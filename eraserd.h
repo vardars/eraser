@@ -74,7 +74,7 @@ const char * const szUsage =
     "    -passes\t\tNumber of overwriting passes (default 1)\n"
     "    -silent\t\tNothing to standard output\n";
 
-const char * const szCopyright = "Eraser %s for DOS. Free Software.\nCopyright 2002 Garrett Trant. (http://www.heidi.ie/eraser/)\n";
+const char * const szCopyright = "Eraser %s for DOS. Free Software.\nCopyright 2007 Garrett Trant. (http://www.heidi.ie/eraser/)\n";
 
 const int iBarLength = 54;
 const int iShowNameLength = 8 + 1 + 3;
