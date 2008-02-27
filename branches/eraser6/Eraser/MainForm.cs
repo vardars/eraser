@@ -41,7 +41,9 @@ namespace Eraser
 			help.Text = "Help";
 			toolBar.Items.Add(help);
 
-			(new SchedulerPanel()).Parent = contentPanel;
+			SchedulerPanel panel = new SchedulerPanel();
+			contentPanel.Controls.Add(panel);
+			panel.Dock = DockStyle.Fill;
 		}
 
 		private static GraphicsPath CreateRoundRect(float X, float Y, float width,
