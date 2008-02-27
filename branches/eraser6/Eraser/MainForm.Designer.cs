@@ -28,7 +28,6 @@ namespace Eraser
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.contentPanel = new System.Windows.Forms.Panel();
 			this.SuspendLayout();
 			// 
@@ -46,11 +45,12 @@ namespace Eraser
 			// 
 			// MainForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.ClientSize = new System.Drawing.Size(766, 538);
 			this.Controls.Add(this.contentPanel);
+			this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.MinimumSize = new System.Drawing.Size(760, 520);
 			this.Name = "MainForm";
 			this.Text = "Eraser";
@@ -63,5 +63,6 @@ namespace Eraser
 		#endregion
 
 		private System.Windows.Forms.Panel contentPanel;
+
 	}
 }

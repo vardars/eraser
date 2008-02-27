@@ -40,6 +40,8 @@ namespace Eraser
 			help.Bitmap = Properties.Resources.ToolbarHelp;
 			help.Text = "Help";
 			toolBar.Items.Add(help);
+
+			(new BasePanel()).Parent = contentPanel;
 		}
 
 		private static GraphicsPath CreateRoundRect(float X, float Y, float width,
