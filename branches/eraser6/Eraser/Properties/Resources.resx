@@ -119,6 +119,15 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="BackgroundGradient" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\background_layered.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\BackgroundGradient.bmp;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ToolbarArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ToolbarArrow.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ToolbarSchedule" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ToolbarSchedule.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ToolbarSettings" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ToolbarSettings.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
