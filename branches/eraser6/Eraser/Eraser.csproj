@@ -43,11 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasePanel.cs">
+    <Compile Include="SchedulerPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="BasePanel.Designer.cs">
-      <DependentUpon>BasePanel.cs</DependentUpon>
+    <Compile Include="SchedulerPanel.Designer.cs">
+      <DependentUpon>SchedulerPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -63,9 +63,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="BasePanel.resx">
+    <EmbeddedResource Include="SchedulerPanel.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>BasePanel.cs</DependentUpon>
+      <DependentUpon>SchedulerPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <SubType>Designer</SubType>
