@@ -9,82 +9,112 @@ using System.Windows.Forms;
 
 namespace Eraser
 {
-    public partial class MainForm : Form
-    {
-        public MainForm()
-        {
-            InitializeComponent();
-        }
+	public partial class MainForm : Form
+	{
+		private ToolBar toolBar;
+		public MainForm()
+		{
+			InitializeComponent();
 
-        private static GraphicsPath CreateRoundRect(float X, float Y, float width,
-            float height, float radius)
-        {
-            GraphicsPath result = new GraphicsPath();
+			//Create the toolbar control
+			toolBar = new ToolBar();
+			toolBar.Name = "toolBar";
+			toolBar.Location = new Point(14, 27);
+			toolBar.Size = new Size(500, 26);
+			toolBar.TabIndex = 1;
+			this.Controls.Add(this.toolBar);
 
-            //Top line.
-            result.AddLine(X + radius, Y, X + width - 2 * radius, Y);
+			ToolBarItem schedule = new ToolBarItem();
+			schedule.Bitmap = Properties.Resources.ToolbarSchedule;
+			schedule.Text = "Erasing Schedule";
+			schedule.Menu = new ContextMenu();
+			schedule.Menu.MenuItems.Add("Queue Task");
+			toolBar.Items.Add(schedule);
 
-            //Top-right corner
-            result.AddArc(X + width - 2 * radius, Y, 2 * radius, 2 * radius, 270, 90);
+			ToolBarItem settings = new ToolBarItem();
+			settings.Bitmap = Properties.Resources.ToolbarSettings;
+			settings.Text = "Settings";
+			toolBar.Items.Add(settings);
 
-            //Right line.
-            result.AddLine(X + width, Y + radius, X + width, Y + height - 2 * radius);
+			ToolBarItem help = new ToolBarItem();
+			help.Bitmap = Properties.Resources.ToolbarHelp;
+			help.Text = "Help";
+			toolBar.Items.Add(help);
+		}
 
-            //Bottom-right corner
-            result.AddArc(X + width - 2 * radius, Y + height - 2 * radius, 2 * radius, 2 * radius, 0, 90);
+		private static GraphicsPath CreateRoundRect(float X, float Y, float width,
+			float height, float radius)
+		{
+			GraphicsPath result = new GraphicsPath();
 
-            //Bottom line.
-            result.AddLine(X + width - 2 * radius, Y + height, X + radius, Y + height);
+			//Top line.
+			result.AddLine(X + radius, Y, X + width - 2 * radius, Y);
 
-            //Bottom-left corner
-            result.AddArc(X, Y + height - 2 *radius, 2 * radius, 2 * radius, 90, 90);
+			//Top-right corner
+			result.AddArc(X + width - 2 * radius, Y, 2 * radius, 2 * radius, 270, 90);
 
-            //Left line
-            result.AddLine(X, Y + height - 2 * radius, X, Y + radius);
+			//Right line.
+			result.AddLine(X + width, Y + radius, X + width, Y + height - 2 * radius);
 
-            //Top-left corner
-            result.AddArc(X, Y, 2 * radius, 2 * radius, 180, 90);
-            result.CloseFigure();
+			//Bottom-right corner
+			result.AddArc(X + width - 2 * radius, Y + height - 2 * radius, 2 * radius, 2 * radius, 0, 90);
 
-            return result;
-        }
+			//Bottom line.
+			result.AddLine(X + width - 2 * radius, Y + height, X + radius, Y + height);
 
-        private void DrawBackground(Graphics dc)
-        {
-            //Draw the base background
-            dc.FillRectangle(new SolidBrush(Color.FromArgb(unchecked((int)0xFF292929))),
-                new Rectangle(new Point(0, 0), this.Size));
+			//Bottom-left corner
+			result.AddArc(X, Y + height - 2 *radius, 2 * radius, 2 * radius, 90, 90);
 
-            //Then the side gradient
-            dc.FillRectangle(new LinearGradientBrush(new Rectangle(0, 0, 338, Math.Max(1, ClientSize.Height)),
-                    Color.FromArgb(unchecked((int)0xFF363636)),
-                    Color.FromArgb(unchecked((int)0xFF292929)), 0.0),
-                0, 0, 338, ClientSize.Height);
+			//Left line
+			result.AddLine(X, Y + height - 2 * radius, X, Y + radius);
 
-            //Draw the top background
-            dc.FillRectangle(new SolidBrush(Color.FromArgb(unchecked((int)0xFF414141))),
-                new Rectangle(0, 0, ClientSize.Width, 32));
+			//Top-left corner
+			result.AddArc(X, Y, 2 * radius, 2 * radius, 180, 90);
+			result.CloseFigure();
 
-            //Finally the top gradient
-            dc.DrawImage(Properties.Resources.BackgroundGradient, new Point(0, 0));
+			return result;
+		}
 
-            dc.SmoothingMode = SmoothingMode.AntiAlias;
-            dc.FillPath(Brushes.White, CreateRoundRect(11, 74, contentPanel.Width + 8, ClientSize.Height - 85, 3));
-        }
+		private void DrawBackground(Graphics dc)
+		{
+			//Draw the base background
+			dc.FillRectangle(new SolidBrush(Color.FromArgb(unchecked((int)0xFF292929))),
+				new Rectangle(new Point(0, 0), this.Size));
 
-        private void MainForm_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.SetClip(new Rectangle(0, 0, Width, Height), CombineMode.Intersect);
-            DrawBackground(e.Graphics);
-        }
+			//Then the side gradient
+			dc.FillRectangle(new LinearGradientBrush(new Rectangle(0, 0, 338, Math.Max(1, ClientSize.Height)),
+					Color.FromArgb(unchecked((int)0xFF363636)),
+					Color.FromArgb(unchecked((int)0xFF292929)), 0.0),
+				0, 0, 338, ClientSize.Height);
 
-        private void MainForm_Resize(object sender, EventArgs e)
-        {
-            Bitmap bmp = new Bitmap(Width, Height);
-            Graphics dc = Graphics.FromImage(bmp);
-            DrawBackground(dc);
+			//Draw the top background
+			dc.FillRectangle(new SolidBrush(Color.FromArgb(unchecked((int)0xFF414141))),
+				new Rectangle(0, 0, ClientSize.Width, 32));
 
-            CreateGraphics().DrawImage(bmp, new Point(0, 0));
-        }
-    }
+			//The top gradient
+			dc.DrawImage(Properties.Resources.BackgroundGradient, new Point(0, 0));
+
+			//And the logo
+			Bitmap logo = Properties.Resources.BackgroundLogo;
+			dc.DrawImage(logo, new Point(ClientSize.Width - logo.Width - 10, 10));
+
+			dc.SmoothingMode = SmoothingMode.AntiAlias;
+			dc.FillPath(Brushes.White, CreateRoundRect(11, 74, contentPanel.Width + 8, ClientSize.Height - 85, 3));
+		}
+
+		private void MainForm_Paint(object sender, PaintEventArgs e)
+		{
+			e.Graphics.SetClip(new Rectangle(0, 0, Width, Height), CombineMode.Intersect);
+			DrawBackground(e.Graphics);
+		}
+
+		private void MainForm_Resize(object sender, EventArgs e)
+		{
+			Bitmap bmp = new Bitmap(Width, Height);
+			Graphics dc = Graphics.FromImage(bmp);
+			DrawBackground(dc);
+
+			CreateGraphics().DrawImage(bmp, new Point(0, 0));
+		}
+	}
 }
