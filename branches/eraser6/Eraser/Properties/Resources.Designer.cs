@@ -66,5 +66,40 @@ namespace Eraser.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        internal static System.Drawing.Bitmap BackgroundLogo {
+            get {
+                object obj = ResourceManager.GetObject("BackgroundLogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ToolbarArrow {
+            get {
+                object obj = ResourceManager.GetObject("ToolbarArrow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ToolbarHelp {
+            get {
+                object obj = ResourceManager.GetObject("ToolbarHelp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ToolbarSchedule {
+            get {
+                object obj = ResourceManager.GetObject("ToolbarSchedule", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap ToolbarSettings {
+            get {
+                object obj = ResourceManager.GetObject("ToolbarSettings", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
