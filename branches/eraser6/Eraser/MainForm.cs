@@ -35,7 +35,7 @@ namespace Eraser
 
 			ToolBarItem schedule = new ToolBarItem();
 			schedule.Bitmap = Properties.Resources.ToolbarSchedule;
-			schedule.Text = "Erasing Schedule";
+			schedule.Text = "Erase Schedule";
 			schedule.Menu = toolbarScheduleMenu;
 			schedule.ToolbarItemClicked += delegate(object sender, EventArgs args)
 			{
@@ -179,6 +179,15 @@ namespace Eraser
 		private void aboutEraserToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			using (AboutForm form = new AboutForm())
+			{
+				form.ShowDialog();
+			}
+		}
+
+		private void newTaskToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			ToolStripDropDownItem item = sender as ToolStripDropDownItem;
+			using (TaskPropertiesForm form = new TaskPropertiesForm())
 			{
 				form.ShowDialog();
 			}

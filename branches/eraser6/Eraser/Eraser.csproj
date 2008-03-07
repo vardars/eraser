@@ -109,6 +109,14 @@
       <SubType>Designer</SubType>
       <DependentUpon>SettingsPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="TaskDataSelectionForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TaskDataSelectionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TaskPropertiesForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TaskPropertiesForm.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -135,6 +143,18 @@
     <Compile Include="SettingsPanel.Designer.cs">
       <DependentUpon>SettingsPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="TaskDataSelectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TaskDataSelectionForm.Designer.cs">
+      <DependentUpon>TaskDataSelectionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TaskPropertiesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TaskPropertiesForm.Designer.cs">
+      <DependentUpon>TaskPropertiesForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="ToolBar.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -150,6 +170,12 @@
     <None Include="Resources\BackgroundLogo.png" />
     <Content Include="Resources\ToolbarSchedule.png" />
     <Content Include="Resources\ToolbarSettings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Manager\Manager.csproj">
+      <Project>{C1AC3255-0939-499D-A69D-725E3DD4F574}</Project>
+      <Name>Manager</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

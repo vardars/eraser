@@ -32,6 +32,8 @@ namespace Eraser
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.contentPanel = new System.Windows.Forms.Panel();
 			this.toolbarScheduleMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.newTaskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolbarScheduleMenuQueue = new System.Windows.Forms.ToolStripMenuItem();
 			this.viewLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolbarHelpMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -56,10 +58,24 @@ namespace Eraser
 			// toolbarScheduleMenu
 			// 
 			this.toolbarScheduleMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newTaskToolStripMenuItem,
+            this.toolStripSeparator1,
             this.toolbarScheduleMenuQueue,
             this.viewLogToolStripMenuItem});
 			this.toolbarScheduleMenu.Name = "toolbarScheduleMenu";
-			this.toolbarScheduleMenu.Size = new System.Drawing.Size(194, 48);
+			this.toolbarScheduleMenu.Size = new System.Drawing.Size(194, 98);
+			// 
+			// newTaskToolStripMenuItem
+			// 
+			this.newTaskToolStripMenuItem.Name = "newTaskToolStripMenuItem";
+			this.newTaskToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+			this.newTaskToolStripMenuItem.Text = "New Task";
+			this.newTaskToolStripMenuItem.Click += new System.EventHandler(this.newTaskToolStripMenuItem_Click);
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(190, 6);
 			// 
 			// toolbarScheduleMenuQueue
 			// 
@@ -123,6 +139,8 @@ namespace Eraser
 		private System.Windows.Forms.ToolStripMenuItem checkForUpdatesToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem aboutEraserToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem viewLogToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem newTaskToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 
 	}
 }

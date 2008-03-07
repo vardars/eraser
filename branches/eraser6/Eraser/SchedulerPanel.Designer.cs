@@ -40,8 +40,8 @@ namespace Eraser
 			// 
 			// titleLbl
 			// 
-			this.titleLbl.Size = new System.Drawing.Size(121, 32);
-			this.titleLbl.Text = "Scheduler";
+			this.titleLbl.Size = new System.Drawing.Size(175, 32);
+			this.titleLbl.Text = "Erase Schedule";
 			// 
 			// titleIcon
 			// 
