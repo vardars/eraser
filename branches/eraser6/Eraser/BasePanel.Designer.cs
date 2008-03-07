@@ -51,7 +51,7 @@ namespace Eraser
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.content.Location = new System.Drawing.Point(20, 52);
 			this.content.Name = "content";
-			this.content.Size = new System.Drawing.Size(622, 272);
+			this.content.Size = new System.Drawing.Size(622, 377);
 			this.content.TabIndex = 3;
 			// 
 			// titleIcon
@@ -70,7 +70,7 @@ namespace Eraser
 			this.Controls.Add(this.titleLbl);
 			this.Name = "BasePanel";
 			this.Padding = new System.Windows.Forms.Padding(17);
-			this.Size = new System.Drawing.Size(662, 344);
+			this.Size = new System.Drawing.Size(662, 449);
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

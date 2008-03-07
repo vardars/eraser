@@ -85,10 +85,15 @@ namespace Eraser
 				contentPanel.SuspendLayout();
 				contentPanel.Controls.Remove(oldPage);
 				contentPanel.Controls.Add(CurrPage);
-				CurrPage.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
-				CurrPage.Left = 0;
-				CurrPage.Top = 0;
-				CurrPage.Width = contentPanel.Width;
+
+				if (CurrPage.Dock == DockStyle.None)
+				{
+					CurrPage.Anchor = AnchorStyles.Left | AnchorStyles.Right |
+						AnchorStyles.Top;
+					CurrPage.Left = 0;
+					CurrPage.Top = 0;
+					CurrPage.Width = contentPanel.Width;
+				}
 				contentPanel.ResumeLayout();
 			}
 		}

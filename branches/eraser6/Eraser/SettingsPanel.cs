@@ -13,6 +13,7 @@ namespace Eraser
 		public SettingsPanel()
 		{
 			InitializeComponent();
+			Dock = DockStyle.None;
 		}
 	}
 }
