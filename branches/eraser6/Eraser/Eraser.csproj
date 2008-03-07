@@ -12,7 +12,7 @@
     <AssemblyName>Eraser</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ApplicationIcon>Resources\Eraser.ico</ApplicationIcon>
+    <ApplicationIcon>..\Resources\Eraser.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -148,7 +148,6 @@
     <None Include="Resources\ToolbarArrow.png" />
     <None Include="Resources\ToolbarHelp.png" />
     <None Include="Resources\BackgroundLogo.png" />
-    <None Include="Resources\Eraser.ico" />
     <Content Include="Resources\ToolbarSchedule.png" />
     <Content Include="Resources\ToolbarSettings.png" />
   </ItemGroup>
