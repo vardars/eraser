@@ -49,6 +49,12 @@
     <Compile Include="BasePanel.Designer.cs">
       <DependentUpon>BasePanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="LightGroup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LightGroup.Designer.cs">
+      <DependentUpon>LightGroup.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -66,6 +72,10 @@
     <EmbeddedResource Include="BasePanel.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BasePanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LightGroup.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>LightGroup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <SubType>Designer</SubType>
