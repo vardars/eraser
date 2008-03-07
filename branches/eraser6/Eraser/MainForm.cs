@@ -11,39 +11,65 @@ namespace Eraser
 {
 	public partial class MainForm : Form
 	{
-		private ToolBar toolBar;
+		public enum Pages
+		{
+			SCHEDULER = 0,
+			SETTINGS
+		}
+
+		private ToolBar ToolBar = new ToolBar();
+		private BasePanel CurrPage = null;
+		private SchedulerPanel SchedulerPage = new SchedulerPanel();
+		private SettingsPanel SettingsPage = new SettingsPanel();
+
 		public MainForm()
 		{
 			InitializeComponent();
 
 			//Create the toolbar control
-			toolBar = new ToolBar();
-			toolBar.Name = "toolBar";
-			toolBar.Location = new Point(14, 27);
-			toolBar.Size = new Size(500, 26);
-			toolBar.TabIndex = 1;
-			this.Controls.Add(this.toolBar);
+			ToolBar.Name = "toolBar";
+			ToolBar.Location = new Point(14, 27);
+			ToolBar.Size = new Size(500, 26);
+			ToolBar.TabIndex = 1;
+			this.Controls.Add(this.ToolBar);
 
 			ToolBarItem schedule = new ToolBarItem();
 			schedule.Bitmap = Properties.Resources.ToolbarSchedule;
 			schedule.Text = "Erasing Schedule";
 			schedule.Menu = new ContextMenu();
 			schedule.Menu.MenuItems.Add("Queue Task");
-			toolBar.Items.Add(schedule);
+			ToolBar.Items.Add(schedule);
 
 			ToolBarItem settings = new ToolBarItem();
 			settings.Bitmap = Properties.Resources.ToolbarSettings;
 			settings.Text = "Settings";
-			toolBar.Items.Add(settings);
+			ToolBar.Items.Add(settings);
 
 			ToolBarItem help = new ToolBarItem();
 			help.Bitmap = Properties.Resources.ToolbarHelp;
 			help.Text = "Help";
-			toolBar.Items.Add(help);
+			ToolBar.Items.Add(help);
 
-			SchedulerPanel panel = new SchedulerPanel();
-			contentPanel.Controls.Add(panel);
-			panel.Dock = DockStyle.Fill;
+			//Show the default page.
+			ChangePage(Pages.SCHEDULER);
+		}
+
+		public void ChangePage(Pages page)
+		{
+			contentPanel.SuspendLayout();
+			contentPanel.Controls.Remove(CurrPage);
+			switch (page)
+			{
+				case Pages.SCHEDULER:
+					CurrPage = SchedulerPage;
+					break;
+				case Pages.SETTINGS:
+					CurrPage = SettingsPage;
+					break;
+			}
+
+			contentPanel.Controls.Add(CurrPage);
+			CurrPage.Dock = DockStyle.Fill;
 		}
 
 		private static GraphicsPath CreateRoundRect(float X, float Y, float width,

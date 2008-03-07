@@ -8,9 +8,9 @@ using System.Windows.Forms;
 
 namespace Eraser
 {
-	public partial class SchedulerPanel : Eraser.BasePanel
+	public partial class SettingsPanel : Eraser.BasePanel
 	{
-		public SchedulerPanel()
+		public SettingsPanel()
 		{
 			InitializeComponent();
 		}

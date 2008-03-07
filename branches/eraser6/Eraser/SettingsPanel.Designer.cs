@@ -1,6 +1,6 @@
 namespace Eraser
 {
-	partial class SchedulerPanel
+	partial class SettingsPanel
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -33,16 +33,16 @@ namespace Eraser
 			// 
 			// titleLbl
 			// 
-			this.titleLbl.Size = new System.Drawing.Size(121, 32);
-			this.titleLbl.Text = "Scheduler";
+			this.titleLbl.Size = new System.Drawing.Size(101, 32);
+			this.titleLbl.Text = "Settings";
 			// 
 			// titleIcon
 			// 
-			this.titleIcon.Image = global::Eraser.Properties.Resources.ToolbarSchedule;
+			this.titleIcon.Image = global::Eraser.Properties.Resources.ToolbarSettings;
 			// 
-			// SchedulerPanel
+			// SettingsPanel
 			// 
-			this.Name = "SchedulerPanel";
+			this.Name = "SettingsPanel";
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -52,4 +52,3 @@ namespace Eraser
 		#endregion
 	}
 }
-

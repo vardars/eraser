@@ -43,11 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SchedulerPanel.cs">
+    <Compile Include="BasePanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SchedulerPanel.Designer.cs">
-      <DependentUpon>SchedulerPanel.cs</DependentUpon>
+    <Compile Include="BasePanel.Designer.cs">
+      <DependentUpon>BasePanel.cs</DependentUpon>
     </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -63,9 +63,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="SchedulerPanel.resx">
+    <EmbeddedResource Include="BasePanel.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>SchedulerPanel.cs</DependentUpon>
+      <DependentUpon>BasePanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <SubType>Designer</SubType>
@@ -80,6 +80,14 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="SchedulerPanel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SchedulerPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SettingsPanel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SettingsPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -93,6 +101,18 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="SchedulerPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SchedulerPanel.Designer.cs">
+      <DependentUpon>SchedulerPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SettingsPanel.Designer.cs">
+      <DependentUpon>SettingsPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolBar.cs">
       <SubType>Component</SubType>
