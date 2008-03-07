@@ -60,6 +60,13 @@ namespace Eraser.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap AboutDialog {
+            get {
+                object obj = ResourceManager.GetObject("AboutDialog", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap BackgroundGradient {
             get {
                 object obj = ResourceManager.GetObject("BackgroundGradient", resourceCulture);
@@ -71,6 +78,13 @@ namespace Eraser.Properties {
             get {
                 object obj = ResourceManager.GetObject("BackgroundLogo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon Eraser {
+            get {
+                object obj = ResourceManager.GetObject("Eraser", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         

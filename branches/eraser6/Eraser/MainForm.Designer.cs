@@ -29,10 +29,15 @@ namespace Eraser
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.contentPanel = new System.Windows.Forms.Panel();
 			this.toolbarScheduleMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.toolbarScheduleMenuQueue = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolbarHelpMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.aboutEraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolbarScheduleMenu.SuspendLayout();
+			this.toolbarHelpMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// contentPanel
@@ -52,13 +57,34 @@ namespace Eraser
 			this.toolbarScheduleMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolbarScheduleMenuQueue});
 			this.toolbarScheduleMenu.Name = "toolbarScheduleMenu";
-			this.toolbarScheduleMenu.Size = new System.Drawing.Size(153, 48);
+			this.toolbarScheduleMenu.Size = new System.Drawing.Size(128, 26);
 			// 
 			// toolbarScheduleMenuQueue
 			// 
 			this.toolbarScheduleMenuQueue.Name = "toolbarScheduleMenuQueue";
-			this.toolbarScheduleMenuQueue.Size = new System.Drawing.Size(152, 22);
+			this.toolbarScheduleMenuQueue.Size = new System.Drawing.Size(127, 22);
 			this.toolbarScheduleMenuQueue.Text = "Queue Up";
+			// 
+			// toolbarHelpMenu
+			// 
+			this.toolbarHelpMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.checkForUpdatesToolStripMenuItem,
+            this.aboutEraserToolStripMenuItem});
+			this.toolbarHelpMenu.Name = "toolbarHelpMenu";
+			this.toolbarHelpMenu.Size = new System.Drawing.Size(172, 48);
+			// 
+			// checkForUpdatesToolStripMenuItem
+			// 
+			this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
+			this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+			this.checkForUpdatesToolStripMenuItem.Text = "Check for Updates";
+			// 
+			// aboutEraserToolStripMenuItem
+			// 
+			this.aboutEraserToolStripMenuItem.Name = "aboutEraserToolStripMenuItem";
+			this.aboutEraserToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+			this.aboutEraserToolStripMenuItem.Text = "About Eraser";
+			this.aboutEraserToolStripMenuItem.Click += new System.EventHandler(this.aboutEraserToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
@@ -68,12 +94,14 @@ namespace Eraser
 			this.ClientSize = new System.Drawing.Size(766, 538);
 			this.Controls.Add(this.contentPanel);
 			this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MinimumSize = new System.Drawing.Size(760, 520);
 			this.Name = "MainForm";
 			this.Text = "Eraser";
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
 			this.Resize += new System.EventHandler(this.MainForm_Resize);
 			this.toolbarScheduleMenu.ResumeLayout(false);
+			this.toolbarHelpMenu.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -83,6 +111,9 @@ namespace Eraser
 		private System.Windows.Forms.Panel contentPanel;
 		private System.Windows.Forms.ContextMenuStrip toolbarScheduleMenu;
 		private System.Windows.Forms.ToolStripMenuItem toolbarScheduleMenuQueue;
+		private System.Windows.Forms.ContextMenuStrip toolbarHelpMenu;
+		private System.Windows.Forms.ToolStripMenuItem checkForUpdatesToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem aboutEraserToolStripMenuItem;
 
 	}
 }

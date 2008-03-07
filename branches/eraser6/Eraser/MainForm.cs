@@ -55,12 +55,18 @@ namespace Eraser
 			ToolBarItem help = new ToolBarItem();
 			help.Bitmap = Properties.Resources.ToolbarHelp;
 			help.Text = "Help";
+			help.Menu = toolbarHelpMenu;
 			ToolBar.Items.Add(help);
 
 			//Show the default page.
 			ChangePage(Pages.SCHEDULER);
 		}
 
+		/// <summary>
+		/// Changes the active page displayed in the form.
+		/// </summary>
+		/// <param name="page">The new page to change to. No action is done when the
+		/// current page is the same as the new page requested</param>
 		public void ChangePage(Pages page)
 		{
 			BasePanel oldPage = CurrPage;
@@ -160,6 +166,14 @@ namespace Eraser
 			DrawBackground(dc);
 
 			CreateGraphics().DrawImage(bmp, new Point(0, 0));
+		}
+
+		private void aboutEraserToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (AboutForm form = new AboutForm())
+			{
+				form.ShowDialog();
+			}
 		}
 	}
 }

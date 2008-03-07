@@ -43,6 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutForm.Designer.cs">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="BasePanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -69,6 +75,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AboutForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="BasePanel.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BasePanel.cs</DependentUpon>
@@ -132,10 +142,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\AboutDialog.png" />
+    <Content Include="Eraser.ico" />
     <Content Include="Resources\BackgroundGradient.bmp" />
     <None Include="Resources\ToolbarArrow.png" />
     <None Include="Resources\ToolbarHelp.png" />
     <None Include="Resources\BackgroundLogo.png" />
+    <None Include="Resources\Eraser.ico" />
     <Content Include="Resources\ToolbarSchedule.png" />
     <Content Include="Resources\ToolbarSettings.png" />
   </ItemGroup>
