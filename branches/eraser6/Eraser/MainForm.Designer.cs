@@ -33,6 +33,7 @@ namespace Eraser
 			this.contentPanel = new System.Windows.Forms.Panel();
 			this.toolbarScheduleMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.toolbarScheduleMenuQueue = new System.Windows.Forms.ToolStripMenuItem();
+			this.viewLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolbarHelpMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutEraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,15 +56,22 @@ namespace Eraser
 			// toolbarScheduleMenu
 			// 
 			this.toolbarScheduleMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolbarScheduleMenuQueue});
+            this.toolbarScheduleMenuQueue,
+            this.viewLogToolStripMenuItem});
 			this.toolbarScheduleMenu.Name = "toolbarScheduleMenu";
-			this.toolbarScheduleMenu.Size = new System.Drawing.Size(128, 26);
+			this.toolbarScheduleMenu.Size = new System.Drawing.Size(194, 48);
 			// 
 			// toolbarScheduleMenuQueue
 			// 
 			this.toolbarScheduleMenuQueue.Name = "toolbarScheduleMenuQueue";
-			this.toolbarScheduleMenuQueue.Size = new System.Drawing.Size(127, 22);
-			this.toolbarScheduleMenuQueue.Text = "Queue Up";
+			this.toolbarScheduleMenuQueue.Size = new System.Drawing.Size(193, 22);
+			this.toolbarScheduleMenuQueue.Text = "View Completed Tasks";
+			// 
+			// viewLogToolStripMenuItem
+			// 
+			this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
+			this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+			this.viewLogToolStripMenuItem.Text = "View Log";
 			// 
 			// toolbarHelpMenu
 			// 
@@ -114,6 +122,7 @@ namespace Eraser
 		private System.Windows.Forms.ContextMenuStrip toolbarHelpMenu;
 		private System.Windows.Forms.ToolStripMenuItem checkForUpdatesToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem aboutEraserToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem viewLogToolStripMenuItem;
 
 	}
 }
