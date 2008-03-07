@@ -37,11 +37,19 @@ namespace Eraser
 			schedule.Bitmap = Properties.Resources.ToolbarSchedule;
 			schedule.Text = "Erasing Schedule";
 			schedule.Menu = toolbarScheduleMenu;
+			schedule.ToolbarItemClicked += delegate(object sender, EventArgs args)
+			{
+				this.ChangePage(Pages.SCHEDULER);
+			};
 			ToolBar.Items.Add(schedule);
 
 			ToolBarItem settings = new ToolBarItem();
 			settings.Bitmap = Properties.Resources.ToolbarSettings;
 			settings.Text = "Settings";
+			settings.ToolbarItemClicked += delegate(object sender, EventArgs args)
+			{
+				this.ChangePage(Pages.SETTINGS);
+			};
 			ToolBar.Items.Add(settings);
 
 			ToolBarItem help = new ToolBarItem();
@@ -55,8 +63,7 @@ namespace Eraser
 
 		public void ChangePage(Pages page)
 		{
-			contentPanel.SuspendLayout();
-			contentPanel.Controls.Remove(CurrPage);
+			BasePanel oldPage = CurrPage;
 			switch (page)
 			{
 				case Pages.SCHEDULER:
@@ -67,8 +74,17 @@ namespace Eraser
 					break;
 			}
 
-			contentPanel.Controls.Add(CurrPage);
-			CurrPage.Dock = DockStyle.Fill;
+			if (oldPage != CurrPage)
+			{
+				contentPanel.SuspendLayout();
+				contentPanel.Controls.Remove(oldPage);
+				contentPanel.Controls.Add(CurrPage);
+				CurrPage.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+				CurrPage.Left = 0;
+				CurrPage.Top = 0;
+				CurrPage.Width = contentPanel.Width;
+				contentPanel.ResumeLayout();
+			}
 		}
 
 		private static GraphicsPath CreateRoundRect(float X, float Y, float width,
