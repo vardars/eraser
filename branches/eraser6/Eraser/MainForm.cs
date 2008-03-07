@@ -58,6 +58,9 @@ namespace Eraser
 			help.Menu = toolbarHelpMenu;
 			ToolBar.Items.Add(help);
 
+			//Set the docking style for each of the pages
+			SchedulerPage.Dock = DockStyle.Fill;
+
 			//Show the default page.
 			ChangePage(Pages.SCHEDULER);
 		}
