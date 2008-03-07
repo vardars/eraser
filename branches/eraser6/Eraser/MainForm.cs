@@ -36,8 +36,7 @@ namespace Eraser
 			ToolBarItem schedule = new ToolBarItem();
 			schedule.Bitmap = Properties.Resources.ToolbarSchedule;
 			schedule.Text = "Erasing Schedule";
-			schedule.Menu = new ContextMenu();
-			schedule.Menu.MenuItems.Add("Queue Task");
+			schedule.Menu = toolbarScheduleMenu;
 			ToolBar.Items.Add(schedule);
 
 			ToolBarItem settings = new ToolBarItem();

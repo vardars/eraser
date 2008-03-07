@@ -28,7 +28,11 @@ namespace Eraser
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.contentPanel = new System.Windows.Forms.Panel();
+			this.toolbarScheduleMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.toolbarScheduleMenuQueue = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolbarScheduleMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// contentPanel
@@ -43,6 +47,19 @@ namespace Eraser
 			this.contentPanel.Size = new System.Drawing.Size(752, 449);
 			this.contentPanel.TabIndex = 0;
 			// 
+			// toolbarScheduleMenu
+			// 
+			this.toolbarScheduleMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolbarScheduleMenuQueue});
+			this.toolbarScheduleMenu.Name = "toolbarScheduleMenu";
+			this.toolbarScheduleMenu.Size = new System.Drawing.Size(153, 48);
+			// 
+			// toolbarScheduleMenuQueue
+			// 
+			this.toolbarScheduleMenuQueue.Name = "toolbarScheduleMenuQueue";
+			this.toolbarScheduleMenuQueue.Size = new System.Drawing.Size(152, 22);
+			this.toolbarScheduleMenuQueue.Text = "Queue Up";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -56,6 +73,7 @@ namespace Eraser
 			this.Text = "Eraser";
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
 			this.Resize += new System.EventHandler(this.MainForm_Resize);
+			this.toolbarScheduleMenu.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -63,6 +81,8 @@ namespace Eraser
 		#endregion
 
 		private System.Windows.Forms.Panel contentPanel;
+		private System.Windows.Forms.ContextMenuStrip toolbarScheduleMenu;
+		private System.Windows.Forms.ToolStripMenuItem toolbarScheduleMenuQueue;
 
 	}
 }
