@@ -24,11 +24,13 @@ namespace Eraser
 		public void AddTask(Task task)
 		{
 			ListViewItem item = scheduler.Items.Add(GenerateTaskName(task));
-			item.SubItems.Add(string.Empty); //Time of next run
-			item.SubItems.Add("Not running");
+			item.SubItems.Add(task.Schedule.UIText);
+			item.SubItems.Add(string.Empty);
 
-			if (task.Schedule == null)
-				item.Group = scheduler.Groups["single"];
+			if (task.Schedule == Schedule.RunNow)
+				item.Group = scheduler.Groups["immediate"];
+			else if (task.Schedule == Schedule.RunOnRestart)
+				item.Group = scheduler.Groups["restart"];
 			else
 				item.Group = scheduler.Groups["recurring"];
 		}

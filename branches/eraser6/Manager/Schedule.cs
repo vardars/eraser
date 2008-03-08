@@ -21,7 +21,7 @@ namespace Eraser.Manager
 		{
 			public override string UIText
 			{
-				get { return "Running when restarted"; }
+				get { return "Running on restart"; }
 			}
 		}
 
