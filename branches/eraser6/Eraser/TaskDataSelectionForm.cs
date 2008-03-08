@@ -13,6 +13,18 @@ namespace Eraser
 {
 	public partial class TaskDataSelectionForm : Form
 	{
+		private class DriveItem
+		{
+			public override string ToString()
+			{
+				return Label;
+			}
+
+			public string Drive;
+			public string Label;
+			public Icon Icon;
+		}
+
 		public TaskDataSelectionForm()
 		{
 			//Create the UI
@@ -29,7 +41,11 @@ namespace Eraser
 					driveType != DriveTypes.DRIVE_CDROM &&
 					driveType != DriveTypes.DRIVE_REMOTE)
 				{
-					unusedDisk.Items.Add(File.GetFileDescription(drive));
+					DriveItem item = new DriveItem();
+					item.Drive = drive.Substring(0, drive.Length - 1);
+					item.Label = File.GetFileDescription(item.Drive);
+					item.Icon = File.GetFileIcon(item.Drive);
+					unusedDisk.Items.Add(item);
 				}
 			}
 		}
@@ -91,6 +107,33 @@ namespace Eraser
 			folderDialog.SelectedPath = folderPath.Text;
 			if (folderDialog.ShowDialog() == DialogResult.OK)
 				folderPath.Text = folderDialog.SelectedPath;
+		}
+
+		private void unusedDisk_DrawItem(object sender, DrawItemEventArgs e)
+		{
+			if (e.Index == -1)
+				return;
+
+			Graphics g = e.Graphics;
+			DriveItem item = (DriveItem)unusedDisk.Items[e.Index];
+			Color textColour = e.ForeColor;
+			PointF textPos = e.Bounds.Location;
+			textPos.X += item.Icon.Width + 4;
+			textPos.Y += 2;
+
+			//Set the text colour and background colour if the control is disabled
+			if ((e.State & DrawItemState.Disabled) == 0)
+				e.DrawBackground();
+			else
+			{
+				g.FillRectangle(new SolidBrush(SystemColors.ButtonFace), e.Bounds);
+				textColour = SystemColors.GrayText;
+			}
+
+			g.DrawIcon(item.Icon, e.Bounds.X + 2, e.Bounds.Y);
+			g.DrawString(item.Label, e.Font, new SolidBrush(textColour), textPos);
+			if ((e.State & DrawItemState.Focus) != 0)
+				e.DrawFocusRectangle();
 		}
 
 		private void ok_Click(object sender, EventArgs e)

@@ -175,12 +175,14 @@ namespace Eraser
 			// 
 			this.unusedDisk.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
+			this.unusedDisk.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
 			this.unusedDisk.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.unusedDisk.FormattingEnabled = true;
 			this.unusedDisk.Location = new System.Drawing.Point(31, 260);
 			this.unusedDisk.Name = "unusedDisk";
-			this.unusedDisk.Size = new System.Drawing.Size(287, 23);
+			this.unusedDisk.Size = new System.Drawing.Size(287, 24);
 			this.unusedDisk.TabIndex = 15;
+			this.unusedDisk.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.unusedDisk_DrawItem);
 			// 
 			// methodLbl
 			// 
