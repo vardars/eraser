@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+
 using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace Eraser.Util
 {
-	using HICON = UIntPtr;
-	using HIMAGELIST = UIntPtr;
+	using HICON = IntPtr;
+	using HIMAGELIST = IntPtr;
 
 	public class File
 	{
@@ -20,11 +22,24 @@ namespace Eraser.Util
 		public static string GetFileDescription(string path)
 		{
 			SHFILEINFO shfi = new SHFILEINFO();
-			HIMAGELIST imageList = (HIMAGELIST) SHGetFileInfo(path, 0, ref shfi,
-				Marshal.SizeOf(shfi), SHGetFileInfoFlags.SHGFI_SMALLICON |
-				SHGetFileInfoFlags.SHGFI_SYSICONINDEX |
+			SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
 				SHGetFileInfoFlags.SHGFI_DISPLAYNAME);
 			return shfi.szDisplayName;
+		}
+
+		/// <summary>
+		/// Uses SHGetFileInfo to retrieve the icon for the given file, folder or
+		/// drive.
+		/// </summary>
+		/// <param name="path">A string that contains the path and file name for
+		/// the file in question. Both absolute and relative paths are valid.</param>
+		/// <returns>An Icon object containing the bitmap</returns>
+		public static Icon GetFileIcon(string path)
+		{
+			SHFILEINFO shfi = new SHFILEINFO();
+			SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
+				SHGetFileInfoFlags.SHGFI_SMALLICON | SHGetFileInfoFlags.SHGFI_ICON);
+			return Icon.FromHandle(shfi.hIcon);
 		}
 
 		/// <summary>
@@ -75,7 +90,7 @@ namespace Eraser.Util
 		///														Windows NT, Windows 2000, Windows XP: Win32 console application or .bat file
 		/// </returns>
 		[DllImport("Shell32.dll")]
-		private static extern UIntPtr SHGetFileInfo(string path, uint fileAttributes,
+		private static extern IntPtr SHGetFileInfo(string path, uint fileAttributes,
 			ref SHFILEINFO psfi, int fileInfo, SHGetFileInfoFlags flags);
 
 		enum SHGetFileInfoFlags
