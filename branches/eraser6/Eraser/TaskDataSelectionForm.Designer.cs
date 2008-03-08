@@ -211,6 +211,7 @@ namespace Eraser
 			this.ok.TabIndex = 16;
 			this.ok.Text = "OK";
 			this.ok.UseVisualStyleBackColor = true;
+			this.ok.Click += new System.EventHandler(this.ok_Click);
 			// 
 			// cancel
 			// 

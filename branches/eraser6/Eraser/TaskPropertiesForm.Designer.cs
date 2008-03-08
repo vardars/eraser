@@ -108,6 +108,7 @@ namespace Eraser
 			this.data.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.dataColData,
             this.dataColMethod});
+			this.data.FullRowSelect = true;
 			this.data.Location = new System.Drawing.Point(15, 77);
 			this.data.Name = "data";
 			this.data.Size = new System.Drawing.Size(391, 196);
