@@ -84,6 +84,7 @@ namespace Eraser
 			this.scheduleTime = new System.Windows.Forms.MaskedTextBox();
 			this.scheduleTimeLbl = new System.Windows.Forms.Label();
 			this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+			this.typeRestart = new System.Windows.Forms.RadioButton();
 			this.container.SuspendLayout();
 			this.containerTask.SuspendLayout();
 			this.containerSchedule.SuspendLayout();
@@ -124,7 +125,7 @@ namespace Eraser
 			// eraseLbl
 			// 
 			this.eraseLbl.AutoSize = true;
-			this.eraseLbl.Location = new System.Drawing.Point(6, 75);
+			this.eraseLbl.Location = new System.Drawing.Point(6, 93);
 			this.eraseLbl.Name = "eraseLbl";
 			this.eraseLbl.Size = new System.Drawing.Size(78, 15);
 			this.eraseLbl.TabIndex = 2;
@@ -170,9 +171,9 @@ namespace Eraser
             this.dataColData,
             this.dataColMethod});
 			this.data.FullRowSelect = true;
-			this.data.Location = new System.Drawing.Point(9, 93);
+			this.data.Location = new System.Drawing.Point(9, 111);
 			this.data.Name = "data";
-			this.data.Size = new System.Drawing.Size(324, 254);
+			this.data.Size = new System.Drawing.Size(324, 234);
 			this.data.TabIndex = 7;
 			this.data.UseCompatibleStateImageBehavior = false;
 			this.data.View = System.Windows.Forms.View.Details;
@@ -190,7 +191,7 @@ namespace Eraser
 			// dataAdd
 			// 
 			this.dataAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.dataAdd.Location = new System.Drawing.Point(9, 353);
+			this.dataAdd.Location = new System.Drawing.Point(9, 351);
 			this.dataAdd.Name = "dataAdd";
 			this.dataAdd.Size = new System.Drawing.Size(75, 23);
 			this.dataAdd.TabIndex = 8;
@@ -235,6 +236,7 @@ namespace Eraser
 			// 
 			// containerTask
 			// 
+			this.containerTask.Controls.Add(this.typeRestart);
 			this.containerTask.Controls.Add(this.nameLbl);
 			this.containerTask.Controls.Add(this.name);
 			this.containerTask.Controls.Add(this.typeLbl);
@@ -739,6 +741,17 @@ namespace Eraser
 			// 
 			this.errorProvider.ContainerControl = this;
 			// 
+			// typeRestart
+			// 
+			this.typeRestart.AutoSize = true;
+			this.typeRestart.Location = new System.Drawing.Point(142, 71);
+			this.typeRestart.Name = "typeRestart";
+			this.typeRestart.Size = new System.Drawing.Size(102, 19);
+			this.typeRestart.TabIndex = 9;
+			this.typeRestart.TabStop = true;
+			this.typeRestart.Text = "Run on Restart";
+			this.typeRestart.UseVisualStyleBackColor = true;
+			// 
 			// TaskPropertiesForm
 			// 
 			this.AcceptButton = this.ok;
@@ -840,5 +853,6 @@ namespace Eraser
 		private System.Windows.Forms.MaskedTextBox scheduleTime;
 		private System.Windows.Forms.Label scheduleTimeLbl;
 		private System.Windows.Forms.ErrorProvider errorProvider;
+		private System.Windows.Forms.RadioButton typeRestart;
 	}
 }
