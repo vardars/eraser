@@ -28,6 +28,7 @@ namespace Eraser
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.nameLbl = new System.Windows.Forms.Label();
 			this.name = new System.Windows.Forms.TextBox();
 			this.eraseLbl = new System.Windows.Forms.Label();
@@ -82,6 +83,7 @@ namespace Eraser
 			this.scheduleTimePanel = new System.Windows.Forms.Panel();
 			this.scheduleTime = new System.Windows.Forms.MaskedTextBox();
 			this.scheduleTimeLbl = new System.Windows.Forms.Label();
+			this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
 			this.container.SuspendLayout();
 			this.containerTask.SuspendLayout();
 			this.containerSchedule.SuspendLayout();
@@ -98,6 +100,7 @@ namespace Eraser
 			this.oneTimePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.oneTimeBitmap)).BeginInit();
 			this.scheduleTimePanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// nameLbl
@@ -169,7 +172,7 @@ namespace Eraser
 			this.data.FullRowSelect = true;
 			this.data.Location = new System.Drawing.Point(9, 93);
 			this.data.Name = "data";
-			this.data.Size = new System.Drawing.Size(324, 256);
+			this.data.Size = new System.Drawing.Size(324, 254);
 			this.data.TabIndex = 7;
 			this.data.UseCompatibleStateImageBehavior = false;
 			this.data.View = System.Windows.Forms.View.Details;
@@ -187,7 +190,7 @@ namespace Eraser
 			// dataAdd
 			// 
 			this.dataAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.dataAdd.Location = new System.Drawing.Point(9, 355);
+			this.dataAdd.Location = new System.Drawing.Point(9, 353);
 			this.dataAdd.Name = "dataAdd";
 			this.dataAdd.Size = new System.Drawing.Size(75, 23);
 			this.dataAdd.TabIndex = 8;
@@ -204,6 +207,7 @@ namespace Eraser
 			this.ok.TabIndex = 9;
 			this.ok.Text = "OK";
 			this.ok.UseVisualStyleBackColor = true;
+			this.ok.Click += new System.EventHandler(this.ok_Click);
 			// 
 			// cancel
 			// 
@@ -731,6 +735,10 @@ namespace Eraser
 			this.scheduleTimeLbl.TabIndex = 3;
 			this.scheduleTimeLbl.Text = "Run this task at:";
 			// 
+			// errorProvider
+			// 
+			this.errorProvider.ContainerControl = this;
+			// 
 			// TaskPropertiesForm
 			// 
 			this.AcceptButton = this.ok;
@@ -770,6 +778,7 @@ namespace Eraser
 			((System.ComponentModel.ISupportInitialize)(this.oneTimeBitmap)).EndInit();
 			this.scheduleTimePanel.ResumeLayout(false);
 			this.scheduleTimePanel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -830,5 +839,6 @@ namespace Eraser
 		private System.Windows.Forms.Panel scheduleTimePanel;
 		private System.Windows.Forms.MaskedTextBox scheduleTime;
 		private System.Windows.Forms.Label scheduleTimeLbl;
+		private System.Windows.Forms.ErrorProvider errorProvider;
 	}
 }

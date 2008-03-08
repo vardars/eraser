@@ -35,8 +35,10 @@ namespace Eraser
 						item = data.Items.Add("Unused space on " + (entry as Task.FreeSpace).Drive);
 					else
 						throw new NotImplementedException("Unimplemented data erasure type.");
+					
 					item.SubItems.Add(entry.Method.Name);
 					task.Entries.Add(entry);
+					errorProvider.Clear();
 				}
 			}
 		}
@@ -86,6 +88,31 @@ namespace Eraser
 			scheduleMonthlyRelativeWeek.Enabled = scheduleMonthlyRelativeWeekDay.Enabled =
 				scheduleMonthlyRelativeFreq.Enabled = scheduleMonthlyRelative.Checked &&
 				scheduleMonthly.Checked && typeRecurring.Checked;
+		}
+
+		private void ok_Click(object sender, EventArgs e)
+		{
+			if (data.Items.Count == 0)
+			{
+				errorProvider.SetIconPadding(data, -16);
+				errorProvider.SetError(data, "The task has no data to erase.");
+				return;
+			}
+
+			errorProvider.Clear();
+
+			//Set the name of the task
+			task.Name = name.Text;
+
+			//And the schedule, if selected.
+			if (typeRecurring.Checked)
+			{
+
+			}
+
+			//Close the dialog
+			DialogResult = DialogResult.OK;
+			Close();
 		}
 
 		private Task task = new Task();
