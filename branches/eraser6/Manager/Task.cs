@@ -176,7 +176,7 @@ namespace Eraser.Manager
 
 		private uint id;
 		private string name;
-		private Schedule schedule = null;
+		private Schedule schedule = Schedule.RunNow;
 		private List<EraseTarget> entries = new List<EraseTarget>();
 	}
 }
