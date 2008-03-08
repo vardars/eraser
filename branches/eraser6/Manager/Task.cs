@@ -12,7 +12,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Represents a generic target of erasure
 		/// </summary>
-		public class EraseTarget
+		public abstract class EraseTarget
 		{
 			/// <summary>
 			/// The method used for erasing the file. If the variable is equal to
@@ -22,6 +22,14 @@ namespace Eraser.Manager
 			{
 				get { return method; }
 				set { method = value; }
+			}
+
+			/// <summary>
+			/// Retrieves the text to display representing this task.
+			/// </summary>
+			public abstract string UIText
+			{
+				get;
 			}
 
 			private EraseMethod method = null;
@@ -47,6 +55,11 @@ namespace Eraser.Manager
 				set { path = value; }
 			}
 
+			public override string UIText
+			{
+				get { return Path; }
+			}
+
 			private string path;
 		}
 
@@ -56,6 +69,11 @@ namespace Eraser.Manager
 		public class FreeSpace : EraseTarget
 		{
 			public string Drive;
+
+			public override string UIText
+			{
+				get { return string.Format("Unused disk space ({0})", Drive); }
+			}
 		}
 
 		/// <summary>
@@ -129,8 +147,8 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// The name for this task. This is just an opaque value for the user to recognize
-		/// the task.
+		/// The name for this task. This is just an opaque value for the user to
+		/// recognize the task.
 		/// </summary>
 		public string Name
 		{
@@ -147,8 +165,18 @@ namespace Eraser.Manager
 			set { entries = value; }
 		}
 
+		/// <summary>
+		/// The schedule for running the task.
+		/// </summary>
+		public Schedule Schedule
+		{
+			get { return schedule; }
+			set { schedule = value; }
+		}
+
 		private uint id;
 		private string name;
+		private Schedule schedule = null;
 		private List<EraseTarget> entries = new List<EraseTarget>();
 	}
 }

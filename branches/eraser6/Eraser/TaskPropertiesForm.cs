@@ -21,6 +21,20 @@ namespace Eraser
 			scheduleDaily.Checked = true;
 		}
 
+		/// <summary>
+		/// Sets or retrieves the task object to be edited or being edited.
+		/// </summary>
+		public Task Task
+		{
+			get { return task; }
+			set { task = value; UpdateUIFromTask(); }
+		}
+
+		private void UpdateUIFromTask()
+		{
+			throw new NotImplementedException("UpdateUIFromTask not implemented.");
+		}
+
 		private void dataAdd_Click(object sender, EventArgs e)
 		{
 			using (TaskDataSelectionForm form = new TaskDataSelectionForm())
@@ -28,13 +42,7 @@ namespace Eraser
 				if (form.ShowDialog() == DialogResult.OK)
 				{
 					Task.EraseTarget entry = form.GetTaskEntry();
-					ListViewItem item = null;
-					if (entry is Task.FilesystemObject)
-						item = data.Items.Add((entry as Task.FilesystemObject).Path);
-					else if (entry is Task.FreeSpace)
-						item = data.Items.Add("Unused space on " + (entry as Task.FreeSpace).Drive);
-					else
-						throw new NotImplementedException("Unimplemented data erasure type.");
+					ListViewItem item = data.Items.Add(entry.UIText);
 					
 					item.SubItems.Add(entry.Method.Name);
 					task.Entries.Add(entry);
