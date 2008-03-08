@@ -28,8 +28,8 @@ namespace Eraser
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Once-only tasks", System.Windows.Forms.HorizontalAlignment.Left);
-			System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Run on Restart", System.Windows.Forms.HorizontalAlignment.Left);
+			System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Tasks queued for execution", System.Windows.Forms.HorizontalAlignment.Left);
+			System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Tasks executed on restart", System.Windows.Forms.HorizontalAlignment.Left);
 			System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Recurring tasks", System.Windows.Forms.HorizontalAlignment.Left);
 			this.scheduler = new System.Windows.Forms.ListView();
 			this.schedulerColName = new System.Windows.Forms.ColumnHeader();
@@ -63,9 +63,9 @@ namespace Eraser
             this.schedulerColNextRun,
             this.schedulerColStatus});
 			this.scheduler.FullRowSelect = true;
-			listViewGroup1.Header = "Once-only tasks";
-			listViewGroup1.Name = "single";
-			listViewGroup2.Header = "Run on Restart";
+			listViewGroup1.Header = "Tasks queued for execution";
+			listViewGroup1.Name = "immediate";
+			listViewGroup2.Header = "Tasks executed on restart";
 			listViewGroup2.Name = "restart";
 			listViewGroup3.Header = "Recurring tasks";
 			listViewGroup3.Name = "recurring";

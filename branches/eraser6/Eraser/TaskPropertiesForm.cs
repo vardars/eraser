@@ -17,7 +17,7 @@ namespace Eraser
 			InitializeComponent();
 
 			//Set a default task type
-			typeOneTime.Checked = true;
+			typeImmediate.Checked = true;
 			scheduleDaily.Checked = true;
 		}
 
@@ -26,8 +26,28 @@ namespace Eraser
 		/// </summary>
 		public Task Task
 		{
-			get { return task; }
+			get { UpdateTaskFromUI(); return task; }
 			set { task = value; UpdateUIFromTask(); }
+		}
+
+		private void UpdateTaskFromUI()
+		{
+			//Set the name of the task
+			task.Name = name.Text;
+
+			//And the schedule, if selected.
+			if (typeImmediate.Checked)
+			{
+				task.Schedule = Schedule.RunNow;
+			}
+			else if (typeRestart.Checked)
+			{
+				task.Schedule = Schedule.RunOnRestart;
+			}
+			else if (typeRecurring.Checked)
+			{
+
+			}
 		}
 
 		private void UpdateUIFromTask()
@@ -56,7 +76,7 @@ namespace Eraser
 			scheduleTimeLbl.Enabled = scheduleTime.Enabled = schedulePattern.Enabled =
 				scheduleDaily.Enabled = scheduleWeekly.Enabled =
 				scheduleMonthly.Enabled = typeRecurring.Checked;
-			oneTimePanel.Visible = !typeRecurring.Checked;
+			nonRecurringPanel.Visible = !typeRecurring.Checked;
 			
 			scheduleSpan_CheckedChanged(sender, e);
 		}
@@ -108,15 +128,6 @@ namespace Eraser
 			}
 
 			errorProvider.Clear();
-
-			//Set the name of the task
-			task.Name = name.Text;
-
-			//And the schedule, if selected.
-			if (typeRecurring.Checked)
-			{
-
-			}
 
 			//Close the dialog
 			DialogResult = DialogResult.OK;

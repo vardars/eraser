@@ -33,7 +33,7 @@ namespace Eraser
 			this.name = new System.Windows.Forms.TextBox();
 			this.eraseLbl = new System.Windows.Forms.Label();
 			this.typeLbl = new System.Windows.Forms.Label();
-			this.typeOneTime = new System.Windows.Forms.RadioButton();
+			this.typeImmediate = new System.Windows.Forms.RadioButton();
 			this.typeRecurring = new System.Windows.Forms.RadioButton();
 			this.data = new System.Windows.Forms.ListView();
 			this.dataColData = new System.Windows.Forms.ColumnHeader();
@@ -77,9 +77,9 @@ namespace Eraser
 			this.scheduleMonthlyRelative = new System.Windows.Forms.RadioButton();
 			this.scheduleMonthlyByDayEveryLbl = new System.Windows.Forms.Label();
 			this.scheduleMonthlyByDay = new System.Windows.Forms.RadioButton();
-			this.oneTimePanel = new System.Windows.Forms.Panel();
-			this.oneTimeLbl = new System.Windows.Forms.Label();
-			this.oneTimeBitmap = new System.Windows.Forms.PictureBox();
+			this.nonRecurringPanel = new System.Windows.Forms.Panel();
+			this.nonRecurringLbl = new System.Windows.Forms.Label();
+			this.nonRecurringBitmap = new System.Windows.Forms.PictureBox();
 			this.scheduleTimePanel = new System.Windows.Forms.Panel();
 			this.scheduleTime = new System.Windows.Forms.MaskedTextBox();
 			this.scheduleTimeLbl = new System.Windows.Forms.Label();
@@ -98,8 +98,8 @@ namespace Eraser
 			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyByDayNumber)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyByDayFreq)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyRelativeFreq)).BeginInit();
-			this.oneTimePanel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.oneTimeBitmap)).BeginInit();
+			this.nonRecurringPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.nonRecurringBitmap)).BeginInit();
 			this.scheduleTimePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
 			this.SuspendLayout();
@@ -140,16 +140,16 @@ namespace Eraser
 			this.typeLbl.TabIndex = 4;
 			this.typeLbl.Text = "Task Type:";
 			// 
-			// typeOneTime
+			// typeImmediate
 			// 
-			this.typeOneTime.AutoSize = true;
-			this.typeOneTime.Location = new System.Drawing.Point(142, 35);
-			this.typeOneTime.Name = "typeOneTime";
-			this.typeOneTime.Size = new System.Drawing.Size(76, 19);
-			this.typeOneTime.TabIndex = 5;
-			this.typeOneTime.Text = "One-time";
-			this.typeOneTime.UseVisualStyleBackColor = true;
-			this.typeOneTime.CheckedChanged += new System.EventHandler(this.taskType_CheckedChanged);
+			this.typeImmediate.AutoSize = true;
+			this.typeImmediate.Location = new System.Drawing.Point(142, 35);
+			this.typeImmediate.Name = "typeImmediate";
+			this.typeImmediate.Size = new System.Drawing.Size(115, 19);
+			this.typeImmediate.TabIndex = 5;
+			this.typeImmediate.Text = "Run immediately";
+			this.typeImmediate.UseVisualStyleBackColor = true;
+			this.typeImmediate.CheckedChanged += new System.EventHandler(this.taskType_CheckedChanged);
 			// 
 			// typeRecurring
 			// 
@@ -240,7 +240,7 @@ namespace Eraser
 			this.containerTask.Controls.Add(this.nameLbl);
 			this.containerTask.Controls.Add(this.name);
 			this.containerTask.Controls.Add(this.typeLbl);
-			this.containerTask.Controls.Add(this.typeOneTime);
+			this.containerTask.Controls.Add(this.typeImmediate);
 			this.containerTask.Controls.Add(this.typeRecurring);
 			this.containerTask.Controls.Add(this.eraseLbl);
 			this.containerTask.Controls.Add(this.data);
@@ -269,7 +269,7 @@ namespace Eraser
 			this.tableLayoutPanel1.ColumnCount = 1;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.Controls.Add(this.schedulePattern, 0, 2);
-			this.tableLayoutPanel1.Controls.Add(this.oneTimePanel, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this.nonRecurringPanel, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this.scheduleTimePanel, 0, 1);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
@@ -676,36 +676,36 @@ namespace Eraser
 			this.scheduleMonthlyByDay.UseVisualStyleBackColor = true;
 			this.scheduleMonthlyByDay.CheckedChanged += new System.EventHandler(this.scheduleMonthlySpan_CheckedChanged);
 			// 
-			// oneTimePanel
+			// nonRecurringPanel
 			// 
-			this.oneTimePanel.Controls.Add(this.oneTimeLbl);
-			this.oneTimePanel.Controls.Add(this.oneTimeBitmap);
-			this.oneTimePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.oneTimePanel.Location = new System.Drawing.Point(3, 3);
-			this.oneTimePanel.Name = "oneTimePanel";
-			this.oneTimePanel.Size = new System.Drawing.Size(327, 34);
-			this.oneTimePanel.TabIndex = 1;
+			this.nonRecurringPanel.Controls.Add(this.nonRecurringLbl);
+			this.nonRecurringPanel.Controls.Add(this.nonRecurringBitmap);
+			this.nonRecurringPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.nonRecurringPanel.Location = new System.Drawing.Point(3, 3);
+			this.nonRecurringPanel.Name = "nonRecurringPanel";
+			this.nonRecurringPanel.Size = new System.Drawing.Size(327, 34);
+			this.nonRecurringPanel.TabIndex = 1;
 			// 
-			// oneTimeLbl
+			// nonRecurringLbl
 			// 
-			this.oneTimeLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			this.nonRecurringLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.oneTimeLbl.Location = new System.Drawing.Point(38, 0);
-			this.oneTimeLbl.Name = "oneTimeLbl";
-			this.oneTimeLbl.Size = new System.Drawing.Size(287, 34);
-			this.oneTimeLbl.TabIndex = 1;
-			this.oneTimeLbl.Text = "The task being edited is a non-recurring task, none of the settings on this page " +
+			this.nonRecurringLbl.Location = new System.Drawing.Point(38, 0);
+			this.nonRecurringLbl.Name = "nonRecurringLbl";
+			this.nonRecurringLbl.Size = new System.Drawing.Size(287, 34);
+			this.nonRecurringLbl.TabIndex = 1;
+			this.nonRecurringLbl.Text = "The task being edited is a non-recurring task, none of the settings on this page " +
 				"apply.";
 			// 
-			// oneTimeBitmap
+			// nonRecurringBitmap
 			// 
-			this.oneTimeBitmap.Image = global::Eraser.Properties.Resources.Information;
-			this.oneTimeBitmap.Location = new System.Drawing.Point(0, 0);
-			this.oneTimeBitmap.Name = "oneTimeBitmap";
-			this.oneTimeBitmap.Size = new System.Drawing.Size(32, 32);
-			this.oneTimeBitmap.TabIndex = 0;
-			this.oneTimeBitmap.TabStop = false;
+			this.nonRecurringBitmap.Image = global::Eraser.Properties.Resources.Information;
+			this.nonRecurringBitmap.Location = new System.Drawing.Point(0, 0);
+			this.nonRecurringBitmap.Name = "nonRecurringBitmap";
+			this.nonRecurringBitmap.Size = new System.Drawing.Size(32, 32);
+			this.nonRecurringBitmap.TabIndex = 0;
+			this.nonRecurringBitmap.TabStop = false;
 			// 
 			// scheduleTimePanel
 			// 
@@ -746,10 +746,10 @@ namespace Eraser
 			this.typeRestart.AutoSize = true;
 			this.typeRestart.Location = new System.Drawing.Point(142, 71);
 			this.typeRestart.Name = "typeRestart";
-			this.typeRestart.Size = new System.Drawing.Size(102, 19);
+			this.typeRestart.Size = new System.Drawing.Size(99, 19);
 			this.typeRestart.TabIndex = 9;
 			this.typeRestart.TabStop = true;
-			this.typeRestart.Text = "Run on Restart";
+			this.typeRestart.Text = "Run on restart";
 			this.typeRestart.UseVisualStyleBackColor = true;
 			// 
 			// TaskPropertiesForm
@@ -787,8 +787,8 @@ namespace Eraser
 			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyByDayNumber)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyByDayFreq)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyRelativeFreq)).EndInit();
-			this.oneTimePanel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.oneTimeBitmap)).EndInit();
+			this.nonRecurringPanel.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.nonRecurringBitmap)).EndInit();
 			this.scheduleTimePanel.ResumeLayout(false);
 			this.scheduleTimePanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
@@ -802,7 +802,7 @@ namespace Eraser
 		private System.Windows.Forms.TextBox name;
 		private System.Windows.Forms.Label eraseLbl;
 		private System.Windows.Forms.Label typeLbl;
-		private System.Windows.Forms.RadioButton typeOneTime;
+		private System.Windows.Forms.RadioButton typeImmediate;
 		private System.Windows.Forms.RadioButton typeRecurring;
 		private System.Windows.Forms.ListView data;
 		private System.Windows.Forms.ColumnHeader dataColData;
@@ -846,9 +846,9 @@ namespace Eraser
 		private System.Windows.Forms.RadioButton scheduleMonthlyRelative;
 		private System.Windows.Forms.Label scheduleMonthlyByDayEveryLbl;
 		private System.Windows.Forms.RadioButton scheduleMonthlyByDay;
-		private System.Windows.Forms.Panel oneTimePanel;
-		private System.Windows.Forms.Label oneTimeLbl;
-		private System.Windows.Forms.PictureBox oneTimeBitmap;
+		private System.Windows.Forms.Panel nonRecurringPanel;
+		private System.Windows.Forms.Label nonRecurringLbl;
+		private System.Windows.Forms.PictureBox nonRecurringBitmap;
 		private System.Windows.Forms.Panel scheduleTimePanel;
 		private System.Windows.Forms.MaskedTextBox scheduleTime;
 		private System.Windows.Forms.Label scheduleTimeLbl;
