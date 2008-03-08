@@ -32,7 +32,7 @@ namespace Eraser
 			System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Recurring tasks", System.Windows.Forms.HorizontalAlignment.Left);
 			this.scheduler = new System.Windows.Forms.ListView();
 			this.schedulerColName = new System.Windows.Forms.ColumnHeader();
-			this.schedulerColMethod = new System.Windows.Forms.ColumnHeader();
+			this.schedulerColNextRun = new System.Windows.Forms.ColumnHeader();
 			this.schedulerColStatus = new System.Windows.Forms.ColumnHeader();
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).BeginInit();
 			this.content.SuspendLayout();
@@ -59,13 +59,13 @@ namespace Eraser
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.scheduler.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.schedulerColName,
-            this.schedulerColMethod,
+            this.schedulerColNextRun,
             this.schedulerColStatus});
 			this.scheduler.FullRowSelect = true;
 			listViewGroup1.Header = "Once-only tasks";
-			listViewGroup1.Name = "schedulerGrpSingle";
+			listViewGroup1.Name = "single";
 			listViewGroup2.Header = "Recurring tasks";
-			listViewGroup2.Name = "schedulerGrpRecurring";
+			listViewGroup2.Name = "recurring";
 			this.scheduler.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup1,
             listViewGroup2});
@@ -79,12 +79,12 @@ namespace Eraser
 			// schedulerColName
 			// 
 			this.schedulerColName.Text = "Task Name";
-			this.schedulerColName.Width = 300;
+			this.schedulerColName.Width = 250;
 			// 
-			// schedulerColMethod
+			// schedulerColNextRun
 			// 
-			this.schedulerColMethod.Text = "Method";
-			this.schedulerColMethod.Width = 100;
+			this.schedulerColNextRun.Text = "Next Run";
+			this.schedulerColNextRun.Width = 150;
 			// 
 			// schedulerColStatus
 			// 
@@ -103,10 +103,10 @@ namespace Eraser
 
 		#endregion
 
-		private System.Windows.Forms.ListView scheduler;
 		private System.Windows.Forms.ColumnHeader schedulerColName;
-		private System.Windows.Forms.ColumnHeader schedulerColMethod;
+		private System.Windows.Forms.ColumnHeader schedulerColNextRun;
 		private System.Windows.Forms.ColumnHeader schedulerColStatus;
+		private System.Windows.Forms.ListView scheduler;
 	}
 }
 

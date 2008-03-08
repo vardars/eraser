@@ -189,7 +189,8 @@ namespace Eraser
 			ToolStripDropDownItem item = sender as ToolStripDropDownItem;
 			using (TaskPropertiesForm form = new TaskPropertiesForm())
 			{
-				form.ShowDialog();
+				if (form.ShowDialog() == DialogResult.OK)
+					SchedulerPage.AddTask(form.Task);
 			}
 		}
 	}
