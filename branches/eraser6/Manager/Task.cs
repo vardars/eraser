@@ -10,37 +10,36 @@ namespace Eraser.Manager
 	public class Task
 	{
 		/// <summary>
-		/// Class representing the data to be erased.
+		/// Represents a generic target of erasure
 		/// </summary>
-		public abstract class Data
+		public class EraseTarget
+		{
+			/// <summary>
+			/// The method used for erasing the file. If the variable is equal to
+			/// EraseMethod.Default then the default is queried for the task type.
+			/// </summary>
+			public EraseMethod Method
+			{
+				get { return method; }
+				set { method = value; }
+			}
+
+			private EraseMethod method = null;
+		}
+
+		/// <summary>
+		/// Class representing a tangible object (file/folder) to be erased.
+		/// </summary>
+		public abstract class FilesystemObject : EraseTarget
 		{
 			/// <summary>
 			/// Retrieves the list of files/folders to erase as a list.
 			/// </summary>
 			/// <returns></returns>
 			internal abstract List<string> GetPaths();
-		}
-
-		/// <summary>
-		/// Class representing a free space erase.
-		/// </summary>
-		public class FreeSpace
-		{
-			public string Drive;
-		}
-
-		/// <summary>
-		/// Class representing a file to be erased.
-		/// </summary>
-		public class File : Data
-		{
-			internal override List<string> GetPaths()
-			{
-				return null;
-			}
 
 			/// <summary>
-			/// The path to the file referred to by this object.
+			/// The path to the file or folder referred to by this object.
 			/// </summary>
 			public string Path
 			{
@@ -49,6 +48,74 @@ namespace Eraser.Manager
 			}
 
 			private string path;
+		}
+
+		/// <summary>
+		/// Class representing a free space erase.
+		/// </summary>
+		public class FreeSpace : EraseTarget
+		{
+			public string Drive;
+		}
+
+		/// <summary>
+		/// Class representing a file to be erased.
+		/// </summary>
+		public class File : FilesystemObject
+		{
+			internal override List<string> GetPaths()
+			{
+				List<string> result = new List<string>();
+				result.Add(Path);
+				return result;
+			}
+		}
+
+		/// <summary>
+		/// Represents a folder and its files which are to be erased.
+		/// </summary>
+		public class Folder : FilesystemObject
+		{
+			internal override List<string> GetPaths()
+			{
+				List<string> result = new List<string>();
+				throw new Exception("The Folder.GetPaths() method has not been implemented.");
+			}
+
+			/// <summary>
+			/// A wildcard expression stating the condition for the set of files to include.
+			/// The include mask is applied before the exclude mask is applied. If this value
+			/// is empty, all files and folders within the folder specified is included.
+			/// </summary>
+			public string IncludeMask
+			{
+				get { return includeMask; }
+				set { includeMask = value; }
+			}
+
+			/// <summary>
+			/// A wildcard expression stating the condition for removing files from the set
+			/// of included files. If this value is omitted, all files and folders extracted
+			/// by the inclusion mask is erased.
+			/// </summary>
+			public string ExcludeMask
+			{
+				get { return excludeMask; }
+				set { excludeMask = value; }
+			}
+
+			/// <summary>
+			/// Determines if Eraser should delete the folder after the erase process.
+			/// </summary>
+			public bool DeleteIfEmpty
+			{
+				get { return deleteIfEmpty; }
+				set { deleteIfEmpty = value; }
+			}
+
+			private string includeMask;
+			private string excludeMask;
+			private bool deleteIfEmpty;
 		}
 
 		/// <summary>
@@ -74,7 +141,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The set of data to erase when this task is executed.
 		/// </summary>
-		public List<object> Entries
+		public List<EraseTarget> Entries
 		{
 			get { return entries; }
 			set { entries = value; }
@@ -82,6 +149,6 @@ namespace Eraser.Manager
 
 		private uint id;
 		private string name;
-		private List<object> entries;
+		private List<EraseTarget> entries = new List<EraseTarget>();
 	}
 }
