@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Manager")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Eraser Manager")]
+[assembly: AssemblyDescription("Eraser task manager and client library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Manager")]
-[assembly: AssemblyCopyright("Copyright ©  2008")]
+[assembly: AssemblyCompany("Eraser Project")]
+[assembly: AssemblyProduct("Eraser")]
+[assembly: AssemblyCopyright("Copyright © 2008 The Eraser Project")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
