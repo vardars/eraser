@@ -43,6 +43,7 @@ namespace Eraser
 			this.cancel = new System.Windows.Forms.Button();
 			this.container = new System.Windows.Forms.TabControl();
 			this.containerTask = new System.Windows.Forms.TabPage();
+			this.typeRestart = new System.Windows.Forms.RadioButton();
 			this.containerSchedule = new System.Windows.Forms.TabPage();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.schedulePattern = new System.Windows.Forms.GroupBox();
@@ -65,18 +66,6 @@ namespace Eraser
 			this.scheduleWeeklyLbl = new System.Windows.Forms.Label();
 			this.scheduleWeekly = new System.Windows.Forms.RadioButton();
 			this.scheduleMonthly = new System.Windows.Forms.RadioButton();
-			this.scheduleMonthlyPanel = new System.Windows.Forms.Panel();
-			this.scheduleMonthlyByDayNumber = new System.Windows.Forms.NumericUpDown();
-			this.scheduleMonthlyByDayFreq = new System.Windows.Forms.NumericUpDown();
-			this.scheduleMonthlyRelativeFreq = new System.Windows.Forms.NumericUpDown();
-			this.scheduleMonthlyRelativeFreqLbl = new System.Windows.Forms.Label();
-			this.scheduleMonthlyRelativeEveryLbl = new System.Windows.Forms.Label();
-			this.scheduleMonthlyByDayMonthLbl = new System.Windows.Forms.Label();
-			this.scheduleMonthlyRelativeWeekDay = new System.Windows.Forms.ComboBox();
-			this.scheduleMonthlyRelativeWeek = new System.Windows.Forms.ComboBox();
-			this.scheduleMonthlyRelative = new System.Windows.Forms.RadioButton();
-			this.scheduleMonthlyByDayEveryLbl = new System.Windows.Forms.Label();
-			this.scheduleMonthlyByDay = new System.Windows.Forms.RadioButton();
 			this.nonRecurringPanel = new System.Windows.Forms.Panel();
 			this.nonRecurringLbl = new System.Windows.Forms.Label();
 			this.nonRecurringBitmap = new System.Windows.Forms.PictureBox();
@@ -84,7 +73,11 @@ namespace Eraser
 			this.scheduleTime = new System.Windows.Forms.MaskedTextBox();
 			this.scheduleTimeLbl = new System.Windows.Forms.Label();
 			this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-			this.typeRestart = new System.Windows.Forms.RadioButton();
+			this.scheduleMonthlyDayNumber = new System.Windows.Forms.NumericUpDown();
+			this.scheduleMonthlyFreq = new System.Windows.Forms.NumericUpDown();
+			this.scheduleMonthlyMonthLbl = new System.Windows.Forms.Label();
+			this.scheduleMonthlyEveryLbl = new System.Windows.Forms.Label();
+			this.scheduleMonthlyLbl = new System.Windows.Forms.Label();
 			this.container.SuspendLayout();
 			this.containerTask.SuspendLayout();
 			this.containerSchedule.SuspendLayout();
@@ -94,14 +87,12 @@ namespace Eraser
 			this.scheduleDailyPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.scheduleDailyByDayFreq)).BeginInit();
 			this.scheduleWeeklyDays.SuspendLayout();
-			this.scheduleMonthlyPanel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyByDayNumber)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyByDayFreq)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyRelativeFreq)).BeginInit();
 			this.nonRecurringPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.nonRecurringBitmap)).BeginInit();
 			this.scheduleTimePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyDayNumber)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyFreq)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// nameLbl
@@ -173,7 +164,7 @@ namespace Eraser
 			this.data.FullRowSelect = true;
 			this.data.Location = new System.Drawing.Point(9, 111);
 			this.data.Name = "data";
-			this.data.Size = new System.Drawing.Size(324, 234);
+			this.data.Size = new System.Drawing.Size(324, 232);
 			this.data.TabIndex = 7;
 			this.data.UseCompatibleStateImageBehavior = false;
 			this.data.View = System.Windows.Forms.View.Details;
@@ -191,7 +182,7 @@ namespace Eraser
 			// dataAdd
 			// 
 			this.dataAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.dataAdd.Location = new System.Drawing.Point(9, 351);
+			this.dataAdd.Location = new System.Drawing.Point(9, 349);
 			this.dataAdd.Name = "dataAdd";
 			this.dataAdd.Size = new System.Drawing.Size(75, 23);
 			this.dataAdd.TabIndex = 8;
@@ -253,6 +244,17 @@ namespace Eraser
 			this.containerTask.Text = "Task";
 			this.containerTask.UseVisualStyleBackColor = true;
 			// 
+			// typeRestart
+			// 
+			this.typeRestart.AutoSize = true;
+			this.typeRestart.Location = new System.Drawing.Point(142, 71);
+			this.typeRestart.Name = "typeRestart";
+			this.typeRestart.Size = new System.Drawing.Size(99, 19);
+			this.typeRestart.TabIndex = 9;
+			this.typeRestart.TabStop = true;
+			this.typeRestart.Text = "Run on restart";
+			this.typeRestart.UseVisualStyleBackColor = true;
+			// 
 			// containerSchedule
 			// 
 			this.containerSchedule.Controls.Add(this.tableLayoutPanel1);
@@ -286,6 +288,11 @@ namespace Eraser
 			this.schedulePattern.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
+			this.schedulePattern.Controls.Add(this.scheduleMonthlyLbl);
+			this.schedulePattern.Controls.Add(this.scheduleMonthlyDayNumber);
+			this.schedulePattern.Controls.Add(this.scheduleMonthlyFreq);
+			this.schedulePattern.Controls.Add(this.scheduleMonthlyMonthLbl);
+			this.schedulePattern.Controls.Add(this.scheduleMonthlyEveryLbl);
 			this.schedulePattern.Controls.Add(this.scheduleWeeklyFreq);
 			this.schedulePattern.Controls.Add(this.scheduleDaily);
 			this.schedulePattern.Controls.Add(this.scheduleDailyPanel);
@@ -294,7 +301,6 @@ namespace Eraser
 			this.schedulePattern.Controls.Add(this.scheduleWeeklyLbl);
 			this.schedulePattern.Controls.Add(this.scheduleWeekly);
 			this.schedulePattern.Controls.Add(this.scheduleMonthly);
-			this.schedulePattern.Controls.Add(this.scheduleMonthlyPanel);
 			this.schedulePattern.Location = new System.Drawing.Point(3, 71);
 			this.schedulePattern.Name = "schedulePattern";
 			this.schedulePattern.Size = new System.Drawing.Size(327, 306);
@@ -351,9 +357,24 @@ namespace Eraser
 			// scheduleDailyByDayFreq
 			// 
 			this.scheduleDailyByDayFreq.Location = new System.Drawing.Point(62, 3);
+			this.scheduleDailyByDayFreq.Maximum = new decimal(new int[] {
+            366,
+            0,
+            0,
+            0});
+			this.scheduleDailyByDayFreq.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
 			this.scheduleDailyByDayFreq.Name = "scheduleDailyByDayFreq";
 			this.scheduleDailyByDayFreq.Size = new System.Drawing.Size(43, 23);
 			this.scheduleDailyByDayFreq.TabIndex = 4;
+			this.scheduleDailyByDayFreq.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
 			// 
 			// scheduleDailyByDay
 			// 
@@ -373,9 +394,9 @@ namespace Eraser
 			this.scheduleDailyByDayLbl.AutoSize = true;
 			this.scheduleDailyByDayLbl.Location = new System.Drawing.Point(111, 5);
 			this.scheduleDailyByDayLbl.Name = "scheduleDailyByDayLbl";
-			this.scheduleDailyByDayLbl.Size = new System.Drawing.Size(34, 15);
+			this.scheduleDailyByDayLbl.Size = new System.Drawing.Size(42, 15);
 			this.scheduleDailyByDayLbl.TabIndex = 2;
-			this.scheduleDailyByDayLbl.Text = "days,";
+			this.scheduleDailyByDayLbl.Text = "day(s),";
 			// 
 			// scheduleDailyByWeekday
 			// 
@@ -515,167 +536,6 @@ namespace Eraser
 			this.scheduleMonthly.UseVisualStyleBackColor = true;
 			this.scheduleMonthly.CheckedChanged += new System.EventHandler(this.scheduleSpan_CheckedChanged);
 			// 
-			// scheduleMonthlyPanel
-			// 
-			this.scheduleMonthlyPanel.Controls.Add(this.scheduleMonthlyByDayNumber);
-			this.scheduleMonthlyPanel.Controls.Add(this.scheduleMonthlyByDayFreq);
-			this.scheduleMonthlyPanel.Controls.Add(this.scheduleMonthlyRelativeFreq);
-			this.scheduleMonthlyPanel.Controls.Add(this.scheduleMonthlyRelativeFreqLbl);
-			this.scheduleMonthlyPanel.Controls.Add(this.scheduleMonthlyRelativeEveryLbl);
-			this.scheduleMonthlyPanel.Controls.Add(this.scheduleMonthlyByDayMonthLbl);
-			this.scheduleMonthlyPanel.Controls.Add(this.scheduleMonthlyRelativeWeekDay);
-			this.scheduleMonthlyPanel.Controls.Add(this.scheduleMonthlyRelativeWeek);
-			this.scheduleMonthlyPanel.Controls.Add(this.scheduleMonthlyRelative);
-			this.scheduleMonthlyPanel.Controls.Add(this.scheduleMonthlyByDayEveryLbl);
-			this.scheduleMonthlyPanel.Controls.Add(this.scheduleMonthlyByDay);
-			this.scheduleMonthlyPanel.Location = new System.Drawing.Point(23, 213);
-			this.scheduleMonthlyPanel.Name = "scheduleMonthlyPanel";
-			this.scheduleMonthlyPanel.Size = new System.Drawing.Size(304, 87);
-			this.scheduleMonthlyPanel.TabIndex = 8;
-			// 
-			// scheduleMonthlyByDayNumber
-			// 
-			this.scheduleMonthlyByDayNumber.Location = new System.Drawing.Point(54, 1);
-			this.scheduleMonthlyByDayNumber.Maximum = new decimal(new int[] {
-            31,
-            0,
-            0,
-            0});
-			this.scheduleMonthlyByDayNumber.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-			this.scheduleMonthlyByDayNumber.Name = "scheduleMonthlyByDayNumber";
-			this.scheduleMonthlyByDayNumber.Size = new System.Drawing.Size(43, 23);
-			this.scheduleMonthlyByDayNumber.TabIndex = 1;
-			this.scheduleMonthlyByDayNumber.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-			// 
-			// scheduleMonthlyByDayFreq
-			// 
-			this.scheduleMonthlyByDayFreq.Location = new System.Drawing.Point(158, 1);
-			this.scheduleMonthlyByDayFreq.Maximum = new decimal(new int[] {
-            120,
-            0,
-            0,
-            0});
-			this.scheduleMonthlyByDayFreq.Name = "scheduleMonthlyByDayFreq";
-			this.scheduleMonthlyByDayFreq.Size = new System.Drawing.Size(43, 23);
-			this.scheduleMonthlyByDayFreq.TabIndex = 3;
-			// 
-			// scheduleMonthlyRelativeFreq
-			// 
-			this.scheduleMonthlyRelativeFreq.Location = new System.Drawing.Point(23, 56);
-			this.scheduleMonthlyRelativeFreq.Maximum = new decimal(new int[] {
-            120,
-            0,
-            0,
-            0});
-			this.scheduleMonthlyRelativeFreq.Name = "scheduleMonthlyRelativeFreq";
-			this.scheduleMonthlyRelativeFreq.Size = new System.Drawing.Size(42, 23);
-			this.scheduleMonthlyRelativeFreq.TabIndex = 9;
-			// 
-			// scheduleMonthlyRelativeFreqLbl
-			// 
-			this.scheduleMonthlyRelativeFreqLbl.AutoSize = true;
-			this.scheduleMonthlyRelativeFreqLbl.Location = new System.Drawing.Point(71, 58);
-			this.scheduleMonthlyRelativeFreqLbl.Name = "scheduleMonthlyRelativeFreqLbl";
-			this.scheduleMonthlyRelativeFreqLbl.Size = new System.Drawing.Size(56, 15);
-			this.scheduleMonthlyRelativeFreqLbl.TabIndex = 10;
-			this.scheduleMonthlyRelativeFreqLbl.Text = "month(s)";
-			// 
-			// scheduleMonthlyRelativeEveryLbl
-			// 
-			this.scheduleMonthlyRelativeEveryLbl.AutoSize = true;
-			this.scheduleMonthlyRelativeEveryLbl.Location = new System.Drawing.Point(248, 32);
-			this.scheduleMonthlyRelativeEveryLbl.Name = "scheduleMonthlyRelativeEveryLbl";
-			this.scheduleMonthlyRelativeEveryLbl.Size = new System.Drawing.Size(41, 15);
-			this.scheduleMonthlyRelativeEveryLbl.TabIndex = 8;
-			this.scheduleMonthlyRelativeEveryLbl.Text = ", every";
-			// 
-			// scheduleMonthlyByDayMonthLbl
-			// 
-			this.scheduleMonthlyByDayMonthLbl.AutoSize = true;
-			this.scheduleMonthlyByDayMonthLbl.Location = new System.Drawing.Point(207, 3);
-			this.scheduleMonthlyByDayMonthLbl.Name = "scheduleMonthlyByDayMonthLbl";
-			this.scheduleMonthlyByDayMonthLbl.Size = new System.Drawing.Size(56, 15);
-			this.scheduleMonthlyByDayMonthLbl.TabIndex = 4;
-			this.scheduleMonthlyByDayMonthLbl.Text = "month(s)";
-			// 
-			// scheduleMonthlyRelativeWeekDay
-			// 
-			this.scheduleMonthlyRelativeWeekDay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.scheduleMonthlyRelativeWeekDay.FormattingEnabled = true;
-			this.scheduleMonthlyRelativeWeekDay.Items.AddRange(new object[] {
-            "day",
-            "weekday",
-            "weekend day",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday"});
-			this.scheduleMonthlyRelativeWeekDay.Location = new System.Drawing.Point(142, 29);
-			this.scheduleMonthlyRelativeWeekDay.Name = "scheduleMonthlyRelativeWeekDay";
-			this.scheduleMonthlyRelativeWeekDay.Size = new System.Drawing.Size(100, 23);
-			this.scheduleMonthlyRelativeWeekDay.TabIndex = 7;
-			// 
-			// scheduleMonthlyRelativeWeek
-			// 
-			this.scheduleMonthlyRelativeWeek.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.scheduleMonthlyRelativeWeek.FormattingEnabled = true;
-			this.scheduleMonthlyRelativeWeek.Items.AddRange(new object[] {
-            "first",
-            "second",
-            "third",
-            "fourth",
-            "fifth",
-            "last"});
-			this.scheduleMonthlyRelativeWeek.Location = new System.Drawing.Point(70, 29);
-			this.scheduleMonthlyRelativeWeek.Name = "scheduleMonthlyRelativeWeek";
-			this.scheduleMonthlyRelativeWeek.Size = new System.Drawing.Size(72, 23);
-			this.scheduleMonthlyRelativeWeek.TabIndex = 6;
-			// 
-			// scheduleMonthlyRelative
-			// 
-			this.scheduleMonthlyRelative.AutoSize = true;
-			this.scheduleMonthlyRelative.Location = new System.Drawing.Point(3, 30);
-			this.scheduleMonthlyRelative.Name = "scheduleMonthlyRelative";
-			this.scheduleMonthlyRelative.Size = new System.Drawing.Size(61, 19);
-			this.scheduleMonthlyRelative.TabIndex = 5;
-			this.scheduleMonthlyRelative.TabStop = true;
-			this.scheduleMonthlyRelative.Text = "On the";
-			this.scheduleMonthlyRelative.UseVisualStyleBackColor = true;
-			this.scheduleMonthlyRelative.CheckedChanged += new System.EventHandler(this.scheduleMonthlySpan_CheckedChanged);
-			// 
-			// scheduleMonthlyByDayEveryLbl
-			// 
-			this.scheduleMonthlyByDayEveryLbl.AutoSize = true;
-			this.scheduleMonthlyByDayEveryLbl.Location = new System.Drawing.Point(103, 3);
-			this.scheduleMonthlyByDayEveryLbl.Name = "scheduleMonthlyByDayEveryLbl";
-			this.scheduleMonthlyByDayEveryLbl.Size = new System.Drawing.Size(49, 15);
-			this.scheduleMonthlyByDayEveryLbl.TabIndex = 2;
-			this.scheduleMonthlyByDayEveryLbl.Text = "of every";
-			// 
-			// scheduleMonthlyByDay
-			// 
-			this.scheduleMonthlyByDay.AutoSize = true;
-			this.scheduleMonthlyByDay.Checked = true;
-			this.scheduleMonthlyByDay.Location = new System.Drawing.Point(3, 1);
-			this.scheduleMonthlyByDay.Name = "scheduleMonthlyByDay";
-			this.scheduleMonthlyByDay.Size = new System.Drawing.Size(45, 19);
-			this.scheduleMonthlyByDay.TabIndex = 0;
-			this.scheduleMonthlyByDay.TabStop = true;
-			this.scheduleMonthlyByDay.Text = "Day";
-			this.scheduleMonthlyByDay.UseVisualStyleBackColor = true;
-			this.scheduleMonthlyByDay.CheckedChanged += new System.EventHandler(this.scheduleMonthlySpan_CheckedChanged);
-			// 
 			// nonRecurringPanel
 			// 
 			this.nonRecurringPanel.Controls.Add(this.nonRecurringLbl);
@@ -741,16 +601,76 @@ namespace Eraser
 			// 
 			this.errorProvider.ContainerControl = this;
 			// 
-			// typeRestart
+			// scheduleMonthlyDayNumber
 			// 
-			this.typeRestart.AutoSize = true;
-			this.typeRestart.Location = new System.Drawing.Point(142, 71);
-			this.typeRestart.Name = "typeRestart";
-			this.typeRestart.Size = new System.Drawing.Size(99, 19);
-			this.typeRestart.TabIndex = 9;
-			this.typeRestart.TabStop = true;
-			this.typeRestart.Text = "Run on restart";
-			this.typeRestart.UseVisualStyleBackColor = true;
+			this.scheduleMonthlyDayNumber.Location = new System.Drawing.Point(74, 212);
+			this.scheduleMonthlyDayNumber.Maximum = new decimal(new int[] {
+            31,
+            0,
+            0,
+            0});
+			this.scheduleMonthlyDayNumber.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.scheduleMonthlyDayNumber.Name = "scheduleMonthlyDayNumber";
+			this.scheduleMonthlyDayNumber.Size = new System.Drawing.Size(43, 23);
+			this.scheduleMonthlyDayNumber.TabIndex = 9;
+			this.scheduleMonthlyDayNumber.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			// 
+			// scheduleMonthlyFreq
+			// 
+			this.scheduleMonthlyFreq.Location = new System.Drawing.Point(178, 212);
+			this.scheduleMonthlyFreq.Maximum = new decimal(new int[] {
+            120,
+            0,
+            0,
+            0});
+			this.scheduleMonthlyFreq.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.scheduleMonthlyFreq.Name = "scheduleMonthlyFreq";
+			this.scheduleMonthlyFreq.Size = new System.Drawing.Size(43, 23);
+			this.scheduleMonthlyFreq.TabIndex = 11;
+			this.scheduleMonthlyFreq.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			// 
+			// scheduleMonthlyMonthLbl
+			// 
+			this.scheduleMonthlyMonthLbl.AutoSize = true;
+			this.scheduleMonthlyMonthLbl.Location = new System.Drawing.Point(227, 214);
+			this.scheduleMonthlyMonthLbl.Name = "scheduleMonthlyMonthLbl";
+			this.scheduleMonthlyMonthLbl.Size = new System.Drawing.Size(56, 15);
+			this.scheduleMonthlyMonthLbl.TabIndex = 12;
+			this.scheduleMonthlyMonthLbl.Text = "month(s)";
+			// 
+			// scheduleMonthlyEveryLbl
+			// 
+			this.scheduleMonthlyEveryLbl.AutoSize = true;
+			this.scheduleMonthlyEveryLbl.Location = new System.Drawing.Point(123, 214);
+			this.scheduleMonthlyEveryLbl.Name = "scheduleMonthlyEveryLbl";
+			this.scheduleMonthlyEveryLbl.Size = new System.Drawing.Size(49, 15);
+			this.scheduleMonthlyEveryLbl.TabIndex = 10;
+			this.scheduleMonthlyEveryLbl.Text = "of every";
+			// 
+			// scheduleMonthlyLbl
+			// 
+			this.scheduleMonthlyLbl.AutoSize = true;
+			this.scheduleMonthlyLbl.Location = new System.Drawing.Point(23, 214);
+			this.scheduleMonthlyLbl.Name = "scheduleMonthlyLbl";
+			this.scheduleMonthlyLbl.Size = new System.Drawing.Size(45, 15);
+			this.scheduleMonthlyLbl.TabIndex = 13;
+			this.scheduleMonthlyLbl.Text = "On day";
 			// 
 			// TaskPropertiesForm
 			// 
@@ -782,16 +702,13 @@ namespace Eraser
 			((System.ComponentModel.ISupportInitialize)(this.scheduleDailyByDayFreq)).EndInit();
 			this.scheduleWeeklyDays.ResumeLayout(false);
 			this.scheduleWeeklyDays.PerformLayout();
-			this.scheduleMonthlyPanel.ResumeLayout(false);
-			this.scheduleMonthlyPanel.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyByDayNumber)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyByDayFreq)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyRelativeFreq)).EndInit();
 			this.nonRecurringPanel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.nonRecurringBitmap)).EndInit();
 			this.scheduleTimePanel.ResumeLayout(false);
 			this.scheduleTimePanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyDayNumber)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyFreq)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -834,18 +751,6 @@ namespace Eraser
 		private System.Windows.Forms.Label scheduleWeeklyLbl;
 		private System.Windows.Forms.RadioButton scheduleWeekly;
 		private System.Windows.Forms.RadioButton scheduleMonthly;
-		private System.Windows.Forms.Panel scheduleMonthlyPanel;
-		private System.Windows.Forms.NumericUpDown scheduleMonthlyByDayNumber;
-		private System.Windows.Forms.NumericUpDown scheduleMonthlyByDayFreq;
-		private System.Windows.Forms.NumericUpDown scheduleMonthlyRelativeFreq;
-		private System.Windows.Forms.Label scheduleMonthlyRelativeFreqLbl;
-		private System.Windows.Forms.Label scheduleMonthlyRelativeEveryLbl;
-		private System.Windows.Forms.Label scheduleMonthlyByDayMonthLbl;
-		private System.Windows.Forms.ComboBox scheduleMonthlyRelativeWeekDay;
-		private System.Windows.Forms.ComboBox scheduleMonthlyRelativeWeek;
-		private System.Windows.Forms.RadioButton scheduleMonthlyRelative;
-		private System.Windows.Forms.Label scheduleMonthlyByDayEveryLbl;
-		private System.Windows.Forms.RadioButton scheduleMonthlyByDay;
 		private System.Windows.Forms.Panel nonRecurringPanel;
 		private System.Windows.Forms.Label nonRecurringLbl;
 		private System.Windows.Forms.PictureBox nonRecurringBitmap;
@@ -854,5 +759,10 @@ namespace Eraser
 		private System.Windows.Forms.Label scheduleTimeLbl;
 		private System.Windows.Forms.ErrorProvider errorProvider;
 		private System.Windows.Forms.RadioButton typeRestart;
+		private System.Windows.Forms.NumericUpDown scheduleMonthlyDayNumber;
+		private System.Windows.Forms.NumericUpDown scheduleMonthlyFreq;
+		private System.Windows.Forms.Label scheduleMonthlyMonthLbl;
+		private System.Windows.Forms.Label scheduleMonthlyEveryLbl;
+		private System.Windows.Forms.Label scheduleMonthlyLbl;
 	}
 }

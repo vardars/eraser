@@ -46,7 +46,50 @@ namespace Eraser
 			}
 			else if (typeRecurring.Checked)
 			{
+				RecurringSchedule schedule = new RecurringSchedule();
+				task.Schedule = schedule;
 
+				if (scheduleDaily.Checked)
+				{
+					if (scheduleDailyByDay.Checked)
+					{
+						schedule.Type = RecurringSchedule.ScheduleUnit.DAILY;
+						schedule.Frequency = (uint)scheduleDailyByDayFreq.Value;
+					}
+					else
+					{
+						schedule.Type = RecurringSchedule.ScheduleUnit.WEEKDAYS;
+					}
+				}
+				else if (scheduleWeekly.Checked)
+				{
+					schedule.Type = RecurringSchedule.ScheduleUnit.WEEKLY;
+					schedule.Frequency = (uint)scheduleWeeklyFreq.Value;
+					RecurringSchedule.DaysOfWeek weeklySchedule = 0;
+					if (scheduleWeeklyMonday.Checked)
+						weeklySchedule |= RecurringSchedule.DaysOfWeek.MONDAY;
+					if (scheduleWeeklyTuesday.Checked)
+						weeklySchedule |= RecurringSchedule.DaysOfWeek.TUESDAY;
+					if (scheduleWeeklyWednesday.Checked)
+						weeklySchedule |= RecurringSchedule.DaysOfWeek.WEDNESDAY;
+					if (scheduleWeeklyThursday.Checked)
+						weeklySchedule |= RecurringSchedule.DaysOfWeek.THURSDAY;
+					if (scheduleWeeklyFriday.Checked)
+						weeklySchedule |= RecurringSchedule.DaysOfWeek.FRIDAY;
+					if (scheduleWeeklySaturday.Checked)
+						weeklySchedule |= RecurringSchedule.DaysOfWeek.SATURDAY;
+					if (scheduleWeeklySunday.Checked)
+						weeklySchedule |= RecurringSchedule.DaysOfWeek.SUNDAY;
+					schedule.WeeklySchedule = weeklySchedule;
+				}
+				else if (scheduleMonthly.Checked)
+				{
+					schedule.Type = RecurringSchedule.ScheduleUnit.MONTHLY;
+					schedule.Frequency = (uint)scheduleMonthlyFreq.Value;
+					schedule.MonthlySchedule = (uint)scheduleMonthlyDayNumber.Value;
+				}
+				else
+					throw new ArgumentOutOfRangeException("No such scheduling method");
 			}
 		}
 
@@ -92,30 +135,18 @@ namespace Eraser
 				scheduleWeeklyThursday.Enabled = scheduleWeeklyFriday.Enabled =
 				scheduleWeeklySaturday.Enabled = scheduleWeeklySunday.Enabled =
 				scheduleWeekly.Checked && typeRecurring.Checked;
-			scheduleMonthlyByDay.Enabled = scheduleMonthlyByDayEveryLbl.Enabled =
-				scheduleMonthlyByDayMonthLbl.Enabled = scheduleMonthlyRelative.Enabled =
-				scheduleMonthlyRelativeEveryLbl.Enabled =
-				scheduleMonthlyRelativeFreqLbl.Enabled = scheduleMonthly.Checked &&
+			scheduleMonthlyLbl.Enabled = scheduleMonthlyDayNumber.Enabled =
+				scheduleMonthlyEveryLbl.Enabled = scheduleMonthlyFreq.Enabled =
+				scheduleMonthlyMonthLbl.Enabled = scheduleMonthly.Checked &&
 				typeRecurring.Checked;
 
 			scheduleDailySpan_CheckedChanged(sender, e);
-			scheduleMonthlySpan_CheckedChanged(sender, e);
 		}
 
 		private void scheduleDailySpan_CheckedChanged(object sender, EventArgs e)
 		{
 			scheduleDailyByDayFreq.Enabled = scheduleDailyByDay.Checked &&
 				scheduleDaily.Checked && typeRecurring.Checked;
-		}
-
-		private void scheduleMonthlySpan_CheckedChanged(object sender, EventArgs e)
-		{
-			scheduleMonthlyByDayNumber.Enabled = scheduleMonthlyByDayFreq.Enabled =
-				scheduleMonthlyByDay.Checked && scheduleMonthly.Checked &&
-				typeRecurring.Checked;
-			scheduleMonthlyRelativeWeek.Enabled = scheduleMonthlyRelativeWeekDay.Enabled =
-				scheduleMonthlyRelativeFreq.Enabled = scheduleMonthlyRelative.Checked &&
-				scheduleMonthly.Checked && typeRecurring.Checked;
 		}
 
 		private void ok_Click(object sender, EventArgs e)
