@@ -81,6 +81,13 @@ namespace Eraser.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Information {
+            get {
+                object obj = ResourceManager.GetObject("Information", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap ToolbarArrow {
             get {
                 object obj = ResourceManager.GetObject("ToolbarArrow", resourceCulture);

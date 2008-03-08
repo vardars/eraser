@@ -168,6 +168,7 @@
     <None Include="Resources\ToolbarArrow.png" />
     <None Include="Resources\ToolbarHelp.png" />
     <None Include="Resources\BackgroundLogo.png" />
+    <None Include="Resources\Information.png" />
     <Content Include="Resources\ToolbarSchedule.png" />
     <Content Include="Resources\ToolbarSettings.png" />
   </ItemGroup>

@@ -44,12 +44,6 @@ namespace Eraser
 			this.containerTask = new System.Windows.Forms.TabPage();
 			this.containerSchedule = new System.Windows.Forms.TabPage();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.oneTimePanel = new System.Windows.Forms.Panel();
-			this.oneTimeLbl = new System.Windows.Forms.Label();
-			this.oneTimeBitmap = new System.Windows.Forms.PictureBox();
-			this.scheduleTimePanel = new System.Windows.Forms.Panel();
-			this.scheduleTime = new System.Windows.Forms.MaskedTextBox();
-			this.scheduleTimeLbl = new System.Windows.Forms.Label();
 			this.schedulePattern = new System.Windows.Forms.GroupBox();
 			this.scheduleWeeklyFreq = new System.Windows.Forms.NumericUpDown();
 			this.scheduleDaily = new System.Windows.Forms.RadioButton();
@@ -82,13 +76,16 @@ namespace Eraser
 			this.scheduleMonthlyRelative = new System.Windows.Forms.RadioButton();
 			this.scheduleMonthlyByDayEveryLbl = new System.Windows.Forms.Label();
 			this.scheduleMonthlyByDay = new System.Windows.Forms.RadioButton();
+			this.oneTimePanel = new System.Windows.Forms.Panel();
+			this.oneTimeLbl = new System.Windows.Forms.Label();
+			this.oneTimeBitmap = new System.Windows.Forms.PictureBox();
+			this.scheduleTimePanel = new System.Windows.Forms.Panel();
+			this.scheduleTime = new System.Windows.Forms.MaskedTextBox();
+			this.scheduleTimeLbl = new System.Windows.Forms.Label();
 			this.container.SuspendLayout();
 			this.containerTask.SuspendLayout();
 			this.containerSchedule.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
-			this.oneTimePanel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.oneTimeBitmap)).BeginInit();
-			this.scheduleTimePanel.SuspendLayout();
 			this.schedulePattern.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.scheduleWeeklyFreq)).BeginInit();
 			this.scheduleDailyPanel.SuspendLayout();
@@ -98,6 +95,9 @@ namespace Eraser
 			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyByDayNumber)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyByDayFreq)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyRelativeFreq)).BeginInit();
+			this.oneTimePanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.oneTimeBitmap)).BeginInit();
+			this.scheduleTimePanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// nameLbl
@@ -169,7 +169,7 @@ namespace Eraser
 			this.data.FullRowSelect = true;
 			this.data.Location = new System.Drawing.Point(9, 93);
 			this.data.Name = "data";
-			this.data.Size = new System.Drawing.Size(324, 258);
+			this.data.Size = new System.Drawing.Size(324, 256);
 			this.data.TabIndex = 7;
 			this.data.UseCompatibleStateImageBehavior = false;
 			this.data.View = System.Windows.Forms.View.Details;
@@ -187,7 +187,7 @@ namespace Eraser
 			// dataAdd
 			// 
 			this.dataAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.dataAdd.Location = new System.Drawing.Point(9, 357);
+			this.dataAdd.Location = new System.Drawing.Point(9, 355);
 			this.dataAdd.Name = "dataAdd";
 			this.dataAdd.Size = new System.Drawing.Size(75, 23);
 			this.dataAdd.TabIndex = 8;
@@ -274,66 +274,6 @@ namespace Eraser
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(333, 380);
 			this.tableLayoutPanel1.TabIndex = 10;
-			// 
-			// oneTimePanel
-			// 
-			this.oneTimePanel.Controls.Add(this.oneTimeLbl);
-			this.oneTimePanel.Controls.Add(this.oneTimeBitmap);
-			this.oneTimePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.oneTimePanel.Location = new System.Drawing.Point(3, 3);
-			this.oneTimePanel.Name = "oneTimePanel";
-			this.oneTimePanel.Size = new System.Drawing.Size(327, 34);
-			this.oneTimePanel.TabIndex = 1;
-			// 
-			// oneTimeLbl
-			// 
-			this.oneTimeLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.oneTimeLbl.Location = new System.Drawing.Point(38, 0);
-			this.oneTimeLbl.Name = "oneTimeLbl";
-			this.oneTimeLbl.Size = new System.Drawing.Size(287, 34);
-			this.oneTimeLbl.TabIndex = 1;
-			this.oneTimeLbl.Text = "The task being edited is a non-recurring task, none of the settings on this page " +
-				"apply.";
-			// 
-			// oneTimeBitmap
-			// 
-			this.oneTimeBitmap.Location = new System.Drawing.Point(0, 0);
-			this.oneTimeBitmap.Name = "oneTimeBitmap";
-			this.oneTimeBitmap.Size = new System.Drawing.Size(32, 32);
-			this.oneTimeBitmap.TabIndex = 0;
-			this.oneTimeBitmap.TabStop = false;
-			// 
-			// scheduleTimePanel
-			// 
-			this.scheduleTimePanel.AutoSize = true;
-			this.scheduleTimePanel.Controls.Add(this.scheduleTime);
-			this.scheduleTimePanel.Controls.Add(this.scheduleTimeLbl);
-			this.scheduleTimePanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.scheduleTimePanel.Location = new System.Drawing.Point(0, 40);
-			this.scheduleTimePanel.Margin = new System.Windows.Forms.Padding(0);
-			this.scheduleTimePanel.Name = "scheduleTimePanel";
-			this.scheduleTimePanel.Size = new System.Drawing.Size(333, 28);
-			this.scheduleTimePanel.TabIndex = 2;
-			// 
-			// scheduleTime
-			// 
-			this.scheduleTime.Location = new System.Drawing.Point(99, 2);
-			this.scheduleTime.Mask = "90:00";
-			this.scheduleTime.Name = "scheduleTime";
-			this.scheduleTime.Size = new System.Drawing.Size(47, 23);
-			this.scheduleTime.TabIndex = 4;
-			this.scheduleTime.ValidatingType = typeof(System.DateTime);
-			// 
-			// scheduleTimeLbl
-			// 
-			this.scheduleTimeLbl.AutoSize = true;
-			this.scheduleTimeLbl.Location = new System.Drawing.Point(3, 5);
-			this.scheduleTimeLbl.Name = "scheduleTimeLbl";
-			this.scheduleTimeLbl.Size = new System.Drawing.Size(90, 15);
-			this.scheduleTimeLbl.TabIndex = 3;
-			this.scheduleTimeLbl.Text = "Run this task at:";
 			// 
 			// schedulePattern
 			// 
@@ -730,6 +670,67 @@ namespace Eraser
 			this.scheduleMonthlyByDay.UseVisualStyleBackColor = true;
 			this.scheduleMonthlyByDay.CheckedChanged += new System.EventHandler(this.scheduleMonthlySpan_CheckedChanged);
 			// 
+			// oneTimePanel
+			// 
+			this.oneTimePanel.Controls.Add(this.oneTimeLbl);
+			this.oneTimePanel.Controls.Add(this.oneTimeBitmap);
+			this.oneTimePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.oneTimePanel.Location = new System.Drawing.Point(3, 3);
+			this.oneTimePanel.Name = "oneTimePanel";
+			this.oneTimePanel.Size = new System.Drawing.Size(327, 34);
+			this.oneTimePanel.TabIndex = 1;
+			// 
+			// oneTimeLbl
+			// 
+			this.oneTimeLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.oneTimeLbl.Location = new System.Drawing.Point(38, 0);
+			this.oneTimeLbl.Name = "oneTimeLbl";
+			this.oneTimeLbl.Size = new System.Drawing.Size(287, 34);
+			this.oneTimeLbl.TabIndex = 1;
+			this.oneTimeLbl.Text = "The task being edited is a non-recurring task, none of the settings on this page " +
+				"apply.";
+			// 
+			// oneTimeBitmap
+			// 
+			this.oneTimeBitmap.Image = global::Eraser.Properties.Resources.Information;
+			this.oneTimeBitmap.Location = new System.Drawing.Point(0, 0);
+			this.oneTimeBitmap.Name = "oneTimeBitmap";
+			this.oneTimeBitmap.Size = new System.Drawing.Size(32, 32);
+			this.oneTimeBitmap.TabIndex = 0;
+			this.oneTimeBitmap.TabStop = false;
+			// 
+			// scheduleTimePanel
+			// 
+			this.scheduleTimePanel.AutoSize = true;
+			this.scheduleTimePanel.Controls.Add(this.scheduleTime);
+			this.scheduleTimePanel.Controls.Add(this.scheduleTimeLbl);
+			this.scheduleTimePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.scheduleTimePanel.Location = new System.Drawing.Point(0, 40);
+			this.scheduleTimePanel.Margin = new System.Windows.Forms.Padding(0);
+			this.scheduleTimePanel.Name = "scheduleTimePanel";
+			this.scheduleTimePanel.Size = new System.Drawing.Size(333, 28);
+			this.scheduleTimePanel.TabIndex = 2;
+			// 
+			// scheduleTime
+			// 
+			this.scheduleTime.Location = new System.Drawing.Point(99, 2);
+			this.scheduleTime.Mask = "90:00";
+			this.scheduleTime.Name = "scheduleTime";
+			this.scheduleTime.Size = new System.Drawing.Size(47, 23);
+			this.scheduleTime.TabIndex = 4;
+			this.scheduleTime.ValidatingType = typeof(System.DateTime);
+			// 
+			// scheduleTimeLbl
+			// 
+			this.scheduleTimeLbl.AutoSize = true;
+			this.scheduleTimeLbl.Location = new System.Drawing.Point(3, 5);
+			this.scheduleTimeLbl.Name = "scheduleTimeLbl";
+			this.scheduleTimeLbl.Size = new System.Drawing.Size(90, 15);
+			this.scheduleTimeLbl.TabIndex = 3;
+			this.scheduleTimeLbl.Text = "Run this task at:";
+			// 
 			// TaskPropertiesForm
 			// 
 			this.AcceptButton = this.ok;
@@ -752,10 +753,6 @@ namespace Eraser
 			this.containerSchedule.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
-			this.oneTimePanel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.oneTimeBitmap)).EndInit();
-			this.scheduleTimePanel.ResumeLayout(false);
-			this.scheduleTimePanel.PerformLayout();
 			this.schedulePattern.ResumeLayout(false);
 			this.schedulePattern.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.scheduleWeeklyFreq)).EndInit();
@@ -769,6 +766,10 @@ namespace Eraser
 			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyByDayNumber)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyByDayFreq)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.scheduleMonthlyRelativeFreq)).EndInit();
+			this.oneTimePanel.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.oneTimeBitmap)).EndInit();
+			this.scheduleTimePanel.ResumeLayout(false);
+			this.scheduleTimePanel.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
