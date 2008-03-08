@@ -4,6 +4,11 @@ using System.Text;
 
 namespace Eraser.Manager
 {
+	/// <summary>
+	/// Executor base class. This class will manage the tasks currently scheduled
+	/// to be run and will run them when they are set to be run. This class is
+	/// abstract as they each will have their own ways of dealing with tasks.
+	/// </summary>
 	public abstract class Executor
 	{
 		/// <summary>
@@ -11,55 +16,26 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="task">The Task object describing the details of the task.
 		/// The task object's ID member will be updated to allow unique identification.</param>
-		public virtual void AddTask(ref Task task)
-		{
-			if (unusedIds.Count != 0)
-			{
-				task.ID = unusedIds[0];
-				unusedIds.RemoveAt(0);
-			}
-			else
-				task.ID = ++nextId;
-			tasks.Add(task.ID, task);
-		}
+		public abstract void AddTask(ref Task task);
 
 		/// <summary>
 		/// Deletes a task currently pending execution.
 		/// </summary>
 		/// <param name="taskId">The unique task ID returned when AddTask was called.</param>
 		/// <returns>True if the task was found and deleted.</returns>
-		public virtual bool DeleteTask(uint taskId)
-		{
-			if (!tasks.ContainsKey(taskId))
-				return false;
-			unusedIds.Add(taskId);
-			tasks.Remove(taskId);
-			return true;
-		}
+		public abstract bool DeleteTask(uint taskId);
 
 		/// <summary>
 		/// Retrieves the task object represented by the task ID given.
 		/// </summary>
 		/// <param name="taskId">The Task ID of the task in question.</param>
 		/// <returns>The task object represented by the ID, or null if no object is found</returns>
-		public virtual Task GetTask(uint taskId)
-		{
-			if (!tasks.ContainsKey(taskId))
-				return null;
-			return tasks[taskId];
-		}
+		public abstract Task GetTask(uint taskId);
 
 		/// <summary>
 		/// Retrieves an enumerator to the list of tasks.
 		/// </summary>
 		/// <returns>An enumerator to the list of tasks</returns>
-		public Dictionary<uint, Task>.Enumerator GetIterator()
-		{
-			return tasks.GetEnumerator();
-		}
-
-		private Dictionary<uint, Task> tasks = new Dictionary<uint, Task>();
-		private List<uint> unusedIds = new List<uint>();
-		private uint nextId = 0;
+		public abstract Dictionary<uint, Task>.Enumerator GetIterator();
 	}
 }
