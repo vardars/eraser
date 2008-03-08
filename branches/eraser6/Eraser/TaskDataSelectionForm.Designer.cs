@@ -28,6 +28,7 @@ namespace Eraser
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.file = new System.Windows.Forms.RadioButton();
 			this.folder = new System.Windows.Forms.RadioButton();
 			this.unused = new System.Windows.Forms.RadioButton();
@@ -47,6 +48,8 @@ namespace Eraser
 			this.cancel = new System.Windows.Forms.Button();
 			this.fileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.folderDialog = new System.Windows.Forms.FolderBrowserDialog();
+			this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// file
@@ -235,6 +238,10 @@ namespace Eraser
 			this.folderDialog.Description = "Select a folder to erase.";
 			this.folderDialog.ShowNewFolderButton = false;
 			// 
+			// errorProvider
+			// 
+			this.errorProvider.ContainerControl = this;
+			// 
 			// TaskDataSelectionForm
 			// 
 			this.AcceptButton = this.ok;
@@ -267,6 +274,7 @@ namespace Eraser
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Select Data to Erase";
+			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -293,5 +301,6 @@ namespace Eraser
 		private System.Windows.Forms.Button cancel;
 		private System.Windows.Forms.OpenFileDialog fileDialog;
 		private System.Windows.Forms.FolderBrowserDialog folderDialog;
+		private System.Windows.Forms.ErrorProvider errorProvider;
 	}
 }

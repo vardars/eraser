@@ -48,6 +48,16 @@ namespace Eraser
 					unusedDisk.Items.Add(item);
 				}
 			}
+
+			if (unusedDisk.Items.Count != 0)
+				unusedDisk.SelectedIndex = 0;
+
+			//And the methods list
+			List<EraseMethod> methods = EraseMethod.GetMethods();
+			foreach (EraseMethod method in methods)
+				this.method.Items.Add(method);
+			if (this.method.Items.Count != 0)
+				this.method.SelectedIndex = 0;
 		}
 
 		/// <summary>
@@ -80,9 +90,10 @@ namespace Eraser
 				Task.FreeSpace freeSpaceTask = new Task.FreeSpace();
 				result = freeSpaceTask;
 
-				freeSpaceTask.Drive = (string)unusedDisk.SelectedValue;
+				freeSpaceTask.Drive = (unusedDisk.SelectedItem as DriveItem).Drive;
 			}
 
+			result.Method = this.method.SelectedItem as EraseMethod;
 			return result;
 		}
 
@@ -93,6 +104,7 @@ namespace Eraser
 				folderInclude.Enabled = folderExcludeLbl.Enabled = folderExclude.Enabled =
 				folderDelete.Enabled = folder.Checked;
 			unusedDisk.Enabled = unused.Checked;
+			errorProvider.Clear();
 		}
 
 		private void fileBrowse_Click(object sender, EventArgs e)
@@ -138,8 +150,16 @@ namespace Eraser
 
 		private void ok_Click(object sender, EventArgs e)
 		{
-			DialogResult = DialogResult.OK;
-			Close();
+			if (file.Checked && filePath.Text.Length == 0)
+				errorProvider.SetError(filePath, "Invalid file path");
+			else if (folder.Checked && folderPath.Text.Length == 0)
+				errorProvider.SetError(folderPath, "Invalid folder path");
+			else
+			{
+				errorProvider.Clear();
+				DialogResult = DialogResult.OK;
+				Close();
+			}
 		}
 	}
 }
