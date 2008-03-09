@@ -18,7 +18,7 @@ namespace Eraser.Manager
 			/// The method used for erasing the file. If the variable is equal to
 			/// EraseMethod.Default then the default is queried for the task type.
 			/// </summary>
-			public EraseMethod Method
+			public IEraseMethod Method
 			{
 				get { return method; }
 				set { method = value; }
@@ -32,7 +32,7 @@ namespace Eraser.Manager
 				get;
 			}
 
-			private EraseMethod method = null;
+			private IEraseMethod method = null;
 		}
 
 		/// <summary>

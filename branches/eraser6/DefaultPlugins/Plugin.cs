@@ -7,7 +7,7 @@ using Eraser.Manager.Plugin;
 
 namespace Eraser.DefaultPlugins
 {
-	public class DefaultPlugin : IEraseMethod, IPlugin
+	public class DefaultPlugin : IPlugin
 	{
 		#region IPlugin Members
 

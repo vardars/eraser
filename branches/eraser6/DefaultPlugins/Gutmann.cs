@@ -6,14 +6,14 @@ using Eraser.Manager;
 
 namespace Eraser.DefaultPlugins
 {
-	class Gutmann : EraseMethod
+	class Gutmann : IEraseMethod
 	{
-		public override string Name
+		string IEraseMethod.Name
 		{
 			get { return "Gutmann"; }
 		}
 
-		public override void Erase(System.IO.Stream strm, PRNG prng)
+		void IEraseMethod.Erase(System.IO.Stream strm, PRNG prng)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
