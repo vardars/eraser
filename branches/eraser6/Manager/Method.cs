@@ -25,10 +25,21 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Retrieves all currently registered erasure methods.
 		/// </summary>
-		/// <returns>A list, with an instance of each method.</returns>
+		/// <returns>A mutable list, with an instance of each method.</returns>
 		public static List<EraseMethod> GetMethods()
 		{
-			return methods.GetRange(0, methods.Count);
+			lock (methods)
+				return methods.GetRange(0, methods.Count);
+		}
+
+		/// <summary>
+		/// Allows plug-ins to register methods with the main program. Thread-safe.
+		/// </summary>
+		/// <param name="method"></param>
+		public static void RegisterMethod(EraseMethod method)
+		{
+			lock (methods)
+				methods.Add(method);
 		}
 
 		/// <summary>
@@ -59,6 +70,5 @@ namespace Eraser.Manager
 		/// an EraseMethod argument is acceptable.
 		/// </summary>
 		public static readonly EraseMethod Default = new DefaultErase();
-
 	}
 }
