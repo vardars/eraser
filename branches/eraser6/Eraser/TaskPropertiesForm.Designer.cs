@@ -164,7 +164,7 @@ namespace Eraser
 			this.data.FullRowSelect = true;
 			this.data.Location = new System.Drawing.Point(9, 111);
 			this.data.Name = "data";
-			this.data.Size = new System.Drawing.Size(324, 226);
+			this.data.Size = new System.Drawing.Size(324, 240);
 			this.data.TabIndex = 7;
 			this.data.UseCompatibleStateImageBehavior = false;
 			this.data.View = System.Windows.Forms.View.Details;
@@ -182,7 +182,7 @@ namespace Eraser
 			// dataAdd
 			// 
 			this.dataAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.dataAdd.Location = new System.Drawing.Point(9, 343);
+			this.dataAdd.Location = new System.Drawing.Point(9, 357);
 			this.dataAdd.Name = "dataAdd";
 			this.dataAdd.Size = new System.Drawing.Size(75, 23);
 			this.dataAdd.TabIndex = 8;

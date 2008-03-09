@@ -158,7 +158,9 @@ namespace Eraser
 			if (data.Items.Count == 0)
 			{
 				errorProvider.SetIconPadding(data, -16);
+				errorProvider.SetIconAlignment(data, ErrorIconAlignment.BottomRight);
 				errorProvider.SetError(data, "The task has no data to erase.");
+				container.SelectedIndex = 0;
 				return;
 			}
 
