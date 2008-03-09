@@ -34,8 +34,6 @@ namespace Eraser
 			// 
 			// pictureBox1
 			// 
-			this.pictureBox1.BackgroundImage = global::Eraser.Properties.Resources.BackgroundGradient;
-			this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
 			this.pictureBox1.Image = global::Eraser.Properties.Resources.AboutDialog;
 			this.pictureBox1.Location = new System.Drawing.Point(0, 0);
 			this.pictureBox1.Name = "pictureBox1";
@@ -47,8 +45,6 @@ namespace Eraser
 			// AboutForm
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
-			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(41)))), ((int)(((byte)(41)))));
-			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
 			this.ClientSize = new System.Drawing.Size(568, 326);
 			this.Controls.Add(this.pictureBox1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -56,7 +52,6 @@ namespace Eraser
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "AboutForm";
-			this.Click += new System.EventHandler(this.AboutForm_Click);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
 			this.ResumeLayout(false);
 
