@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+using System.Globalization;
 using Eraser.Manager;
 
 namespace Eraser
@@ -24,7 +25,11 @@ namespace Eraser
 		public void AddTask(Task task)
 		{
 			ListViewItem item = scheduler.Items.Add(GenerateTaskName(task));
-			item.SubItems.Add(task.Schedule.UIText);
+			if (task.Schedule is RecurringSchedule)
+				item.SubItems.Add((task.Schedule as RecurringSchedule).NextRun.
+					ToString(DateTimeFormatInfo.CurrentInfo.FullDateTimePattern));
+			else
+				item.SubItems.Add(task.Schedule.UIText);
 			item.SubItems.Add(string.Empty);
 
 			if (task.Schedule == Schedule.RunNow)
