@@ -50,7 +50,7 @@ namespace Eraser
 			{
 				RecurringSchedule schedule = new RecurringSchedule();
 				task.Schedule = schedule;
-				schedule.ExecutionTime = new DateTime(0, 0, 1, scheduleTime.Value.Hour,
+				schedule.ExecutionTime = new DateTime(1, 1, 1, scheduleTime.Value.Hour,
 					scheduleTime.Value.Minute, scheduleTime.Value.Second);
 
 				if (scheduleDaily.Checked)
