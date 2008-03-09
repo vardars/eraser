@@ -108,7 +108,7 @@ namespace Eraser
 			{
 				if (form.ShowDialog() == DialogResult.OK)
 				{
-					Task.EraseTarget entry = form.GetTaskEntry();
+					Task.ErasureTarget entry = form.GetTaskEntry();
 					ListViewItem item = data.Items.Add(entry.UIText);
 					
 					item.SubItems.Add(entry.Method.Name);

@@ -13,7 +13,7 @@ namespace Eraser.DefaultPlugins
 
 		public void Initialize(Host host)
 		{
-			host.RegisterEraseMethod(new Gutmann());
+			host.RegisterErasureMethod(new Gutmann());
 		}
 
 		public string Name

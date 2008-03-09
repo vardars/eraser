@@ -28,7 +28,7 @@ namespace Eraser
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Erase method providers", System.Windows.Forms.HorizontalAlignment.Left);
+			System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Erasure method providers", System.Windows.Forms.HorizontalAlignment.Left);
 			System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Random number generators", System.Windows.Forms.HorizontalAlignment.Left);
 			System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("History trace cleaners", System.Windows.Forms.HorizontalAlignment.Left);
 			this.shell = new Eraser.LightGroup();
@@ -156,7 +156,7 @@ namespace Eraser
 			this.eraseUnusedMethodLbl.Name = "eraseUnusedMethodLbl";
 			this.eraseUnusedMethodLbl.Size = new System.Drawing.Size(164, 13);
 			this.eraseUnusedMethodLbl.TabIndex = 11;
-			this.eraseUnusedMethodLbl.Text = "Default free space erase method:";
+			this.eraseUnusedMethodLbl.Text = "Default free space erasure method:";
 			// 
 			// eraseFilesMethod
 			// 
@@ -197,7 +197,7 @@ namespace Eraser
             this.pluginsManagerColVersion,
             this.pluginsManagerColPath});
 			this.pluginsManager.FullRowSelect = true;
-			listViewGroup1.Header = "Erase method providers";
+			listViewGroup1.Header = "Erasure method providers";
 			listViewGroup1.Name = "pluginsManagerGrpMethod";
 			listViewGroup2.Header = "Random number generators";
 			listViewGroup2.Name = "pluginsManagerGrpPrng";

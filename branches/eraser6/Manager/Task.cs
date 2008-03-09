@@ -12,13 +12,14 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Represents a generic target of erasure
 		/// </summary>
-		public abstract class EraseTarget
+		public abstract class ErasureTarget
 		{
 			/// <summary>
 			/// The method used for erasing the file. If the variable is equal to
-			/// EraseMethod.Default then the default is queried for the task type.
+			/// ErasureMethodManager.Default then the default is queried for the
+			/// task type.
 			/// </summary>
-			public IEraseMethod Method
+			public IErasureMethod Method
 			{
 				get { return method; }
 				set { method = value; }
@@ -32,13 +33,13 @@ namespace Eraser.Manager
 				get;
 			}
 
-			private IEraseMethod method = null;
+			private IErasureMethod method = null;
 		}
 
 		/// <summary>
 		/// Class representing a tangible object (file/folder) to be erased.
 		/// </summary>
-		public abstract class FilesystemObject : EraseTarget
+		public abstract class FilesystemObject : ErasureTarget
 		{
 			/// <summary>
 			/// Retrieves the list of files/folders to erase as a list.
@@ -66,7 +67,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Class representing a free space erase.
 		/// </summary>
-		public class FreeSpace : EraseTarget
+		public class FreeSpace : ErasureTarget
 		{
 			public string Drive;
 
@@ -159,7 +160,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The set of data to erase when this task is executed.
 		/// </summary>
-		public List<EraseTarget> Entries
+		public List<ErasureTarget> Entries
 		{
 			get { return entries; }
 			set { entries = value; }
@@ -177,6 +178,6 @@ namespace Eraser.Manager
 		private uint id;
 		private string name;
 		private Schedule schedule = Schedule.RunNow;
-		private List<EraseTarget> entries = new List<EraseTarget>();
+		private List<ErasureTarget> entries = new List<ErasureTarget>();
 	}
 }

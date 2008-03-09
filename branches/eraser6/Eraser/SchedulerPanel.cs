@@ -55,7 +55,7 @@ namespace Eraser
 			string result = string.Empty;
 			if (task.Entries.Count < 3)
 				//Simpler case, small set of data.
-				foreach (Task.EraseTarget tgt in task.Entries)
+				foreach (Task.ErasureTarget tgt in task.Entries)
 					result += tgt.UIText + ", ";
 			else
 				//Ok, we've quite a few entries, get the first, the mid and the end.

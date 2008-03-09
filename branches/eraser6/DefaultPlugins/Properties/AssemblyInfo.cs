@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Default PRNG and Erasure Methods for Eraser")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Eraser Project")]
-[assembly: AssemblyProduct("Erase")]
+[assembly: AssemblyProduct("Eraser")]
 [assembly: AssemblyCopyright("Copyright © 2008 The Eraser Project")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

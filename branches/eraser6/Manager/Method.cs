@@ -14,7 +14,7 @@ namespace Eraser.Manager
 	/// <summary>
 	/// An interface class representing the method for erasure.
 	/// </summary>
-	public interface IEraseMethod
+	public interface IErasureMethod
 	{
 		/// <summary>
 		/// The name of this erase pass, used for display in the UI
@@ -43,19 +43,19 @@ namespace Eraser.Manager
 	public class ErasureMethodManager
 	{
 		#region Default Erase method
-		private class DefaultErase : IEraseMethod
+		private class DefaultErase : IErasureMethod
 		{
 			public DefaultErase()
 			{
 				ErasureMethodManager.RegisterMethod(this);
 			}
 
-			string IEraseMethod.Name
+			string IErasureMethod.Name
 			{
 				get { return "(default)"; }
 			}
 
-			void IEraseMethod.Erase(Stream strm, PRNG prng)
+			void IErasureMethod.Erase(Stream strm, PRNG prng)
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -64,9 +64,9 @@ namespace Eraser.Manager
 		/// <summary>
 		/// A dummy method placeholder used for representing the default erase
 		/// method. Using this variable when passing it to erase functions taking
-		/// an EraseMethod argument is acceptable.
+		/// an IErasureMethod argument is acceptable.
 		/// </summary>
-		public static readonly IEraseMethod Default = new DefaultErase();
+		public static readonly IErasureMethod Default = new DefaultErase();
 		#endregion
 
 		#region Registrar fields
@@ -74,7 +74,7 @@ namespace Eraser.Manager
 		/// Retrieves all currently registered erasure methods.
 		/// </summary>
 		/// <returns>A mutable list, with an instance of each method.</returns>
-		public static List<IEraseMethod> GetMethods()
+		public static List<IErasureMethod> GetMethods()
 		{
 			lock (Globals.ErasureMethodManager.methods)
 				return Globals.ErasureMethodManager.methods.GetRange(0,
@@ -85,7 +85,7 @@ namespace Eraser.Manager
 		/// Allows plug-ins to register methods with the main program. Thread-safe.
 		/// </summary>
 		/// <param name="method"></param>
-		public static void RegisterMethod(IEraseMethod method)
+		public static void RegisterMethod(IErasureMethod method)
 		{
 			lock (Globals.ErasureMethodManager.methods)
 				Globals.ErasureMethodManager.methods.Add(method);
@@ -94,7 +94,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The list of currently registered erasure methods.
 		/// </summary>
-		private List<IEraseMethod> methods = new List<IEraseMethod>();
+		private List<IErasureMethod> methods = new List<IErasureMethod>();
 		#endregion
 	}
 }

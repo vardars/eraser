@@ -47,7 +47,7 @@ namespace Eraser.Manager.Plugin
 		/// Registers an erasure method with the manager.
 		/// </summary>
 		/// <param name="method">The erase method to register.</param>
-		public abstract void RegisterEraseMethod(IEraseMethod method);
+		public abstract void RegisterErasureMethod(IErasureMethod method);
 	}
 
 	/// <summary>
@@ -103,7 +103,7 @@ namespace Eraser.Manager.Plugin
 			}
 		}
 
-		public override void RegisterEraseMethod(IEraseMethod method)
+		public override void RegisterErasureMethod(IErasureMethod method)
 		{
 			ErasureMethodManager.RegisterMethod(method);
 		}
