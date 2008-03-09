@@ -75,7 +75,7 @@ namespace Eraser
             listViewGroup3});
 			this.scheduler.Location = new System.Drawing.Point(0, 0);
 			this.scheduler.Name = "scheduler";
-			this.scheduler.Size = new System.Drawing.Size(622, 377);
+			this.scheduler.Size = new System.Drawing.Size(712, 377);
 			this.scheduler.TabIndex = 0;
 			this.scheduler.UseCompatibleStateImageBehavior = false;
 			this.scheduler.View = System.Windows.Forms.View.Details;
@@ -83,12 +83,12 @@ namespace Eraser
 			// schedulerColName
 			// 
 			this.schedulerColName.Text = "Task Name";
-			this.schedulerColName.Width = 250;
+			this.schedulerColName.Width = 280;
 			// 
 			// schedulerColNextRun
 			// 
 			this.schedulerColNextRun.Text = "Next Run";
-			this.schedulerColNextRun.Width = 150;
+			this.schedulerColNextRun.Width = 200;
 			// 
 			// schedulerColStatus
 			// 

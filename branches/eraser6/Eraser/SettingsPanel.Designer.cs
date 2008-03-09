@@ -80,7 +80,7 @@ namespace Eraser
 			this.content.Controls.Add(this.lockedAllow);
 			this.content.Controls.Add(this.shellContextMenu);
 			this.content.Controls.Add(this.shell);
-			this.content.Size = new System.Drawing.Size(622, 554);
+			this.content.Size = new System.Drawing.Size(712, 554);
 			// 
 			// shell
 			// 
@@ -91,7 +91,7 @@ namespace Eraser
 			this.shell.Location = new System.Drawing.Point(0, -6);
 			this.shell.Name = "shell";
 			this.shell.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
-			this.shell.Size = new System.Drawing.Size(622, 32);
+			this.shell.Size = new System.Drawing.Size(712, 32);
 			this.shell.TabIndex = 2;
 			// 
 			// shellContextMenu
@@ -137,7 +137,7 @@ namespace Eraser
 			this.erase.Location = new System.Drawing.Point(0, 49);
 			this.erase.Name = "erase";
 			this.erase.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
-			this.erase.Size = new System.Drawing.Size(622, 32);
+			this.erase.Size = new System.Drawing.Size(712, 32);
 			this.erase.TabIndex = 9;
 			// 
 			// eraseFilesMethodLbl
@@ -183,7 +183,7 @@ namespace Eraser
 			this.plugins.Location = new System.Drawing.Point(0, 279);
 			this.plugins.Name = "plugins";
 			this.plugins.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
-			this.plugins.Size = new System.Drawing.Size(622, 32);
+			this.plugins.Size = new System.Drawing.Size(712, 32);
 			this.plugins.TabIndex = 14;
 			// 
 			// pluginsManager
@@ -209,7 +209,7 @@ namespace Eraser
             listViewGroup3});
 			this.pluginsManager.Location = new System.Drawing.Point(20, 317);
 			this.pluginsManager.Name = "pluginsManager";
-			this.pluginsManager.Size = new System.Drawing.Size(599, 234);
+			this.pluginsManager.Size = new System.Drawing.Size(689, 234);
 			this.pluginsManager.TabIndex = 15;
 			this.pluginsManager.UseCompatibleStateImageBehavior = false;
 			this.pluginsManager.View = System.Windows.Forms.View.Details;
@@ -217,12 +217,12 @@ namespace Eraser
 			// pluginsManagerColName
 			// 
 			this.pluginsManagerColName.Text = "Name";
-			this.pluginsManagerColName.Width = 200;
+			this.pluginsManagerColName.Width = 250;
 			// 
 			// pluginsManagerColAuthor
 			// 
 			this.pluginsManagerColAuthor.Text = "Author";
-			this.pluginsManagerColAuthor.Width = 120;
+			this.pluginsManagerColAuthor.Width = 140;
 			// 
 			// pluginsManagerColVersion
 			// 
@@ -243,7 +243,7 @@ namespace Eraser
 			this.scheduler.Location = new System.Drawing.Point(0, 185);
 			this.scheduler.Name = "scheduler";
 			this.scheduler.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
-			this.scheduler.Size = new System.Drawing.Size(622, 32);
+			this.scheduler.Size = new System.Drawing.Size(712, 32);
 			this.scheduler.TabIndex = 16;
 			// 
 			// schedulerMissed
@@ -281,7 +281,7 @@ namespace Eraser
 			// SettingsPanel
 			// 
 			this.Name = "SettingsPanel";
-			this.Size = new System.Drawing.Size(662, 626);
+			this.Size = new System.Drawing.Size(752, 626);
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).EndInit();
 			this.content.ResumeLayout(false);
 			this.content.PerformLayout();
