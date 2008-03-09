@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+using System.Globalization;
 using Eraser.Manager;
 
 namespace Eraser
@@ -15,6 +16,7 @@ namespace Eraser
 		public TaskPropertiesForm()
 		{
 			InitializeComponent();
+			scheduleTime.CustomFormat = DateTimeFormatInfo.CurrentInfo.ShortTimePattern;
 
 			//Set a default task type
 			typeImmediate.Checked = true;
@@ -48,6 +50,8 @@ namespace Eraser
 			{
 				RecurringSchedule schedule = new RecurringSchedule();
 				task.Schedule = schedule;
+				schedule.ExecutionTime = new DateTime(0, 0, 1, scheduleTime.Value.Hour,
+					scheduleTime.Value.Minute, scheduleTime.Value.Second);
 
 				if (scheduleDaily.Checked)
 				{
