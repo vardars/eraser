@@ -36,6 +36,8 @@
     <Compile Include="DirectExecutor.cs" />
     <Compile Include="Executor.cs" />
     <Compile Include="Method.cs" />
+    <Compile Include="Plugins.cs" />
+    <Compile Include="PRNG.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Schedule.cs" />
     <Compile Include="Task.cs" />
