@@ -60,17 +60,17 @@ namespace Eraser.Manager
 				switch (type)
 				{
 					case ScheduleUnit.DAILY:
-						result += "Once every ";
+						result = "Once every ";
 						if (frequency != 1)
 							result += string.Format("{0} days", frequency);
 						else
 							result += "day";
 						break;
 					case ScheduleUnit.WEEKDAYS:
-						result += "Every weekday";
+						result = "Every weekday";
 						break;
 					case ScheduleUnit.WEEKLY:
-						result += "Every ";
+						result = "Every ";
 						if ((weeklySchedule & DaysOfWeek.MONDAY) != 0)
 							result += "Monday, ";
 						if ((weeklySchedule & DaysOfWeek.TUESDAY) != 0)
@@ -90,7 +90,8 @@ namespace Eraser.Manager
 							frequency == 1 ? "s" : "");
 						break;
 					case ScheduleUnit.MONTHLY:
-						result += "Monthly, ";
+						result = string.Format("On day {0} of every {1} month{2}",
+							monthlySchedule, frequency, frequency != 1 ? "s" : "");
 						break;
 				}
 
@@ -230,7 +231,6 @@ namespace Eraser.Manager
 		public DateTime LastRun
 		{
 			get { return lastRun; }
-			set { LastRun = value; }
 		}
 
 		/// <summary>
@@ -291,10 +291,19 @@ namespace Eraser.Manager
 				}
 
 				Debug.WriteLine(string.Format("Next scheduled run time, for object " +
-					"with last run time {0} and schedule {1}", lastRun.ToString(),
-					UIText));
+					"with last run time {0} and schedule {1}, is at {2}",
+					lastRun.ToString(), UIText, nextRun.ToString()));
 				return nextRun;
 			}
+		}
+
+		/// <summary>
+		/// Reschedules the task.
+		/// </summary>
+		/// <param name="lastRun">The last time the task was run.</param>
+		internal void Reschedule(DateTime lastRun)
+		{
+			this.lastRun = lastRun;
 		}
 
 		private ScheduleUnit type;
