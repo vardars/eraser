@@ -29,8 +29,8 @@ namespace Eraser
 		private void InitializeComponent()
 		{
 			this.container = new System.Windows.Forms.TableLayoutPanel();
-			this.label = new System.Windows.Forms.Label();
 			this.separator = new Trustbridge.Windows.Controls.BevelLine();
+			this.label = new System.Windows.Forms.Label();
 			this.container.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -52,6 +52,18 @@ namespace Eraser
 			this.container.Size = new System.Drawing.Size(274, 23);
 			this.container.TabIndex = 3;
 			// 
+			// separator
+			// 
+			this.separator.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.separator.Angle = 90;
+			this.separator.Location = new System.Drawing.Point(62, 11);
+			this.separator.Margin = new System.Windows.Forms.Padding(0, 11, 0, 0);
+			this.separator.Name = "separator";
+			this.separator.Size = new System.Drawing.Size(212, 2);
+			this.separator.TabIndex = 6;
+			// 
 			// label
 			// 
 			this.label.AutoSize = true;
@@ -62,18 +74,6 @@ namespace Eraser
 			this.label.Size = new System.Drawing.Size(59, 19);
 			this.label.TabIndex = 1;
 			this.label.Text = "Group Title";
-			// 
-			// separator
-			// 
-			this.separator.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.separator.Angle = 90;
-			this.separator.Location = new System.Drawing.Point(62, 9);
-			this.separator.Margin = new System.Windows.Forms.Padding(0, 9, 0, 0);
-			this.separator.Name = "separator";
-			this.separator.Size = new System.Drawing.Size(212, 2);
-			this.separator.TabIndex = 6;
 			// 
 			// LightGroup
 			// 
