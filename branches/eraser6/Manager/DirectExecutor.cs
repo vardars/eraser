@@ -86,6 +86,10 @@ namespace Eraser.Manager
 			return tasks.GetEnumerator();
 		}
 
+		/// <summary>
+		/// The thread entry point for this object. This object operates on a queue
+		/// and hence the thread will sequentially execute tasks.
+		/// </summary>
 		private void Main()
 		{
 			//The waiting thread will utilize a polling loop to check for new
@@ -110,6 +114,10 @@ namespace Eraser.Manager
 				{
 					//Run the task
 					;
+
+					//If the task is a recurring task, reschedule it since we are done.
+					if (task.Schedule is RecurringSchedule)
+						((RecurringSchedule)task.Schedule).Reschedule(DateTime.Now);
 				}
 
 				//Wait for half a minute to check for the next scheduled task.
@@ -117,17 +125,51 @@ namespace Eraser.Manager
 			}
 		}
 
+		/// <summary>
+		/// The thread object.
+		/// </summary>
 		private Thread thread;
 
+		/// <summary>
+		/// The lock preventing concurrent access for the tasks list and the
+		/// tasks queue.
+		/// </summary>
 		private object tasksLock = new object();
+
+		/// <summary>
+		/// The list of tasks. Includes all immediate, reboot, and recurring tasks
+		/// </summary>
 		private Dictionary<uint, Task> tasks = new Dictionary<uint, Task>();
+
+		/// <summary>
+		/// The queue of tasks. This queue is executed when the first element's
+		/// timestamp (the key) has been past. This list assumes that all tasks
+		/// are sorted by timestamp, smallest one first.
+		/// </summary>
 		private SortedList<DateTime, Task> scheduledTasks =
 			new SortedList<DateTime, Task>();
 
+		/// <summary>
+		/// The list of task IDs for recycling.
+		/// </summary>
 		private List<uint> unusedIds = new List<uint>();
+
+		/// <summary>
+		/// Lock preventing concurrent access for the IDs.
+		/// </summary>
 		private object unusedIdsLock = new object();
+
+		/// <summary>
+		/// Incrementing ID. This value is incremented by one every time an ID
+		/// is required by no unused IDs remain.
+		/// </summary>
 		private uint nextId = 0;
 
+		/// <summary>
+		/// An automatically reset event allowing the addition of new tasks to
+		/// interrupt the thread's sleeping state waiting for the next recurring
+		/// task to be due.
+		/// </summary>
 		AutoResetEvent schedulerInterrupt = new AutoResetEvent(true);
 	}
 }
