@@ -31,9 +31,30 @@ namespace Eraser.Manager.Plugin
 		/// <summary>
 		/// Retrieves the list of currently loaded plugins.
 		/// </summary>
-		public abstract List<IPlugin> Plugins
+		public abstract List<PluginInstance> Plugins
 		{
 			get;
+		}
+
+		/// <summary>
+		/// The plugin load event delegate.
+		/// </summary>
+		/// <param name="instance">The instance of the plugin loaded.</param>
+		public delegate void OnPluginLoadEventHandler(PluginInstance instance);
+
+		/// <summary>
+		/// The plugin loaded event.
+		/// </summary>
+		public event OnPluginLoadEventHandler PluginLoad;
+
+		/// <summary>
+		/// Event callback executor for the OnPluginLoad Event
+		/// </summary>
+		/// <param name="instance"></param>
+		protected void OnPluginLoad(PluginInstance instance)
+		{
+			if (PluginLoad != null)
+				PluginLoad.Invoke(instance);
 		}
 
 		/// <summary>
@@ -73,7 +94,7 @@ namespace Eraser.Manager.Plugin
 		/// </summary>
 		public const string PLUGINSFOLDER = "Plugins/";
 
-		public override List<IPlugin> Plugins
+		public override List<PluginInstance> Plugins
 		{
 			get { return plugins; }
 		}
@@ -94,11 +115,18 @@ namespace Eraser.Manager.Plugin
 				Type typeInterface = type.GetInterface("Eraser.Manager.Plugin.IPlugin", true);
 				if (typeInterface != null)
 				{
+					//Initialize the plugin
 					IPlugin pluginInterface = (IPlugin)Activator.CreateInstance(
 						assembly.GetType(type.ToString()));
 					pluginInterface.Initialize(this);
+
+					//Create the PluginInstance structure
+					PluginInstance instance = new PluginInstance(assembly, filePath, pluginInterface);
+
+					//Add the plugin to the list of loaded plugins
 					lock (plugins)
-						plugins.Add(pluginInterface);
+						plugins.Add(instance);
+					OnPluginLoad(instance);
 				}
 			}
 		}
@@ -108,7 +136,24 @@ namespace Eraser.Manager.Plugin
 			ErasureMethodManager.RegisterMethod(method);
 		}
 
-		private List<IPlugin> plugins = new List<IPlugin>();
+		private List<PluginInstance> plugins = new List<PluginInstance>();
+	}
+
+	/// <summary>
+	/// Structure holding the instance values of the plugin like handle and path.
+	/// </summary>
+	public struct PluginInstance
+	{
+		internal PluginInstance(Assembly assembly, string path, IPlugin plugin)
+		{
+			Assembly = assembly;
+			Path = path;
+			Plugin = plugin;
+		}
+
+		public Assembly Assembly;
+		public string Path;
+		public IPlugin Plugin;
 	}
 
 	/// <summary>
