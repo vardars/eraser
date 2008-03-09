@@ -158,7 +158,8 @@ namespace Eraser
 
 			//And the logo
 			Bitmap logo = Properties.Resources.BackgroundLogo;
-			dc.DrawImage(logo, new Point(ClientSize.Width - logo.Width - 10, 10));
+			dc.DrawImage(logo, new Point(ClientSize.Width - logo.Width - 10,
+				(contentPanel.Top - logo.Height) / 2));
 
 			dc.SmoothingMode = SmoothingMode.AntiAlias;
 			dc.FillPath(Brushes.White, CreateRoundRect(11, 74, contentPanel.Width + 8, ClientSize.Height - 85, 3));
