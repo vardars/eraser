@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Diagnostics;
 
 namespace Eraser.Manager
 {
@@ -53,7 +54,48 @@ namespace Eraser.Manager
 	{
 		public override string UIText
 		{
-			get { return "Recurring schedule, not implemented."; }
+			get
+			{
+				string result = string.Empty;
+				switch (type)
+				{
+					case ScheduleUnit.DAILY:
+						result += "Once every ";
+						if (frequency != 1)
+							result += string.Format("{0} days", frequency);
+						else
+							result += "day";
+						break;
+					case ScheduleUnit.WEEKDAYS:
+						result += "Every weekday";
+						break;
+					case ScheduleUnit.WEEKLY:
+						result += "Every ";
+						if ((weeklySchedule & DaysOfWeek.MONDAY) != 0)
+							result += "Monday, ";
+						if ((weeklySchedule & DaysOfWeek.TUESDAY) != 0)
+							result += "Tuesday, ";
+						if ((weeklySchedule & DaysOfWeek.WEDNESDAY) != 0)
+							result += "Wednesday, ";
+						if ((weeklySchedule & DaysOfWeek.THURSDAY) != 0)
+							result += "Thursday, ";
+						if ((weeklySchedule & DaysOfWeek.FRIDAY) != 0)
+							result += "Friday, ";
+						if ((weeklySchedule & DaysOfWeek.SATURDAY) != 0)
+							result += "Saturday, ";
+						if ((weeklySchedule & DaysOfWeek.SUNDAY) != 0)
+							result += "Sunday, ";
+
+						result += string.Format("once every {0} week{1}.", frequency,
+							frequency == 1 ? "s" : "");
+						break;
+					case ScheduleUnit.MONTHLY:
+						result += "Monthly, ";
+						break;
+				}
+
+				return result + string.Format(", at {0}", executionTime.TimeOfDay.ToString());
+			}
 		}
 
 		/// <summary>
@@ -131,6 +173,15 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// The time of day where the task will be executed.
+		/// </summary>
+		public DateTime ExecutionTime
+		{
+			get { return ExecutionTime; }
+			set { executionTime = value; }
+		}
+
+		/// <summary>
 		/// The days of the week which this task should be run. This is valid only
 		/// with Weekly schedules. This field is the DaysOfWeek enumerations
 		/// ORed together.
@@ -190,25 +241,40 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				DateTime result = LastRun;
+				//Get a good starting point, either now, or the last time the task
+				//was run.
+				DateTime nextRun = LastRun;
+				if (nextRun == DateTime.MinValue)
+					nextRun = DateTime.Now;
+
 				switch (Type)
 				{
 					case ScheduleUnit.DAILY:
-						while (result < DateTime.Now)
-							result = result.AddDays(frequency);
+						//First assume that it is today that we are running the schedule
+						long daysToAdd = (DateTime.Now - nextRun).Days;
+						if (daysToAdd % frequency != 0)
+							daysToAdd += frequency - (daysToAdd % frequency);
+						nextRun = nextRun.AddDays(daysToAdd);
+						nextRun = nextRun.AddHours(executionTime.Hour);
+						nextRun = nextRun.AddMinutes(executionTime.Minute);
+
+						//If we have passed today's run time, schedule it after the next
+						//frequency
+						if (nextRun < DateTime.Now)
+							nextRun = nextRun.AddDays(1);
 						break;
 					case ScheduleUnit.WEEKDAYS:
-						while (result < DateTime.Now ||
+						while (nextRun < DateTime.Now ||
 							lastRun.DayOfWeek == DayOfWeek.Saturday ||
 							lastRun.DayOfWeek == DayOfWeek.Sunday)
-							result = result.AddDays(1.0);
+							nextRun = nextRun.AddDays(1);
 						break;
 					case ScheduleUnit.WEEKLY:
 						//First find the next day of the week within this week.
 						for (DayOfWeek day = lastRun.DayOfWeek; day <= DayOfWeek.Sunday; ++day)
 							if (((int)weeklySchedule & (1 << (int)day)) != 0)
 								//Bullseye! Run the task next day in the week.
-								result = result.AddDays(day - lastRun.DayOfWeek);
+								nextRun = nextRun.AddDays(day - lastRun.DayOfWeek);
 
 						//Ok, we now need to find the earliest day of the week where
 						//the task will run.
@@ -216,18 +282,24 @@ namespace Eraser.Manager
 						break;
 					case ScheduleUnit.MONTHLY:
 						//Increment the month until we are past our current date.
-						while (lastRun < DateTime.Now)
-							result = result.AddMonths((int)frequency);
-						result = result.AddDays(-((int)monthlySchedule - result.Day));
+						nextRun = nextRun.AddMinutes(executionTime.Minute - nextRun.Minute);
+						nextRun = nextRun.AddHours(executionTime.Hour - nextRun.Hour);
+						nextRun = nextRun.AddDays(-((int)monthlySchedule - nextRun.Day));
+						while (nextRun < DateTime.Now)
+							nextRun = nextRun.AddMonths((int)frequency);
 						break;
 				}
 
-				return result;
+				Debug.WriteLine(string.Format("Next scheduled run time, for object " +
+					"with last run time {0} and schedule {1}", lastRun.ToString(),
+					UIText));
+				return nextRun;
 			}
 		}
 
 		private ScheduleUnit type;
 		private uint frequency;
+		private DateTime executionTime;
 		private DaysOfWeek weeklySchedule;
 		private uint monthlySchedule;
 
