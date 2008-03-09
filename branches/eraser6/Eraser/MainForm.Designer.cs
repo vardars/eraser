@@ -63,7 +63,7 @@ namespace Eraser
             this.toolbarScheduleMenuQueue,
             this.viewLogToolStripMenuItem});
 			this.toolbarScheduleMenu.Name = "toolbarScheduleMenu";
-			this.toolbarScheduleMenu.Size = new System.Drawing.Size(194, 98);
+			this.toolbarScheduleMenu.Size = new System.Drawing.Size(194, 76);
 			// 
 			// newTaskToolStripMenuItem
 			// 
@@ -122,6 +122,7 @@ namespace Eraser
 			this.MinimumSize = new System.Drawing.Size(760, 520);
 			this.Name = "MainForm";
 			this.Text = "Eraser";
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
 			this.Resize += new System.EventHandler(this.MainForm_Resize);
 			this.toolbarScheduleMenu.ResumeLayout(false);

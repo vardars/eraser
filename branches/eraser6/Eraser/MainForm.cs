@@ -68,6 +68,11 @@ namespace Eraser
 			ChangePage(Pages.SCHEDULER);
 		}
 
+		private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+		{
+			(eraserClient as IDisposable).Dispose();
+		}
+
 		/// <summary>
 		/// Changes the active page displayed in the form.
 		/// </summary>
