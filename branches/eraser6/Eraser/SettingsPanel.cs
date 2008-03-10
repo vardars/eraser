@@ -86,15 +86,40 @@ namespace Eraser
 			schedulerMissedImmediate.Checked =
 				Globals.Settings.ExecuteMissedTasksImmediately;
 
-			//After all the settings have been loaded, do a sanity check.
-			//NotImplemented: This is a VERY crude way of getting the user to do things!
-			//Select an intelligent default instead.
+			//Select an intelligent default if the settings are invalid.
+			string defaults = string.Empty;
 			if (eraseFilesMethod.SelectedIndex == -1)
-				MessageBox.Show("The Default file erasure method is invalid, please set a valid default.");
+			{
+				eraseFilesMethod.SelectedIndex = 0;
+				defaults += "\tDefault file erasure method\n";
+			}
 			if (eraseUnusedMethod.SelectedIndex == -1)
-				MessageBox.Show("The Default unused space erasure method is invalid, please set a valid default.");
+			{
+				eraseUnusedMethod.SelectedIndex = 0;
+				defaults += "\tDefault unused space erasure method\n";
+			}
 			if (erasePRNG.SelectedIndex == -1)
-				MessageBox.Show("The randomness data source is invalid, please set a valid source.");
+			{
+				erasePRNG.SelectedIndex = 0;
+				defaults += "\tRandomness data source\n";
+			}
+
+			//Remind the user.
+			if (defaults.Length != 0)
+			{
+				Globals.Settings.DefaultFileErasureMethod =
+					((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
+				Globals.Settings.DefaultUnusedSpaceErasureMethod =
+					((ErasureMethod)eraseUnusedMethod.SelectedItem).GUID;
+				Globals.Settings.ActivePRNG = 
+					((PRNG)erasePRNG.SelectedItem).GUID;
+
+				MessageBox.Show(string.Format("The following settings held invalid values:\n\n" +
+					"{0}\nThese settings have now been set to naive defaults.\n\n" +
+					"Please check that the new settings suit your required level of security.",
+					defaults), "Eraser", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				saveSettings_Click(null, null);
+			}
 		}
 
 		private void saveSettings_Click(object sender, EventArgs e)
