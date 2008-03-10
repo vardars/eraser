@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Eraser.Manager
 {
@@ -19,7 +21,7 @@ namespace Eraser.Manager
 			/// ErasureMethodManager.Default then the default is queried for the
 			/// task type.
 			/// </summary>
-			public IErasureMethod Method
+			public ErasureMethod Method
 			{
 				get { return method; }
 				set { method = value; }
@@ -33,7 +35,7 @@ namespace Eraser.Manager
 				get;
 			}
 
-			private IErasureMethod method = null;
+			private ErasureMethod method = null;
 		}
 
 		/// <summary>
@@ -97,8 +99,31 @@ namespace Eraser.Manager
 		{
 			internal override List<string> GetPaths()
 			{
+				//Get a list to hold all the resulting paths.
 				List<string> result = new List<string>();
-				throw new Exception("The Folder.GetPaths() method has not been implemented.");
+
+				//Open the root of the search, including every file matching the pattern
+				DirectoryInfo dir = new DirectoryInfo(Path);
+
+				//List recursively all the files which match the include pattern.
+				string includeMask = IncludeMask;
+				if (includeMask.Length == 0)
+					includeMask = "*.*";
+				FileInfo[] files = dir.GetFiles(includeMask, SearchOption.AllDirectories);
+
+				//Then exclude each file.
+				if (ExcludeMask.Length != 0)
+				{
+					string regex = Regex.Escape(ExcludeMask).Replace("\\*", ".*").
+						Replace("\\?", ".");
+					Regex excludePattern = new Regex(regex, RegexOptions.IgnoreCase);
+					foreach (FileInfo file in files)
+						if (excludePattern.Matches(file.FullName).Count == 0)
+							result.Add(file.FullName);
+				}
+				
+				//Return the filtered list.
+				return result;
 			}
 
 			/// <summary>
