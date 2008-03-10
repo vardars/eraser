@@ -48,6 +48,18 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// Disk operation write unit. Chosen such that this value mod 3, 4, 512,
+		/// and 1024 is 0
+		/// </summary>
+		protected const uint DiskOperationUnit = 1536 * 4096 * 2;
+
+		/// <summary>
+		/// Unused space erasure file size. Each of the files used in erasing
+		/// unused space will be of this size.
+		/// </summary>
+		protected const uint FreeSpaceFileUnit = DiskOperationUnit * 36;
+
+		/// <summary>
 		/// A simple callback for clients to retrieve progress information from
 		/// the erase method.
 		/// </summary>
@@ -69,6 +81,98 @@ namespace Eraser.Manager
 		/// <param name="prng">The PRNG source for random data.</param>
 		/// <param name="callback">The progress callback function.</param>
 		public abstract void Erase(Stream strm, PRNG prng, OnProgress callback);
+
+		/// <summary>
+		/// Shuffles the passes in the input array, effectively randomizing the
+		/// order or rewrites.
+		/// </summary>
+		/// <param name="passes">The input set of passes.</param>
+		/// <returns>The shuffled set of passes.</returns>
+		protected static Pass[] ShufflePasses(Pass[] passes)
+		{
+			//Make a copy.
+			Pass[] result = new Pass[passes.Length];
+			passes.CopyTo(result, 0);
+
+			//Randomize.
+			PRNG rand = PRNGManager.GetInstance(Globals.Settings.ActivePRNG);
+			for (int i = 0; i < result.Length; ++i)
+			{
+				int val = rand.Next(result.Length - 1);
+				Pass tmpPass = result[val];
+				result[val] = result[i];
+				result[i] = tmpPass;
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Helper function. This function will write random data to the stream
+		/// using the provided PRNG.
+		/// </summary>
+		/// <param name="strm">The buffer to populate with data to write to disk.</param>
+		/// <param name="prng">The PRNG used.</param>
+		protected static void WriteRandom(ref byte[] buffer, object value)
+		{
+			((PRNG)value).NextBytes(buffer);
+		}
+
+		/// <summary>
+		/// Helper function. This function will write the repeating pattern
+		/// to the stream.
+		/// </summary>
+		/// <param name="strm">The buffer to populate with data to write to disk.</param>
+		/// <param name="value">The byte[] to write.</param>
+		protected static void WriteConstant(ref byte[] buffer, object value)
+		{
+			byte[] pattern = (byte[])value;
+			for (int i = 0; i < buffer.Length; ++i)
+				buffer[i] = pattern[i % pattern.Length];
+		}
+
+		/// <summary>
+		/// The prototype of a pass.
+		/// </summary>
+		/// <param name="strm">The buffer to populate with data to write to disk.</param>
+		/// <param name="opaque">An opaque value, depending on the type of callback.</param>
+		protected delegate void PassFunction(ref byte[] buffer, object opaque);
+
+		/// <summary>
+		/// A pass object. This object holds both the pass function, as well as the
+		/// data used for the pass (random, byte, or triplet)
+		/// </summary>
+		protected struct Pass
+		{
+			public override string ToString()
+			{
+				return OpaqueValue == null ? "Random" : OpaqueValue.ToString();
+			}
+
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="function">The delegate to the function.</param>
+			/// <param name="opaqueValue">The opaque value passed to the function.</param>
+			public Pass(PassFunction function, object opaqueValue)
+			{
+				Function = function;
+				OpaqueValue = opaqueValue;
+			}
+
+			/// <summary>
+			/// Executes the pass.
+			/// </summary>
+			/// <param name="buffer">The buffer to populate with the data to write.</param>
+			/// <param name="prng">The PRNG used for random passes.</param>
+			public void Execute(ref byte[] buffer, PRNG prng)
+			{
+				Function(ref buffer, OpaqueValue == null ? prng : OpaqueValue);
+			}
+
+			PassFunction Function;
+			object OpaqueValue;
+		}
 	}
 
 	/// <summary>
@@ -136,7 +240,7 @@ namespace Eraser.Manager
 				lock (Globals.ErasureMethodManager.methods)
 					return Globals.ErasureMethodManager.methods[guid];
 			}
-			catch (KeyNotFoundException e)
+			catch (KeyNotFoundException)
 			{
 				throw new FatalException("PRNG not found: " + guid.ToString());
 			}
