@@ -18,7 +18,7 @@ namespace Eraser.Manager
 	{
 		public override string ToString()
 		{
-			return Name;
+			return string.Format("{0} ({1} {2})", Name, Passes, "passes");
 		}
 
 		/// <summary>
@@ -30,6 +30,24 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// The number of erase passes for this erasure method.
+		/// </summary>
+		public abstract uint Passes
+		{
+			get;
+		}
+
+		/// <summary>
+		/// A simple callback for clients to retrieve progress information from
+		/// the erase method.
+		/// </summary>
+		/// <param name="currentProgress">A value from 0 to 100 stating the
+		/// percentage progress of the erasure.</param>
+		/// <param name="currentPass">The current pass number. The total number
+		/// of passes can be found from the Passes property.</param>
+		public delegate void OnProgress(uint currentProgress, uint currentPass);
+
+		/// <summary>
 		/// The main bit of the class! This function is called whenever data has
 		/// to be erased. Erase the stream passed in, using the given PRNG for
 		/// randomness where necessary.
@@ -39,7 +57,8 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="strm">The stream which needs to be erased.</param>
 		/// <param name="prng">The PRNG source for random data.</param>
-		public abstract void Erase(Stream strm, PRNG prng);
+		/// <param name="callback">The progress callback function.</param>
+		public abstract void Erase(Stream strm, PRNG prng, OnProgress callback);
 	}
 
 	/// <summary>
@@ -55,12 +74,17 @@ namespace Eraser.Manager
 				ErasureMethodManager.Register(this);
 			}
 
+			public override uint Passes
+			{
+				get { return 0; }
+			}
+
 			public override string Name
 			{
 				get { return "(default)"; }
 			}
 
-			public override void Erase(Stream strm, PRNG prng)
+			public override void Erase(Stream strm, PRNG prng, OnProgress callback)
 			{
 				throw new NotImplementedException("The method or operation is not implemented.");
 			}

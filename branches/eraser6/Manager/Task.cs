@@ -228,7 +228,7 @@ namespace Eraser.Manager
 		/// The prototype for events handling the progress changed event.
 		/// </summary>
 		/// <param name="e">The new progress value.</param>
-		public delegate void ProgressEventFunction(ProgressChangedEventArgs e);
+		public delegate void ProgressEventFunction(TaskProgressEventArgs e);
 
 		/// <summary>
 		/// The event object holding all event handlers.
@@ -239,7 +239,7 @@ namespace Eraser.Manager
 		/// Broadcasts a ProgressChanged event.
 		/// </summary>
 		/// <param name="e">The new progress value.</param>
-		internal void OnProgressChanged(ProgressChangedEventArgs e)
+		internal void OnProgressChanged(TaskProgressEventArgs e)
 		{
 			if (ProgressChanged != null)
 				ProgressChanged.Invoke(e);
@@ -250,5 +250,37 @@ namespace Eraser.Manager
 		private Schedule schedule = Schedule.RunNow;
 		private List<ErasureTarget> entries = new List<ErasureTarget>();
 		private List<LogEntry> log = new List<LogEntry>();
+	}
+
+	/// <summary>
+	/// A Event argument object containing the progress of the task.
+	/// </summary>
+	public class TaskProgressEventArgs : EventArgs
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="overallProgress">The overall progress of the task.</param>
+		/// <param name="currentItemProgress">The progress for the individual
+		/// component of the task.</param>
+		public TaskProgressEventArgs(uint overallProgress, uint currentItemProgress)
+		{
+			this.overallProgress = overallProgress;
+			this.currentItemProgress = currentItemProgress;
+		}
+
+		/// <summary>
+		/// A number from 0 to 100 detailing the overall progress of the task.
+		/// </summary>
+		public uint OverallProgress
+		{
+			get { return overallProgress; }
+		}
+
+		internal uint overallProgress;
+		internal uint currentItemProgress;
+		internal string currentItemName;
+		internal uint currentPass;
+		internal uint totalPasses;
 	}
 }

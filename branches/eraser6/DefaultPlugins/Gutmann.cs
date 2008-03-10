@@ -13,7 +13,12 @@ namespace Eraser.DefaultPlugins
 			get { return "Gutmann"; }
 		}
 
-		public override void Erase(System.IO.Stream strm, PRNG prng)
+		public override uint Passes
+		{
+			get { return 35; }
+		}
+
+		public override void Erase(System.IO.Stream strm, PRNG prng, OnProgress callback)
 		{
 			throw new NotImplementedException("The method or operation is not implemented.");
 		}
