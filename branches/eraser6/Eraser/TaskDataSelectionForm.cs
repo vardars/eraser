@@ -53,8 +53,8 @@ namespace Eraser
 				unusedDisk.SelectedIndex = 0;
 
 			//And the methods list
-			List<IErasureMethod> methods = ErasureMethodManager.GetMethods();
-			foreach (IErasureMethod method in methods)
+			List<ErasureMethod> methods = ErasureMethodManager.GetMethods();
+			foreach (ErasureMethod method in methods)
 				this.method.Items.Add(method);
 			if (this.method.Items.Count != 0)
 				this.method.SelectedIndex = 0;
@@ -93,7 +93,7 @@ namespace Eraser
 				freeSpaceTask.Drive = (unusedDisk.SelectedItem as DriveItem).Drive;
 			}
 
-			result.Method = this.method.SelectedItem as IErasureMethod;
+			result.Method = this.method.SelectedItem as ErasureMethod;
 			return result;
 		}
 

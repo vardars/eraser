@@ -147,7 +147,7 @@ namespace Eraser
 			this.eraseFilesMethodLbl.Name = "eraseFilesMethodLbl";
 			this.eraseFilesMethodLbl.Size = new System.Drawing.Size(127, 13);
 			this.eraseFilesMethodLbl.TabIndex = 10;
-			this.eraseFilesMethodLbl.Text = "Default file erase method:";
+			this.eraseFilesMethodLbl.Text = "Default file erasure method:";
 			// 
 			// eraseUnusedMethodLbl
 			// 

@@ -67,8 +67,14 @@ namespace Eraser.Manager.Plugin
 		/// <summary>
 		/// Registers an erasure method with the manager.
 		/// </summary>
-		/// <param name="method">The erase method to register.</param>
-		public abstract void RegisterErasureMethod(IErasureMethod method);
+		/// <param name="method">The erasure method to register.</param>
+		public abstract void RegisterErasureMethod(ErasureMethod method);
+
+		/// <summary>
+		/// Registers a PRNG with the manager.
+		/// </summary>
+		/// <param name="prng">The PRNG algorithm to register.</param>
+		public abstract void RegisterPRNG(PRNG prng);
 	}
 
 	/// <summary>
@@ -131,9 +137,14 @@ namespace Eraser.Manager.Plugin
 			}
 		}
 
-		public override void RegisterErasureMethod(IErasureMethod method)
+		public override void RegisterErasureMethod(ErasureMethod method)
 		{
-			ErasureMethodManager.RegisterMethod(method);
+			ErasureMethodManager.Register(method);
+		}
+
+		public override void RegisterPRNG(PRNG prng)
+		{
+			PRNGManager.Register(prng);
 		}
 
 		private List<PluginInstance> plugins = new List<PluginInstance>();
