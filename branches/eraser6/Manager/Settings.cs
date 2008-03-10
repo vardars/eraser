@@ -53,6 +53,24 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// The PRNG used. This is a GUID since PRNGs are implemented through
+		/// plugins and plugins may not be loaded and missing references may follow.
+		/// </summary>
+		public Guid ActivePRNG
+		{
+			get
+			{
+				lock (this)
+					return activePRNG;
+			}
+			set
+			{
+				lock (this)
+					activePRNG = value;
+			}
+		}
+
+		/// <summary>
 		/// Whether files which are locked when being erased can be scheduled for
 		/// erasure on system restart.
 		/// </summary>
@@ -107,6 +125,7 @@ namespace Eraser.Manager
 
 		public Guid defaultFileErasureMethod = Guid.Empty;
 		public Guid defaultUnusedSpaceErasureMethod = Guid.Empty;
+		public Guid activePRNG = Guid.Empty;
 		public bool allowFilesToBeErasedOnRestart = true;
 		public bool confirmWithUserBeforeReschedulingErase = true;
 		public bool executeMissedTasksImmediately = true;

@@ -43,12 +43,17 @@ namespace Eraser
 				OnNewPluginLoaded(i.Current);
 
 			//Refresh the list of erasure methods
-			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.GetMethods();
+			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.GetAll();
 			foreach (ErasureMethod method in methods.Values)
 			{
 				eraseFilesMethod.Items.Add(method);
 				eraseUnusedMethod.Items.Add(method);
 			}
+
+			//Refresh the list of PRNGs
+			Dictionary<Guid, PRNG> prngs = PRNGManager.GetAll();
+			foreach (PRNG prng in prngs.Values)
+				erasePRNG.Items.Add(prng);
 		}
 
 		private void LoadSettings()
@@ -67,6 +72,13 @@ namespace Eraser
 					break;
 				}
 
+			foreach (Object prng in erasePRNG.Items)
+				if (((PRNG)prng).GUID == Globals.Settings.ActivePRNG)
+				{
+					erasePRNG.SelectedItem = prng;
+					break;
+				}
+
 			lockedAllow.Checked =
 				Globals.Settings.AllowFilesToBeErasedOnRestart;
 			lockedConfirm.Checked =
@@ -75,10 +87,14 @@ namespace Eraser
 				Globals.Settings.ExecuteMissedTasksImmediately;
 
 			//After all the settings have been loaded, do a sanity check.
+			//NotImplemented: This is a VERY crude way of getting the user to do things!
+			//Select an intelligent default instead.
 			if (eraseFilesMethod.SelectedIndex == -1)
 				MessageBox.Show("The Default file erasure method is invalid, please set a valid default.");
 			if (eraseUnusedMethod.SelectedIndex == -1)
 				MessageBox.Show("The Default unused space erasure method is invalid, please set a valid default.");
+			if (erasePRNG.SelectedIndex == -1)
+				MessageBox.Show("The randomness data source is invalid, please set a valid source.");
 		}
 
 		private void saveSettings_Click(object sender, EventArgs e)
@@ -87,6 +103,8 @@ namespace Eraser
 				((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
 			Globals.Settings.DefaultUnusedSpaceErasureMethod =
 				((ErasureMethod)eraseUnusedMethod.SelectedItem).GUID;
+			Globals.Settings.ActivePRNG =
+				((PRNG)erasePRNG.SelectedItem).GUID;
 			Globals.Settings.AllowFilesToBeErasedOnRestart =
 				lockedAllow.Checked;
 			Globals.Settings.ConfirmWithUserBeforeReschedulingErase =
