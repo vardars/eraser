@@ -14,11 +14,13 @@ namespace Eraser.DefaultPlugins
 		public void Initialize(Host host)
 		{
 			host.RegisterErasureMethod(new Gutmann());
+			host.RegisterPRNG(new ISAAC());
+			host.RegisterPRNG(new RNGCrypto());
 		}
 
 		public string Name
 		{
-			get { return "Default Erase Methods and PRNGs"; }
+			get { return "Default Erasure Methods and PRNGs"; }
 		}
 
 		public string Author
@@ -32,7 +34,7 @@ namespace Eraser.DefaultPlugins
 
 		public void Dispose()
 		{
-			throw new Exception("The method or operation is not implemented.");
+			throw new NotImplementedException("The method or operation is not implemented.");
 		}
 
 		#endregion

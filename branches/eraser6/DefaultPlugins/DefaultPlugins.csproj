@@ -28,14 +28,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ISAAC, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Users\Joel Low\Documents\Development\Libraries\C#\ISAAC\Rand\bin\Release\ISAAC.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gutmann.cs" />
+    <Compile Include="ISAAC.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RNGCrypto.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Manager\Manager.csproj">
