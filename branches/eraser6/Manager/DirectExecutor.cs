@@ -114,20 +114,31 @@ namespace Eraser.Manager
 
 				if (task != null)
 				{
-					//Run the task
-					foreach (Task.ErasureTarget target in task.Entries)
 					try
 					{
-						if (target is Task.UnusedSpace)
-							EraseUnusedSpace(task, (Task.UnusedSpace)target);
-						else if (target is Task.FilesystemObject)
-							EraseFilesystemObject(task, (Task.FilesystemObject)target);
-						else
-							throw new ArgumentException("Unknown erasure target.");
+						//Run the task
+						foreach (Task.ErasureTarget target in task.Entries)
+							try
+							{
+								if (target is Task.UnusedSpace)
+									EraseUnusedSpace(task, (Task.UnusedSpace)target);
+								else if (target is Task.FilesystemObject)
+									EraseFilesystemObject(task, (Task.FilesystemObject)target);
+								else
+									throw new ArgumentException("Unknown erasure target.");
+							}
+							catch (FatalException)
+							{
+								throw;
+							}
+							catch (Exception e)
+							{
+								task.LogEntry(new LogEntry(e.Message, LogLevel.ERROR));
+							}
 					}
-					catch (Exception e)
+					catch (FatalException e)
 					{
-						task.LogEntry(new LogEntry(e.Message, LogLevel.ERROR));
+						task.LogEntry(new LogEntry(e.Message, LogLevel.FATAL));
 					}
 
 					//If the task is a recurring task, reschedule it since we are done.
@@ -192,7 +203,7 @@ namespace Eraser.Manager
 					FileMode.Open, FileAccess.Write, FileShare.None,
 					8, FileOptions.WriteThrough))
 				{
-					target.Method.Erase(strm, null,
+					target.Method.Erase(strm, PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
 						delegate(uint currentProgress, uint currentPass)
 						{
 							eventArgs.currentPass = currentPass;
