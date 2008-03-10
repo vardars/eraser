@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading;
 using System.IO;
 
+using Eraser.Util;
+
 namespace Eraser.Manager
 {
 	/// <summary>
@@ -208,6 +210,13 @@ namespace Eraser.Manager
 					FileMode.Open, FileAccess.Write, FileShare.None,
 					8, FileOptions.WriteThrough))
 				{
+					//Set the end of the stream after the wrap-round the cluster size
+					uint clusterSize = Drives.GetDriveClusterSize(info.Directory.Root.FullName);
+					long roundUpFileLength = strm.Length % clusterSize;
+					if (roundUpFileLength != 0)
+						strm.SetLength(strm.Length + (clusterSize - roundUpFileLength));
+
+					//Then erase the file.
 					method.Erase(strm, PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
 						delegate(uint currentProgress, uint currentPass)
 						{
@@ -236,7 +245,7 @@ namespace Eraser.Manager
 			//Set the date of the file to be invalid to prevent forensic
 			//detection
 			info.CreationTime = info.LastWriteTime = info.LastAccessTime =
-				DateTime.MinValue;
+				new DateTime(1800, 1, 1, 0, 0, 0);
 			info.Attributes = FileAttributes.Normal;
 			info.Attributes = FileAttributes.NotContentIndexed;
 
@@ -244,26 +253,25 @@ namespace Eraser.Manager
 			for (uint i = 0; i < FilenameErasePasses; ++i)
 			{
 				//Get a random file name
-				PRNG prng = null;
+				PRNG prng = PRNGManager.GetInstance(Globals.Settings.ActivePRNG);
 				byte[] newFileNameAry = new byte[info.Name.Length];
 				prng.NextBytes(newFileNameAry);
-				string newFileName = (new System.Text.ASCIIEncoding()).
-					GetString(newFileNameAry);
 
 				//Validate the name
 				const string validFileNameChars = "0123456789abcdefghijklmnopqrs" +
 					"tuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-				for (int j = 0, k = newFileName.Length; j < k; ++j)
-					if (!Char.IsLetterOrDigit(newFileName[j]))
-					{
-						newFileName.Insert(j, validFileNameChars[
-							(int)newFileName[j] % validFileNameChars.Length].ToString());
-						newFileName.Remove(j + 1, 1);
-					}
+				for (int j = 0, k = newFileNameAry.Length; j < k; ++j)
+					newFileNameAry[j] = (byte)validFileNameChars[
+						(int)newFileNameAry[j] % validFileNameChars.Length];
 
 				//Rename the file.
-				info.MoveTo(info.DirectoryName + Path.DirectorySeparatorChar + newFileName);
+				string newPath = info.DirectoryName + Path.DirectorySeparatorChar +
+					(new System.Text.UTF8Encoding()).GetString(newFileNameAry);
+				info.MoveTo(newPath);
 			}
+
+			//Then delete the file.
+			info.Delete();
 		}
 
 		/// <summary>
