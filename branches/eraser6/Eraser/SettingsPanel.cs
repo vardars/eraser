@@ -99,12 +99,40 @@ namespace Eraser
 
 		private void saveSettings_Click(object sender, EventArgs e)
 		{
+			//Error checks first.
+			errorProvider.Clear();
+			if (eraseFilesMethod.SelectedIndex == -1)
+			{
+				errorProvider.SetError(eraseFilesMethod, "An invalid file erasure method " +
+					"was selected.");
+				return;
+			}
+			else if (eraseUnusedMethod.SelectedIndex == -1)
+			{
+				errorProvider.SetError(eraseUnusedMethod, "An invalid unused disk space " +
+					"erasure method was selected.");
+				return;
+			}
+			else if (erasePRNG.SelectedIndex == -1)
+			{
+				errorProvider.SetError(erasePRNG, "An invalid randomness data " +
+					"source was selected.");
+				return;
+			}
+
 			Globals.Settings.DefaultFileErasureMethod =
 				((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
 			Globals.Settings.DefaultUnusedSpaceErasureMethod =
 				((ErasureMethod)eraseUnusedMethod.SelectedItem).GUID;
-			Globals.Settings.ActivePRNG =
-				((PRNG)erasePRNG.SelectedItem).GUID;
+
+			PRNG newPRNG = (PRNG)erasePRNG.SelectedItem;
+			if (newPRNG.GUID != Globals.Settings.ActivePRNG)
+			{
+				MessageBox.Show("The new randomness data source will only be used when " +
+					"the next task is run.\nCurrently running tasks will use the old source.",
+					"Eraser", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				Globals.Settings.ActivePRNG = newPRNG.GUID;
+			}
 			Globals.Settings.AllowFilesToBeErasedOnRestart =
 				lockedAllow.Checked;
 			Globals.Settings.ConfirmWithUserBeforeReschedulingErase =

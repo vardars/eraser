@@ -28,6 +28,7 @@ namespace Eraser
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Erasure method providers", System.Windows.Forms.HorizontalAlignment.Left);
 			System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Random number generators", System.Windows.Forms.HorizontalAlignment.Left);
 			System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("History trace cleaners", System.Windows.Forms.HorizontalAlignment.Left);
@@ -53,8 +54,10 @@ namespace Eraser
 			this.saveSettings = new System.Windows.Forms.Button();
 			this.erasePRNGLbl = new System.Windows.Forms.Label();
 			this.erasePRNG = new System.Windows.Forms.ComboBox();
+			this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).BeginInit();
 			this.content.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// titleLbl
@@ -312,6 +315,10 @@ namespace Eraser
 			this.erasePRNG.Size = new System.Drawing.Size(190, 21);
 			this.erasePRNG.TabIndex = 9;
 			// 
+			// errorProvider
+			// 
+			this.errorProvider.ContainerControl = this;
+			// 
 			// SettingsPanel
 			// 
 			this.Controls.Add(this.saveSettings);
@@ -324,6 +331,7 @@ namespace Eraser
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).EndInit();
 			this.content.ResumeLayout(false);
 			this.content.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -353,5 +361,6 @@ namespace Eraser
 		private System.Windows.Forms.Button saveSettings;
 		private System.Windows.Forms.ComboBox erasePRNG;
 		private System.Windows.Forms.Label erasePRNGLbl;
+		private System.Windows.Forms.ErrorProvider errorProvider;
 	}
 }
