@@ -170,6 +170,11 @@ namespace Eraser.Manager
 			List<string> paths = target.GetPaths();
 			TaskProgressEventArgs eventArgs = new TaskProgressEventArgs(0, 0);
 
+			//Get the erasure method if the user specified he wants the default.
+			ErasureMethod method = target.Method;
+			if (method == ErasureMethodManager.Default)
+				method = ErasureMethodManager.GetInstance(Globals.Settings.DefaultFileErasureMethod);
+
 			//Iterate over every path, and erase the path.
 			for (int i = 0; i < paths.Count; ++i)
 			{
@@ -177,7 +182,7 @@ namespace Eraser.Manager
 				eventArgs.overallProgress = (uint)(i * 100) / (uint)paths.Count;
 				eventArgs.currentItemName = paths[i];
 				eventArgs.currentItemProgress = 0;
-				eventArgs.totalPasses = target.Method.Passes;
+				eventArgs.totalPasses = method.Passes;
 				task.OnProgressChanged(eventArgs);
 
 				//Make sure the file does not have any attributes which may
@@ -203,7 +208,7 @@ namespace Eraser.Manager
 					FileMode.Open, FileAccess.Write, FileShare.None,
 					8, FileOptions.WriteThrough))
 				{
-					target.Method.Erase(strm, PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
+					method.Erase(strm, PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
 						delegate(uint currentProgress, uint currentPass)
 						{
 							eventArgs.currentPass = currentPass;

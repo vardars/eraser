@@ -107,8 +107,8 @@ namespace Eraser.Manager
 
 		/// <summary>
 		/// A dummy method placeholder used for representing the default erase
-		/// method. Using this variable when passing it to erase functions taking
-		/// an IErasureMethod argument is acceptable.
+		/// method. Do not use this variable when trying to call the erase function,
+		/// this is just a placeholder and will throw a NotImplementedException.
 		/// </summary>
 		public static readonly ErasureMethod Default = new DefaultMethod();
 		#endregion
