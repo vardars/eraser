@@ -122,6 +122,9 @@ namespace Eraser.Manager
 						if (excludePattern.Matches(file.FullName).Count == 0)
 							result.Add(file.FullName);
 				}
+				else
+					foreach (FileInfo file in files)
+						result.Add(file.FullName);
 				
 				//Return the filtered list.
 				return result;
