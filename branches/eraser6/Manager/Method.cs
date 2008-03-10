@@ -100,7 +100,8 @@ namespace Eraser.Manager
 
 			public override void Erase(Stream strm, PRNG prng, OnProgress callback)
 			{
-				throw new NotImplementedException("The method or operation is not implemented.");
+				throw new NotImplementedException("The DefaultMethod class should never be " +
+					"used and should instead be replaced before execution!");
 			}
 		}
 
@@ -117,7 +118,7 @@ namespace Eraser.Manager
 		/// Retrieves all currently registered erasure methods.
 		/// </summary>
 		/// <returns>A mutable list, with an instance of each method.</returns>
-		public static Dictionary<Guid, ErasureMethod> GetMethods()
+		public static Dictionary<Guid, ErasureMethod> GetAll()
 		{
 			lock (Globals.ErasureMethodManager.methods)
 				return Globals.ErasureMethodManager.methods;

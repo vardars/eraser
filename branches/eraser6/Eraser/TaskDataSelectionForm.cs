@@ -53,7 +53,7 @@ namespace Eraser
 				unusedDisk.SelectedIndex = 0;
 
 			//And the methods list
-			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.GetMethods();
+			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.GetAll();
 			this.method.Items.Add(ErasureMethodManager.Default);
 			foreach (ErasureMethod method in methods.Values)
 				this.method.Items.Add(method);
