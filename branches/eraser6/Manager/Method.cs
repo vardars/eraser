@@ -125,6 +125,25 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// Retrieves the instance of the erasure method with the given GUID.
+		/// </summary>
+		/// <param name="guid">The GUID of the erasure method.</param>
+		/// <returns>The erasure method instance.</returns>
+		public static PRNG GetInstance(Guid guid)
+		{
+			try
+			{
+				lock (Globals.ErasureMethodManager.methods)
+					return Globals.ErasureMethodManager.methods[guid];
+			}
+			catch (KeyNotFoundException e)
+			{
+				throw new FatalException("PRNG not found: " + guid.ToString());
+			}
+		}
+
+
+		/// <summary>
 		/// Allows plug-ins to register methods with the main program. Thread-safe.
 		/// </summary>
 		/// <param name="method"></param>

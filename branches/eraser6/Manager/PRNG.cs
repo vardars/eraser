@@ -53,6 +53,24 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// Retrieves the instance of the PRNG with the given GUID.
+		/// </summary>
+		/// <param name="guid">The GUID of the PRNG.</param>
+		/// <returns>The PRNG instance.</returns>
+		public static PRNG GetInstance(Guid guid)
+		{
+			try
+			{
+				lock (Globals.PRNGManager.prngs)
+					return Globals.PRNGManager.prngs[guid];
+			}
+			catch (KeyNotFoundException e)
+			{
+				throw new FatalException("PRNG not found: " + guid.ToString());
+			}
+		}
+
+		/// <summary>
 		/// Allows plug-ins to register PRNGs with the main program. Thread-safe.
 		/// </summary>
 		/// <param name="method"></param>
