@@ -88,11 +88,6 @@ namespace Eraser.Manager
 			}
 		}
 
-		public override Dictionary<uint, Task>.Enumerator GetIterator()
-		{
-			return tasks.GetEnumerator();
-		}
-
 		/// <summary>
 		/// The thread entry point for this object. This object operates on a queue
 		/// and hence the thread will sequentially execute tasks.
@@ -123,8 +118,8 @@ namespace Eraser.Manager
 					foreach (Task.ErasureTarget target in task.Entries)
 					try
 					{
-						if (target is Task.FreeSpace)
-							EraseFreeSpace(task, (Task.FreeSpace)target);
+						if (target is Task.UnusedSpace)
+							EraseUnusedSpace(task, (Task.UnusedSpace)target);
 						else if (target is Task.FilesystemObject)
 							EraseFilesystemObject(task, (Task.FilesystemObject)target);
 						else
@@ -146,12 +141,12 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Executes a free space erase.
+		/// Executes a unused space erase.
 		/// </summary>
-		/// <param name="target">The target of the free space erase.</param>
-		private void EraseFreeSpace(Task task, Task.FreeSpace target)
+		/// <param name="target">The target of the unused space erase.</param>
+		private void EraseUnusedSpace(Task task, Task.UnusedSpace target)
 		{
-			throw new NotImplementedException("Free space erasures are not "+
+			throw new NotImplementedException("Unused space erasures are not "+
 				"currently implemented");
 		}
 

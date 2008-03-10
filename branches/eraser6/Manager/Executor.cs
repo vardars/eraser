@@ -33,12 +33,6 @@ namespace Eraser.Manager
 		public abstract Task GetTask(uint taskId);
 
 		/// <summary>
-		/// Retrieves an enumerator to the list of tasks.
-		/// </summary>
-		/// <returns>An enumerator to the list of tasks</returns>
-		public abstract Dictionary<uint, Task>.Enumerator GetIterator();
-
-		/// <summary>
 		/// The number of times file names are renamed to erase the file name from
 		/// the MFT.
 		/// </summary>
