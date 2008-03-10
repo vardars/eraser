@@ -64,7 +64,7 @@ namespace Eraser.Manager
 				lock (Globals.PRNGManager.prngs)
 					return Globals.PRNGManager.prngs[guid];
 			}
-			catch (KeyNotFoundException e)
+			catch (KeyNotFoundException)
 			{
 				throw new FatalException("PRNG not found: " + guid.ToString());
 			}
