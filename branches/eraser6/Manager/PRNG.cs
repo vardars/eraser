@@ -27,6 +27,14 @@ namespace Eraser.Manager
 		{
 			get;
 		}
+
+		/// <summary>
+		/// The GUID for this PRNG.
+		/// </summary>
+		public abstract Guid GUID
+		{
+			get;
+		}
 	}
 
 	/// <summary>
@@ -38,26 +46,25 @@ namespace Eraser.Manager
 		/// Retrieves all currently registered erasure methods.
 		/// </summary>
 		/// <returns>A mutable list, with an instance of each PRNG.</returns>
-		public static List<PRNG> GetGenerators()
+		public static Dictionary<Guid, PRNG> GetAll()
 		{
 			lock (Globals.PRNGManager.prngs)
-				return Globals.PRNGManager.prngs.GetRange(0,
-					Globals.PRNGManager.prngs.Count);
+				return Globals.PRNGManager.prngs;
 		}
 
 		/// <summary>
 		/// Allows plug-ins to register PRNGs with the main program. Thread-safe.
 		/// </summary>
 		/// <param name="method"></param>
-		public static void Register(PRNG method)
+		public static void Register(PRNG prng)
 		{
 			lock (Globals.PRNGManager.prngs)
-				Globals.PRNGManager.prngs.Add(method);
+				Globals.PRNGManager.prngs.Add(prng.GUID, prng);
 		}
 
 		/// <summary>
 		/// The list of currently registered erasure methods.
 		/// </summary>
-		private List<PRNG> prngs = new List<PRNG>();
+		private Dictionary<Guid, PRNG> prngs = new Dictionary<Guid, PRNG>();
 	}
 }

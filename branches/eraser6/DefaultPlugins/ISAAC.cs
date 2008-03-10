@@ -16,6 +16,11 @@ namespace Eraser.DefaultPlugins
 			get { return "ISAAC CSPRNG"; }
 		}
 
+		public override Guid GUID
+		{
+			get { return new Guid("{CB7DE02E-8067-4270-B115-70AB49F23BB7}"); }
+		}
+
 		public override void NextBytes(byte[] buffer)
 		{
 			//Generate 256 ints.
