@@ -68,9 +68,9 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Class representing a free space erase.
+		/// Class representing a unused space erase.
 		/// </summary>
-		public class FreeSpace : ErasureTarget
+		public class UnusedSpace : ErasureTarget
 		{
 			public string Drive;
 

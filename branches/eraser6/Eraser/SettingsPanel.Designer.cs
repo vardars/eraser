@@ -50,6 +50,7 @@ namespace Eraser
 			this.schedulerMissed = new System.Windows.Forms.Label();
 			this.schedulerMissedImmediate = new System.Windows.Forms.RadioButton();
 			this.schedulerMissedIgnore = new System.Windows.Forms.RadioButton();
+			this.saveSettings = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).BeginInit();
 			this.content.SuspendLayout();
 			this.SuspendLayout();
@@ -145,7 +146,7 @@ namespace Eraser
 			this.eraseFilesMethodLbl.AutoSize = true;
 			this.eraseFilesMethodLbl.Location = new System.Drawing.Point(17, 88);
 			this.eraseFilesMethodLbl.Name = "eraseFilesMethodLbl";
-			this.eraseFilesMethodLbl.Size = new System.Drawing.Size(127, 13);
+			this.eraseFilesMethodLbl.Size = new System.Drawing.Size(136, 13);
 			this.eraseFilesMethodLbl.TabIndex = 10;
 			this.eraseFilesMethodLbl.Text = "Default file erasure method:";
 			// 
@@ -154,9 +155,9 @@ namespace Eraser
 			this.eraseUnusedMethodLbl.AutoSize = true;
 			this.eraseUnusedMethodLbl.Location = new System.Drawing.Point(17, 114);
 			this.eraseUnusedMethodLbl.Name = "eraseUnusedMethodLbl";
-			this.eraseUnusedMethodLbl.Size = new System.Drawing.Size(164, 13);
+			this.eraseUnusedMethodLbl.Size = new System.Drawing.Size(173, 13);
 			this.eraseUnusedMethodLbl.TabIndex = 11;
-			this.eraseUnusedMethodLbl.Text = "Default free space erasure method:";
+			this.eraseUnusedMethodLbl.Text = "Default unused space erasure method:";
 			// 
 			// eraseFilesMethod
 			// 
@@ -278,10 +279,26 @@ namespace Eraser
 			this.schedulerMissedIgnore.Text = "ignore the missed schedule and run only at the next appointed time";
 			this.schedulerMissedIgnore.UseVisualStyleBackColor = true;
 			// 
+			// saveSettings
+			// 
+			this.saveSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.saveSettings.Location = new System.Drawing.Point(639, 27);
+			this.saveSettings.Name = "saveSettings";
+			this.saveSettings.Size = new System.Drawing.Size(90, 23);
+			this.saveSettings.TabIndex = 4;
+			this.saveSettings.Text = "Save Settings";
+			this.saveSettings.UseVisualStyleBackColor = true;
+			this.saveSettings.Click += new System.EventHandler(this.saveSettings_Click);
+			// 
 			// SettingsPanel
 			// 
+			this.Controls.Add(this.saveSettings);
 			this.Name = "SettingsPanel";
 			this.Size = new System.Drawing.Size(752, 626);
+			this.Controls.SetChildIndex(this.saveSettings, 0);
+			this.Controls.SetChildIndex(this.titleLbl, 0);
+			this.Controls.SetChildIndex(this.titleIcon, 0);
+			this.Controls.SetChildIndex(this.content, 0);
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).EndInit();
 			this.content.ResumeLayout(false);
 			this.content.PerformLayout();
@@ -311,5 +328,6 @@ namespace Eraser
 		private System.Windows.Forms.RadioButton schedulerMissedImmediate;
 		private System.Windows.Forms.Label schedulerMissed;
 		private LightGroup scheduler;
+		private System.Windows.Forms.Button saveSettings;
 	}
 }

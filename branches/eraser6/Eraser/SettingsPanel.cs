@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
+using Eraser.Manager;
 using Eraser.Manager.Plugin;
 
 namespace Eraser
@@ -17,24 +18,81 @@ namespace Eraser
 			InitializeComponent();
 			Dock = DockStyle.None;
 
-			//Load the list of DLLs
-			Host instance = Host.Instance;
-			List<PluginInstance>.Enumerator i = instance.Plugins.GetEnumerator();
-			while (i.MoveNext())
-			{
-				ListViewItem item = pluginsManager.Items.Add(i.Current.Plugin.Name);
-				item.SubItems.Add(i.Current.Plugin.Author);
-				item.SubItems.Add(string.Empty);//item.SubItems.Add(i.Current.Version);
-				item.SubItems.Add(i.Current.Path);
-			}
+			//For new plugins, register the callback.
+			Host.Instance.PluginLoad += new Host.OnPluginLoadEventHandler(OnNewPluginLoaded);
 
-			//For new DLLs, register the callback.
-			instance.PluginLoad += new Host.OnPluginLoadEventHandler(OnNewPluginLoaded);
+			//Load the values
+			LoadPluginDependantValues();
+			LoadSettings();
 		}
 
 		private void OnNewPluginLoaded(PluginInstance instance)
 		{
-			throw new NotImplementedException("The plugin load event handler has not been implemented.");
+			ListViewItem item = pluginsManager.Items.Add(instance.Plugin.Name);
+			item.SubItems.Add(instance.Plugin.Author);
+			item.SubItems.Add(string.Empty);//item.SubItems.Add(i.Current.Version);
+			item.SubItems.Add(instance.Path);
+		}
+
+		private void LoadPluginDependantValues()
+		{
+			//Load the list of plugins
+			Host instance = Host.Instance;
+			List<PluginInstance>.Enumerator i = instance.Plugins.GetEnumerator();
+			while (i.MoveNext())
+				OnNewPluginLoaded(i.Current);
+
+			//Refresh the list of erasure methods
+			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.GetMethods();
+			foreach (ErasureMethod method in methods.Values)
+			{
+				eraseFilesMethod.Items.Add(method);
+				eraseUnusedMethod.Items.Add(method);
+			}
+		}
+
+		private void LoadSettings()
+		{
+			foreach (Object method in eraseFilesMethod.Items)
+				if (((ErasureMethod)method).GUID == Globals.Settings.DefaultFileErasureMethod)
+				{
+					eraseFilesMethod.SelectedItem = method;
+					break;
+				}
+			 
+			foreach (Object method in eraseUnusedMethod.Items)
+				if (((ErasureMethod)method).GUID == Globals.Settings.DefaultUnusedSpaceErasureMethod)
+				{
+					eraseUnusedMethod.SelectedItem = method;
+					break;
+				}
+
+			lockedAllow.Checked =
+				Globals.Settings.AllowFilesToBeErasedOnRestart;
+			lockedConfirm.Checked =
+				Globals.Settings.ConfirmWithUserBeforeReschedulingErase;
+			schedulerMissedImmediate.Checked =
+				Globals.Settings.ExecuteMissedTasksImmediately;
+
+			//After all the settings have been loaded, do a sanity check.
+			if (eraseFilesMethod.SelectedIndex == -1)
+				MessageBox.Show("The Default file erasure method is invalid, please set a valid default.");
+			if (eraseUnusedMethod.SelectedIndex == -1)
+				MessageBox.Show("The Default unused space erasure method is invalid, please set a valid default.");
+		}
+
+		private void saveSettings_Click(object sender, EventArgs e)
+		{
+			Globals.Settings.DefaultFileErasureMethod =
+				((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
+			Globals.Settings.DefaultUnusedSpaceErasureMethod =
+				((ErasureMethod)eraseUnusedMethod.SelectedItem).GUID;
+			Globals.Settings.AllowFilesToBeErasedOnRestart =
+				lockedAllow.Checked;
+			Globals.Settings.ConfirmWithUserBeforeReschedulingErase =
+				lockedConfirm.Checked;
+			Globals.Settings.ExecuteMissedTasksImmediately =
+				schedulerMissedImmediate.Checked;
 		}
 	}
 }
