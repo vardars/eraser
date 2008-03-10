@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.ComponentModel;
 
 namespace Eraser.Manager
 {
@@ -200,9 +201,54 @@ namespace Eraser.Manager
 			set { schedule = value; }
 		}
 
+		/// <summary>
+		/// Retrieves the log for this task.
+		/// </summary>
+		public List<LogEntry> Log
+		{
+			get
+			{
+				lock (log)
+					return log.GetRange(0, log.Count);
+			}
+		}
+
+		/// <summary>
+		/// Logs the message and its associated information into the task Log.
+		/// </summary>
+		/// <param name="entry">The log entry structure representing the log
+		/// message.</param>
+		internal void LogEntry(LogEntry entry)
+		{
+			lock (log)
+				log.Add(entry);
+		}
+
+		/// <summary>
+		/// The prototype for events handling the progress changed event.
+		/// </summary>
+		/// <param name="e">The new progress value.</param>
+		public delegate void ProgressEventFunction(ProgressChangedEventArgs e);
+
+		/// <summary>
+		/// The event object holding all event handlers.
+		/// </summary>
+		public event ProgressEventFunction ProgressChanged;
+
+		/// <summary>
+		/// Broadcasts a ProgressChanged event.
+		/// </summary>
+		/// <param name="e">The new progress value.</param>
+		internal void OnProgressChanged(ProgressChangedEventArgs e)
+		{
+			if (ProgressChanged != null)
+				ProgressChanged.Invoke(e);
+		}
+
 		private uint id;
 		private string name;
 		private Schedule schedule = Schedule.RunNow;
 		private List<ErasureTarget> entries = new List<ErasureTarget>();
+		private List<LogEntry> log = new List<LogEntry>();
 	}
 }

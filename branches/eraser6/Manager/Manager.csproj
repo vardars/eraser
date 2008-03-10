@@ -35,6 +35,7 @@
   <ItemGroup>
     <Compile Include="DirectExecutor.cs" />
     <Compile Include="Executor.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Method.cs" />
     <Compile Include="Plugins.cs" />
     <Compile Include="PRNG.cs" />
