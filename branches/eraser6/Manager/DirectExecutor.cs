@@ -170,7 +170,7 @@ namespace Eraser.Manager
 		private void EraseFilesystemObject(Task task, Task.FilesystemObject target)
 		{
 			List<string> paths = target.GetPaths();
-			TaskProgressEventArgs eventArgs = new TaskProgressEventArgs(0, 0);
+			TaskProgressEventArgs eventArgs = new TaskProgressEventArgs(task, 0, 0);
 
 			//Get the erasure method if the user specified he wants the default.
 			ErasureMethod method = target.Method;

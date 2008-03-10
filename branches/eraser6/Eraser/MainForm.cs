@@ -201,8 +201,8 @@ namespace Eraser
 				if (form.ShowDialog() == DialogResult.OK)
 				{
 					Task task = form.Task;
-					SchedulerPage.AddTask(task);
 					eraserClient.AddTask(ref task);
+					SchedulerPage.AddTask(ref task);
 				}
 			}
 		}

@@ -263,10 +263,20 @@ namespace Eraser.Manager
 		/// <param name="overallProgress">The overall progress of the task.</param>
 		/// <param name="currentItemProgress">The progress for the individual
 		/// component of the task.</param>
-		public TaskProgressEventArgs(uint overallProgress, uint currentItemProgress)
+		public TaskProgressEventArgs(Task task, uint overallProgress,
+			uint currentItemProgress)
 		{
+			this.task = task;
 			this.overallProgress = overallProgress;
 			this.currentItemProgress = currentItemProgress;
+		}
+
+		/// <summary>
+		/// The executing task.
+		/// </summary>
+		public Task Task
+		{
+			get { return task; }
 		}
 
 		/// <summary>
@@ -277,6 +287,40 @@ namespace Eraser.Manager
 			get { return overallProgress; }
 		}
 
+		/// <summary>
+		/// A number from 0 to 100 detailing the overall progress of the item.
+		/// </summary>
+		public uint CurrentItemProgress
+		{
+			get { return currentItemProgress; }
+		}
+
+		/// <summary>
+		/// The file name of the item being erased.
+		/// </summary>
+		public string CurrentItemName
+		{
+			get { return currentItemName; }
+		}
+
+		/// <summary>
+		/// The pass number of a multi-pass erasure method.
+		/// </summary>
+		public uint CurrentPass
+		{
+			get { return currentPass; }
+		}
+
+		/// <summary>
+		/// The total number of passes to complete before this erasure method is
+		/// completed.
+		/// </summary>
+		public uint TotalPasses
+		{
+			get { return totalPasses; }
+		}
+
+		private Task task;
 		internal uint overallProgress;
 		internal uint currentItemProgress;
 		internal string currentItemName;
