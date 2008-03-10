@@ -40,7 +40,7 @@ namespace Eraser.DefaultPlugins
 			for (uint pass = 0; pass < Passes; ++pass)
 			{
 				//Do a progress callback first.
-				callback(pass * 100 / Passes, pass);
+				callback(pass / (float)Passes, pass);
 
 				//Start from the beginning again
 				strm.Seek(strmStart, SeekOrigin.Begin);
@@ -67,8 +67,7 @@ namespace Eraser.DefaultPlugins
 					toWrite -= amount;
 
 					//Do a progress callback.
-					callback((uint)((pass + ((strmLength - toWrite) / (float)strmLength)) *
-						100 / Passes), pass);
+					callback(((float)pass + ((strmLength - toWrite) / (float)strmLength)) / (float)Passes, pass);
 				}
 			}
 		}

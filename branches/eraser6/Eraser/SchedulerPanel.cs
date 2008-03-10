@@ -96,7 +96,7 @@ namespace Eraser
 				if ((uint)item.Tag == e.Task.ID)
 				{
 					//Update the text
-					item.SubItems[2].Text = string.Format("{0}%", e.CurrentItemProgress);
+					item.SubItems[2].Text = string.Format("{0}%", e.OverallProgress);
 				}
 		}
 	}

@@ -63,11 +63,11 @@ namespace Eraser.Manager
 		/// A simple callback for clients to retrieve progress information from
 		/// the erase method.
 		/// </summary>
-		/// <param name="currentProgress">A value from 0 to 100 stating the
+		/// <param name="currentProgress">A value from 0 to 1 stating the
 		/// percentage progress of the erasure.</param>
 		/// <param name="currentPass">The current pass number. The total number
 		/// of passes can be found from the Passes property.</param>
-		public delegate void OnProgress(uint currentProgress, uint currentPass);
+		public delegate void OnProgress(float currentProgress, uint currentPass);
 
 		/// <summary>
 		/// The main bit of the class! This function is called whenever data has

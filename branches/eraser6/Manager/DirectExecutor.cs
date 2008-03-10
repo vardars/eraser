@@ -218,10 +218,12 @@ namespace Eraser.Manager
 
 					//Then erase the file.
 					method.Erase(strm, PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
-						delegate(uint currentProgress, uint currentPass)
+						delegate(float currentProgress, uint currentPass)
 						{
 							eventArgs.currentPass = currentPass;
-							eventArgs.currentItemProgress = currentProgress;
+							eventArgs.currentItemProgress = (uint)currentProgress * 100;
+							eventArgs.overallProgress = (uint)(((i + currentProgress) /
+								(float)paths.Count) * 100);
 							task.OnProgressChanged(eventArgs);
 						}
 					);
