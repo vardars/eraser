@@ -129,7 +129,7 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="guid">The GUID of the erasure method.</param>
 		/// <returns>The erasure method instance.</returns>
-		public static PRNG GetInstance(Guid guid)
+		public static ErasureMethod GetInstance(Guid guid)
 		{
 			try
 			{
