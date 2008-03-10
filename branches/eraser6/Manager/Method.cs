@@ -5,9 +5,9 @@ using System.IO;
 
 namespace Eraser.Manager
 {
-	internal partial class Globals
+	public partial class Globals
 	{
-		public static ErasureMethodManager ErasureMethodManager =
+		internal static ErasureMethodManager ErasureMethodManager =
 			new ErasureMethodManager();
 	}
 
@@ -18,6 +18,8 @@ namespace Eraser.Manager
 	{
 		public override string ToString()
 		{
+			if (Passes == 0)
+				return Name;
 			return string.Format("{0} ({1} {2})", Name, Passes, "passes");
 		}
 
@@ -33,6 +35,14 @@ namespace Eraser.Manager
 		/// The number of erase passes for this erasure method.
 		/// </summary>
 		public abstract uint Passes
+		{
+			get;
+		}
+
+		/// <summary>
+		/// The GUID for this erasure method.
+		/// </summary>
+		public abstract Guid GUID
 		{
 			get;
 		}
@@ -71,7 +81,11 @@ namespace Eraser.Manager
 		{
 			public DefaultMethod()
 			{
-				ErasureMethodManager.Register(this);
+			}
+
+			public override string Name
+			{
+				get { return "(default)"; }
 			}
 
 			public override uint Passes
@@ -79,9 +93,9 @@ namespace Eraser.Manager
 				get { return 0; }
 			}
 
-			public override string Name
+			public override Guid GUID
 			{
-				get { return "(default)"; }
+				get { return Guid.Empty; }
 			}
 
 			public override void Erase(Stream strm, PRNG prng, OnProgress callback)
@@ -103,11 +117,10 @@ namespace Eraser.Manager
 		/// Retrieves all currently registered erasure methods.
 		/// </summary>
 		/// <returns>A mutable list, with an instance of each method.</returns>
-		public static List<ErasureMethod> GetMethods()
+		public static Dictionary<Guid, ErasureMethod> GetMethods()
 		{
 			lock (Globals.ErasureMethodManager.methods)
-				return Globals.ErasureMethodManager.methods.GetRange(0,
-					Globals.ErasureMethodManager.methods.Count);
+				return Globals.ErasureMethodManager.methods;
 		}
 
 		/// <summary>
@@ -117,13 +130,14 @@ namespace Eraser.Manager
 		public static void Register(ErasureMethod method)
 		{
 			lock (Globals.ErasureMethodManager.methods)
-				Globals.ErasureMethodManager.methods.Add(method);
+				Globals.ErasureMethodManager.methods.Add(method.GUID, method);
 		}
 
 		/// <summary>
 		/// The list of currently registered erasure methods.
 		/// </summary>
-		private List<ErasureMethod> methods = new List<ErasureMethod>();
+		private Dictionary<Guid, ErasureMethod> methods =
+			new Dictionary<Guid, ErasureMethod>();
 		#endregion
 	}
 }

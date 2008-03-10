@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Eraser.Manager
 {
-	internal partial class Globals
+	public partial class Globals
 	{
-		public static PRNGManager PRNGManager = new PRNGManager();
+		internal static PRNGManager PRNGManager = new PRNGManager();
 	}
 
 	/// <summary>

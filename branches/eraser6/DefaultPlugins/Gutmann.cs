@@ -18,6 +18,11 @@ namespace Eraser.DefaultPlugins
 			get { return 35; }
 		}
 
+		public override Guid GUID
+		{
+			get { return new Guid("{1407FC4E-FEFF-4375-B4FB-D7EFBB7E9922}"); }
+		}
+
 		public override void Erase(System.IO.Stream strm, PRNG prng, OnProgress callback)
 		{
 			throw new NotImplementedException("The method or operation is not implemented.");

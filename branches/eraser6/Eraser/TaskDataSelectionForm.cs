@@ -53,8 +53,9 @@ namespace Eraser
 				unusedDisk.SelectedIndex = 0;
 
 			//And the methods list
-			List<ErasureMethod> methods = ErasureMethodManager.GetMethods();
-			foreach (ErasureMethod method in methods)
+			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.GetMethods();
+			this.method.Items.Add(ErasureMethodManager.Default);
+			foreach (ErasureMethod method in methods.Values)
 				this.method.Items.Add(method);
 			if (this.method.Items.Count != 0)
 				this.method.SelectedIndex = 0;
@@ -63,7 +64,7 @@ namespace Eraser
 		/// <summary>
 		/// Retrieves the settings on the property page as the Eraser Manager API equivalent.
 		/// </summary>
-		/// <returns>An Eraser.Manager.Task.Data or Eraser.Manager.Task.FreeSpace object
+		/// <returns>An Eraser.Manager.Task.Data or Eraser.Manager.Task.UnusedSpace object
 		/// or any of its inherited classes, depending on the task selected</returns>
 		public Task.ErasureTarget GetTaskEntry()
 		{
@@ -87,10 +88,10 @@ namespace Eraser
 			}
 			else
 			{
-				Task.FreeSpace freeSpaceTask = new Task.FreeSpace();
-				result = freeSpaceTask;
+				Task.UnusedSpace unusedSpaceTask = new Task.UnusedSpace();
+				result = unusedSpaceTask;
 
-				freeSpaceTask.Drive = (unusedDisk.SelectedItem as DriveItem).Drive;
+				unusedSpaceTask.Drive = (unusedDisk.SelectedItem as DriveItem).Drive;
 			}
 
 			result.Method = this.method.SelectedItem as ErasureMethod;
