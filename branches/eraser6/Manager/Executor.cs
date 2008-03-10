@@ -37,5 +37,11 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <returns>An enumerator to the list of tasks</returns>
 		public abstract Dictionary<uint, Task>.Enumerator GetIterator();
+
+		/// <summary>
+		/// The number of times file names are renamed to erase the file name from
+		/// the MFT.
+		/// </summary>
+		protected const uint FilenameErasePasses = 7;
 	}
 }

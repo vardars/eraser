@@ -34,7 +34,6 @@ namespace Eraser.Manager
 	/// </summary>
 	public class PRNGManager
 	{
-		#region Registrar fields
 		/// <summary>
 		/// Retrieves all currently registered erasure methods.
 		/// </summary>
@@ -60,6 +59,5 @@ namespace Eraser.Manager
 		/// The list of currently registered erasure methods.
 		/// </summary>
 		private List<PRNG> prngs = new List<PRNG>();
-		#endregion
 	}
 }

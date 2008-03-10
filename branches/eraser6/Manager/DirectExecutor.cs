@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 using System.Threading;
+using System.IO;
 
 namespace Eraser.Manager
 {
@@ -119,7 +120,20 @@ namespace Eraser.Manager
 				if (task != null)
 				{
 					//Run the task
-					;
+					foreach (Task.ErasureTarget target in task.Entries)
+					try
+					{
+						if (target is Task.FreeSpace)
+							EraseFreeSpace(task, (Task.FreeSpace)target);
+						else if (target is Task.FilesystemObject)
+							EraseFilesystemObject(task, (Task.FilesystemObject)target);
+						else
+							throw new ArgumentException("Unknown erasure target.");
+					}
+					catch (Exception e)
+					{
+						task.LogEntry(new LogEntry(e.Message, LogLevel.ERROR));
+					}
 
 					//If the task is a recurring task, reschedule it since we are done.
 					if (task.Schedule is RecurringSchedule)
@@ -128,6 +142,116 @@ namespace Eraser.Manager
 
 				//Wait for half a minute to check for the next scheduled task.
 				schedulerInterrupt.WaitOne(30000, false);
+			}
+		}
+
+		/// <summary>
+		/// Executes a free space erase.
+		/// </summary>
+		/// <param name="target">The target of the free space erase.</param>
+		private void EraseFreeSpace(Task task, Task.FreeSpace target)
+		{
+			throw new NotImplementedException("Free space erasures are not "+
+				"currently implemented");
+		}
+
+		/// <summary>
+		/// Erases a file or folder on the volume.
+		/// </summary>
+		/// <param name="target">The target of the erasure.</param>
+		private void EraseFilesystemObject(Task task, Task.FilesystemObject target)
+		{
+			List<string> paths = target.GetPaths();
+			TaskProgressEventArgs eventArgs = new TaskProgressEventArgs(0, 0);
+
+			//Iterate over every path, and erase the path.
+			for (int i = 0; i < paths.Count; ++i)
+			{
+				//Update the task progress
+				eventArgs.overallProgress = (uint)(i * 100) / (uint)paths.Count;
+				eventArgs.currentItemName = paths[i];
+				eventArgs.currentItemProgress = 0;
+				eventArgs.totalPasses = target.Method.Passes;
+				task.OnProgressChanged(eventArgs);
+
+				//Make sure the file does not have any attributes which may
+				//affect the erasure process
+				FileInfo info = new FileInfo(paths[i]);
+				if ((info.Attributes & FileAttributes.Compressed) != 0 ||
+					(info.Attributes & FileAttributes.Encrypted) != 0 ||
+					(info.Attributes & FileAttributes.SparseFile) != 0 ||
+					(info.Attributes & FileAttributes.ReparsePoint) != 0)
+				{
+					//Log the error
+					throw new ArgumentException("Compressed, encrypted, or sparse" +
+						"files cannot be erased with Eraser.");
+				}
+
+				//Remove the read-only flag, if it is set.
+				if ((info.Attributes & FileAttributes.ReadOnly) != 0)
+					info.Attributes &= ~FileAttributes.ReadOnly;
+
+				//Create the file stream, and call the erasure method
+				//to write to the stream.
+				using (FileStream strm = new FileStream(info.FullName,
+					FileMode.Open, FileAccess.Write, FileShare.None,
+					8, FileOptions.WriteThrough))
+				{
+					target.Method.Erase(strm, null,
+						delegate(uint currentProgress, uint currentPass)
+						{
+							eventArgs.currentPass = currentPass;
+							eventArgs.currentItemProgress = currentProgress;
+							task.OnProgressChanged(eventArgs);
+						}
+					);
+
+					//Set the length of the file to 0.
+					strm.Seek(0, SeekOrigin.Begin);
+					strm.SetLength(0);
+				}
+
+				//Remove the file.
+				RemoveFile(info);
+			}
+		}
+
+		/// <summary>
+		/// Securely removes the filename of the file.
+		/// </summary>
+		/// <param name="info">The FileInfo object representing the file.</param>
+		private void RemoveFile(FileInfo info)
+		{
+			//Set the date of the file to be invalid to prevent forensic
+			//detection
+			info.CreationTime = info.LastWriteTime = info.LastAccessTime =
+				DateTime.MinValue;
+			info.Attributes = FileAttributes.Normal;
+			info.Attributes = FileAttributes.NotContentIndexed;
+
+			//Rename the file a few times to erase the record from the MFT.
+			for (uint i = 0; i < FilenameErasePasses; ++i)
+			{
+				//Get a random file name
+				PRNG prng = null;
+				byte[] newFileNameAry = new byte[info.Name.Length];
+				prng.NextBytes(newFileNameAry);
+				string newFileName = (new System.Text.ASCIIEncoding()).
+					GetString(newFileNameAry);
+
+				//Validate the name
+				const string validFileNameChars = "0123456789abcdefghijklmnopqrs" +
+					"tuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+				for (int j = 0, k = newFileName.Length; j < k; ++j)
+					if (!Char.IsLetterOrDigit(newFileName[j]))
+					{
+						newFileName.Insert(j, validFileNameChars[
+							(int)newFileName[j] % validFileNameChars.Length].ToString());
+						newFileName.Remove(j + 1, 1);
+					}
+
+				//Rename the file.
+				info.MoveTo(info.DirectoryName + Path.DirectorySeparatorChar + newFileName);
 			}
 		}
 
