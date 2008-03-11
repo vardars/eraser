@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 namespace Eraser.Manager
 {
@@ -48,8 +49,27 @@ namespace Eraser.Manager
 		/// Retrieves the task object represented by the task ID given.
 		/// </summary>
 		/// <param name="taskId">The Task ID of the task in question.</param>
-		/// <returns>The task object represented by the ID, or null if no object is found</returns>
+		/// <returns>The task object represented by the ID, or null if no object
+		/// is found.</returns>
 		public abstract Task GetTask(uint taskId);
+
+		/// <summary>
+		/// Retrieves the current task list for the executor.
+		/// </summary>
+		/// <returns>A list of tasks which the executor has registered.</returns>
+		public abstract List<Task> GetTasks();
+
+		/// <summary>
+		/// Saves the task list to the given stream.
+		/// </summary>
+		/// <param name="stream">The stream to save to.</param>
+		public abstract void SaveTaskList(Stream stream);
+
+		/// <summary>
+		/// Loads the task list from the given stream.
+		/// </summary>
+		/// <param name="stream">The stream to save to.</param>
+		public abstract void LoadTaskList(Stream stream);
 
 		/// <summary>
 		/// The number of times file names are renamed to erase the file name from

@@ -6,6 +6,8 @@ using System.Threading;
 using System.IO;
 
 using Eraser.Util;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Eraser.Manager
 {
@@ -151,6 +153,28 @@ namespace Eraser.Manager
 			}
 		}
 
+		public override List<Task> GetTasks()
+		{
+			lock (tasksLock)
+			{
+				Task[] result = new Task[tasks.Count];
+				tasks.Values.CopyTo(result, 0);
+				return new List<Task>(result);
+			}
+		}
+
+		public override void SaveTaskList(Stream stream)
+		{
+			lock (tasksLock)
+				new BinaryFormatter().Serialize(stream, tasks);
+		}
+
+		public override void LoadTaskList(Stream stream)
+		{
+			lock (tasksLock)
+				tasks = (Dictionary<uint, Task>)new BinaryFormatter().Deserialize(stream);
+		}
+
 		/// <summary>
 		/// The thread entry point for this object. This object operates on a queue
 		/// and hence the thread will sequentially execute tasks.
@@ -188,7 +212,7 @@ namespace Eraser.Manager
 						task.OnTaskStarted(new TaskEventArgs(task));
 
 						//Run the task
-						foreach (Task.ErasureTarget target in task.Entries)
+						foreach (Task.ErasureTarget target in task.Targets)
 							try
 							{
 								if (target is Task.UnusedSpace)

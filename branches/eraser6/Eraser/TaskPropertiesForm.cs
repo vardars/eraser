@@ -109,7 +109,7 @@ namespace Eraser
 			name.Text = task.Name;
 
 			//The data
-			foreach (Task.ErasureTarget target in task.Entries)
+			foreach (Task.ErasureTarget target in task.Targets)
 			{
 				ListViewItem item = data.Items.Add(target.UIText);
 				item.SubItems.Add(target.Method.Name);
@@ -181,7 +181,7 @@ namespace Eraser
 					ListViewItem item = data.Items.Add(target.UIText);
 					
 					item.SubItems.Add(target.Method.Name);
-					task.Entries.Add(target);
+					task.Targets.Add(target);
 					errorProvider.Clear();
 				}
 			}
@@ -197,12 +197,12 @@ namespace Eraser
 			using (TaskDataSelectionForm form = new TaskDataSelectionForm())
 			{
 				ListViewItem item = data.SelectedItems[0];
-				form.Target = task.Entries[item.Index];
+				form.Target = task.Targets[item.Index];
 
 				if (form.ShowDialog() == DialogResult.OK)
 				{
 					Task.ErasureTarget target = form.Target;
-					task.Entries[item.Index] = target;
+					task.Targets[item.Index] = target;
 					item.Text = target.UIText;
 					item.SubItems[1].Text = target.Method.Name;
 				}
