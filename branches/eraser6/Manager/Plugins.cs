@@ -54,7 +54,7 @@ namespace Eraser.Manager.Plugin
 		protected void OnPluginLoad(PluginInstance instance)
 		{
 			if (PluginLoad != null)
-				PluginLoad.Invoke(instance);
+				PluginLoad(instance);
 		}
 
 		/// <summary>

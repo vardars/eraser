@@ -293,7 +293,7 @@ namespace Eraser.Manager
 		internal void OnTaskStarted(TaskEventArgs e)
 		{
 			if (TaskStarted != null)
-				TaskStarted.Invoke(e);
+				TaskStarted(e);
 			executing = true;
 		}
 
@@ -304,7 +304,7 @@ namespace Eraser.Manager
 		internal void OnProgressChanged(TaskProgressEventArgs e)
 		{
 			if (ProgressChanged != null)
-				ProgressChanged.Invoke(e);
+				ProgressChanged(e);
 		}
 
 		/// <summary>
@@ -314,7 +314,7 @@ namespace Eraser.Manager
 		internal void OnTaskFinished(TaskEventArgs e)
 		{
 			if (TaskFinished != null)
-				TaskFinished.Invoke(e);
+				TaskFinished(e);
 			executing = false;
 		}
 		#endregion
