@@ -172,7 +172,7 @@ namespace Eraser
 			this.eraseFilesMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.eraseFilesMethod.Location = new System.Drawing.Point(267, 84);
 			this.eraseFilesMethod.Name = "eraseFilesMethod";
-			this.eraseFilesMethod.Size = new System.Drawing.Size(190, 21);
+			this.eraseFilesMethod.Size = new System.Drawing.Size(290, 21);
 			this.eraseFilesMethod.TabIndex = 5;
 			// 
 			// eraseUnusedMethod
@@ -180,7 +180,7 @@ namespace Eraser
 			this.eraseUnusedMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.eraseUnusedMethod.Location = new System.Drawing.Point(267, 111);
 			this.eraseUnusedMethod.Name = "eraseUnusedMethod";
-			this.eraseUnusedMethod.Size = new System.Drawing.Size(190, 21);
+			this.eraseUnusedMethod.Size = new System.Drawing.Size(290, 21);
 			this.eraseUnusedMethod.TabIndex = 7;
 			// 
 			// plugins
@@ -312,7 +312,7 @@ namespace Eraser
 			this.erasePRNG.FormattingEnabled = true;
 			this.erasePRNG.Location = new System.Drawing.Point(267, 138);
 			this.erasePRNG.Name = "erasePRNG";
-			this.erasePRNG.Size = new System.Drawing.Size(190, 21);
+			this.erasePRNG.Size = new System.Drawing.Size(290, 21);
 			this.erasePRNG.TabIndex = 9;
 			// 
 			// errorProvider
