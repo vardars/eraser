@@ -25,13 +25,6 @@ namespace Eraser
 			MouseClick += new MouseEventHandler(ToolBar_MouseClick);
 		}
 
-		[DllImport("user32.dll")]
-		extern static int TrackPopupMenu(IntPtr hMenu, uint uFlags, int x, int y,
-			int nReserved, IntPtr hWnd, IntPtr prcRect);
-
-		[DllImport("user32.dll")]
-		extern static int GetSystemMetrics(int nIndex);
-
 		void ToolBar_MouseMove(object sender, MouseEventArgs e)
 		{
 			Redraw();
