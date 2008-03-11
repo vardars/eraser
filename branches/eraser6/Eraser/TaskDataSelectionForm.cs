@@ -66,36 +66,70 @@ namespace Eraser
 		/// </summary>
 		/// <returns>An Eraser.Manager.Task.Data or Eraser.Manager.Task.UnusedSpace object
 		/// or any of its inherited classes, depending on the task selected</returns>
-		public Task.ErasureTarget GetTaskEntry()
+		public Task.ErasureTarget Target
 		{
-			Task.ErasureTarget result = null;
-			if (file.Checked)
+			get
 			{
-				Manager.Task.File fileTask = new Task.File();
-				result = fileTask;
+				Task.ErasureTarget result = null;
+				if (file.Checked)
+				{
+					Manager.Task.File fileTask = new Task.File();
+					result = fileTask;
 
-				fileTask.Path = filePath.Text;
+					fileTask.Path = filePath.Text;
+				}
+				else if (folder.Checked)
+				{
+					Manager.Task.Folder folderTask = new Task.Folder();
+					result = folderTask;
+
+					folderTask.Path = folderPath.Text;
+					folderTask.IncludeMask = folderInclude.Text;
+					folderTask.ExcludeMask = folderExclude.Text;
+					folderTask.DeleteIfEmpty = folderDelete.Checked;
+				}
+				else
+				{
+					Task.UnusedSpace unusedSpaceTask = new Task.UnusedSpace();
+					result = unusedSpaceTask;
+
+					unusedSpaceTask.Drive = ((DriveItem)unusedDisk.SelectedItem).Drive;
+				}
+
+				result.Method = (ErasureMethod)this.method.SelectedItem;
+				return result;
 			}
-			else if (folder.Checked)
+			set
 			{
-				Manager.Task.Folder folderTask = new Task.Folder();
-				result = folderTask;
+				//Set the erasure method.
+				foreach (object item in method.Items)
+					if (item == value.Method)
+						method.SelectedItem = item;
 
-				folderTask.Path = folderPath.Text;
-				folderTask.IncludeMask = folderInclude.Text;
-				folderTask.ExcludeMask = folderExclude.Text;
-				folderTask.DeleteIfEmpty = folderDelete.Checked;
+				//Then the data to be erased.
+				if (value is Task.File)
+				{
+					filePath.Text = ((Task.File)value).Path;
+				}
+				else if (value is Task.Folder)
+				{
+					Manager.Task.Folder folderTask = (Task.Folder)value;
+
+					folderPath.Text = folderTask.Path;
+					folderInclude.Text = folderTask.IncludeMask;
+					folderExclude.Text = folderTask.ExcludeMask;
+					folderDelete.Checked = folderTask.DeleteIfEmpty;
+				}
+				else if (value is Task.UnusedSpace)
+				{
+					Task.UnusedSpace unusedSpaceTask = new Task.UnusedSpace();
+					foreach (object item in unusedDisk.Items)
+						if (((DriveItem)item).Drive == ((Task.UnusedSpace)value).Drive)
+							unusedDisk.SelectedItem = item;
+				}
+				else
+					throw new NotImplementedException("Unknown erasure target.");
 			}
-			else
-			{
-				Task.UnusedSpace unusedSpaceTask = new Task.UnusedSpace();
-				result = unusedSpaceTask;
-
-				unusedSpaceTask.Drive = (unusedDisk.SelectedItem as DriveItem).Drive;
-			}
-
-			result.Method = this.method.SelectedItem as ErasureMethod;
-			return result;
 		}
 
 		private void data_CheckedChanged(object sender, EventArgs e)

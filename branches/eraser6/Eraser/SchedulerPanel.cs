@@ -203,7 +203,8 @@ namespace Eraser
 			runNowToolStripMenuItem.Enabled = aTaskNotQueued;
 			cancelTaskToolStripMenuItem.Enabled = aTaskExecuting;
 
-			editTaskToolStripMenuItem.Enabled = scheduler.SelectedItems.Count == 1;
+			editTaskToolStripMenuItem.Enabled = scheduler.SelectedItems.Count == 1 &&
+				!((Task)scheduler.SelectedItems[0].Tag).Executing;
 			deleteTaskToolStripMenuItem.Enabled = !aTaskExecuting;
 		}
 
@@ -266,7 +267,27 @@ namespace Eraser
 		/// <param name="e">Event argument.</param>
 		private void editTaskToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			throw new NotImplementedException("Not implemented.");
+			if (scheduler.SelectedItems.Count != 1)
+				return;
+
+			//Make sure that the task is not being executed, or else. This can
+			//be done in the Client library, but there will be no effect on the
+			//currently running task.
+			Task task = (Task)scheduler.SelectedItems[0].Tag;
+			if (task.Executing)
+				return;
+
+			//Edit the task.
+			using (TaskPropertiesForm form = new TaskPropertiesForm())
+			{
+				form.Task = task;
+				if (form.ShowDialog() == DialogResult.OK)
+				{
+					task = form.Task;
+					scheduler.SelectedItems[0].Tag = task;
+					Program.eraserClient.ReplaceTask(task);
+				}
+			}
 		}
 
 		/// <summary>

@@ -32,6 +32,9 @@ namespace Eraser
 			set { task = value; UpdateUIFromTask(); }
 		}
 
+		/// <summary>
+		/// Updates the local task object from the UI elements.
+		/// </summary>
 		private void UpdateTaskFromUI()
 		{
 			//Set the name of the task
@@ -93,27 +96,115 @@ namespace Eraser
 					schedule.MonthlySchedule = (int)scheduleMonthlyDayNumber.Value;
 				}
 				else
-					throw new ArgumentOutOfRangeException("No such scheduling method");
+					throw new NotImplementedException("No such scheduling method");
 			}
 		}
 
+		/// <summary>
+		/// Updates the UI elements to reflect the data in the Task object.
+		/// </summary>
 		private void UpdateUIFromTask()
 		{
-			throw new NotImplementedException("UpdateUIFromTask not implemented.");
+			//Set the name of the task
+			name.Text = task.Name;
+
+			//The data
+			foreach (Task.ErasureTarget target in task.Entries)
+			{
+				ListViewItem item = data.Items.Add(target.UIText);
+				item.SubItems.Add(target.Method.Name);
+			}
+
+			//And the schedule, if selected.
+			if (task.Schedule == Schedule.RunNow)
+			{
+				typeImmediate.Checked = true;
+			}
+			else if (task.Schedule == Schedule.RunOnRestart)
+			{
+				typeRestart.Checked = true;
+			}
+			else
+			{
+				typeRecurring.Checked = true;
+				RecurringSchedule schedule = (RecurringSchedule)task.Schedule;
+				scheduleTime.Value = scheduleTime.MinDate.Add(schedule.ExecutionTime.TimeOfDay);
+
+				switch (schedule.Type)
+				{
+					case RecurringSchedule.ScheduleUnit.DAILY:
+						scheduleDailyByDay.Checked = true;
+						scheduleDailyByDayFreq.Value = schedule.Frequency;
+						break;
+					case RecurringSchedule.ScheduleUnit.WEEKDAYS:
+						scheduleDailyByWeekday.Checked = true;
+						break;
+					case RecurringSchedule.ScheduleUnit.WEEKLY:
+						scheduleWeeklyFreq.Value = schedule.Frequency;
+						scheduleWeeklyMonday.Checked =
+							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.MONDAY) != 0;
+						scheduleWeeklyTuesday.Checked =
+							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.TUESDAY) != 0;
+						scheduleWeeklyWednesday.Checked =
+							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.WEDNESDAY) != 0;
+						scheduleWeeklyThursday.Checked =
+							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.THURSDAY) != 0;
+						scheduleWeeklyFriday.Checked =
+							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.FRIDAY) != 0;
+						scheduleWeeklySaturday.Checked =
+							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.SATURDAY) != 0;
+						scheduleWeeklySunday.Checked =
+							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.SUNDAY) != 0;
+						break;
+					case RecurringSchedule.ScheduleUnit.MONTHLY:
+						scheduleMonthlyFreq.Value = schedule.Frequency;
+						scheduleMonthlyDayNumber.Value = schedule.MonthlySchedule;
+						break;
+					default:
+						throw new NotImplementedException("Unknown schedule type.");
+				}
+			}
 		}
 
+		/// <summary>
+		/// Triggered when the user clicks on the Add Data button.
+		/// </summary>
+		/// <param name="sender">The button.</param>
+		/// <param name="e">Event argument.</param>
 		private void dataAdd_Click(object sender, EventArgs e)
 		{
 			using (TaskDataSelectionForm form = new TaskDataSelectionForm())
 			{
 				if (form.ShowDialog() == DialogResult.OK)
 				{
-					Task.ErasureTarget entry = form.GetTaskEntry();
-					ListViewItem item = data.Items.Add(entry.UIText);
+					Task.ErasureTarget target = form.Target;
+					ListViewItem item = data.Items.Add(target.UIText);
 					
-					item.SubItems.Add(entry.Method.Name);
-					task.Entries.Add(entry);
+					item.SubItems.Add(target.Method.Name);
+					task.Entries.Add(target);
 					errorProvider.Clear();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Generated when the user double-clicks an item in the list-view.
+		/// </summary>
+		/// <param name="sender">The list-view which generated this event.</param>
+		/// <param name="e">Event argument.</param>
+		private void data_ItemActivate(object sender, EventArgs e)
+		{
+			using (TaskDataSelectionForm form = new TaskDataSelectionForm())
+			{
+				ListViewItem item = data.SelectedItems[0];
+				form.Target = task.Entries[item.Index];
+
+				if (form.ShowDialog() == DialogResult.OK)
+				{
+					Task.ErasureTarget target = form.Target;
+					task.Entries[item.Index] = target;
+					item.Text = target.UIText;
+					item.SubItems[1].Text = target.Method.Name;
 				}
 			}
 		}
@@ -162,6 +253,20 @@ namespace Eraser
 				errorProvider.SetError(data, "The task has no data to erase.");
 				container.SelectedIndex = 0;
 				return;
+			}
+			else if (typeRecurring.Checked && scheduleWeekly.Checked)
+			{
+				if (!scheduleWeeklyMonday.Checked && !scheduleWeeklyTuesday.Checked &&
+					!scheduleWeeklyWednesday.Checked && !scheduleWeeklyThursday.Checked &&
+					!scheduleWeeklyFriday.Checked && !scheduleWeeklySaturday.Checked &&
+					!scheduleWeeklySunday.Checked)
+				{
+					errorProvider.SetIconPadding(scheduleWeeklyDays, -16);
+					errorProvider.SetError(scheduleWeeklyDays, "The task needs to run " +
+						"on at least one day a week");
+					container.SelectedIndex = 1;
+					return;
+				}
 			}
 
 			errorProvider.Clear();
