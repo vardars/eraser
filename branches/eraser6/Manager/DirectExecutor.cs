@@ -52,20 +52,7 @@ namespace Eraser.Manager
 			lock (tasksLock)
 			{
 				tasks.Add(task.ID, task);
-
-				//If the task is scheduled to run now, break the waiting thread and
-				//run it immediately
-				if (task.Schedule == Schedule.RunNow)
-				{
-					scheduledTasks.Add(DateTime.Now, task);
-					schedulerInterrupt.Set();
-				}
-				//If the task is scheduled, add the next execution time to the list
-				//of schduled tasks.
-				else if (task.Schedule != Schedule.RunOnRestart)
-				{
-					scheduledTasks.Add((task.Schedule as RecurringSchedule).NextRun, task);
-				}
+				QueueTask(task);
 			}
 		}
 
@@ -81,6 +68,30 @@ namespace Eraser.Manager
 				tasks.Remove(taskId);
 			}
 			return true;
+		}
+
+		public override void QueueTask(Task task)
+		{
+			//Ignore tasks which are only run on computer restart.
+			if (task.Schedule == Schedule.RunOnRestart)
+				return;
+
+			lock (tasksLock)
+			{
+				//If the task is scheduled to run now, break the waiting thread and
+				//run it immediately
+				if (task.Schedule == Schedule.RunNow)
+				{
+					scheduledTasks.Add(DateTime.Now, task);
+					schedulerInterrupt.Set();
+				}
+				//If the task is scheduled, add the next execution time to the list
+				//of schduled tasks.
+				else
+				{
+					scheduledTasks.Add((task.Schedule as RecurringSchedule).NextRun, task);
+				}
+			}
 		}
 
 		public override void CancelTask(Task task)

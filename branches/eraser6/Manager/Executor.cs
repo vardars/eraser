@@ -26,6 +26,12 @@ namespace Eraser.Manager
 		public abstract bool DeleteTask(uint taskId);
 
 		/// <summary>
+		/// Queues the task for execution.
+		/// </summary>
+		/// <param name="task">The task to queue.</param>
+		public abstract void QueueTask(Task task);
+
+		/// <summary>
 		/// Cancels the given task, if it is being executed.
 		/// </summary>
 		/// <param name="task">The task to cancel.</param>
