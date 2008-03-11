@@ -16,11 +16,11 @@ namespace Eraser
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new MainForm());
 
-			(eraserClient as IDisposable).Dispose();
+			using (eraserClient = new DirectExecutor())
+				Application.Run(new MainForm());
 		}
 
-		public static Executor eraserClient = new DirectExecutor();
+		public static DirectExecutor eraserClient;
 	}
 }
