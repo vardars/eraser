@@ -45,6 +45,8 @@
 			this.stop = new System.Windows.Forms.Button();
 			this.bevelLine1 = new Trustbridge.Windows.Controls.BevelLine();
 			this.bevelLine2 = new Trustbridge.Windows.Controls.BevelLine();
+			this.timeLeftLbl = new System.Windows.Forms.Label();
+			this.timeLeft = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.title)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -53,7 +55,7 @@
 			this.overallProgressLbl.Location = new System.Drawing.Point(6, 174);
 			this.overallProgressLbl.Name = "overallProgressLbl";
 			this.overallProgressLbl.Size = new System.Drawing.Size(128, 15);
-			this.overallProgressLbl.TabIndex = 0;
+			this.overallProgressLbl.TabIndex = 1;
 			this.overallProgressLbl.Text = "Total: 75%";
 			this.overallProgressLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
@@ -62,7 +64,7 @@
 			this.overallProgress.Location = new System.Drawing.Point(6, 192);
 			this.overallProgress.Name = "overallProgress";
 			this.overallProgress.Size = new System.Drawing.Size(129, 15);
-			this.overallProgress.TabIndex = 1;
+			this.overallProgress.TabIndex = 2;
 			this.overallProgress.Value = 75;
 			// 
 			// jobTitle
@@ -72,7 +74,7 @@
 			this.jobTitle.Location = new System.Drawing.Point(149, 8);
 			this.jobTitle.Name = "jobTitle";
 			this.jobTitle.Size = new System.Drawing.Size(180, 15);
-			this.jobTitle.TabIndex = 2;
+			this.jobTitle.TabIndex = 3;
 			this.jobTitle.Text = "C:\\Users\\Joel Low\\Documents\\";
 			// 
 			// status
@@ -82,7 +84,7 @@
 			this.status.Location = new System.Drawing.Point(215, 28);
 			this.status.Name = "status";
 			this.status.Size = new System.Drawing.Size(84, 15);
-			this.status.TabIndex = 3;
+			this.status.TabIndex = 5;
 			this.status.Text = "Overwriting...";
 			// 
 			// statusLbl
@@ -100,7 +102,7 @@
 			this.itemLbl.Location = new System.Drawing.Point(148, 61);
 			this.itemLbl.Name = "itemLbl";
 			this.itemLbl.Size = new System.Drawing.Size(34, 15);
-			this.itemLbl.TabIndex = 5;
+			this.itemLbl.TabIndex = 6;
 			this.itemLbl.Text = "Item:";
 			// 
 			// item
@@ -109,7 +111,7 @@
 			this.item.Location = new System.Drawing.Point(215, 61);
 			this.item.Name = "item";
 			this.item.Size = new System.Drawing.Size(71, 15);
-			this.item.TabIndex = 6;
+			this.item.TabIndex = 7;
 			this.item.Text = "C:\\...\\File.txt";
 			// 
 			// passLbl
@@ -118,7 +120,7 @@
 			this.passLbl.Location = new System.Drawing.Point(148, 80);
 			this.passLbl.Name = "passLbl";
 			this.passLbl.Size = new System.Drawing.Size(33, 15);
-			this.passLbl.TabIndex = 7;
+			this.passLbl.TabIndex = 8;
 			this.passLbl.Text = "Pass:";
 			// 
 			// pass
@@ -126,9 +128,9 @@
 			this.pass.AutoSize = true;
 			this.pass.Location = new System.Drawing.Point(215, 80);
 			this.pass.Name = "pass";
-			this.pass.Size = new System.Drawing.Size(131, 15);
-			this.pass.TabIndex = 8;
-			this.pass.Text = "7 of 35 (15 seconds left)";
+			this.pass.Size = new System.Drawing.Size(42, 15);
+			this.pass.TabIndex = 9;
+			this.pass.Text = "7 of 35";
 			// 
 			// title
 			// 
@@ -145,7 +147,7 @@
 			this.titleLbl.Location = new System.Drawing.Point(6, 6);
 			this.titleLbl.Name = "titleLbl";
 			this.titleLbl.Size = new System.Drawing.Size(128, 18);
-			this.titleLbl.TabIndex = 12;
+			this.titleLbl.TabIndex = 0;
 			this.titleLbl.Text = "Erasing...";
 			this.titleLbl.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
@@ -163,7 +165,7 @@
 			this.itemProgress.Location = new System.Drawing.Point(150, 137);
 			this.itemProgress.Name = "itemProgress";
 			this.itemProgress.Size = new System.Drawing.Size(257, 17);
-			this.itemProgress.TabIndex = 14;
+			this.itemProgress.TabIndex = 12;
 			this.itemProgress.Value = 97;
 			// 
 			// stop
@@ -171,9 +173,10 @@
 			this.stop.Location = new System.Drawing.Point(367, 184);
 			this.stop.Name = "stop";
 			this.stop.Size = new System.Drawing.Size(75, 23);
-			this.stop.TabIndex = 17;
+			this.stop.TabIndex = 14;
 			this.stop.Text = "Stop";
 			this.stop.UseVisualStyleBackColor = true;
+			this.stop.Click += new System.EventHandler(this.stop_Click);
 			// 
 			// bevelLine1
 			// 
@@ -181,7 +184,7 @@
 			this.bevelLine1.Location = new System.Drawing.Point(152, 51);
 			this.bevelLine1.Name = "bevelLine1";
 			this.bevelLine1.Size = new System.Drawing.Size(285, 2);
-			this.bevelLine1.TabIndex = 18;
+			this.bevelLine1.TabIndex = 16;
 			// 
 			// bevelLine2
 			// 
@@ -190,13 +193,33 @@
 			this.bevelLine2.Name = "bevelLine2";
 			this.bevelLine2.Orientation = System.Windows.Forms.Orientation.Vertical;
 			this.bevelLine2.Size = new System.Drawing.Size(2, 190);
-			this.bevelLine2.TabIndex = 20;
+			this.bevelLine2.TabIndex = 15;
+			// 
+			// timeLeftLbl
+			// 
+			this.timeLeftLbl.AutoSize = true;
+			this.timeLeftLbl.Location = new System.Drawing.Point(149, 99);
+			this.timeLeftLbl.Name = "timeLeftLbl";
+			this.timeLeftLbl.Size = new System.Drawing.Size(57, 15);
+			this.timeLeftLbl.TabIndex = 10;
+			this.timeLeftLbl.Text = "Time left:";
+			// 
+			// timeLeft
+			// 
+			this.timeLeft.AutoSize = true;
+			this.timeLeft.Location = new System.Drawing.Point(215, 99);
+			this.timeLeft.Name = "timeLeft";
+			this.timeLeft.Size = new System.Drawing.Size(76, 15);
+			this.timeLeft.TabIndex = 11;
+			this.timeLeft.Text = "Calculating...";
 			// 
 			// ProgressForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.ClientSize = new System.Drawing.Size(449, 216);
+			this.Controls.Add(this.timeLeft);
+			this.Controls.Add(this.timeLeftLbl);
 			this.Controls.Add(this.bevelLine2);
 			this.Controls.Add(this.bevelLine1);
 			this.Controls.Add(this.stop);
@@ -244,6 +267,8 @@
 		private System.Windows.Forms.Button stop;
 		private Trustbridge.Windows.Controls.BevelLine bevelLine1;
 		private Trustbridge.Windows.Controls.BevelLine bevelLine2;
+		private System.Windows.Forms.Label timeLeftLbl;
+		private System.Windows.Forms.Label timeLeft;
 	}
 }
 

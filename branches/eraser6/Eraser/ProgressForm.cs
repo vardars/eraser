@@ -42,8 +42,8 @@ namespace Eraser
 			}
 
 			item.Text = e.CurrentItemName;
-			pass.Text = string.Format("{0} out of {1} ({2} seconds left)",
-				e.CurrentPass, e.TotalPasses, e.TimeLeft);
+			pass.Text = string.Format("{0} out of {1}", e.CurrentPass, e.TotalPasses);
+			timeLeft.Text = string.Format("{0} left", new TimeSpan(0, 0, e.TimeLeft).ToString());
 
 			itemProgress.Value = e.CurrentItemProgress;
 			itemProgressLbl.Text = string.Format("{0}%", e.CurrentItemProgress);
@@ -71,18 +71,22 @@ namespace Eraser
 			switch (highestLevel)
 			{
 				case LogLevel.WARNING:
-					status.Text += " with warnings.";
+					status.Text += " with warnings";
 					break;
 				case LogLevel.ERROR:
-					status.Text  += " with errors.";
+					status.Text  += " with errors";
 					break;
 				case LogLevel.FATAL:
-					status.Text = "Not completed.";
-					break;
-				default:
-					status.Text += ".";
+					status.Text = "Not completed";
 					break;
 			}
+		}
+
+		private void stop_Click(object sender, EventArgs e)
+		{
+			if (task.Executing)
+				task.Executor.CancelTask(task);
+			Close();
 		}
 	}
 }
