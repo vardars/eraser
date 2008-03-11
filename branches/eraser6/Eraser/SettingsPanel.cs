@@ -31,7 +31,7 @@ namespace Eraser
 		{
 			ListViewItem item = pluginsManager.Items.Add(instance.Plugin.Name);
 			item.SubItems.Add(instance.Plugin.Author);
-			item.SubItems.Add(string.Empty);//item.SubItems.Add(i.Current.Version);
+			item.SubItems.Add(instance.Assembly.GetName().Version.ToString());
 			item.SubItems.Add(instance.Path);
 		}
 

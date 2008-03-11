@@ -29,9 +29,9 @@ namespace Eraser
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Erasure method providers", System.Windows.Forms.HorizontalAlignment.Left);
-			System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Random number generators", System.Windows.Forms.HorizontalAlignment.Left);
-			System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("History trace cleaners", System.Windows.Forms.HorizontalAlignment.Left);
+			System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Erasure method providers", System.Windows.Forms.HorizontalAlignment.Left);
+			System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Random number generators", System.Windows.Forms.HorizontalAlignment.Left);
+			System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("History trace cleaners", System.Windows.Forms.HorizontalAlignment.Left);
 			this.shell = new Eraser.LightGroup();
 			this.shellContextMenu = new System.Windows.Forms.CheckBox();
 			this.lockedAllow = new System.Windows.Forms.CheckBox();
@@ -199,23 +199,22 @@ namespace Eraser
 			// 
 			this.pluginsManager.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.pluginsManager.CheckBoxes = true;
 			this.pluginsManager.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.pluginsManagerColName,
             this.pluginsManagerColAuthor,
             this.pluginsManagerColVersion,
             this.pluginsManagerColPath});
 			this.pluginsManager.FullRowSelect = true;
-			listViewGroup4.Header = "Erasure method providers";
-			listViewGroup4.Name = "pluginsManagerGrpMethod";
-			listViewGroup5.Header = "Random number generators";
-			listViewGroup5.Name = "pluginsManagerGrpPrng";
-			listViewGroup6.Header = "History trace cleaners";
-			listViewGroup6.Name = "pluginsManagerGrpHistory";
+			listViewGroup1.Header = "Erasure method providers";
+			listViewGroup1.Name = "pluginsManagerGrpMethod";
+			listViewGroup2.Header = "Random number generators";
+			listViewGroup2.Name = "pluginsManagerGrpPrng";
+			listViewGroup3.Header = "History trace cleaners";
+			listViewGroup3.Name = "pluginsManagerGrpHistory";
 			this.pluginsManager.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup4,
-            listViewGroup5,
-            listViewGroup6});
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3});
 			this.pluginsManager.Location = new System.Drawing.Point(20, 344);
 			this.pluginsManager.Name = "pluginsManager";
 			this.pluginsManager.Size = new System.Drawing.Size(689, 234);
