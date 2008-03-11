@@ -178,7 +178,7 @@ namespace Eraser.Manager
 		/// </summary>
 		public DateTime ExecutionTime
 		{
-			get { return ExecutionTime; }
+			get { return executionTime; }
 			set { executionTime = value; }
 		}
 
