@@ -34,7 +34,7 @@ namespace Eraser
 			ToolBar.Location = new Point(14, 27);
 			ToolBar.Size = new Size(500, 26);
 			ToolBar.TabIndex = 1;
-			this.Controls.Add(this.ToolBar);
+			Controls.Add(ToolBar);
 
 			ToolBarItem schedule = new ToolBarItem();
 			schedule.Bitmap = Properties.Resources.ToolbarSchedule;
@@ -42,7 +42,7 @@ namespace Eraser
 			schedule.Menu = toolbarScheduleMenu;
 			schedule.ToolbarItemClicked += delegate(object sender, EventArgs args)
 			{
-				this.ChangePage(Pages.SCHEDULER);
+				ChangePage(Pages.SCHEDULER);
 			};
 			ToolBar.Items.Add(schedule);
 
@@ -51,7 +51,7 @@ namespace Eraser
 			settings.Text = "Settings";
 			settings.ToolbarItemClicked += delegate(object sender, EventArgs args)
 			{
-				this.ChangePage(Pages.SETTINGS);
+				ChangePage(Pages.SETTINGS);
 			};
 			ToolBar.Items.Add(settings);
 
@@ -146,7 +146,7 @@ namespace Eraser
 		{
 			//Draw the base background
 			dc.FillRectangle(new SolidBrush(Color.FromArgb(unchecked((int)0xFF292929))),
-				new Rectangle(new Point(0, 0), this.Size));
+				new Rectangle(new Point(0, 0), Size));
 
 			//Then the side gradient
 			dc.FillRectangle(new LinearGradientBrush(new Rectangle(0, 0, 338, Math.Max(1, ClientSize.Height)),

@@ -279,7 +279,6 @@ namespace Eraser.Manager
 						//Ok, we now need to find the earliest day of the week where
 						//the task will run.
 						throw new NotImplementedException("Weekly schedule calculation not implemented");
-						break;
 					case ScheduleUnit.MONTHLY:
 						//Increment the month until we are past our current date.
 						nextRun = nextRun.AddMinutes(executionTime.Minute - nextRun.Minute);

@@ -181,33 +181,33 @@ namespace Eraser
 		public Settings()
 		{
 			RegistryKey key = Application.UserAppDataRegistry;
-			this.ActivePRNG = new Guid((string)
+			ActivePRNG = new Guid((string)
 				key.GetValue("PRNG", (object)Guid.Empty));
-			this.EraseLockedFilesOnRestart =
+			EraseLockedFilesOnRestart =
 				(int)key.GetValue("EraseOnRestart", (object)true) != 0;
-			this.ConfirmEraseOnRestart =
+			ConfirmEraseOnRestart =
 				(int)key.GetValue("ConfirmEraseOnRestart", (object)true) != 0;
-			this.DefaultFileErasureMethod = new Guid((string)
+			DefaultFileErasureMethod = new Guid((string)
 				key.GetValue("DefaultFileErasureMethod", (object)Guid.Empty));
-			this.DefaultUnusedSpaceErasureMethod = new Guid((string)
+			DefaultUnusedSpaceErasureMethod = new Guid((string)
 				key.GetValue("DefaultUnusedSpaceErasureMethod", (object)Guid.Empty));
-			this.ExecuteMissedTasksImmediately =
+			ExecuteMissedTasksImmediately =
 				(int)key.GetValue("ExecuteMissedTasksImmediately", (object)true) != 0;
 		}
 
 		~Settings()
 		{
 			RegistryKey key = Application.UserAppDataRegistry;
-			key.SetValue("PRNG", this.ActivePRNG);
-			key.SetValue("EraseOnRestart", this.EraseLockedFilesOnRestart,
+			key.SetValue("PRNG", ActivePRNG);
+			key.SetValue("EraseOnRestart", EraseLockedFilesOnRestart,
 				RegistryValueKind.DWord);
-			key.SetValue("ConfirmEraseOnRestart", this.ConfirmEraseOnRestart,
+			key.SetValue("ConfirmEraseOnRestart", ConfirmEraseOnRestart,
 				RegistryValueKind.DWord);
-			key.SetValue("DefaultFileErasureMethod", this.DefaultFileErasureMethod);
+			key.SetValue("DefaultFileErasureMethod", DefaultFileErasureMethod);
 			key.SetValue("DefaultUnusedSpaceErasureMethod",
-				this.DefaultUnusedSpaceErasureMethod);
+				DefaultUnusedSpaceErasureMethod);
 			key.SetValue("ExecuteMissedTasksImmediately",
-				this.ExecuteMissedTasksImmediately, RegistryValueKind.DWord);
+				ExecuteMissedTasksImmediately, RegistryValueKind.DWord);
 		}
 	}
 }
