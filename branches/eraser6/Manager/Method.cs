@@ -34,7 +34,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The number of erase passes for this erasure method.
 		/// </summary>
-		public abstract uint Passes
+		public abstract int Passes
 		{
 			get;
 		}
@@ -51,13 +51,13 @@ namespace Eraser.Manager
 		/// Disk operation write unit. Chosen such that this value mod 3, 4, 512,
 		/// and 1024 is 0
 		/// </summary>
-		protected const uint DiskOperationUnit = 1536 * 4096 * 2;
+		protected const int DiskOperationUnit = 1536 * 4096 * 2;
 
 		/// <summary>
 		/// Unused space erasure file size. Each of the files used in erasing
 		/// unused space will be of this size.
 		/// </summary>
-		protected const uint FreeSpaceFileUnit = DiskOperationUnit * 36;
+		protected const int FreeSpaceFileUnit = DiskOperationUnit * 36;
 
 		/// <summary>
 		/// A simple callback for clients to retrieve progress information from
@@ -67,7 +67,7 @@ namespace Eraser.Manager
 		/// percentage progress of the erasure.</param>
 		/// <param name="currentPass">The current pass number. The total number
 		/// of passes can be found from the Passes property.</param>
-		public delegate void OnProgress(float currentProgress, uint currentPass);
+		public delegate void OnProgress(float currentProgress, int currentPass);
 
 		/// <summary>
 		/// The main bit of the class! This function is called whenever data has
@@ -192,7 +192,7 @@ namespace Eraser.Manager
 				get { return "(default)"; }
 			}
 
-			public override uint Passes
+			public override int Passes
 			{
 				get { return 0; }
 			}

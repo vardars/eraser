@@ -181,7 +181,7 @@ namespace Eraser.Manager
 			for (int i = 0; i < paths.Count; ++i)
 			{
 				//Update the task progress
-				eventArgs.overallProgress = (uint)(i * 100) / (uint)paths.Count;
+				eventArgs.overallProgress = (i * 100) / paths.Count;
 				eventArgs.currentItemName = paths[i];
 				eventArgs.currentItemProgress = 0;
 				eventArgs.totalPasses = method.Passes;
@@ -218,12 +218,13 @@ namespace Eraser.Manager
 
 					//Then erase the file.
 					method.Erase(strm, PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
-						delegate(float currentProgress, uint currentPass)
+						delegate(float currentProgress, int currentPass)
 						{
 							eventArgs.currentPass = currentPass;
-							eventArgs.currentItemProgress = (uint)currentProgress * 100;
-							eventArgs.overallProgress = (uint)(((i + currentProgress) /
-								(float)paths.Count) * 100);
+							eventArgs.currentItemProgress = (int)
+								((float)currentProgress * 100.0);
+							eventArgs.overallProgress = (int)
+								(((i + currentProgress) / (float)paths.Count) * 100);
 							task.OnProgressChanged(eventArgs);
 						}
 					);
@@ -252,7 +253,7 @@ namespace Eraser.Manager
 			info.Attributes = FileAttributes.NotContentIndexed;
 
 			//Rename the file a few times to erase the record from the MFT.
-			for (uint i = 0; i < FilenameErasePasses; ++i)
+			for (int i = 0; i < FilenameErasePasses; ++i)
 			{
 				//Get a random file name
 				PRNG prng = PRNGManager.GetInstance(Globals.Settings.ActivePRNG);

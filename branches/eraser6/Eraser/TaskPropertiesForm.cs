@@ -58,7 +58,7 @@ namespace Eraser
 					if (scheduleDailyByDay.Checked)
 					{
 						schedule.Type = RecurringSchedule.ScheduleUnit.DAILY;
-						schedule.Frequency = (uint)scheduleDailyByDayFreq.Value;
+						schedule.Frequency = (int)scheduleDailyByDayFreq.Value;
 					}
 					else
 					{
@@ -68,7 +68,7 @@ namespace Eraser
 				else if (scheduleWeekly.Checked)
 				{
 					schedule.Type = RecurringSchedule.ScheduleUnit.WEEKLY;
-					schedule.Frequency = (uint)scheduleWeeklyFreq.Value;
+					schedule.Frequency = (int)scheduleWeeklyFreq.Value;
 					RecurringSchedule.DaysOfWeek weeklySchedule = 0;
 					if (scheduleWeeklyMonday.Checked)
 						weeklySchedule |= RecurringSchedule.DaysOfWeek.MONDAY;
@@ -89,8 +89,8 @@ namespace Eraser
 				else if (scheduleMonthly.Checked)
 				{
 					schedule.Type = RecurringSchedule.ScheduleUnit.MONTHLY;
-					schedule.Frequency = (uint)scheduleMonthlyFreq.Value;
-					schedule.MonthlySchedule = (uint)scheduleMonthlyDayNumber.Value;
+					schedule.Frequency = (int)scheduleMonthlyFreq.Value;
+					schedule.MonthlySchedule = (int)scheduleMonthlyDayNumber.Value;
 				}
 				else
 					throw new ArgumentOutOfRangeException("No such scheduling method");

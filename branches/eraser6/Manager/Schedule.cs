@@ -152,7 +152,7 @@ namespace Eraser.Manager
 		/// The frequency of the event. This value is valid only with Daily,
 		/// Weekly and Monthly schedules.
 		/// </summary>
-		public uint Frequency
+		public int Frequency
 		{
 			get
 			{
@@ -211,7 +211,7 @@ namespace Eraser.Manager
 		/// The nth day of the month on which this task will run. This is valid
 		/// only with Monthly schedules
 		/// </summary>
-		public uint MonthlySchedule
+		public int MonthlySchedule
 		{
 			get
 			{
@@ -307,10 +307,10 @@ namespace Eraser.Manager
 		}
 
 		private ScheduleUnit type;
-		private uint frequency;
+		private int frequency;
 		private DateTime executionTime;
 		private DaysOfWeek weeklySchedule;
-		private uint monthlySchedule;
+		private int monthlySchedule;
 
 		private DateTime lastRun;
 	}

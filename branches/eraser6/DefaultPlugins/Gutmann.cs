@@ -14,9 +14,9 @@ namespace Eraser.DefaultPlugins
 			get { return "Gutmann"; }
 		}
 
-		public override uint Passes
+		public override int Passes
 		{
-			get { return (uint)passes.Length; }
+			get { return passes.Length; }
 		}
 
 		public override Guid GUID
@@ -37,7 +37,7 @@ namespace Eraser.DefaultPlugins
 			byte[] buffer = new byte[DiskOperationUnit];
 
 			//Run every pass!
-			for (uint pass = 0; pass < Passes; ++pass)
+			for (int pass = 0; pass < Passes; ++pass)
 			{
 				//Do a progress callback first.
 				callback(pass / (float)Passes, pass);

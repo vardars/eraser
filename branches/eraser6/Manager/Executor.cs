@@ -36,6 +36,6 @@ namespace Eraser.Manager
 		/// The number of times file names are renamed to erase the file name from
 		/// the MFT.
 		/// </summary>
-		protected const uint FilenameErasePasses = 7;
+		protected const int FilenameErasePasses = 7;
 	}
 }

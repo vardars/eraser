@@ -25,7 +25,7 @@ namespace Eraser.DefaultPlugins
 		{
 			lock (isaac)
 			{
-				for (uint bytesGenerated = 0;
+				for (int bytesGenerated = 0;
 					bytesGenerated < buffer.Length * sizeof(byte);
 					bytesGenerated += Rand.ISAAC.SIZE * sizeof(int))
 				{
@@ -37,10 +37,10 @@ namespace Eraser.DefaultPlugins
 					fixed (byte* dest = buffer)
 					{
 						byte* bSrc = (byte*)src;
-						int bytesToCopy = (int)Math.Min((uint)Rand.ISAAC.SIZE, buffer.Length),
+						int bytesToCopy = Math.Min(Rand.ISAAC.SIZE, buffer.Length),
 						    randArraySize = isaac.rsl.Length * sizeof(int);
 
-						for (uint i = 0; i < randArraySize && i < bytesToCopy; ++i)
+						for (int i = 0; i < randArraySize && i < bytesToCopy; ++i)
 							dest[i] = bSrc[i];
 					}
 				}
