@@ -167,6 +167,8 @@ namespace Eraser
 			// folderDelete
 			// 
 			this.folderDelete.AutoSize = true;
+			this.folderDelete.Checked = true;
+			this.folderDelete.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.folderDelete.Location = new System.Drawing.Point(31, 210);
 			this.folderDelete.Name = "folderDelete";
 			this.folderDelete.Size = new System.Drawing.Size(140, 19);
