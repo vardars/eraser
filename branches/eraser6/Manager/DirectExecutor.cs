@@ -19,7 +19,7 @@ namespace Eraser.Manager
 		{
 			thread = new Thread(delegate()
 			{
-				this.Main();
+				Main();
 			});
 
 			thread.Start();
@@ -38,11 +38,11 @@ namespace Eraser.Manager
 			{
 				if (unusedIds.Count != 0)
 				{
-					task.ID = unusedIds[0];
+					task.id = unusedIds[0];
 					unusedIds.RemoveAt(0);
 				}
 				else
-					task.ID = ++nextId;
+					task.id = ++nextId;
 			}
 
 			//Add the task to the set of tasks
@@ -118,6 +118,9 @@ namespace Eraser.Manager
 				{
 					try
 					{
+						//Broadcast the task started event.
+						task.OnTaskStarted(new TaskEventArgs(task));
+
 						//Run the task
 						foreach (Task.ErasureTarget target in task.Entries)
 							try
@@ -142,10 +145,15 @@ namespace Eraser.Manager
 					{
 						task.LogEntry(new LogEntry(e.Message, LogLevel.FATAL));
 					}
+					finally
+					{
+						//And the task finished event.
+						task.OnTaskFinished(new TaskEventArgs(task));
 
-					//If the task is a recurring task, reschedule it since we are done.
-					if (task.Schedule is RecurringSchedule)
-						((RecurringSchedule)task.Schedule).Reschedule(DateTime.Now);
+						//If the task is a recurring task, reschedule it since we are done.
+						if (task.Schedule is RecurringSchedule)
+							((RecurringSchedule)task.Schedule).Reschedule(DateTime.Now);
+					}
 				}
 
 				//Wait for half a minute to check for the next scheduled task.
@@ -182,6 +190,7 @@ namespace Eraser.Manager
 			{
 				//Update the task progress
 				eventArgs.overallProgress = (i * 100) / paths.Count;
+				eventArgs.currentTarget = target;
 				eventArgs.currentItemName = paths[i];
 				eventArgs.currentItemProgress = 0;
 				eventArgs.totalPasses = method.Passes;

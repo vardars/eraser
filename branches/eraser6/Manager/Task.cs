@@ -173,7 +173,6 @@ namespace Eraser.Manager
 		public uint ID
 		{
 			get { return id; }
-			set { id = value; }
 		}
 
 		/// <summary>
@@ -184,6 +183,38 @@ namespace Eraser.Manager
 		{
 			get { return name; }
 			set { name = value; }
+		}
+
+		/// <summary>
+		/// The name of the task, used for display in UI elements.
+		/// </summary>
+		public string UIText
+		{
+			get
+			{
+				//Simple case, the task name was given by the user.
+				if (Name.Length != 0)
+					return Name;
+
+				string result = string.Empty;
+				if (Entries.Count < 3)
+					//Simpler case, small set of data.
+					foreach (Task.ErasureTarget tgt in Entries)
+						result += tgt.UIText + ", ";
+				else
+					//Ok, we've quite a few entries, get the first, the mid and the end.
+					for (int i = 0; i < Entries.Count; i += Entries.Count / 3)
+						result += Entries[i].UIText + ", ";
+				return result.Substring(0, result.Length - 2);
+			}
+		}
+
+		/// <summary>
+		/// Gets the status of the task - whether it is being executed.
+		/// </summary>
+		public bool Executing
+		{
+			get { return executing; }
 		}
 
 		/// <summary>
@@ -227,6 +258,13 @@ namespace Eraser.Manager
 				log.Add(entry);
 		}
 
+		#region Events
+		/// <summary>
+		/// The prototype for events handling just a task object as the event argument.
+		/// </summary>
+		/// <param name="e">The task object.</param>
+		public delegate void TaskEventFunction(TaskEventArgs e);
+
 		/// <summary>
 		/// The prototype for events handling the progress changed event.
 		/// </summary>
@@ -234,9 +272,30 @@ namespace Eraser.Manager
 		public delegate void ProgressEventFunction(TaskProgressEventArgs e);
 
 		/// <summary>
+		/// The start of the execution of a task.
+		/// </summary>
+		public event TaskEventFunction TaskStarted;
+
+		/// <summary>
 		/// The event object holding all event handlers.
 		/// </summary>
 		public event ProgressEventFunction ProgressChanged;
+
+		/// <summary>
+		/// The completion of the execution of a task.
+		/// </summary>
+		public event TaskEventFunction TaskFinished;
+
+		/// <summary>
+		/// Broadcasts the task execution start event.
+		/// </summary>
+		/// <param name="e"></param>
+		internal void OnTaskStarted(TaskEventArgs e)
+		{
+			if (TaskStarted != null)
+				TaskStarted.Invoke(e);
+			executing = true;
+		}
 
 		/// <summary>
 		/// Broadcasts a ProgressChanged event.
@@ -248,30 +307,39 @@ namespace Eraser.Manager
 				ProgressChanged.Invoke(e);
 		}
 
-		private uint id;
+		/// <summary>
+		/// Broadcasts the task execution completion event.
+		/// </summary>
+		/// <param name="e"></param>
+		internal void OnTaskFinished(TaskEventArgs e)
+		{
+			if (TaskFinished != null)
+				TaskFinished.Invoke(e);
+			executing = false;
+		}
+		#endregion
+
+		internal uint id;
 		private string name;
+		private bool executing;
+
 		private Schedule schedule = Schedule.RunNow;
 		private List<ErasureTarget> entries = new List<ErasureTarget>();
 		private List<LogEntry> log = new List<LogEntry>();
 	}
 
 	/// <summary>
-	/// A Event argument object containing the progress of the task.
+	/// A base event class for all event arguments involving a task.
 	/// </summary>
-	public class TaskProgressEventArgs : EventArgs
+	public class TaskEventArgs : EventArgs
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="overallProgress">The overall progress of the task.</param>
-		/// <param name="currentItemProgress">The progress for the individual
-		/// component of the task.</param>
-		public TaskProgressEventArgs(Task task, int overallProgress,
-			int currentItemProgress)
+		/// <param name="task">The task being run.</param>
+		public TaskEventArgs(Task task)
 		{
 			this.task = task;
-			this.overallProgress = overallProgress;
-			this.currentItemProgress = currentItemProgress;
 		}
 
 		/// <summary>
@@ -282,12 +350,43 @@ namespace Eraser.Manager
 			get { return task; }
 		}
 
+		private Task task;
+	}
+
+	/// <summary>
+	/// A Event argument object containing the progress of the task.
+	/// </summary>
+	public class TaskProgressEventArgs : TaskEventArgs
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="task">The task being run.</param>
+		/// <param name="overallProgress">The overall progress of the task.</param>
+		/// <param name="currentItemProgress">The progress for the individual
+		/// component of the task.</param>
+		public TaskProgressEventArgs(Task task, int overallProgress,
+			int currentItemProgress)
+			: base(task)
+		{
+			this.overallProgress = overallProgress;
+			this.currentItemProgress = currentItemProgress;
+		}
+
 		/// <summary>
 		/// A number from 0 to 100 detailing the overall progress of the task.
 		/// </summary>
 		public int OverallProgress
 		{
 			get { return overallProgress; }
+		}
+
+		/// <summary>
+		/// The current erasure target - the current item being erased.
+		/// </summary>
+		public Task.ErasureTarget CurrentTarget
+		{
+			get { return currentTarget; }
 		}
 
 		/// <summary>
@@ -323,11 +422,11 @@ namespace Eraser.Manager
 			get { return totalPasses; }
 		}
 
-		private Task task;
 		internal int overallProgress;
+		internal Task.ErasureTarget currentTarget;
 		internal int currentItemProgress;
 		internal string currentItemName;
-		internal int currentPass;
+		internal int currentPass = 1;
 		internal int totalPasses;
 	}
 }
