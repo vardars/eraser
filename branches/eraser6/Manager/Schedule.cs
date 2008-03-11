@@ -132,8 +132,9 @@ namespace Eraser.Manager
 						if ((weeklySchedule & DaysOfWeek.SUNDAY) != 0)
 							result += "Sunday, ";
 
-						result += string.Format("once every {0} week{1}.", frequency,
-							frequency == 1 ? "s" : "");
+						result += frequency == 1 ?
+							string.Format("once every {0} week.", frequency) :
+							string.Format("once every {0} weeks.", frequency);
 						break;
 					case ScheduleUnit.MONTHLY:
 						result = string.Format("On day {0} of every {1} month{2}",
