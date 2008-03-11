@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using System.Drawing;
 
 namespace Eraser.Util
@@ -41,6 +42,53 @@ namespace Eraser.Util
 				SHGetFileInfoFlags.SHGFI_SMALLICON | SHGetFileInfoFlags.SHGFI_ICON);
 			return Icon.FromHandle(shfi.hIcon);
 		}
+
+		public static string GetCompactPath(string longPath, int newWidth, Font drawFont)
+		{
+			using (Control ctrl = new Control())
+			{
+				//First check if the source string is too long.
+				Graphics g = ctrl.CreateGraphics();
+				int width = g.MeasureString(longPath, drawFont).ToSize().Width;
+				if (width <= newWidth)
+					return longPath;
+
+				//It is, shorten it.
+				int aveCharWidth = width / longPath.Length;
+				int charCount = newWidth / aveCharWidth;
+				StringBuilder builder = new StringBuilder();
+				builder.Append(longPath);
+				builder.EnsureCapacity(charCount);
+
+				while (g.MeasureString(builder.ToString(), drawFont).Width > newWidth)
+				{
+					if (PathCompactPathEx(builder, longPath, (UIntPtr)(--charCount),
+						(UIntPtr)0) == UIntPtr.Zero)
+					{
+						return string.Empty;
+					}
+				}
+
+				return builder.ToString();
+			}
+		}
+
+		/// <summary>
+		/// Truncates a path to fit within a certain number of characters by
+		/// replacing path components with ellipses.
+		/// </summary>
+		/// <param name="pszOut">[out] The address of the string that has been altered.</param>
+		/// <param name="pszSrc">[in] A pointer to a null-terminated string of maximum
+		/// length MAX_PATH that contains the path to be altered.</param>
+		/// <param name="cchMax">[in] The maximum number of characters to be
+		/// contained in the new string, including the terminating NULL character.
+		/// For example, if cchMax = 8, the resulting string can contain a maximum
+		/// of 7 characters plus the terminating NULL character.</param>
+		/// <param name="dwFlags">Reserved.</param>
+		/// <returns>Returns TRUE if successful, or FALSE otherwise.</returns>
+		[DllImport("Shlwapi.dll")]
+		private static extern UIntPtr PathCompactPathEx(
+			StringBuilder pszOut, string pszSrc, UIntPtr cchMax, UIntPtr dwFlags);
 
 		/// <summary>
 		/// Retrieves information about an object in the file system, such as a

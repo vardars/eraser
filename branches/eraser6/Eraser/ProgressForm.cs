@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using Eraser.Manager;
+using Eraser.Util;
 
 namespace Eraser
 {
@@ -41,7 +42,7 @@ namespace Eraser
 				return;
 			}
 
-			item.Text = e.CurrentItemName;
+			item.Text = File.GetCompactPath(e.CurrentItemName, item.Width, item.Font);
 			pass.Text = string.Format("{0} out of {1}", e.CurrentPass, e.TotalPasses);
 			timeLeft.Text = string.Format("{0} left", new TimeSpan(0, 0, e.TimeLeft).ToString());
 
@@ -80,6 +81,9 @@ namespace Eraser
 					status.Text = "Not completed";
 					break;
 			}
+
+			//Change the Stop button to be a Close button.
+			stop.Text = "Close";
 		}
 
 		private void stop_Click(object sender, EventArgs e)

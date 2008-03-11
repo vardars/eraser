@@ -107,10 +107,9 @@
 			// 
 			// item
 			// 
-			this.item.AutoSize = true;
 			this.item.Location = new System.Drawing.Point(215, 61);
 			this.item.Name = "item";
-			this.item.Size = new System.Drawing.Size(71, 15);
+			this.item.Size = new System.Drawing.Size(220, 15);
 			this.item.TabIndex = 7;
 			this.item.Text = "C:\\...\\File.txt";
 			// 
