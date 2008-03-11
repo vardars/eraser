@@ -164,8 +164,88 @@ namespace Eraser.Manager
 				Function(ref buffer, OpaqueValue == null ? prng : OpaqueValue);
 			}
 
-			PassFunction Function;
-			object OpaqueValue;
+			public PassFunction Function;
+			public object OpaqueValue;
+		}
+	}
+
+	/// <summary>
+	/// Pass-based erasure method. This subclass of erasure methods follow a fixed
+	/// pattern for every pass, although the order of passes can be randomized.
+	/// This is to simplify definitions of classes in plugins.
+	/// </summary>
+	public abstract class PassBasedErasureMethod : ErasureMethod
+	{
+		public override int Passes
+		{
+			get { return PassesSet.Length; }
+		}
+
+		/// <summary>
+		/// Whether the passes should be randomized before running them in random
+		/// order.
+		/// </summary>
+		protected abstract bool RandomizePasses
+		{
+			get;
+		}
+
+		/// <summary>
+		/// The set of Pass objects describing the passes in this erasure method.
+		/// </summary>
+		protected abstract Pass[] PassesSet
+		{
+			get;
+		}
+
+		public override void Erase(Stream strm, PRNG prng, OnProgress callback)
+		{
+			//Randomize the order of the passes
+			Pass[] randomizedPasses = PassesSet;
+			if (RandomizePasses)
+				randomizedPasses = ShufflePasses(randomizedPasses);
+
+			//Remember the starting position of the stream.
+			long strmStart = strm.Position;
+			long strmLength = strm.Length - strmStart;
+
+			//Allocate memory for a buffer holding data for the pass.
+			byte[] buffer = new byte[Math.Min(DiskOperationUnit, strmLength)];
+
+			//Run every pass!
+			for (int pass = 0; pass < Passes; ++pass)
+			{
+				//Do a progress callback first.
+				callback(pass / (float)Passes, pass + 1);
+
+				//Start from the beginning again
+				strm.Seek(strmStart, SeekOrigin.Begin);
+
+				//Write the buffer to disk.
+				long toWrite = strmLength;
+				int dataStopped = buffer.Length;
+				while (toWrite > 0)
+				{
+					//Calculate how much of the buffer to write to disk.
+					int amount = (int)Math.Min(toWrite, buffer.Length - dataStopped);
+
+					//If we have no data left, get more!
+					if (amount == 0)
+					{
+						randomizedPasses[pass].Execute(ref buffer, prng);
+						dataStopped = 0;
+						continue;
+					}
+
+					//Write the data.
+					strm.Write(buffer, dataStopped, amount);
+					strm.Flush();
+					toWrite -= amount;
+
+					//Do a progress callback.
+					callback(((float)pass + ((strmLength - toWrite) / (float)strmLength)) / (float)Passes, pass + 1);
+				}
+			}
 		}
 	}
 
