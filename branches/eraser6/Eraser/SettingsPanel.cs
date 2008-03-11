@@ -21,7 +21,6 @@ namespace Eraser
 
 			//For new plugins, register the callback.
 			Host.Instance.PluginLoad += new Host.OnPluginLoadEventHandler(OnNewPluginLoaded);
-			Globals.Settings = new Settings();
 
 			//Load the values
 			LoadPluginDependantValues();
@@ -173,41 +172,6 @@ namespace Eraser
 				lockedConfirm.Checked;
 			Globals.Settings.ExecuteMissedTasksImmediately =
 				schedulerMissedImmediate.Checked;
-		}
-	}
-
-	public class Settings : Manager.Settings
-	{
-		public Settings()
-		{
-			RegistryKey key = Application.UserAppDataRegistry;
-			ActivePRNG = new Guid((string)
-				key.GetValue("PRNG", (object)Guid.Empty));
-			EraseLockedFilesOnRestart =
-				(int)key.GetValue("EraseOnRestart", (object)true) != 0;
-			ConfirmEraseOnRestart =
-				(int)key.GetValue("ConfirmEraseOnRestart", (object)true) != 0;
-			DefaultFileErasureMethod = new Guid((string)
-				key.GetValue("DefaultFileErasureMethod", (object)Guid.Empty));
-			DefaultUnusedSpaceErasureMethod = new Guid((string)
-				key.GetValue("DefaultUnusedSpaceErasureMethod", (object)Guid.Empty));
-			ExecuteMissedTasksImmediately =
-				(int)key.GetValue("ExecuteMissedTasksImmediately", (object)true) != 0;
-		}
-
-		~Settings()
-		{
-			RegistryKey key = Application.UserAppDataRegistry;
-			key.SetValue("PRNG", ActivePRNG);
-			key.SetValue("EraseOnRestart", EraseLockedFilesOnRestart,
-				RegistryValueKind.DWord);
-			key.SetValue("ConfirmEraseOnRestart", ConfirmEraseOnRestart,
-				RegistryValueKind.DWord);
-			key.SetValue("DefaultFileErasureMethod", DefaultFileErasureMethod);
-			key.SetValue("DefaultUnusedSpaceErasureMethod",
-				DefaultUnusedSpaceErasureMethod);
-			key.SetValue("ExecuteMissedTasksImmediately",
-				ExecuteMissedTasksImmediately, RegistryValueKind.DWord);
 		}
 	}
 }
