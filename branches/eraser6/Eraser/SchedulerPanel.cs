@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 using System.Globalization;
 using Eraser.Manager;
+using System.Runtime.InteropServices;
 
 namespace Eraser
 {
@@ -27,7 +28,7 @@ namespace Eraser
 		public void AddTask(ref Task task)
 		{
 			//Insert the item into the list-view.
-			ListViewItem item = scheduler.Items.Add(GenerateTaskName(task));
+			ListViewItem item = scheduler.Items.Add(task.UIText);
 			if (task.Schedule is RecurringSchedule)
 				item.SubItems.Add((task.Schedule as RecurringSchedule).NextRun.
 					ToString(DateTimeFormatInfo.CurrentInfo.FullDateTimePattern));
@@ -45,34 +46,39 @@ namespace Eraser
 
 			//Set the tag of the item so we know which task on the LV corresponds
 			//to the physical task object.
-			item.Tag = task.ID;
+			item.Tag = task;
 
-			//Set the handler for the progress event
+			//Add our event handlers to the task
+			task.TaskStarted += new Task.TaskEventFunction(task_TaskStarted);
 			task.ProgressChanged += new Task.ProgressEventFunction(task_ProgressChanged);
+			task.TaskFinished += new Task.TaskEventFunction(task_TaskFinished);
 		}
 
 		/// <summary>
-		/// Determines the task name to display, deciding on whether a task name is
-		/// provided by the user.
+		/// Handles the task start event.
 		/// </summary>
-		/// <param name="task">The task object for which a name is to be generated</param>
-		/// <returns>A task name, may not be unique.</returns>
-		private string GenerateTaskName(Task task)
+		/// <param name="e">The task event object.</param>
+		void task_TaskStarted(TaskEventArgs e)
 		{
-			//Simple case, the task name was given by the user.
-			if (task.Name.Length != 0)
-				return task.Name;
+			if (scheduler.InvokeRequired)
+			{
+				Task.TaskEventFunction func =
+					new Task.TaskEventFunction(task_TaskStarted);
+				Invoke(func, new object[] { e });
+				return;
+			}
 
-			string result = string.Empty;
-			if (task.Entries.Count < 3)
-				//Simpler case, small set of data.
-				foreach (Task.ErasureTarget tgt in task.Entries)
-					result += tgt.UIText + ", ";
-			else
-				//Ok, we've quite a few entries, get the first, the mid and the end.
-				for (int i = 0; i < task.Entries.Count; i += task.Entries.Count / 3)
-					result += task.Entries[i].UIText + ", ";
-			return result.Substring(0, result.Length - 2);
+			//Get the list view item
+			ListViewItem item = GetTaskItem(e.Task);
+
+			//Update the status.
+			item.SubItems[1].Text = "Running...";
+
+			//Show the progress bar
+			schedulerProgress.Tag = item.Index;
+			schedulerProgress.Visible = true;
+			schedulerProgress.Value = 0;
+			PositionProgressBar();
 		}
 
 		/// <summary>
@@ -87,18 +93,154 @@ namespace Eraser
 			{
 				Task.ProgressEventFunction func =
 					new Task.ProgressEventFunction(task_ProgressChanged);
-				this.Invoke(func, new object[] { e });
+				Invoke(func, new object[] { e });
 				return;
 			}
 
 			//Find the list view item
-			foreach (ListViewItem item in scheduler.Items)
-				if ((uint)item.Tag == e.Task.ID)
+			ListViewItem item = GetTaskItem(e.Task);
+
+			//Update the progress bar
+			schedulerProgress.Value = e.OverallProgress;
+		}
+
+		/// <summary>
+		/// Handles the task completion event.
+		/// </summary>
+		/// <param name="e">The task event object.</param>
+		void task_TaskFinished(TaskEventArgs e)
+		{
+			if (scheduler.InvokeRequired)
+			{
+				Task.TaskEventFunction func =
+					new Task.TaskEventFunction(task_TaskFinished);
+				Invoke(func, new object[] { e });
+				return;
+			}
+
+			//Get the list view item
+			ListViewItem item = GetTaskItem(e.Task);
+
+			//Update the status.
+			item.SubItems[1].Text = "Completed";
+
+			//Hide the progress bar
+			if (schedulerProgress.Tag != null &&
+				(int)schedulerProgress.Tag == item.Index)
+			{
+				schedulerProgress.Tag = null;
+				schedulerProgress.Visible = false;
+			}
+
+			//Inform the user on the status of the task.
+			LogLevel highestLevel = LogLevel.INFORMATION;
+			foreach (LogEntry log in e.Task.Log)
+				if (log.Level > highestLevel)
+					highestLevel = log.Level;
+
+			switch (highestLevel)
+			{
+				case LogLevel.WARNING:
+					item.SubItems[1].Text += " with warnings.";
+					break;
+				case LogLevel.ERROR:
+					item.SubItems[1].Text += " with errors.";
+					break;
+				case LogLevel.FATAL:
+					item.SubItems[1].Text = "Not completed.";
+					break;
+				default:
+					item.SubItems[1].Text += ".";
+					break;
+			}
+		}
+
+		/// <summary>
+		/// Occurs when the user double-clicks a scheduler item. This will result
+		/// in the log viewer being called, or the progress dialog to be displayed.
+		/// </summary>
+		/// <param name="sender">The list view which triggered the event.</param>
+		/// <param name="e">Event argument.</param>
+		private void scheduler_ItemActivate(object sender, EventArgs e)
+		{
+			if (scheduler.SelectedItems.Count == 0)
+				return;
+
+			ListViewItem item = scheduler.SelectedItems[0];
+			if (((Task)item.Tag).Executing)
+				using (ProgressForm form = new ProgressForm((Task)item.Tag))
 				{
-					//Update the text
-					item.SubItems[2].Text = string.Format("{0}%", e.OverallProgress);
+					form.ShowDialog();
 				}
 		}
+
+		#region Item management
+		/// <summary>
+		/// Retrieves the ListViewItem for the given task.
+		/// </summary>
+		/// <param name="task">The task object whose list view entry is being sought.</param>
+		/// <returns>A ListViewItem for the given task object.</returns>
+		private ListViewItem GetTaskItem(Task task)
+		{
+			foreach (ListViewItem item in scheduler.Items)
+				if (item.Tag == task)
+					return item;
+
+			return null;
+		}
+
+		/// <summary>
+		/// Maintains the position of the progress bar.
+		/// </summary>
+		private void PositionProgressBar()
+		{
+			if (schedulerProgress.Tag == null)
+				return;
+
+			Rectangle rect = GetSubItemRect((int)schedulerProgress.Tag, 2);
+			schedulerProgress.Top = rect.Top;
+			schedulerProgress.Left = rect.Left;
+			schedulerProgress.Width = rect.Width;
+			schedulerProgress.Height = rect.Height;
+		}
+
+		private void scheduler_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
+		{
+			e.DrawDefault = true;
+			if (schedulerProgress.Tag != null)
+				PositionProgressBar();
+		}
+
+		private void scheduler_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+		{
+			e.DrawDefault = true;
+		}
+		#endregion
+
+		#region GetSubItemRect
+		[DllImport("User32.dll")]
+		private static extern UIntPtr SendMessage(IntPtr HWND, uint Message,
+			UIntPtr wParam, IntPtr lParam);
+
+		private struct Rect
+		{
+			public int left;
+			public int top;
+			public int right;
+			public int bottom;
+		};
+
+		private unsafe Rectangle GetSubItemRect(int index, int subItemIndex)
+		{
+			Rect pRect = new Rect();
+			pRect.top = subItemIndex;
+			pRect.left = 0; //LVIR_BOUNDS
+			SendMessage(scheduler.Handle, 0x1000 + 56, (UIntPtr)index, (IntPtr)(&pRect));
+
+			return new Rectangle(pRect.left, pRect.top, pRect.right - pRect.left,
+				pRect.bottom - pRect.top);
+		}
+		#endregion
 	}
 }
 
