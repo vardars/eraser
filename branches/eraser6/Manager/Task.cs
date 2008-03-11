@@ -47,8 +47,10 @@ namespace Eraser.Manager
 			/// <summary>
 			/// Retrieves the list of files/folders to erase as a list.
 			/// </summary>
-			/// <returns></returns>
-			internal abstract List<string> GetPaths();
+			/// <param name="totalSize">Returns the total size in bytes of the
+			/// items.</param>
+			/// <returns>A list containing the paths to all the files to be erased.</returns>
+			internal abstract List<string> GetPaths(out long totalSize);
 
 			/// <summary>
 			/// The path to the file or folder referred to by this object.
@@ -85,10 +87,12 @@ namespace Eraser.Manager
 		/// </summary>
 		public class File : FilesystemObject
 		{
-			internal override List<string> GetPaths()
+			internal override List<string> GetPaths(out long totalSize)
 			{
 				List<string> result = new List<string>();
 				result.Add(Path);
+
+				totalSize = new FileInfo(Path).Length;
 				return result;
 			}
 		}
@@ -98,7 +102,7 @@ namespace Eraser.Manager
 		/// </summary>
 		public class Folder : FilesystemObject
 		{
-			internal override List<string> GetPaths()
+			internal override List<string> GetPaths(out long totalSize)
 			{
 				//Get a list to hold all the resulting paths.
 				List<string> result = new List<string>();
@@ -112,7 +116,8 @@ namespace Eraser.Manager
 					includeMask = "*.*";
 				FileInfo[] files = dir.GetFiles(includeMask, SearchOption.AllDirectories);
 
-				//Then exclude each file.
+				//Then exclude each file and finalize the list and total file size
+				totalSize = 0;
 				if (ExcludeMask.Length != 0)
 				{
 					string regex = Regex.Escape(ExcludeMask).Replace("\\*", ".*").
@@ -120,11 +125,17 @@ namespace Eraser.Manager
 					Regex excludePattern = new Regex(regex, RegexOptions.IgnoreCase);
 					foreach (FileInfo file in files)
 						if (excludePattern.Matches(file.FullName).Count == 0)
+						{
+							totalSize += file.Length;
 							result.Add(file.FullName);
+						}
 				}
 				else
 					foreach (FileInfo file in files)
+					{
+						totalSize += file.Length;
 						result.Add(file.FullName);
+					}
 				
 				//Return the filtered list.
 				return result;
@@ -382,6 +393,14 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// The amount of time left for the operation to complete, in seconds.
+		/// </summary>
+		public int TimeLeft
+		{
+			get { return timeLeft; }
+		}
+
+		/// <summary>
 		/// The current erasure target - the current item being erased.
 		/// </summary>
 		public Task.ErasureTarget CurrentTarget
@@ -423,6 +442,7 @@ namespace Eraser.Manager
 		}
 
 		internal int overallProgress;
+		internal int timeLeft;
 		internal Task.ErasureTarget currentTarget;
 		internal int currentItemProgress;
 		internal string currentItemName;

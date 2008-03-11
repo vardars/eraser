@@ -51,7 +51,7 @@ namespace Eraser.Manager
 		/// Disk operation write unit. Chosen such that this value mod 3, 4, 512,
 		/// and 1024 is 0
 		/// </summary>
-		protected const int DiskOperationUnit = 1536 * 4096 * 2;
+		protected const int DiskOperationUnit = 1536 * 4096;
 
 		/// <summary>
 		/// Unused space erasure file size. Each of the files used in erasing

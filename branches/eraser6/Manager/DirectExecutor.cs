@@ -177,13 +177,25 @@ namespace Eraser.Manager
 		/// <param name="target">The target of the erasure.</param>
 		private void EraseFilesystemObject(Task task, Task.FilesystemObject target)
 		{
-			List<string> paths = target.GetPaths();
+			//Retrieve the list of files to erase.
+			long totalSize = 0;
+			List<string> paths = target.GetPaths(out totalSize);
 			TaskProgressEventArgs eventArgs = new TaskProgressEventArgs(task, 0, 0);
 
 			//Get the erasure method if the user specified he wants the default.
 			ErasureMethod method = target.Method;
 			if (method == ErasureMethodManager.Default)
 				method = ErasureMethodManager.GetInstance(Globals.Settings.DefaultFileErasureMethod);
+
+			//Calculate the total amount of data required to finish the wipe. This
+			//value is just the total about of data to be erased multiplied by
+			//number of passes
+			totalSize *= method.Passes;
+
+			//Record the start of the erasure pass so we can calculate speed of erasures
+			long totalLeft = totalSize;
+			long overallWriteSpeed = 0;
+			DateTime startTime = DateTime.Now;
 
 			//Iterate over every path, and erase the path.
 			for (int i = 0; i < paths.Count; ++i)
@@ -229,6 +241,14 @@ namespace Eraser.Manager
 					method.Erase(strm, PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
 						delegate(float currentProgress, int currentPass)
 						{
+							long amountWritten = (long)(currentProgress * (info.Length * method.Passes));
+							if (overallWriteSpeed != 0)
+								eventArgs.timeLeft = (int)((totalLeft - amountWritten) /
+									overallWriteSpeed);
+							else if (amountWritten != 0 && (DateTime.Now - startTime).TotalSeconds != 0)
+								overallWriteSpeed = (long)(amountWritten /
+									(DateTime.Now - startTime).TotalSeconds);
+
 							eventArgs.currentPass = currentPass;
 							eventArgs.currentItemProgress = (int)
 								((float)currentProgress * 100.0);
@@ -237,6 +257,11 @@ namespace Eraser.Manager
 							task.OnProgressChanged(eventArgs);
 						}
 					);
+
+					//Update the speed-influencing statistics.
+					totalLeft -= info.Length * method.Passes;
+					overallWriteSpeed = (long)((totalSize - totalLeft) /
+						(DateTime.Now - startTime).TotalSeconds);
 
 					//Set the length of the file to 0.
 					strm.Seek(0, SeekOrigin.Begin);

@@ -43,7 +43,7 @@ namespace Eraser
 
 			item.Text = e.CurrentItemName;
 			pass.Text = string.Format("{0} out of {1} ({2} seconds left)",
-				e.CurrentPass, e.TotalPasses, 0);
+				e.CurrentPass, e.TotalPasses, e.TimeLeft);
 
 			itemProgress.Value = e.CurrentItemProgress;
 			itemProgressLbl.Text = string.Format("{0}%", e.CurrentItemProgress);
@@ -62,7 +62,7 @@ namespace Eraser
 			}
 
 			//Inform the user on the status of the task.
-			status.Text = "Completed.";
+			status.Text = "Completed";
 			LogLevel highestLevel = LogLevel.INFORMATION;
 			foreach (LogEntry log in e.Task.Log)
 				if (log.Level > highestLevel)
