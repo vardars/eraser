@@ -34,13 +34,13 @@ namespace Eraser.DefaultPlugins
 			long strmLength = strm.Length - strmStart;
 
 			//Allocate memory for a buffer holding data for the pass.
-			byte[] buffer = new byte[DiskOperationUnit];
+			byte[] buffer = new byte[Math.Min(DiskOperationUnit, strmLength)];
 
 			//Run every pass!
 			for (int pass = 0; pass < Passes; ++pass)
 			{
 				//Do a progress callback first.
-				callback(pass / (float)Passes, pass);
+				callback(pass / (float)Passes, pass + 1);
 
 				//Start from the beginning again
 				strm.Seek(strmStart, SeekOrigin.Begin);
