@@ -182,7 +182,30 @@ namespace Eraser.Manager
 		public override void LoadTaskList(Stream stream)
 		{
 			lock (tasksLock)
+			{
+				//Load the list into the dictionary
 				tasks = (Dictionary<uint, Task>)new BinaryFormatter().Deserialize(stream);
+
+				//Ignore the next portion if there are no tasks
+				if (tasks.Count == 0)
+					return;
+
+				lock (unusedIdsLock)
+				{
+					//Find gaps in the numbering
+					nextId = 1;
+					foreach (uint id in tasks.Keys)
+					{
+						while (id > nextId)
+							unusedIds.Add(++nextId);
+						++nextId;
+					}
+
+					//Decrement the ID, since the next ID will be preincremented
+					//before use.
+					--nextId;
+				}
+			}
 		}
 
 		/// <summary>
