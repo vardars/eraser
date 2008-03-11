@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace Eraser.Manager
 {
@@ -38,8 +39,25 @@ namespace Eraser.Manager
 	/// <summary>
 	/// Represents a log entry.
 	/// </summary>
-	public struct LogEntry
+	[Serializable]
+	public struct LogEntry : ISerializable
 	{
+		#region Serialization code
+		public LogEntry(SerializationInfo info, StreamingContext context)
+		{
+			Level = (LogLevel)info.GetValue("Level", typeof(LogLevel));
+			Timestamp = (DateTime)info.GetValue("Timestamp", typeof(DateTime));
+			Message = (string)info.GetValue("Message", typeof(string));
+		}
+
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue("Level", Level);
+			info.AddValue("Timestamp", Timestamp);
+			info.AddValue("Message", Message);
+		}
+		#endregion
+
 		/// <summary>
 		/// Creates a LogEntry structure.
 		/// </summary>

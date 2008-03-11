@@ -2,29 +2,65 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 
 namespace Eraser.Manager
 {
 	/// <summary>
 	/// Base class for all schedule types.
 	/// </summary>
-	public abstract class Schedule
+	[Serializable]
+	public abstract class Schedule : ISerializable
 	{
+		#region Default values
+		[Serializable]
 		private class RunNowSchedule : Schedule
 		{
+			#region Object serialization
+			public RunNowSchedule(SerializationInfo info, StreamingContext context)
+			{
+			}
+
+			public override void GetObjectData(SerializationInfo info,
+				StreamingContext context)
+			{
+			}
+			#endregion
+
+			public RunNowSchedule()
+			{
+			}
+
 			public override string UIText
 			{
 				get { return "Pending execution..."; }
 			}
 		}
 
+		[Serializable]
 		private class RunOnRestartSchedule : Schedule
 		{
+			#region Object serialization
+			public RunOnRestartSchedule(SerializationInfo info, StreamingContext context)
+			{
+			}
+
+			public override void GetObjectData(SerializationInfo info,
+				StreamingContext context)
+			{
+			}
+			#endregion
+
+			public RunOnRestartSchedule()
+			{
+			}
+
 			public override string UIText
 			{
 				get { return "Running on restart"; }
 			}
 		}
+		#endregion
 
 		/// <summary>
 		/// Retrieves the text that should be displayed detailing the nature of
@@ -34,6 +70,14 @@ namespace Eraser.Manager
 		{
 			get;
 		}
+
+		/// <summary>
+		/// Populates a SerializationInfo with the data needed to serialize the
+		/// target object.
+		/// </summary>
+		/// <param name="info">The SerializationInfo to populate with data.</param>
+		/// <param name="context">The destination for this serialization.</param>
+		public abstract void GetObjectData(SerializationInfo info, StreamingContext context);
 
 		/// <summary>
 		/// The global value for tasks which should be run immediately.
@@ -50,8 +94,10 @@ namespace Eraser.Manager
 	/// <summary>
 	/// Recurring runs schedule type.
 	/// </summary>
+	[Serializable]
 	public class RecurringSchedule : Schedule
 	{
+		#region Overridden members
 		public override string UIText
 		{
 			get
@@ -97,6 +143,35 @@ namespace Eraser.Manager
 
 				return result + string.Format(", at {0}", executionTime.TimeOfDay.ToString());
 			}
+		}
+		#endregion
+
+		#region Object serialization
+		public RecurringSchedule(SerializationInfo info, StreamingContext context)
+		{
+			type = (ScheduleUnit)info.GetValue("Type", typeof(ScheduleUnit));
+			frequency = (int)info.GetValue("Frequency", typeof(int));
+			executionTime = (DateTime)info.GetValue("ExecutionTime", typeof(DateTime));
+			weeklySchedule = (DaysOfWeek)info.GetValue("WeeklySchedule", typeof(DaysOfWeek));
+			monthlySchedule = (int)info.GetValue("MonthlySchedule", typeof(int));
+		}
+
+		public override void GetObjectData(SerializationInfo info,
+			StreamingContext context)
+		{
+			info.AddValue("Type", type);
+			info.AddValue("Frequency", frequency);
+			info.AddValue("ExecutionTime", executionTime);
+			info.AddValue("WeeklySchedule", weeklySchedule);
+			info.AddValue("MonthlySchedule", monthlySchedule);
+		}
+		#endregion
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public RecurringSchedule()
+		{
 		}
 
 		/// <summary>

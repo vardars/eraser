@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Runtime.Serialization;
 using System.ComponentModel;
 
 namespace Eraser.Manager
@@ -10,13 +11,39 @@ namespace Eraser.Manager
 	/// <summary>
 	/// Deals with an erase task.
 	/// </summary>
-	public class Task
+	[Serializable]
+	public class Task : ISerializable
 	{
 		/// <summary>
 		/// Represents a generic target of erasure
 		/// </summary>
-		public abstract class ErasureTarget
+		[Serializable]
+		public abstract class ErasureTarget : ISerializable
 		{
+			#region Serialization code
+			public ErasureTarget(SerializationInfo info, StreamingContext context)
+			{
+				Guid methodGuid = (Guid)info.GetValue("Method", typeof(Guid));
+				if (methodGuid == Guid.Empty)
+					method = ErasureMethodManager.Default;
+				else
+					method = ErasureMethodManager.GetInstance(methodGuid);
+			}
+
+			public virtual void GetObjectData(SerializationInfo info,
+				StreamingContext context)
+			{
+				info.AddValue("Method", method.GUID);
+			}
+			#endregion
+
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			public ErasureTarget()
+			{
+			}
+
 			/// <summary>
 			/// The method used for erasing the file. If the variable is equal to
 			/// ErasureMethodManager.Default then the default is queried for the
@@ -42,8 +69,31 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Class representing a tangible object (file/folder) to be erased.
 		/// </summary>
+		[Serializable]
 		public abstract class FilesystemObject : ErasureTarget
 		{
+			#region Serialization code
+			public FilesystemObject(SerializationInfo info, StreamingContext context)
+				: base(info, context)
+			{
+				path = (string)info.GetValue("Path", typeof(string));
+			}
+
+			override public void GetObjectData(SerializationInfo info,
+				StreamingContext context)
+			{
+				base.GetObjectData(info, context);
+				info.AddValue("Path", path);
+			}
+			#endregion
+
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			public FilesystemObject()
+			{
+			}
+
 			/// <summary>
 			/// Retrieves the list of files/folders to erase as a list.
 			/// </summary>
@@ -72,21 +122,59 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Class representing a unused space erase.
 		/// </summary>
+		[Serializable]
 		public class UnusedSpace : ErasureTarget
 		{
-			public string Drive;
+			#region Serialization code
+			UnusedSpace(SerializationInfo info, StreamingContext context)
+				: base(info, context)
+			{
+				Drive = (string)info.GetValue("Drive", typeof(string));
+			}
+
+			public override void GetObjectData(SerializationInfo info,
+				StreamingContext context)
+			{
+				base.GetObjectData(info, context);
+				info.AddValue("Drive", Drive);
+			}
+			#endregion
+
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			public UnusedSpace()
+			{
+			}
 
 			public override string UIText
 			{
 				get { return string.Format("Unused disk space ({0})", Drive); }
 			}
+
+			public string Drive;
 		}
 
 		/// <summary>
 		/// Class representing a file to be erased.
 		/// </summary>
+		[Serializable]
 		public class File : FilesystemObject
 		{
+			#region Serialization code
+			public File(SerializationInfo info, StreamingContext context)
+				: base(info, context)
+			{
+			}
+			#endregion
+
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			public File()
+			{
+			}
+
 			internal override List<string> GetPaths(out long totalSize)
 			{
 				List<string> result = new List<string>();
@@ -100,8 +188,35 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Represents a folder and its files which are to be erased.
 		/// </summary>
+		[Serializable]
 		public class Folder : FilesystemObject
 		{
+			#region Serialization code
+			public Folder(SerializationInfo info, StreamingContext context)
+				: base(info, context)
+			{
+				includeMask = (string)info.GetValue("IncludeMask", typeof(string));
+				excludeMask = (string)info.GetValue("ExcludeMask", typeof(string));
+				deleteIfEmpty = (bool)info.GetValue("DeleteIfEmpty", typeof(bool));
+			}
+
+			public override void GetObjectData(SerializationInfo info,
+				StreamingContext context)
+			{
+				base.GetObjectData(info, context);
+				info.AddValue("IncludeMask", includeMask);
+				info.AddValue("ExcludeMask", excludeMask);
+				info.AddValue("DeleteIfEmpty", deleteIfEmpty);
+			}
+			#endregion
+
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			public Folder()
+			{
+			}
+
 			internal override List<string> GetPaths(out long totalSize)
 			{
 				//Get a list to hold all the resulting paths.
@@ -177,6 +292,45 @@ namespace Eraser.Manager
 			private bool deleteIfEmpty;
 		}
 
+		#region Serialization code
+		public Task(SerializationInfo info, StreamingContext context)
+		{
+			id = (uint)info.GetValue("ID", typeof(uint));
+			name = (string)info.GetValue("Name", typeof(string));
+			targets = (List<ErasureTarget>)info.GetValue("Targets", typeof(List<ErasureTarget>));
+			log = (List<LogEntry>)info.GetValue("Log", typeof(List<LogEntry>));
+
+			Schedule schedule = (Schedule)info.GetValue("Schedule", typeof(Schedule));
+			if (schedule.GetType() == Schedule.RunNow.GetType())
+				this.schedule = Schedule.RunNow;
+			else if (schedule.GetType() == Schedule.RunOnRestart.GetType())
+				this.schedule = Schedule.RunOnRestart;
+			else if (schedule is RecurringSchedule)
+				this.Schedule = schedule;
+			else
+				throw new InvalidDataException("An invalid type was found when loading " +
+					"the task schedule");
+		}
+
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue("ID", id);
+			info.AddValue("Name", name);
+			info.AddValue("Schedule", schedule);
+			info.AddValue("Targets", targets);
+
+			lock (log)
+				info.AddValue("Log", log);
+		}
+		#endregion
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public Task()
+		{
+		}
+
 		/// <summary>
 		/// The unique identifier for this task. This ID will be persistent across
 		/// executions.
@@ -216,14 +370,14 @@ namespace Eraser.Manager
 					return Name;
 
 				string result = string.Empty;
-				if (Entries.Count < 3)
+				if (Targets.Count < 3)
 					//Simpler case, small set of data.
-					foreach (Task.ErasureTarget tgt in Entries)
+					foreach (Task.ErasureTarget tgt in Targets)
 						result += tgt.UIText + ", ";
 				else
 					//Ok, we've quite a few entries, get the first, the mid and the end.
-					for (int i = 0; i < Entries.Count; i += Entries.Count / 3)
-						result += Entries[i].UIText + ", ";
+					for (int i = 0; i < Targets.Count; i += Targets.Count / 3)
+						result += Targets[i].UIText + ", ";
 				return result.Substring(0, result.Length - 2);
 			}
 		}
@@ -249,10 +403,10 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The set of data to erase when this task is executed.
 		/// </summary>
-		public List<ErasureTarget> Entries
+		public List<ErasureTarget> Targets
 		{
-			get { return entries; }
-			set { entries = value; }
+			get { return targets; }
+			set { targets = value; }
 		}
 
 		/// <summary>
@@ -357,7 +511,7 @@ namespace Eraser.Manager
 		private bool executing;
 
 		private Schedule schedule = Schedule.RunNow;
-		private List<ErasureTarget> entries = new List<ErasureTarget>();
+		private List<ErasureTarget> targets = new List<ErasureTarget>();
 		private List<LogEntry> log = new List<LogEntry>();
 	}
 
