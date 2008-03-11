@@ -30,18 +30,39 @@ namespace Eraser.DefaultPlugins
 					bytesGenerated += Rand.ISAAC.SIZE * sizeof(int))
 				{
 					//Generate 256 ints.
-					isaac.Isaac();
+					if (isaac.count == 0)
+						isaac.Isaac();
 
 					//Copy the data.
 					fixed (int* src = isaac.rsl)
-					fixed (byte* dest = buffer)
+					fixed (byte* dest = &buffer[bytesGenerated])
 					{
-						byte* bSrc = (byte*)src;
-						int bytesToCopy = Math.Min(Rand.ISAAC.SIZE, buffer.Length),
-						    randArraySize = isaac.rsl.Length * sizeof(int);
+						//Advance to the end of the array of unused randomness.
+						//byte* bSrc = (byte*)src;
+						byte* pSrc = (byte*)(src + isaac.count);
+						byte* pDest = dest;
 
-						for (int i = 0; i < randArraySize && i < bytesToCopy; ++i)
-							dest[i] = bSrc[i];
+						//Copy four bytes at a time, moving the source pointer backwards,
+						//and the destination pointer forwards.
+						int bytesToCopy = Math.Min(isaac.count * sizeof(int),
+							buffer.Length - bytesGenerated);
+						while (bytesToCopy >= 4)
+						{
+							pSrc -= sizeof(int);
+							*(int*)pDest = *(int*)pSrc;
+							pDest += sizeof(int);
+
+							bytesToCopy -= sizeof(int);
+							--isaac.count;
+						}
+
+						//Copy the remaining bytes over.
+						if (bytesToCopy != 0)
+						{
+							while (bytesToCopy-- != 0)
+								*pDest++ = *pSrc--;
+							--isaac.count;
+						}
 					}
 				}
 			}
