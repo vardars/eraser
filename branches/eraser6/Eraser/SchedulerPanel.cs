@@ -25,7 +25,7 @@ namespace Eraser
 		/// <param name="task">The task object. The task object will be modified
 		/// to have its progress event firing to one of the member functions of
 		/// the panel.</param>
-		public void AddTask(ref Task task)
+		public void AddTask(Task task)
 		{
 			//Insert the item into the list-view.
 			ListViewItem item = scheduler.Items.Add(task.UIText);
@@ -52,6 +52,9 @@ namespace Eraser
 			task.TaskStarted += new Task.TaskEventFunction(task_TaskStarted);
 			task.ProgressChanged += new Task.ProgressEventFunction(task_ProgressChanged);
 			task.TaskFinished += new Task.TaskEventFunction(task_TaskFinished);
+
+			//Then add the task to the executor.
+			Program.eraserClient.AddTask(ref task);
 		}
 
 		/// <summary>

@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
-using Eraser.Manager;
 
 namespace Eraser
 {
@@ -22,8 +21,6 @@ namespace Eraser
 		private BasePanel CurrPage = null;
 		private SchedulerPanel SchedulerPage = new SchedulerPanel();
 		private SettingsPanel SettingsPage = new SettingsPanel();
-
-		private Executor eraserClient = new DirectExecutor();
 
 		public MainForm()
 		{
@@ -66,11 +63,6 @@ namespace Eraser
 
 			//Show the default page.
 			ChangePage(Pages.SCHEDULER);
-		}
-
-		private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-		{
-			(eraserClient as IDisposable).Dispose();
 		}
 
 		/// <summary>
@@ -199,11 +191,7 @@ namespace Eraser
 			using (TaskPropertiesForm form = new TaskPropertiesForm())
 			{
 				if (form.ShowDialog() == DialogResult.OK)
-				{
-					Task task = form.Task;
-					eraserClient.AddTask(ref task);
-					SchedulerPage.AddTask(ref task);
-				}
+					SchedulerPage.AddTask(form.Task);
 			}
 		}
 	}

@@ -122,7 +122,6 @@ namespace Eraser
 			this.MinimumSize = new System.Drawing.Size(760, 520);
 			this.Name = "MainForm";
 			this.Text = "Eraser";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
 			this.Resize += new System.EventHandler(this.MainForm_Resize);
 			this.toolbarScheduleMenu.ResumeLayout(false);

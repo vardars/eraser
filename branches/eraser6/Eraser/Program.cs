@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
+using Eraser.Manager;
+
 namespace Eraser
 {
 	static class Program
@@ -15,6 +17,10 @@ namespace Eraser
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new MainForm());
+
+			(eraserClient as IDisposable).Dispose();
 		}
+
+		public static Executor eraserClient = new DirectExecutor();
 	}
 }
