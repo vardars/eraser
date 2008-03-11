@@ -42,7 +42,7 @@
     <Compile Include="EraseDoD.cs" />
     <Compile Include="EraseRandom.cs" />
     <Compile Include="EraseGutmann.cs" />
-    <Compile Include="ISAAC.cs" />
+    <Compile Include="RNGISAAC.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RNGCrypto.cs" />
