@@ -247,12 +247,17 @@ namespace Eraser.Manager
 					}
 					finally
 					{
-						//And the task finished event.
-						task.OnTaskFinished(new TaskEventArgs(task));
-
 						//If the task is a recurring task, reschedule it since we are done.
 						if (task.Schedule is RecurringSchedule)
 							((RecurringSchedule)task.Schedule).Reschedule(DateTime.Now);
+
+						//If the task is an execute on restart task, it is only run
+						//once and can now be restored to an immediately executed task
+						if (task.Schedule == Schedule.RunOnRestart)
+							task.Schedule = Schedule.RunNow;
+
+						//And the task finished event.
+						task.OnTaskFinished(new TaskEventArgs(task));
 					}
 				}
 
