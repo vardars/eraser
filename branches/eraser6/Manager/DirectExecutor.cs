@@ -45,6 +45,9 @@ namespace Eraser.Manager
 					task.id = ++nextId;
 			}
 
+			//Set the executor of the task
+			task.executor = this;
+
 			//Add the task to the set of tasks
 			lock (tasksLock)
 			{
@@ -78,6 +81,13 @@ namespace Eraser.Manager
 				tasks.Remove(taskId);
 			}
 			return true;
+		}
+
+		public override void CancelTask(Task task)
+		{
+			lock (currentTask)
+				if (currentTask == task)
+					currentTask.cancelled = true;
 		}
 
 		public override Task GetTask(uint taskId)
@@ -116,9 +126,13 @@ namespace Eraser.Manager
 
 				if (task != null)
 				{
+					//Set the currently executing task.
+					currentTask = task;
+
 					try
 					{
 						//Broadcast the task started event.
+						task.cancelled = false;
 						task.OnTaskStarted(new TaskEventArgs(task));
 
 						//Run the task
@@ -255,6 +269,10 @@ namespace Eraser.Manager
 							eventArgs.overallProgress = (int)
 								(((i + currentProgress) / (float)paths.Count) * 100);
 							task.OnProgressChanged(eventArgs);
+
+							lock (currentTask)
+								if (currentTask.cancelled)
+									throw new FatalException("The task was cancelled.");
 						}
 					);
 
@@ -344,7 +362,18 @@ namespace Eraser.Manager
 				//Rename the folder.
 				string newPath = info.Parent.FullName + Path.DirectorySeparatorChar +
 					(new System.Text.UTF8Encoding()).GetString(newFileNameAry);
-				info.MoveTo(newPath);
+
+				//Try to rename the file. If it fails, it is probably due to another
+				//process locking the file. Defer, then rename again.
+				try
+				{
+					info.MoveTo(newPath);
+				}
+				catch (IOException)
+				{
+					Thread.Sleep(100);
+					--i;
+				}
 			}
 
 			//Remove the folder
@@ -374,6 +403,11 @@ namespace Eraser.Manager
 		/// </summary>
 		private SortedList<DateTime, Task> scheduledTasks =
 			new SortedList<DateTime, Task>();
+
+		/// <summary>
+		/// The currently executing task.
+		/// </summary>
+		Task currentTask;
 
 		/// <summary>
 		/// The list of task IDs for recycling.

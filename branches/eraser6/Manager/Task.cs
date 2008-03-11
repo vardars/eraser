@@ -187,6 +187,14 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// The Executor object which is managing this task.
+		/// </summary>
+		public Executor Executor
+		{
+			get { return executor; }
+		}
+
+		/// <summary>
 		/// The name for this task. This is just an opaque value for the user to
 		/// recognize the task.
 		/// </summary>
@@ -331,6 +339,9 @@ namespace Eraser.Manager
 		#endregion
 
 		internal uint id;
+		internal Executor executor;
+		internal bool cancelled = false;
+
 		private string name;
 		private bool executing;
 

@@ -26,6 +26,12 @@ namespace Eraser.Manager
 		public abstract bool DeleteTask(uint taskId);
 
 		/// <summary>
+		/// Cancels the given task, if it is being executed.
+		/// </summary>
+		/// <param name="task">The task to cancel.</param>
+		public abstract void CancelTask(Task task);
+
+		/// <summary>
 		/// Retrieves the task object represented by the task ID given.
 		/// </summary>
 		/// <param name="taskId">The Task ID of the task in question.</param>
