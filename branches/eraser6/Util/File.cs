@@ -62,7 +62,7 @@ namespace Eraser.Util
 
 				while (g.MeasureString(builder.ToString(), drawFont).Width > newWidth)
 				{
-					if (PathCompactPathEx(builder, longPath, (UIntPtr)(--charCount),
+					if (PathCompactPathEx(builder, longPath, (UIntPtr)(charCount--),
 						(UIntPtr)0) == UIntPtr.Zero)
 					{
 						return string.Empty;
