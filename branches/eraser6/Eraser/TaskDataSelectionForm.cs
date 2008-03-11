@@ -109,10 +109,12 @@ namespace Eraser
 				//Then the data to be erased.
 				if (value is Task.File)
 				{
+					file.Checked = true;
 					filePath.Text = ((Task.File)value).Path;
 				}
 				else if (value is Task.Folder)
 				{
+					folder.Checked = true;
 					Manager.Task.Folder folderTask = (Task.Folder)value;
 
 					folderPath.Text = folderTask.Path;
@@ -122,6 +124,7 @@ namespace Eraser
 				}
 				else if (value is Task.UnusedSpace)
 				{
+					unused.Checked = true;
 					Task.UnusedSpace unusedSpaceTask = new Task.UnusedSpace();
 					foreach (object item in unusedDisk.Items)
 						if (((DriveItem)item).Drive == ((Task.UnusedSpace)value).Drive)
