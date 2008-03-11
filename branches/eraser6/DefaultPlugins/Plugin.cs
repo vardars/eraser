@@ -14,6 +14,10 @@ namespace Eraser.DefaultPlugins
 		public void Initialize(Host host)
 		{
 			host.RegisterErasureMethod(new Gutmann());
+			host.RegisterErasureMethod(new Schneier());
+			host.RegisterErasureMethod(new DoD_EcE());
+			host.RegisterErasureMethod(new DoD_E());
+			host.RegisterErasureMethod(new Pseudorandom());
 			host.RegisterPRNG(new ISAAC());
 			host.RegisterPRNG(new RNGCrypto());
 		}
