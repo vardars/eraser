@@ -41,22 +41,10 @@ namespace Eraser
 
 		private void DisplayTask(Task task)
 		{
-			//Insert the item into the list-view.
+			//Add the item to the list view
 			ListViewItem item = scheduler.Items.Add(task.UIText);
-			if (task.Schedule is RecurringSchedule)
-				item.SubItems.Add((task.Schedule as RecurringSchedule).NextRun.
-					ToString(DateTimeFormatInfo.CurrentInfo.FullDateTimePattern));
-			else
-				item.SubItems.Add(task.Schedule.UIText);
-			item.SubItems.Add(String.Empty);
-
-			//Set the group of the task.
-			if (task.Schedule == Schedule.RunNow)
-				item.Group = scheduler.Groups["immediate"];
-			else if (task.Schedule == Schedule.RunOnRestart)
-				item.Group = scheduler.Groups["restart"];
-			else
-				item.Group = scheduler.Groups["recurring"];
+			item.SubItems.Add(string.Empty);
+			item.SubItems.Add(string.Empty);
 
 			//Set the tag of the item so we know which task on the LV corresponds
 			//to the physical task object.
@@ -66,6 +54,52 @@ namespace Eraser
 			task.TaskStarted += new Task.TaskEventFunction(task_TaskStarted);
 			task.ProgressChanged += new Task.ProgressEventFunction(task_ProgressChanged);
 			task.TaskFinished += new Task.TaskEventFunction(task_TaskFinished);
+
+			//Show the fields on the list view
+			UpdateTask(item);
+		}
+
+		private void UpdateTask(ListViewItem item)
+		{
+			//Get the task object
+			Task task = (Task)item.Tag;
+
+			//Set the task name
+			item.Text = task.UIText;
+
+			//Set the next run time of the task
+			if (task.Schedule is RecurringSchedule)
+			{
+				item.SubItems[1].Text = ((task.Schedule as RecurringSchedule).NextRun.
+					ToString(DateTimeFormatInfo.CurrentInfo.FullDateTimePattern));
+			}
+			else if (task.Schedule == Schedule.RunNow)
+			{
+				if (task.Queued)
+					item.SubItems[1].Text = "Queued for execution";
+				else
+					item.SubItems[1].Text = "Not queued";
+			}
+			else
+				item.SubItems[1].Text = task.Schedule.UIText;
+
+			//Set the group of the task.
+			CategorizeTask(task, item);
+		}
+
+		private void CategorizeTask(Task task)
+		{
+			CategorizeTask(task, GetTaskItem(task));
+		}
+
+		private void CategorizeTask(Task task, ListViewItem item)
+		{
+			if (task.Schedule == Schedule.RunNow)
+				item.Group = scheduler.Groups["immediate"];
+			else if (task.Schedule == Schedule.RunOnRestart)
+				item.Group = scheduler.Groups["restart"];
+			else
+				item.Group = scheduler.Groups["recurring"];
 		}
 
 		/// <summary>
@@ -167,6 +201,11 @@ namespace Eraser
 					item.SubItems[1].Text += ".";
 					break;
 			}
+
+			//Recategorize the task. Do not assume the task has maintained the
+			//category since run-on-restart tasks will be changed to immediately
+			//run tasks.
+			CategorizeTask(e.Task, item);
 		}
 
 		/// <summary>
@@ -284,7 +323,8 @@ namespace Eraser
 			//Make sure that the task is not being executed, or else. This can
 			//be done in the Client library, but there will be no effect on the
 			//currently running task.
-			Task task = (Task)scheduler.SelectedItems[0].Tag;
+			ListViewItem item = scheduler.SelectedItems[0];
+			Task task = (Task)item.Tag;
 			if (task.Executing)
 				return;
 
@@ -297,6 +337,9 @@ namespace Eraser
 					task = form.Task;
 					scheduler.SelectedItems[0].Tag = task;
 					Program.eraserClient.ReplaceTask(task);
+
+					//Update the list view
+					UpdateTask(item);
 				}
 			}
 		}

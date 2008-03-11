@@ -33,7 +33,7 @@ namespace Eraser.Manager
 
 			public override string UIText
 			{
-				get { return "Pending execution..."; }
+				get { return string.Empty; }
 			}
 		}
 
