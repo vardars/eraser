@@ -29,53 +29,51 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProgressForm));
-			this.totalProgressLbl = new System.Windows.Forms.Label();
-			this.totalProgressPb = new System.Windows.Forms.ProgressBar();
-			this.jobTitleLbl = new System.Windows.Forms.Label();
+			this.overallProgressLbl = new System.Windows.Forms.Label();
+			this.overallProgress = new System.Windows.Forms.ProgressBar();
+			this.jobTitle = new System.Windows.Forms.Label();
 			this.status = new System.Windows.Forms.Label();
 			this.statusLbl = new System.Windows.Forms.Label();
 			this.itemLbl = new System.Windows.Forms.Label();
 			this.item = new System.Windows.Forms.Label();
 			this.passLbl = new System.Windows.Forms.Label();
 			this.pass = new System.Windows.Forms.Label();
-			this.methodLbl = new System.Windows.Forms.Label();
-			this.method = new System.Windows.Forms.Label();
-			this.titlePic = new System.Windows.Forms.PictureBox();
+			this.title = new System.Windows.Forms.PictureBox();
 			this.titleLbl = new System.Windows.Forms.Label();
-			this.itemPbLbl = new System.Windows.Forms.Label();
-			this.itemPb = new System.Windows.Forms.ProgressBar();
-			this.stopBtn = new System.Windows.Forms.Button();
+			this.itemProgressLbl = new System.Windows.Forms.Label();
+			this.itemProgress = new System.Windows.Forms.ProgressBar();
+			this.stop = new System.Windows.Forms.Button();
 			this.bevelLine1 = new Trustbridge.Windows.Controls.BevelLine();
 			this.bevelLine2 = new Trustbridge.Windows.Controls.BevelLine();
-			((System.ComponentModel.ISupportInitialize)(this.titlePic)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.title)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// totalProgressLbl
+			// overallProgressLbl
 			// 
-			this.totalProgressLbl.Location = new System.Drawing.Point(6, 174);
-			this.totalProgressLbl.Name = "totalProgressLbl";
-			this.totalProgressLbl.Size = new System.Drawing.Size(128, 15);
-			this.totalProgressLbl.TabIndex = 0;
-			this.totalProgressLbl.Text = "Total: 75%";
-			this.totalProgressLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.overallProgressLbl.Location = new System.Drawing.Point(6, 174);
+			this.overallProgressLbl.Name = "overallProgressLbl";
+			this.overallProgressLbl.Size = new System.Drawing.Size(128, 15);
+			this.overallProgressLbl.TabIndex = 0;
+			this.overallProgressLbl.Text = "Total: 75%";
+			this.overallProgressLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
-			// totalProgressPb
+			// overallProgress
 			// 
-			this.totalProgressPb.Location = new System.Drawing.Point(6, 192);
-			this.totalProgressPb.Name = "totalProgressPb";
-			this.totalProgressPb.Size = new System.Drawing.Size(129, 15);
-			this.totalProgressPb.TabIndex = 1;
-			this.totalProgressPb.Value = 75;
+			this.overallProgress.Location = new System.Drawing.Point(6, 192);
+			this.overallProgress.Name = "overallProgress";
+			this.overallProgress.Size = new System.Drawing.Size(129, 15);
+			this.overallProgress.TabIndex = 1;
+			this.overallProgress.Value = 75;
 			// 
-			// jobTitleLbl
+			// jobTitle
 			// 
-			this.jobTitleLbl.AutoSize = true;
-			this.jobTitleLbl.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.jobTitleLbl.Location = new System.Drawing.Point(149, 8);
-			this.jobTitleLbl.Name = "jobTitleLbl";
-			this.jobTitleLbl.Size = new System.Drawing.Size(180, 15);
-			this.jobTitleLbl.TabIndex = 2;
-			this.jobTitleLbl.Text = "C:\\Users\\Joel Low\\Documents\\";
+			this.jobTitle.AutoSize = true;
+			this.jobTitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.jobTitle.Location = new System.Drawing.Point(149, 8);
+			this.jobTitle.Name = "jobTitle";
+			this.jobTitle.Size = new System.Drawing.Size(180, 15);
+			this.jobTitle.TabIndex = 2;
+			this.jobTitle.Text = "C:\\Users\\Joel Low\\Documents\\";
 			// 
 			// status
 			// 
@@ -132,32 +130,14 @@
 			this.pass.TabIndex = 8;
 			this.pass.Text = "7 of 35 (15 seconds left)";
 			// 
-			// methodLbl
+			// title
 			// 
-			this.methodLbl.AutoSize = true;
-			this.methodLbl.Location = new System.Drawing.Point(149, 99);
-			this.methodLbl.Name = "methodLbl";
-			this.methodLbl.Size = new System.Drawing.Size(52, 15);
-			this.methodLbl.TabIndex = 9;
-			this.methodLbl.Text = "Method:";
-			// 
-			// method
-			// 
-			this.method.AutoSize = true;
-			this.method.Location = new System.Drawing.Point(215, 99);
-			this.method.Name = "method";
-			this.method.Size = new System.Drawing.Size(57, 15);
-			this.method.TabIndex = 10;
-			this.method.Text = "Gutmann";
-			// 
-			// titlePic
-			// 
-			this.titlePic.Image = ((System.Drawing.Image)(resources.GetObject("titlePic.Image")));
-			this.titlePic.Location = new System.Drawing.Point(6, 33);
-			this.titlePic.Name = "titlePic";
-			this.titlePic.Size = new System.Drawing.Size(128, 128);
-			this.titlePic.TabIndex = 11;
-			this.titlePic.TabStop = false;
+			this.title.Image = ((System.Drawing.Image)(resources.GetObject("title.Image")));
+			this.title.Location = new System.Drawing.Point(6, 33);
+			this.title.Name = "title";
+			this.title.Size = new System.Drawing.Size(128, 128);
+			this.title.TabIndex = 11;
+			this.title.TabStop = false;
 			// 
 			// titleLbl
 			// 
@@ -169,31 +149,31 @@
 			this.titleLbl.Text = "Erasing...";
 			this.titleLbl.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
-			// itemPbLbl
+			// itemProgressLbl
 			// 
-			this.itemPbLbl.AutoSize = true;
-			this.itemPbLbl.Location = new System.Drawing.Point(413, 138);
-			this.itemPbLbl.Name = "itemPbLbl";
-			this.itemPbLbl.Size = new System.Drawing.Size(29, 15);
-			this.itemPbLbl.TabIndex = 13;
-			this.itemPbLbl.Text = "97%";
+			this.itemProgressLbl.AutoSize = true;
+			this.itemProgressLbl.Location = new System.Drawing.Point(413, 138);
+			this.itemProgressLbl.Name = "itemProgressLbl";
+			this.itemProgressLbl.Size = new System.Drawing.Size(29, 15);
+			this.itemProgressLbl.TabIndex = 13;
+			this.itemProgressLbl.Text = "97%";
 			// 
-			// itemPb
+			// itemProgress
 			// 
-			this.itemPb.Location = new System.Drawing.Point(150, 137);
-			this.itemPb.Name = "itemPb";
-			this.itemPb.Size = new System.Drawing.Size(257, 17);
-			this.itemPb.TabIndex = 14;
-			this.itemPb.Value = 97;
+			this.itemProgress.Location = new System.Drawing.Point(150, 137);
+			this.itemProgress.Name = "itemProgress";
+			this.itemProgress.Size = new System.Drawing.Size(257, 17);
+			this.itemProgress.TabIndex = 14;
+			this.itemProgress.Value = 97;
 			// 
-			// stopBtn
+			// stop
 			// 
-			this.stopBtn.Location = new System.Drawing.Point(367, 184);
-			this.stopBtn.Name = "stopBtn";
-			this.stopBtn.Size = new System.Drawing.Size(75, 23);
-			this.stopBtn.TabIndex = 17;
-			this.stopBtn.Text = "Stop";
-			this.stopBtn.UseVisualStyleBackColor = true;
+			this.stop.Location = new System.Drawing.Point(367, 184);
+			this.stop.Name = "stop";
+			this.stop.Size = new System.Drawing.Size(75, 23);
+			this.stop.TabIndex = 17;
+			this.stop.Text = "Stop";
+			this.stop.UseVisualStyleBackColor = true;
 			// 
 			// bevelLine1
 			// 
@@ -212,34 +192,35 @@
 			this.bevelLine2.Size = new System.Drawing.Size(2, 190);
 			this.bevelLine2.TabIndex = 20;
 			// 
-			// MainForm
+			// ProgressForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.ClientSize = new System.Drawing.Size(449, 216);
 			this.Controls.Add(this.bevelLine2);
 			this.Controls.Add(this.bevelLine1);
-			this.Controls.Add(this.stopBtn);
-			this.Controls.Add(this.itemPb);
-			this.Controls.Add(this.itemPbLbl);
+			this.Controls.Add(this.stop);
+			this.Controls.Add(this.itemProgress);
+			this.Controls.Add(this.itemProgressLbl);
 			this.Controls.Add(this.titleLbl);
-			this.Controls.Add(this.titlePic);
-			this.Controls.Add(this.method);
-			this.Controls.Add(this.methodLbl);
+			this.Controls.Add(this.title);
 			this.Controls.Add(this.pass);
 			this.Controls.Add(this.passLbl);
 			this.Controls.Add(this.item);
 			this.Controls.Add(this.itemLbl);
 			this.Controls.Add(this.statusLbl);
 			this.Controls.Add(this.status);
-			this.Controls.Add(this.jobTitleLbl);
-			this.Controls.Add(this.totalProgressPb);
-			this.Controls.Add(this.totalProgressLbl);
+			this.Controls.Add(this.jobTitle);
+			this.Controls.Add(this.overallProgress);
+			this.Controls.Add(this.overallProgressLbl);
 			this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-			this.Name = "MainForm";
-			this.Text = "Eraser - Erasing";
-			((System.ComponentModel.ISupportInitialize)(this.titlePic)).EndInit();
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
+			this.Name = "ProgressForm";
+			this.ShowInTaskbar = false;
+			this.Text = "Erasure Progress";
+			((System.ComponentModel.ISupportInitialize)(this.title)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -247,22 +228,20 @@
 
 		#endregion
 
-		private System.Windows.Forms.Label totalProgressLbl;
-		private System.Windows.Forms.ProgressBar totalProgressPb;
-		private System.Windows.Forms.Label jobTitleLbl;
+		private System.Windows.Forms.Label overallProgressLbl;
+		private System.Windows.Forms.ProgressBar overallProgress;
+		private System.Windows.Forms.Label jobTitle;
 		private System.Windows.Forms.Label status;
 		private System.Windows.Forms.Label statusLbl;
 		private System.Windows.Forms.Label itemLbl;
 		private System.Windows.Forms.Label item;
 		private System.Windows.Forms.Label passLbl;
 		private System.Windows.Forms.Label pass;
-		private System.Windows.Forms.Label methodLbl;
-		private System.Windows.Forms.Label method;
-		private System.Windows.Forms.PictureBox titlePic;
+		private System.Windows.Forms.PictureBox title;
 		private System.Windows.Forms.Label titleLbl;
-		private System.Windows.Forms.Label itemPbLbl;
-		private System.Windows.Forms.ProgressBar itemPb;
-		private System.Windows.Forms.Button stopBtn;
+		private System.Windows.Forms.Label itemProgressLbl;
+		private System.Windows.Forms.ProgressBar itemProgress;
+		private System.Windows.Forms.Button stop;
 		private Trustbridge.Windows.Controls.BevelLine bevelLine1;
 		private Trustbridge.Windows.Controls.BevelLine bevelLine2;
 	}
