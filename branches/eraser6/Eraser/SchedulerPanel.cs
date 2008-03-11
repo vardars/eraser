@@ -17,6 +17,11 @@ namespace Eraser
 		public SchedulerPanel()
 		{
 			InitializeComponent();
+
+			//Populate the scheduler list-view with the current task list
+			List<Task> tasks = Program.eraserClient.GetTasks();
+			foreach (Task task in tasks)
+				DisplayTask(task);
 		}
 
 		/// <summary>
@@ -26,6 +31,15 @@ namespace Eraser
 		/// to have its progress event firing to one of the member functions of
 		/// the panel.</param>
 		public void AddTask(Task task)
+		{
+			//Display the new task
+			DisplayTask(task);
+
+			//Then add the task to the executor.
+			Program.eraserClient.AddTask(ref task);
+		}
+
+		private void DisplayTask(Task task)
 		{
 			//Insert the item into the list-view.
 			ListViewItem item = scheduler.Items.Add(task.UIText);
@@ -52,9 +66,6 @@ namespace Eraser
 			task.TaskStarted += new Task.TaskEventFunction(task_TaskStarted);
 			task.ProgressChanged += new Task.ProgressEventFunction(task_ProgressChanged);
 			task.TaskFinished += new Task.TaskEventFunction(task_TaskFinished);
-
-			//Then add the task to the executor.
-			Program.eraserClient.AddTask(ref task);
 		}
 
 		/// <summary>
