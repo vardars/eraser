@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 using Eraser.Manager;
 using Eraser.Manager.Plugin;
+using Microsoft.Win32;
 
 namespace Eraser
 {
@@ -20,6 +21,7 @@ namespace Eraser
 
 			//For new plugins, register the callback.
 			Host.Instance.PluginLoad += new Host.OnPluginLoadEventHandler(OnNewPluginLoaded);
+			Globals.Settings = new Settings();
 
 			//Load the values
 			LoadPluginDependantValues();
@@ -80,11 +82,13 @@ namespace Eraser
 				}
 
 			lockedAllow.Checked =
-				Globals.Settings.AllowFilesToBeErasedOnRestart;
+				Globals.Settings.EraseLockedFilesOnRestart;
 			lockedConfirm.Checked =
-				Globals.Settings.ConfirmWithUserBeforeReschedulingErase;
+				Globals.Settings.ConfirmEraseOnRestart;
 			schedulerMissedImmediate.Checked =
 				Globals.Settings.ExecuteMissedTasksImmediately;
+			schedulerMissedIgnore.Checked =
+				!Globals.Settings.ExecuteMissedTasksImmediately;
 
 			//Select an intelligent default if the settings are invalid.
 			string defaults = string.Empty;
@@ -120,6 +124,11 @@ namespace Eraser
 					defaults), "Eraser", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				saveSettings_Click(null, null);
 			}
+		}
+
+		private void lockedAllow_CheckedChanged(object sender, EventArgs e)
+		{
+			lockedConfirm.Enabled = lockedAllow.Checked;
 		}
 
 		private void saveSettings_Click(object sender, EventArgs e)
@@ -158,12 +167,47 @@ namespace Eraser
 					"Eraser", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				Globals.Settings.ActivePRNG = newPRNG.GUID;
 			}
-			Globals.Settings.AllowFilesToBeErasedOnRestart =
+			Globals.Settings.EraseLockedFilesOnRestart =
 				lockedAllow.Checked;
-			Globals.Settings.ConfirmWithUserBeforeReschedulingErase =
+			Globals.Settings.ConfirmEraseOnRestart =
 				lockedConfirm.Checked;
 			Globals.Settings.ExecuteMissedTasksImmediately =
 				schedulerMissedImmediate.Checked;
+		}
+	}
+
+	public class Settings : Manager.Settings
+	{
+		public Settings()
+		{
+			RegistryKey key = Application.UserAppDataRegistry;
+			this.ActivePRNG = new Guid((string)
+				key.GetValue("PRNG", (object)Guid.Empty));
+			this.EraseLockedFilesOnRestart =
+				(int)key.GetValue("EraseOnRestart", (object)true) != 0;
+			this.ConfirmEraseOnRestart =
+				(int)key.GetValue("ConfirmEraseOnRestart", (object)true) != 0;
+			this.DefaultFileErasureMethod = new Guid((string)
+				key.GetValue("DefaultFileErasureMethod", (object)Guid.Empty));
+			this.DefaultUnusedSpaceErasureMethod = new Guid((string)
+				key.GetValue("DefaultUnusedSpaceErasureMethod", (object)Guid.Empty));
+			this.ExecuteMissedTasksImmediately =
+				(int)key.GetValue("ExecuteMissedTasksImmediately", (object)true) != 0;
+		}
+
+		~Settings()
+		{
+			RegistryKey key = Application.UserAppDataRegistry;
+			key.SetValue("PRNG", this.ActivePRNG);
+			key.SetValue("EraseOnRestart", this.EraseLockedFilesOnRestart,
+				RegistryValueKind.DWord);
+			key.SetValue("ConfirmEraseOnRestart", this.ConfirmEraseOnRestart,
+				RegistryValueKind.DWord);
+			key.SetValue("DefaultFileErasureMethod", this.DefaultFileErasureMethod);
+			key.SetValue("DefaultUnusedSpaceErasureMethod",
+				this.DefaultUnusedSpaceErasureMethod);
+			key.SetValue("ExecuteMissedTasksImmediately",
+				this.ExecuteMissedTasksImmediately, RegistryValueKind.DWord);
 		}
 	}
 }

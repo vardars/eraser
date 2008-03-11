@@ -74,17 +74,17 @@ namespace Eraser.Manager
 		/// Whether files which are locked when being erased can be scheduled for
 		/// erasure on system restart.
 		/// </summary>
-		public bool AllowFilesToBeErasedOnRestart
+		public bool EraseLockedFilesOnRestart
 		{
 			get
 			{
 				lock (this)
-					return allowFilesToBeErasedOnRestart;
+					return eraseLockedFilesOnRestart;
 			}
 			set
 			{
 				lock (this)
-					allowFilesToBeErasedOnRestart = value;
+					eraseLockedFilesOnRestart = value;
 			}
 		}
 
@@ -92,17 +92,17 @@ namespace Eraser.Manager
 		/// Whether scheduling files for restart erase should get the blessing of
 		/// the user first.
 		/// </summary>
-		public bool ConfirmWithUserBeforeReschedulingErase
+		public bool ConfirmEraseOnRestart
 		{
 			get
 			{
 				lock (this)
-					return confirmWithUserBeforeReschedulingErase;
+					return confirmEraseOnRestart;
 			}
 			set
 			{
 				lock (this)
-					confirmWithUserBeforeReschedulingErase = value;
+					confirmEraseOnRestart = value;
 			}
 		}
 
@@ -126,8 +126,8 @@ namespace Eraser.Manager
 		public Guid defaultFileErasureMethod = Guid.Empty;
 		public Guid defaultUnusedSpaceErasureMethod = Guid.Empty;
 		public Guid activePRNG = Guid.Empty;
-		public bool allowFilesToBeErasedOnRestart = true;
-		public bool confirmWithUserBeforeReschedulingErase = true;
+		public bool eraseLockedFilesOnRestart = true;
+		public bool confirmEraseOnRestart = true;
 		public bool executeMissedTasksImmediately = true;
 	}
 }
