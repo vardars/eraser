@@ -237,10 +237,18 @@ namespace Eraser.Manager
 				//Remove the file.
 				RemoveFile(info);
 			}
+
+			//If the user requested a folder removal, do it.
+			if (target is Task.Folder)
+			{
+				Task.Folder fldr = (Task.Folder)target;
+				if (fldr.DeleteIfEmpty)
+					RemoveFolder(new DirectoryInfo(fldr.Path));
+			}
 		}
 
 		/// <summary>
-		/// Securely removes the filename of the file.
+		/// Securely removes files.
 		/// </summary>
 		/// <param name="info">The FileInfo object representing the file.</param>
 		private void RemoveFile(FileInfo info)
@@ -274,6 +282,38 @@ namespace Eraser.Manager
 			}
 
 			//Then delete the file.
+			info.Delete();
+		}
+
+		private void RemoveFolder(DirectoryInfo info)
+		{
+			foreach (FileInfo file in info.GetFiles())
+				RemoveFile(file);
+			foreach (DirectoryInfo dir in info.GetDirectories())
+				RemoveFolder(dir);
+
+			//Then clean up this folder.
+			for (int i = 0; i < FilenameErasePasses; ++i)
+			{
+				//Get a random file name
+				PRNG prng = PRNGManager.GetInstance(Globals.Settings.ActivePRNG);
+				byte[] newFileNameAry = new byte[info.Name.Length];
+				prng.NextBytes(newFileNameAry);
+
+				//Validate the name
+				const string validFileNameChars = "0123456789abcdefghijklmnopqrs" +
+					"tuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+				for (int j = 0, k = newFileNameAry.Length; j < k; ++j)
+					newFileNameAry[j] = (byte)validFileNameChars[
+						(int)newFileNameAry[j] % validFileNameChars.Length];
+
+				//Rename the folder.
+				string newPath = info.Parent.FullName + Path.DirectorySeparatorChar +
+					(new System.Text.UTF8Encoding()).GetString(newFileNameAry);
+				info.MoveTo(newPath);
+			}
+
+			//Remove the folder
 			info.Delete();
 		}
 
