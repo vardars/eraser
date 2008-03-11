@@ -87,6 +87,23 @@ namespace Eraser.Manager
 			return true;
 		}
 
+		public override void ReplaceTask(Task task)
+		{
+			lock (tasksLock)
+			{
+				//Replace the task in the global set
+				if (!tasks.ContainsKey(task.ID))
+					return;
+
+				tasks[task.ID] = task;
+
+				//Then replace the task if it is in the queue
+				for (int i = 0; i != scheduledTasks.Count; ++i)
+					if (scheduledTasks.Values[i].id == task.ID)
+						scheduledTasks.Values[i] = task;
+			}
+		}
+
 		public override void QueueTask(Task task)
 		{
 			lock (tasksLock)

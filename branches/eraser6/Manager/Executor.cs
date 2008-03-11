@@ -26,6 +26,13 @@ namespace Eraser.Manager
 		public abstract bool DeleteTask(uint taskId);
 
 		/// <summary>
+		/// Replaces the current task in the executor with the new task, loading
+		/// new parameters. This maintains the taks ID.
+		/// </summary>
+		/// <param name="task">The new task details.</param>
+		public abstract void ReplaceTask(Task task);
+		
+		/// <summary>
 		/// Queues the task for execution.
 		/// </summary>
 		/// <param name="task">The task to queue.</param>
