@@ -418,6 +418,18 @@ namespace Eraser.Manager
 			set { schedule = value; }
 		}
 
+		#region Logging functions
+		/// <summary>
+		/// The prototype of a registrant of the Log event.
+		/// </summary>
+		/// <param name="e"></param>
+		public delegate void LogEvent(LogEntry e);
+
+		/// <summary>
+		/// All the registered event handlers for the log event of this task.
+		/// </summary>
+		public event LogEvent Logged;
+
 		/// <summary>
 		/// Retrieves the log for this task.
 		/// </summary>
@@ -439,7 +451,20 @@ namespace Eraser.Manager
 		{
 			lock (log)
 				log.Add(entry);
+
+			if (Logged != null)
+				Logged(entry);
 		}
+
+		/// <summary>
+		/// Clears the log entries from the log.
+		/// </summary>
+		public void ClearLog()
+		{
+			lock (log)
+				log.Clear();
+		}
+		#endregion
 
 		#region Events
 		/// <summary>

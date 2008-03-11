@@ -307,7 +307,12 @@ namespace Eraser
 		/// <param name="e">Event argument.</param>
 		private void viewTaskLogToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			throw new NotImplementedException("Not implemented.");
+			if (scheduler.SelectedItems.Count != 1)
+				return;
+
+			ListViewItem item = scheduler.SelectedItems[0];
+			using (LogForm form = new LogForm((Task)item.Tag))
+				form.ShowDialog();
 		}
 
 		/// <summary>
