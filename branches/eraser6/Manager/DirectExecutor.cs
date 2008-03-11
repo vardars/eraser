@@ -120,6 +120,16 @@ namespace Eraser.Manager
 			}
 		}
 
+		public override void QueueRestartTasks()
+		{
+			lock (tasksLock)
+			{
+				foreach (Task task in tasks.Values)
+					if (task.Schedule == Schedule.RunOnRestart)
+						QueueTask(task);
+			}
+		}
+
 		public override void CancelTask(Task task)
 		{
 			lock (currentTask)

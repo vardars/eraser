@@ -18,6 +18,7 @@ namespace Eraser
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
+			Application.SafeTopLevelCaptionFormat = "Eraser";
 
 			using (eraserClient = new DirectExecutor())
 			{
@@ -28,6 +29,9 @@ namespace Eraser
 				{
 					eraserClient.LoadTaskList(stream);
 				}
+
+				//Run tasks which are meant to be run on restart
+				eraserClient.QueueRestartTasks();
 
 				//Run the program
 				Application.Run(new MainForm());
