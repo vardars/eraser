@@ -67,7 +67,7 @@ namespace Eraser.DefaultPlugins
 					toWrite -= amount;
 
 					//Do a progress callback.
-					callback(((float)pass + ((strmLength - toWrite) / (float)strmLength)) / (float)Passes, pass);
+					callback(((float)pass + ((strmLength - toWrite) / (float)strmLength)) / (float)Passes, pass + 1);
 				}
 			}
 		}
