@@ -32,7 +32,7 @@ namespace Eraser.Manager
 		public abstract void QueueTask(Task task);
 
 		/// <summary>
-		/// Cancels the given task, if it is being executed.
+		/// Cancels the given task, if it is being executed or queued for execution.
 		/// </summary>
 		/// <param name="task">The task to cancel.</param>
 		public abstract void CancelTask(Task task);

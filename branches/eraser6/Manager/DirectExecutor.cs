@@ -52,7 +52,19 @@ namespace Eraser.Manager
 			lock (tasksLock)
 			{
 				tasks.Add(task.ID, task);
-				QueueTask(task);
+
+				//If the task is scheduled to run now, break the waiting thread and
+				//run it immediately
+				if (task.Schedule == Schedule.RunNow)
+				{
+					QueueTask(task);
+				}
+				//If the task is scheduled, add the next execution time to the list
+				//of schduled tasks.
+				else if (task.Schedule != Schedule.RunOnRestart)
+				{
+					scheduledTasks.Add((task.Schedule as RecurringSchedule).NextRun, task);
+				}
 			}
 		}
 
@@ -66,39 +78,50 @@ namespace Eraser.Manager
 				lock (unusedIdsLock)
 					unusedIds.Add(taskId);
 				tasks.Remove(taskId);
+
+				for (int i = 0; i != scheduledTasks.Count; ++i)
+					if (scheduledTasks.Values[i].id == taskId)
+						scheduledTasks.RemoveAt(i);
 			}
+
 			return true;
 		}
 
 		public override void QueueTask(Task task)
 		{
-			//Ignore tasks which are only run on computer restart.
-			if (task.Schedule == Schedule.RunOnRestart)
-				return;
-
 			lock (tasksLock)
 			{
-				//If the task is scheduled to run now, break the waiting thread and
-				//run it immediately
-				if (task.Schedule == Schedule.RunNow)
-				{
-					scheduledTasks.Add(DateTime.Now, task);
-					schedulerInterrupt.Set();
-				}
-				//If the task is scheduled, add the next execution time to the list
-				//of schduled tasks.
-				else
-				{
-					scheduledTasks.Add((task.Schedule as RecurringSchedule).NextRun, task);
-				}
+				//Set the task variable to indicate that the task is already
+				//waiting to be executed.
+				task.queued = true;
+
+				//Queue the task to be run immediately.
+				scheduledTasks.Add(DateTime.Now, task);
+				schedulerInterrupt.Set();
 			}
 		}
 
 		public override void CancelTask(Task task)
 		{
 			lock (currentTask)
+			{
 				if (currentTask == task)
+				{
 					currentTask.cancelled = true;
+					return;
+				}
+			}
+
+			lock (tasksLock)
+				for (int i = 0; i != scheduledTasks.Count; ++i)
+					if (scheduledTasks.Values[i] == task)
+					{
+						scheduledTasks.RemoveAt(i);
+						return;
+					}
+
+			throw new ArgumentOutOfRangeException("The task to be cancelled must " +
+				"either be currently executing or queued.");
 		}
 
 		public override Task GetTask(uint taskId)
@@ -143,6 +166,7 @@ namespace Eraser.Manager
 					try
 					{
 						//Broadcast the task started event.
+						task.queued = false;
 						task.cancelled = false;
 						task.OnTaskStarted(new TaskEventArgs(task));
 

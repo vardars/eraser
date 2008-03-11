@@ -237,6 +237,16 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// Gets whether this task is currently queued to run. This is true only
+		/// if the queue it is in is an explicit request, i.e will run when the
+		/// executor is idle.
+		/// </summary>
+		public bool Queued
+		{
+			get { return queued; }
+		}
+
+		/// <summary>
 		/// The set of data to erase when this task is executed.
 		/// </summary>
 		public List<ErasureTarget> Entries
@@ -341,6 +351,7 @@ namespace Eraser.Manager
 		internal uint id;
 		internal Executor executor;
 		internal bool cancelled = false;
+		internal bool queued = false;
 
 		private string name;
 		private bool executing;
