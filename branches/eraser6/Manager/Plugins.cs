@@ -7,14 +7,6 @@ using System.Reflection;
 namespace Eraser.Manager.Plugin
 {
 	/// <summary>
-	/// Globals class which holds global instances of the necessary plugin objects.
-	/// </summary>
-	internal partial class Globals
-	{
-		public static DefaultHost Host = new DefaultHost();
-	}
-
-	/// <summary>
 	/// The plugins host interface which is used for communicating with the host
 	/// program.
 	/// </summary>

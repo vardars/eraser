@@ -5,12 +5,6 @@ using System.IO;
 
 namespace Eraser.Manager
 {
-	public partial class Globals
-	{
-		internal static ErasureMethodManager ErasureMethodManager =
-			new ErasureMethodManager();
-	}
-
 	/// <summary>
 	/// An interface class representing the method for erasure.
 	/// </summary>

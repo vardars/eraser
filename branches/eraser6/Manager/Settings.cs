@@ -4,11 +4,6 @@ using System.Text;
 
 namespace Eraser.Manager
 {
-	public partial class Globals
-	{
-		public static Settings Settings = new Settings();
-	}
-
 	/// <summary>
 	/// Settings class. Holds the defaults for the manager's operations.
 	/// </summary>

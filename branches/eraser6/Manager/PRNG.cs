@@ -4,11 +4,6 @@ using System.Text;
 
 namespace Eraser.Manager
 {
-	public partial class Globals
-	{
-		internal static PRNGManager PRNGManager = new PRNGManager();
-	}
-
 	/// <summary>
 	/// An interface class for all pseudorandom number generators used for the
 	/// random data erase passes.
