@@ -34,7 +34,7 @@ namespace Eraser
 					ToString(DateTimeFormatInfo.CurrentInfo.FullDateTimePattern));
 			else
 				item.SubItems.Add(task.Schedule.UIText);
-			item.SubItems.Add(string.Empty);
+			item.SubItems.Add(String.Empty);
 
 			//Set the group of the task.
 			if (task.Schedule == Schedule.RunNow)
@@ -172,9 +172,119 @@ namespace Eraser
 			ListViewItem item = scheduler.SelectedItems[0];
 			if (((Task)item.Tag).Executing)
 				using (ProgressForm form = new ProgressForm((Task)item.Tag))
-				{
 					form.ShowDialog();
+			else
+				editTaskToolStripMenuItem_Click(sender, e);
+		}
+
+		/// <summary>
+		/// Occurs when the user right-clicks the list view.
+		/// </summary>
+		/// <param name="sender">The list view which generated this event.</param>
+		/// <param name="e">Event argument.</param>
+		private void schedulerMenu_Opening(object sender, CancelEventArgs e)
+		{
+			//If nothing's selected, don't show the menu
+			if (scheduler.SelectedItems.Count == 0)
+			{
+				e.Cancel = true;
+				return;
+			}
+
+			bool aTaskNotQueued = false;
+			bool aTaskExecuting = false;
+			foreach (ListViewItem item in scheduler.SelectedItems)
+			{
+				Task task = (Task)item.Tag;
+				aTaskNotQueued = aTaskNotQueued || (!task.Queued && !task.Executing);
+				aTaskExecuting = aTaskExecuting || task.Executing;
+			}
+
+			runNowToolStripMenuItem.Enabled = aTaskNotQueued;
+			cancelTaskToolStripMenuItem.Enabled = aTaskExecuting;
+
+			editTaskToolStripMenuItem.Enabled = scheduler.SelectedItems.Count == 1;
+			deleteTaskToolStripMenuItem.Enabled = !aTaskExecuting;
+		}
+
+		/// <summary>
+		/// Occurs whent the user selects the Run Now context menu item.
+		/// </summary>
+		/// <param name="sender">The menu which generated this event.</param>
+		/// <param name="e">Event argument.</param>
+		private void runNowToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			foreach (ListViewItem item in scheduler.SelectedItems)
+			{
+				//Queue the task
+				Task task = (Task)item.Tag;
+				if (!task.Executing && !task.Queued)
+				{
+					Program.eraserClient.QueueTask(task);
+
+					//Update the UI
+					item.SubItems[1].Text = Schedule.RunNow.UIText;
 				}
+			}
+		}
+
+		/// <summary>
+		/// Occurs whent the user selects the Cancel Task context menu item.
+		/// </summary>
+		/// <param name="sender">The menu which generated this event.</param>
+		/// <param name="e">Event argument.</param>
+		private void cancelTaskToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			foreach (ListViewItem item in scheduler.SelectedItems)
+			{
+				//Queue the task
+				Task task = (Task)item.Tag;
+				if (task.Executing || task.Queued)
+				{
+					Program.eraserClient.CancelTask(task);
+
+					//Update the UI
+					item.SubItems[1].Text = string.Empty;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Occurs when the user selects the View Task Log context menu item.
+		/// </summary>
+		/// <param name="sender">The menu item which generated this event.</param>
+		/// <param name="e">Event argument.</param>
+		private void viewTaskLogToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			throw new NotImplementedException("Not implemented.");
+		}
+
+		/// <summary>
+		/// Occurs when the user selects the Edit Task context menu item.
+		/// </summary>
+		/// <param name="sender">The menu item which generated this event.</param>
+		/// <param name="e">Event argument.</param>
+		private void editTaskToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			throw new NotImplementedException("Not implemented.");
+		}
+
+		/// <summary>
+		/// Occurs when the user selects the Delete Task context menu item.
+		/// </summary>
+		/// <param name="sender">The menu item which generated this event.</param>
+		/// <param name="e">Event argument.</param>
+		private void deleteTaskToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			foreach (ListViewItem item in scheduler.SelectedItems)
+			{
+				Task task = (Task)item.Tag;
+				if (!task.Executing)
+				{
+					Program.eraserClient.DeleteTask(task.ID);
+					scheduler.Items.RemoveAt(item.Index);
+				}
+			}
 		}
 
 		#region Item management
