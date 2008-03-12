@@ -72,7 +72,7 @@
 			this.jobTitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.jobTitle.Location = new System.Drawing.Point(149, 8);
 			this.jobTitle.Name = "jobTitle";
-			this.jobTitle.Size = new System.Drawing.Size(34, 15);
+			this.jobTitle.Size = new System.Drawing.Size(0, 15);
 			this.jobTitle.TabIndex = 3;
 			// 
 			// status
@@ -107,13 +107,13 @@
 			// 
 			this.item.Location = new System.Drawing.Point(215, 61);
 			this.item.Name = "item";
-			this.item.Size = new System.Drawing.Size(220, 15);
+			this.item.Size = new System.Drawing.Size(220, 30);
 			this.item.TabIndex = 7;
 			// 
 			// passLbl
 			// 
 			this.passLbl.AutoSize = true;
-			this.passLbl.Location = new System.Drawing.Point(148, 80);
+			this.passLbl.Location = new System.Drawing.Point(148, 95);
 			this.passLbl.Name = "passLbl";
 			this.passLbl.Size = new System.Drawing.Size(33, 15);
 			this.passLbl.TabIndex = 8;
@@ -122,7 +122,7 @@
 			// pass
 			// 
 			this.pass.AutoSize = true;
-			this.pass.Location = new System.Drawing.Point(215, 80);
+			this.pass.Location = new System.Drawing.Point(215, 95);
 			this.pass.Name = "pass";
 			this.pass.Size = new System.Drawing.Size(13, 15);
 			this.pass.TabIndex = 9;
@@ -193,7 +193,7 @@
 			// timeLeftLbl
 			// 
 			this.timeLeftLbl.AutoSize = true;
-			this.timeLeftLbl.Location = new System.Drawing.Point(148, 99);
+			this.timeLeftLbl.Location = new System.Drawing.Point(148, 114);
 			this.timeLeftLbl.Name = "timeLeftLbl";
 			this.timeLeftLbl.Size = new System.Drawing.Size(57, 15);
 			this.timeLeftLbl.TabIndex = 10;
@@ -202,7 +202,7 @@
 			// timeLeft
 			// 
 			this.timeLeft.AutoSize = true;
-			this.timeLeft.Location = new System.Drawing.Point(215, 99);
+			this.timeLeft.Location = new System.Drawing.Point(215, 114);
 			this.timeLeft.Name = "timeLeft";
 			this.timeLeft.Size = new System.Drawing.Size(76, 15);
 			this.timeLeft.TabIndex = 11;

@@ -42,7 +42,7 @@ namespace Eraser
 				return;
 			}
 
-			item.Text = File.GetCompactPath(e.CurrentItemName, item.Width, item.Font);
+			item.Text = File.GetCompactPath(e.CurrentItemName, item.Width * 2, item.Font);
 			pass.Text = e.TotalPasses != 0 ?
 				string.Format("{0} out of {1}", e.CurrentPass, e.TotalPasses) :
 				string.Format("{0}", e.CurrentPass);
