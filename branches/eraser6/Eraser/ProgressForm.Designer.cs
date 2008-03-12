@@ -56,7 +56,7 @@
 			this.overallProgressLbl.Name = "overallProgressLbl";
 			this.overallProgressLbl.Size = new System.Drawing.Size(128, 15);
 			this.overallProgressLbl.TabIndex = 1;
-			this.overallProgressLbl.Text = "Total: 75%";
+			this.overallProgressLbl.Text = "Total: 0%";
 			this.overallProgressLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// overallProgress
@@ -65,7 +65,6 @@
 			this.overallProgress.Name = "overallProgress";
 			this.overallProgress.Size = new System.Drawing.Size(129, 15);
 			this.overallProgress.TabIndex = 2;
-			this.overallProgress.Value = 75;
 			// 
 			// jobTitle
 			// 
@@ -73,9 +72,8 @@
 			this.jobTitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.jobTitle.Location = new System.Drawing.Point(149, 8);
 			this.jobTitle.Name = "jobTitle";
-			this.jobTitle.Size = new System.Drawing.Size(180, 15);
+			this.jobTitle.Size = new System.Drawing.Size(34, 15);
 			this.jobTitle.TabIndex = 3;
-			this.jobTitle.Text = "C:\\Users\\Joel Low\\Documents\\";
 			// 
 			// status
 			// 
@@ -111,7 +109,6 @@
 			this.item.Name = "item";
 			this.item.Size = new System.Drawing.Size(220, 15);
 			this.item.TabIndex = 7;
-			this.item.Text = "C:\\...\\File.txt";
 			// 
 			// passLbl
 			// 
@@ -127,9 +124,9 @@
 			this.pass.AutoSize = true;
 			this.pass.Location = new System.Drawing.Point(215, 80);
 			this.pass.Name = "pass";
-			this.pass.Size = new System.Drawing.Size(42, 15);
+			this.pass.Size = new System.Drawing.Size(13, 15);
 			this.pass.TabIndex = 9;
-			this.pass.Text = "7 of 35";
+			this.pass.Text = "0";
 			// 
 			// title
 			// 
@@ -155,9 +152,9 @@
 			this.itemProgressLbl.AutoSize = true;
 			this.itemProgressLbl.Location = new System.Drawing.Point(413, 138);
 			this.itemProgressLbl.Name = "itemProgressLbl";
-			this.itemProgressLbl.Size = new System.Drawing.Size(29, 15);
+			this.itemProgressLbl.Size = new System.Drawing.Size(23, 15);
 			this.itemProgressLbl.TabIndex = 13;
-			this.itemProgressLbl.Text = "97%";
+			this.itemProgressLbl.Text = "0%";
 			// 
 			// itemProgress
 			// 
@@ -165,7 +162,6 @@
 			this.itemProgress.Name = "itemProgress";
 			this.itemProgress.Size = new System.Drawing.Size(257, 17);
 			this.itemProgress.TabIndex = 12;
-			this.itemProgress.Value = 97;
 			// 
 			// stop
 			// 
@@ -197,7 +193,7 @@
 			// timeLeftLbl
 			// 
 			this.timeLeftLbl.AutoSize = true;
-			this.timeLeftLbl.Location = new System.Drawing.Point(149, 99);
+			this.timeLeftLbl.Location = new System.Drawing.Point(148, 99);
 			this.timeLeftLbl.Name = "timeLeftLbl";
 			this.timeLeftLbl.Size = new System.Drawing.Size(57, 15);
 			this.timeLeftLbl.TabIndex = 10;
