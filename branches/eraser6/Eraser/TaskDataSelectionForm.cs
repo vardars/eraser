@@ -135,6 +135,26 @@ namespace Eraser
 			}
 		}
 
+		private void method_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (!(method.SelectedItem is UnusedSpaceErasureMethod) &&
+				method.SelectedItem != ErasureMethodManager.Default)
+			{
+				if (unused.Checked)
+				{
+					file.Checked = true;
+					errorProvider.SetError(unused, "The erasure method selected does " +
+						"not support unused disk space erasures.");
+				}
+				unused.Enabled = false;
+			}
+			else if (!unused.Enabled)
+			{
+				unused.Enabled = true;
+				errorProvider.Clear();
+			}
+		}
+
 		private void data_CheckedChanged(object sender, EventArgs e)
 		{
 			filePath.Enabled = fileBrowse.Enabled = file.Checked;

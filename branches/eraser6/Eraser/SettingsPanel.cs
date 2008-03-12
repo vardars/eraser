@@ -48,7 +48,8 @@ namespace Eraser
 			foreach (ErasureMethod method in methods.Values)
 			{
 				eraseFilesMethod.Items.Add(method);
-				eraseUnusedMethod.Items.Add(method);
+				if (method is UnusedSpaceErasureMethod)
+					eraseUnusedMethod.Items.Add(method);
 			}
 
 			//Refresh the list of PRNGs

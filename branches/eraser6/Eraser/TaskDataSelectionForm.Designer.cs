@@ -208,6 +208,7 @@ namespace Eraser
 			this.method.Name = "method";
 			this.method.Size = new System.Drawing.Size(189, 23);
 			this.method.TabIndex = 2;
+			this.method.SelectedIndexChanged += new System.EventHandler(this.method_SelectedIndexChanged);
 			// 
 			// ok
 			// 

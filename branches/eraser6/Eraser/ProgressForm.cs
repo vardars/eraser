@@ -43,7 +43,9 @@ namespace Eraser
 			}
 
 			item.Text = File.GetCompactPath(e.CurrentItemName, item.Width, item.Font);
-			pass.Text = string.Format("{0} out of {1}", e.CurrentPass, e.TotalPasses);
+			pass.Text = e.TotalPasses != 0 ?
+				string.Format("{0} out of {1}", e.CurrentPass, e.TotalPasses) :
+				string.Format("{0}", e.CurrentPass);
 			timeLeft.Text = string.Format("{0} left", new TimeSpan(0, 0, e.TimeLeft).ToString());
 
 			itemProgress.Value = e.CurrentItemProgress;
