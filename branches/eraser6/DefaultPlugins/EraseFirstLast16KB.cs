@@ -27,7 +27,7 @@ namespace Eraser.DefaultPlugins
 		public override long CalculateEraseDataSize(List<string> paths, long targetSize)
 		{
 			//Simple. Number of files multiplied by 32kb.
-			return paths.Count * 16 * 1024;
+			return paths.Count * dataSize * 2;
 		}
 
 		public override void Erase(Stream strm, long erasureLength, PRNG prng,
