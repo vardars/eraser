@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 using Eraser.Manager;
 using Eraser.Util;
+using System.IO;
 
 namespace Eraser
 {
@@ -35,11 +36,11 @@ namespace Eraser
 			string[] drives = Environment.GetLogicalDrives();
 			foreach (string drive in drives)
 			{
-				DriveTypes driveType = Drives.GetDriveType(drive);
-				if (driveType != DriveTypes.DRIVE_UNKNOWN &&
-					driveType != DriveTypes.DRIVE_NO_ROOT_DIR &&
-					driveType != DriveTypes.DRIVE_CDROM &&
-					driveType != DriveTypes.DRIVE_REMOTE)
+				DriveType driveType = new DriveInfo(drive).DriveType;
+				if (driveType != DriveType.Unknown &&
+					driveType != DriveType.NoRootDirectory &&
+					driveType != DriveType.CDRom &&
+					driveType != DriveType.Network)
 				{
 					DriveItem item = new DriveItem();
 					item.Drive = drive.Substring(0, drive.Length - 1);
