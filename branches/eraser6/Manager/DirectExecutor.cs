@@ -331,8 +331,232 @@ namespace Eraser.Manager
 		/// <param name="target">The target of the unused space erase.</param>
 		private void EraseUnusedSpace(Task task, Task.UnusedSpace target)
 		{
-			throw new NotImplementedException("Unused space erasures are not "+
-				"currently implemented");
+			//NotImplemented: Check for privileges: This includes disk quotas.:FreeSpace.cpp@217
+			//NotImplemented: Disable low disk space notification: FreeSpace.cpp@46
+
+			//Get the erasure method if the user specified he wants the default.
+			ErasureMethod method = target.Method;
+			if (method == ErasureMethodManager.Default)
+				method = ErasureMethodManager.GetInstance(
+					Globals.Settings.DefaultUnusedSpaceErasureMethod);
+
+			TaskProgressEventArgs eventArgs = new TaskProgressEventArgs(task, 0, 0);
+			eventArgs.currentTarget = target;
+			eventArgs.currentItemName = "Cluster tips";
+			eventArgs.totalPasses = method.Passes;
+			eventArgs.timeLeft = -1;
+			task.OnProgressChanged(eventArgs);
+
+			//Erase the cluster tips of every file on the drive.
+			EraseClusterTips(task, target, method,
+				delegate(int currentFile, string currentFilePath, int totalFiles)
+				{
+					eventArgs.currentItemName = "(Tips) " + currentFilePath;
+					eventArgs.currentItemProgress = (int)((float)currentFile / totalFiles * 100);
+					eventArgs.overallProgress = eventArgs.CurrentItemProgress / 10;
+					task.OnProgressChanged(eventArgs);
+				}
+			);
+
+			//Make a folder to dump our temporary files in
+			DirectoryInfo info = new DirectoryInfo(target.Drive).Root;
+			while (info.Root.FullName == info.FullName)
+				try
+				{
+					info = info.CreateSubdirectory(GetRandomFileName(18));
+				}
+				catch (IOException)
+				{
+				}
+
+			try
+			{
+				//Set the folder's compression flag off since we want to use as much
+				//space as possible
+				if (Eraser.Util.File.IsCompressed(info.FullName))
+					Eraser.Util.File.SetCompression(info.FullName, false);
+
+				//Determine the total amount of data that needs to be written.
+				WriteStatistics statistics = new WriteStatistics();
+				long totalSize = method.CalculateEraseDataSize(
+					null, Drive.GetFreeSpace(info.Root.FullName));
+
+				//Continue creating files while there is free space.
+				eventArgs.currentItemName = "Unused space";
+				task.OnProgressChanged(eventArgs);
+				while (Drive.GetFreeSpace(info.Root.FullName) > 0)
+				{
+					FileStream stream = null;
+					try
+					{
+						stream = new FileStream(info.FullName + Path.DirectorySeparatorChar +
+							GetRandomFileName(18), FileMode.CreateNew, FileAccess.Write);
+					}
+					catch (IOException)
+					{
+						//IOExceptions are because of an already existing file name.
+						continue;
+					}
+
+					//Set the length of the file to be the amount of free space left
+					//or the maximum size of one of these dumps.
+					stream.SetLength(Math.Min(ErasureMethod.FreeSpaceFileUnit,
+						Drive.GetFreeSpace(info.Root.FullName)));
+
+					//Then run the erase task
+					method.Erase(stream, long.MaxValue,
+						PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
+						delegate(long lastWritten, int currentPass)
+						{
+							statistics.DataWritten += lastWritten;
+							eventArgs.currentPass = currentPass;
+							eventArgs.currentItemProgress = (int)(statistics.DataWritten * 100 / totalSize);
+							eventArgs.overallProgress = (int)((10 + eventArgs.currentItemProgress * 0.8));
+
+							if (statistics.Speed == 0)
+								eventArgs.timeLeft = -1;
+							else
+								eventArgs.timeLeft = (int)((totalSize - statistics.DataWritten) / statistics.Speed);
+							task.OnProgressChanged(eventArgs);
+
+							lock (currentTask)
+								if (currentTask.cancelled)
+									throw new FatalException("The task was cancelled.");
+						}
+					);
+				}
+
+				//If the drive is using NTFS, try to squeeze entries into the MFT as well
+				eventArgs.currentItemName = "Resident MFT entries";
+				task.OnProgressChanged(eventArgs);
+
+				try
+				{
+					List<FileStream> streams = new List<FileStream>();
+					for (; ; )
+					{
+						//Open this stream
+						FileStream strm = new FileStream(info.FullName + Path.DirectorySeparatorChar +
+							GetRandomFileName(18), FileMode.CreateNew, FileAccess.Write);
+						streams.Add(strm);
+
+						//Stretch the file size to the size of one MFT record
+						strm.SetLength(1);
+
+						//Then run the erase task
+						method.Erase(strm, long.MaxValue,
+							PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
+							null);
+					}
+				}
+				catch (IOException)
+				{
+					//OK, enough squeezing.
+				}
+			}
+			finally
+			{
+				eventArgs.currentItemName = "Removing temporary files";
+				task.OnProgressChanged(eventArgs);
+
+				//Remove the folder holding all our temporary files.
+				RemoveFolder(info);
+
+				//NotImplemented: Enable low disk space notification: FreeSpace.cpp@68
+			}
+
+
+			//NotImplemented: clear directory entries: Eraser.cpp@2321
+		}
+
+		private delegate void SubFoldersHandler(DirectoryInfo info);
+		private delegate void ClusterTipsEraseProgress(int currentFile,
+			string currentFilePath, int totalFiles);
+		private static void EraseClusterTips(Task task, Task.UnusedSpace target,
+			ErasureMethod method, ClusterTipsEraseProgress callback)
+		{
+			//List all the files which can be erased.
+			List<string> files = new List<string>();
+			SubFoldersHandler subFolders = null;
+			subFolders = delegate(DirectoryInfo info)
+			{
+				try
+				{
+					foreach (FileInfo file in info.GetFiles())
+						if (Eraser.Util.File.IsProtectedSystemFile(file.FullName))
+							task.LogEntry(new LogEntry(string.Format("{0} did not have its cluster tips " +
+								"erased, because it is a system file", file.FullName), LogLevel.INFORMATION));
+						else
+							files.Add(file.FullName);
+
+					foreach (DirectoryInfo subDir in info.GetDirectories())
+						subFolders(subDir);
+				}
+				catch (UnauthorizedAccessException)
+				{
+				}
+				catch (IOException)
+				{
+				}
+			};
+
+			subFolders(new DirectoryInfo(target.Drive));
+
+			//For every file, erase the cluster tips.
+			for (int i = 0, j = files.Count; i != j; ++i)
+			{
+				EraseFileClusterTips(files[i], method);
+				callback(i, files[i], files.Count);
+			}
+		}
+
+		/// <summary>
+		/// Erases the cluster tips of the given file.
+		/// </summary>
+		/// <param name="file">The file to erase.</param>
+		/// <param name="method">The erasure method to use.</param>
+		private static void EraseFileClusterTips(string file, ErasureMethod method)
+		{
+			//Get the file access times
+			DateTime lastAccess, lastWrite, created;
+			{
+				FileInfo info = new FileInfo(file);
+				lastAccess = info.LastAccessTime;
+				lastWrite = info.LastWriteTime;
+				created = info.CreationTime;
+			}
+
+			//Create the stream, lengthen the file, then tell the erasure method
+			//to erase the tips.
+			using (FileStream stream = new FileStream(file, FileMode.Open,
+				FileAccess.Write, FileShare.ReadWrite))
+			{
+				long fileLength = stream.Length;
+				long fileArea = GetFileArea(file);
+
+				try
+				{
+					stream.SetLength(fileArea);
+					stream.Seek(fileLength, SeekOrigin.Begin);
+
+					//Erase the file
+					method.Erase(stream, long.MaxValue, PRNGManager.GetInstance(
+						Globals.Settings.ActivePRNG), null);
+				}
+				finally
+				{
+					//Make sure the file is restored!
+					stream.SetLength(fileLength);
+				}
+			}
+
+			//Set the file times
+			{
+				FileInfo info = new FileInfo(file);
+				info.LastAccessTime = lastAccess;
+				info.LastWriteTime = lastWrite;
+				info.CreationTime = created;
+			}
 		}
 
 		/// <summary>
