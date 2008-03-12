@@ -92,13 +92,13 @@ namespace Eraser.Manager
 		/// Disk operation write unit. Chosen such that this value mod 3, 4, 512,
 		/// and 1024 is 0
 		/// </summary>
-		protected const int DiskOperationUnit = 1536 * 4096;
+		public const int DiskOperationUnit = 1536 * 4096;
 
 		/// <summary>
 		/// Unused space erasure file size. Each of the files used in erasing
 		/// unused space will be of this size.
 		/// </summary>
-		protected const int FreeSpaceFileUnit = DiskOperationUnit * 36;
+		public const int FreeSpaceFileUnit = DiskOperationUnit * 36;
 
 		/// <summary>
 		/// Shuffles the passes in the input array, effectively randomizing the
@@ -275,7 +275,8 @@ namespace Eraser.Manager
 			for (int pass = 0; pass < Passes; ++pass)
 			{
 				//Do a progress callback first.
-				callback(pass / (float)Passes, pass + 1);
+				if (callback != null)
+					callback(pass / (float)Passes, pass + 1);
 
 				//Start from the beginning again
 				strm.Seek(strmStart, SeekOrigin.Begin);
@@ -302,7 +303,9 @@ namespace Eraser.Manager
 					toWrite -= amount;
 
 					//Do a progress callback.
-					callback(((float)pass + ((strmLength - toWrite) / (float)strmLength)) / (float)Passes, pass + 1);
+					if (callback != null)
+						callback(((float)pass + ((strmLength - toWrite) / (float)strmLength)) /
+							(float)Passes, pass + 1);
 				}
 			}
 		}
