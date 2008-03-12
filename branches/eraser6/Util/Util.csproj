@@ -37,6 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Kernel.cs" />
     <Compile Include="File.cs" />
     <Compile Include="Drive.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

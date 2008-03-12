@@ -13,7 +13,7 @@ namespace Eraser.Util
 	using HICON = IntPtr;
 	using HIMAGELIST = IntPtr;
 
-	public class File
+	public static class File
 	{
 		/// <summary>
 		/// Uses SHGetFileInfo to retrieve the description for the given file,
@@ -108,7 +108,7 @@ namespace Eraser.Util
 			uint result = SfcIsFileProtected(IntPtr.Zero, filePath);
 			if (result != 0)
 				return true;
-			else if (GetLastError() == 2) //ERROR_FILE_NOT_FOUND
+			else if (Kernel.GetLastError() == 2) //ERROR_FILE_NOT_FOUND
 				return false;
 
 			throw new Exception("Unknown SfcIsFileProtected error.");
@@ -129,15 +129,6 @@ namespace Eraser.Util
 		private static extern uint SfcIsFileProtected(IntPtr RpcHandle,
 			[MarshalAs(UnmanagedType.LPWStr)]string ProtFileName);
 
-		/// <summary>
-		/// Retrieves the calling thread's last-error code value. The last-error
-		/// code is maintained on a per-thread basis. Multiple threads do not
-		/// overwrite each other's last-error code.
-		/// </summary>
-		/// <returns>The return value is the calling thread's last-error code.</returns>
-		[DllImport("Kernel32.dll")]
-		public static extern uint GetLastError();
-		
 		/// <summary>
 		/// Checks whether the path given is compressed.
 		/// </summary>
@@ -225,15 +216,37 @@ namespace Eraser.Util
 		/// returns 0.
 		/// If the function fails, the return value is INVALID_HANDLE_VALUE.
 		/// To get extended error information, call GetLastError.</returns>
-		[DllImport("kernel32.dll")]
-		private static extern SafeFileHandle CreateFile(string lpFileName, uint dwDesiredAccess,
+		[DllImport("Kernel32.dll")]
+		public static extern SafeFileHandle CreateFile(string lpFileName, uint dwDesiredAccess,
 			uint dwShareMode, IntPtr SecurityAttributes, uint dwCreationDisposition,
 			uint dwFlagsAndAttributes, IntPtr hTemplateFile);
 
-		private const uint GENERIC_READ = 0x80000000;
-		private const uint GENERIC_WRITE = 0x40000000;
-		private const uint OPEN_EXISTING = 3;
-		private const uint FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
+		public const uint GENERIC_READ = 0x80000000;
+		public const uint GENERIC_WRITE = 0x40000000;
+		public const uint GENERIC_EXECUTE = 0x20000000;
+		public const uint GENERIC_ALL = 0x10000000;
+
+		public const uint FILE_SHARE_READ = 0x00000001;
+		public const uint FILE_SHARE_WRITE = 0x00000002;
+		public const uint FILE_SHARE_DELETE = 0x00000004;
+
+		public const uint CREATE_NEW = 1;
+		public const uint CREATE_ALWAYS = 2;
+		public const uint OPEN_EXISTING = 3;
+		public const uint OPEN_ALWAYS = 4;
+		public const uint TRUNCATE_EXISTING = 5;
+
+		public const uint FILE_FLAG_WRITE_THROUGH = 0x80000000;
+		public const uint FILE_FLAG_OVERLAPPED = 0x40000000;
+		public const uint FILE_FLAG_NO_BUFFERING = 0x20000000;
+		public const uint FILE_FLAG_RANDOM_ACCESS = 0x10000000;
+		public const uint FILE_FLAG_SEQUENTIAL_SCAN = 0x08000000;
+		public const uint FILE_FLAG_DELETE_ON_CLOSE = 0x04000000;
+		public const uint FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
+		public const uint FILE_FLAG_POSIX_SEMANTICS = 0x01000000;
+		public const uint FILE_FLAG_OPEN_REPARSE_POINT = 0x00200000;
+		public const uint FILE_FLAG_OPEN_NO_RECALL = 0x00100000;
+		public const uint FILE_FLAG_FIRST_PIPE_INSTANCE = 0x00080000;
 
 		/// <summary>
 		/// Retrieves information about an object in the file system, such as a
