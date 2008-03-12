@@ -42,6 +42,7 @@
     <Compile Include="EraseDoD.cs" />
     <Compile Include="EraseRandom.cs" />
     <Compile Include="EraseGutmann.cs" />
+    <Compile Include="EraseFirstLast16KB.cs" />
     <Compile Include="RNGISAAC.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
