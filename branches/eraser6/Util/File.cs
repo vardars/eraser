@@ -5,6 +5,8 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
+using Microsoft.Win32.SafeHandles;
 
 namespace Eraser.Util
 {
@@ -43,6 +45,13 @@ namespace Eraser.Util
 			return Icon.FromHandle(shfi.hIcon);
 		}
 
+		/// <summary>
+		/// Compacts the file path, fitting in the given width.
+		/// </summary>
+		/// <param name="longPath">The long file path.</param>
+		/// <param name="newWidth">The target width of the text.</param>
+		/// <param name="drawFont">The font used for drawing the text.</param>
+		/// <returns>The compacted file path.</returns>
 		public static string GetCompactPath(string longPath, int newWidth, Font drawFont)
 		{
 			using (Control ctrl = new Control())
@@ -62,8 +71,7 @@ namespace Eraser.Util
 
 				while (g.MeasureString(builder.ToString(), drawFont).Width > newWidth)
 				{
-					if (PathCompactPathEx(builder, longPath, (UIntPtr)(charCount--),
-						(UIntPtr)0) == UIntPtr.Zero)
+					if (PathCompactPathEx(builder, longPath, (uint)charCount--, 0) == 0)
 					{
 						return string.Empty;
 					}
@@ -87,8 +95,145 @@ namespace Eraser.Util
 		/// <param name="dwFlags">Reserved.</param>
 		/// <returns>Returns TRUE if successful, or FALSE otherwise.</returns>
 		[DllImport("Shlwapi.dll")]
-		private static extern UIntPtr PathCompactPathEx(
-			StringBuilder pszOut, string pszSrc, UIntPtr cchMax, UIntPtr dwFlags);
+		private static extern uint PathCompactPathEx(
+			StringBuilder pszOut, string pszSrc, uint cchMax, uint dwFlags);
+
+		/// <summary>
+		/// Determines if a given file is protected by SFC.
+		/// </summary>
+		/// <param name="filePath">The path to check</param>
+		/// <returns>True if the file is protected.</returns>
+		public static bool IsProtectedSystemFile(string filePath)
+		{
+			uint result = SfcIsFileProtected(IntPtr.Zero, filePath);
+			if (result != 0)
+				return true;
+			else if (GetLastError() == 2) //ERROR_FILE_NOT_FOUND
+				return false;
+
+			throw new Exception("Unknown SfcIsFileProtected error.");
+		}
+
+		/// <summary>
+		/// Determines whether the specified file is protected. Applications
+		/// should avoid replacing protected system files.
+		/// </summary>
+		/// <param name="RpcHandle">This parameter must be NULL.</param>
+		/// <param name="ProtFileName">The name of the file.</param>
+		/// <returns>If the file is protected, the return value is a nonzero value.
+		/// 
+		/// If the file is not protected, the return value is zero and GetLastError
+		/// returns ERROR_FILE_NOT_FOUND. If the function fails, GetLastError will
+		/// return a different error code.</returns>
+		[DllImport("Sfc.dll")]
+		private static extern uint SfcIsFileProtected(IntPtr RpcHandle,
+			[MarshalAs(UnmanagedType.LPWStr)]string ProtFileName);
+
+		/// <summary>
+		/// Retrieves the calling thread's last-error code value. The last-error
+		/// code is maintained on a per-thread basis. Multiple threads do not
+		/// overwrite each other's last-error code.
+		/// </summary>
+		/// <returns>The return value is the calling thread's last-error code.</returns>
+		[DllImport("Kernel32.dll")]
+		public static extern uint GetLastError();
+		
+		/// <summary>
+		/// Checks whether the path given is compressed.
+		/// </summary>
+		/// <param name="filePath">The path to the file or folder</param>
+		/// <returns>True if the file or folder is compressed.</returns>
+		public unsafe static bool IsCompressed(string path)
+		{
+			ushort compressionStatus = 0;
+			uint bytesReturned = 0;
+
+			using (FileStream strm = new FileStream(CreateFile(path,
+				GENERIC_READ | GENERIC_WRITE, 0, IntPtr.Zero, OPEN_EXISTING,
+				FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.Read))
+			{
+				if (DeviceIoControl(strm.SafeFileHandle.DangerousGetHandle(),
+					FSCTL_GET_COMPRESSION, IntPtr.Zero, 0, new IntPtr(&compressionStatus),
+					sizeof(ushort), out bytesReturned, IntPtr.Zero) != 0)
+				{
+					const ushort COMPRESSION_FORMAT_NONE = 0x0000;
+					return compressionStatus != COMPRESSION_FORMAT_NONE;
+				}
+			}
+
+			throw new Exception("Unknown DeviceIoControl error.");
+		}
+
+		/// <summary>
+		/// Sets whether the file system object pointed to by path is compressed.
+		/// </summary>
+		/// <param name="path">The path to the file or folder.</param>
+		/// <returns>True if the file or folder has its compression value set.</returns>
+		public unsafe static bool SetCompression(string path, bool compressed)
+		{
+			ushort compressionStatus = compressed ?
+				COMPRESSION_FORMAT_DEFAULT : COMPRESSION_FORMAT_NONE;
+			uint bytesReturned = 0;
+
+			using (FileStream strm = new FileStream(CreateFile(path,
+				GENERIC_READ | GENERIC_WRITE, 0, IntPtr.Zero, OPEN_EXISTING,
+				FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.ReadWrite))
+			{
+				return DeviceIoControl(strm.SafeFileHandle.DangerousGetHandle(),
+					FSCTL_SET_COMPRESSION, new IntPtr(&compressionStatus),
+					sizeof(ushort), IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero) != 0;
+			}
+		}
+
+		[DllImport("Kernel32.dll")]
+		private extern static unsafe uint DeviceIoControl(IntPtr hDevice,
+			uint dwIoControlCode, IntPtr lpInBuffer, uint nInBufferSize,
+			IntPtr lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
+			IntPtr lpOverlapped);
+
+		private const uint FSCTL_GET_COMPRESSION = 0x9003C;
+		private const uint FSCTL_SET_COMPRESSION = 0x9C040;
+		private const ushort COMPRESSION_FORMAT_NONE = 0x0000;
+		private const ushort COMPRESSION_FORMAT_DEFAULT = 0x0001;
+
+		/// <summary>
+		/// The CreateFile function creates or opens a file, file stream, directory,
+		/// physical disk, volume, console buffer, tape drive, communications resource,
+		/// mailslot, or named pipe. The function returns a handle that can be used
+		/// to access an object.
+		/// </summary>
+		/// <param name="FileName"></param>
+		/// <param name="DesiredAccess"> access to the object, which can be read,
+		/// write, or both</param>
+		/// <param name="ShareMode">The sharing mode of an object, which can be
+		/// read, write, both, or none</param>
+		/// <param name="SecurityAttributes">A pointer to a SECURITY_ATTRIBUTES
+		/// structure that determines whether or not the returned handle can be
+		/// inherited by child processes. Can be null</param>
+		/// <param name="CreationDisposition">An action to take on files that exist
+		/// and do not exist</param>
+		/// <param name="FlagsAndAttributes">The file attributes and flags.</param>
+		/// <param name="hTemplateFile">A handle to a template file with the
+		/// GENERIC_READ access right. The template file supplies file attributes
+		/// and extended attributes for the file that is being created. This
+		/// parameter can be null</param>
+		/// <returns>If the function succeeds, the return value is an open handle
+		/// to a specified file. If a specified file exists before the function
+		/// all and dwCreationDisposition is CREATE_ALWAYS or OPEN_ALWAYS, a call
+		/// to GetLastError returns ERROR_ALREADY_EXISTS, even when the function
+		/// succeeds. If a file does not exist before the call, GetLastError
+		/// returns 0.
+		/// If the function fails, the return value is INVALID_HANDLE_VALUE.
+		/// To get extended error information, call GetLastError.</returns>
+		[DllImport("kernel32.dll")]
+		private static extern SafeFileHandle CreateFile(string lpFileName, uint dwDesiredAccess,
+			uint dwShareMode, IntPtr SecurityAttributes, uint dwCreationDisposition,
+			uint dwFlagsAndAttributes, IntPtr hTemplateFile);
+
+		private const uint GENERIC_READ = 0x80000000;
+		private const uint GENERIC_WRITE = 0x40000000;
+		private const uint OPEN_EXISTING = 3;
+		private const uint FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
 
 		/// <summary>
 		/// Retrieves information about an object in the file system, such as a
