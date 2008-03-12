@@ -26,8 +26,20 @@ namespace Eraser.DefaultPlugins
 
 		public override long CalculateEraseDataSize(List<string> paths, long targetSize)
 		{
-			//Simple. Number of files multiplied by 32kb.
-			return paths.Count * dataSize * 2;
+			//Amount of data required to be written.
+			long amountToWrite = 0;
+			if (paths == null)
+			{
+				if (targetSize <= dataSize)
+					amountToWrite = targetSize;
+				else
+					amountToWrite = dataSize * 2;
+			}
+			else
+				amountToWrite = paths.Count * dataSize * 2;
+
+			//The final amount has to be multiplied by the number of passes.
+			return amountToWrite * Method.Passes;
 		}
 
 		public override void Erase(Stream strm, long erasureLength, PRNG prng,
@@ -40,40 +52,40 @@ namespace Eraser.DefaultPlugins
 				throw new ArgumentException("The amount of data erased should not be " +
 					"limited, since this is a self-limiting erasure method.");
 
-			//Try to retrieve the default erasure method.
-			ErasureMethod defaultMethod = ErasureMethodManager.GetInstance(
-				Globals.Settings.DefaultFileErasureMethod);
-
-			//If we are the default, use the default pseudorandom pass.
-			if (defaultMethod.GUID == GUID)
-				defaultMethod = ErasureMethodManager.GetInstance(new Guid(
-					"{BF8BA267-231A-4085-9BF9-204DE65A6641}"));
+			ErasureMethod method = Method;
 
 			//If the target stream is shorter than 16kb, just forward it to the default
 			//function.
 			if (strm.Length < dataSize)
 			{
-				defaultMethod.Erase(strm, erasureLength, prng, callback);
+				method.Erase(strm, erasureLength, prng, callback);
 				return;
 			}
 
-			//Declare our local anonymous function to forward the progress event
-			//to the callback function.
-			float baseCompleted = 0;
-			OnProgress chainCallbackHandler = delegate(float currentProgress, int currentPass)
-			{
-				callback(baseCompleted + currentProgress / 2,
-					(int)((baseCompleted * defaultMethod.Passes) + currentPass / 2));
-			};
-
 			//Seek to the beginning and write 16kb.
 			strm.Seek(0, SeekOrigin.Begin);
-			defaultMethod.Erase(strm, dataSize, prng, chainCallbackHandler);
-			baseCompleted = 0.5F;
+			method.Erase(strm, dataSize, prng, callback);
 
 			//Seek to the end - 16kb, and write.
 			strm.Seek(-dataSize, SeekOrigin.End);
-			defaultMethod.Erase(strm, long.MaxValue, prng, chainCallbackHandler);
+			method.Erase(strm, long.MaxValue, prng, callback);
+		}
+
+		private ErasureMethod Method
+		{
+			get
+			{
+				//Try to retrieve the default erasure method.
+				ErasureMethod defaultMethod = ErasureMethodManager.GetInstance(
+					Globals.Settings.DefaultFileErasureMethod);
+
+				//If we are the default, use the default pseudorandom pass.
+				if (defaultMethod.GUID == GUID)
+					defaultMethod = ErasureMethodManager.GetInstance(new Guid(
+						"{BF8BA267-231A-4085-9BF9-204DE65A6641}"));
+
+				return defaultMethod;
+			}
 		}
 
 		/// <summary>
