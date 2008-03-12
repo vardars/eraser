@@ -318,7 +318,7 @@ namespace Eraser.Manager
 			//Calculate the total amount of data required to finish the wipe. This
 			//value is just the total about of data to be erased multiplied by
 			//number of passes
-			totalSize *= method.Passes;
+			totalSize = method.CalculateEraseDataSize(paths, totalSize);
 
 			//Record the start of the erasure pass so we can calculate speed of erasures
 			long totalLeft = totalSize;
@@ -366,7 +366,8 @@ namespace Eraser.Manager
 						strm.SetLength(strm.Length + (clusterSize - roundUpFileLength));
 
 					//Then erase the file.
-					method.Erase(strm, PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
+					method.Erase(strm, long.MaxValue,
+						PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
 						delegate(float currentProgress, int currentPass)
 						{
 							long amountWritten = (long)(currentProgress * (info.Length * method.Passes));
