@@ -65,11 +65,11 @@ namespace Eraser.Manager
 		/// A simple callback for clients to retrieve progress information from
 		/// the erase method.
 		/// </summary>
-		/// <param name="dataWritten">The amount of data written to the stream since
+		/// <param name="lastWritten">The amount of data written to the stream since
 		/// the last call to the delegate.</param>
 		/// <param name="currentPass">The current pass number. The total number
 		/// of passes can be found from the Passes property.</param>
-		public delegate void OnProgress(long dataWritten, int currentPass);
+		public delegate void OnProgress(long lastWritten, int currentPass);
 
 		/// <summary>
 		/// The main bit of the class! This function is called whenever data has
