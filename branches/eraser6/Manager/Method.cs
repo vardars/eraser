@@ -6,7 +6,9 @@ using System.IO;
 namespace Eraser.Manager
 {
 	/// <summary>
-	/// An interface class representing the method for erasure.
+	/// An interface class representing the method for erasure. If classes only
+	/// inherit this class, then the method can only be used to erase abstract
+	/// streams, not unused drive space.
 	/// </summary>
 	public abstract class ErasureMethod
 	{
@@ -14,7 +16,9 @@ namespace Eraser.Manager
 		{
 			if (Passes == 0)
 				return Name;
-			return string.Format("{0} ({1} {2})", Name, Passes, "passes");
+			return Passes == 1 ?
+				string.Format("{0} (1 pass)", Name) :
+				string.Format("{0} ({1} passes)", Name, Passes);
 		}
 
 		/// <summary>
@@ -42,16 +46,20 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Disk operation write unit. Chosen such that this value mod 3, 4, 512,
-		/// and 1024 is 0
+		/// Calculates the total size of the erasure data that needs to be written.
+		/// This is mainly for use by the Manager to determine how much data needs
+		/// to be written to disk.
 		/// </summary>
-		protected const int DiskOperationUnit = 1536 * 4096;
-
-		/// <summary>
-		/// Unused space erasure file size. Each of the files used in erasing
-		/// unused space will be of this size.
-		/// </summary>
-		protected const int FreeSpaceFileUnit = DiskOperationUnit * 36;
+		/// <param name="paths">The list containing the file paths to erase.</param>
+		/// <param name="targetSize">The precomputed value of the total size of
+		/// the files to be erased.</param>
+		/// <returns>The total size of the files that need to be erased.</returns>
+		/// <remarks>This function MAY be slow. Most erasure methods can
+		/// calculate this amount fairly quickly as the number of files and the
+		/// total size of the files (the ones that take most computation time)
+		/// are already provided. However some exceptional cases may take a
+		/// long time if the data set is large.</remarks>
+		public abstract long CalculateEraseDataSize(List<string> paths, long targetSize);
 
 		/// <summary>
 		/// A simple callback for clients to retrieve progress information from
@@ -72,9 +80,25 @@ namespace Eraser.Manager
 		/// instance, this function may be called across different threads.
 		/// </summary>
 		/// <param name="strm">The stream which needs to be erased.</param>
+		/// <param name="erasureLength">The length of the stream to erase. If all
+		/// data in the stream should be overwritten, then pass in the maximum
+		/// value for long, the function will take the minimum.</param>
 		/// <param name="prng">The PRNG source for random data.</param>
 		/// <param name="callback">The progress callback function.</param>
-		public abstract void Erase(Stream strm, PRNG prng, OnProgress callback);
+		public abstract void Erase(Stream strm, long erasureLength, PRNG prng,
+			OnProgress callback);
+
+		/// <summary>
+		/// Disk operation write unit. Chosen such that this value mod 3, 4, 512,
+		/// and 1024 is 0
+		/// </summary>
+		protected const int DiskOperationUnit = 1536 * 4096;
+
+		/// <summary>
+		/// Unused space erasure file size. Each of the files used in erasing
+		/// unused space will be of this size.
+		/// </summary>
+		protected const int FreeSpaceFileUnit = DiskOperationUnit * 36;
 
 		/// <summary>
 		/// Shuffles the passes in the input array, effectively randomizing the
@@ -170,11 +194,39 @@ namespace Eraser.Manager
 	}
 
 	/// <summary>
+	/// This class adds functionality to the ErasureMethod class to erase
+	/// unused drive space.
+	/// </summary>
+	public abstract class UnusedSpaceErasureMethod : ErasureMethod
+	{
+		/// <summary>
+		/// This function will allow clients to erase a file in a set of files
+		/// used to fill the disk, thus achieving disk unused space erasure.
+		/// 
+		/// By default, this function will simply call the Erase method inherited
+		/// from the ErasureMethod class.
+		/// 
+		/// This function should be implemented thread-safe as using the same
+		/// instance, this function may be called across different threads.
+		/// </summary>
+		/// <param name="strm">The stream which needs to be erased.</param>
+		/// <param name="prng">The PRNG source for random data.</param>
+		/// <param name="callback">The progress callback function.</param>
+		public virtual void EraseUnusedSpace(Stream strm, PRNG prng, OnProgress callback)
+		{
+			Erase(strm, long.MaxValue, prng, callback);
+		}
+	}
+
+	/// <summary>
 	/// Pass-based erasure method. This subclass of erasure methods follow a fixed
 	/// pattern for every pass, although the order of passes can be randomized.
 	/// This is to simplify definitions of classes in plugins.
+	/// 
+	/// Since instances of this class apply data by passes, they can by default
+	/// erase unused drive space as well.
 	/// </summary>
-	public abstract class PassBasedErasureMethod : ErasureMethod
+	public abstract class PassBasedErasureMethod : UnusedSpaceErasureMethod
 	{
 		public override int Passes
 		{
@@ -198,7 +250,14 @@ namespace Eraser.Manager
 			get;
 		}
 
-		public override void Erase(Stream strm, PRNG prng, OnProgress callback)
+		public override long CalculateEraseDataSize(List<string> paths, long targetSize)
+		{
+			//Simple. Amount of data multiplied by passes.
+			return targetSize * Passes;
+		}
+
+		public override void Erase(Stream strm, long erasureLength, PRNG prng,
+			OnProgress callback)
 		{
 			//Randomize the order of the passes
 			Pass[] randomizedPasses = PassesSet;
@@ -207,7 +266,7 @@ namespace Eraser.Manager
 
 			//Remember the starting position of the stream.
 			long strmStart = strm.Position;
-			long strmLength = strm.Length - strmStart;
+			long strmLength = Math.Min(strm.Length - strmStart, erasureLength);
 
 			//Allocate memory for a buffer holding data for the pass.
 			byte[] buffer = new byte[Math.Min(DiskOperationUnit, strmLength)];
@@ -276,7 +335,14 @@ namespace Eraser.Manager
 				get { return Guid.Empty; }
 			}
 
-			public override void Erase(Stream strm, PRNG prng, OnProgress callback)
+			public override long CalculateEraseDataSize(List<string> paths, long targetSize)
+			{
+				throw new NotImplementedException("The DefaultMethod class should never be " +
+					"used and should instead be replaced before execution!");
+			}
+
+			public override void Erase(Stream strm, long erasureLength, PRNG prng,
+				OnProgress callback)
 			{
 				throw new NotImplementedException("The DefaultMethod class should never be " +
 					"used and should instead be replaced before execution!");
