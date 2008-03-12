@@ -196,6 +196,7 @@ namespace Eraser.Manager
 					nextId = 1;
 					foreach (uint id in tasks.Keys)
 					{
+						tasks[id].executor = this;
 						while (id > nextId)
 							unusedIds.Add(++nextId);
 						++nextId;
@@ -289,6 +290,41 @@ namespace Eraser.Manager
 			}
 		}
 
+		private class WriteStatistics
+		{
+			public WriteStatistics()
+			{
+				startTime = DateTime.Now;
+			}
+
+			public int Speed
+			{
+				get
+				{
+					if (DateTime.Now == startTime)
+						return 0;
+
+					if ((DateTime.Now - lastSpeedCalc).Seconds < 10 && lastSpeed != 0)
+						return lastSpeed;
+
+					lastSpeedCalc = DateTime.Now;
+					lastSpeed = (int)(dataWritten / (DateTime.Now - startTime).TotalSeconds);
+					return lastSpeed;
+				}
+			}
+
+			public long DataWritten
+			{
+				get { return dataWritten; }
+				set { dataWritten = value; }
+			}
+
+			private DateTime startTime;
+			private DateTime lastSpeedCalc;
+			private long dataWritten;
+			private int lastSpeed;
+		}
+
 		/// <summary>
 		/// Executes a unused space erase.
 		/// </summary>
@@ -306,8 +342,8 @@ namespace Eraser.Manager
 		private void EraseFilesystemObject(Task task, Task.FilesystemObject target)
 		{
 			//Retrieve the list of files to erase.
-			long totalSize = 0;
-			List<string> paths = target.GetPaths(out totalSize);
+			long dataTotal = 0;
+			List<string> paths = target.GetPaths(out dataTotal);
 			TaskProgressEventArgs eventArgs = new TaskProgressEventArgs(task, 0, 0);
 
 			//Get the erasure method if the user specified he wants the default.
@@ -318,12 +354,10 @@ namespace Eraser.Manager
 			//Calculate the total amount of data required to finish the wipe. This
 			//value is just the total about of data to be erased multiplied by
 			//number of passes
-			totalSize = method.CalculateEraseDataSize(paths, totalSize);
+			dataTotal = method.CalculateEraseDataSize(paths, dataTotal);
 
 			//Record the start of the erasure pass so we can calculate speed of erasures
-			long totalLeft = totalSize;
-			long overallWriteSpeed = 0;
-			DateTime startTime = DateTime.Now;
+			WriteStatistics statistics = new WriteStatistics();
 
 			//Iterate over every path, and erase the path.
 			for (int i = 0; i < paths.Count; ++i)
@@ -360,29 +394,24 @@ namespace Eraser.Manager
 					8, FileOptions.WriteThrough))
 				{
 					//Set the end of the stream after the wrap-round the cluster size
-					uint clusterSize = Drive.GetClusterSize(info.Directory.Root.FullName);
-					long roundUpFileLength = strm.Length % clusterSize;
-					if (roundUpFileLength != 0)
-						strm.SetLength(strm.Length + (clusterSize - roundUpFileLength));
+					strm.SetLength(GetFileArea(info.FullName));
 
 					//Then erase the file.
+					long itemWritten = 0,
+					     itemTotal = method.CalculateEraseDataSize(null, strm.Length);
 					method.Erase(strm, long.MaxValue,
 						PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
-						delegate(float currentProgress, int currentPass)
+						delegate(long lastWritten, int currentPass)
 						{
-							long amountWritten = (long)(currentProgress * (info.Length * method.Passes));
-							if (overallWriteSpeed != 0)
-								eventArgs.timeLeft = (int)((totalLeft - amountWritten) /
-									overallWriteSpeed);
-							else if (amountWritten != 0 && (DateTime.Now - startTime).TotalSeconds != 0)
-								overallWriteSpeed = (long)(amountWritten /
-									(DateTime.Now - startTime).TotalSeconds);
-
+							statistics.DataWritten += lastWritten;
 							eventArgs.currentPass = currentPass;
-							eventArgs.currentItemProgress = (int)
-								((float)currentProgress * 100.0);
-							eventArgs.overallProgress = (int)
-								(((i + currentProgress) / (float)paths.Count) * 100);
+							eventArgs.currentItemProgress = (int)((itemWritten += lastWritten) * 100 / itemTotal);
+							eventArgs.overallProgress = (int)(statistics.DataWritten * 100 / dataTotal);
+
+							if (statistics.Speed != 0)
+								eventArgs.timeLeft = (int)(dataTotal - statistics.DataWritten) / statistics.Speed;
+							else
+								eventArgs.timeLeft = -1;
 							task.OnProgressChanged(eventArgs);
 
 							lock (currentTask)
@@ -390,11 +419,6 @@ namespace Eraser.Manager
 									throw new FatalException("The task was cancelled.");
 						}
 					);
-
-					//Update the speed-influencing statistics.
-					totalLeft -= info.Length * method.Passes;
-					overallWriteSpeed = (long)((totalSize - totalLeft) /
-						(DateTime.Now - startTime).TotalSeconds);
 
 					//Set the length of the file to 0.
 					strm.Seek(0, SeekOrigin.Begin);
@@ -412,6 +436,19 @@ namespace Eraser.Manager
 				if (fldr.DeleteIfEmpty)
 					RemoveFolder(new DirectoryInfo(fldr.Path));
 			}
+		}
+
+		/// <summary>
+		/// Retrieves the size of the file on disk, calculated by the amount of
+		/// clusters allocated by it.
+		/// </summary>
+		/// <param name="filePath">The path to the file.</param>
+		/// <returns>The area of the file.</returns>
+		private static long GetFileArea(string filePath)
+		{
+			FileInfo info = new FileInfo(filePath);
+			uint clusterSize = Drive.GetClusterSize(info.Directory.Root.FullName);
+			return (info.Length + (clusterSize - 1)) & ~(clusterSize - 1);
 		}
 
 		/// <summary>
