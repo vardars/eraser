@@ -360,7 +360,7 @@ namespace Eraser.Manager
 					8, FileOptions.WriteThrough))
 				{
 					//Set the end of the stream after the wrap-round the cluster size
-					uint clusterSize = Drives.GetDriveClusterSize(info.Directory.Root.FullName);
+					uint clusterSize = Drive.GetClusterSize(info.Directory.Root.FullName);
 					long roundUpFileLength = strm.Length % clusterSize;
 					if (roundUpFileLength != 0)
 						strm.SetLength(strm.Length + (clusterSize - roundUpFileLength));
@@ -418,7 +418,7 @@ namespace Eraser.Manager
 		/// Securely removes files.
 		/// </summary>
 		/// <param name="info">The FileInfo object representing the file.</param>
-		private void RemoveFile(FileInfo info)
+		private static void RemoveFile(FileInfo info)
 		{
 			//Set the date of the file to be invalid to prevent forensic
 			//detection
@@ -430,29 +430,28 @@ namespace Eraser.Manager
 			//Rename the file a few times to erase the record from the MFT.
 			for (int i = 0; i < FilenameErasePasses; ++i)
 			{
-				//Get a random file name
-				PRNG prng = PRNGManager.GetInstance(Globals.Settings.ActivePRNG);
-				byte[] newFileNameAry = new byte[info.Name.Length];
-				prng.NextBytes(newFileNameAry);
-
-				//Validate the name
-				const string validFileNameChars = "0123456789abcdefghijklmnopqrs" +
-					"tuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-				for (int j = 0, k = newFileNameAry.Length; j < k; ++j)
-					newFileNameAry[j] = (byte)validFileNameChars[
-						(int)newFileNameAry[j] % validFileNameChars.Length];
-
 				//Rename the file.
 				string newPath = info.DirectoryName + Path.DirectorySeparatorChar +
-					(new System.Text.UTF8Encoding()).GetString(newFileNameAry);
-				info.MoveTo(newPath);
+					GetRandomFileName(info.Name.Length);
+
+				//Try to rename the file. If it fails, it is probably due to another
+				//process locking the file. Defer, then rename again.
+				try
+				{
+					info.MoveTo(newPath);
+				}
+				catch (IOException)
+				{
+					Thread.Sleep(100);
+					--i;
+				}
 			}
 
 			//Then delete the file.
 			info.Delete();
 		}
 
-		private void RemoveFolder(DirectoryInfo info)
+		private static void RemoveFolder(DirectoryInfo info)
 		{
 			foreach (FileInfo file in info.GetFiles())
 				RemoveFile(file);
@@ -462,21 +461,9 @@ namespace Eraser.Manager
 			//Then clean up this folder.
 			for (int i = 0; i < FilenameErasePasses; ++i)
 			{
-				//Get a random file name
-				PRNG prng = PRNGManager.GetInstance(Globals.Settings.ActivePRNG);
-				byte[] newFileNameAry = new byte[info.Name.Length];
-				prng.NextBytes(newFileNameAry);
-
-				//Validate the name
-				const string validFileNameChars = "0123456789abcdefghijklmnopqrs" +
-					"tuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-				for (int j = 0, k = newFileNameAry.Length; j < k; ++j)
-					newFileNameAry[j] = (byte)validFileNameChars[
-						(int)newFileNameAry[j] % validFileNameChars.Length];
-
 				//Rename the folder.
 				string newPath = info.Parent.FullName + Path.DirectorySeparatorChar +
-					(new System.Text.UTF8Encoding()).GetString(newFileNameAry);
+					GetRandomFileName(info.Name.Length);
 
 				//Try to rename the file. If it fails, it is probably due to another
 				//process locking the file. Defer, then rename again.
@@ -493,6 +480,28 @@ namespace Eraser.Manager
 
 			//Remove the folder
 			info.Delete();
+		}
+
+		/// <summary>
+		/// Generates a random file name with the given length.
+		/// </summary>
+		/// <param name="length">The length of the file name to generate.</param>
+		/// <returns>A random file name.</returns>
+		private static string GetRandomFileName(int length)
+		{
+			//Get a random file name
+			PRNG prng = PRNGManager.GetInstance(Globals.Settings.ActivePRNG);
+			byte[] newFileNameAry = new byte[length];
+			prng.NextBytes(newFileNameAry);
+
+			//Validate the name
+			string validFileNameChars = "0123456789abcdefghijklmnopqrstuvwxyz" +
+				"ABCDEFGHIJKLMNOPQRSTUVWXYZ _+=-()[]{}',`~!";
+			for (int j = 0, k = newFileNameAry.Length; j < k; ++j)
+				newFileNameAry[j] = (byte)validFileNameChars[
+					(int)newFileNameAry[j] % validFileNameChars.Length];
+
+			return new System.Text.UTF8Encoding().GetString(newFileNameAry);
 		}
 
 		/// <summary>
