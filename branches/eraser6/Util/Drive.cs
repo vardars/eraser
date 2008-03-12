@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace Eraser.Util
 {
-	public static class Drives
+	public static class Drive
 	{
 		/// <summary>
 		/// Determines whether a disk drive is a removable, fixed, CD-ROM, RAM disk,
@@ -70,7 +70,7 @@ namespace Eraser.Util
 		/// <param name="driveName">The path to the root of the drive, including
 		/// the trailing \</param>
 		/// <returns>The size of one cluster, in bytes.</returns>
-		public static uint GetDriveClusterSize(string driveName)
+		public static uint GetClusterSize(string driveName)
 		{
 			UInt32 clusterSize = 0, sectorSize, freeClusters, totalClusters;
 			if (GetDiskFreeSpace(driveName, out clusterSize, out sectorSize, 
@@ -78,6 +78,71 @@ namespace Eraser.Util
 				return clusterSize * sectorSize;
 
 			throw new Exception("Unknown error calling GetDiskFreeSpace()");
+		}
+
+		/// <summary>
+		/// Retrieves information about the amount of space that is available on
+		/// a disk volume, which is the total amount of space, the total amount
+		/// of free space, and the total amount of free space available to the
+		/// user that is associated with the calling thread.
+		/// </summary>
+		/// <param name="lpDirectoryName">A directory on the disk.</param>
+		/// <param name="lpFreeBytesAvailable">A pointer to a variable that receives
+		/// the total number of free bytes on a disk that are available to the
+		/// user who is associated with the calling thread.
+		/// 
+		/// This parameter can be NULL.
+		/// 
+		/// If per-user quotas are being used, this value may be less than the
+		/// total number of free bytes on a disk.</param>
+		/// <param name="lpTotalNumberOfBytes">A pointer to a variable that receives
+		/// the total number of bytes on a disk that are available to the user
+		/// who is associated with the calling thread.
+		/// 
+		/// This parameter can be NULL.
+		/// 
+		/// If per-user quotas are being used, this value may be less than the
+		/// total number of bytes on a disk.</param>
+		/// <param name="lpTotalNumberOfFreeBytes">A pointer to a variable that
+		/// receives the total number of free bytes on a disk.
+		/// 
+		/// This parameter can be NULL.</param>
+		/// <returns>If the function succeeds, the return value is nonzero.
+		/// 
+		/// If the function fails, the return value is zero (0).
+		/// To get extended error information, call GetLastError.</returns>
+		/// <remarks>The values obtained by this function are of the type ULARGE_INTEGER.
+		/// Do not truncate these values to 32 bits.
+		/// 
+		/// The GetDiskFreeSpaceEx function returns zero (0) for lpTotalNumberOfFreeBytes
+		/// and lpFreeBytesAvailable for all CD requests unless the disk is an
+		/// unwritten CD in a CD-RW drive.
+		/// 
+		/// Symbolic link behavior—If the path points to a symbolic link, the
+		/// operation is performed on the target.</remarks>
+		[DllImport("Kernel32.dll")]
+		internal static extern uint GetDiskFreeSpaceEx(
+			[MarshalAs(UnmanagedType.LPStr)]string lpDirectoryName,
+			out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes,
+			out ulong lpTotalNumberOfFreeBytes);
+
+		/// <summary>
+		/// Determines the free space size of the given volume.
+		/// </summary>
+		/// <param name="driveName">The path to the root of the drive, including
+		/// the trailing \</param>
+		/// <returns>The free space of the drive, in bytes.</returns>
+		/// <remarks>This value is affected by disk quotas.</remarks>
+		public static long GetFreeSpace(string driveName)
+		{
+			ulong userAccessibleBytes, totalUserBytes, totalFreeBytes;
+			if (GetDiskFreeSpaceEx(driveName, out userAccessibleBytes,
+				out totalUserBytes, out totalFreeBytes) != 0)
+			{
+				return (long)userAccessibleBytes;
+			}
+
+			throw new Exception("Unknown error while determining free drive space.");
 		}
 	}
 
