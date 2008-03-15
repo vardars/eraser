@@ -40,6 +40,7 @@
     <Compile Include="Kernel.cs" />
     <Compile Include="File.cs" />
     <Compile Include="Drive.cs" />
+    <Compile Include="Permissions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

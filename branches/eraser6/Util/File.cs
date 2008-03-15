@@ -71,7 +71,7 @@ namespace Eraser.Util
 
 				while (g.MeasureString(builder.ToString(), drawFont).Width > newWidth)
 				{
-					if (PathCompactPathEx(builder, longPath, (uint)charCount--, 0) == 0)
+					if (!PathCompactPathEx(builder, longPath, (uint)charCount--, 0))
 					{
 						return string.Empty;
 					}
@@ -82,52 +82,19 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
-		/// Truncates a path to fit within a certain number of characters by
-		/// replacing path components with ellipses.
-		/// </summary>
-		/// <param name="pszOut">[out] The address of the string that has been altered.</param>
-		/// <param name="pszSrc">[in] A pointer to a null-terminated string of maximum
-		/// length MAX_PATH that contains the path to be altered.</param>
-		/// <param name="cchMax">[in] The maximum number of characters to be
-		/// contained in the new string, including the terminating NULL character.
-		/// For example, if cchMax = 8, the resulting string can contain a maximum
-		/// of 7 characters plus the terminating NULL character.</param>
-		/// <param name="dwFlags">Reserved.</param>
-		/// <returns>Returns TRUE if successful, or FALSE otherwise.</returns>
-		[DllImport("Shlwapi.dll")]
-		private static extern uint PathCompactPathEx(
-			StringBuilder pszOut, string pszSrc, uint cchMax, uint dwFlags);
-
-		/// <summary>
 		/// Determines if a given file is protected by SFC.
 		/// </summary>
 		/// <param name="filePath">The path to check</param>
 		/// <returns>True if the file is protected.</returns>
 		public static bool IsProtectedSystemFile(string filePath)
 		{
-			uint result = SfcIsFileProtected(IntPtr.Zero, filePath);
-			if (result != 0)
+			if (SfcIsFileProtected(IntPtr.Zero, filePath))
 				return true;
-			else if (Kernel.GetLastError() == 2) //ERROR_FILE_NOT_FOUND
+			else if (Marshal.GetLastWin32Error() == 2) //ERROR_FILE_NOT_FOUND
 				return false;
 
 			throw new Exception("Unknown SfcIsFileProtected error.");
 		}
-
-		/// <summary>
-		/// Determines whether the specified file is protected. Applications
-		/// should avoid replacing protected system files.
-		/// </summary>
-		/// <param name="RpcHandle">This parameter must be NULL.</param>
-		/// <param name="ProtFileName">The name of the file.</param>
-		/// <returns>If the file is protected, the return value is a nonzero value.
-		/// 
-		/// If the file is not protected, the return value is zero and GetLastError
-		/// returns ERROR_FILE_NOT_FOUND. If the function fails, GetLastError will
-		/// return a different error code.</returns>
-		[DllImport("Sfc.dll")]
-		private static extern uint SfcIsFileProtected(IntPtr RpcHandle,
-			[MarshalAs(UnmanagedType.LPWStr)]string ProtFileName);
 
 		/// <summary>
 		/// Checks whether the path given is compressed.
@@ -145,7 +112,7 @@ namespace Eraser.Util
 			{
 				if (DeviceIoControl(strm.SafeFileHandle.DangerousGetHandle(),
 					FSCTL_GET_COMPRESSION, IntPtr.Zero, 0, new IntPtr(&compressionStatus),
-					sizeof(ushort), out bytesReturned, IntPtr.Zero) != 0)
+					sizeof(ushort), out bytesReturned, IntPtr.Zero))
 				{
 					const ushort COMPRESSION_FORMAT_NONE = 0x0000;
 					return compressionStatus != COMPRESSION_FORMAT_NONE;
@@ -172,81 +139,9 @@ namespace Eraser.Util
 			{
 				return DeviceIoControl(strm.SafeFileHandle.DangerousGetHandle(),
 					FSCTL_SET_COMPRESSION, new IntPtr(&compressionStatus),
-					sizeof(ushort), IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero) != 0;
+					sizeof(ushort), IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
 			}
 		}
-
-		[DllImport("Kernel32.dll")]
-		private extern static unsafe uint DeviceIoControl(IntPtr hDevice,
-			uint dwIoControlCode, IntPtr lpInBuffer, uint nInBufferSize,
-			IntPtr lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
-			IntPtr lpOverlapped);
-
-		private const uint FSCTL_GET_COMPRESSION = 0x9003C;
-		private const uint FSCTL_SET_COMPRESSION = 0x9C040;
-		private const ushort COMPRESSION_FORMAT_NONE = 0x0000;
-		private const ushort COMPRESSION_FORMAT_DEFAULT = 0x0001;
-
-		/// <summary>
-		/// The CreateFile function creates or opens a file, file stream, directory,
-		/// physical disk, volume, console buffer, tape drive, communications resource,
-		/// mailslot, or named pipe. The function returns a handle that can be used
-		/// to access an object.
-		/// </summary>
-		/// <param name="FileName"></param>
-		/// <param name="DesiredAccess"> access to the object, which can be read,
-		/// write, or both</param>
-		/// <param name="ShareMode">The sharing mode of an object, which can be
-		/// read, write, both, or none</param>
-		/// <param name="SecurityAttributes">A pointer to a SECURITY_ATTRIBUTES
-		/// structure that determines whether or not the returned handle can be
-		/// inherited by child processes. Can be null</param>
-		/// <param name="CreationDisposition">An action to take on files that exist
-		/// and do not exist</param>
-		/// <param name="FlagsAndAttributes">The file attributes and flags.</param>
-		/// <param name="hTemplateFile">A handle to a template file with the
-		/// GENERIC_READ access right. The template file supplies file attributes
-		/// and extended attributes for the file that is being created. This
-		/// parameter can be null</param>
-		/// <returns>If the function succeeds, the return value is an open handle
-		/// to a specified file. If a specified file exists before the function
-		/// all and dwCreationDisposition is CREATE_ALWAYS or OPEN_ALWAYS, a call
-		/// to GetLastError returns ERROR_ALREADY_EXISTS, even when the function
-		/// succeeds. If a file does not exist before the call, GetLastError
-		/// returns 0.
-		/// If the function fails, the return value is INVALID_HANDLE_VALUE.
-		/// To get extended error information, call GetLastError.</returns>
-		[DllImport("Kernel32.dll")]
-		public static extern SafeFileHandle CreateFile(string lpFileName, uint dwDesiredAccess,
-			uint dwShareMode, IntPtr SecurityAttributes, uint dwCreationDisposition,
-			uint dwFlagsAndAttributes, IntPtr hTemplateFile);
-
-		public const uint GENERIC_READ = 0x80000000;
-		public const uint GENERIC_WRITE = 0x40000000;
-		public const uint GENERIC_EXECUTE = 0x20000000;
-		public const uint GENERIC_ALL = 0x10000000;
-
-		public const uint FILE_SHARE_READ = 0x00000001;
-		public const uint FILE_SHARE_WRITE = 0x00000002;
-		public const uint FILE_SHARE_DELETE = 0x00000004;
-
-		public const uint CREATE_NEW = 1;
-		public const uint CREATE_ALWAYS = 2;
-		public const uint OPEN_EXISTING = 3;
-		public const uint OPEN_ALWAYS = 4;
-		public const uint TRUNCATE_EXISTING = 5;
-
-		public const uint FILE_FLAG_WRITE_THROUGH = 0x80000000;
-		public const uint FILE_FLAG_OVERLAPPED = 0x40000000;
-		public const uint FILE_FLAG_NO_BUFFERING = 0x20000000;
-		public const uint FILE_FLAG_RANDOM_ACCESS = 0x10000000;
-		public const uint FILE_FLAG_SEQUENTIAL_SCAN = 0x08000000;
-		public const uint FILE_FLAG_DELETE_ON_CLOSE = 0x04000000;
-		public const uint FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
-		public const uint FILE_FLAG_POSIX_SEMANTICS = 0x01000000;
-		public const uint FILE_FLAG_OPEN_REPARSE_POINT = 0x00200000;
-		public const uint FILE_FLAG_OPEN_NO_RECALL = 0x00100000;
-		public const uint FILE_FLAG_FIRST_PIPE_INSTANCE = 0x00080000;
 
 		/// <summary>
 		/// Retrieves information about an object in the file system, such as a
@@ -480,5 +375,114 @@ namespace Eraser.Util
 			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
 			public string szTypeName;
 		}
+
+		/// <summary>
+		/// Truncates a path to fit within a certain number of characters by
+		/// replacing path components with ellipses.
+		/// </summary>
+		/// <param name="pszOut">[out] The address of the string that has been altered.</param>
+		/// <param name="pszSrc">[in] A pointer to a null-terminated string of maximum
+		/// length MAX_PATH that contains the path to be altered.</param>
+		/// <param name="cchMax">[in] The maximum number of characters to be
+		/// contained in the new string, including the terminating NULL character.
+		/// For example, if cchMax = 8, the resulting string can contain a maximum
+		/// of 7 characters plus the terminating NULL character.</param>
+		/// <param name="dwFlags">Reserved.</param>
+		/// <returns>Returns TRUE if successful, or FALSE otherwise.</returns>
+		[DllImport("Shlwapi.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool PathCompactPathEx(
+			StringBuilder pszOut, string pszSrc, uint cchMax, uint dwFlags);
+
+		/// <summary>
+		/// Determines whether the specified file is protected. Applications
+		/// should avoid replacing protected system files.
+		/// </summary>
+		/// <param name="RpcHandle">This parameter must be NULL.</param>
+		/// <param name="ProtFileName">The name of the file.</param>
+		/// <returns>If the file is protected, the return value is true.
+		/// 
+		/// If the file is not protected, the return value is false and
+		/// Marshal.GetLastWin32Error() returns ERROR_FILE_NOT_FOUND. If the
+		/// function fails, Marshal.GetLastWin32Error() will return a different
+		/// error code.</returns>
+		[DllImport("Sfc.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool SfcIsFileProtected(IntPtr RpcHandle,
+			[MarshalAs(UnmanagedType.LPWStr)]string ProtFileName);
+
+		/// <summary>
+		/// The CreateFile function creates or opens a file, file stream, directory,
+		/// physical disk, volume, console buffer, tape drive, communications resource,
+		/// mailslot, or named pipe. The function returns a handle that can be used
+		/// to access an object.
+		/// </summary>
+		/// <param name="FileName"></param>
+		/// <param name="DesiredAccess"> access to the object, which can be read,
+		/// write, or both</param>
+		/// <param name="ShareMode">The sharing mode of an object, which can be
+		/// read, write, both, or none</param>
+		/// <param name="SecurityAttributes">A pointer to a SECURITY_ATTRIBUTES
+		/// structure that determines whether or not the returned handle can be
+		/// inherited by child processes. Can be null</param>
+		/// <param name="CreationDisposition">An action to take on files that exist
+		/// and do not exist</param>
+		/// <param name="FlagsAndAttributes">The file attributes and flags.</param>
+		/// <param name="hTemplateFile">A handle to a template file with the
+		/// GENERIC_READ access right. The template file supplies file attributes
+		/// and extended attributes for the file that is being created. This
+		/// parameter can be null</param>
+		/// <returns>If the function succeeds, the return value is an open handle
+		/// to a specified file. If a specified file exists before the function
+		/// all and dwCreationDisposition is CREATE_ALWAYS or OPEN_ALWAYS, a call
+		/// to GetLastError returns ERROR_ALREADY_EXISTS, even when the function
+		/// succeeds. If a file does not exist before the call, GetLastError
+		/// returns 0.
+		/// 
+		/// If the function fails, the return value is INVALID_HANDLE_VALUE.
+		/// To get extended error information, call Marshal.GetLastWin32Error().</returns>
+		[DllImport("Kernel32.dll", SetLastError = true)]
+		public static extern SafeFileHandle CreateFile(string lpFileName, uint dwDesiredAccess,
+			uint dwShareMode, IntPtr SecurityAttributes, uint dwCreationDisposition,
+			uint dwFlagsAndAttributes, IntPtr hTemplateFile);
+
+		public const uint GENERIC_READ = 0x80000000;
+		public const uint GENERIC_WRITE = 0x40000000;
+		public const uint GENERIC_EXECUTE = 0x20000000;
+		public const uint GENERIC_ALL = 0x10000000;
+
+		public const uint FILE_SHARE_READ = 0x00000001;
+		public const uint FILE_SHARE_WRITE = 0x00000002;
+		public const uint FILE_SHARE_DELETE = 0x00000004;
+
+		public const uint CREATE_NEW = 1;
+		public const uint CREATE_ALWAYS = 2;
+		public const uint OPEN_EXISTING = 3;
+		public const uint OPEN_ALWAYS = 4;
+		public const uint TRUNCATE_EXISTING = 5;
+
+		public const uint FILE_FLAG_WRITE_THROUGH = 0x80000000;
+		public const uint FILE_FLAG_OVERLAPPED = 0x40000000;
+		public const uint FILE_FLAG_NO_BUFFERING = 0x20000000;
+		public const uint FILE_FLAG_RANDOM_ACCESS = 0x10000000;
+		public const uint FILE_FLAG_SEQUENTIAL_SCAN = 0x08000000;
+		public const uint FILE_FLAG_DELETE_ON_CLOSE = 0x04000000;
+		public const uint FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
+		public const uint FILE_FLAG_POSIX_SEMANTICS = 0x01000000;
+		public const uint FILE_FLAG_OPEN_REPARSE_POINT = 0x00200000;
+		public const uint FILE_FLAG_OPEN_NO_RECALL = 0x00100000;
+		public const uint FILE_FLAG_FIRST_PIPE_INSTANCE = 0x00080000;
+
+		[DllImport("Kernel32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private extern static unsafe bool DeviceIoControl(IntPtr hDevice,
+			uint dwIoControlCode, IntPtr lpInBuffer, uint nInBufferSize,
+			IntPtr lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
+			IntPtr lpOverlapped);
+
+		private const uint FSCTL_GET_COMPRESSION = 0x9003C;
+		private const uint FSCTL_SET_COMPRESSION = 0x9C040;
+		private const ushort COMPRESSION_FORMAT_NONE = 0x0000;
+		private const ushort COMPRESSION_FORMAT_DEFAULT = 0x0001;
 	}
 }
