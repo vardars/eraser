@@ -21,9 +21,10 @@ namespace Eraser.Manager
 		public DirectExecutor()
 		{
 			thread = new Thread(delegate()
-			{
-				Main();
-			});
+				{
+					Main();
+				}
+			);
 
 			thread.Start();
 			Thread.Sleep(0);
