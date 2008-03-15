@@ -38,7 +38,6 @@ namespace Eraser.DefaultPlugins
 					fixed (byte* dest = &buffer[bytesGenerated])
 					{
 						//Advance to the end of the array of unused randomness.
-						//byte* bSrc = (byte*)src;
 						byte* pSrc = (byte*)(src + isaac.count);
 						byte* pDest = dest;
 
