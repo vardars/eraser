@@ -17,7 +17,7 @@ namespace Eraser.Manager.Plugin
 		/// </summary>
 		public static Host Instance
 		{
-			get { return Globals.Host; }
+			get { return ManagerLibrary.Instance.Host; }
 		}
 
 		/// <summary>
