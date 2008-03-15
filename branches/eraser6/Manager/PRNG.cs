@@ -6,6 +6,7 @@ using System.Threading;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
 using Eraser.Util;
+using Microsoft.Win32.SafeHandles;
 
 namespace Eraser.Manager
 {
@@ -124,13 +125,13 @@ namespace Eraser.Manager
 			//First add the simple startup random information.
 			{
 				//Process startup information
-				Kernel.STARTUPINFO startupInfo = new Kernel.STARTUPINFO();
-				Kernel.GetStartupInfo(out startupInfo);
+				KernelAPI.STARTUPINFO startupInfo = new KernelAPI.STARTUPINFO();
+				KernelAPI.GetStartupInfo(out startupInfo);
 				AddEntropy(startupInfo);
 
 				//System information
-				Kernel.SYSTEM_INFO systemInfo = new Kernel.SYSTEM_INFO();
-				Kernel.GetSystemInfo(out systemInfo);
+				KernelAPI.SYSTEM_INFO systemInfo = new KernelAPI.SYSTEM_INFO();
+				KernelAPI.GetSystemInfo(out systemInfo);
 				AddEntropy(systemInfo);
 
 				MixPool();
@@ -140,7 +141,7 @@ namespace Eraser.Manager
 			while (thread.ThreadState != ThreadState.AbortRequested)
 			{
 				FastAddEntropy();
-
+				SlowAddEntropy();
 				Thread.Sleep(3000);
 			}
 		}
@@ -197,6 +198,11 @@ namespace Eraser.Manager
 			}
 		}
 
+		/// <summary>
+		/// Adds data which is random to the pool
+		/// </summary>
+		/// <typeparam name="T">Any value type</typeparam>
+		/// <param name="entropy">A value which will be XORed with pool contents.</param>
 		public unsafe void AddEntropy<T>(T entropy) where T : struct
 		{
 			int sizeofObject = Marshal.SizeOf(entropy);
@@ -243,7 +249,7 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Adds entropy to the pool. The sources of the entropya data is queried
+		/// Adds entropy to the pool. The sources of the entropy data is queried
 		/// quickly.
 		/// </summary>
 		private void FastAddEntropy()
@@ -252,30 +258,30 @@ namespace Eraser.Manager
 			AddEntropy(Drive.GetFreeSpace(Environment.SystemDirectory));
 
 			//Miscellaneous window handles
-			AddEntropy(UI.GetCapture());
-			AddEntropy(UI.GetClipboardOwner());
-			AddEntropy(UI.GetClipboardViewer());
-			AddEntropy(UI.GetDesktopWindow());
-			AddEntropy(UI.GetForegroundWindow());
-			AddEntropy(UI.GetMessagePos());
-			AddEntropy(UI.GetMessageTime());
-			AddEntropy(UI.GetOpenClipboardWindow());
-			AddEntropy(UI.GetProcessWindowStation());
-			AddEntropy(Kernel.GetCurrentProcessId());
-			AddEntropy(Kernel.GetCurrentThreadId());
-			AddEntropy(Kernel.GetProcessHeap());
+			AddEntropy(UserAPI.GetCapture());
+			AddEntropy(UserAPI.GetClipboardOwner());
+			AddEntropy(UserAPI.GetClipboardViewer());
+			AddEntropy(UserAPI.GetDesktopWindow());
+			AddEntropy(UserAPI.GetForegroundWindow());
+			AddEntropy(UserAPI.GetMessagePos());
+			AddEntropy(UserAPI.GetMessageTime());
+			AddEntropy(UserAPI.GetOpenClipboardWindow());
+			AddEntropy(UserAPI.GetProcessWindowStation());
+			AddEntropy(KernelAPI.GetCurrentProcessId());
+			AddEntropy(KernelAPI.GetCurrentThreadId());
+			AddEntropy(KernelAPI.GetProcessHeap());
 
 			//The caret and cursor positions
-			UI.POINT point;
-			UI.GetCaretPos(out point);
+			UserAPI.POINT point;
+			UserAPI.GetCaretPos(out point);
 			AddEntropy(point);
-			UI.GetCursorPos(out point);
+			UserAPI.GetCursorPos(out point);
 			AddEntropy(point);
 
 			//Amount of free memory
-			Kernel.MEMORYSTATUSEX memoryStatus = new Kernel.MEMORYSTATUSEX();
+			KernelAPI.MEMORYSTATUSEX memoryStatus = new KernelAPI.MEMORYSTATUSEX();
 			memoryStatus.dwLength = (uint)Marshal.SizeOf(memoryStatus);
-			if (Kernel.GlobalMemoryStatusEx(ref memoryStatus))
+			if (KernelAPI.GlobalMemoryStatusEx(ref memoryStatus))
 			{
 				AddEntropy(memoryStatus.ullAvailPhys);
 				AddEntropy(memoryStatus.ullAvailVirtual);
@@ -283,7 +289,7 @@ namespace Eraser.Manager
 
 			//Thread execution times
 			long creationTime, exitTime, kernelTime, userTime;
-			if (Kernel.GetThreadTimes(Kernel.GetCurrentThread(), out creationTime,
+			if (KernelAPI.GetThreadTimes(KernelAPI.GetCurrentThread(), out creationTime,
 				out exitTime, out kernelTime, out userTime))
 			{
 				AddEntropy(creationTime);
@@ -292,7 +298,7 @@ namespace Eraser.Manager
 			}
 
 			//Process execution times
-			if (Kernel.GetProcessTimes(Kernel.GetCurrentProcess(), out creationTime,
+			if (KernelAPI.GetProcessTimes(KernelAPI.GetCurrentProcess(), out creationTime,
 				out exitTime, out kernelTime, out userTime))
 			{
 				AddEntropy(creationTime);
@@ -305,16 +311,113 @@ namespace Eraser.Manager
 
 			//The high resolution performance counter
 			long perfCount = 0;
-			if (Kernel.QueryPerformanceCounter(out perfCount))
+			if (KernelAPI.QueryPerformanceCounter(out perfCount))
 				AddEntropy(perfCount);
 
 			//Ticks since start up
-			uint tickCount = Kernel.GetTickCount();
+			uint tickCount = KernelAPI.GetTickCount();
 			if (tickCount != 0)
 				AddEntropy(tickCount);
 
 			//CryptGenRandom
 			byte[] cryptGenRandom = new byte[160];
+			if (CryptAPI.CryptGenRandom(cryptGenRandom))
+				AddEntropy(cryptGenRandom);
+		}
+
+		/// <summary>
+		/// Adds entropy to the pool. The sources of the entropy data is queried
+		/// relatively slowly compared to the FastAddEntropy function.
+		/// </summary>
+		private void SlowAddEntropy()
+		{
+			//NetAPI statistics
+			unsafe
+			{
+				IntPtr netAPIStats = IntPtr.Zero;
+				if (NetAPI.NetStatisticsGet(null, NetAPI.SERVICE_WORKSTATION,
+					0, 0, out netAPIStats) == 0)
+				{
+					//Get the size of the buffer
+					uint size = 0;
+					NetAPI.NetApiBufferSize(netAPIStats, out size);
+					byte[] entropy = new byte[size];
+
+					//Copy the buffer
+					fixed (byte* fEntropy = entropy)
+					{
+						byte* pSrc = (byte*)netAPIStats.ToPointer();
+						byte* pEntropy = fEntropy;
+						while (size-- != 0)
+							*pEntropy++ = *pSrc++;
+					}
+
+					//And add it to the pool
+					AddEntropy(entropy);
+
+					//Free the statistics buffer
+					NetAPI.NetApiBufferFree(netAPIStats);
+				}
+			}
+
+#if false
+			//Get disk I/O statistics for all the hard drives
+			for (int drive = 0; ; ++drive)
+			{
+				//Try to open the drive.
+				using (SafeFileHandle hDevice = File.CreateFile(
+					string.Format("\\\\.\\PhysicalDrive%d", drive), 0,
+					File.FILE_SHARE_READ | File.FILE_SHARE_WRITE, IntPtr.Zero,
+					File.OPEN_EXISTING, 0, IntPtr.Zero))
+				{
+					if (hDevice.IsInvalid)
+						break;
+
+					//This only works if the user has turned on the disk performance
+					//counters with 'diskperf -y'. These counters are off by default
+					if (File.DeviceIoControl(hDevice, IOCTL_DISK_PERFORMANCE, NULL, 0,
+						&diskPerformance, sizeof(DISK_PERFORMANCE), &uSize, NULL))
+					{
+						addEntropy(&diskPerformance, uSize);
+					}
+				}
+			}
+#endif
+
+			/*
+			 Query performance data. Because the Win32 version of this API (through
+			 registry) may be buggy, use the NT Native API instead.
+			 
+			 Scan the first 64 possible information types (we don't bother
+			 with increasing the buffer size as we do with the Win32
+			 version of the performance data read, we may miss a few classes
+			 but it's no big deal).  In addition the returned size value for
+			 some classes is wrong (eg 23 and 24 return a size of 0) so we
+			 miss a few more things, but again it's no big deal.  This scan
+			 typically yields around 20 pieces of data, there's nothing in
+			 the range 65...128 so chances are there won't be anything above
+			 there either.
+			*/
+			uint dataWritten = 0;
+			byte[] infoBuffer = new byte[65536];
+			uint totalEntropy = 0;
+			for (uint infoType = 0; infoType < 64; ++infoType)
+			{
+				uint result = NTAPI.NtQuerySystemInformation(infoType, infoBuffer,
+					(uint)infoBuffer.Length, out dataWritten);
+
+				if (result == 0 /*ERROR_SUCCESS*/ && dataWritten > 0)
+				{
+					byte[] entropy = new byte[dataWritten];
+					for (int i = 0; i < dataWritten; ++i)
+						entropy[i] = infoBuffer[i];
+					AddEntropy(entropy);
+					totalEntropy += dataWritten;
+				}
+			}
+
+			//Finally, our good friend CryptGenRandom()
+			byte[] cryptGenRandom = new byte[1536];
 			if (CryptAPI.CryptGenRandom(cryptGenRandom))
 				AddEntropy(cryptGenRandom);
 		}
