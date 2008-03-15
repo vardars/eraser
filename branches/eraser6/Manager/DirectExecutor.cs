@@ -409,34 +409,39 @@ namespace Eraser.Manager
 						currFile = info.FullName + Path.DirectorySeparatorChar +
 							GetRandomFileName(18);
 					while (System.IO.File.Exists(currFile));
-					FileStream stream = new FileStream(currFile, FileMode.CreateNew, FileAccess.Write);
+					
+					//Create the stream
+					using (FileStream stream = new FileStream(currFile,
+						FileMode.CreateNew, FileAccess.Write))
+					{
 
-					//Set the length of the file to be the amount of free space left
-					//or the maximum size of one of these dumps.
-					stream.SetLength(Math.Min(ErasureMethod.FreeSpaceFileUnit,
-						Drive.GetFreeSpace(info.Root.FullName)));
+						//Set the length of the file to be the amount of free space left
+						//or the maximum size of one of these dumps.
+						stream.SetLength(Math.Min(ErasureMethod.FreeSpaceFileUnit,
+							Drive.GetFreeSpace(info.Root.FullName)));
 
-					//Then run the erase task
-					method.Erase(stream, long.MaxValue,
-						PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
-						delegate(long lastWritten, int currentPass)
-						{
-							statistics.DataWritten += lastWritten;
-							eventArgs.currentPass = currentPass;
-							eventArgs.currentItemProgress = (int)(statistics.DataWritten * 100 / totalSize);
-							eventArgs.overallProgress = (int)((10 + eventArgs.currentItemProgress * 0.8));
+						//Then run the erase task
+						method.Erase(stream, long.MaxValue,
+							PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
+							delegate(long lastWritten, int currentPass)
+							{
+								statistics.DataWritten += lastWritten;
+								eventArgs.currentPass = currentPass;
+								eventArgs.currentItemProgress = (int)(statistics.DataWritten * 100 / totalSize);
+								eventArgs.overallProgress = (int)((10 + eventArgs.currentItemProgress * 0.8));
 
-							if (statistics.Speed == 0)
-								eventArgs.timeLeft = -1;
-							else
-								eventArgs.timeLeft = (int)((totalSize - statistics.DataWritten) / statistics.Speed);
-							task.OnProgressChanged(eventArgs);
+								if (statistics.Speed == 0)
+									eventArgs.timeLeft = -1;
+								else
+									eventArgs.timeLeft = (int)((totalSize - statistics.DataWritten) / statistics.Speed);
+								task.OnProgressChanged(eventArgs);
 
-							lock (currentTask)
-								if (currentTask.cancelled)
-									throw new FatalException("The task was cancelled.");
-						}
-					);
+								lock (currentTask)
+									if (currentTask.cancelled)
+										throw new FatalException("The task was cancelled.");
+							}
+						);
+					}
 				}
 
 				//If the drive is using NTFS, try to squeeze entries into the MFT as well
@@ -448,16 +453,17 @@ namespace Eraser.Manager
 					for ( ; ; )
 					{
 						//Open this stream
-						FileStream strm = new FileStream(info.FullName + Path.DirectorySeparatorChar +
-							GetRandomFileName(18), FileMode.CreateNew, FileAccess.Write);
+						using (FileStream strm = new FileStream(info.FullName + Path.DirectorySeparatorChar +
+							GetRandomFileName(18), FileMode.CreateNew, FileAccess.Write))
+						{
+							//Stretch the file size to the size of one MFT record
+							strm.SetLength(1);
 
-						//Stretch the file size to the size of one MFT record
-						strm.SetLength(1);
-
-						//Then run the erase task
-						method.Erase(strm, long.MaxValue,
-							PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
-							null);
+							//Then run the erase task
+							method.Erase(strm, long.MaxValue,
+								PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
+								null);
+						}
 					}
 				}
 				catch (IOException)
