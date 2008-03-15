@@ -129,5 +129,23 @@ namespace Eraser.Util
 
 			throw new Exception("Unknown error while determining free drive space.");
 		}
+
+		/// <summary>
+		/// Checks if the current user has disk quotas on the volume provided.
+		/// </summary>
+		/// <param name="driveName">The path to the root of the drive, including
+		/// the trailing \</param>
+		/// <returns>True if quotas are in effect.</returns>
+		public static bool HasQuota(string driveName)
+		{
+			ulong userAccessibleBytes, totalUserBytes, totalFreeBytes;
+			if (GetDiskFreeSpaceEx(driveName, out userAccessibleBytes,
+				out totalUserBytes, out totalFreeBytes) != 0)
+			{
+				return userAccessibleBytes != totalFreeBytes;
+			}
+
+			throw new Exception("Unknown error while determining free drive space.");
+		}
 	}
 }

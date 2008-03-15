@@ -6,6 +6,7 @@ using System.Threading;
 using System.IO;
 
 using Eraser.Util;
+using System.Security.Principal;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -331,8 +332,24 @@ namespace Eraser.Manager
 		/// <param name="target">The target of the unused space erase.</param>
 		private void EraseUnusedSpace(Task task, Task.UnusedSpace target)
 		{
-			//NotImplemented: Check for privileges: This includes disk quotas.:FreeSpace.cpp@217
-			//NotImplemented: Disable low disk space notification: FreeSpace.cpp@46
+			//Check for sufficient privileges to run the unused space erasure.
+			if (!IsAdministrator())
+			{
+				string exceptionString = "The program does not have the required permissions " +
+					"to erase the unused space on disk";
+				if (Environment.OSVersion.Platform == PlatformID.Win32NT &&
+					Environment.OSVersion.Version >= new Version(6, 0))
+				{
+					exceptionString += ". Run the program as administrator and retry the operation.";
+				}
+				throw new Exception(exceptionString);
+			}
+
+			//If the user is under disk quotas, log a warning message
+			if (Drive.HasQuota(target.Drive))
+				task.LogEntry(new LogEntry("The drive which is having its unused space erased has " +
+					"disk quotas active. This will prevent the complete erasure of unused space and " +
+					"will pose a security concern", LogLevel.WARNING));
 
 			//Get the erasure method if the user specified he wants the default.
 			ErasureMethod method = target.Method;
@@ -360,14 +377,13 @@ namespace Eraser.Manager
 
 			//Make a folder to dump our temporary files in
 			DirectoryInfo info = new DirectoryInfo(target.Drive).Root;
-			while (info.Root.FullName == info.FullName)
-				try
-				{
-					info = info.CreateSubdirectory(GetRandomFileName(18));
-				}
-				catch (IOException)
-				{
-				}
+			{
+				string directoryName;
+				do
+					directoryName = GetRandomFileName(18);
+				while (Directory.Exists(info.FullName + Path.DirectorySeparatorChar + directoryName));
+				info = info.CreateSubdirectory(directoryName);
+			}
 
 			try
 			{
@@ -386,17 +402,13 @@ namespace Eraser.Manager
 				task.OnProgressChanged(eventArgs);
 				while (Drive.GetFreeSpace(info.Root.FullName) > 0)
 				{
-					FileStream stream = null;
-					try
-					{
-						stream = new FileStream(info.FullName + Path.DirectorySeparatorChar +
-							GetRandomFileName(18), FileMode.CreateNew, FileAccess.Write);
-					}
-					catch (IOException)
-					{
-						//IOExceptions are because of an already existing file name.
-						continue;
-					}
+					//Generate a non-existant file name
+					string currFile;
+					do
+						currFile = info.FullName + Path.DirectorySeparatorChar +
+							GetRandomFileName(18);
+					while (System.IO.File.Exists(currFile));
+					FileStream stream = new FileStream(currFile, FileMode.CreateNew, FileAccess.Write);
 
 					//Set the length of the file to be the amount of free space left
 					//or the maximum size of one of these dumps.
@@ -432,13 +444,11 @@ namespace Eraser.Manager
 
 				try
 				{
-					List<FileStream> streams = new List<FileStream>();
-					for (; ; )
+					for ( ; ; )
 					{
 						//Open this stream
 						FileStream strm = new FileStream(info.FullName + Path.DirectorySeparatorChar +
 							GetRandomFileName(18), FileMode.CreateNew, FileAccess.Write);
-						streams.Add(strm);
 
 						//Stretch the file size to the size of one MFT record
 						strm.SetLength(1);
@@ -461,8 +471,6 @@ namespace Eraser.Manager
 
 				//Remove the folder holding all our temporary files.
 				RemoveFolder(info);
-
-				//NotImplemented: Enable low disk space notification: FreeSpace.cpp@68
 			}
 
 
@@ -660,6 +668,18 @@ namespace Eraser.Manager
 				if (fldr.DeleteIfEmpty)
 					RemoveFolder(new DirectoryInfo(fldr.Path));
 			}
+		}
+
+		/// <summary>
+		/// Checks whether the current process is running with administrative
+		/// privileges.
+		/// </summary>
+		/// <returns>True if the user is an administrator. This only returns
+		/// true under Vista if the process is elevated.</returns>
+		private static bool IsAdministrator()
+		{
+			WindowsPrincipal principal = new WindowsPrincipal(WindowsIdentity.GetCurrent());
+			return principal.IsInRole(WindowsBuiltInRole.Administrator);
 		}
 
 		/// <summary>
