@@ -37,11 +37,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Kernel.cs" />
+    <Compile Include="CryptAPI.cs" />
+    <Compile Include="KernelAPI.cs" />
     <Compile Include="File.cs" />
     <Compile Include="Drive.cs" />
+    <Compile Include="NetAPI.cs" />
+    <Compile Include="NTAPI.cs" />
     <Compile Include="Permissions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserAPI.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
