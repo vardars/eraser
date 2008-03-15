@@ -149,7 +149,7 @@ namespace Eraser.Util
 		/// error information, call Marshal.GetLastWin32Error.</returns>
 		[DllImport("Advapi32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		internal static extern bool CryptReleaseContext(SafeCryptHandle hProv, uint dwFlags);
+		internal static extern bool CryptReleaseContext(IntPtr hProv, uint dwFlags);
 
 		/// <summary>
 		/// The HCRYPTPROV handle.
@@ -201,7 +201,8 @@ namespace Eraser.Util
 
 		protected override bool ReleaseHandle()
 		{
-			CryptAPI.CryptReleaseContext(this, 0u);
+			CryptAPI.CryptReleaseContext(handle, 0u);
+			handle = IntPtr.Zero;
 			return true;
 		}
 	}
