@@ -333,7 +333,7 @@ namespace Eraser.Manager
 		private void EraseUnusedSpace(Task task, Task.UnusedSpace target)
 		{
 			//Check for sufficient privileges to run the unused space erasure.
-			if (!IsAdministrator())
+			if (!Permissions.IsAdministrator())
 			{
 				string exceptionString = "The program does not have the required permissions " +
 					"to erase the unused space on disk";
@@ -668,18 +668,6 @@ namespace Eraser.Manager
 				if (fldr.DeleteIfEmpty)
 					RemoveFolder(new DirectoryInfo(fldr.Path));
 			}
-		}
-
-		/// <summary>
-		/// Checks whether the current process is running with administrative
-		/// privileges.
-		/// </summary>
-		/// <returns>True if the user is an administrator. This only returns
-		/// true under Vista if the process is elevated.</returns>
-		private static bool IsAdministrator()
-		{
-			WindowsPrincipal principal = new WindowsPrincipal(WindowsIdentity.GetCurrent());
-			return principal.IsInRole(WindowsBuiltInRole.Administrator);
 		}
 
 		/// <summary>
