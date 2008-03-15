@@ -130,6 +130,7 @@ namespace Eraser.Manager
 				: base(info, context)
 			{
 				Drive = (string)info.GetValue("Drive", typeof(string));
+				EraseClusterTips = (bool)info.GetValue("EraseClusterTips", typeof(bool));
 			}
 
 			public override void GetObjectData(SerializationInfo info,
@@ -137,6 +138,7 @@ namespace Eraser.Manager
 			{
 				base.GetObjectData(info, context);
 				info.AddValue("Drive", Drive);
+				info.AddValue("EraseClusterTips", EraseClusterTips);
 			}
 			#endregion
 
@@ -152,7 +154,15 @@ namespace Eraser.Manager
 				get { return string.Format("Unused disk space ({0})", Drive); }
 			}
 
+			/// <summary>
+			/// The drive to erase
+			/// </summary>
 			public string Drive;
+
+			/// <summary>
+			/// Whether cluster tips should be erased.
+			/// </summary>
+			public bool EraseClusterTips;
 		}
 
 		/// <summary>

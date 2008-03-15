@@ -366,15 +366,18 @@ namespace Eraser.Manager
 			task.OnProgressChanged(eventArgs);
 
 			//Erase the cluster tips of every file on the drive.
-			EraseClusterTips(task, target, method,
-				delegate(int currentFile, string currentFilePath, int totalFiles)
-				{
-					eventArgs.currentItemName = "(Tips) " + currentFilePath;
-					eventArgs.currentItemProgress = (int)((float)currentFile / totalFiles * 100);
-					eventArgs.overallProgress = eventArgs.CurrentItemProgress / 10;
-					task.OnProgressChanged(eventArgs);
-				}
-			);
+			if (target.EraseClusterTips)
+			{
+				EraseClusterTips(task, target, method,
+					delegate(int currentFile, string currentFilePath, int totalFiles)
+					{
+						eventArgs.currentItemName = "(Tips) " + currentFilePath;
+						eventArgs.currentItemProgress = (int)((float)currentFile / totalFiles * 100);
+						eventArgs.overallProgress = eventArgs.CurrentItemProgress / 10;
+						task.OnProgressChanged(eventArgs);
+					}
+				);
+			}
 
 			//Make a folder to dump our temporary files in
 			DirectoryInfo info = new DirectoryInfo(target.Drive).Root;

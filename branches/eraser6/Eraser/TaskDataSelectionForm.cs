@@ -95,6 +95,7 @@ namespace Eraser
 					result = unusedSpaceTask;
 
 					unusedSpaceTask.Drive = ((DriveItem)unusedDisk.SelectedItem).Drive;
+					unusedSpaceTask.EraseClusterTips = unusedClusterTips.Checked;
 				}
 
 				result.Method = (ErasureMethod)this.method.SelectedItem;
@@ -130,6 +131,7 @@ namespace Eraser
 					foreach (object item in unusedDisk.Items)
 						if (((DriveItem)item).Drive == ((Task.UnusedSpace)value).Drive)
 							unusedDisk.SelectedItem = item;
+					unusedClusterTips.Checked = unusedSpaceTask.EraseClusterTips;
 				}
 				else
 					throw new NotImplementedException("Unknown erasure target.");
@@ -162,7 +164,7 @@ namespace Eraser
 			folderPath.Enabled = folderBrowse.Enabled = folderIncludeLbl.Enabled =
 				folderInclude.Enabled = folderExcludeLbl.Enabled = folderExclude.Enabled =
 				folderDelete.Enabled = folder.Checked;
-			unusedDisk.Enabled = unused.Checked;
+			unusedDisk.Enabled = unusedClusterTips.Enabled = unused.Checked;
 			errorProvider.Clear();
 		}
 

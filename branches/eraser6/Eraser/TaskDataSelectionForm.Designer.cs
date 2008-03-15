@@ -49,6 +49,7 @@ namespace Eraser
 			this.fileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.folderDialog = new System.Windows.Forms.FolderBrowserDialog();
 			this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+			this.unusedClusterTips = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -213,7 +214,7 @@ namespace Eraser
 			// ok
 			// 
 			this.ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.ok.Location = new System.Drawing.Point(162, 312);
+			this.ok.Location = new System.Drawing.Point(162, 315);
 			this.ok.Name = "ok";
 			this.ok.Size = new System.Drawing.Size(75, 23);
 			this.ok.TabIndex = 16;
@@ -225,7 +226,7 @@ namespace Eraser
 			// 
 			this.cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancel.Location = new System.Drawing.Point(243, 312);
+			this.cancel.Location = new System.Drawing.Point(243, 315);
 			this.cancel.Name = "cancel";
 			this.cancel.Size = new System.Drawing.Size(75, 23);
 			this.cancel.TabIndex = 17;
@@ -245,13 +246,26 @@ namespace Eraser
 			// 
 			this.errorProvider.ContainerControl = this;
 			// 
+			// unusedClusterTips
+			// 
+			this.unusedClusterTips.AutoSize = true;
+			this.unusedClusterTips.Checked = true;
+			this.unusedClusterTips.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.unusedClusterTips.Location = new System.Drawing.Point(31, 290);
+			this.unusedClusterTips.Name = "unusedClusterTips";
+			this.unusedClusterTips.Size = new System.Drawing.Size(113, 19);
+			this.unusedClusterTips.TabIndex = 18;
+			this.unusedClusterTips.Text = "Erase cluster tips";
+			this.unusedClusterTips.UseVisualStyleBackColor = true;
+			// 
 			// TaskDataSelectionForm
 			// 
 			this.AcceptButton = this.ok;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.CancelButton = this.cancel;
-			this.ClientSize = new System.Drawing.Size(330, 347);
+			this.ClientSize = new System.Drawing.Size(330, 350);
+			this.Controls.Add(this.unusedClusterTips);
 			this.Controls.Add(this.cancel);
 			this.Controls.Add(this.ok);
 			this.Controls.Add(this.method);
@@ -305,5 +319,6 @@ namespace Eraser
 		private System.Windows.Forms.OpenFileDialog fileDialog;
 		private System.Windows.Forms.FolderBrowserDialog folderDialog;
 		private System.Windows.Forms.ErrorProvider errorProvider;
+		private System.Windows.Forms.CheckBox unusedClusterTips;
 	}
 }
