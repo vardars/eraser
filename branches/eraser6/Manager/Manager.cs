@@ -5,31 +5,49 @@ using System.Text;
 namespace Eraser.Manager
 {
 	/// <summary>
-	/// The globals class. This static class holds global variables used in
-	/// the other Manager classes.
+	/// The library instance which initializes and cleans up data required for the
+	/// library to function.
 	/// </summary>
-	public static class Globals
+	public class ManagerLibrary : IDisposable
 	{
+		public ManagerLibrary()
+		{
+			Instance = this;
+			PRNGManager = new PRNGManager();
+			ErasureMethodManager = new ErasureMethodManager();
+			Settings = new Settings();
+			Host = new Plugin.DefaultHost();
+		}
+
+		public void Dispose()
+		{
+			PRNGManager.entropyThread.Abort();
+		}
+
+		/// <summary>
+		/// The global library instance.
+		/// </summary>
+		public static ManagerLibrary Instance = null;
+
 		/// <summary>
 		/// The global instance of the PRNG Manager
 		/// </summary>
-		internal static PRNGManager PRNGManager = new PRNGManager();
+		internal PRNGManager PRNGManager;
 
 		/// <summary>
 		/// The global instance of the Erasure method manager.
 		/// </summary>
-		internal static ErasureMethodManager ErasureMethodManager = new ErasureMethodManager();
+		internal ErasureMethodManager ErasureMethodManager;
 
 		/// <summary>
 		/// Global instance of the Settings object.
 		/// </summary>
-		public static Settings Settings = new Settings();
+		public Settings Settings;
 
 		/// <summary>
 		/// The global instance of the Plugin host
 		/// </summary>
-		internal static Plugin.DefaultHost Host =
-			new Plugin.DefaultHost();
+		internal Plugin.DefaultHost Host;
 	}
 
 	/// <summary>
