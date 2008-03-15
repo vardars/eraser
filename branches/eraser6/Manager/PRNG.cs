@@ -45,7 +45,7 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="seed">An arbitrary length of information that will be
 		/// used to reseed the PRNG</param>
-		//protected internal abstract void Reseed(byte[] seed);
+		protected internal abstract void Reseed(byte[] seed);
 	}
 
 	/// <summary>
@@ -59,8 +59,8 @@ namespace Eraser.Manager
 		/// <returns>A mutable list, with an instance of each PRNG.</returns>
 		public static Dictionary<Guid, PRNG> GetAll()
 		{
-			lock (Globals.PRNGManager.prngs)
-				return Globals.PRNGManager.prngs;
+			lock (ManagerLibrary.Instance.PRNGManager.prngs)
+				return ManagerLibrary.Instance.PRNGManager.prngs;
 		}
 
 		/// <summary>
@@ -72,8 +72,8 @@ namespace Eraser.Manager
 		{
 			try
 			{
-				lock (Globals.PRNGManager.prngs)
-					return Globals.PRNGManager.prngs[guid];
+				lock (ManagerLibrary.Instance.PRNGManager.prngs)
+					return ManagerLibrary.Instance.PRNGManager.prngs[guid];
 			}
 			catch (KeyNotFoundException)
 			{
@@ -87,11 +87,34 @@ namespace Eraser.Manager
 		/// <param name="method"></param>
 		public static void Register(PRNG prng)
 		{
-			lock (Globals.PRNGManager.prngs)
-				Globals.PRNGManager.prngs.Add(prng.GUID, prng);
+			lock (ManagerLibrary.Instance.PRNGManager.prngs)
+				ManagerLibrary.Instance.PRNGManager.prngs.Add(prng.GUID, prng);
 		}
 
-		private EntropyThread entropyThread = new EntropyThread();
+		/// <summary>
+		/// Allows the EntropyThread to get entropy to the PRNG functions as seeds.
+		/// </summary>
+		/// <param name="entropy">An array of bytes, being entropy for the PRNG.</param>
+		internal void AddEntropy(byte[] entropy)
+		{
+			lock (ManagerLibrary.Instance.PRNGManager.prngs)
+				foreach (PRNG prng in prngs.Values)
+					prng.Reseed(entropy);
+		}
+
+		/// <summary>
+		/// Gets entropy from the EntropyThread.
+		/// </summary>
+		/// <returns>A buffer of arbitrary length containing random information.</returns>
+		public static byte[] GetEntropy()
+		{
+			return ManagerLibrary.Instance.PRNGManager.entropyThread.GetPool();
+		}
+		
+		/// <summary>
+		/// The entropy thread gathering entropy for the RNGs.
+		/// </summary>
+		internal EntropyThread entropyThread = new EntropyThread();
 
 		/// <summary>
 		/// The list of currently registered erasure methods.
@@ -106,23 +129,10 @@ namespace Eraser.Manager
 	{
 		public EntropyThread()
 		{
+			//Create the pool.
 			pool = new byte[512];
-			thread = new Thread(delegate()
-				{
-					this.Main();
-				}
-			);
-			thread.Start();
-		}
 
-		/// <summary>
-		/// The PRNG entropy thread. This thread will run in the background, getting
-		/// random data to be used for entropy. This will maintain the integrity
-		/// of generated data from the PRNGs.
-		/// </summary>
-		private void Main()
-		{
-			//First add the simple startup random information.
+			//Initialize the pool with some default information.
 			{
 				//Process startup information
 				KernelAPI.STARTUPINFO startupInfo = new KernelAPI.STARTUPINFO();
@@ -134,15 +144,84 @@ namespace Eraser.Manager
 				KernelAPI.GetSystemInfo(out systemInfo);
 				AddEntropy(systemInfo);
 
+				FastAddEntropy();
+				SlowAddEntropy();
 				MixPool();
 			}
 
+			//Then start the thread which maintains the pool.
+			thread = new Thread(delegate()
+				{
+					this.Main();
+				}
+			);
+			thread.Start();
+		}
+
+		/// <summary>
+		/// Stops the execution of the thread.
+		/// </summary>
+		public void Abort()
+		{
+			thread.Abort();
+		}
+
+		/// <summary>
+		/// The PRNG entropy thread. This thread will run in the background, getting
+		/// random data to be used for entropy. This will maintain the integrity
+		/// of generated data from the PRNGs.
+		/// </summary>
+		private void Main()
+		{
 			//This entropy thread will utilize a polling loop.
+			DateTime lastAddedEntropy = DateTime.Now;
 			while (thread.ThreadState != ThreadState.AbortRequested)
 			{
 				FastAddEntropy();
 				SlowAddEntropy();
 				Thread.Sleep(3000);
+
+				//Send entropy to the PRNGs for new seeds.
+				if (DateTime.Now - lastAddedEntropy > new TimeSpan(0, 10, 0))
+					ManagerLibrary.Instance.PRNGManager.AddEntropy(GetPool());
+			}
+		}
+
+		/// <summary>
+		/// Retrieves the current contents of the entropy pool.
+		/// </summary>
+		/// <returns>A byte array containing all the randomness currently found.</returns>
+		public byte[] GetPool()
+		{
+			//Mix and invert the pool
+			MixPool();
+			InvertPool();
+
+			//Return a safe copy
+			lock (pool)
+			{
+				byte[] result = new byte[pool.Length];
+				pool.CopyTo(result, 0);
+
+				return result;
+			}
+		}
+
+		/// <summary>
+		/// Inverts the contents of the pool
+		/// </summary>
+		private void InvertPool()
+		{
+			lock (poolLock)
+			unsafe
+			{
+				fixed (byte* fPool = pool)
+				{
+					int* pPool = (int*)fPool;
+					int poolLength = pool.Length / sizeof(int);
+					while (poolLength-- != 0)
+						*pPool = (int)(*pPool++ ^ unchecked((uint)-1));
+				}
 			}
 		}
 

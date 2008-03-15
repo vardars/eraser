@@ -11,6 +11,11 @@ namespace Eraser.DefaultPlugins
 	/// </summary>
 	public class ISAAC : PRNG
 	{
+		public ISAAC()
+		{
+			isaac = new Rand.ISAAC(ConvertSeedArray(PRNGManager.GetEntropy()));
+		}
+
 		public override string Name
 		{
 			get { return "ISAAC CSPRNG"; }
@@ -67,6 +72,37 @@ namespace Eraser.DefaultPlugins
 			}
 		}
 
-		private Rand.ISAAC isaac = new Rand.ISAAC();
+		protected override void Reseed(byte[] seed)
+		{
+			lock (isaac)
+				isaac = new Rand.ISAAC(ConvertSeedArray(seed));
+		}
+
+		/// <summary>
+		/// Converts the source seed array constituting bytes to one made up of ints.
+		/// </summary>
+		/// <param name="seed">The seed to convert.</param>
+		/// <returns>An int[] containins the seed array.</returns>
+		private unsafe static int[] ConvertSeedArray(byte[] seed)
+		{
+			//Copy the seed to an int array
+			int[] newSeed = new int[seed.Length / sizeof(int)];
+			fixed (byte* fSeed = seed)
+			fixed (int* fNewSeed = newSeed)
+			{
+				//Calculate the amount in bytes to copy
+				byte* pSeed = fSeed;
+				byte* pNewSeed = (byte*)fNewSeed;
+				int amount = Math.Min(seed.Length, Rand.ISAAC.SIZE * sizeof(int));
+
+				//Copy
+				while (amount-- != 0)
+					*pNewSeed++ = *pSeed++;
+			}
+
+			return newSeed;
+		}
+
+		private Rand.ISAAC isaac;
 	}
 }

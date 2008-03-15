@@ -61,34 +61,34 @@ namespace Eraser
 		private void LoadSettings()
 		{
 			foreach (Object method in eraseFilesMethod.Items)
-				if (((ErasureMethod)method).GUID == Globals.Settings.DefaultFileErasureMethod)
+				if (((ErasureMethod)method).GUID == ManagerLibrary.Instance.Settings.DefaultFileErasureMethod)
 				{
 					eraseFilesMethod.SelectedItem = method;
 					break;
 				}
 			 
 			foreach (Object method in eraseUnusedMethod.Items)
-				if (((ErasureMethod)method).GUID == Globals.Settings.DefaultUnusedSpaceErasureMethod)
+				if (((ErasureMethod)method).GUID == ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod)
 				{
 					eraseUnusedMethod.SelectedItem = method;
 					break;
 				}
 
 			foreach (Object prng in erasePRNG.Items)
-				if (((PRNG)prng).GUID == Globals.Settings.ActivePRNG)
+				if (((PRNG)prng).GUID == ManagerLibrary.Instance.Settings.ActivePRNG)
 				{
 					erasePRNG.SelectedItem = prng;
 					break;
 				}
 
 			lockedAllow.Checked =
-				Globals.Settings.EraseLockedFilesOnRestart;
+				ManagerLibrary.Instance.Settings.EraseLockedFilesOnRestart;
 			lockedConfirm.Checked =
-				Globals.Settings.ConfirmEraseOnRestart;
+				ManagerLibrary.Instance.Settings.ConfirmEraseOnRestart;
 			schedulerMissedImmediate.Checked =
-				Globals.Settings.ExecuteMissedTasksImmediately;
+				ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately;
 			schedulerMissedIgnore.Checked =
-				!Globals.Settings.ExecuteMissedTasksImmediately;
+				!ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately;
 
 			//Select an intelligent default if the settings are invalid.
 			string defaults = string.Empty;
@@ -111,11 +111,11 @@ namespace Eraser
 			//Remind the user.
 			if (defaults.Length != 0)
 			{
-				Globals.Settings.DefaultFileErasureMethod =
+				ManagerLibrary.Instance.Settings.DefaultFileErasureMethod =
 					((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
-				Globals.Settings.DefaultUnusedSpaceErasureMethod =
+				ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod =
 					((ErasureMethod)eraseUnusedMethod.SelectedItem).GUID;
-				Globals.Settings.ActivePRNG = 
+				ManagerLibrary.Instance.Settings.ActivePRNG = 
 					((PRNG)erasePRNG.SelectedItem).GUID;
 
 				MessageBox.Show(string.Format("The following settings held invalid values:\n\n" +
@@ -154,24 +154,24 @@ namespace Eraser
 				return;
 			}
 
-			Globals.Settings.DefaultFileErasureMethod =
+			ManagerLibrary.Instance.Settings.DefaultFileErasureMethod =
 				((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
-			Globals.Settings.DefaultUnusedSpaceErasureMethod =
+			ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod =
 				((ErasureMethod)eraseUnusedMethod.SelectedItem).GUID;
 
 			PRNG newPRNG = (PRNG)erasePRNG.SelectedItem;
-			if (newPRNG.GUID != Globals.Settings.ActivePRNG)
+			if (newPRNG.GUID != ManagerLibrary.Instance.Settings.ActivePRNG)
 			{
 				MessageBox.Show("The new randomness data source will only be used when " +
 					"the next task is run.\nCurrently running tasks will use the old source.",
 					"Eraser", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				Globals.Settings.ActivePRNG = newPRNG.GUID;
+				ManagerLibrary.Instance.Settings.ActivePRNG = newPRNG.GUID;
 			}
-			Globals.Settings.EraseLockedFilesOnRestart =
+			ManagerLibrary.Instance.Settings.EraseLockedFilesOnRestart =
 				lockedAllow.Checked;
-			Globals.Settings.ConfirmEraseOnRestart =
+			ManagerLibrary.Instance.Settings.ConfirmEraseOnRestart =
 				lockedConfirm.Checked;
-			Globals.Settings.ExecuteMissedTasksImmediately =
+			ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately =
 				schedulerMissedImmediate.Checked;
 		}
 	}

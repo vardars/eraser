@@ -25,6 +25,11 @@ namespace Eraser.DefaultPlugins
 				rand.GetBytes(buffer);
 		}
 
+		protected override void Reseed(byte[] seed)
+		{
+			//No-op. RNGCryptoServiceProviders can't be reseeded.
+		}
+
 		RNGCryptoServiceProvider rand = new RNGCryptoServiceProvider();
 	}
 }

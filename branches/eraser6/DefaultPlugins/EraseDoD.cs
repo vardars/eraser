@@ -27,7 +27,7 @@ namespace Eraser.DefaultPlugins
 			get
 			{
 				//Set passes 1, 4 and 5 to be a random value
-				PRNG prng = PRNGManager.GetInstance(Globals.Settings.ActivePRNG);
+				PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
 				int rand = prng.Next();
 
 				Pass[] result = new Pass[]

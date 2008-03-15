@@ -20,10 +20,11 @@ namespace Eraser
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.SafeTopLevelCaptionFormat = "Eraser";
 
+			using (ManagerLibrary library = new ManagerLibrary())
 			using (eraserClient = new DirectExecutor())
 			{
 				//Set the defaults for the library
-				Globals.Settings = new Settings();
+				library.Settings = new Settings();
 
 				//Load the task list
 				RegistryKey key = Application.UserAppDataRegistry;

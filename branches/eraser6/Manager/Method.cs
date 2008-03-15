@@ -113,7 +113,7 @@ namespace Eraser.Manager
 			passes.CopyTo(result, 0);
 
 			//Randomize.
-			PRNG rand = PRNGManager.GetInstance(Globals.Settings.ActivePRNG);
+			PRNG rand = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
 			for (int i = 0; i < result.Length; ++i)
 			{
 				int val = rand.Next(result.Length - 1);
@@ -366,8 +366,8 @@ namespace Eraser.Manager
 		/// <returns>A mutable list, with an instance of each method.</returns>
 		public static Dictionary<Guid, ErasureMethod> GetAll()
 		{
-			lock (Globals.ErasureMethodManager.methods)
-				return Globals.ErasureMethodManager.methods;
+			lock (ManagerLibrary.Instance.ErasureMethodManager.methods)
+				return ManagerLibrary.Instance.ErasureMethodManager.methods;
 		}
 
 		/// <summary>
@@ -379,8 +379,8 @@ namespace Eraser.Manager
 		{
 			try
 			{
-				lock (Globals.ErasureMethodManager.methods)
-					return Globals.ErasureMethodManager.methods[guid];
+				lock (ManagerLibrary.Instance.ErasureMethodManager.methods)
+					return ManagerLibrary.Instance.ErasureMethodManager.methods[guid];
 			}
 			catch (KeyNotFoundException)
 			{
@@ -395,8 +395,8 @@ namespace Eraser.Manager
 		/// <param name="method"></param>
 		public static void Register(ErasureMethod method)
 		{
-			lock (Globals.ErasureMethodManager.methods)
-				Globals.ErasureMethodManager.methods.Add(method.GUID, method);
+			lock (ManagerLibrary.Instance.ErasureMethodManager.methods)
+				ManagerLibrary.Instance.ErasureMethodManager.methods.Add(method.GUID, method);
 		}
 
 		/// <summary>

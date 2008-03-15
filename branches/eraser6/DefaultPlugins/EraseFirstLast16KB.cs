@@ -77,7 +77,7 @@ namespace Eraser.DefaultPlugins
 			{
 				//Try to retrieve the default erasure method.
 				ErasureMethod defaultMethod = ErasureMethodManager.GetInstance(
-					Globals.Settings.DefaultFileErasureMethod);
+					ManagerLibrary.Instance.Settings.DefaultFileErasureMethod);
 
 				//If we are the default, use the default pseudorandom pass.
 				if (defaultMethod.GUID == GUID)

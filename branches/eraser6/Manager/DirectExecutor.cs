@@ -356,7 +356,7 @@ namespace Eraser.Manager
 			ErasureMethod method = target.Method;
 			if (method == ErasureMethodManager.Default)
 				method = ErasureMethodManager.GetInstance(
-					Globals.Settings.DefaultUnusedSpaceErasureMethod);
+					ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod);
 
 			TaskProgressEventArgs eventArgs = new TaskProgressEventArgs(task, 0, 0);
 			eventArgs.currentTarget = target;
@@ -418,7 +418,7 @@ namespace Eraser.Manager
 
 					//Then run the erase task
 					method.Erase(stream, long.MaxValue,
-						PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
+						PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
 						delegate(long lastWritten, int currentPass)
 						{
 							statistics.DataWritten += lastWritten;
@@ -456,7 +456,7 @@ namespace Eraser.Manager
 
 						//Then run the erase task
 						method.Erase(strm, long.MaxValue,
-							PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
+							PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
 							null);
 					}
 				}
@@ -550,7 +550,7 @@ namespace Eraser.Manager
 
 					//Erase the file
 					method.Erase(stream, long.MaxValue, PRNGManager.GetInstance(
-						Globals.Settings.ActivePRNG), null);
+						ManagerLibrary.Instance.Settings.ActivePRNG), null);
 				}
 				finally
 				{
@@ -582,7 +582,7 @@ namespace Eraser.Manager
 			//Get the erasure method if the user specified he wants the default.
 			ErasureMethod method = target.Method;
 			if (method == ErasureMethodManager.Default)
-				method = ErasureMethodManager.GetInstance(Globals.Settings.DefaultFileErasureMethod);
+				method = ErasureMethodManager.GetInstance(ManagerLibrary.Instance.Settings.DefaultFileErasureMethod);
 
 			//Calculate the total amount of data required to finish the wipe. This
 			//value is just the total about of data to be erased multiplied by
@@ -633,7 +633,7 @@ namespace Eraser.Manager
 					long itemWritten = 0,
 					     itemTotal = method.CalculateEraseDataSize(null, strm.Length);
 					method.Erase(strm, long.MaxValue,
-						PRNGManager.GetInstance(Globals.Settings.ActivePRNG),
+						PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
 						delegate(long lastWritten, int currentPass)
 						{
 							statistics.DataWritten += lastWritten;
@@ -760,7 +760,7 @@ namespace Eraser.Manager
 		private static string GetRandomFileName(int length)
 		{
 			//Get a random file name
-			PRNG prng = PRNGManager.GetInstance(Globals.Settings.ActivePRNG);
+			PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
 			byte[] newFileNameAry = new byte[length];
 			prng.NextBytes(newFileNameAry);
 
