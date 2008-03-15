@@ -31,7 +31,18 @@ namespace Eraser
 				byte[] savedTaskList = (byte[])key.GetValue("TaskList", new byte[] { });
 				using (MemoryStream stream = new MemoryStream(savedTaskList))
 				{
-					eraserClient.LoadTaskList(stream);
+					try
+					{
+						if (savedTaskList.Length != 0)
+							eraserClient.LoadTaskList(stream);
+					}
+					catch (Exception)
+					{
+						key.DeleteValue("TaskList");
+						MessageBox.Show("Could not load task list. All task entries have " +
+							"been lost.", "Eraser", MessageBoxButtons.OK,
+							MessageBoxIcon.Error);
+					}
 				}
 
 				//Create the main form
