@@ -80,17 +80,17 @@ namespace Eraser
 		{
 			RegistryKey key = Application.UserAppDataRegistry;
 			ActivePRNG = new Guid((string)
-				key.GetValue("PRNG", (object)Guid.Empty));
+				key.GetValue("PRNG", Guid.Empty.ToString()));
 			EraseLockedFilesOnRestart =
-				(int)key.GetValue("EraseOnRestart", (object)true) != 0;
+				(int)key.GetValue("EraseOnRestart", (object)1) != 0;
 			ConfirmEraseOnRestart =
-				(int)key.GetValue("ConfirmEraseOnRestart", (object)true) != 0;
+				(int)key.GetValue("ConfirmEraseOnRestart", (object)1) != 0;
 			DefaultFileErasureMethod = new Guid((string)
-				key.GetValue("DefaultFileErasureMethod", (object)Guid.Empty));
+				key.GetValue("DefaultFileErasureMethod", Guid.Empty.ToString()));
 			DefaultUnusedSpaceErasureMethod = new Guid((string)
-				key.GetValue("DefaultUnusedSpaceErasureMethod", (object)Guid.Empty));
+				key.GetValue("DefaultUnusedSpaceErasureMethod", Guid.Empty.ToString()));
 			ExecuteMissedTasksImmediately =
-				(int)key.GetValue("ExecuteMissedTasksImmediately", (object)true) != 0;
+				(int)key.GetValue("ExecuteMissedTasksImmediately", (object)1) != 0;
 		}
 
 		~Settings()
