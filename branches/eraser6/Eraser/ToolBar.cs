@@ -100,9 +100,9 @@ namespace Eraser
 				if (i.Menu != null)
 				{
 					Bitmap menu_arrow = Properties.Resources.ToolbarArrow;
-					i.MenuRect = new Rectangle(x += 6, (Height - menu_arrow.Height) / 2,
+					i.MenuRect = new Rectangle(x += 6, i.TextRect.Y,
 						menu_arrow.Width, menu_arrow.Height);
-					dc.DrawImage(menu_arrow, i.MenuRect.Location);
+					dc.DrawImage(menu_arrow, i.MenuRect);
 					x += i.MenuRect.Width;
 				}
 
