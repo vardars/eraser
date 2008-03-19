@@ -84,7 +84,7 @@ namespace Eraser
 			EraseLockedFilesOnRestart =
 				(int)key.GetValue("EraseOnRestart", (object)1) != 0;
 			ConfirmEraseOnRestart =
-				(int)key.GetValue("ConfirmEraseOnRestart", (object)1) != 0;
+				(int)key.GetValue("ConfirmEraseOnRestart", (object)0) != 0;
 			DefaultFileErasureMethod = new Guid((string)
 				key.GetValue("DefaultFileErasureMethod", Guid.Empty.ToString()));
 			DefaultUnusedSpaceErasureMethod = new Guid((string)
