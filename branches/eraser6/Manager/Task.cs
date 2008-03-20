@@ -5,6 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using System.ComponentModel;
+using Eraser.Util;
 
 namespace Eraser.Manager
 {
@@ -103,6 +104,26 @@ namespace Eraser.Manager
 			internal abstract List<string> GetPaths(out long totalSize);
 
 			/// <summary>
+			/// Adds ADSes of the given file to the list.
+			/// </summary>
+			/// <param name="list">The list to add the ADS paths to.</param>
+			/// <param name="file">The file to look for ADSes</param>
+			protected void GetPathADSes(ref List<string> list, ref long totalSize, string file)
+			{
+				//Get the ADS names
+				List<string> adses = Util.File.GetADSes(new FileInfo(file));
+
+				//Then prepend the path.
+				foreach (string adsName in adses)
+				{
+					string adsPath = file + ':' + adsName;
+					list.Add(adsPath);
+					Util.StreamInfo info = new Util.StreamInfo(adsPath);
+					totalSize += info.Length;
+				}
+			}
+
+			/// <summary>
 			/// The path to the file or folder referred to by this object.
 			/// </summary>
 			public string Path
@@ -188,9 +209,11 @@ namespace Eraser.Manager
 			internal override List<string> GetPaths(out long totalSize)
 			{
 				List<string> result = new List<string>();
-				result.Add(Path);
+				totalSize = 0;
+				GetPathADSes(ref result, ref totalSize, Path);
 
-				totalSize = new FileInfo(Path).Length;
+				totalSize += new FileInfo(Path).Length;
+				result.Add(Path);
 				return result;
 			}
 		}
@@ -252,6 +275,7 @@ namespace Eraser.Manager
 						if (excludePattern.Matches(file.FullName).Count == 0)
 						{
 							totalSize += file.Length;
+							GetPathADSes(ref result, ref totalSize, file.FullName);
 							result.Add(file.FullName);
 						}
 				}
@@ -259,6 +283,7 @@ namespace Eraser.Manager
 					foreach (FileInfo file in files)
 					{
 						totalSize += file.Length;
+						GetPathADSes(ref result, ref totalSize, file.FullName);
 						result.Add(file.FullName);
 					}
 				

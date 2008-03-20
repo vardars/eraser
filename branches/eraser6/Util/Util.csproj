@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CryptAPI.cs" />
+    <Compile Include="StreamInfo.cs" />
     <Compile Include="KernelAPI.cs" />
     <Compile Include="File.cs" />
     <Compile Include="Drive.cs" />

@@ -505,7 +505,11 @@ namespace Eraser.Manager
 							task.LogEntry(new LogEntry(string.Format("{0} did not have its cluster tips " +
 								"erased, because it is a system file", file.FullName), LogLevel.INFORMATION));
 						else
+						{
+							foreach (string i in Util.File.GetADSes(file))
+								files.Add(file.FullName + ':' + i);
 							files.Add(file.FullName);
+						}
 
 					foreach (DirectoryInfo subDir in info.GetDirectories())
 						subFolders(subDir);
@@ -536,18 +540,22 @@ namespace Eraser.Manager
 		private static void EraseFileClusterTips(string file, ErasureMethod method)
 		{
 			//Get the file access times
-			DateTime lastAccess, lastWrite, created;
+			StreamInfo streamInfo = new StreamInfo(file);
+			DateTime lastAccess = DateTime.MinValue, lastWrite = DateTime.MinValue,
+			         created = DateTime.MinValue;
 			{
-				FileInfo info = new FileInfo(file);
-				lastAccess = info.LastAccessTime;
-				lastWrite = info.LastWriteTime;
-				created = info.CreationTime;
+				FileInfo info = streamInfo.File;
+				if (info != null)
+				{
+					lastAccess = info.LastAccessTime;
+					lastWrite = info.LastWriteTime;
+					created = info.CreationTime;
+				}
 			}
 
 			//Create the stream, lengthen the file, then tell the erasure method
 			//to erase the tips.
-			using (FileStream stream = new FileStream(file, FileMode.Open,
-				FileAccess.Write, FileShare.ReadWrite))
+			using (FileStream stream = streamInfo.Open(FileMode.Open, FileAccess.Write))
 			{
 				long fileLength = stream.Length;
 				long fileArea = GetFileArea(file);
@@ -569,11 +577,12 @@ namespace Eraser.Manager
 			}
 
 			//Set the file times
+			FileInfo fileInfo = streamInfo.File;
+			if (fileInfo != null)
 			{
-				FileInfo info = new FileInfo(file);
-				info.LastAccessTime = lastAccess;
-				info.LastWriteTime = lastWrite;
-				info.CreationTime = created;
+				fileInfo.LastAccessTime = lastAccess;
+				fileInfo.LastWriteTime = lastWrite;
+				fileInfo.CreationTime = created;
 			}
 		}
 
@@ -593,9 +602,7 @@ namespace Eraser.Manager
 			if (method == ErasureMethodManager.Default)
 				method = ErasureMethodManager.GetInstance(ManagerLibrary.Instance.Settings.DefaultFileErasureMethod);
 
-			//Calculate the total amount of data required to finish the wipe. This
-			//value is just the total about of data to be erased multiplied by
-			//number of passes
+			//Calculate the total amount of data required to finish the wipe.
 			dataTotal = method.CalculateEraseDataSize(paths, dataTotal);
 
 			//Record the start of the erasure pass so we can calculate speed of erasures
@@ -612,9 +619,10 @@ namespace Eraser.Manager
 				eventArgs.totalPasses = method.Passes;
 				task.OnProgressChanged(eventArgs);
 
-				//Make sure the file does not have any attributes which may
-				//affect the erasure process
-				FileInfo info = new FileInfo(paths[i]);
+				//Make sure the file does not have any attributes which may affect
+				//the erasure process
+				bool isReadOnly = false;
+				StreamInfo info = new StreamInfo(paths[i]);
 				if ((info.Attributes & FileAttributes.Compressed) != 0 ||
 					(info.Attributes & FileAttributes.Encrypted) != 0 ||
 					(info.Attributes & FileAttributes.SparseFile) != 0 ||
@@ -626,49 +634,66 @@ namespace Eraser.Manager
 				}
 
 				//Remove the read-only flag, if it is set.
-				if ((info.Attributes & FileAttributes.ReadOnly) != 0)
-					info.Attributes &= ~FileAttributes.ReadOnly;
+				if (isReadOnly = info.IsReadOnly)
+					info.IsReadOnly = false;
 
-				//Create the file stream, and call the erasure method
-				//to write to the stream.
-				using (FileStream strm = new FileStream(info.FullName,
-					FileMode.Open, FileAccess.Write, FileShare.None,
-					8, FileOptions.WriteThrough))
+				try
 				{
-					//Set the end of the stream after the wrap-round the cluster size
-					strm.SetLength(GetFileArea(info.FullName));
+					//Create the file stream, and call the erasure method to write to
+					//the stream.
+					using (FileStream strm = info.Open(FileMode.Open, FileAccess.Write,
+						FileShare.None, FileOptions.WriteThrough))
+					{
+						//Set the end of the stream after the wrap-round the cluster size
+						strm.SetLength(GetFileArea(paths[i]));
 
-					//Then erase the file.
-					long itemWritten = 0,
-					     itemTotal = method.CalculateEraseDataSize(null, strm.Length);
-					method.Erase(strm, long.MaxValue,
-						PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
-						delegate(long lastWritten, int currentPass)
+						//If the stream is empty, there's nothing to overwrite. Continue
+						//to the next entry
+						if (strm.Length != 0)
 						{
-							statistics.DataWritten += lastWritten;
-							eventArgs.currentPass = currentPass;
-							eventArgs.currentItemProgress = (int)((itemWritten += lastWritten) * 100 / itemTotal);
-							eventArgs.overallProgress = (int)(statistics.DataWritten * 100 / dataTotal);
+							//Then erase the file.
+							long itemWritten = 0,
+								 itemTotal = method.CalculateEraseDataSize(null, strm.Length);
+							method.Erase(strm, long.MaxValue,
+								PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
+								delegate(long lastWritten, int currentPass)
+								{
+									statistics.DataWritten += lastWritten;
+									eventArgs.currentPass = currentPass;
+									eventArgs.currentItemProgress = (int)
+										((itemWritten += lastWritten) * 100 / itemTotal);
+									eventArgs.overallProgress = (int)
+										(statistics.DataWritten * 100 / dataTotal);
 
-							if (statistics.Speed != 0)
-								eventArgs.timeLeft = (int)(dataTotal - statistics.DataWritten) / statistics.Speed;
-							else
-								eventArgs.timeLeft = -1;
-							task.OnProgressChanged(eventArgs);
+									if (statistics.Speed != 0)
+										eventArgs.timeLeft = (int)
+											(dataTotal - statistics.DataWritten) / statistics.Speed;
+									else
+										eventArgs.timeLeft = -1;
+									task.OnProgressChanged(eventArgs);
 
-							lock (currentTask)
-								if (currentTask.cancelled)
-									throw new FatalException("The task was cancelled.");
+									lock (currentTask)
+										if (currentTask.cancelled)
+											throw new FatalException("The task was cancelled.");
+								}
+							);
 						}
-					);
 
-					//Set the length of the file to 0.
-					strm.Seek(0, SeekOrigin.Begin);
-					strm.SetLength(0);
+						//Set the length of the file to 0.
+						strm.Seek(0, SeekOrigin.Begin);
+						strm.SetLength(0);
+					}
+
+					//Remove the file.
+					FileInfo fileInfo = info.File;
+					if (fileInfo != null)
+						RemoveFile(fileInfo);
 				}
-
-				//Remove the file.
-				RemoveFile(info);
+				finally
+				{
+					//Re-set the read-only flag
+					info.IsReadOnly = isReadOnly;
+				}
 			}
 
 			//If the user requested a folder removal, do it.
@@ -688,7 +713,7 @@ namespace Eraser.Manager
 		/// <returns>The area of the file.</returns>
 		private static long GetFileArea(string filePath)
 		{
-			FileInfo info = new FileInfo(filePath);
+			StreamInfo info = new StreamInfo(filePath);
 			uint clusterSize = Drive.GetClusterSize(info.Directory.Root.FullName);
 			return (info.Length + (clusterSize - 1)) & ~(clusterSize - 1);
 		}
