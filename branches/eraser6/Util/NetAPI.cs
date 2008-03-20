@@ -30,7 +30,7 @@ namespace Eraser.Util
 		/// If the function fails, the return value is a system error code. For
 		/// a list of error codes, see System Error Codes.</returns>
 		[DllImport("Netapi32.dll", CharSet = CharSet.Unicode)]
-		public static unsafe extern uint NetStatisticsGet(string server, string service,
+		public static extern uint NetStatisticsGet(string server, string service,
 			uint level, uint options, out IntPtr bufptr);
 
 		/// <summary>
@@ -59,7 +59,7 @@ namespace Eraser.Util
 		/// If the function fails, the return value is a system error code. For
 		/// a list of error codes, see System Error Codes.</returns>
 		[DllImport("Netapi32.dll")]
-		public static unsafe extern uint NetApiBufferFree(IntPtr Buffer);
+		public static extern uint NetApiBufferFree(IntPtr Buffer);
 
 		private const uint NERR_Success = 0;
 		public const string SERVICE_WORKSTATION = "LanmanWorkstation";

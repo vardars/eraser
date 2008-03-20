@@ -40,7 +40,7 @@ namespace Eraser.Util
 		public static Icon GetFileIcon(string path)
 		{
 			SHFILEINFO shfi = new SHFILEINFO();
-			SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
+			SHGetFileInfo(path + "\\", 0, ref shfi, Marshal.SizeOf(shfi),
 				SHGetFileInfoFlags.SHGFI_SMALLICON | SHGetFileInfoFlags.SHGFI_ICON);
 			return Icon.FromHandle(shfi.hIcon);
 		}
@@ -101,7 +101,7 @@ namespace Eraser.Util
 		/// </summary>
 		/// <param name="filePath">The path to the file or folder</param>
 		/// <returns>True if the file or folder is compressed.</returns>
-		public unsafe static bool IsCompressed(string path)
+		public static bool IsCompressed(string path)
 		{
 			ushort compressionStatus = 0;
 			uint bytesReturned = 0;
@@ -111,7 +111,7 @@ namespace Eraser.Util
 				FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.Read))
 			{
 				if (DeviceIoControl(strm.SafeFileHandle.DangerousGetHandle(),
-					FSCTL_GET_COMPRESSION, IntPtr.Zero, 0, new IntPtr(&compressionStatus),
+					FSCTL_GET_COMPRESSION, IntPtr.Zero, 0, out compressionStatus,
 					sizeof(ushort), out bytesReturned, IntPtr.Zero))
 				{
 					const ushort COMPRESSION_FORMAT_NONE = 0x0000;
@@ -127,7 +127,7 @@ namespace Eraser.Util
 		/// </summary>
 		/// <param name="path">The path to the file or folder.</param>
 		/// <returns>True if the file or folder has its compression value set.</returns>
-		public unsafe static bool SetCompression(string path, bool compressed)
+		public static bool SetCompression(string path, bool compressed)
 		{
 			ushort compressionStatus = compressed ?
 				COMPRESSION_FORMAT_DEFAULT : COMPRESSION_FORMAT_NONE;
@@ -138,7 +138,7 @@ namespace Eraser.Util
 				FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.ReadWrite))
 			{
 				return DeviceIoControl(strm.SafeFileHandle.DangerousGetHandle(),
-					FSCTL_SET_COMPRESSION, new IntPtr(&compressionStatus),
+					FSCTL_SET_COMPRESSION, ref compressionStatus,
 					sizeof(ushort), IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
 			}
 		}
@@ -475,8 +475,22 @@ namespace Eraser.Util
 
 		[DllImport("Kernel32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private extern static unsafe bool DeviceIoControl(IntPtr hDevice,
+		private extern static bool DeviceIoControl(IntPtr hDevice,
 			uint dwIoControlCode, IntPtr lpInBuffer, uint nInBufferSize,
+			IntPtr lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
+			IntPtr lpOverlapped);
+
+		[DllImport("Kernel32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private extern static bool DeviceIoControl(IntPtr hDevice,
+			uint dwIoControlCode, IntPtr lpInBuffer, uint nInBufferSize,
+			out ushort lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
+			IntPtr lpOverlapped);
+
+		[DllImport("Kernel32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private extern static bool DeviceIoControl(IntPtr hDevice,
+			uint dwIoControlCode, ref ushort lpInBuffer, uint nInBufferSize,
 			IntPtr lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
 			IntPtr lpOverlapped);
 
