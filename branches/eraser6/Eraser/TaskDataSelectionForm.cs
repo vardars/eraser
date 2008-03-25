@@ -44,8 +44,10 @@ namespace Eraser
 				{
 					DriveItem item = new DriveItem();
 					item.Drive = drive.Substring(0, drive.Length - 1);
-					item.Label = Eraser.Util.File.GetFileDescription(item.Drive);
-					item.Icon = Eraser.Util.File.GetFileIcon(item.Drive);
+					item.Label = Eraser.Util.File.GetFileDescription(item.Drive +
+						Path.DirectorySeparatorChar);
+					item.Icon = Eraser.Util.File.GetFileIcon(item.Drive +
+						Path.DirectorySeparatorChar);
 					unusedDisk.Items.Add(item);
 				}
 			}

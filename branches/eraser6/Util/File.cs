@@ -77,7 +77,8 @@ namespace Eraser.Util
 		/// folder or drive.
 		/// </summary>
 		/// <param name="path">A string that contains the path and file name for
-		/// the file in question. Both absolute and relative paths are valid.</param>
+		/// the file in question. Both absolute and relative paths are valid.
+		/// Directories and volumes must contain the trailing \</param>
 		/// <returns>A string containing the description</returns>
 		public static string GetFileDescription(string path)
 		{
@@ -92,12 +93,13 @@ namespace Eraser.Util
 		/// drive.
 		/// </summary>
 		/// <param name="path">A string that contains the path and file name for
-		/// the file in question. Both absolute and relative paths are valid.</param>
+		/// the file in question. Both absolute and relative paths are valid.
+		/// Directories and volumes must contain the trailing \</param>
 		/// <returns>An Icon object containing the bitmap</returns>
 		public static Icon GetFileIcon(string path)
 		{
 			SHFILEINFO shfi = new SHFILEINFO();
-			SHGetFileInfo(path + "\\", 0, ref shfi, Marshal.SizeOf(shfi),
+			SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
 				SHGetFileInfoFlags.SHGFI_SMALLICON | SHGetFileInfoFlags.SHGFI_ICON);
 			return Icon.FromHandle(shfi.hIcon);
 		}
@@ -398,6 +400,7 @@ namespace Eraser.Util
 			SHGFI_OVERLAYINDEX		= 0x000000040
 		}
 
+		[StructLayout(LayoutKind.Sequential)]
 		private struct SHFILEINFO
 		{
 			/// <summary>
