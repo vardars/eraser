@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Runtime.InteropServices;
 using Eraser.Util;
 using Microsoft.Win32.SafeHandles;
+using System.IO;
 
 namespace Eraser.Manager
 {
@@ -306,35 +307,14 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Adds random data to the pool.
-		/// </summary>
-		/// <param name="entropy">Data to add to the pool.</param>
-		public unsafe void AddEntropy(long entropy)
-		{
-			byte* pEntropy = (byte*)&entropy;
-			byte[] array = new byte[sizeof(long)];
-			for (int i = 0; i < array.Length; ++i)
-				array[i] = *pEntropy++;
-			AddEntropy(array);
-		}
-
-		/// <summary>
-		/// Adds random data to the pool.
-		/// </summary>
-		/// <param name="entropy">Data to add to the pool.</param>
-		public unsafe void AddEntropy(IntPtr entropy)
-		{
-			AddEntropy(entropy.ToInt64());
-		}
-
-		/// <summary>
 		/// Adds entropy to the pool. The sources of the entropy data is queried
 		/// quickly.
 		/// </summary>
 		private void FastAddEntropy()
 		{
 			//Add the free disk space to the pool
-			AddEntropy(Drive.GetFreeSpace(Environment.SystemDirectory));
+			AddEntropy(new DriveInfo(new DirectoryInfo(Environment.SystemDirectory).
+				Root.FullName).TotalFreeSpace);
 
 			//Miscellaneous window handles
 			AddEntropy(UserAPI.GetCapture());
