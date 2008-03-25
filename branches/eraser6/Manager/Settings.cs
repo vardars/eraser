@@ -118,11 +118,11 @@ namespace Eraser.Manager
 			}
 		}
 
-		public Guid defaultFileErasureMethod = Guid.Empty;
-		public Guid defaultUnusedSpaceErasureMethod = Guid.Empty;
-		public Guid activePRNG = Guid.Empty;
-		public bool eraseLockedFilesOnRestart = true;
-		public bool confirmEraseOnRestart = true;
-		public bool executeMissedTasksImmediately = true;
+		private Guid defaultFileErasureMethod = Guid.Empty;
+		private Guid defaultUnusedSpaceErasureMethod = Guid.Empty;
+		private Guid activePRNG = Guid.Empty;
+		private bool eraseLockedFilesOnRestart = true;
+		private bool confirmEraseOnRestart = true;
+		private bool executeMissedTasksImmediately = true;
 	}
 }
