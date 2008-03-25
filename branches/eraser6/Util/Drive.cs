@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 
 using System.Runtime.InteropServices;
+using System.ComponentModel;
+using System.IO;
 
 namespace Eraser.Util
 {
@@ -21,26 +23,8 @@ namespace Eraser.Util
 				out freeClusters, out totalClusters))
 				return clusterSize * sectorSize;
 
-			throw new Exception("Unknown error calling GetDiskFreeSpace()");
-		}
-
-		/// <summary>
-		/// Determines the free space size of the given volume.
-		/// </summary>
-		/// <param name="driveName">The path to the root of the drive, including
-		/// the trailing \</param>
-		/// <returns>The free space of the drive, in bytes.</returns>
-		/// <remarks>This value is affected by disk quotas.</remarks>
-		public static long GetFreeSpace(string driveName)
-		{
-			ulong userAccessibleBytes, totalUserBytes, totalFreeBytes;
-			if (GetDiskFreeSpaceEx(driveName, out userAccessibleBytes,
-				out totalUserBytes, out totalFreeBytes))
-			{
-				return (long)userAccessibleBytes;
-			}
-
-			throw new Exception("Unknown error while determining free drive space.");
+			throw new Win32Exception(Marshal.GetLastWin32Error(),
+				"Eraser.Util.Drive.GetClusterSize");
 		}
 
 		/// <summary>
@@ -51,14 +35,8 @@ namespace Eraser.Util
 		/// <returns>True if quotas are in effect.</returns>
 		public static bool HasQuota(string driveName)
 		{
-			ulong userAccessibleBytes, totalUserBytes, totalFreeBytes;
-			if (GetDiskFreeSpaceEx(driveName, out userAccessibleBytes,
-				out totalUserBytes, out totalFreeBytes))
-			{
-				return userAccessibleBytes != totalFreeBytes;
-			}
-
-			throw new Exception("Unknown error while determining free drive space.");
+			DriveInfo info = new DriveInfo(driveName);
+			return info.TotalFreeSpace != info.AvailableFreeSpace;
 		}
 
 		/// <summary>
@@ -100,51 +78,5 @@ namespace Eraser.Util
 			[MarshalAs(UnmanagedType.LPStr)]string lpRootPathName,
 			out UInt32 lpSectorsPerCluster, out UInt32 lpBytesPerSector,
 			out UInt32 lpNumberOfFreeClusters, out UInt32 lpTotalNumberOfClusters);
-
-		/// <summary>
-		/// Retrieves information about the amount of space that is available on
-		/// a disk volume, which is the total amount of space, the total amount
-		/// of free space, and the total amount of free space available to the
-		/// user that is associated with the calling thread.
-		/// </summary>
-		/// <param name="lpDirectoryName">A directory on the disk.</param>
-		/// <param name="lpFreeBytesAvailable">A pointer to a variable that receives
-		/// the total number of free bytes on a disk that are available to the
-		/// user who is associated with the calling thread.
-		/// 
-		/// This parameter can be NULL.
-		/// 
-		/// If per-user quotas are being used, this value may be less than the
-		/// total number of free bytes on a disk.</param>
-		/// <param name="lpTotalNumberOfBytes">A pointer to a variable that receives
-		/// the total number of bytes on a disk that are available to the user
-		/// who is associated with the calling thread.
-		/// 
-		/// This parameter can be NULL.
-		/// 
-		/// If per-user quotas are being used, this value may be less than the
-		/// total number of bytes on a disk.</param>
-		/// <param name="lpTotalNumberOfFreeBytes">A pointer to a variable that
-		/// receives the total number of free bytes on a disk.
-		/// 
-		/// This parameter can be NULL.</param>
-		/// <returns>If the function succeeds, the return value is true. To get
-		/// extended error information, call Marshal.GetLastWin32Error().</returns>
-		/// <remarks>The values obtained by this function are of the type ULARGE_INTEGER.
-		/// Do not truncate these values to 32 bits.
-		/// 
-		/// The GetDiskFreeSpaceEx function returns zero (0) for lpTotalNumberOfFreeBytes
-		/// and lpFreeBytesAvailable for all CD requests unless the disk is an
-		/// unwritten CD in a CD-RW drive.
-		/// 
-		/// Symbolic link behavior—If the path points to a symbolic link, the
-		/// operation is performed on the target.</remarks>
-		[DllImport("Kernel32.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		internal static extern bool GetDiskFreeSpaceEx(
-			[MarshalAs(UnmanagedType.LPStr)]string lpDirectoryName,
-			out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes,
-			out ulong lpTotalNumberOfFreeBytes);
-
 	}
 }

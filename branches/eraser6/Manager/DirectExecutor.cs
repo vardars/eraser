@@ -398,13 +398,13 @@ namespace Eraser.Manager
 
 				//Determine the total amount of data that needs to be written.
 				WriteStatistics statistics = new WriteStatistics();
-				long totalSize = method.CalculateEraseDataSize(
-					null, Drive.GetFreeSpace(info.Root.FullName));
+				DriveInfo driveInfo = new DriveInfo(info.Root.FullName);
+				long totalSize = method.CalculateEraseDataSize(null, driveInfo.TotalFreeSpace);
 
 				//Continue creating files while there is free space.
 				eventArgs.currentItemName = "Unused space";
 				task.OnProgressChanged(eventArgs);
-				while (Drive.GetFreeSpace(info.Root.FullName) > 0)
+				while (driveInfo.TotalFreeSpace > 0)
 				{
 					//Generate a non-existant file name
 					string currFile;
@@ -417,11 +417,10 @@ namespace Eraser.Manager
 					using (FileStream stream = new FileStream(currFile,
 						FileMode.CreateNew, FileAccess.Write))
 					{
-
 						//Set the length of the file to be the amount of free space left
 						//or the maximum size of one of these dumps.
 						stream.SetLength(Math.Min(ErasureMethod.FreeSpaceFileUnit,
-							Drive.GetFreeSpace(info.Root.FullName)));
+							driveInfo.TotalFreeSpace));
 
 						//Then run the erase task
 						method.Erase(stream, long.MaxValue,
