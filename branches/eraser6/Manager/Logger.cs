@@ -119,6 +119,9 @@ namespace Eraser.Manager
 				lastSession = DateTime.Now;
 				entries.Add(lastSession, new List<LogEntry>());
 			}
+
+			if (OnNewSession != null)
+				OnNewSession(this, new EventArgs());
 		}
 
 		/// <summary>
