@@ -63,7 +63,7 @@ namespace Eraser.Util
 		{
 			get
 			{
-				if (streamName.Length == 0)
+				if (streamName == null)
 					return new FileInfo(fileName);
 				return null;
 			}
