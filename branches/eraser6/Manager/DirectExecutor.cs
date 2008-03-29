@@ -384,7 +384,7 @@ namespace Eraser.Manager
 			{
 				string directoryName;
 				do
-					directoryName = GetRandomFileName(18);
+					directoryName = GenerateRandomFileName(18);
 				while (Directory.Exists(info.FullName + Path.DirectorySeparatorChar + directoryName));
 				info = info.CreateSubdirectory(directoryName);
 			}
@@ -410,7 +410,7 @@ namespace Eraser.Manager
 					string currFile;
 					do
 						currFile = info.FullName + Path.DirectorySeparatorChar +
-							GetRandomFileName(18);
+							GenerateRandomFileName(18);
 					while (System.IO.File.Exists(currFile));
 					
 					//Create the stream
@@ -446,32 +446,10 @@ namespace Eraser.Manager
 					}
 				}
 
-				//If the drive is using NTFS, try to squeeze entries into the MFT as well
-				eventArgs.currentItemName = "Resident MFT entries";
+				//Erase old file system records
+				eventArgs.currentItemName = "Old file system records";
 				task.OnProgressChanged(eventArgs);
-
-				try
-				{
-					for ( ; ; )
-					{
-						//Open this stream
-						using (FileStream strm = new FileStream(info.FullName + Path.DirectorySeparatorChar +
-							GetRandomFileName(18), FileMode.CreateNew, FileAccess.Write))
-						{
-							//Stretch the file size to the size of one MFT record
-							strm.SetLength(1);
-
-							//Then run the erase task
-							method.Erase(strm, long.MaxValue,
-								PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
-								null);
-						}
-					}
-				}
-				catch (IOException)
-				{
-					//OK, enough squeezing.
-				}
+				EraseFilesystemRecords(info, method);
 			}
 			finally
 			{
@@ -583,6 +561,60 @@ namespace Eraser.Manager
 				fileInfo.LastWriteTime = lastWrite;
 				fileInfo.CreationTime = created;
 			}
+		}
+
+		/// <summary>
+		/// Erases the old MFT or FAT records. This creates small one-byte files
+		/// until the MFT or FAT grows, if the disk is not full. If the disk is
+		/// full, just keep forcing the MFT to store files until nothing else
+		/// fits.
+		/// </summary>
+		/// <param name="info">The directory information structure containing
+		/// the path to store the temporary one-byte files. The MFT of that
+		/// drive will be erased.</param>
+		/// <param name="method">The method used to erase the records.</param>
+		private void EraseFilesystemRecords(DirectoryInfo info, ErasureMethod method)
+		{
+			DriveInfo driveInfo = new DriveInfo(info.Root.FullName);
+			string driveFormat = driveInfo.DriveFormat;
+			if (driveFormat == "NTFS")
+			{
+				//If the volume is full, squeeze one-byte files.
+				try
+				{
+					FileInfo mftInfo = new FileInfo(driveInfo.RootDirectory.FullName +
+						Path.DirectorySeparatorChar + "$MFT");
+					long oldMFTSize = mftInfo.Length;
+					for ( ; ; )
+					{
+						//Open this stream
+						using (FileStream strm = new FileStream(info.FullName +
+							Path.DirectorySeparatorChar + GenerateRandomFileName(18),
+							FileMode.CreateNew, FileAccess.Write))
+						{
+							//Stretch the file size to the size of one MFT record
+							strm.SetLength(1);
+
+							//Then run the erase task
+							method.Erase(strm, long.MaxValue,
+								PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
+								null);
+						}
+
+						//Determine if we can stop. We will stop if the disk is not
+						//full and the MFT has grown in size.
+						if (driveInfo.TotalFreeSpace != 0 && mftInfo.Length != oldMFTSize)
+							break;
+					}
+				}
+				catch (IOException)
+				{
+					//OK, enough squeezing.
+				}
+			}
+			else
+				throw new NotImplementedException("Could not erase old file system " +
+					"records: Unsupported File system");
 		}
 
 		/// <summary>
@@ -735,7 +767,7 @@ namespace Eraser.Manager
 			{
 				//Rename the file.
 				string newPath = info.DirectoryName + Path.DirectorySeparatorChar +
-					GetRandomFileName(info.Name.Length);
+					GenerateRandomFileName(info.Name.Length);
 
 				//Try to rename the file. If it fails, it is probably due to another
 				//process locking the file. Defer, then rename again.
@@ -750,10 +782,53 @@ namespace Eraser.Manager
 				}
 			}
 
+			//If the user wants plausible deniability, find a random file on the same
+			//volume and write it over.
+			if (Manager.ManagerLibrary.Instance.Settings.PlausibleDeniability)
+			{
+				//Get the template file to copy
+				string shadowFile;
+				FileInfo shadowFileInfo;
+				do
+				{
+					shadowFile = GetRandomFileName(info.Directory.Root);
+					shadowFileInfo = new FileInfo(shadowFile);
+				}
+				while (shadowFileInfo.DirectoryName == info.DirectoryName);
+				
+				//Rename the file to have the same name as the shadow
+				info.MoveTo(info.DirectoryName + shadowFileInfo.Name);
+
+				//Dump the copy (the first 4MB, or less, depending on the file size and available
+				//user space)
+				long amountToCopy = Math.Min(4 * 1024 * 1024, shadowFileInfo.Length);
+				using (FileStream shadowFileStream = shadowFileInfo.OpenRead())
+				using (FileStream destFileStream = info.OpenWrite())
+				{
+					while (destFileStream.Position < amountToCopy)
+					{
+						byte[] buf = new byte[524288];
+						int bytesRead = shadowFileStream.Read(buf, 0, buf.Length);
+
+						//Stop bothering if the input stream is at the end
+						if (bytesRead == 0)
+							break;
+
+						//Dump the read contents onto the file to be deleted
+						destFileStream.Write(buf, 0,
+							(int)Math.Min(bytesRead, amountToCopy - destFileStream.Position));
+					}
+				}
+			}
+
 			//Then delete the file.
 			info.Delete();
 		}
 
+		/// <summary>
+		/// Removes the folder and all its contents.
+		/// </summary>
+		/// <param name="info">The folder to remove.</param>
 		private static void RemoveFolder(DirectoryInfo info)
 		{
 			foreach (FileInfo file in info.GetFiles())
@@ -766,7 +841,7 @@ namespace Eraser.Manager
 			{
 				//Rename the folder.
 				string newPath = info.Parent.FullName + Path.DirectorySeparatorChar +
-					GetRandomFileName(info.Name.Length);
+					GenerateRandomFileName(info.Name.Length);
 
 				//Try to rename the file. If it fails, it is probably due to another
 				//process locking the file. Defer, then rename again.
@@ -790,7 +865,7 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="length">The length of the file name to generate.</param>
 		/// <returns>A random file name.</returns>
-		private static string GetRandomFileName(int length)
+		private static string GenerateRandomFileName(int length)
 		{
 			//Get a random file name
 			PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
@@ -805,6 +880,31 @@ namespace Eraser.Manager
 					(int)newFileNameAry[j] % validFileNameChars.Length];
 
 			return new System.Text.UTF8Encoding().GetString(newFileNameAry);
+		}
+
+		/// <summary>
+		/// Gets a random file from within the provided directory.
+		/// </summary>
+		/// <param name="info">The directory to get a random file name from.</param>
+		/// <returns>A string containing the full path to the file.</returns>
+		private static string GetRandomFileName(DirectoryInfo info)
+		{
+			PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
+			FileSystemInfo[] entries = info.GetFileSystemInfos();
+			if (entries.Length == 0)
+				return string.Empty;
+			string result = string.Empty;
+
+			while (result.Length == 0)
+			{
+				int index = prng.Next(entries.Length - 1);
+				if (entries[index] is DirectoryInfo)
+					result = GetRandomFileName((DirectoryInfo)entries[index]);
+				else 
+					result = ((FileInfo)entries[index]).FullName;
+			}
+
+			return result;
 		}
 
 		/// <summary>

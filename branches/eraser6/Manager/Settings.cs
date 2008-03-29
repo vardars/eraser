@@ -118,11 +118,31 @@ namespace Eraser.Manager
 			}
 		}
 
+		/// <summary>
+		/// Whether erasures should be run with plausible deniability. This is
+		/// achieved by the executor copying files over the file to be removed
+		/// before removing it.
+		/// </summary>
+		public bool PlausibleDeniability
+		{
+			get
+			{
+				lock (this)
+					return plausibleDeniability;
+			}
+			set
+			{
+				lock (this)
+					plausibleDeniability = value;
+			}
+		}
+
 		private Guid defaultFileErasureMethod = Guid.Empty;
 		private Guid defaultUnusedSpaceErasureMethod = Guid.Empty;
 		private Guid activePRNG = Guid.Empty;
 		private bool eraseLockedFilesOnRestart = true;
 		private bool confirmEraseOnRestart = true;
 		private bool executeMissedTasksImmediately = true;
+		private bool plausibleDeniability = true;
 	}
 }

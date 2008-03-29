@@ -89,6 +89,8 @@ namespace Eraser
 				ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately;
 			schedulerMissedIgnore.Checked =
 				!ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately;
+			plausibleDeniability.Checked =
+				ManagerLibrary.Instance.Settings.PlausibleDeniability;
 
 			//Select an intelligent default if the settings are invalid.
 			string defaults = string.Empty;
@@ -173,6 +175,8 @@ namespace Eraser
 				lockedConfirm.Checked;
 			ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately =
 				schedulerMissedImmediate.Checked;
+			ManagerLibrary.Instance.Settings.PlausibleDeniability =
+				plausibleDeniability.Checked;
 		}
 	}
 }

@@ -91,6 +91,8 @@ namespace Eraser
 				key.GetValue("DefaultUnusedSpaceErasureMethod", Guid.Empty.ToString()));
 			ExecuteMissedTasksImmediately =
 				(int)key.GetValue("ExecuteMissedTasksImmediately", (object)1) != 0;
+			PlausibleDeniability =
+				(int)key.GetValue("PlausibleDeniability", (object)1) != 0;
 		}
 
 		~Settings()
@@ -106,6 +108,8 @@ namespace Eraser
 				DefaultUnusedSpaceErasureMethod);
 			key.SetValue("ExecuteMissedTasksImmediately",
 				ExecuteMissedTasksImmediately, RegistryValueKind.DWord);
+			key.SetValue("PlausibleDeniability", PlausibleDeniability,
+				RegistryValueKind.DWord);
 		}
 	}
 }

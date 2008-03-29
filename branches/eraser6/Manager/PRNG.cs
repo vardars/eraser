@@ -47,6 +47,70 @@ namespace Eraser.Manager
 		/// <param name="seed">An arbitrary length of information that will be
 		/// used to reseed the PRNG</param>
 		protected internal abstract void Reseed(byte[] seed);
+
+		#region Random members
+		public override int Next(int maxValue)
+		{
+			if (maxValue == 0)
+				return 0;
+			return Next() % maxValue;
+		}
+
+		public override int Next(int minValue, int maxValue)
+		{
+			if (minValue > maxValue)
+				throw new ArgumentOutOfRangeException("minValue", minValue, "minValue is greater than maxValue");
+			else if (minValue == maxValue)
+				return minValue;
+			return (Next() % (maxValue - minValue)) + minValue;
+		}
+
+		public unsafe override int Next()
+		{
+			//Declare a return variable
+			int result;
+			int* fResult = &result;
+
+			//Get the random-valued bytes to fill the int.
+			byte[] rand = new byte[sizeof(int)];
+			NextBytes(rand);
+
+			//Copy the random buffer into the int.
+			fixed (byte* fRand = rand)
+			{
+				byte* pResult = (byte*)fResult;
+				byte* pRand = fRand;
+				for (int i = 0; i != sizeof(int); ++i)
+					*pResult++ = *pRand++;
+			}
+
+			return Math.Abs(result);
+		}
+
+		protected unsafe override double Sample()
+		{
+			//Declare a return variable
+			double result;
+			double* fResult = &result;
+
+			//Get the random-valued bytes to fill the int.
+			byte[] rand = new byte[sizeof(double)];
+			NextBytes(rand);
+
+			//Copy the random buffer into the int.
+			fixed (byte* fRand = rand)
+			{
+				byte* pResult = (byte*)fResult;
+				byte* pRand = fRand;
+				for (int i = 0; i != sizeof(double); ++i)
+					*pResult++ = *pRand++;
+			}
+
+			return result;
+		}
+
+		public abstract override void NextBytes(byte[] buffer);
+		#endregion
 	}
 
 	/// <summary>
