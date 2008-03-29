@@ -3,24 +3,24 @@
 *	Kaz
 
 ===Important===
-1. Previous errors are still recognized as errors after the task is run.
-2. Next Scheduled run
-3. Test multi-target tasks
+1. Next Scheduled run
+2. Test multi-target tasks
+3. For the FL16KB - the default method may change during execution. Get the user
+   to set the method to use.
 
 a. Are file names of ADSes changeable and would leaving them be a security risk?
 
 ===Features===
 1. Allow runtime Plugin Load
 2. Add APIs for the Verify feature
-4. Resolve locked files on restart
-5* Internationalization. How do we do it in .NET?
-6. Allow users to select erasure passes from recycle bin context menu
-7. Allow pattern wiping. ie write a user-provided pattern to the disk for an erasure pass
+3. Resolve locked files on restart
+4* Internationalization
+     Use Gettext.
+5. Allow users to select erasure passes from recycle bin context menu
+6. Allow pattern wiping. ie write a user-provided pattern to the disk for an erasure pass
 
 ===Questions===
 1. More intelligent default settings selection
-2. For the FL16KB - the default method may change during execution. Get the user
-   to set the method to use.
 	
 ===Annoyances===
 1. Progress calculation when cluster tip erasure is disabled
