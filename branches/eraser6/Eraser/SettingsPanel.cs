@@ -44,6 +44,11 @@ namespace Eraser
 			while (i.MoveNext())
 				OnNewPluginLoaded(i.Current);
 
+			//Refresh the list of languages
+			Dictionary<Guid, Language> languages = LanguageManager.GetAll();
+			foreach (Language lang in languages.Values)
+				uiLanguage.Items.Add(lang);
+
 			//Refresh the list of erasure methods
 			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.GetAll();
 			foreach (ErasureMethod method in methods.Values)
@@ -61,6 +66,13 @@ namespace Eraser
 
 		private void LoadSettings()
 		{
+			foreach (Object lang in uiLanguage.Items)
+				if (((Language)lang).GUID == ManagerLibrary.Instance.Settings.UILanguage)
+				{
+					uiLanguage.SelectedItem = lang;
+					break;
+				}
+
 			foreach (Object method in eraseFilesMethod.Items)
 				if (((ErasureMethod)method).GUID == ManagerLibrary.Instance.Settings.DefaultFileErasureMethod)
 				{
@@ -95,6 +107,10 @@ namespace Eraser
 
 			//Select an intelligent default if the settings are invalid.
 			string defaults = string.Empty;
+			if (uiLanguage.SelectedIndex == -1)
+			{
+				defaults += "\tUser interface language\n";
+			}
 			if (eraseFilesMethod.SelectedIndex == -1)
 			{
 				if (eraseFilesMethod.Items.Count > 0)
@@ -166,7 +182,12 @@ namespace Eraser
 		{
 			//Error checks first.
 			errorProvider.Clear();
-			if (eraseFilesMethod.SelectedIndex == -1)
+			if (uiLanguage.SelectedIndex == -1)
+			{
+				errorProvider.SetError(uiLanguage, "An invalid language was selected.");
+				return;
+			}
+			else if (eraseFilesMethod.SelectedIndex == -1)
 			{
 				errorProvider.SetError(eraseFilesMethod, "An invalid file erasure method " +
 					"was selected.");
@@ -185,6 +206,8 @@ namespace Eraser
 				return;
 			}
 
+			ManagerLibrary.Instance.Settings.UILanguage =
+				((Language)uiLanguage.SelectedItem).GUID;
 			ManagerLibrary.Instance.Settings.DefaultFileErasureMethod =
 				((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
 			ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod =

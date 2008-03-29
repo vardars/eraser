@@ -94,6 +94,8 @@ namespace Eraser
 				(int)key.GetValue("ExecuteMissedTasksImmediately", (object)1) != 0;
 			PlausibleDeniability =
 				(int)key.GetValue("PlausibleDeniability", (object)1) != 0;
+			UILanguage = new Guid((string)
+				key.GetValue("UILanguage", Guid.Empty.ToString()));
 
 			//Load the plugin settings.
 			byte[] pluginSettings = (byte[])key.GetValue("PluginSettings", new byte[] { });
@@ -130,6 +132,7 @@ namespace Eraser
 				ExecuteMissedTasksImmediately, RegistryValueKind.DWord);
 			key.SetValue("PlausibleDeniability", PlausibleDeniability,
 				RegistryValueKind.DWord);
+			key.SetValue("UILanguage", UILanguage);
 
 			using (MemoryStream stream = new MemoryStream())
 			{

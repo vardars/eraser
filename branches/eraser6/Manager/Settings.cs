@@ -10,6 +10,24 @@ namespace Eraser.Manager
 	public class Settings
 	{
 		/// <summary>
+		/// The language which all user interface elements should be presented in.
+		/// This is a GUID since languages are supplied through plugins.
+		/// </summary>
+		public Guid UILanguage
+		{
+			get
+			{
+				lock (this)
+					return uiLanguage;
+			}
+			set
+			{
+				lock (this)
+					uiLanguage = value;
+			}
+		}
+
+		/// <summary>
 		/// The default file erasure method. This is a GUID since methods are
 		/// implemented through plugins and plugins may not be loaded and missing
 		/// references may follow.
@@ -158,6 +176,7 @@ namespace Eraser.Manager
 			}
 		}
 
+		private Guid uiLanguage = Guid.Empty;
 		private Guid defaultFileErasureMethod = Guid.Empty;
 		private Guid defaultUnusedSpaceErasureMethod = Guid.Empty;
 		private Guid activePRNG = Guid.Empty;

@@ -40,12 +40,12 @@
     <Position X="11.25" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <FileName>Manager.cs</FileName>
-      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAACAAAwAAAAAAEAAQ=</HashCode>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAEAAAACAAAwAAAAAAEAAQ=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="Eraser.Manager.FatalException">
-    <Position X="11.25" Y="3.5" Width="1.5" />
+    <Position X="11.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <FileName>Manager.cs</FileName>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
@@ -167,14 +167,14 @@
     <Position X="13" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Settings.cs</FileName>
-      <HashCode>EAAAAAAAIBgAAAAQAAoAAAAAIBAAABAAAAIAACAQIAA=</HashCode>
+      <HashCode>EAAAAAgAKBgAAAAQAAoBAAAAIBAAABAAAAIAACAQIQA=</HashCode>
     </TypeIdentifier>
   </Class>
   <Class Name="Eraser.Manager.Task" BaseTypeListCollapsed="true">
     <Position X="5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Task.cs</FileName>
-      <HashCode>AAAAJAQAAAMAgBYBAABECIQgQEgmAEBAAABAAAAAAiA=</HashCode>
+      <HashCode>AAAAJAQAAAEAgAQBAABECIQgQEgmAEBAAABAAAAAAiA=</HashCode>
     </TypeIdentifier>
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
@@ -206,11 +206,6 @@
           <NewMemberFileName>Task.cs</NewMemberFileName>
         </TypeIdentifier>
       </Class>
-      <Delegate Name="Eraser.Manager.Task.LogEvent" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Task.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Delegate>
       <Delegate Name="Eraser.Manager.Task.TaskEventFunction" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>Task.cs</NewMemberFileName>
@@ -253,14 +248,50 @@
     </NestedTypes>
   </Class>
   <Class Name="Eraser.Manager.Plugin.DefaultHost">
-    <Position X="13.25" Y="8.5" Width="1.5" />
+    <Position X="13.25" Y="8.75" Width="1.5" />
     <TypeIdentifier>
       <FileName>Plugins.cs</FileName>
       <HashCode>AAAAAgAAAAAAAAAAAAAAAAAAAAACAAIAAgAQAAACAAA=</HashCode>
     </TypeIdentifier>
   </Class>
+  <Class Name="Eraser.Manager.Logger" BaseTypeListCollapsed="true">
+    <Position X="17.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Logger.cs</FileName>
+      <HashCode>AgIAAAAAAAEIACAAAAAoAAAgAAAAAAAAACAAAABAAAA=</HashCode>
+    </TypeIdentifier>
+    <NestedTypes>
+      <Delegate Name="Eraser.Manager.Logger.LogEvent" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Logger.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Eraser.Manager.Language">
+    <Position X="17.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Language.cs</FileName>
+      <HashCode>AABAAAAAAAAAAAAEAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Eraser.Manager.LanguageManager">
+    <Position X="19.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Language.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAABAABAACAAgAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Eraser.Manager.LanguageEnglishUK">
+    <Position X="17.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Language.cs</FileName>
+      <HashCode>AABAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
   <Struct Name="Eraser.Manager.LogEntry" BaseTypeListCollapsed="true">
-    <Position X="17.25" Y="3.5" Width="1.5" />
+    <Position X="19" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Logger.cs</FileName>
       <HashCode>AAAAAAAAAAAAAAAAAAACAAAgAAAAAAABAAAAIAAAAAA=</HashCode>
@@ -278,11 +309,11 @@
     <Position X="13.25" Y="6.25" Width="1.5" />
     <TypeIdentifier>
       <FileName>Plugins.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAQAAgAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAABAAAEAAQAAgAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Interface>
   <Enum Name="Eraser.Manager.LogLevel">
-    <Position X="17.25" Y="1.5" Width="1.5" />
+    <Position X="19" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <FileName>Logger.cs</FileName>
       <HashCode>AAAAAAABAAAAAAAAAAAAEAAAAgAAAAAQAAQAAAAAAAA=</HashCode>

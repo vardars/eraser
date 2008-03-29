@@ -29,11 +29,8 @@ namespace Eraser
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Erasure method providers", System.Windows.Forms.HorizontalAlignment.Left);
-			System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Random number generators", System.Windows.Forms.HorizontalAlignment.Left);
-			System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("History trace cleaners", System.Windows.Forms.HorizontalAlignment.Left);
-			this.shell = new Eraser.LightGroup();
-			this.shellContextMenu = new System.Windows.Forms.CheckBox();
+			this.ui = new Eraser.LightGroup();
+			this.uiContextMenu = new System.Windows.Forms.CheckBox();
 			this.lockedAllow = new System.Windows.Forms.CheckBox();
 			this.lockedConfirm = new System.Windows.Forms.CheckBox();
 			this.erase = new Eraser.LightGroup();
@@ -58,6 +55,8 @@ namespace Eraser
 			this.erasePRNG = new System.Windows.Forms.ComboBox();
 			this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
 			this.plausibleDeniability = new System.Windows.Forms.CheckBox();
+			this.uiLanguageLbl = new System.Windows.Forms.Label();
+			this.uiLanguage = new System.Windows.Forms.ComboBox();
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).BeginInit();
 			this.content.SuspendLayout();
 			this.pluginsMenu.SuspendLayout();
@@ -75,6 +74,8 @@ namespace Eraser
 			// 
 			// content
 			// 
+			this.content.Controls.Add(this.uiLanguage);
+			this.content.Controls.Add(this.uiLanguageLbl);
 			this.content.Controls.Add(this.plausibleDeniability);
 			this.content.Controls.Add(this.erasePRNG);
 			this.content.Controls.Add(this.erasePRNGLbl);
@@ -91,43 +92,43 @@ namespace Eraser
 			this.content.Controls.Add(this.erase);
 			this.content.Controls.Add(this.lockedConfirm);
 			this.content.Controls.Add(this.lockedAllow);
-			this.content.Controls.Add(this.shellContextMenu);
-			this.content.Controls.Add(this.shell);
-			this.content.Size = new System.Drawing.Size(712, 602);
+			this.content.Controls.Add(this.uiContextMenu);
+			this.content.Controls.Add(this.ui);
+			this.content.Size = new System.Drawing.Size(712, 630);
 			// 
-			// shell
+			// ui
 			// 
-			this.shell.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			this.ui.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.shell.AutoSize = true;
-			this.shell.Label = "Shell integration";
-			this.shell.Location = new System.Drawing.Point(0, -6);
-			this.shell.Name = "shell";
-			this.shell.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
-			this.shell.Size = new System.Drawing.Size(712, 32);
-			this.shell.TabIndex = 1;
+			this.ui.AutoSize = true;
+			this.ui.Label = "Shell integration";
+			this.ui.Location = new System.Drawing.Point(0, -6);
+			this.ui.Name = "ui";
+			this.ui.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
+			this.ui.Size = new System.Drawing.Size(712, 32);
+			this.ui.TabIndex = 1;
 			// 
-			// shellContextMenu
+			// uiContextMenu
 			// 
-			this.shellContextMenu.AutoSize = true;
-			this.shellContextMenu.Checked = true;
-			this.shellContextMenu.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.shellContextMenu.Location = new System.Drawing.Point(20, 32);
-			this.shellContextMenu.Name = "shellContextMenu";
-			this.shellContextMenu.Size = new System.Drawing.Size(209, 17);
-			this.shellContextMenu.TabIndex = 2;
-			this.shellContextMenu.Text = "Integrate Eraser into Windows Explorer";
-			this.shellContextMenu.UseVisualStyleBackColor = true;
+			this.uiContextMenu.AutoSize = true;
+			this.uiContextMenu.Checked = true;
+			this.uiContextMenu.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.uiContextMenu.Location = new System.Drawing.Point(20, 53);
+			this.uiContextMenu.Name = "uiContextMenu";
+			this.uiContextMenu.Size = new System.Drawing.Size(209, 17);
+			this.uiContextMenu.TabIndex = 4;
+			this.uiContextMenu.Text = "Integrate Eraser into Windows Explorer";
+			this.uiContextMenu.UseVisualStyleBackColor = true;
 			// 
 			// lockedAllow
 			// 
 			this.lockedAllow.AutoSize = true;
 			this.lockedAllow.Checked = true;
 			this.lockedAllow.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.lockedAllow.Location = new System.Drawing.Point(20, 166);
+			this.lockedAllow.Location = new System.Drawing.Point(20, 193);
 			this.lockedAllow.Name = "lockedAllow";
 			this.lockedAllow.Size = new System.Drawing.Size(251, 17);
-			this.lockedAllow.TabIndex = 10;
+			this.lockedAllow.TabIndex = 12;
 			this.lockedAllow.Text = "Allow locked files to be erased on system restart";
 			this.lockedAllow.UseVisualStyleBackColor = true;
 			this.lockedAllow.CheckedChanged += new System.EventHandler(this.lockedAllow_CheckedChanged);
@@ -135,10 +136,10 @@ namespace Eraser
 			// lockedConfirm
 			// 
 			this.lockedConfirm.AutoSize = true;
-			this.lockedConfirm.Location = new System.Drawing.Point(36, 189);
+			this.lockedConfirm.Location = new System.Drawing.Point(36, 216);
 			this.lockedConfirm.Name = "lockedConfirm";
 			this.lockedConfirm.Size = new System.Drawing.Size(182, 17);
-			this.lockedConfirm.TabIndex = 11;
+			this.lockedConfirm.TabIndex = 13;
 			this.lockedConfirm.Text = "Confirm with user before doing so";
 			this.lockedConfirm.UseVisualStyleBackColor = true;
 			// 
@@ -148,45 +149,45 @@ namespace Eraser
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.erase.AutoSize = true;
 			this.erase.Label = "Erase settings";
-			this.erase.Location = new System.Drawing.Point(0, 49);
+			this.erase.Location = new System.Drawing.Point(0, 76);
 			this.erase.Name = "erase";
 			this.erase.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
 			this.erase.Size = new System.Drawing.Size(712, 32);
-			this.erase.TabIndex = 3;
+			this.erase.TabIndex = 5;
 			// 
 			// eraseFilesMethodLbl
 			// 
 			this.eraseFilesMethodLbl.AutoSize = true;
-			this.eraseFilesMethodLbl.Location = new System.Drawing.Point(17, 88);
+			this.eraseFilesMethodLbl.Location = new System.Drawing.Point(17, 115);
 			this.eraseFilesMethodLbl.Name = "eraseFilesMethodLbl";
 			this.eraseFilesMethodLbl.Size = new System.Drawing.Size(136, 13);
-			this.eraseFilesMethodLbl.TabIndex = 4;
+			this.eraseFilesMethodLbl.TabIndex = 6;
 			this.eraseFilesMethodLbl.Text = "Default file erasure method:";
 			// 
 			// eraseUnusedMethodLbl
 			// 
 			this.eraseUnusedMethodLbl.AutoSize = true;
-			this.eraseUnusedMethodLbl.Location = new System.Drawing.Point(17, 114);
+			this.eraseUnusedMethodLbl.Location = new System.Drawing.Point(17, 141);
 			this.eraseUnusedMethodLbl.Name = "eraseUnusedMethodLbl";
 			this.eraseUnusedMethodLbl.Size = new System.Drawing.Size(190, 13);
-			this.eraseUnusedMethodLbl.TabIndex = 6;
+			this.eraseUnusedMethodLbl.TabIndex = 8;
 			this.eraseUnusedMethodLbl.Text = "Default unused space erasure method:";
 			// 
 			// eraseFilesMethod
 			// 
 			this.eraseFilesMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.eraseFilesMethod.Location = new System.Drawing.Point(267, 84);
+			this.eraseFilesMethod.Location = new System.Drawing.Point(267, 111);
 			this.eraseFilesMethod.Name = "eraseFilesMethod";
 			this.eraseFilesMethod.Size = new System.Drawing.Size(290, 21);
-			this.eraseFilesMethod.TabIndex = 5;
+			this.eraseFilesMethod.TabIndex = 7;
 			// 
 			// eraseUnusedMethod
 			// 
 			this.eraseUnusedMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.eraseUnusedMethod.Location = new System.Drawing.Point(267, 111);
+			this.eraseUnusedMethod.Location = new System.Drawing.Point(267, 138);
 			this.eraseUnusedMethod.Name = "eraseUnusedMethod";
 			this.eraseUnusedMethod.Size = new System.Drawing.Size(290, 21);
-			this.eraseUnusedMethod.TabIndex = 7;
+			this.eraseUnusedMethod.TabIndex = 9;
 			// 
 			// plugins
 			// 
@@ -194,11 +195,11 @@ namespace Eraser
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.plugins.AutoSize = true;
 			this.plugins.Label = "Plugins";
-			this.plugins.Location = new System.Drawing.Point(0, 330);
+			this.plugins.Location = new System.Drawing.Point(0, 357);
 			this.plugins.Name = "plugins";
 			this.plugins.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
 			this.plugins.Size = new System.Drawing.Size(712, 32);
-			this.plugins.TabIndex = 16;
+			this.plugins.TabIndex = 19;
 			// 
 			// pluginsManager
 			// 
@@ -211,20 +212,10 @@ namespace Eraser
             this.pluginsManagerColPath});
 			this.pluginsManager.ContextMenuStrip = this.pluginsMenu;
 			this.pluginsManager.FullRowSelect = true;
-			listViewGroup4.Header = "Erasure method providers";
-			listViewGroup4.Name = "pluginsManagerGrpMethod";
-			listViewGroup5.Header = "Random number generators";
-			listViewGroup5.Name = "pluginsManagerGrpPrng";
-			listViewGroup6.Header = "History trace cleaners";
-			listViewGroup6.Name = "pluginsManagerGrpHistory";
-			this.pluginsManager.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup4,
-            listViewGroup5,
-            listViewGroup6});
-			this.pluginsManager.Location = new System.Drawing.Point(20, 368);
+			this.pluginsManager.Location = new System.Drawing.Point(20, 395);
 			this.pluginsManager.Name = "pluginsManager";
 			this.pluginsManager.Size = new System.Drawing.Size(689, 234);
-			this.pluginsManager.TabIndex = 17;
+			this.pluginsManager.TabIndex = 20;
 			this.pluginsManager.UseCompatibleStateImageBehavior = false;
 			this.pluginsManager.View = System.Windows.Forms.View.Details;
 			// 
@@ -259,7 +250,7 @@ namespace Eraser
 			// settingsToolStripMenuItem
 			// 
 			this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-			this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.settingsToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
 			this.settingsToolStripMenuItem.Text = "Settings...";
 			this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
 			// 
@@ -269,29 +260,29 @@ namespace Eraser
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.scheduler.AutoSize = true;
 			this.scheduler.Label = "Scheduler settings";
-			this.scheduler.Location = new System.Drawing.Point(0, 236);
+			this.scheduler.Location = new System.Drawing.Point(0, 263);
 			this.scheduler.Name = "scheduler";
 			this.scheduler.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
 			this.scheduler.Size = new System.Drawing.Size(712, 32);
-			this.scheduler.TabIndex = 12;
+			this.scheduler.TabIndex = 15;
 			// 
 			// schedulerMissed
 			// 
 			this.schedulerMissed.AutoSize = true;
-			this.schedulerMissed.Location = new System.Drawing.Point(17, 271);
+			this.schedulerMissed.Location = new System.Drawing.Point(17, 298);
 			this.schedulerMissed.Name = "schedulerMissed";
 			this.schedulerMissed.Size = new System.Drawing.Size(242, 13);
-			this.schedulerMissed.TabIndex = 13;
+			this.schedulerMissed.TabIndex = 16;
 			this.schedulerMissed.Text = "When a recurring task has missed its starting time,";
 			// 
 			// schedulerMissedImmediate
 			// 
 			this.schedulerMissedImmediate.AutoSize = true;
 			this.schedulerMissedImmediate.Checked = true;
-			this.schedulerMissedImmediate.Location = new System.Drawing.Point(36, 287);
+			this.schedulerMissedImmediate.Location = new System.Drawing.Point(36, 314);
 			this.schedulerMissedImmediate.Name = "schedulerMissedImmediate";
 			this.schedulerMissedImmediate.Size = new System.Drawing.Size(217, 17);
-			this.schedulerMissedImmediate.TabIndex = 14;
+			this.schedulerMissedImmediate.TabIndex = 17;
 			this.schedulerMissedImmediate.TabStop = true;
 			this.schedulerMissedImmediate.Text = "execute the task when Eraser next starts";
 			this.schedulerMissedImmediate.UseVisualStyleBackColor = true;
@@ -299,10 +290,10 @@ namespace Eraser
 			// schedulerMissedIgnore
 			// 
 			this.schedulerMissedIgnore.AutoSize = true;
-			this.schedulerMissedIgnore.Location = new System.Drawing.Point(36, 307);
+			this.schedulerMissedIgnore.Location = new System.Drawing.Point(36, 334);
 			this.schedulerMissedIgnore.Name = "schedulerMissedIgnore";
 			this.schedulerMissedIgnore.Size = new System.Drawing.Size(339, 17);
-			this.schedulerMissedIgnore.TabIndex = 15;
+			this.schedulerMissedIgnore.TabIndex = 18;
 			this.schedulerMissedIgnore.TabStop = true;
 			this.schedulerMissedIgnore.Text = "ignore the missed schedule and run only at the next appointed time";
 			this.schedulerMissedIgnore.UseVisualStyleBackColor = true;
@@ -321,20 +312,20 @@ namespace Eraser
 			// erasePRNGLbl
 			// 
 			this.erasePRNGLbl.AutoSize = true;
-			this.erasePRNGLbl.Location = new System.Drawing.Point(17, 142);
+			this.erasePRNGLbl.Location = new System.Drawing.Point(17, 169);
 			this.erasePRNGLbl.Name = "erasePRNGLbl";
 			this.erasePRNGLbl.Size = new System.Drawing.Size(131, 13);
-			this.erasePRNGLbl.TabIndex = 8;
+			this.erasePRNGLbl.TabIndex = 10;
 			this.erasePRNGLbl.Text = "Randomness data source:";
 			// 
 			// erasePRNG
 			// 
 			this.erasePRNG.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.erasePRNG.FormattingEnabled = true;
-			this.erasePRNG.Location = new System.Drawing.Point(267, 138);
+			this.erasePRNG.Location = new System.Drawing.Point(267, 165);
 			this.erasePRNG.Name = "erasePRNG";
 			this.erasePRNG.Size = new System.Drawing.Size(290, 21);
-			this.erasePRNG.TabIndex = 9;
+			this.erasePRNG.TabIndex = 11;
 			// 
 			// errorProvider
 			// 
@@ -345,18 +336,36 @@ namespace Eraser
 			this.plausibleDeniability.AutoSize = true;
 			this.plausibleDeniability.Checked = true;
 			this.plausibleDeniability.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.plausibleDeniability.Location = new System.Drawing.Point(20, 213);
+			this.plausibleDeniability.Location = new System.Drawing.Point(20, 240);
 			this.plausibleDeniability.Name = "plausibleDeniability";
 			this.plausibleDeniability.Size = new System.Drawing.Size(361, 17);
-			this.plausibleDeniability.TabIndex = 18;
+			this.plausibleDeniability.TabIndex = 14;
 			this.plausibleDeniability.Text = "Copy other files from the same volume over the deleted file after erasing";
 			this.plausibleDeniability.UseVisualStyleBackColor = true;
+			// 
+			// uiLanguageLbl
+			// 
+			this.uiLanguageLbl.AutoSize = true;
+			this.uiLanguageLbl.Location = new System.Drawing.Point(17, 29);
+			this.uiLanguageLbl.Name = "uiLanguageLbl";
+			this.uiLanguageLbl.Size = new System.Drawing.Size(123, 13);
+			this.uiLanguageLbl.TabIndex = 2;
+			this.uiLanguageLbl.Text = "User interface language:";
+			// 
+			// uiLanguage
+			// 
+			this.uiLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.uiLanguage.FormattingEnabled = true;
+			this.uiLanguage.Location = new System.Drawing.Point(267, 26);
+			this.uiLanguage.Name = "uiLanguage";
+			this.uiLanguage.Size = new System.Drawing.Size(290, 21);
+			this.uiLanguage.TabIndex = 3;
 			// 
 			// SettingsPanel
 			// 
 			this.Controls.Add(this.saveSettings);
 			this.Name = "SettingsPanel";
-			this.Size = new System.Drawing.Size(752, 674);
+			this.Size = new System.Drawing.Size(752, 702);
 			this.Controls.SetChildIndex(this.saveSettings, 0);
 			this.Controls.SetChildIndex(this.titleLbl, 0);
 			this.Controls.SetChildIndex(this.titleIcon, 0);
@@ -375,8 +384,8 @@ namespace Eraser
 
 		private System.Windows.Forms.CheckBox lockedConfirm;
 		private System.Windows.Forms.CheckBox lockedAllow;
-		private System.Windows.Forms.CheckBox shellContextMenu;
-		private LightGroup shell;
+		private System.Windows.Forms.CheckBox uiContextMenu;
+		private LightGroup ui;
 		private System.Windows.Forms.Label eraseUnusedMethodLbl;
 		private System.Windows.Forms.Label eraseFilesMethodLbl;
 		private LightGroup erase;
@@ -399,5 +408,7 @@ namespace Eraser
 		private System.Windows.Forms.CheckBox plausibleDeniability;
 		private System.Windows.Forms.ContextMenuStrip pluginsMenu;
 		private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+		private System.Windows.Forms.ComboBox uiLanguage;
+		private System.Windows.Forms.Label uiLanguageLbl;
 	}
 }

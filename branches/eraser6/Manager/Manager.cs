@@ -14,6 +14,7 @@ namespace Eraser.Manager
 		{
 			Instance = this;
 			PRNGManager = new PRNGManager();
+			LanguageManager = new LanguageManager();
 			ErasureMethodManager = new ErasureMethodManager();
 			Settings = new Settings();
 			Host = new Plugin.DefaultHost();
@@ -30,9 +31,14 @@ namespace Eraser.Manager
 		public static ManagerLibrary Instance = null;
 
 		/// <summary>
-		/// The global instance of the PRNG Manager
+		/// The global instance of the PRNG Manager.
 		/// </summary>
 		internal PRNGManager PRNGManager;
+
+		/// <summary>
+		/// Global instance of the Language Manager.
+		/// </summary>
+		internal LanguageManager LanguageManager;
 
 		/// <summary>
 		/// The global instance of the Erasure method manager.
@@ -45,7 +51,7 @@ namespace Eraser.Manager
 		public Settings Settings;
 
 		/// <summary>
-		/// The global instance of the Plugin host
+		/// The global instance of the Plugin host.
 		/// </summary>
 		internal Plugin.DefaultHost Host;
 	}
