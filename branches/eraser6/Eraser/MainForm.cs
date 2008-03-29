@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
+using Eraser.Util;
 
 namespace Eraser
 {
@@ -35,7 +36,7 @@ namespace Eraser
 
 			ToolBarItem schedule = new ToolBarItem();
 			schedule.Bitmap = Properties.Resources.ToolbarSchedule;
-			schedule.Text = "Erase Schedule";
+			schedule.Text = S._("Erase Schedule");
 			schedule.Menu = toolbarScheduleMenu;
 			schedule.ToolbarItemClicked += delegate(object sender, EventArgs args)
 			{
@@ -45,7 +46,7 @@ namespace Eraser
 
 			ToolBarItem settings = new ToolBarItem();
 			settings.Bitmap = Properties.Resources.ToolbarSettings;
-			settings.Text = "Settings";
+			settings.Text = S._("Settings");
 			settings.ToolbarItemClicked += delegate(object sender, EventArgs args)
 			{
 				ChangePage(Pages.SETTINGS);
@@ -54,7 +55,7 @@ namespace Eraser
 
 			ToolBarItem help = new ToolBarItem();
 			help.Bitmap = Properties.Resources.ToolbarHelp;
-			help.Text = "Help";
+			help.Text = S._("Help");
 			help.Menu = toolbarHelpMenu;
 			ToolBar.Items.Add(help);
 

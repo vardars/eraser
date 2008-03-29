@@ -202,4 +202,14 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>for /R %25%25i in (*.cs) do xgettext --keyword=_ --keyword=_:1c,2 --from-code UTF-8 -j -o "$(ProjectDir)Langauges\Eraser.pot" "%25%25i"
+for %25%25i in ($(ProjectDir)Languages\*.po) do msgmerge -U --backup=none "%25%25i" "$(ProjectDir)Languages\Eraser.pot"
+
+set path=$(PATH);C:\Windows\Microsoft.NET\Framework\v2.0.50727
+set GETTEXTCSHARPLIBDIR=D:\Development\Libraries\C#\gettext\gettext-runtime\intl-csharp\bin\Release
+for %25%25i in ($(ProjectDir)Languages\*.po) do msgfmt --verbose --csharp %25%25i --locale %25%25~ni  -r Eraser -d "$(ProjectDir)$(OutDir)\"</PostBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
 </Project>

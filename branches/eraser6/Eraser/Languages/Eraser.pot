@@ -1,0 +1,29 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-03-29 21:46+0800\n"
+"PO-Revision-Date: 2008-03-29 21:53+0800\n"
+"Last-Translator: Joel Low <lowjoel@users.sourceforge.ne>\n"
+"Language-Team: Eraser Developers <eraser-developers@list.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:39
+msgid "Erase Schedule"
+msgstr "RandomRandom"
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:49
+msgid "Settings"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:58
+msgid "Help"
+msgstr ""
