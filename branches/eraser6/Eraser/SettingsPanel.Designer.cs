@@ -29,9 +29,9 @@ namespace Eraser
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Erasure method providers", System.Windows.Forms.HorizontalAlignment.Left);
-			System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Random number generators", System.Windows.Forms.HorizontalAlignment.Left);
-			System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("History trace cleaners", System.Windows.Forms.HorizontalAlignment.Left);
+			System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Erasure method providers", System.Windows.Forms.HorizontalAlignment.Left);
+			System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Random number generators", System.Windows.Forms.HorizontalAlignment.Left);
+			System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("History trace cleaners", System.Windows.Forms.HorizontalAlignment.Left);
 			this.shell = new Eraser.LightGroup();
 			this.shellContextMenu = new System.Windows.Forms.CheckBox();
 			this.lockedAllow = new System.Windows.Forms.CheckBox();
@@ -47,6 +47,8 @@ namespace Eraser
 			this.pluginsManagerColAuthor = new System.Windows.Forms.ColumnHeader();
 			this.pluginsManagerColVersion = new System.Windows.Forms.ColumnHeader();
 			this.pluginsManagerColPath = new System.Windows.Forms.ColumnHeader();
+			this.pluginsMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.scheduler = new Eraser.LightGroup();
 			this.schedulerMissed = new System.Windows.Forms.Label();
 			this.schedulerMissedImmediate = new System.Windows.Forms.RadioButton();
@@ -58,6 +60,7 @@ namespace Eraser
 			this.plausibleDeniability = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).BeginInit();
 			this.content.SuspendLayout();
+			this.pluginsMenu.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -111,7 +114,7 @@ namespace Eraser
 			this.shellContextMenu.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.shellContextMenu.Location = new System.Drawing.Point(20, 32);
 			this.shellContextMenu.Name = "shellContextMenu";
-			this.shellContextMenu.Size = new System.Drawing.Size(216, 17);
+			this.shellContextMenu.Size = new System.Drawing.Size(209, 17);
 			this.shellContextMenu.TabIndex = 2;
 			this.shellContextMenu.Text = "Integrate Eraser into Windows Explorer";
 			this.shellContextMenu.UseVisualStyleBackColor = true;
@@ -123,7 +126,7 @@ namespace Eraser
 			this.lockedAllow.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.lockedAllow.Location = new System.Drawing.Point(20, 166);
 			this.lockedAllow.Name = "lockedAllow";
-			this.lockedAllow.Size = new System.Drawing.Size(258, 17);
+			this.lockedAllow.Size = new System.Drawing.Size(251, 17);
 			this.lockedAllow.TabIndex = 10;
 			this.lockedAllow.Text = "Allow locked files to be erased on system restart";
 			this.lockedAllow.UseVisualStyleBackColor = true;
@@ -134,7 +137,7 @@ namespace Eraser
 			this.lockedConfirm.AutoSize = true;
 			this.lockedConfirm.Location = new System.Drawing.Point(36, 189);
 			this.lockedConfirm.Name = "lockedConfirm";
-			this.lockedConfirm.Size = new System.Drawing.Size(188, 17);
+			this.lockedConfirm.Size = new System.Drawing.Size(182, 17);
 			this.lockedConfirm.TabIndex = 11;
 			this.lockedConfirm.Text = "Confirm with user before doing so";
 			this.lockedConfirm.UseVisualStyleBackColor = true;
@@ -156,7 +159,7 @@ namespace Eraser
 			this.eraseFilesMethodLbl.AutoSize = true;
 			this.eraseFilesMethodLbl.Location = new System.Drawing.Point(17, 88);
 			this.eraseFilesMethodLbl.Name = "eraseFilesMethodLbl";
-			this.eraseFilesMethodLbl.Size = new System.Drawing.Size(142, 13);
+			this.eraseFilesMethodLbl.Size = new System.Drawing.Size(136, 13);
 			this.eraseFilesMethodLbl.TabIndex = 4;
 			this.eraseFilesMethodLbl.Text = "Default file erasure method:";
 			// 
@@ -165,7 +168,7 @@ namespace Eraser
 			this.eraseUnusedMethodLbl.AutoSize = true;
 			this.eraseUnusedMethodLbl.Location = new System.Drawing.Point(17, 114);
 			this.eraseUnusedMethodLbl.Name = "eraseUnusedMethodLbl";
-			this.eraseUnusedMethodLbl.Size = new System.Drawing.Size(194, 13);
+			this.eraseUnusedMethodLbl.Size = new System.Drawing.Size(190, 13);
 			this.eraseUnusedMethodLbl.TabIndex = 6;
 			this.eraseUnusedMethodLbl.Text = "Default unused space erasure method:";
 			// 
@@ -206,17 +209,18 @@ namespace Eraser
             this.pluginsManagerColAuthor,
             this.pluginsManagerColVersion,
             this.pluginsManagerColPath});
+			this.pluginsManager.ContextMenuStrip = this.pluginsMenu;
 			this.pluginsManager.FullRowSelect = true;
-			listViewGroup1.Header = "Erasure method providers";
-			listViewGroup1.Name = "pluginsManagerGrpMethod";
-			listViewGroup2.Header = "Random number generators";
-			listViewGroup2.Name = "pluginsManagerGrpPrng";
-			listViewGroup3.Header = "History trace cleaners";
-			listViewGroup3.Name = "pluginsManagerGrpHistory";
+			listViewGroup4.Header = "Erasure method providers";
+			listViewGroup4.Name = "pluginsManagerGrpMethod";
+			listViewGroup5.Header = "Random number generators";
+			listViewGroup5.Name = "pluginsManagerGrpPrng";
+			listViewGroup6.Header = "History trace cleaners";
+			listViewGroup6.Name = "pluginsManagerGrpHistory";
 			this.pluginsManager.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2,
-            listViewGroup3});
+            listViewGroup4,
+            listViewGroup5,
+            listViewGroup6});
 			this.pluginsManager.Location = new System.Drawing.Point(20, 368);
 			this.pluginsManager.Name = "pluginsManager";
 			this.pluginsManager.Size = new System.Drawing.Size(689, 234);
@@ -244,6 +248,21 @@ namespace Eraser
 			this.pluginsManagerColPath.Text = "File Path";
 			this.pluginsManagerColPath.Width = 180;
 			// 
+			// pluginsMenu
+			// 
+			this.pluginsMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.settingsToolStripMenuItem});
+			this.pluginsMenu.Name = "pluginsContextMenu";
+			this.pluginsMenu.Size = new System.Drawing.Size(126, 26);
+			this.pluginsMenu.Opening += new System.ComponentModel.CancelEventHandler(this.pluginsMenu_Opening);
+			// 
+			// settingsToolStripMenuItem
+			// 
+			this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+			this.settingsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.settingsToolStripMenuItem.Text = "Settings...";
+			this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+			// 
 			// scheduler
 			// 
 			this.scheduler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -261,7 +280,7 @@ namespace Eraser
 			this.schedulerMissed.AutoSize = true;
 			this.schedulerMissed.Location = new System.Drawing.Point(17, 271);
 			this.schedulerMissed.Name = "schedulerMissed";
-			this.schedulerMissed.Size = new System.Drawing.Size(249, 13);
+			this.schedulerMissed.Size = new System.Drawing.Size(242, 13);
 			this.schedulerMissed.TabIndex = 13;
 			this.schedulerMissed.Text = "When a recurring task has missed its starting time,";
 			// 
@@ -271,7 +290,7 @@ namespace Eraser
 			this.schedulerMissedImmediate.Checked = true;
 			this.schedulerMissedImmediate.Location = new System.Drawing.Point(36, 287);
 			this.schedulerMissedImmediate.Name = "schedulerMissedImmediate";
-			this.schedulerMissedImmediate.Size = new System.Drawing.Size(225, 17);
+			this.schedulerMissedImmediate.Size = new System.Drawing.Size(217, 17);
 			this.schedulerMissedImmediate.TabIndex = 14;
 			this.schedulerMissedImmediate.TabStop = true;
 			this.schedulerMissedImmediate.Text = "execute the task when Eraser next starts";
@@ -282,7 +301,7 @@ namespace Eraser
 			this.schedulerMissedIgnore.AutoSize = true;
 			this.schedulerMissedIgnore.Location = new System.Drawing.Point(36, 307);
 			this.schedulerMissedIgnore.Name = "schedulerMissedIgnore";
-			this.schedulerMissedIgnore.Size = new System.Drawing.Size(348, 17);
+			this.schedulerMissedIgnore.Size = new System.Drawing.Size(339, 17);
 			this.schedulerMissedIgnore.TabIndex = 15;
 			this.schedulerMissedIgnore.TabStop = true;
 			this.schedulerMissedIgnore.Text = "ignore the missed schedule and run only at the next appointed time";
@@ -304,7 +323,7 @@ namespace Eraser
 			this.erasePRNGLbl.AutoSize = true;
 			this.erasePRNGLbl.Location = new System.Drawing.Point(17, 142);
 			this.erasePRNGLbl.Name = "erasePRNGLbl";
-			this.erasePRNGLbl.Size = new System.Drawing.Size(132, 13);
+			this.erasePRNGLbl.Size = new System.Drawing.Size(131, 13);
 			this.erasePRNGLbl.TabIndex = 8;
 			this.erasePRNGLbl.Text = "Randomness data source:";
 			// 
@@ -328,7 +347,7 @@ namespace Eraser
 			this.plausibleDeniability.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.plausibleDeniability.Location = new System.Drawing.Point(20, 213);
 			this.plausibleDeniability.Name = "plausibleDeniability";
-			this.plausibleDeniability.Size = new System.Drawing.Size(376, 17);
+			this.plausibleDeniability.Size = new System.Drawing.Size(361, 17);
 			this.plausibleDeniability.TabIndex = 18;
 			this.plausibleDeniability.Text = "Copy other files from the same volume over the deleted file after erasing";
 			this.plausibleDeniability.UseVisualStyleBackColor = true;
@@ -345,6 +364,7 @@ namespace Eraser
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).EndInit();
 			this.content.ResumeLayout(false);
 			this.content.PerformLayout();
+			this.pluginsMenu.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -377,5 +397,7 @@ namespace Eraser
 		private System.Windows.Forms.Label erasePRNGLbl;
 		private System.Windows.Forms.ErrorProvider errorProvider;
 		private System.Windows.Forms.CheckBox plausibleDeniability;
+		private System.Windows.Forms.ContextMenuStrip pluginsMenu;
+		private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
 	}
 }

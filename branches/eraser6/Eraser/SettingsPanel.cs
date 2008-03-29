@@ -33,6 +33,7 @@ namespace Eraser
 			item.SubItems.Add(instance.Plugin.Author);
 			item.SubItems.Add(instance.Assembly.GetName().Version.ToString());
 			item.SubItems.Add(instance.Path);
+			item.Tag = instance;
 		}
 
 		private void LoadPluginDependantValues()
@@ -131,6 +132,26 @@ namespace Eraser
 		private void lockedAllow_CheckedChanged(object sender, EventArgs e)
 		{
 			lockedConfirm.Enabled = lockedAllow.Checked;
+		}
+
+		private void pluginsMenu_Opening(object sender, CancelEventArgs e)
+		{
+			if (pluginsManager.SelectedItems.Count == 1)
+			{
+				PluginInstance instance = (PluginInstance)pluginsManager.SelectedItems[0].Tag;
+				e.Cancel = !instance.Plugin.Configurable;
+			}
+			else
+				e.Cancel = true;
+		}
+
+		private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (pluginsManager.SelectedItems.Count != 1)
+				return;
+			
+			PluginInstance instance = (PluginInstance)pluginsManager.SelectedItems[0].Tag;
+			instance.Plugin.DisplaySettings(this);
 		}
 
 		private void saveSettings_Click(object sender, EventArgs e)

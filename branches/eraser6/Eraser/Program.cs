@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Eraser.Manager;
 using Microsoft.Win32;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Eraser
 {
@@ -93,6 +94,25 @@ namespace Eraser
 				(int)key.GetValue("ExecuteMissedTasksImmediately", (object)1) != 0;
 			PlausibleDeniability =
 				(int)key.GetValue("PlausibleDeniability", (object)1) != 0;
+
+			//Load the plugin settings.
+			byte[] pluginSettings = (byte[])key.GetValue("PluginSettings", new byte[] { });
+			if (pluginSettings.Length != 0)
+				using (MemoryStream stream = new MemoryStream(pluginSettings))
+				{
+					try
+					{
+						this.pluginSettings = (Dictionary<Guid, Dictionary<string, object>>)
+							new BinaryFormatter().Deserialize(stream);
+					}
+					catch (Exception)
+					{
+						key.DeleteValue("PluginSettings");
+						MessageBox.Show("Could not load plugin settings. All settings " +
+							"have been lost", "Eraser", MessageBoxButtons.OK,
+							MessageBoxIcon.Error);
+					}
+				}
 		}
 
 		~Settings()
@@ -110,6 +130,12 @@ namespace Eraser
 				ExecuteMissedTasksImmediately, RegistryValueKind.DWord);
 			key.SetValue("PlausibleDeniability", PlausibleDeniability,
 				RegistryValueKind.DWord);
+
+			using (MemoryStream stream = new MemoryStream())
+			{
+				new BinaryFormatter().Serialize(stream, pluginSettings);
+				key.SetValue("PluginSettings", stream.ToArray(), RegistryValueKind.Binary);
+			}
 		}
 	}
 }

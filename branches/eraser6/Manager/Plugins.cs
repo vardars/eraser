@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Reflection;
+using System.Windows.Forms;
 
 namespace Eraser.Manager.Plugin
 {
@@ -190,5 +191,20 @@ namespace Eraser.Manager.Plugin
 		{
 			get;
 		}
+
+		/// <summary>
+		/// Determines whether the plug-in is configurable.
+		/// </summary>
+		bool Configurable
+		{
+			get;
+		}
+
+		/// <summary>
+		/// Fulfil a request to display the settings for this plug-in.
+		/// </summary>
+		/// <param name="parent">The parent control which the settings dialog should
+		/// be parented with.</param>
+		void DisplaySettings(Control parent);
 	}
 }

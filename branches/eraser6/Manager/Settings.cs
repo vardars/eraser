@@ -137,6 +137,27 @@ namespace Eraser.Manager
 			}
 		}
 
+		/// <summary>
+		/// Retrieves the dictionary holding settings for the given plugin.
+		/// </summary>
+		/// <param name="plugin">The GUID of the plugin querying for settings</param>
+		/// <returns>A dictionary holding settings for the plugin. This dictionary
+		/// will be automatically saved when the program exits holding the settings
+		/// permanenently. An empty dictionary will be returned if no settings
+		/// currently exist.</returns>
+		public Dictionary<string, object> GetSettings(Guid plugin)
+		{
+			lock (pluginSettings)
+			{
+				if (pluginSettings.ContainsKey(plugin))
+					return pluginSettings[plugin];
+
+				Dictionary<string, object> result = new Dictionary<string, object>();
+				pluginSettings.Add(plugin, result);
+				return result;
+			}
+		}
+
 		private Guid defaultFileErasureMethod = Guid.Empty;
 		private Guid defaultUnusedSpaceErasureMethod = Guid.Empty;
 		private Guid activePRNG = Guid.Empty;
@@ -144,5 +165,8 @@ namespace Eraser.Manager
 		private bool confirmEraseOnRestart = true;
 		private bool executeMissedTasksImmediately = true;
 		private bool plausibleDeniability = true;
+
+		protected Dictionary<Guid, Dictionary<string, object>> pluginSettings =
+			new Dictionary<Guid, Dictionary<string, object>>();
 	}
 }
