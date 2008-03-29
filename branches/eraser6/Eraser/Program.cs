@@ -6,6 +6,7 @@ using Eraser.Manager;
 using Microsoft.Win32;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Globalization;
 
 namespace Eraser
 {
@@ -94,8 +95,8 @@ namespace Eraser
 				(int)key.GetValue("ExecuteMissedTasksImmediately", (object)1) != 0;
 			PlausibleDeniability =
 				(int)key.GetValue("PlausibleDeniability", (object)1) != 0;
-			UILanguage = new Guid((string)
-				key.GetValue("UILanguage", Guid.Empty.ToString()));
+			UILanguage = (string)key.GetValue("UILanguage", string.Empty);
+			Util.S.Language = new CultureInfo(UILanguage);
 
 			//Load the plugin settings.
 			byte[] pluginSettings = (byte[])key.GetValue("PluginSettings", new byte[] { });

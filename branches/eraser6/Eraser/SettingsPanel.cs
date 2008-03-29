@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Eraser.Manager;
 using Eraser.Manager.Plugin;
 using Microsoft.Win32;
+using System.Globalization;
 
 namespace Eraser
 {
@@ -45,9 +46,9 @@ namespace Eraser
 				OnNewPluginLoaded(i.Current);
 
 			//Refresh the list of languages
-			Dictionary<Guid, Language> languages = LanguageManager.GetAll();
-			foreach (Language lang in languages.Values)
-				uiLanguage.Items.Add(lang);
+			List<CultureInfo> languages = LanguageManager.GetAll();
+			foreach (CultureInfo culture in languages)
+				uiLanguage.Items.Add(culture);
 
 			//Refresh the list of erasure methods
 			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.GetAll();
@@ -67,7 +68,7 @@ namespace Eraser
 		private void LoadSettings()
 		{
 			foreach (Object lang in uiLanguage.Items)
-				if (((Language)lang).GUID == ManagerLibrary.Instance.Settings.UILanguage)
+				if (((CultureInfo)lang).Name == ManagerLibrary.Instance.Settings.UILanguage)
 				{
 					uiLanguage.SelectedItem = lang;
 					break;
@@ -207,7 +208,7 @@ namespace Eraser
 			}
 
 			ManagerLibrary.Instance.Settings.UILanguage =
-				((Language)uiLanguage.SelectedItem).GUID;
+				((CultureInfo)uiLanguage.SelectedItem).Name;
 			ManagerLibrary.Instance.Settings.DefaultFileErasureMethod =
 				((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
 			ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod =

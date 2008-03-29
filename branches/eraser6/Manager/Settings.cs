@@ -13,7 +13,7 @@ namespace Eraser.Manager
 		/// The language which all user interface elements should be presented in.
 		/// This is a GUID since languages are supplied through plugins.
 		/// </summary>
-		public Guid UILanguage
+		public string UILanguage
 		{
 			get
 			{
@@ -176,7 +176,7 @@ namespace Eraser.Manager
 			}
 		}
 
-		private Guid uiLanguage = Guid.Empty;
+		private string uiLanguage;
 		private Guid defaultFileErasureMethod = Guid.Empty;
 		private Guid defaultUnusedSpaceErasureMethod = Guid.Empty;
 		private Guid activePRNG = Guid.Empty;

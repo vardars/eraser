@@ -30,9 +30,9 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gettext, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="GNU.Gettext, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Libraries\C#\gettext\gettext-runtime\intl-csharp\bin\Release\Gettext.dll</HintPath>
+      <HintPath>..\..\..\Libraries\C#\gettext\gettext-runtime\intl-csharp\bin\Release\GNU.Gettext.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
