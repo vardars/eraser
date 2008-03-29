@@ -97,30 +97,38 @@ namespace Eraser
 			string defaults = string.Empty;
 			if (eraseFilesMethod.SelectedIndex == -1)
 			{
-				eraseFilesMethod.SelectedIndex = 0;
+				if (eraseFilesMethod.Items.Count > 0)
+				{
+					eraseFilesMethod.SelectedIndex = 0;
+					ManagerLibrary.Instance.Settings.DefaultFileErasureMethod =
+						((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
+				}
 				defaults += "\tDefault file erasure method\n";
 			}
 			if (eraseUnusedMethod.SelectedIndex == -1)
 			{
-				eraseUnusedMethod.SelectedIndex = 0;
+				if (eraseUnusedMethod.Items.Count > 0)
+				{
+					eraseUnusedMethod.SelectedIndex = 0;
+					ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod =
+						((ErasureMethod)eraseUnusedMethod.SelectedItem).GUID;
+				}
 				defaults += "\tDefault unused space erasure method\n";
 			}
 			if (erasePRNG.SelectedIndex == -1)
 			{
-				erasePRNG.SelectedIndex = 0;
+				if (erasePRNG.Items.Count > 0)
+				{
+					erasePRNG.SelectedIndex = 0;
+					ManagerLibrary.Instance.Settings.ActivePRNG =
+						((PRNG)erasePRNG.SelectedItem).GUID;
+				}
 				defaults += "\tRandomness data source\n";
 			}
 
 			//Remind the user.
 			if (defaults.Length != 0)
 			{
-				ManagerLibrary.Instance.Settings.DefaultFileErasureMethod =
-					((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
-				ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod =
-					((ErasureMethod)eraseUnusedMethod.SelectedItem).GUID;
-				ManagerLibrary.Instance.Settings.ActivePRNG = 
-					((PRNG)erasePRNG.SelectedItem).GUID;
-
 				MessageBox.Show(string.Format("The following settings held invalid values:\n\n" +
 					"{0}\nThese settings have now been set to naive defaults.\n\n" +
 					"Please check that the new settings suit your required level of security.",
