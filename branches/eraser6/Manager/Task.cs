@@ -333,7 +333,7 @@ namespace Eraser.Manager
 			id = (uint)info.GetValue("ID", typeof(uint));
 			name = (string)info.GetValue("Name", typeof(string));
 			targets = (List<ErasureTarget>)info.GetValue("Targets", typeof(List<ErasureTarget>));
-			log = (List<LogEntry>)info.GetValue("Log", typeof(List<LogEntry>));
+			log = (Logger)info.GetValue("Log", typeof(Logger));
 
 			Schedule schedule = (Schedule)info.GetValue("Schedule", typeof(Schedule));
 			if (schedule.GetType() == Schedule.RunNow.GetType())
@@ -453,53 +453,13 @@ namespace Eraser.Manager
 			set { schedule = value; }
 		}
 
-		#region Logging functions
 		/// <summary>
-		/// The prototype of a registrant of the Log event.
+		/// The log entries which this task has accumulated.
 		/// </summary>
-		/// <param name="e"></param>
-		public delegate void LogEvent(LogEntry e);
-
-		/// <summary>
-		/// All the registered event handlers for the log event of this task.
-		/// </summary>
-		public event LogEvent Logged;
-
-		/// <summary>
-		/// Retrieves the log for this task.
-		/// </summary>
-		public List<LogEntry> Log
+		public Logger Log
 		{
-			get
-			{
-				lock (log)
-					return log.GetRange(0, log.Count);
-			}
+			get { return log; }
 		}
-
-		/// <summary>
-		/// Logs the message and its associated information into the task Log.
-		/// </summary>
-		/// <param name="entry">The log entry structure representing the log
-		/// message.</param>
-		internal void LogEntry(LogEntry entry)
-		{
-			lock (log)
-				log.Add(entry);
-
-			if (Logged != null)
-				Logged(entry);
-		}
-
-		/// <summary>
-		/// Clears the log entries from the log.
-		/// </summary>
-		public void ClearLog()
-		{
-			lock (log)
-				log.Clear();
-		}
-		#endregion
 
 		#region Events
 		/// <summary>
@@ -572,7 +532,7 @@ namespace Eraser.Manager
 
 		private Schedule schedule = Schedule.RunNow;
 		private List<ErasureTarget> targets = new List<ErasureTarget>();
-		private List<LogEntry> log = new List<LogEntry>();
+		private Logger log = new Logger();
 	}
 
 	/// <summary>

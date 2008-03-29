@@ -247,6 +247,10 @@ namespace Eraser.Manager
 						task.cancelled = false;
 						task.OnTaskStarted(new TaskEventArgs(task));
 
+						//Start a new log session to separate this session's events
+						//from previous ones.
+						task.Log.NewSession();
+
 						//Run the task
 						foreach (Task.ErasureTarget target in task.Targets)
 							try
@@ -264,12 +268,12 @@ namespace Eraser.Manager
 							}
 							catch (Exception e)
 							{
-								task.LogEntry(new LogEntry(e.Message, LogLevel.ERROR));
+								task.Log.Add(new LogEntry(e.Message, LogLevel.ERROR));
 							}
 					}
 					catch (FatalException e)
 					{
-						task.LogEntry(new LogEntry(e.Message, LogLevel.FATAL));
+						task.Log.Add(new LogEntry(e.Message, LogLevel.FATAL));
 					}
 					finally
 					{
@@ -348,7 +352,7 @@ namespace Eraser.Manager
 
 			//If the user is under disk quotas, log a warning message
 			if (Drive.HasQuota(target.Drive))
-				task.LogEntry(new LogEntry("The drive which is having its unused space erased has " +
+				task.Log.Add(new LogEntry("The drive which is having its unused space erased has " +
 					"disk quotas active. This will prevent the complete erasure of unused space and " +
 					"will pose a security concern", LogLevel.WARNING));
 
@@ -479,7 +483,7 @@ namespace Eraser.Manager
 				{
 					foreach (FileInfo file in info.GetFiles())
 						if (Eraser.Util.File.IsProtectedSystemFile(file.FullName))
-							task.LogEntry(new LogEntry(string.Format("{0} did not have its cluster tips " +
+							task.Log.Add(new LogEntry(string.Format("{0} did not have its cluster tips " +
 								"erased, because it is a system file", file.FullName), LogLevel.INFORMATION));
 						else
 						{

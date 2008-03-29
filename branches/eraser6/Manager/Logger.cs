@@ -37,6 +37,132 @@ namespace Eraser.Manager
 	}
 
 	/// <summary>
+	/// The Logger class which handles log entries and manages entries.
+	/// 
+	/// The class has the notion of entries and sessions. Each session contains one
+	/// or more (log) entries. This allows the program to determine if the last
+	/// session had errors or not.
+	/// </summary>
+	[Serializable]
+	public class Logger : ISerializable
+	{
+		#region Serialization code
+		public Logger(SerializationInfo info, StreamingContext context)
+		{
+			entries = (Dictionary<DateTime, List<LogEntry>>)
+				info.GetValue("Entries", typeof(Dictionary<DateTime, List<LogEntry>>));
+			foreach (DateTime key in entries.Keys)
+				lastSession = key;
+		}
+
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue("Entries", entries);
+		}
+		#endregion
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public Logger()
+		{
+			entries = new Dictionary<DateTime, List<LogEntry>>();
+		}
+
+		/// <summary>
+		/// The prototype of a registrant of the Log event.
+		/// </summary>
+		/// <param name="e"></param>
+		public delegate void LogEvent(LogEntry e);
+
+		/// <summary>
+		/// All the registered event handlers for the log event of this task.
+		/// </summary>
+		public event LogEvent OnLogged;
+
+		/// <summary>
+		/// All the registered event handlers for handling when a new session has been
+		/// started.
+		/// </summary>
+		public event EventHandler OnNewSession;
+
+		/// <summary>
+		/// Retrieves the log for this task.
+		/// </summary>
+		public Dictionary<DateTime, List<LogEntry>> Entries
+		{
+			get
+			{
+				return entries;
+			}
+		}
+
+		/// <summary>
+		/// Retrieves the log entries from the previous session.
+		/// </summary>
+		public List<LogEntry> LastSessionEntries
+		{
+			get
+			{
+				lock (entries)
+					return entries[lastSession];
+			}
+		}
+
+		/// <summary>
+		/// Adds a new session to the log.
+		/// </summary>
+		internal void NewSession()
+		{
+			lock (entries)
+			{
+				lastSession = DateTime.Now;
+				entries.Add(lastSession, new List<LogEntry>());
+			}
+		}
+
+		/// <summary>
+		/// Logs the message and its associated information into the current session.
+		/// </summary>
+		/// <param name="entry">The log entry structure representing the log
+		/// message.</param>
+		internal void Add(LogEntry entry)
+		{
+			lock (entries)
+			{
+				if (entries.Count == 0)
+					NewSession();
+				entries[lastSession].Add(entry);
+			}
+
+			if (OnLogged != null)
+				OnLogged(entry);
+		}
+
+		/// <summary>
+		/// Clears the log entries from the log.
+		/// </summary>
+		public void Clear()
+		{
+			lock (entries)
+			{
+				entries.Clear();
+				lastSession = DateTime.MinValue;
+			}
+		}
+
+		/// <summary>
+		/// The log entries.
+		/// </summary>
+		private Dictionary<DateTime, List<LogEntry>> entries;
+
+		/// <summary>
+		/// The last session
+		/// </summary>
+		private DateTime lastSession;
+	}
+
+	/// <summary>
 	/// Represents a log entry.
 	/// </summary>
 	[Serializable]

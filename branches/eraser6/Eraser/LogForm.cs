@@ -22,17 +22,17 @@ namespace Eraser
 			Text = string.Format("{0} - {1}", Text, task.UIText);
 
 			//Add all the existing log messages
-			List<LogEntry> log = task.Log;
+			List<LogEntry> log = task.Log.LastSessionEntries;
 			foreach (LogEntry entry in log)
 				task_Logged(entry);
 
 			//Register our event handler to get live log messages
-			task.Logged += new Task.LogEvent(task_Logged);
+			task.Log.OnLogged += new Logger.LogEvent(task_Logged);
 		}
 
 		~LogForm()
 		{
-			task.Logged -= new Task.LogEvent(task_Logged);
+			task.Log.OnLogged -= new Logger.LogEvent(task_Logged);
 		}
 
 		private void task_Logged(LogEntry e)
@@ -57,7 +57,7 @@ namespace Eraser
 
 		private void clear_Click(object sender, EventArgs e)
 		{
-			this.task.ClearLog();
+			this.task.Log.Clear();
 			log.Items.Clear();
 		}
 
