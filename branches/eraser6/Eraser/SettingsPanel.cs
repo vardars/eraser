@@ -20,6 +20,7 @@ namespace Eraser
 		{
 			InitializeComponent();
 			Dock = DockStyle.None;
+			S.TranslateControl(this);
 
 			//For new plugins, register the callback.
 			Host.Instance.PluginLoad += new Host.OnPluginLoadEventHandler(OnNewPluginLoaded);
@@ -47,8 +48,8 @@ namespace Eraser
 				OnNewPluginLoaded(i.Current);
 
 			//Refresh the list of languages
-			List<CultureInfo> languages = LanguageManager.GetAll();
-			foreach (CultureInfo culture in languages)
+			List<Language> languages = LanguageManager.GetAll();
+			foreach (Language culture in languages)
 				uiLanguage.Items.Add(culture);
 
 			//Refresh the list of erasure methods
@@ -69,7 +70,7 @@ namespace Eraser
 		private void LoadSettings()
 		{
 			foreach (Object lang in uiLanguage.Items)
-				if (((CultureInfo)lang).Name == ManagerLibrary.Instance.Settings.UILanguage)
+				if (((Language)lang).Name == ManagerLibrary.Instance.Settings.UILanguage)
 				{
 					uiLanguage.SelectedItem = lang;
 					break;
@@ -210,7 +211,7 @@ namespace Eraser
 			}
 
 			ManagerLibrary.Instance.Settings.UILanguage =
-				((CultureInfo)uiLanguage.SelectedItem).Name;
+				((Language)uiLanguage.SelectedItem).Name;
 			ManagerLibrary.Instance.Settings.DefaultFileErasureMethod =
 				((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
 			ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod =
