@@ -210,9 +210,12 @@ if exist "Filelist" (
 )
 
 for /R %25%25i in (*.cs) do echo %25%25i &gt;&gt; "Filelist"
-xgettext --keyword=_ --keyword=_:1c,2 --from-code UTF-8 -j -o "Languages\Eraser.pot" "%25i"
+xgettext --keyword=_ --keyword=_:1c,2 --from-code UTF-8 -j -o "Languages\Eraser.pot" -f "Filelist"
 del Filelist
 
+for /R %25%25i in (*.designer.cs) do echo %25%25i &gt;&gt; "Filelist"
+xgettext --keyword=_ --keyword=_:1c,2 --from-code UTF-8 -a -j -o "Languages\Eraser.pot" -f Filelist
+del Filelist
 for %25%25i in (Languages\*.po) do msgmerge -U --backup=none "%25%25i" "Languages\Eraser.pot"
 
 set path=$(PATH);C:\Windows\Microsoft.NET\Framework\v2.0.50727
