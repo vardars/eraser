@@ -148,8 +148,8 @@ namespace Eraser
 				if (unused.Checked)
 				{
 					file.Checked = true;
-					errorProvider.SetError(unused, "The erasure method selected does " +
-						"not support unused disk space erasures.");
+					errorProvider.SetError(unused, S._("The erasure method selected does " +
+						"not support unused disk space erasures."));
 				}
 				unused.Enabled = false;
 			}
@@ -214,9 +214,9 @@ namespace Eraser
 		private void ok_Click(object sender, EventArgs e)
 		{
 			if (file.Checked && filePath.Text.Length == 0)
-				errorProvider.SetError(filePath, "Invalid file path");
+				errorProvider.SetError(filePath, S._("Invalid file path"));
 			else if (folder.Checked && folderPath.Text.Length == 0)
-				errorProvider.SetError(folderPath, "Invalid folder path");
+				errorProvider.SetError(folderPath, S._("Invalid folder path"));
 			else
 			{
 				errorProvider.Clear();

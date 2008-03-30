@@ -10,6 +10,7 @@ using Eraser.Manager;
 using Eraser.Manager.Plugin;
 using Microsoft.Win32;
 using System.Globalization;
+using Eraser.Util;
 
 namespace Eraser
 {
@@ -105,13 +106,11 @@ namespace Eraser
 				!ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately;
 			plausibleDeniability.Checked =
 				ManagerLibrary.Instance.Settings.PlausibleDeniability;
+			List<string> defaultsList = new List<string>();
 
 			//Select an intelligent default if the settings are invalid.
-			string defaults = string.Empty;
 			if (uiLanguage.SelectedIndex == -1)
-			{
-				defaults += "\tUser interface language\n";
-			}
+				defaultsList.Add(S._("User interface language"));
 			if (eraseFilesMethod.SelectedIndex == -1)
 			{
 				if (eraseFilesMethod.Items.Count > 0)
@@ -120,7 +119,7 @@ namespace Eraser
 					ManagerLibrary.Instance.Settings.DefaultFileErasureMethod =
 						((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
 				}
-				defaults += "\tDefault file erasure method\n";
+				defaultsList.Add(S._("Default file erasure method"));
 			}
 			if (eraseUnusedMethod.SelectedIndex == -1)
 			{
@@ -130,7 +129,7 @@ namespace Eraser
 					ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod =
 						((ErasureMethod)eraseUnusedMethod.SelectedItem).GUID;
 				}
-				defaults += "\tDefault unused space erasure method\n";
+				defaultsList.Add(S._("Default unused space erasure method"));
 			}
 			if (erasePRNG.SelectedIndex == -1)
 			{
@@ -140,15 +139,18 @@ namespace Eraser
 					ManagerLibrary.Instance.Settings.ActivePRNG =
 						((PRNG)erasePRNG.SelectedItem).GUID;
 				}
-				defaults += "\tRandomness data source\n";
+				defaultsList.Add(S._("Randomness data source"));
 			}
 
 			//Remind the user.
-			if (defaults.Length != 0)
+			if (defaultsList.Count != 0)
 			{
-				MessageBox.Show(string.Format("The following settings held invalid values:\n\n" +
+				string defaults = string.Empty;
+				foreach (string item in defaultsList)
+					defaults += "\t" + item +"\n";
+				MessageBox.Show(string.Format(S._("The following settings held invalid values:\n\n" +
 					"{0}\nThese settings have now been set to naive defaults.\n\n" +
-					"Please check that the new settings suit your required level of security.",
+					"Please check that the new settings suit your required level of security."),
 					defaults), "Eraser", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				saveSettings_Click(null, null);
 			}
@@ -185,25 +187,25 @@ namespace Eraser
 			errorProvider.Clear();
 			if (uiLanguage.SelectedIndex == -1)
 			{
-				errorProvider.SetError(uiLanguage, "An invalid language was selected.");
+				errorProvider.SetError(uiLanguage, S._("An invalid language was selected."));
 				return;
 			}
 			else if (eraseFilesMethod.SelectedIndex == -1)
 			{
-				errorProvider.SetError(eraseFilesMethod, "An invalid file erasure method " +
-					"was selected.");
+				errorProvider.SetError(eraseFilesMethod, S._("An invalid file erasure method " +
+					"was selected."));
 				return;
 			}
 			else if (eraseUnusedMethod.SelectedIndex == -1)
 			{
-				errorProvider.SetError(eraseUnusedMethod, "An invalid unused disk space " +
-					"erasure method was selected.");
+				errorProvider.SetError(eraseUnusedMethod, S._("An invalid unused disk space " +
+					"erasure method was selected."));
 				return;
 			}
 			else if (erasePRNG.SelectedIndex == -1)
 			{
-				errorProvider.SetError(erasePRNG, "An invalid randomness data " +
-					"source was selected.");
+				errorProvider.SetError(erasePRNG, S._("An invalid randomness data " +
+					"source was selected."));
 				return;
 			}
 
@@ -217,9 +219,9 @@ namespace Eraser
 			PRNG newPRNG = (PRNG)erasePRNG.SelectedItem;
 			if (newPRNG.GUID != ManagerLibrary.Instance.Settings.ActivePRNG)
 			{
-				MessageBox.Show("The new randomness data source will only be used when " +
-					"the next task is run.\nCurrently running tasks will use the old source.",
-					"Eraser", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(S._("The new randomness data source will only be used when " +
+					"the next task is run.\nCurrently running tasks will use the old source."),
+					S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 				ManagerLibrary.Instance.Settings.ActivePRNG = newPRNG.GUID;
 			}
 			ManagerLibrary.Instance.Settings.EraseLockedFilesOnRestart =

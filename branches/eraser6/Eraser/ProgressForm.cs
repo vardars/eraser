@@ -44,14 +44,14 @@ namespace Eraser
 
 			item.Text = File.GetCompactPath(e.CurrentItemName, item.Width * 2, item.Font);
 			pass.Text = e.TotalPasses != 0 ?
-				string.Format("{0} out of {1}", e.CurrentPass, e.TotalPasses) :
+				string.Format(S._("{0} out of {1}"), e.CurrentPass, e.TotalPasses) :
 				string.Format("{0}", e.CurrentPass);
-			timeLeft.Text = string.Format("{0} left", new TimeSpan(0, 0, e.TimeLeft).ToString());
+			timeLeft.Text = string.Format(S._("{0} left"), new TimeSpan(0, 0, e.TimeLeft).ToString());
 
 			itemProgress.Value = e.CurrentItemProgress;
 			itemProgressLbl.Text = string.Format("{0}%", e.CurrentItemProgress);
 			overallProgress.Value = e.OverallProgress;
-			overallProgressLbl.Text = string.Format("Total: {0}%", e.OverallProgress);
+			overallProgressLbl.Text = string.Format(S._("Total: {0}%"), e.OverallProgress);
 		}
 
 		void task_TaskFinished(TaskEventArgs e)
@@ -65,7 +65,6 @@ namespace Eraser
 			}
 
 			//Inform the user on the status of the task.
-			status.Text = "Completed";
 			LogLevel highestLevel = LogLevel.INFORMATION;
 			List<LogEntry> entries = e.Task.Log.LastSessionEntries;
 			foreach (LogEntry log in entries)
@@ -75,18 +74,21 @@ namespace Eraser
 			switch (highestLevel)
 			{
 				case LogLevel.WARNING:
-					status.Text += " with warnings";
+					status.Text = S._("Completed with warnings");
 					break;
 				case LogLevel.ERROR:
-					status.Text  += " with errors";
+					status.Text = S._("Completed with errors");
 					break;
 				case LogLevel.FATAL:
-					status.Text = "Not completed";
+					status.Text = S._("Not completed");
+					break;
+				default:
+					status.Text = S._("Completed");
 					break;
 			}
 
 			//Change the Stop button to be a Close button.
-			stop.Text = "Close";
+			stop.Text = S._("Close");
 		}
 
 		private void stop_Click(object sender, EventArgs e)

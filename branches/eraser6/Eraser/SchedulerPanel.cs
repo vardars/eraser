@@ -6,8 +6,9 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-using System.Globalization;
 using Eraser.Manager;
+using Eraser.Util;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace Eraser
@@ -76,9 +77,9 @@ namespace Eraser
 			else if (task.Schedule == Schedule.RunNow)
 			{
 				if (task.Queued)
-					item.SubItems[1].Text = "Queued for execution";
+					item.SubItems[1].Text = S._("Queued for execution");
 				else
-					item.SubItems[1].Text = "Not queued";
+					item.SubItems[1].Text = S._("Not queued");
 			}
 			else
 				item.SubItems[1].Text = task.Schedule.UIText;
@@ -120,7 +121,7 @@ namespace Eraser
 			ListViewItem item = GetTaskItem(e.Task);
 
 			//Update the status.
-			item.SubItems[1].Text = "Running...";
+			item.SubItems[1].Text = S._("Running...");
 
 			//Show the progress bar
 			schedulerProgress.Tag = item.Index;
@@ -170,7 +171,7 @@ namespace Eraser
 			ListViewItem item = GetTaskItem(e.Task);
 
 			//Update the status.
-			item.SubItems[1].Text = "Completed";
+			item.SubItems[1].Text = S._("Completed");
 
 			//Hide the progress bar
 			if (schedulerProgress.Tag != null &&
@@ -190,16 +191,16 @@ namespace Eraser
 			switch (highestLevel)
 			{
 				case LogLevel.WARNING:
-					item.SubItems[1].Text += " with warnings.";
+					item.SubItems[1].Text = S._("Completed with warnings");
 					break;
 				case LogLevel.ERROR:
-					item.SubItems[1].Text += " with errors.";
+					item.SubItems[1].Text = S._("Completed with errors");
 					break;
 				case LogLevel.FATAL:
-					item.SubItems[1].Text = "Not completed.";
+					item.SubItems[1].Text = S._("Not completed");
 					break;
 				default:
-					item.SubItems[1].Text += ".";
+					item.SubItems[1].Text = S._("Completed");
 					break;
 			}
 

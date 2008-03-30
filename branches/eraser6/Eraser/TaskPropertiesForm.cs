@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 using System.Globalization;
 using Eraser.Manager;
+using Eraser.Util;
 
 namespace Eraser
 {
@@ -96,7 +97,7 @@ namespace Eraser
 					schedule.MonthlySchedule = (int)scheduleMonthlyDayNumber.Value;
 				}
 				else
-					throw new NotImplementedException("No such scheduling method");
+					throw new NotImplementedException("No such scheduling method.");
 			}
 		}
 
@@ -250,7 +251,7 @@ namespace Eraser
 			{
 				errorProvider.SetIconPadding(data, -16);
 				errorProvider.SetIconAlignment(data, ErrorIconAlignment.BottomRight);
-				errorProvider.SetError(data, "The task has no data to erase.");
+				errorProvider.SetError(data, S._("The task has no data to erase."));
 				container.SelectedIndex = 0;
 				return;
 			}
@@ -262,8 +263,8 @@ namespace Eraser
 					!scheduleWeeklySunday.Checked)
 				{
 					errorProvider.SetIconPadding(scheduleWeeklyDays, -16);
-					errorProvider.SetError(scheduleWeeklyDays, "The task needs to run " +
-						"on at least one day a week");
+					errorProvider.SetError(scheduleWeeklyDays, S._("The task needs to run " +
+						"on at least one day a week"));
 					container.SelectedIndex = 1;
 					return;
 				}

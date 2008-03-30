@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 
 using Eraser.Manager;
+using Eraser.Util;
 using Microsoft.Win32;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -20,7 +21,7 @@ namespace Eraser
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.SafeTopLevelCaptionFormat = "Eraser";
+			Application.SafeTopLevelCaptionFormat = S._("Eraser");
 
 			using (ManagerLibrary library = new ManagerLibrary())
 			using (eraserClient = new DirectExecutor())
@@ -41,8 +42,8 @@ namespace Eraser
 					catch (Exception)
 					{
 						key.DeleteValue("TaskList");
-						MessageBox.Show("Could not load task list. All task entries have " +
-							"been lost.", "Eraser", MessageBoxButtons.OK,
+						MessageBox.Show(S._("Could not load task list. All task entries have " +
+							"been lost."), S._("Eraser"), MessageBoxButtons.OK,
 							MessageBoxIcon.Error);
 					}
 				}
@@ -96,7 +97,7 @@ namespace Eraser
 			PlausibleDeniability =
 				(int)key.GetValue("PlausibleDeniability", (object)1) != 0;
 			UILanguage = (string)key.GetValue("UILanguage", string.Empty);
-			Util.S.Language = new CultureInfo(UILanguage);
+			S.Language = new CultureInfo(UILanguage);
 
 			//Load the plugin settings.
 			byte[] pluginSettings = (byte[])key.GetValue("PluginSettings", new byte[] { });
@@ -111,8 +112,8 @@ namespace Eraser
 					catch (Exception)
 					{
 						key.DeleteValue("PluginSettings");
-						MessageBox.Show("Could not load plugin settings. All settings " +
-							"have been lost", "Eraser", MessageBoxButtons.OK,
+						MessageBox.Show(S._("Could not load plugin settings. All settings " +
+							"have been lost"), S._("Eraser"), MessageBoxButtons.OK,
 							MessageBoxIcon.Error);
 					}
 				}
