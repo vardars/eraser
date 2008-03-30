@@ -21,5 +21,11 @@ namespace Eraser
 			get { return label.Text; }
 			set { label.Text = value; }
 		}
+
+		public override string Text
+		{
+			get { return Label; }
+			set { Label = value; }
+		}
 	}
 }
