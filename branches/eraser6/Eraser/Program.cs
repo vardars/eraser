@@ -113,7 +113,7 @@ namespace Eraser
 					{
 						key.DeleteValue("PluginSettings");
 						MessageBox.Show(S._("Could not load plugin settings. All settings " +
-							"have been lost"), S._("Eraser"), MessageBoxButtons.OK,
+							"have been lost."), S._("Eraser"), MessageBoxButtons.OK,
 							MessageBoxIcon.Error);
 					}
 				}
