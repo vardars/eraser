@@ -1,34 +1,35 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# English translations for PACKAGE package.
+# Copyright (C) 2008 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# <EMAIL@ADDRESS>, 2008.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Eraser\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-03-31 07:08+0800\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2008-03-31 07:08+0800\n"
+"Last-Translator: Joel Low <lowjoel@users.sourceforge.net>\n"
+"Language-Team: The Eraser Project <eraser-developers@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: Dutch\n"
 
 #: D:\Development\Projects\Eraser\Eraser\MainForm.cs:39
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:56
 msgid "Erase Schedule"
-msgstr ""
+msgstr "Planner"
 
 #: D:\Development\Projects\Eraser\Eraser\MainForm.cs:49
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:69
 msgid "Settings"
-msgstr ""
+msgstr "Instellingen"
 
 #: D:\Development\Projects\Eraser\Eraser\MainForm.cs:58
 msgid "Help"
-msgstr ""
+msgstr "Help"
 
 #: D:\Development\Projects\Eraser\Eraser\Program.cs:24
 #: D:\Development\Projects\Eraser\Eraser\Program.cs:46
@@ -36,92 +37,92 @@ msgstr ""
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:224
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:225
 msgid "Eraser"
-msgstr ""
+msgstr "Eraser"
 
 #: D:\Development\Projects\Eraser\Eraser\Program.cs:45
 msgid "Could not load task list. All task entries have been lost."
-msgstr ""
+msgstr "Kan geen taak lijst vinden. Alle taken zijn verdwenen."
 
 #: D:\Development\Projects\Eraser\Eraser\Program.cs:115
 msgid "Could not load plugin settings. All settings have been lost."
-msgstr ""
+msgstr "Kan geen plugin lijst vinden. Alle plugins zijn verdwenen."
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:47
-#, possible-csharp-format
+#, csharp-format
 msgid "{0} out of {1}"
-msgstr ""
+msgstr "{0} van {1}"
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:49
-#, possible-csharp-format
+#, csharp-format
 msgid "{0} left"
-msgstr ""
+msgstr "{0} rechts"
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:54
-#, possible-csharp-format
+#, csharp-format
 msgid "Total: {0}%"
-msgstr ""
+msgstr "Totaal: {0}%"
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:77
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:194
 msgid "Completed with warnings"
-msgstr ""
+msgstr "Afgerond met waarschuwingen"
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:80
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:197
 msgid "Completed with errors"
-msgstr ""
+msgstr "Afgerond met fouten"
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:83
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:200
 msgid "Not completed"
-msgstr ""
+msgstr "Niet afgerond"
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:86
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:174
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:203
 msgid "Completed"
-msgstr ""
+msgstr "Afgerond"
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:91
 #: D:\Development\Projects\Eraser\Eraser\LogForm.Designer.cs:76
 msgid "Close"
-msgstr ""
+msgstr "Sluiten"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:80
 msgid "Queued for execution"
-msgstr ""
+msgstr "In wachtrij geplaatst voor operatie"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:82
 msgid "Not queued"
-msgstr ""
+msgstr "Niet in wachtrij geplaatst"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:124
 msgid "Running..."
-msgstr ""
+msgstr "Wordt uitgevoerd..."
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:113
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:114
 msgid "User interface language"
-msgstr ""
+msgstr "Gebruikers interface taal:"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:122
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:123
 msgid "Default file erasure method"
-msgstr ""
+msgstr "Standard bestand verwijder methode"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:132
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:133
 msgid "Default unused space erasure method"
-msgstr ""
+msgstr "Standaard ongebruikte ruimte verwijder methode"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:142
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:143
 msgid "Randomness data source"
-msgstr ""
+msgstr "Willekeurige data bron"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:151
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:152
-#, possible-csharp-format
+#, csharp-format
 msgid ""
 "The following settings held invalid values:\n"
 "\n"
@@ -130,26 +131,33 @@ msgid ""
 "\n"
 "Please check that the new settings suit your required level of security."
 msgstr ""
+"De volgende instellingen had ongeldige waarden:\n"
+"\n"
+"{0}\n"
+"Deze instellingen zijn omgezet naar lege standaards.\n"
+"\n"
+"Kijk goed na of de nieuwe instelling u bevalt met de benodigde beveiliging "
+"niveau."
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:190
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:191
 msgid "An invalid language was selected."
-msgstr ""
+msgstr "Een foutieve taal was geselecteerd."
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:195
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:196
 msgid "An invalid file erasure method was selected."
-msgstr ""
+msgstr "Een foutieve wis methode was geselecteerd."
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:201
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:202
 msgid "An invalid unused disk space erasure method was selected."
-msgstr ""
+msgstr "Een foutieve ongebruikte schijfruimte wis methode was geselecteerd."
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:207
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:208
 msgid "An invalid randomness data source was selected."
-msgstr ""
+msgstr "Een foutieve Willekeurige data bron was geselecteerd."
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:222
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:223
@@ -157,27 +165,31 @@ msgid ""
 "The new randomness data source will only be used when the next task is run.\n"
 "Currently running tasks will use the old source."
 msgstr ""
+"Deze nieuwe willekeurige data bron zal gebruikt worden als de volgende taak "
+"wordt uitgevoerd.\n"
+"De huidige taak zal de huidige bron gebruiken."
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:151
 msgid ""
 "The erasure method selected does not support unused disk space erasures."
 msgstr ""
+"Deze geselecteerde wis methode kan geen ongebruikte schijfruimte te wissen."
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:217
 msgid "Invalid file path"
-msgstr ""
+msgstr "Foutief bestand"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:219
 msgid "Invalid folder path"
-msgstr ""
+msgstr "Foutieve folder"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.cs:254
 msgid "The task has no data to erase."
-msgstr ""
+msgstr "De taak heeft geen data om te wissen."
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.cs:266
 msgid "The task needs to run on at least one day a week"
-msgstr ""
+msgstr "De taak moet minstens eens per week uitgevoerd worden"
 
 #: D:\Development\Projects\Eraser\Eraser\AboutForm.Designer.cs:39
 msgid "pictureBox1"
@@ -251,7 +263,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\LogForm.Designer.cs:65
 msgid "Clear Log"
-msgstr ""
+msgstr "Leeg Log"
 
 #: D:\Development\Projects\Eraser\Eraser\LogForm.Designer.cs:73
 msgid "close"
@@ -259,15 +271,15 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\LogForm.Designer.cs:82
 msgid "Timestamp"
-msgstr ""
+msgstr "regelstempel"
 
 #: D:\Development\Projects\Eraser\Eraser\LogForm.Designer.cs:87
 msgid "Severity"
-msgstr ""
+msgstr "Type van bericht"
 
 #: D:\Development\Projects\Eraser\Eraser\LogForm.Designer.cs:91
 msgid "Message"
-msgstr ""
+msgstr "bericht"
 
 #: D:\Development\Projects\Eraser\Eraser\LogForm.Designer.cs:105
 msgid "LogForm"
@@ -275,7 +287,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\LogForm.Designer.cs:108
 msgid "Log Viewer"
-msgstr ""
+msgstr "Log Viewer"
 
 #: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:48
 #: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:50
@@ -337,7 +349,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:59
 msgid "Total: 0%"
-msgstr ""
+msgstr "Totaal: 0%"
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:65
 msgid "overallProgress"
@@ -353,7 +365,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:86
 msgid "Overwriting..."
-msgstr ""
+msgstr "Overschrijven..."
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:92
 msgid "statusLbl"
@@ -361,7 +373,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:95
 msgid "Status:"
-msgstr ""
+msgstr "Status:"
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:101
 msgid "itemLbl"
@@ -369,7 +381,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:104
 msgid "Item:"
-msgstr ""
+msgstr "Item:"
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:109
 msgid "item"
@@ -381,7 +393,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:120
 msgid "Pass:"
-msgstr ""
+msgstr "Wachtwoord:"
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:126
 msgid "pass"
@@ -401,7 +413,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:147
 msgid "Erasing..."
-msgstr ""
+msgstr "Wissen..."
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:154
 msgid "itemProgressLbl"
@@ -421,7 +433,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:172
 msgid "Stop"
-msgstr ""
+msgstr "Stop"
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:180
 msgid "bevelLine1"
@@ -437,7 +449,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:200
 msgid "Time left:"
-msgstr ""
+msgstr "tijd over:"
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:206
 msgid "timeLeft"
@@ -445,7 +457,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:209
 msgid "Calculating..."
-msgstr ""
+msgstr "Berekenen..."
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:238
 msgid "ProgressForm"
@@ -453,22 +465,22 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:240
 msgid "Erasure Progress"
-msgstr ""
+msgstr "Verloop van wissen"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:32
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:78
 msgid "Tasks executed immediately"
-msgstr ""
+msgstr "Taak direct uitvoeren"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:33
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:80
 msgid "Tasks executed on restart"
-msgstr ""
+msgstr "taak uitgevoeren bij herstart"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:34
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:82
 msgid "Recurring tasks"
-msgstr ""
+msgstr "Herhaalde taken"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:79
 msgid "immediate"
@@ -489,15 +501,15 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:102
 msgid "Task Name"
-msgstr ""
+msgstr "naam van de taak"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:107
 msgid "Next Run"
-msgstr ""
+msgstr "Volgende uitvoertaak"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:112
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:125
 msgid "schedulerMenu"
@@ -509,7 +521,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:133
 msgid "Run Now"
-msgstr ""
+msgstr "Nu uitvoeren"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:138
 msgid "cancelTaskToolStripMenuItem"
@@ -517,7 +529,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:140
 msgid "Cancel Task"
-msgstr ""
+msgstr "Annuleer Taak"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:145
 msgid "toolStripSeparator2"
@@ -529,7 +541,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:152
 msgid "View Task Log"
-msgstr ""
+msgstr "Bekijk taak log"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:162
 msgid "editTaskToolStripMenuItem"
@@ -537,7 +549,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:164
 msgid "Edit Task"
-msgstr ""
+msgstr "Bewerk taak"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:169
 msgid "deleteTaskToolStripMenuItem"
@@ -545,7 +557,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:171
 msgid "Delete Task"
-msgstr ""
+msgstr "Verwijder taak"
 
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:177
 msgid "schedulerProgress"
@@ -589,7 +601,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:151
 msgid "Erase settings"
-msgstr ""
+msgstr "Instellingen"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:153
 msgid "erase"
@@ -601,7 +613,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:165
 msgid "Default file erasure method:"
-msgstr ""
+msgstr "Standard bestand wis methode"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:171
 msgid "eraseUnusedMethodLbl"
@@ -609,7 +621,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:174
 msgid "Default unused space erasure method:"
-msgstr ""
+msgstr "Standaard ongebruikte ruimte wis methode"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:180
 msgid "eraseFilesMethod"
@@ -621,7 +633,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:197
 msgid "Plugins"
-msgstr ""
+msgstr "Plugins"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:199
 msgid "plugins"
@@ -633,19 +645,19 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:224
 msgid "Name"
-msgstr ""
+msgstr "Naam"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:229
 msgid "Author"
-msgstr ""
+msgstr "Auteur"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:234
 msgid "Version"
-msgstr ""
+msgstr "Versie"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:239
 msgid "File Path"
-msgstr ""
+msgstr "Bestandsnaam"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:246
 msgid "pluginsContextMenu"
@@ -657,11 +669,11 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:254
 msgid "Settings..."
-msgstr ""
+msgstr "Instellingen..."
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:262
 msgid "Scheduler settings"
-msgstr ""
+msgstr "Planner instellingen"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:273
 msgid "schedulerMissed"
@@ -693,7 +705,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:308
 msgid "Save Settings"
-msgstr ""
+msgstr "Bewaar instellingen"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:316
 msgid "erasePRNGLbl"
@@ -701,7 +713,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:319
 msgid "Randomness data source:"
-msgstr ""
+msgstr "Willekeurige data bron:"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:326
 msgid "erasePRNG"
@@ -715,6 +727,7 @@ msgstr ""
 msgid ""
 "Copy other files from the same volume over the deleted file after erasing"
 msgstr ""
+"Copieer andere bestanden met hetzelfde volume over de uitgewiste bestanden"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:350
 msgid "uiLanguageLbl"
@@ -722,7 +735,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:353
 msgid "User interface language:"
-msgstr ""
+msgstr "Interface gebruikers taal:"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:360
 msgid "uiLanguage"
@@ -738,7 +751,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:64
 msgid "File"
-msgstr ""
+msgstr "Bestand"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:72
 msgid "folder"
@@ -746,7 +759,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:76
 msgid "Files in folder"
-msgstr ""
+msgstr "Bestanden in map"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:84
 msgid "unused"
@@ -754,7 +767,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:88
 msgid "Unused disk space"
-msgstr ""
+msgstr "Ongebruikte schijfruimte"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:97
 msgid "filePath"
@@ -767,7 +780,7 @@ msgstr ""
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:108
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:128
 msgid "Browse..."
-msgstr ""
+msgstr "Browse..."
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:117
 msgid "folderPath"
@@ -783,7 +796,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:139
 msgid "Include Mask:"
-msgstr ""
+msgstr "mask Invoegen:"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:146
 msgid "folderInclude"
@@ -795,7 +808,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:157
 msgid "Exclude Mask:"
-msgstr ""
+msgstr "Mask uitsluiten:"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:164
 msgid "folderExclude"
@@ -807,7 +820,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:177
 msgid "Delete folder if empty"
-msgstr ""
+msgstr "Verwijder map indien leeg"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:188
 msgid "unusedDisk"
@@ -819,7 +832,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:200
 msgid "Erasure method:"
-msgstr ""
+msgstr "Wis Methode:"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:209
 msgid "method"
@@ -828,12 +841,12 @@ msgstr ""
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:218
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:199
 msgid "ok"
-msgstr ""
+msgstr "o"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:221
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:202
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:230
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:211
@@ -843,15 +856,15 @@ msgstr ""
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:233
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:214
 msgid "Cancel"
-msgstr ""
+msgstr "Annuleer"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:238
 msgid "All files (*.*)|*.*"
-msgstr ""
+msgstr "Alle bestanden (*.*)|*.*"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:242
 msgid "Select a folder to erase."
-msgstr ""
+msgstr "Selecteer een folder om te wissen."
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:255
 msgid "unusedClusterTips"
@@ -859,7 +872,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:258
 msgid "Erase cluster tips"
-msgstr ""
+msgstr "Wis cluster tips"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:290
 msgid "TaskDataSelectionForm"
@@ -867,7 +880,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:293
 msgid "Select Data to Erase"
-msgstr ""
+msgstr "Selecteer data om te wissen"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:102
 msgid "nameLbl"
@@ -875,7 +888,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:105
 msgid "Task name (optional):"
-msgstr ""
+msgstr "naam van taak (optioneel):"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:112
 msgid "name"
@@ -887,7 +900,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:123
 msgid "Data to erase:"
-msgstr ""
+msgstr "Data om te wissen:"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:129
 msgid "typeLbl"
@@ -895,7 +908,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:132
 msgid "Task Type:"
-msgstr ""
+msgstr "Type Taak:"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:138
 msgid "typeImmediate"
@@ -903,7 +916,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:141
 msgid "Run immediately"
-msgstr ""
+msgstr "Direct uitvoeren"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:149
 msgid "typeRecurring"
@@ -911,7 +924,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:152
 msgid "Recurring"
-msgstr ""
+msgstr "Herhalen"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:167
 msgid "data"
@@ -919,11 +932,11 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:176
 msgid "Data Set"
-msgstr ""
+msgstr "Data set"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:181
 msgid "Erasure Method"
-msgstr ""
+msgstr "Wis methode"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:188
 msgid "dataAdd"
@@ -931,7 +944,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:191
 msgid "Add Data"
-msgstr ""
+msgstr "Data toevoegen"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:242
 msgid "containerTask"
@@ -939,7 +952,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:246
 msgid "Task"
-msgstr ""
+msgstr "Taak"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:253
 msgid "typeRestart"
@@ -947,7 +960,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:257
 msgid "Run on restart"
-msgstr ""
+msgstr "Uitvoeren na herstart"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:264
 msgid "containerSchedule"
@@ -955,7 +968,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:268
 msgid "Schedule"
-msgstr ""
+msgstr "Planner"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:280
 msgid "tableLayoutPanel1"
@@ -967,7 +980,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:311
 msgid "Recurrance Pattern"
-msgstr ""
+msgstr "Herhalingspatroon"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:317
 msgid "scheduleMonthlyLbl"
@@ -975,7 +988,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:320
 msgid "On day"
-msgstr ""
+msgstr "Op dag"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:335
 msgid "scheduleMonthlyDayNumber"
@@ -991,7 +1004,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:368
 msgid "month(s)"
-msgstr ""
+msgstr "Maand(en)"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:374
 msgid "scheduleMonthlyEveryLbl"
@@ -999,7 +1012,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:377
 msgid "of every"
-msgstr ""
+msgstr "of elke"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:392
 msgid "scheduleWeeklyFreq"
@@ -1011,7 +1024,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:408
 msgid "Daily"
-msgstr ""
+msgstr "Dagelijks"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:421
 msgid "scheduleDailyPanel"
@@ -1028,7 +1041,7 @@ msgstr ""
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:456
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:582
 msgid "Every"
-msgstr ""
+msgstr "Elke"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:464
 msgid "scheduleDailyByDayLbl"
@@ -1036,7 +1049,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:467
 msgid "day(s),"
-msgstr ""
+msgstr "dag(en)"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:473
 msgid "scheduleDailyByWeekday"
@@ -1044,7 +1057,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:476
 msgid "Every weekday"
-msgstr ""
+msgstr "Elke werkdag"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:492
 msgid "scheduleWeeklyDays"
@@ -1056,7 +1069,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:503
 msgid "Monday"
-msgstr ""
+msgstr "Maandag"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:510
 msgid "scheduleWeeklyTuesday"
@@ -1064,7 +1077,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:513
 msgid "Tuesday"
-msgstr ""
+msgstr "Dinsdag"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:520
 msgid "scheduleWeeklyWednesday"
@@ -1072,7 +1085,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:523
 msgid "Wednesday"
-msgstr ""
+msgstr "Woensdag"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:530
 msgid "scheduleWeeklyThursday"
@@ -1080,7 +1093,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:533
 msgid "Thursday"
-msgstr ""
+msgstr "Donderdag"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:540
 msgid "scheduleWeeklyFriday"
@@ -1088,7 +1101,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:543
 msgid "Friday"
-msgstr ""
+msgstr "Vrijdag"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:550
 msgid "scheduleWeeklySaturday"
@@ -1096,7 +1109,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:553
 msgid "Saturday"
-msgstr ""
+msgstr "Zaterdag"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:560
 msgid "scheduleWeeklySunday"
@@ -1104,7 +1117,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:563
 msgid "Sunday"
-msgstr ""
+msgstr "Zondag"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:570
 msgid "scheduleWeeklyFreqLbl"
@@ -1112,7 +1125,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:573
 msgid "week(s), on the following days:"
-msgstr ""
+msgstr "week/weken, op de volgende dagen:"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:579
 msgid "scheduleWeeklyLbl"
@@ -1124,7 +1137,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:591
 msgid "Weekly"
-msgstr ""
+msgstr "Wekelijks"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:599
 msgid "scheduleMonthly"
@@ -1132,7 +1145,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:603
 msgid "Monthly"
-msgstr ""
+msgstr "Maandelijks"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:613
 msgid "nonRecurringPanel"
@@ -1147,6 +1160,8 @@ msgid ""
 "The task being edited is a non-recurring task, none of the settings on this "
 "page apply."
 msgstr ""
+"De taak is geen herhaalderlijke taak, geen van deze instellingen op deze "
+"pagina zijn toegepast."
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:633
 msgid "nonRecurringBitmap"
@@ -1166,7 +1181,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:666
 msgid "Run this task at:"
-msgstr ""
+msgstr "Voer deze taak uit op:"
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:685
 msgid "TaskPropertiesForm"
@@ -1174,7 +1189,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:687
 msgid "Task Properties"
-msgstr ""
+msgstr "Taak Instellingen"
 
 #: D:\Development\Projects\Eraser\Eraser\Properties\Resources.Designer.cs:22
 msgid "System.Resources.Tools.StronglyTypedResourceBuilder"
@@ -1210,7 +1225,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\Properties\Resources.Designer.cs:86
 msgid "Information"
-msgstr ""
+msgstr "Informatie"
 
 #: D:\Development\Projects\Eraser\Eraser\Properties\Resources.Designer.cs:93
 msgid "ToolbarArrow"
