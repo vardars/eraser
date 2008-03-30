@@ -15,6 +15,11 @@ namespace Eraser.Util
 	/// </summary>
 	public static class S
 	{
+		/// <summary>
+		/// Translates the localizable string to the set localized string.
+		/// </summary>
+		/// <param name="str">The string to localize.</param>
+		/// <returns>A localized string, or str if no localization exists.</returns>
 		public static string _(string str)
 		{
 			Assembly caller = Assembly.GetCallingAssembly();
@@ -31,8 +36,11 @@ namespace Eraser.Util
 			return res.GetString(str, Language);
 		}
 
+		/// <summary>
+		/// The current culture to use when looking up for localizations.
+		/// </summary>
+		public static CultureInfo Language = CultureInfo.CurrentUICulture;
 		private static Dictionary<Assembly, GettextResourceManager> managers =
 			new Dictionary<Assembly, GettextResourceManager>();
-		public static CultureInfo Language = CultureInfo.CurrentUICulture;
 	}
 }
