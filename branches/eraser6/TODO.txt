@@ -7,6 +7,9 @@
 2. Test multi-target tasks
 3. For the FL16KB - the default method may change during execution. Get the user
    to set the method to use.
+4. Reimplement plausible deniability. ALlow users to select files to be used as
+   denial files. If the list of files are empty, then fall back to the random file
+   approach.
 
 a. Are file names of ADSes changeable and would leaving them be a security risk?
 
@@ -22,11 +25,14 @@ a. Are file names of ADSes changeable and would leaving them be a security risk?
    -Recycle bin erasure
 7. Allow Eraser to be minimized to the system tray
 8. Integrated update function (as a plugin?)
+9. Allow users to define their own passes.
+10. Allow users to specify that they want their page file to be encrypted under Vista.
+    fsutil behavior set encryptpagingfile 1
 
 ===Questions===
 1. More intelligent default settings selection
 2. Can't we filter variable names out of getText pots? We also need to add exception
    strings and such stuff from the other projects.
-	
+
 ===Annoyances===
 1. Progress calculation when cluster tip erasure is disabled
