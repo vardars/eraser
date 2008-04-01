@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Eraser\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-03-31 07:08+0800\n"
-"PO-Revision-Date: 2008-03-31 07:08+0800\n"
+"PO-Revision-Date: 2008-04-01 10:16+0800\n"
 "Last-Translator: Joel Low <lowjoel@users.sourceforge.net>\n"
 "Language-Team: The Eraser Project <eraser-developers@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -17,110 +17,105 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Language: Dutch\n"
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:39
+#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:42
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:56
 msgid "Erase Schedule"
 msgstr "Planner"
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:49
+#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:52
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:69
 msgid "Settings"
 msgstr "Instellingen"
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:58
+#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:61
 msgid "Help"
 msgstr "Help"
 
 #: D:\Development\Projects\Eraser\Eraser\Program.cs:24
-#: D:\Development\Projects\Eraser\Eraser\Program.cs:46
-#: D:\Development\Projects\Eraser\Eraser\Program.cs:116
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:224
+#: D:\Development\Projects\Eraser\Eraser\Program.cs:43
+#: D:\Development\Projects\Eraser\Eraser\Program.cs:113
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:225
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:124
 msgid "Eraser"
 msgstr "Eraser"
 
-#: D:\Development\Projects\Eraser\Eraser\Program.cs:45
+#: D:\Development\Projects\Eraser\Eraser\Program.cs:42
 msgid "Could not load task list. All task entries have been lost."
 msgstr "Kan geen taak lijst vinden. Alle taken zijn verdwenen."
 
-#: D:\Development\Projects\Eraser\Eraser\Program.cs:115
+#: D:\Development\Projects\Eraser\Eraser\Program.cs:112
 msgid "Could not load plugin settings. All settings have been lost."
 msgstr "Kan geen plugin lijst vinden. Alle plugins zijn verdwenen."
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:47
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:48
 #, csharp-format
 msgid "{0} out of {1}"
 msgstr "{0} van {1}"
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:49
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:50
 #, csharp-format
 msgid "{0} left"
 msgstr "{0} rechts"
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:54
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:55
 #, csharp-format
 msgid "Total: {0}%"
 msgstr "Totaal: {0}%"
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:77
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:194
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:78
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:195
 msgid "Completed with warnings"
 msgstr "Afgerond met waarschuwingen"
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:80
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:197
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:81
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:198
 msgid "Completed with errors"
 msgstr "Afgerond met fouten"
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:83
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:200
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:84
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:201
 msgid "Not completed"
 msgstr "Niet afgerond"
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:86
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:174
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:203
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:87
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:175
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:204
 msgid "Completed"
 msgstr "Afgerond"
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:91
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:92
 #: D:\Development\Projects\Eraser\Eraser\LogForm.Designer.cs:76
 msgid "Close"
 msgstr "Sluiten"
 
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:80
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:81
 msgid "Queued for execution"
 msgstr "In wachtrij geplaatst voor operatie"
 
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:82
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:83
 msgid "Not queued"
 msgstr "Niet in wachtrij geplaatst"
 
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:124
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:125
 msgid "Running..."
 msgstr "Wordt uitgevoerd..."
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:113
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:114
 msgid "User interface language"
 msgstr "Gebruikers interface taal:"
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:122
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:123
 msgid "Default file erasure method"
 msgstr "Standard bestand verwijder methode"
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:132
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:133
 msgid "Default unused space erasure method"
 msgstr "Standaard ongebruikte ruimte verwijder methode"
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:142
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:143
 msgid "Randomness data source"
 msgstr "Willekeurige data bron"
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:151
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:152
 #, csharp-format
 msgid ""
@@ -139,27 +134,22 @@ msgstr ""
 "Kijk goed na of de nieuwe instelling u bevalt met de benodigde beveiliging "
 "niveau."
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:190
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:191
 msgid "An invalid language was selected."
 msgstr "Een foutieve taal was geselecteerd."
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:195
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:196
 msgid "An invalid file erasure method was selected."
 msgstr "Een foutieve wis methode was geselecteerd."
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:201
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:202
 msgid "An invalid unused disk space erasure method was selected."
 msgstr "Een foutieve ongebruikte schijfruimte wis methode was geselecteerd."
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:207
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:208
 msgid "An invalid randomness data source was selected."
 msgstr "Een foutieve Willekeurige data bron was geselecteerd."
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:222
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:223
 msgid ""
 "The new randomness data source will only be used when the next task is run.\n"
@@ -169,25 +159,25 @@ msgstr ""
 "wordt uitgevoerd.\n"
 "De huidige taak zal de huidige bron gebruiken."
 
-#: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:151
+#: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:152
 msgid ""
 "The erasure method selected does not support unused disk space erasures."
 msgstr ""
 "Deze geselecteerde wis methode kan geen ongebruikte schijfruimte te wissen."
 
-#: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:217
+#: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:218
 msgid "Invalid file path"
 msgstr "Foutief bestand"
 
-#: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:219
+#: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:220
 msgid "Invalid folder path"
 msgstr "Foutieve folder"
 
-#: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.cs:254
+#: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.cs:255
 msgid "The task has no data to erase."
 msgstr "De taak heeft geen data om te wissen."
 
-#: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.cs:266
+#: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.cs:267
 msgid "The task needs to run on at least one day a week"
 msgstr "De taak moet minstens eens per week uitgevoerd worden"
 
@@ -202,6 +192,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\BasePanel.Designer.cs:40
 #: D:\Development\Projects\Eraser\Eraser\LogForm.Designer.cs:102
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:120
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:72
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:81
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:142
@@ -289,57 +280,68 @@ msgstr ""
 msgid "Log Viewer"
 msgstr "Log Viewer"
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:48
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:50
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:54
 msgid "contentPanel"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:59
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:60
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:65
 msgid "toolbarScheduleMenu"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:64
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:65
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:70
 msgid "newTaskToolStripMenuItem"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:70
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:71
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:72
+msgid "New Task"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:77
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:157
 msgid "toolStripSeparator1"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:75
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:76
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:82
 msgid "toolbarScheduleMenuQueue"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:80
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:81
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:84
+msgid "View Completed Tasks"
+msgstr "Verwijder taak"
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:88
 msgid "viewLogToolStripMenuItem"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:88
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:89
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:90
+msgid "View Log"
+msgstr "Bekijk taak log"
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:97
 msgid "toolbarHelpMenu"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:93
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:94
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:102
 msgid "checkForUpdatesToolStripMenuItem"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:98
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:99
-msgid "aboutEraserToolStripMenuItem"
-msgstr ""
-
 #: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:104
-msgid "$this"
+msgid "Check for Updates"
 msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:108
+msgid "aboutEraserToolStripMenuItem"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:110
+msgid "About Eraser"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:121
+msgid "$this.Icon"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:123
 msgid "MainForm"
 msgstr ""
 
@@ -581,7 +583,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:120
 msgid "Integrate Eraser into Windows Explorer"
-msgstr ""
+msgstr "Integreer Eraser in Windows Explorer"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:129
 msgid "lockedAllow"
@@ -589,7 +591,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:132
 msgid "Allow locked files to be erased on system restart"
-msgstr ""
+msgstr "Wissen van bestanden bij opnieuw opstarten toestaan"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:140
 msgid "lockedConfirm"
@@ -597,7 +599,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:143
 msgid "Confirm with user before doing so"
-msgstr ""
+msgstr "Mij waarschuwen voor uitvoering"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:151
 msgid "Erase settings"
@@ -681,7 +683,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:276
 msgid "When a recurring task has missed its starting time,"
-msgstr ""
+msgstr "Waneer herhaalde taak is gemist, start vooralsnog,"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:283
 msgid "schedulerMissedImmediate"
@@ -689,7 +691,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:287
 msgid "execute the task when Eraser next starts"
-msgstr ""
+msgstr "Taak uitvoeren bij Eraser's eerst volgende start"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:294
 msgid "schedulerMissedIgnore"
@@ -697,7 +699,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:298
 msgid "ignore the missed schedule and run only at the next appointed time"
-msgstr ""
+msgstr "De herhaalde taak en doorgaan met volgende taak in de lijst"
 
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:305
 msgid "saveSettings"
@@ -841,7 +843,7 @@ msgstr ""
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:218
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:199
 msgid "ok"
-msgstr "o"
+msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.Designer.cs:221
 #: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.Designer.cs:202

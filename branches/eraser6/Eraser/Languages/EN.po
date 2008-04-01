@@ -16,110 +16,105 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Language: English\n"
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:39
+#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:42
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:56
 msgid "Erase Schedule"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:49
+#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:52
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.Designer.cs:69
 msgid "Settings"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:58
+#: D:\Development\Projects\Eraser\Eraser\MainForm.cs:61
 msgid "Help"
 msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\Program.cs:24
-#: D:\Development\Projects\Eraser\Eraser\Program.cs:46
-#: D:\Development\Projects\Eraser\Eraser\Program.cs:116
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:224
+#: D:\Development\Projects\Eraser\Eraser\Program.cs:43
+#: D:\Development\Projects\Eraser\Eraser\Program.cs:113
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:225
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:124
 msgid "Eraser"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\Program.cs:45
+#: D:\Development\Projects\Eraser\Eraser\Program.cs:42
 msgid "Could not load task list. All task entries have been lost."
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\Program.cs:115
+#: D:\Development\Projects\Eraser\Eraser\Program.cs:112
 msgid "Could not load plugin settings. All settings have been lost."
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:47
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:48
 #, csharp-format
 msgid "{0} out of {1}"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:49
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:50
 #, csharp-format
 msgid "{0} left"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:54
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:55
 #, csharp-format
 msgid "Total: {0}%"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:77
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:194
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:78
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:195
 msgid "Completed with warnings"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:80
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:197
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:81
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:198
 msgid "Completed with errors"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:83
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:200
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:84
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:201
 msgid "Not completed"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:86
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:174
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:203
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:87
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:175
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:204
 msgid "Completed"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:91
+#: D:\Development\Projects\Eraser\Eraser\ProgressForm.cs:92
 #: D:\Development\Projects\Eraser\Eraser\LogForm.Designer.cs:76
 msgid "Close"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:80
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:81
 msgid "Queued for execution"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:82
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:83
 msgid "Not queued"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:124
+#: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.cs:125
 msgid "Running..."
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:113
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:114
 msgid "User interface language"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:122
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:123
 msgid "Default file erasure method"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:132
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:133
 msgid "Default unused space erasure method"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:142
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:143
 msgid "Randomness data source"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:151
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:152
 #, csharp-format
 msgid ""
@@ -131,51 +126,46 @@ msgid ""
 "Please check that the new settings suit your required level of security."
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:190
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:191
 msgid "An invalid language was selected."
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:195
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:196
 msgid "An invalid file erasure method was selected."
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:201
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:202
 msgid "An invalid unused disk space erasure method was selected."
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:207
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:208
 msgid "An invalid randomness data source was selected."
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:222
 #: D:\Development\Projects\Eraser\Eraser\SettingsPanel.cs:223
 msgid ""
 "The new randomness data source will only be used when the next task is run.\n"
 "Currently running tasks will use the old source."
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:151
+#: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:152
 msgid ""
 "The erasure method selected does not support unused disk space erasures."
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:217
+#: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:218
 msgid "Invalid file path"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:219
+#: D:\Development\Projects\Eraser\Eraser\TaskDataSelectionForm.cs:220
 msgid "Invalid folder path"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.cs:254
+#: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.cs:255
 msgid "The task has no data to erase."
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.cs:266
+#: D:\Development\Projects\Eraser\Eraser\TaskPropertiesForm.cs:267
 msgid "The task needs to run on at least one day a week"
 msgstr ""
 
@@ -190,6 +180,7 @@ msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\BasePanel.Designer.cs:40
 #: D:\Development\Projects\Eraser\Eraser\LogForm.Designer.cs:102
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:120
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:72
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:81
 #: D:\Development\Projects\Eraser\Eraser\ProgressForm.Designer.cs:142
@@ -277,57 +268,68 @@ msgstr ""
 msgid "Log Viewer"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:48
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:50
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:54
 msgid "contentPanel"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:59
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:60
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:65
 msgid "toolbarScheduleMenu"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:64
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:65
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:70
 msgid "newTaskToolStripMenuItem"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:70
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:71
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:72
+msgid "New Task"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:77
 #: D:\Development\Projects\Eraser\Eraser\SchedulerPanel.Designer.cs:157
 msgid "toolStripSeparator1"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:75
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:76
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:82
 msgid "toolbarScheduleMenuQueue"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:80
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:81
-msgid "viewLogToolStripMenuItem"
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:84
+msgid "View Completed Tasks"
 msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:88
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:89
+msgid "viewLogToolStripMenuItem"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:90
+msgid "View Log"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:97
 msgid "toolbarHelpMenu"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:93
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:94
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:102
 msgid "checkForUpdatesToolStripMenuItem"
 msgstr ""
 
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:98
-#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:99
-msgid "aboutEraserToolStripMenuItem"
-msgstr ""
-
 #: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:104
-msgid "$this"
+msgid "Check for Updates"
 msgstr ""
 
 #: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:108
+msgid "aboutEraserToolStripMenuItem"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:110
+msgid "About Eraser"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:121
+msgid "$this.Icon"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\Eraser\MainForm.Designer.cs:123
 msgid "MainForm"
 msgstr ""
 
