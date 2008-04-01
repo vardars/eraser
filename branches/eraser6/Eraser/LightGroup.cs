@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using Eraser.Util;
 
 namespace Eraser
 {
@@ -13,6 +14,7 @@ namespace Eraser
 		public LightGroup()
 		{
 			InitializeComponent();
+			S.TranslateControl(this);
 		}
 
 		[Description("The label text for the group")]

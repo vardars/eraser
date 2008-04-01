@@ -17,6 +17,7 @@ namespace Eraser
 		public TaskPropertiesForm()
 		{
 			InitializeComponent();
+			S.TranslateControl(this);
 			scheduleTime.CustomFormat = DateTimeFormatInfo.CurrentInfo.ShortTimePattern;
 
 			//Set a default task type

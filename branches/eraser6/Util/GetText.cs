@@ -36,6 +36,10 @@ namespace Eraser.Util
 		/// <returns>A localized string, or str if no localization exists.</returns>
 		public static string TranslateText(string str, Assembly assembly)
 		{
+			//If the string is empty, forget it!
+			if (str.Length == 0)
+				return str;
+
 			GettextResourceManager res = null;
 			if (!managers.ContainsKey(assembly))
 			{
@@ -59,9 +63,35 @@ namespace Eraser.Util
 			TranslateControl(c, Assembly.GetCallingAssembly());
 		}
 
+		/// <summary>
+		/// Translates a menu
+		/// </summary>
+		/// <param name="c">The control to translate. Certain classes will be dealt with
+		/// individually.</param>
+		public static void TranslateControl(Menu c)
+		{
+			TranslateMenu(c, Assembly.GetCallingAssembly());
+		}
+
+		/// <summary>
+		/// Translates a menu
+		/// </summary>
+		/// <param name="c">The control to translate. Certain classes will be dealt with
+		/// individually.</param>
+		public static void TranslateControl(ToolStripDropDown c)
+		{
+			TranslateMenu(c, Assembly.GetCallingAssembly());
+		}
+
 		private static void TranslateControl(Control c, Assembly assembly)
 		{
 			c.Text = TranslateText(c.Text, assembly);
+
+			//Translate the menu
+			if (c.ContextMenu != null)
+				TranslateMenu(c.ContextMenu, assembly);
+			if (c.ContextMenuStrip != null)
+				TranslateMenu(c.ContextMenuStrip, assembly);
 
 			if (c is TranslatableControl)
 				((TranslatableControl)c).Translate();
@@ -76,6 +106,20 @@ namespace Eraser.Util
 
 			foreach (Control child in c.Controls)
 				TranslateControl(child, assembly);
+		}
+
+		private static void TranslateMenu(Menu m, Assembly assembly)
+		{
+			foreach (MenuItem item in m.MenuItems)
+				if (item.IsParent)
+					TranslateMenu((Menu)item, assembly);
+		}
+
+		private static void TranslateMenu(ToolStripDropDown m, Assembly assembly)
+		{
+			foreach (ToolStripItem item in m.Items)
+				if (item is ToolStripMenuItem)
+					((ToolStripMenuItem)item).Text = TranslateText(((ToolStripMenuItem)item).Text, assembly);
 		}
 
 		/// <summary>
