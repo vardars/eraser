@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Eraser.Util;
 
 namespace Eraser
 {
@@ -13,6 +14,7 @@ namespace Eraser
 		public AboutForm()
 		{
 			InitializeComponent();
+			S.TranslateControl(this);
 		}
 
 		private void AboutForm_Click(object sender, EventArgs e)
