@@ -4,6 +4,7 @@ using System.Text;
 
 using Eraser.Manager;
 using System.Security.Cryptography;
+using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
@@ -11,7 +12,7 @@ namespace Eraser.DefaultPlugins
 	{
 		public override string Name
 		{
-			get { return "RNGCryptoServiceProvider"; }
+			get { return S._("RNGCryptoServiceProvider"); }
 		}
 
 		public override Guid GUID

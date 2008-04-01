@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using Eraser.Manager;
+using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
@@ -18,7 +19,7 @@ namespace Eraser.DefaultPlugins
 
 		public override string Name
 		{
-			get { return "ISAAC CSPRNG"; }
+			get { return S._("ISAAC CSPRNG"); }
 		}
 
 		public override Guid GUID

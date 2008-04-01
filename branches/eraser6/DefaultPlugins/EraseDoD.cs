@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Eraser.Manager;
+using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
@@ -9,7 +10,7 @@ namespace Eraser.DefaultPlugins
 	{
 		public override string Name
 		{
-			get { return "US DoD 5220.22-M (8-306. / E, C and E)"; }
+			get { return S._("US DoD 5220.22-M (8-306. / E, C and E)"); }
 		}
 
 		public override Guid GUID
@@ -55,7 +56,7 @@ namespace Eraser.DefaultPlugins
 	{
 		public override string Name
 		{
-			get { return "US DoD 5220.22-M (8-306. / E)"; }
+			get { return S._("US DoD 5220.22-M (8-306. / E)"); }
 		}
 
 		public override Guid GUID
