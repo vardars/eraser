@@ -23,12 +23,9 @@ namespace Eraser
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.SafeTopLevelCaptionFormat = S._("Eraser");
 
-			using (ManagerLibrary library = new ManagerLibrary())
+			using (ManagerLibrary library = new ManagerLibrary(new Settings()))
 			using (eraserClient = new DirectExecutor())
 			{
-				//Set the defaults for the library
-				library.Settings = new Settings();
-
 				//Load the task list
 				RegistryKey key = Application.UserAppDataRegistry;
 				byte[] savedTaskList = (byte[])key.GetValue("TaskList", new byte[] { });
@@ -119,7 +116,7 @@ namespace Eraser
 				}
 		}
 
-		~Settings()
+		protected override void Save()
 		{
 			RegistryKey key = Application.UserAppDataRegistry;
 			key.SetValue("PRNG", ActivePRNG);
