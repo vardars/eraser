@@ -791,15 +791,30 @@ namespace Eraser.Manager
 			if (Manager.ManagerLibrary.Instance.Settings.PlausibleDeniability)
 			{
 				//Get the template file to copy
-				string shadowFile;
 				FileInfo shadowFileInfo;
-				do
 				{
-					shadowFile = GetRandomFileName(info.Directory.Root);
+					string shadowFile;
+					List<string> entries = ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles.GetRange(
+						0, ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles.Count);
+					PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
+					do
+					{
+						if (entries.Count == 0)
+							throw new FatalException("Plausible deniability was selected, but no decoy files " +
+								"were found. The current file has been only replaced with random data.");
+
+						int index = prng.Next(entries.Count - 1);
+						if ((System.IO.File.GetAttributes(entries[index]) & FileAttributes.Directory) != 0)
+							shadowFile = GetRandomFileName(new DirectoryInfo(entries[index]));
+						else
+							shadowFile = entries[index];
+
+						entries.RemoveAt(index);
+					}
+					while (shadowFile.Length == 0 || Path.GetDirectoryName(shadowFile) == info.DirectoryName);
 					shadowFileInfo = new FileInfo(shadowFile);
 				}
-				while (shadowFileInfo.DirectoryName == info.DirectoryName);
-				
+
 				//Rename the file to have the same name as the shadow
 				info.MoveTo(info.DirectoryName + shadowFileInfo.Name);
 

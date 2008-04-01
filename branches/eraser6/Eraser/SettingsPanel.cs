@@ -97,6 +97,9 @@ namespace Eraser
 					break;
 				}
 
+			foreach (string path in ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles)
+				plausibleDeniabilityFiles.Items.Add(path);
+
 			lockedAllow.Checked =
 				ManagerLibrary.Instance.Settings.EraseLockedFilesOnRestart;
 			lockedConfirm.Checked =
@@ -162,6 +165,30 @@ namespace Eraser
 			lockedConfirm.Enabled = lockedAllow.Checked;
 		}
 
+		private void plausibleDeniability_CheckedChanged(object sender, EventArgs e)
+		{
+			plausibleDeniabilityFiles.Enabled = plausibleDeniabilityFilesAddFile.Enabled =
+				plausibleDeniabilityFilesRemove.Enabled = plausibleDeniability.Checked;
+		}
+
+		private void plausibleDeniabilityFilesAddFile_Click(object sender, EventArgs e)
+		{
+			if (openFileDialog.ShowDialog() == DialogResult.OK)
+				plausibleDeniabilityFiles.Items.AddRange(openFileDialog.FileNames);
+		}
+
+		private void plausibleDeniabilityFilesAddFolder_Click(object sender, EventArgs e)
+		{
+			if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+				plausibleDeniabilityFiles.Items.Add(folderBrowserDialog.SelectedPath);
+		}
+
+		private void plausibleDeniabilityFilesRemove_Click(object sender, EventArgs e)
+		{
+			if (plausibleDeniabilityFiles.SelectedIndex != -1)
+				plausibleDeniabilityFiles.Items.RemoveAt(plausibleDeniabilityFiles.SelectedIndex);
+		}
+
 		private void pluginsMenu_Opening(object sender, CancelEventArgs e)
 		{
 			if (pluginsManager.SelectedItems.Count == 1)
@@ -209,6 +236,13 @@ namespace Eraser
 					"source was selected."));
 				return;
 			}
+			else if (plausibleDeniability.Checked && plausibleDeniabilityFiles.Items.Count == 0)
+			{
+				errorProvider.SetError(plausibleDeniabilityFiles, S._("Erasures with plausible deniability " +
+					"was selected, but no files were selected to be used as decoys."));
+				errorProvider.SetIconPadding(plausibleDeniabilityFiles, -16);
+				return;
+			}
 
 			ManagerLibrary.Instance.Settings.UILanguage =
 				((Language)uiLanguage.SelectedItem).Name;
@@ -229,6 +263,12 @@ namespace Eraser
 				lockedAllow.Checked;
 			ManagerLibrary.Instance.Settings.ConfirmEraseOnRestart =
 				lockedConfirm.Checked;
+
+			List<string> plausibleDeniabilityFilesList = new List<string>();
+			foreach (string str in this.plausibleDeniabilityFiles.Items)
+				plausibleDeniabilityFilesList.Add(str);
+			ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles = plausibleDeniabilityFilesList;
+
 			ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately =
 				schedulerMissedImmediate.Checked;
 			ManagerLibrary.Instance.Settings.PlausibleDeniability =

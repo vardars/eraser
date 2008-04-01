@@ -28,7 +28,7 @@ namespace Eraser
 			{
 				//Load the task list
 				RegistryKey key = Application.UserAppDataRegistry;
-				byte[] savedTaskList = (byte[])key.GetValue("TaskList", new byte[] { });
+				byte[] savedTaskList = (byte[])key.GetValue("TaskList", new byte[0]);
 				using (MemoryStream stream = new MemoryStream(savedTaskList))
 				{
 					try
@@ -96,8 +96,28 @@ namespace Eraser
 			UILanguage = (string)key.GetValue("UILanguage", string.Empty);
 			S.Language = new CultureInfo(UILanguage);
 
+			//Load the plausible deniability files
+			byte[] plausibleDeniabilityFiles = (byte[])
+				key.GetValue("PlausibleDeniabilityFiles", new byte[0]);
+			if (plausibleDeniabilityFiles.Length != 0)
+				using (MemoryStream stream = new MemoryStream(plausibleDeniabilityFiles))
+				{
+					try
+					{
+						this.PlausibleDeniabilityFiles = (List<string>)
+							new BinaryFormatter().Deserialize(stream);
+					}
+					catch (Exception)
+					{
+						key.DeleteValue("PlausibleDeniabilityFiles");
+						MessageBox.Show(S._("Could not load list of files used for plausible " +
+							"deniability.\n\nThe list of files have been lost."),
+							S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
+				}
+
 			//Load the plugin settings.
-			byte[] pluginSettings = (byte[])key.GetValue("PluginSettings", new byte[] { });
+			byte[] pluginSettings = (byte[])key.GetValue("PluginSettings", new byte[0]);
 			if (pluginSettings.Length != 0)
 				using (MemoryStream stream = new MemoryStream(pluginSettings))
 				{
@@ -137,6 +157,12 @@ namespace Eraser
 			{
 				new BinaryFormatter().Serialize(stream, pluginSettings);
 				key.SetValue("PluginSettings", stream.ToArray(), RegistryValueKind.Binary);
+			}
+
+			using (MemoryStream stream = new MemoryStream())
+			{
+				new BinaryFormatter().Serialize(stream, PlausibleDeniabilityFiles);
+				key.SetValue("PlausibleDeniabilityFiles", stream.ToArray(), RegistryValueKind.Binary);
 			}
 		}
 	}

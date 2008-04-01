@@ -57,6 +57,12 @@ namespace Eraser
 			this.plausibleDeniability = new System.Windows.Forms.CheckBox();
 			this.uiLanguageLbl = new System.Windows.Forms.Label();
 			this.uiLanguage = new System.Windows.Forms.ComboBox();
+			this.plausibleDeniabilityFiles = new System.Windows.Forms.ListBox();
+			this.plausibleDeniabilityFilesAddFile = new System.Windows.Forms.Button();
+			this.plausibleDeniabilityFilesRemove = new System.Windows.Forms.Button();
+			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+			this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+			this.plausibleDeniabilityFilesAddFolder = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).BeginInit();
 			this.content.SuspendLayout();
 			this.pluginsMenu.SuspendLayout();
@@ -74,6 +80,10 @@ namespace Eraser
 			// 
 			// content
 			// 
+			this.content.Controls.Add(this.plausibleDeniabilityFilesAddFolder);
+			this.content.Controls.Add(this.plausibleDeniabilityFilesRemove);
+			this.content.Controls.Add(this.plausibleDeniabilityFilesAddFile);
+			this.content.Controls.Add(this.plausibleDeniabilityFiles);
 			this.content.Controls.Add(this.uiLanguage);
 			this.content.Controls.Add(this.uiLanguageLbl);
 			this.content.Controls.Add(this.plausibleDeniability);
@@ -94,7 +104,7 @@ namespace Eraser
 			this.content.Controls.Add(this.lockedAllow);
 			this.content.Controls.Add(this.uiContextMenu);
 			this.content.Controls.Add(this.ui);
-			this.content.Size = new System.Drawing.Size(712, 630);
+			this.content.Size = new System.Drawing.Size(712, 780);
 			// 
 			// ui
 			// 
@@ -195,7 +205,7 @@ namespace Eraser
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.plugins.AutoSize = true;
 			this.plugins.Label = "Plugins";
-			this.plugins.Location = new System.Drawing.Point(0, 357);
+			this.plugins.Location = new System.Drawing.Point(0, 507);
 			this.plugins.Name = "plugins";
 			this.plugins.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
 			this.plugins.Size = new System.Drawing.Size(712, 32);
@@ -212,7 +222,7 @@ namespace Eraser
             this.pluginsManagerColPath});
 			this.pluginsManager.ContextMenuStrip = this.pluginsMenu;
 			this.pluginsManager.FullRowSelect = true;
-			this.pluginsManager.Location = new System.Drawing.Point(20, 395);
+			this.pluginsManager.Location = new System.Drawing.Point(20, 545);
 			this.pluginsManager.Name = "pluginsManager";
 			this.pluginsManager.Size = new System.Drawing.Size(689, 234);
 			this.pluginsManager.TabIndex = 20;
@@ -260,7 +270,7 @@ namespace Eraser
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.scheduler.AutoSize = true;
 			this.scheduler.Label = "Scheduler settings";
-			this.scheduler.Location = new System.Drawing.Point(0, 263);
+			this.scheduler.Location = new System.Drawing.Point(0, 413);
 			this.scheduler.Name = "scheduler";
 			this.scheduler.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
 			this.scheduler.Size = new System.Drawing.Size(712, 32);
@@ -269,7 +279,7 @@ namespace Eraser
 			// schedulerMissed
 			// 
 			this.schedulerMissed.AutoSize = true;
-			this.schedulerMissed.Location = new System.Drawing.Point(17, 298);
+			this.schedulerMissed.Location = new System.Drawing.Point(17, 448);
 			this.schedulerMissed.Name = "schedulerMissed";
 			this.schedulerMissed.Size = new System.Drawing.Size(242, 13);
 			this.schedulerMissed.TabIndex = 16;
@@ -279,7 +289,7 @@ namespace Eraser
 			// 
 			this.schedulerMissedImmediate.AutoSize = true;
 			this.schedulerMissedImmediate.Checked = true;
-			this.schedulerMissedImmediate.Location = new System.Drawing.Point(36, 314);
+			this.schedulerMissedImmediate.Location = new System.Drawing.Point(36, 464);
 			this.schedulerMissedImmediate.Name = "schedulerMissedImmediate";
 			this.schedulerMissedImmediate.Size = new System.Drawing.Size(217, 17);
 			this.schedulerMissedImmediate.TabIndex = 17;
@@ -290,7 +300,7 @@ namespace Eraser
 			// schedulerMissedIgnore
 			// 
 			this.schedulerMissedIgnore.AutoSize = true;
-			this.schedulerMissedIgnore.Location = new System.Drawing.Point(36, 334);
+			this.schedulerMissedIgnore.Location = new System.Drawing.Point(36, 484);
 			this.schedulerMissedIgnore.Name = "schedulerMissedIgnore";
 			this.schedulerMissedIgnore.Size = new System.Drawing.Size(339, 17);
 			this.schedulerMissedIgnore.TabIndex = 18;
@@ -338,10 +348,11 @@ namespace Eraser
 			this.plausibleDeniability.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.plausibleDeniability.Location = new System.Drawing.Point(20, 240);
 			this.plausibleDeniability.Name = "plausibleDeniability";
-			this.plausibleDeniability.Size = new System.Drawing.Size(361, 17);
+			this.plausibleDeniability.Size = new System.Drawing.Size(359, 17);
 			this.plausibleDeniability.TabIndex = 14;
-			this.plausibleDeniability.Text = "Copy other files from the same volume over the deleted file after erasing";
+			this.plausibleDeniability.Text = "Replace erased files with the following files to allow plausible deniability";
 			this.plausibleDeniability.UseVisualStyleBackColor = true;
+			this.plausibleDeniability.CheckedChanged += new System.EventHandler(this.plausibleDeniability_CheckedChanged);
 			// 
 			// uiLanguageLbl
 			// 
@@ -361,11 +372,59 @@ namespace Eraser
 			this.uiLanguage.Size = new System.Drawing.Size(290, 21);
 			this.uiLanguage.TabIndex = 3;
 			// 
+			// plausibleDeniabilityFiles
+			// 
+			this.plausibleDeniabilityFiles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.plausibleDeniabilityFiles.FormattingEnabled = true;
+			this.plausibleDeniabilityFiles.Location = new System.Drawing.Point(36, 263);
+			this.plausibleDeniabilityFiles.Name = "plausibleDeniabilityFiles";
+			this.plausibleDeniabilityFiles.Size = new System.Drawing.Size(673, 147);
+			this.plausibleDeniabilityFiles.TabIndex = 21;
+			// 
+			// plausibleDeniabilityFilesAddFile
+			// 
+			this.plausibleDeniabilityFilesAddFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.plausibleDeniabilityFilesAddFile.Location = new System.Drawing.Point(462, 236);
+			this.plausibleDeniabilityFilesAddFile.Name = "plausibleDeniabilityFilesAddFile";
+			this.plausibleDeniabilityFilesAddFile.Size = new System.Drawing.Size(75, 23);
+			this.plausibleDeniabilityFilesAddFile.TabIndex = 22;
+			this.plausibleDeniabilityFilesAddFile.Text = "Add File...";
+			this.plausibleDeniabilityFilesAddFile.UseVisualStyleBackColor = true;
+			this.plausibleDeniabilityFilesAddFile.Click += new System.EventHandler(this.plausibleDeniabilityFilesAddFile_Click);
+			// 
+			// plausibleDeniabilityFilesRemove
+			// 
+			this.plausibleDeniabilityFilesRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.plausibleDeniabilityFilesRemove.Location = new System.Drawing.Point(634, 236);
+			this.plausibleDeniabilityFilesRemove.Name = "plausibleDeniabilityFilesRemove";
+			this.plausibleDeniabilityFilesRemove.Size = new System.Drawing.Size(75, 23);
+			this.plausibleDeniabilityFilesRemove.TabIndex = 23;
+			this.plausibleDeniabilityFilesRemove.Text = "Remove";
+			this.plausibleDeniabilityFilesRemove.UseVisualStyleBackColor = true;
+			this.plausibleDeniabilityFilesRemove.Click += new System.EventHandler(this.plausibleDeniabilityFilesRemove_Click);
+			// 
+			// openFileDialog
+			// 
+			this.openFileDialog.Filter = "All Files (*.*)|*.*";
+			this.openFileDialog.Multiselect = true;
+			// 
+			// plausibleDeniabilityFilesAddFolder
+			// 
+			this.plausibleDeniabilityFilesAddFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.plausibleDeniabilityFilesAddFolder.Location = new System.Drawing.Point(543, 236);
+			this.plausibleDeniabilityFilesAddFolder.Name = "plausibleDeniabilityFilesAddFolder";
+			this.plausibleDeniabilityFilesAddFolder.Size = new System.Drawing.Size(85, 23);
+			this.plausibleDeniabilityFilesAddFolder.TabIndex = 24;
+			this.plausibleDeniabilityFilesAddFolder.Text = "Add Folder...";
+			this.plausibleDeniabilityFilesAddFolder.UseVisualStyleBackColor = true;
+			this.plausibleDeniabilityFilesAddFolder.Click += new System.EventHandler(this.plausibleDeniabilityFilesAddFolder_Click);
+			// 
 			// SettingsPanel
 			// 
 			this.Controls.Add(this.saveSettings);
 			this.Name = "SettingsPanel";
-			this.Size = new System.Drawing.Size(752, 702);
+			this.Size = new System.Drawing.Size(752, 852);
 			this.Controls.SetChildIndex(this.saveSettings, 0);
 			this.Controls.SetChildIndex(this.titleLbl, 0);
 			this.Controls.SetChildIndex(this.titleIcon, 0);
@@ -410,5 +469,11 @@ namespace Eraser
 		private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
 		private System.Windows.Forms.ComboBox uiLanguage;
 		private System.Windows.Forms.Label uiLanguageLbl;
+		private System.Windows.Forms.Button plausibleDeniabilityFilesRemove;
+		private System.Windows.Forms.Button plausibleDeniabilityFilesAddFile;
+		private System.Windows.Forms.ListBox plausibleDeniabilityFiles;
+		private System.Windows.Forms.OpenFileDialog openFileDialog;
+		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+		private System.Windows.Forms.Button plausibleDeniabilityFilesAddFolder;
 	}
 }

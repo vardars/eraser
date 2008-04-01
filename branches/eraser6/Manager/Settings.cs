@@ -148,6 +148,7 @@ namespace Eraser.Manager
 		/// achieved by the executor copying files over the file to be removed
 		/// before removing it.
 		/// </summary>
+		/// <seealso cref="PlausibleDeniabilityFiles"/>
 		public bool PlausibleDeniability
 		{
 			get
@@ -159,6 +160,23 @@ namespace Eraser.Manager
 			{
 				lock (this)
 					plausibleDeniability = value;
+			}
+		}
+
+		/// <summary>
+		/// The files which are overwritten with when a file has been erased.
+		/// </summary>
+		public List<string> PlausibleDeniabilityFiles
+		{
+			get
+			{
+				lock (this)
+					return plausibleDeniabilityFiles;
+			}
+			set
+			{
+				lock (this)
+					plausibleDeniabilityFiles = value;
 			}
 		}
 
@@ -215,6 +233,7 @@ namespace Eraser.Manager
 		private bool confirmEraseOnRestart = true;
 		private bool executeMissedTasksImmediately = true;
 		private bool plausibleDeniability = true;
+		private List<string> plausibleDeniabilityFiles = new List<string>();
 
 		protected Dictionary<Guid, Dictionary<string, object>> pluginSettings =
 			new Dictionary<Guid, Dictionary<string, object>>();
