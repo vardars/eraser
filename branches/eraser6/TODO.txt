@@ -19,7 +19,7 @@ a. Are file names of ADSes changeable and would leaving them be a security risk?
 3. Resolve locked files on restart
 4. Allow users to select erasure passes from recycle bin context menu
 5. Allow pattern wiping. ie write a user-provided pattern to the disk for an erasure pass
-6. Context menu. Find a way to port the Explorer context menu to C#.
+6* Context menu. Find a way to port the Explorer context menu to C#.
    -Allow shift-delete to erase the file
    -And optionally replace the recycle bin with Eraser
    -Recycle bin erasure
