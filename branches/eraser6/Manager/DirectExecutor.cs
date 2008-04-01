@@ -893,12 +893,22 @@ namespace Eraser.Manager
 		/// <returns>A string containing the full path to the file.</returns>
 		private static string GetRandomFileName(DirectoryInfo info)
 		{
-			PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
-			FileSystemInfo[] entries = info.GetFileSystemInfos();
+			//First retrieve the list of files and folders in the provided directory.
+			FileSystemInfo[] entries = null;
+			try
+			{
+				entries = info.GetFileSystemInfos();
+			}
+			catch (Exception)
+			{
+				return string.Empty;
+			}
 			if (entries.Length == 0)
 				return string.Empty;
-			string result = string.Empty;
 
+			//Find a random entry.
+			PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
+			string result = string.Empty;
 			while (result.Length == 0)
 			{
 				int index = prng.Next(entries.Length - 1);
