@@ -11,7 +11,7 @@ namespace Eraser.Manager.Plugin
 	/// The plugins host interface which is used for communicating with the host
 	/// program.
 	/// </summary>
-	public abstract class Host
+	public abstract class Host : IDisposable
 	{
 		/// <summary>
 		/// Getter that retrieves the global plugin host instance.
@@ -28,6 +28,11 @@ namespace Eraser.Manager.Plugin
 		{
 			get;
 		}
+
+		/// <summary>
+		/// Cleans up resources used by the host. Also unloads all loaded plugins.
+		/// </summary>
+		public abstract void Dispose();
 
 		/// <summary>
 		/// The plugin load event delegate.
@@ -86,6 +91,14 @@ namespace Eraser.Manager.Plugin
 				if (file.Extension.Equals(".dll"))
 					LoadPlugin(file.FullName);
 			}
+		}
+
+		public override void Dispose()
+		{
+			//Unload all the plugins. This will cause all the plugins to execute
+			//the cleanup code.
+			foreach (PluginInstance plugin in plugins)
+				plugin.Plugin.Dispose();
 		}
 
 		/// <summary>

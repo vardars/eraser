@@ -1,14 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Eraser.Manager
 {
 	/// <summary>
 	/// Settings class. Holds the defaults for the manager's operations.
 	/// </summary>
-	public class Settings
+	public abstract class Settings
 	{
+		/// <summary>
+		/// Saves all the settings to any persistent storage.
+		/// </summary>
+		protected internal abstract void Save();
+
 		/// <summary>
 		/// The language which all user interface elements should be presented in.
 		/// This is a GUID since languages are supplied through plugins.
@@ -174,6 +181,30 @@ namespace Eraser.Manager
 				pluginSettings.Add(plugin, result);
 				return result;
 			}
+		}
+
+		/// <summary>
+		/// Retrieves the dictionary holding settings for the calling assembly.
+		/// </summary>
+		/// <returns>A dictionary holding settings for the plugin. This dictionary
+		/// will be automatically saved when the program exits holding the settings
+		/// permanenently. An empty dictionary will be returned if no settings
+		/// currently exist.</returns>
+		public Dictionary<string, object> GetSettings()
+		{
+			return GetSettings(new Guid(((GuidAttribute)Assembly.GetCallingAssembly().
+				GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value));
+		}
+
+		/// <summary>
+		/// Sets the settings for the calling plugin.
+		/// </summary>
+		/// <param name="settings">The settings of the plugin</param>
+		public void SetSettings(Dictionary<string, object> settings)
+		{
+			pluginSettings[new Guid(((GuidAttribute)Assembly.GetCallingAssembly().
+				GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value)]
+				= settings;
 		}
 
 		private string uiLanguage;

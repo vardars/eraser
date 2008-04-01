@@ -10,19 +10,23 @@ namespace Eraser.Manager
 	/// </summary>
 	public class ManagerLibrary : IDisposable
 	{
-		public ManagerLibrary()
+		public ManagerLibrary(Settings settings)
 		{
 			Instance = this;
+			Settings = settings;
+
 			PRNGManager = new PRNGManager();
 			LanguageManager = new LanguageManager();
 			ErasureMethodManager = new ErasureMethodManager();
-			Settings = new Settings();
 			Host = new Plugin.DefaultHost();
 		}
 
 		public void Dispose()
 		{
 			PRNGManager.entropyThread.Abort();
+			Host.Dispose();
+			Settings.Save();
+			Instance = null;
 		}
 
 		/// <summary>
