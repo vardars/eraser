@@ -416,7 +416,7 @@ namespace Eraser.Manager
 		/// <param name="method">The method to register. Only the type is examined.</param>
 		public static void Register(ErasureMethod method)
 		{
-			Register(method, new object[] { });
+			Register(method, new object[0]);
 		}
 
 		/// <summary>
