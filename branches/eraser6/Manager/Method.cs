@@ -312,7 +312,10 @@ namespace Eraser.Manager
 	}
 
 	/// <summary>
-	/// Class managing all the erasure methods.
+	/// Class managing all the erasure methods. This class pairs GUIDs with constructor
+	/// prototypes, and when an instance of the erasure method is required, a new
+	/// instance is created. This is unique to erasure methods since the other managers
+	/// do not have run-time equivalents; they all are compile-time.
 	/// </summary>
 	public class ErasureMethodManager
 	{
