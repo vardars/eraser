@@ -13,6 +13,10 @@ namespace Eraser.DefaultPlugins
 	{
 		public void Initialize(Host host)
 		{
+			//Get the settings dictionary
+			Settings = Manager.ManagerLibrary.Instance.Settings.GetSettings();
+
+			//Then register the erasure methods et al.
 			host.RegisterErasureMethod(new Gutmann());
 			host.RegisterErasureMethod(new Schneier());
 			host.RegisterErasureMethod(new DoD_EcE());
@@ -21,8 +25,6 @@ namespace Eraser.DefaultPlugins
 			host.RegisterErasureMethod(new FirstLast16KB());
 			host.RegisterPRNG(new ISAAC());
 			host.RegisterPRNG(new RNGCrypto());
-
-			Settings = Manager.ManagerLibrary.Instance.Settings.GetSettings();
 		}
 
 		public void Dispose()

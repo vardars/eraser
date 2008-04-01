@@ -366,8 +366,19 @@ namespace Eraser.Manager
 		/// <returns>A mutable list, with an instance of each method.</returns>
 		public static Dictionary<Guid, ErasureMethod> GetAll()
 		{
+			Dictionary<Guid, ErasureMethod> result = new Dictionary<Guid, ErasureMethod>();
+
 			lock (ManagerLibrary.Instance.ErasureMethodManager.methods)
-				return ManagerLibrary.Instance.ErasureMethodManager.methods;
+			{
+				//Iterate over every item registered.
+				Dictionary<Guid, Type>.Enumerator iter =
+					ManagerLibrary.Instance.ErasureMethodManager.methods.GetEnumerator();
+				while (iter.MoveNext())
+					result.Add(iter.Current.Key,
+						(ErasureMethod)iter.Current.Value.GetConstructor(Type.EmptyTypes).Invoke(null));
+			}
+
+			return result;
 		}
 
 		/// <summary>
@@ -380,7 +391,11 @@ namespace Eraser.Manager
 			try
 			{
 				lock (ManagerLibrary.Instance.ErasureMethodManager.methods)
-					return ManagerLibrary.Instance.ErasureMethodManager.methods[guid];
+				{
+					Type type = ManagerLibrary.Instance.ErasureMethodManager.methods[guid];
+					object result = type.GetConstructor(Type.EmptyTypes).Invoke(null);
+					return (ErasureMethod)result;
+				}
 			}
 			catch (KeyNotFoundException)
 			{
@@ -396,14 +411,19 @@ namespace Eraser.Manager
 		public static void Register(ErasureMethod method)
 		{
 			lock (ManagerLibrary.Instance.ErasureMethodManager.methods)
-				ManagerLibrary.Instance.ErasureMethodManager.methods.Add(method.GUID, method);
+			{
+				if (method.GetType().GetConstructor(Type.EmptyTypes) == null)
+					throw new ArgumentException("Registered erasure methods must contain " +
+						"a parameterless constructor that is called whenever clients request " +
+						"for an instance of the method.");
+				ManagerLibrary.Instance.ErasureMethodManager.methods.Add(method.GUID, method.GetType());
+			}
 		}
 
 		/// <summary>
 		/// The list of currently registered erasure methods.
 		/// </summary>
-		private Dictionary<Guid, ErasureMethod> methods =
-			new Dictionary<Guid, ErasureMethod>();
+		private Dictionary<Guid, Type> methods = new Dictionary<Guid, Type>();
 		#endregion
 	}
 }
