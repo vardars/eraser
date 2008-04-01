@@ -210,7 +210,7 @@ if exist "Filelist" (
 )
 
 for /R %25%25i in (*.cs) do echo %25%25i &gt;&gt; "Filelist"
-xgettext --keyword=_ --keyword=_:1c,2 --from-code UTF-8 -j -o "Languages\Eraser.pot" -f "Filelist"
+xgettext --keyword=_ --keyword=_:1c,2 --from-code UTF-8 -o "Languages\Eraser.pot" -f "Filelist"
 del Filelist
 
 for /R %25%25i in (*.designer.cs) do echo %25%25i &gt;&gt; "Filelist"
