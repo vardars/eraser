@@ -106,6 +106,7 @@ namespace Eraser
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
 			this.Text = "Log Viewer";
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.LogForm_FormClosed);
 			this.ResumeLayout(false);
 
 		}

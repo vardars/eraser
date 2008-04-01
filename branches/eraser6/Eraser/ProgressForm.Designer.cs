@@ -238,6 +238,7 @@
 			this.Name = "ProgressForm";
 			this.ShowInTaskbar = false;
 			this.Text = "Erasure Progress";
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ProgressForm_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.title)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

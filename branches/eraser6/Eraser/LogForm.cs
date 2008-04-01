@@ -35,7 +35,7 @@ namespace Eraser
 			task.Log.OnLogged += new Logger.LogEvent(task_Logged);
 		}
 
-		~LogForm()
+		private void LogForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
 			task.Log.OnLogged -= new Logger.LogEvent(task_Logged);
 		}

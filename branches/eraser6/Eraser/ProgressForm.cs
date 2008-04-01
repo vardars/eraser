@@ -27,7 +27,7 @@ namespace Eraser
 			task.TaskFinished += new Task.TaskEventFunction(task_TaskFinished);
 		}
 
-		~ProgressForm()
+		private void ProgressForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
 			task.ProgressChanged -= new Task.ProgressEventFunction(task_ProgressChanged);
 			task.TaskFinished -= new Task.TaskEventFunction(task_TaskFinished);
