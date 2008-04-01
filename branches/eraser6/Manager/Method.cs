@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Reflection;
 
 namespace Eraser.Manager
 {
@@ -371,11 +372,14 @@ namespace Eraser.Manager
 			lock (ManagerLibrary.Instance.ErasureMethodManager.methods)
 			{
 				//Iterate over every item registered.
-				Dictionary<Guid, Type>.Enumerator iter =
+				Dictionary<Guid, MethodConstructorInfo>.Enumerator iter =
 					ManagerLibrary.Instance.ErasureMethodManager.methods.GetEnumerator();
 				while (iter.MoveNext())
+				{
+					MethodConstructorInfo info = iter.Current.Value;
 					result.Add(iter.Current.Key,
-						(ErasureMethod)iter.Current.Value.GetConstructor(Type.EmptyTypes).Invoke(null));
+						(ErasureMethod)info.Constructor.Invoke(info.Parameters));
+				}
 			}
 
 			return result;
@@ -392,14 +396,13 @@ namespace Eraser.Manager
 			{
 				lock (ManagerLibrary.Instance.ErasureMethodManager.methods)
 				{
-					Type type = ManagerLibrary.Instance.ErasureMethodManager.methods[guid];
-					object result = type.GetConstructor(Type.EmptyTypes).Invoke(null);
-					return (ErasureMethod)result;
+					MethodConstructorInfo info = ManagerLibrary.Instance.ErasureMethodManager.methods[guid];
+					return (ErasureMethod)info.Constructor.Invoke(info.Parameters);
 				}
 			}
 			catch (KeyNotFoundException)
 			{
-				throw new FatalException("PRNG not found: " + guid.ToString());
+				throw new FatalException("Erasure method not found: " + guid.ToString());
 			}
 		}
 
@@ -407,23 +410,69 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Allows plug-ins to register methods with the main program. Thread-safe.
 		/// </summary>
-		/// <param name="method"></param>
+		/// <param name="method">The method to register. Only the type is examined.</param>
 		public static void Register(ErasureMethod method)
 		{
+			Register(method, new object[] { });
+		}
+
+		/// <summary>
+		/// Allows plug-ins to register methods with the main program. Thread-safe.
+		/// </summary>
+		/// <param name="method">The method to register. Only the type is examined.</param>
+		/// <param name="parameters">The parameter list to be passed to the constructor.</param>
+		public static void Register(ErasureMethod method, object[] parameters)
+		{
+			//Get the constructor for the class.
+			ConstructorInfo ctor = null;
+			if (parameters == null || parameters.Length == 0)
+				ctor = method.GetType().GetConstructor(Type.EmptyTypes);
+			else
+			{
+				Type[] parameterTypes = new Type[parameters.Length];
+				for (int i = 0; i < parameters.Length; ++i)
+					parameterTypes[i] = parameters[i].GetType();
+				ctor = method.GetType().GetConstructor(parameterTypes);
+			}
+
+			//Check for a valid constructor.
+			if (ctor == null)
+				throw new ArgumentException("Registered erasure methods must contain " +
+					"a parameterless constructor that is called whenever clients request " +
+					"for an instance of the method. If a constructor requires parameters, " +
+					"specify it in the parameters parameter.");
+
+			//Insert the entry
 			lock (ManagerLibrary.Instance.ErasureMethodManager.methods)
 			{
-				if (method.GetType().GetConstructor(Type.EmptyTypes) == null)
-					throw new ArgumentException("Registered erasure methods must contain " +
-						"a parameterless constructor that is called whenever clients request " +
-						"for an instance of the method.");
-				ManagerLibrary.Instance.ErasureMethodManager.methods.Add(method.GUID, method.GetType());
+				MethodConstructorInfo info = new MethodConstructorInfo();
+				info.Constructor = ctor;
+				info.Parameters = parameters == null || parameters.Length == 0 ? null : parameters;
+				ManagerLibrary.Instance.ErasureMethodManager.methods.Add(method.GUID, info);
 			}
+		}
+
+		/// <summary>
+		/// Holds information on how to construct a new instance of an erasure method.
+		/// </summary>
+		private struct MethodConstructorInfo
+		{
+			/// <summary>
+			/// The reference to the constructor method.
+			/// </summary>
+			public ConstructorInfo Constructor;
+
+			/// <summary>
+			/// The parameter list.
+			/// </summary>
+			public object[] Parameters;
 		}
 
 		/// <summary>
 		/// The list of currently registered erasure methods.
 		/// </summary>
-		private Dictionary<Guid, Type> methods = new Dictionary<Guid, Type>();
+		private Dictionary<Guid, MethodConstructorInfo> methods =
+			new Dictionary<Guid, MethodConstructorInfo>();
 		#endregion
 	}
 }
