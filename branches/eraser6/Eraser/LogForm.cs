@@ -22,9 +22,14 @@ namespace Eraser
 			Text = string.Format("{0} - {1}", Text, task.UIText);
 
 			//Add all the existing log messages
-			List<LogEntry> log = task.Log.LastSessionEntries;
-			foreach (LogEntry entry in log)
-				task_Logged(entry);
+			Dictionary<DateTime, List<LogEntry>> log = task.Log.Entries;
+			Dictionary<DateTime, List<LogEntry>>.Enumerator iter = log.GetEnumerator();
+			foreach (DateTime sessionTime in log.Keys)
+			{
+				this.log.Groups.Add(new ListViewGroup("Session: " + sessionTime.ToString(DATEPATTERN)));
+				foreach (LogEntry entry in log[sessionTime])
+					task_Logged(entry);
+			}
 
 			//Register our event handler to get live log messages
 			task.Log.OnLogged += new Logger.LogEvent(task_Logged);
@@ -37,11 +42,11 @@ namespace Eraser
 
 		private void task_Logged(LogEntry e)
 		{
-			ListViewItem item = log.Items.Add(e.Timestamp.ToString(
-					DateTimeFormatInfo.CurrentInfo.ShortDatePattern + " " +
-					DateTimeFormatInfo.CurrentInfo.ShortTimePattern));
+			ListViewItem item = log.Items.Add(e.Timestamp.ToString(DATEPATTERN));
 			item.SubItems.Add(e.Level.ToString());
 			item.SubItems.Add(e.Message);
+			if (log.Groups.Count != 0)
+				item.Group = log.Groups[log.Groups.Count - 1];
 
 			switch (e.Level)
 			{
@@ -67,5 +72,8 @@ namespace Eraser
 		}
 
 		private Task task;
+		private static string DATEPATTERN =
+			DateTimeFormatInfo.CurrentInfo.ShortDatePattern + " " +
+			DateTimeFormatInfo.CurrentInfo.ShortTimePattern;
 	}
 }

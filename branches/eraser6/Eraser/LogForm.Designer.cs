@@ -29,11 +29,11 @@ namespace Eraser
 		private void InitializeComponent()
 		{
 			this.log = new System.Windows.Forms.ListView();
-			this.clear = new System.Windows.Forms.Button();
-			this.close = new System.Windows.Forms.Button();
 			this.timestamp = new System.Windows.Forms.ColumnHeader();
 			this.severity = new System.Windows.Forms.ColumnHeader();
 			this.message = new System.Windows.Forms.ColumnHeader();
+			this.clear = new System.Windows.Forms.Button();
+			this.close = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// log
@@ -46,14 +46,28 @@ namespace Eraser
             this.severity,
             this.message});
 			this.log.FullRowSelect = true;
+			this.log.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.log.Location = new System.Drawing.Point(12, 12);
 			this.log.MultiSelect = false;
 			this.log.Name = "log";
-			this.log.ShowGroups = false;
 			this.log.Size = new System.Drawing.Size(600, 391);
 			this.log.TabIndex = 0;
 			this.log.UseCompatibleStateImageBehavior = false;
 			this.log.View = System.Windows.Forms.View.Details;
+			// 
+			// timestamp
+			// 
+			this.timestamp.Text = "Timestamp";
+			this.timestamp.Width = 140;
+			// 
+			// severity
+			// 
+			this.severity.Text = "Severity";
+			// 
+			// message
+			// 
+			this.message.Text = "Message";
+			this.message.Width = 375;
 			// 
 			// clear
 			// 
@@ -76,20 +90,6 @@ namespace Eraser
 			this.close.Text = "Close";
 			this.close.UseVisualStyleBackColor = true;
 			this.close.Click += new System.EventHandler(this.close_Click);
-			// 
-			// timestamp
-			// 
-			this.timestamp.Text = "Timestamp";
-			this.timestamp.Width = 140;
-			// 
-			// severity
-			// 
-			this.severity.Text = "Severity";
-			// 
-			// message
-			// 
-			this.message.Text = "Message";
-			this.message.Width = 375;
 			// 
 			// LogForm
 			// 
