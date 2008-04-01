@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
 
 using Eraser.Manager;
 using Eraser.Manager.Plugin;
+using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
 	public class DefaultPlugin : IPlugin
 	{
-		#region IPlugin Members
-
 		public void Initialize(Host host)
 		{
 			host.RegisterErasureMethod(new Gutmann());
@@ -21,27 +21,39 @@ namespace Eraser.DefaultPlugins
 			host.RegisterErasureMethod(new FirstLast16KB());
 			host.RegisterPRNG(new ISAAC());
 			host.RegisterPRNG(new RNGCrypto());
+
+			Settings = Manager.ManagerLibrary.Instance.Settings.GetSettings();
+		}
+
+		public void Dispose()
+		{
+			Manager.ManagerLibrary.Instance.Settings.SetSettings(Settings);
 		}
 
 		public string Name
 		{
-			get { return "Default Erasure Methods and PRNGs"; }
+			get { return S._("Default Erasure Methods and PRNGs"); }
 		}
 
 		public string Author
 		{
-			get { return "The Eraser Project <eraser-development@lists.sourceforge.net>"; }
+			get { return S._("The Eraser Project <eraser-development@lists.sourceforge.net>"); }
 		}
 
-		#endregion
-
-		#region IDisposable Members
-
-		public void Dispose()
+		public bool Configurable
 		{
-			throw new NotImplementedException("The method or operation is not implemented.");
+			get { return true; }
 		}
 
-		#endregion
+		public void DisplaySettings(Control parent)
+		{
+			SettingsForm form = new SettingsForm();
+			form.ShowDialog();
+		}
+
+		/// <summary>
+		/// The dictionary holding settings for this plugin.
+		/// </summary>
+		public static Dictionary<string, object> Settings = null;
 	}
 }
