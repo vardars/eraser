@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
@@ -173,7 +174,7 @@ namespace Eraser.Util
 			else if (Marshal.GetLastWin32Error() == 2) //ERROR_FILE_NOT_FOUND
 				return false;
 
-			throw new Exception("Unknown SfcIsFileProtected error.");
+			throw new Win32Exception("Unknown SfcIsFileProtected error.");
 		}
 
 		/// <summary>
@@ -199,7 +200,7 @@ namespace Eraser.Util
 				}
 			}
 
-			throw new Exception("Unknown DeviceIoControl error.");
+			throw new Win32Exception("Unknown DeviceIoControl error.");
 		}
 
 		/// <summary>
