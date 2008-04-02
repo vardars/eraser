@@ -84,7 +84,7 @@ namespace Eraser.DefaultPlugins
 			foreach (CustomErasureMethod method in addCustomMethods)
 			{
 				customMethods.Add(method.GUID, method);
-				ErasureMethodManager.Register(new EraseCustom(method));
+				ErasureMethodManager.Register(new EraseCustom(method), new object[] { method });
 			}
 			
 			//Remove the old methods.
