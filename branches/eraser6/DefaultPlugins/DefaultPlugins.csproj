@@ -41,6 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomMethodEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CustomMethodEditorForm.Designer.cs">
+      <DependentUpon>CustomMethodEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EraseCustom.cs" />
     <Compile Include="EraseDoD.cs" />
     <Compile Include="EraseRandom.cs" />
     <Compile Include="EraseGutmann.cs" />
@@ -68,6 +75,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CustomMethodEditorForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CustomMethodEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SettingsForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>SettingsForm.cs</DependentUpon>

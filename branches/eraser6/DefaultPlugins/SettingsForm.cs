@@ -44,6 +44,26 @@ namespace Eraser.DefaultPlugins
 						break;
 					} 
 			}
+
+			if (DefaultPlugin.Settings.ContainsKey("EraseCustom"))
+				customMethods = (Dictionary<Guid, CustomErasureMethod>)
+					DefaultPlugin.Settings["EraseCustom"];
+			else
+				customMethods = new Dictionary<Guid, CustomErasureMethod>();
+		}
+
+		private void customMethodAdd_Click(object sender, EventArgs e)
+		{
+			CustomMethodEditorForm form = new CustomMethodEditorForm();
+			if (form.ShowDialog() == DialogResult.OK)
+			{
+				CustomErasureMethod method = form.Method;
+				addCustomMethods.Add(method);
+				
+				ListViewItem item = customMethod.Items.Add(method.Name);
+				item.SubItems.Add(method.Passes.Length.ToString());
+				item.Tag = method;
+			}
 		}
 
 		private void okBtn_Click(object sender, EventArgs e)
@@ -57,9 +77,27 @@ namespace Eraser.DefaultPlugins
 
 			DefaultPlugin.Settings["FL16Method"] = ((ErasureMethod)fl16MethodCmb.SelectedItem).GUID;
 
+			//Save the list of custom erasure methods
+			DefaultPlugin.Settings["EraseCustom"] = customMethods;
+
+			//Update the Erasure method manager on the methods
+			foreach (CustomErasureMethod method in addCustomMethods)
+			{
+				customMethods.Add(method.GUID, method);
+				ErasureMethodManager.Register(new EraseCustom(method));
+			}
+			
+			//Remove the old methods.
+			foreach (Guid guid in removeCustomMethods)
+				ErasureMethodManager.Unregister(guid);
+
 			//Close the dialog
 			DialogResult = DialogResult.OK;
 			Close();
 		}
+
+		private Dictionary<Guid, CustomErasureMethod> customMethods;
+		private List<CustomErasureMethod> addCustomMethods = new List<CustomErasureMethod>();
+		private List<Guid> removeCustomMethods = new List<Guid>();
 	}
 }

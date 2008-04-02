@@ -138,30 +138,23 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Helper function. This function will write the repeating pattern
-		/// to the stream.
+		/// Helper function. This function will write the repeating pass constant.
+		/// to the provided buffer.
 		/// </summary>
 		/// <param name="strm">The buffer to populate with data to write to disk.</param>
 		/// <param name="value">The byte[] to write.</param>
 		protected static void WriteConstant(ref byte[] buffer, object value)
 		{
-			byte[] pattern = (byte[])value;
+			byte[] constant = (byte[])value;
 			for (int i = 0; i < buffer.Length; ++i)
-				buffer[i] = pattern[i % pattern.Length];
+				buffer[i] = constant[i % constant.Length];
 		}
-
-		/// <summary>
-		/// The prototype of a pass.
-		/// </summary>
-		/// <param name="strm">The buffer to populate with data to write to disk.</param>
-		/// <param name="opaque">An opaque value, depending on the type of callback.</param>
-		protected delegate void PassFunction(ref byte[] buffer, object opaque);
 
 		/// <summary>
 		/// A pass object. This object holds both the pass function, as well as the
 		/// data used for the pass (random, byte, or triplet)
 		/// </summary>
-		protected struct Pass
+		public class Pass
 		{
 			public override string ToString()
 			{
@@ -189,7 +182,32 @@ namespace Eraser.Manager
 				Function(ref buffer, OpaqueValue == null ? prng : OpaqueValue);
 			}
 
+			/// <summary>
+			/// The prototype of a pass.
+			/// </summary>
+			/// <param name="strm">The buffer to populate with data to write to disk.</param>
+			/// <param name="opaque">An opaque value, depending on the type of callback.</param>
+			public delegate void PassFunction(ref byte[] buffer, object opaque);
+
+			/// <summary>
+			/// The default pass function which writes random information to the stream
+			/// </summary>
+			public static readonly PassFunction WriteRandom = ErasureMethod.WriteRandom;
+
+			/// <summary>
+			/// THe default pass function which writes a constant repeatedly to the
+			/// stream. The Pass' OpaqueValue must be set.
+			/// </summary>
+			public static readonly PassFunction WriteConstant = ErasureMethod.WriteConstant;
+
+			/// <summary>
+			/// The function to execute for this pass.
+			/// </summary>
 			public PassFunction Function;
+
+			/// <summary>
+			/// The value to be passed to the executing function.
+			/// </summary>
 			public object OpaqueValue;
 		}
 	}
@@ -221,8 +239,9 @@ namespace Eraser.Manager
 
 	/// <summary>
 	/// Pass-based erasure method. This subclass of erasure methods follow a fixed
-	/// pattern for every pass, although the order of passes can be randomized.
-	/// This is to simplify definitions of classes in plugins.
+	/// pattern (constant or random data) for every pass, although the order of
+	/// passes can be randomized. This is to simplify definitions of classes in
+	/// plugins.
 	/// 
 	/// Since instances of this class apply data by passes, they can by default
 	/// erase unused drive space as well.
@@ -477,5 +496,10 @@ namespace Eraser.Manager
 		private Dictionary<Guid, MethodConstructorInfo> methods =
 			new Dictionary<Guid, MethodConstructorInfo>();
 		#endregion
+
+		public static void Unregister(Guid guid)
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
 	}
 }

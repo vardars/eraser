@@ -32,7 +32,10 @@ namespace Eraser.DefaultPlugins
 			this.fl16MethodLbl = new System.Windows.Forms.Label();
 			this.fl16MethodCmb = new System.Windows.Forms.ComboBox();
 			this.customPassGrp = new System.Windows.Forms.GroupBox();
-			this.customPass = new System.Windows.Forms.ListView();
+			this.customMethodAdd = new System.Windows.Forms.Button();
+			this.customMethod = new System.Windows.Forms.ListView();
+			this.customPassName = new System.Windows.Forms.ColumnHeader();
+			this.customPassPassCount = new System.Windows.Forms.ColumnHeader();
 			this.okBtn = new System.Windows.Forms.Button();
 			this.cancelBtn = new System.Windows.Forms.Button();
 			this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
@@ -66,7 +69,8 @@ namespace Eraser.DefaultPlugins
 			this.customPassGrp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.customPassGrp.Controls.Add(this.customPass);
+			this.customPassGrp.Controls.Add(this.customMethodAdd);
+			this.customPassGrp.Controls.Add(this.customMethod);
 			this.customPassGrp.Location = new System.Drawing.Point(15, 56);
 			this.customPassGrp.Name = "customPassGrp";
 			this.customPassGrp.Size = new System.Drawing.Size(337, 315);
@@ -74,16 +78,40 @@ namespace Eraser.DefaultPlugins
 			this.customPassGrp.TabStop = false;
 			this.customPassGrp.Text = "Custom Erasure Methods";
 			// 
-			// customPass
+			// customMethodAdd
 			// 
-			this.customPass.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			this.customMethodAdd.Location = new System.Drawing.Point(6, 286);
+			this.customMethodAdd.Name = "customMethodAdd";
+			this.customMethodAdd.Size = new System.Drawing.Size(90, 23);
+			this.customMethodAdd.TabIndex = 1;
+			this.customMethodAdd.Text = "Add Method";
+			this.customMethodAdd.UseVisualStyleBackColor = true;
+			this.customMethodAdd.Click += new System.EventHandler(this.customMethodAdd_Click);
+			// 
+			// customMethod
+			// 
+			this.customMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.customPass.Location = new System.Drawing.Point(6, 22);
-			this.customPass.Name = "customPass";
-			this.customPass.Size = new System.Drawing.Size(325, 287);
-			this.customPass.TabIndex = 0;
-			this.customPass.UseCompatibleStateImageBehavior = false;
+			this.customMethod.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.customPassName,
+            this.customPassPassCount});
+			this.customMethod.Location = new System.Drawing.Point(6, 22);
+			this.customMethod.MultiSelect = false;
+			this.customMethod.Name = "customMethod";
+			this.customMethod.Size = new System.Drawing.Size(325, 258);
+			this.customMethod.TabIndex = 0;
+			this.customMethod.UseCompatibleStateImageBehavior = false;
+			this.customMethod.View = System.Windows.Forms.View.Details;
+			// 
+			// customPassName
+			// 
+			this.customPassName.Text = "Method Name";
+			this.customPassName.Width = 240;
+			// 
+			// customPassPassCount
+			// 
+			this.customPassPassCount.Text = "Passes";
 			// 
 			// okBtn
 			// 
@@ -91,7 +119,7 @@ namespace Eraser.DefaultPlugins
 			this.okBtn.Location = new System.Drawing.Point(196, 377);
 			this.okBtn.Name = "okBtn";
 			this.okBtn.Size = new System.Drawing.Size(75, 23);
-			this.okBtn.TabIndex = 0;
+			this.okBtn.TabIndex = 4;
 			this.okBtn.Text = "OK";
 			this.okBtn.UseVisualStyleBackColor = true;
 			this.okBtn.Click += new System.EventHandler(this.okBtn_Click);
@@ -103,7 +131,7 @@ namespace Eraser.DefaultPlugins
 			this.cancelBtn.Location = new System.Drawing.Point(277, 377);
 			this.cancelBtn.Name = "cancelBtn";
 			this.cancelBtn.Size = new System.Drawing.Size(75, 23);
-			this.cancelBtn.TabIndex = 1;
+			this.cancelBtn.TabIndex = 5;
 			this.cancelBtn.Text = "Cancel";
 			this.cancelBtn.UseVisualStyleBackColor = true;
 			// 
@@ -145,7 +173,10 @@ namespace Eraser.DefaultPlugins
 		private System.Windows.Forms.GroupBox customPassGrp;
 		private System.Windows.Forms.Button okBtn;
 		private System.Windows.Forms.Button cancelBtn;
-		private System.Windows.Forms.ListView customPass;
+		private System.Windows.Forms.ListView customMethod;
 		private System.Windows.Forms.ErrorProvider errorProvider;
+		private System.Windows.Forms.ColumnHeader customPassName;
+		private System.Windows.Forms.ColumnHeader customPassPassCount;
+		private System.Windows.Forms.Button customMethodAdd;
 	}
 }
