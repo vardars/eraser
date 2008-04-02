@@ -4,9 +4,17 @@
 
 ===Important===
 1. Next Scheduled run
-2. Test multi-target tasks
+2. Multi-target tasks work, but the progress indicator is skewed. Very badly.
+   -Allow deletion and reorganization of task targets
 3. Are file names of ADSes changeable and would leaving them be a security risk?
-4. Allow pattern wiping. ie write a user-provided pattern to the disk for an erasure pass
+4. Complete pattern wiping.
+   -Code implemented to define and add new methods
+   -Implement saving to the registry
+     -CustomErasureMethod not serializable
+   -Implement code in ErasureMethodManager to broadcast changes in the list of
+    registered methods
+   -Implement code to edit and remove these custom methods
+   -Test the beast!
 
 ===Features===
 1. Allow runtime Plugin Load
@@ -21,6 +29,8 @@
 6. Integrated update function (as a plugin?)
 7. Allow users to specify that they want their page file to be encrypted under Vista.
    fsutil behavior set encryptpagingfile 1
+8. Fix internationalized code. GUI elements may run into each other.
+   -Decide: when do we translate code which are exception messages?
 
 ===Questions===
 1. More intelligent default settings selection
