@@ -1,0 +1,278 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-04-02 21:47+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.cs:307
+msgid "The name of the custom method cannot be empty."
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.cs:315
+msgid "The method needs to have at least one pass defined."
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.cs:332
+msgid ""
+"The pass is supposed to write a constant to the files to be erased, but no "
+"constant was defined."
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\EraseDoD.cs:34
+msgid "US DoD 5220.22-M (8-306. / E, C and E)"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\EraseDoD.cs:80
+msgid "US DoD 5220.22-M (8-306. / E)"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\EraseFirstLast16KB.cs:47
+msgid ""
+"The First/last 16KB erasure method requires another erasure method to erase "
+"the file.\n"
+"\n"
+"This must be set in the Plugin Settings dialog."
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\EraseFirstLast16KB.cs:54
+msgid "First/last 16KB Erasure"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\EraseFirstLast16KB.cs:92
+msgid ""
+"The amount of data erased should not be limited, since this is a self-"
+"limiting erasure method."
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\EraseGutmann.cs:35
+msgid "Gutmann"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\EraseRandom.cs:35
+msgid "Pseudorandom Data"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\EraseSchneier.cs:35
+msgid "Schneier 7 pass"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\Plugin.cs:58
+msgid "Default Erasure Methods and PRNGs"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\Plugin.cs:63
+msgid "The Eraser Project <eraser-development@lists.sourceforge.net>"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\RNGCrypto.cs:36
+msgid "RNGCryptoServiceProvider"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\RNGISAAC.cs:43
+msgid "ISAAC CSPRNG"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:82
+msgid "nameLbl"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:85
+msgid "Name:"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:92
+msgid "nameTxt"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:108
+msgid "passesLv"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:117
+msgid "Pass Number"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:122
+msgid "Data"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:129
+msgid "passesAddBtn"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:132
+msgid "Add"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:141
+msgid "passesRemoveBtn"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:144
+msgid "Remove"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:153
+msgid "passesDuplicateBtn"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:156
+msgid "Duplicate"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:165
+msgid "passesMoveUpBtn"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:168
+msgid "Move Up"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:177
+msgid "passesMoveDownBtn"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:180
+msgid "Move Down"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:192
+msgid "passGrp"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:196
+msgid "Pass Data"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:206
+msgid "passTxt"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:218
+msgid "passTypeGrp"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:228
+msgid "passTypeText"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:232
+msgid "Text"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:241
+msgid "passTypeHex"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:244
+msgid "Hexadecimal"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:253
+msgid "passTypeRandom"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:256
+msgid "Random"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:264
+msgid "randomizeChk"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:267
+msgid "Randomize pass order"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:273
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:141
+msgid "okBtn"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:276
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:144
+msgid "OK"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:284
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:153
+msgid "cancelBtn"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:287
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:156
+msgid "Cancel"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:313
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:175
+msgid "Segoe UI"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:317
+msgid "CustomMethodEditorForm"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\CustomMethodEditorForm.Designer.cs:319
+msgid "Custom Erasure Method Editor"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:71
+msgid "fl16MethodLbl"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:74
+msgid "Erasure method for first/last 16 KB:"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:84
+msgid "fl16MethodCmb"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:96
+msgid "customPassGrp"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:100
+msgid "Custom Erasure Methods"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:105
+msgid "customMethodAdd"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:108
+msgid "Add Method"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:122
+msgid "customMethod"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:130
+msgid "Method Name"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:135
+msgid "Passes"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:179
+msgid "SettingsForm"
+msgstr ""
+
+#: D:\Development\Projects\Eraser\DefaultPlugins\SettingsForm.Designer.cs:182
+msgid "Default Plugin - Settings"
+msgstr ""

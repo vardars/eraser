@@ -92,4 +92,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>$(SolutionDir)gettext.bat "$(ProjectDir)" $(OutDir) DefaultPlugins</PostBuildEvent>
+  </PropertyGroup>
 </Project>
