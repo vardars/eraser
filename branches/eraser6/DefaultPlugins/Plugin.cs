@@ -43,9 +43,17 @@ namespace Eraser.DefaultPlugins
 			host.RegisterErasureMethod(new DoD_EcE());
 			host.RegisterErasureMethod(new DoD_E());
 			host.RegisterErasureMethod(new Pseudorandom());
-			host.RegisterErasureMethod(new FirstLast16KB());
 			host.RegisterPRNG(new ISAAC());
 			host.RegisterPRNG(new RNGCrypto());
+
+			//Done last
+			try
+			{
+				host.RegisterErasureMethod(new FirstLast16KB());
+			}
+			catch (Exception)
+			{
+			}
 		}
 
 		public void Dispose()
