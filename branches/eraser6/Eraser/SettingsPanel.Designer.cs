@@ -365,8 +365,6 @@ namespace Eraser
 			// plausibleDeniability
 			// 
 			this.plausibleDeniability.AutoSize = true;
-			this.plausibleDeniability.Checked = true;
-			this.plausibleDeniability.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.plausibleDeniability.Location = new System.Drawing.Point(20, 240);
 			this.plausibleDeniability.Name = "plausibleDeniability";
 			this.plausibleDeniability.Size = new System.Drawing.Size(359, 17);

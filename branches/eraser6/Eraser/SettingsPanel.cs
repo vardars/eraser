@@ -125,17 +125,25 @@ namespace Eraser
 				ManagerLibrary.Instance.Settings.EraseLockedFilesOnRestart;
 			lockedConfirm.Checked =
 				ManagerLibrary.Instance.Settings.ConfirmEraseOnRestart;
+			lockedAllow_CheckedChanged(lockedAllow, new EventArgs());
 			schedulerMissedImmediate.Checked =
 				ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately;
 			schedulerMissedIgnore.Checked =
 				!ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately;
 			plausibleDeniability.Checked =
 				ManagerLibrary.Instance.Settings.PlausibleDeniability;
+			plausibleDeniability_CheckedChanged(plausibleDeniability, new EventArgs());
 			List<string> defaultsList = new List<string>();
 
 			//Select an intelligent default if the settings are invalid.
 			if (uiLanguage.SelectedIndex == -1)
+			{
 				defaultsList.Add(S._("User interface language"));
+				foreach (Language lang in uiLanguage.Items)
+					//TODO: This is an approximation - but that's the best I can think of at the moment
+					if (((CultureInfo)lang).ThreeLetterISOLanguageName == S.Language.ThreeLetterISOLanguageName)
+						uiLanguage.SelectedItem = lang;
+			}
 			if (eraseFilesMethod.SelectedIndex == -1)
 			{
 				if (eraseFilesMethod.Items.Count > 0)
@@ -189,7 +197,8 @@ namespace Eraser
 		private void plausibleDeniability_CheckedChanged(object sender, EventArgs e)
 		{
 			plausibleDeniabilityFiles.Enabled = plausibleDeniabilityFilesAddFile.Enabled =
-				plausibleDeniabilityFilesRemove.Enabled = plausibleDeniability.Checked;
+				plausibleDeniabilityFilesAddFolder.Enabled = plausibleDeniabilityFilesRemove.Enabled =
+				plausibleDeniability.Checked;
 		}
 
 		private void plausibleDeniabilityFilesAddFile_Click(object sender, EventArgs e)
