@@ -23,6 +23,6 @@ del Filelist
 for %%i in (Languages\*.po) do msgmerge -U --backup=none "%%i" "Languages\%3.pot"
 
 set path=%PATH%;C:\Windows\Microsoft.NET\Framework\v2.0.50727
-set GETTEXTCSHARPLIBDIR=D:\Development\Libraries\C#\gettext\gettext-runtime\intl-csharp\bin\Release
+set GETTEXTCSHARPLIBDIR=D:\Development\Libraries\C#\gettext\bin\Release
 echo %PATH%
 for %%i in (Languages\*.po) do msgfmt --verbose --csharp %%i --locale %%~ni  -r Eraser -d %2
