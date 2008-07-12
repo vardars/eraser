@@ -203,7 +203,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>$(SolutionDir)gettext.bat "$(ProjectDir)" $(OutDir) Eraser</PostBuildEvent>
+    <PostBuildEvent>$(SolutionDir)gettext.bat "$(ProjectDir)" $(OutDir) $(ProjectName)</PostBuildEvent>
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
