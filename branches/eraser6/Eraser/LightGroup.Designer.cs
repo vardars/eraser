@@ -114,7 +114,7 @@ namespace Eraser
 		#endregion
 
 		private System.Windows.Forms.TableLayoutPanel container;
-		private Trustbridge.Windows.Controls.BevelLine separator;
+        private Trustbridge.Windows.Controls.BevelLine separator;
 		private System.Windows.Forms.Label label;
 
 	}
