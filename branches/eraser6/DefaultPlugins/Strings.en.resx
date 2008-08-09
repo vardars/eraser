@@ -118,48 +118,48 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="The name of the custom method cannot be empty." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>The name of the custom method cannot be empty.</value>
   </data>
   <data name="The method needs to have at least one pass defined." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>The method needs to have at least one pass defined.</value>
   </data>
   <data name="The pass is supposed to write a constant to the files to be erased, but no constant was defined." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>The pass is supposed to write a constant to the files to be erased, but no constant was defined.</value>
   </data>
   <data name="US DoD 5220.22-M (8-306. / E, C and E)" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>US DoD 5220.22-M (8-306. / E, C and E)</value>
   </data>
   <data name="US DoD 5220.22-M (8-306. / E)" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>US DoD 5220.22-M (8-306. / E)</value>
   </data>
   <data name="The First/last 16KB erasure method requires another erasure method to erase the file.\n\nThis must be set in the Plugin Settings dialog." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>The First/last 16KB erasure method requires another erasure method to erase the file.\n\nThis must be set in the Plugin Settings dialog.</value>
   </data>
   <data name="First/last 16KB Erasure" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>First/last 16KB Erasure</value>
   </data>
   <data name="The amount of data erased should not be limited, since this is a self-limiting erasure method." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>The amount of data erased should not be limited, since this is a self-limiting erasure method.</value>
   </data>
   <data name="Gutmann" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Gutmann</value>
   </data>
   <data name="Pseudorandom Data" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Pseudorandom Data</value>
   </data>
   <data name="Schneier 7 pass" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Schneier 7 pass</value>
   </data>
   <data name="Default Erasure Methods and PRNGs" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Default Erasure Methods and PRNGs</value>
   </data>
   <data name="The Eraser Project &lt;eraser-development@lists.sourceforge.net&gt;" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>The Eraser Project &lt;eraser-development@lists.sourceforge.net&gt;</value>
   </data>
   <data name="RNGCryptoServiceProvider" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>RNGCryptoServiceProvider</value>
   </data>
   <data name="ISAAC CSPRNG" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>ISAAC CSPRNG</value>
   </data>
 </root>
