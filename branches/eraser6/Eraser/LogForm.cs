@@ -63,6 +63,22 @@ namespace Eraser
 
 		private void task_Logged(LogEntry e)
 		{
+			if (InvokeRequired)
+			{
+				//Todo: I get crashes here... but alas, I can't fix it!
+				try
+				{
+					Invoke(new Logger.LogEvent(task_Logged), new object[] { e });
+				}
+				catch (ObjectDisposedException)
+				{
+				}
+				catch (InvalidOperationException)
+				{
+				}
+				return;
+			}
+
 			ListViewItem item = log.Items.Add(e.Timestamp.ToString(DATEPATTERN));
 			item.SubItems.Add(e.Level.ToString());
 			item.SubItems.Add(e.Message);

@@ -49,6 +49,7 @@ namespace Eraser
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LogForm));
 			this.log = new System.Windows.Forms.ListView();
 			this.timestamp = new System.Windows.Forms.ColumnHeader();
 			this.severity = new System.Windows.Forms.ColumnHeader();
@@ -59,74 +60,56 @@ namespace Eraser
 			// 
 			// log
 			// 
-			this.log.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.log, "log");
 			this.log.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.timestamp,
             this.severity,
             this.message});
 			this.log.FullRowSelect = true;
 			this.log.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.log.Location = new System.Drawing.Point(12, 12);
 			this.log.MultiSelect = false;
 			this.log.Name = "log";
-			this.log.Size = new System.Drawing.Size(600, 391);
-			this.log.TabIndex = 0;
 			this.log.UseCompatibleStateImageBehavior = false;
 			this.log.View = System.Windows.Forms.View.Details;
 			// 
 			// timestamp
 			// 
-			this.timestamp.Text = "Timestamp";
-			this.timestamp.Width = 140;
+			resources.ApplyResources(this.timestamp, "timestamp");
 			// 
 			// severity
 			// 
-			this.severity.Text = "Severity";
+			resources.ApplyResources(this.severity, "severity");
 			// 
 			// message
 			// 
-			this.message.Text = "Message";
-			this.message.Width = 375;
+			resources.ApplyResources(this.message, "message");
 			// 
 			// clear
 			// 
-			this.clear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.clear.Location = new System.Drawing.Point(456, 409);
+			resources.ApplyResources(this.clear, "clear");
 			this.clear.Name = "clear";
-			this.clear.Size = new System.Drawing.Size(75, 23);
-			this.clear.TabIndex = 1;
-			this.clear.Text = "Clear Log";
 			this.clear.UseVisualStyleBackColor = true;
 			this.clear.Click += new System.EventHandler(this.clear_Click);
 			// 
 			// close
 			// 
-			this.close.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.close.Location = new System.Drawing.Point(537, 409);
+			resources.ApplyResources(this.close, "close");
 			this.close.Name = "close";
-			this.close.Size = new System.Drawing.Size(75, 23);
-			this.close.TabIndex = 2;
-			this.close.Text = "Close";
 			this.close.UseVisualStyleBackColor = true;
 			this.close.Click += new System.EventHandler(this.close_Click);
 			// 
 			// LogForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-			this.ClientSize = new System.Drawing.Size(624, 444);
 			this.Controls.Add(this.close);
 			this.Controls.Add(this.clear);
 			this.Controls.Add(this.log);
-			this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "LogForm";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
-			this.Text = "Log Viewer";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.LogForm_FormClosed);
 			this.ResumeLayout(false);
 

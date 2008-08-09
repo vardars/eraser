@@ -50,6 +50,7 @@ namespace Eraser
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsPanel));
 			this.ui = new Eraser.LightGroup();
 			this.uiContextMenu = new System.Windows.Forms.CheckBox();
 			this.lockedAllow = new System.Windows.Forms.CheckBox();
@@ -92,8 +93,7 @@ namespace Eraser
 			// 
 			// titleLbl
 			// 
-			this.titleLbl.Size = new System.Drawing.Size(101, 32);
-			this.titleLbl.Text = "Settings";
+			resources.ApplyResources(this.titleLbl, "titleLbl");
 			// 
 			// titleIcon
 			// 
@@ -125,117 +125,74 @@ namespace Eraser
 			this.content.Controls.Add(this.lockedAllow);
 			this.content.Controls.Add(this.uiContextMenu);
 			this.content.Controls.Add(this.ui);
-			this.content.Size = new System.Drawing.Size(712, 780);
+			resources.ApplyResources(this.content, "content");
 			// 
 			// ui
 			// 
-			this.ui.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.ui.AutoSize = true;
+			resources.ApplyResources(this.ui, "ui");
 			this.ui.Label = "Shell integration";
-			this.ui.Location = new System.Drawing.Point(0, -6);
 			this.ui.Name = "ui";
-			this.ui.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
-			this.ui.Size = new System.Drawing.Size(712, 32);
-			this.ui.TabIndex = 1;
 			// 
 			// uiContextMenu
 			// 
-			this.uiContextMenu.AutoSize = true;
+			resources.ApplyResources(this.uiContextMenu, "uiContextMenu");
 			this.uiContextMenu.Checked = true;
 			this.uiContextMenu.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.uiContextMenu.Location = new System.Drawing.Point(20, 53);
 			this.uiContextMenu.Name = "uiContextMenu";
-			this.uiContextMenu.Size = new System.Drawing.Size(209, 17);
-			this.uiContextMenu.TabIndex = 4;
-			this.uiContextMenu.Text = "Integrate Eraser into Windows Explorer";
 			this.uiContextMenu.UseVisualStyleBackColor = true;
 			// 
 			// lockedAllow
 			// 
-			this.lockedAllow.AutoSize = true;
+			resources.ApplyResources(this.lockedAllow, "lockedAllow");
 			this.lockedAllow.Checked = true;
 			this.lockedAllow.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.lockedAllow.Location = new System.Drawing.Point(20, 193);
 			this.lockedAllow.Name = "lockedAllow";
-			this.lockedAllow.Size = new System.Drawing.Size(251, 17);
-			this.lockedAllow.TabIndex = 12;
-			this.lockedAllow.Text = "Allow locked files to be erased on system restart";
 			this.lockedAllow.UseVisualStyleBackColor = true;
 			this.lockedAllow.CheckedChanged += new System.EventHandler(this.lockedAllow_CheckedChanged);
 			// 
 			// lockedConfirm
 			// 
-			this.lockedConfirm.AutoSize = true;
-			this.lockedConfirm.Location = new System.Drawing.Point(36, 216);
+			resources.ApplyResources(this.lockedConfirm, "lockedConfirm");
 			this.lockedConfirm.Name = "lockedConfirm";
-			this.lockedConfirm.Size = new System.Drawing.Size(182, 17);
-			this.lockedConfirm.TabIndex = 13;
-			this.lockedConfirm.Text = "Confirm with user before doing so";
 			this.lockedConfirm.UseVisualStyleBackColor = true;
 			// 
 			// erase
 			// 
-			this.erase.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.erase.AutoSize = true;
+			resources.ApplyResources(this.erase, "erase");
 			this.erase.Label = "Erase settings";
-			this.erase.Location = new System.Drawing.Point(0, 76);
 			this.erase.Name = "erase";
-			this.erase.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
-			this.erase.Size = new System.Drawing.Size(712, 32);
-			this.erase.TabIndex = 5;
 			// 
 			// eraseFilesMethodLbl
 			// 
-			this.eraseFilesMethodLbl.AutoSize = true;
-			this.eraseFilesMethodLbl.Location = new System.Drawing.Point(17, 115);
+			resources.ApplyResources(this.eraseFilesMethodLbl, "eraseFilesMethodLbl");
 			this.eraseFilesMethodLbl.Name = "eraseFilesMethodLbl";
-			this.eraseFilesMethodLbl.Size = new System.Drawing.Size(136, 13);
-			this.eraseFilesMethodLbl.TabIndex = 6;
-			this.eraseFilesMethodLbl.Text = "Default file erasure method:";
 			// 
 			// eraseUnusedMethodLbl
 			// 
-			this.eraseUnusedMethodLbl.AutoSize = true;
-			this.eraseUnusedMethodLbl.Location = new System.Drawing.Point(17, 141);
+			resources.ApplyResources(this.eraseUnusedMethodLbl, "eraseUnusedMethodLbl");
 			this.eraseUnusedMethodLbl.Name = "eraseUnusedMethodLbl";
-			this.eraseUnusedMethodLbl.Size = new System.Drawing.Size(190, 13);
-			this.eraseUnusedMethodLbl.TabIndex = 8;
-			this.eraseUnusedMethodLbl.Text = "Default unused space erasure method:";
 			// 
 			// eraseFilesMethod
 			// 
 			this.eraseFilesMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.eraseFilesMethod.Location = new System.Drawing.Point(267, 111);
+			resources.ApplyResources(this.eraseFilesMethod, "eraseFilesMethod");
 			this.eraseFilesMethod.Name = "eraseFilesMethod";
-			this.eraseFilesMethod.Size = new System.Drawing.Size(290, 21);
-			this.eraseFilesMethod.TabIndex = 7;
 			// 
 			// eraseUnusedMethod
 			// 
 			this.eraseUnusedMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.eraseUnusedMethod.Location = new System.Drawing.Point(267, 138);
+			resources.ApplyResources(this.eraseUnusedMethod, "eraseUnusedMethod");
 			this.eraseUnusedMethod.Name = "eraseUnusedMethod";
-			this.eraseUnusedMethod.Size = new System.Drawing.Size(290, 21);
-			this.eraseUnusedMethod.TabIndex = 9;
 			// 
 			// plugins
 			// 
-			this.plugins.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.plugins.AutoSize = true;
+			resources.ApplyResources(this.plugins, "plugins");
 			this.plugins.Label = "Plugins";
-			this.plugins.Location = new System.Drawing.Point(0, 507);
 			this.plugins.Name = "plugins";
-			this.plugins.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
-			this.plugins.Size = new System.Drawing.Size(712, 32);
-			this.plugins.TabIndex = 19;
 			// 
 			// pluginsManager
 			// 
-			this.pluginsManager.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.pluginsManager, "pluginsManager");
 			this.pluginsManager.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.pluginsManagerColName,
             this.pluginsManagerColAuthor,
@@ -243,120 +200,84 @@ namespace Eraser
             this.pluginsManagerColPath});
 			this.pluginsManager.ContextMenuStrip = this.pluginsMenu;
 			this.pluginsManager.FullRowSelect = true;
-			this.pluginsManager.Location = new System.Drawing.Point(20, 545);
 			this.pluginsManager.Name = "pluginsManager";
-			this.pluginsManager.Size = new System.Drawing.Size(689, 234);
-			this.pluginsManager.TabIndex = 20;
 			this.pluginsManager.UseCompatibleStateImageBehavior = false;
 			this.pluginsManager.View = System.Windows.Forms.View.Details;
 			// 
 			// pluginsManagerColName
 			// 
-			this.pluginsManagerColName.Text = "Name";
-			this.pluginsManagerColName.Width = 250;
+			resources.ApplyResources(this.pluginsManagerColName, "pluginsManagerColName");
 			// 
 			// pluginsManagerColAuthor
 			// 
-			this.pluginsManagerColAuthor.Text = "Author";
-			this.pluginsManagerColAuthor.Width = 140;
+			resources.ApplyResources(this.pluginsManagerColAuthor, "pluginsManagerColAuthor");
 			// 
 			// pluginsManagerColVersion
 			// 
-			this.pluginsManagerColVersion.Text = "Version";
-			this.pluginsManagerColVersion.Width = 80;
+			resources.ApplyResources(this.pluginsManagerColVersion, "pluginsManagerColVersion");
 			// 
 			// pluginsManagerColPath
 			// 
-			this.pluginsManagerColPath.Text = "File Path";
-			this.pluginsManagerColPath.Width = 180;
+			resources.ApplyResources(this.pluginsManagerColPath, "pluginsManagerColPath");
 			// 
 			// pluginsMenu
 			// 
 			this.pluginsMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.settingsToolStripMenuItem});
 			this.pluginsMenu.Name = "pluginsContextMenu";
-			this.pluginsMenu.Size = new System.Drawing.Size(126, 26);
+			resources.ApplyResources(this.pluginsMenu, "pluginsMenu");
 			this.pluginsMenu.Opening += new System.ComponentModel.CancelEventHandler(this.pluginsMenu_Opening);
 			// 
 			// settingsToolStripMenuItem
 			// 
 			this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-			this.settingsToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
-			this.settingsToolStripMenuItem.Text = "Settings...";
+			resources.ApplyResources(this.settingsToolStripMenuItem, "settingsToolStripMenuItem");
 			this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
 			// 
 			// scheduler
 			// 
-			this.scheduler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.scheduler.AutoSize = true;
+			resources.ApplyResources(this.scheduler, "scheduler");
 			this.scheduler.Label = "Scheduler settings";
-			this.scheduler.Location = new System.Drawing.Point(0, 413);
 			this.scheduler.Name = "scheduler";
-			this.scheduler.Padding = new System.Windows.Forms.Padding(0, 10, 0, 5);
-			this.scheduler.Size = new System.Drawing.Size(712, 32);
-			this.scheduler.TabIndex = 15;
 			// 
 			// schedulerMissed
 			// 
-			this.schedulerMissed.AutoSize = true;
-			this.schedulerMissed.Location = new System.Drawing.Point(17, 448);
+			resources.ApplyResources(this.schedulerMissed, "schedulerMissed");
 			this.schedulerMissed.Name = "schedulerMissed";
-			this.schedulerMissed.Size = new System.Drawing.Size(242, 13);
-			this.schedulerMissed.TabIndex = 16;
-			this.schedulerMissed.Text = "When a recurring task has missed its starting time,";
 			// 
 			// schedulerMissedImmediate
 			// 
-			this.schedulerMissedImmediate.AutoSize = true;
+			resources.ApplyResources(this.schedulerMissedImmediate, "schedulerMissedImmediate");
 			this.schedulerMissedImmediate.Checked = true;
-			this.schedulerMissedImmediate.Location = new System.Drawing.Point(36, 464);
 			this.schedulerMissedImmediate.Name = "schedulerMissedImmediate";
-			this.schedulerMissedImmediate.Size = new System.Drawing.Size(217, 17);
-			this.schedulerMissedImmediate.TabIndex = 17;
 			this.schedulerMissedImmediate.TabStop = true;
-			this.schedulerMissedImmediate.Text = "execute the task when Eraser next starts";
 			this.schedulerMissedImmediate.UseVisualStyleBackColor = true;
 			// 
 			// schedulerMissedIgnore
 			// 
-			this.schedulerMissedIgnore.AutoSize = true;
-			this.schedulerMissedIgnore.Location = new System.Drawing.Point(36, 484);
+			resources.ApplyResources(this.schedulerMissedIgnore, "schedulerMissedIgnore");
 			this.schedulerMissedIgnore.Name = "schedulerMissedIgnore";
-			this.schedulerMissedIgnore.Size = new System.Drawing.Size(339, 17);
-			this.schedulerMissedIgnore.TabIndex = 18;
 			this.schedulerMissedIgnore.TabStop = true;
-			this.schedulerMissedIgnore.Text = "ignore the missed schedule and run only at the next appointed time";
 			this.schedulerMissedIgnore.UseVisualStyleBackColor = true;
 			// 
 			// saveSettings
 			// 
-			this.saveSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.saveSettings.Location = new System.Drawing.Point(639, 27);
+			resources.ApplyResources(this.saveSettings, "saveSettings");
 			this.saveSettings.Name = "saveSettings";
-			this.saveSettings.Size = new System.Drawing.Size(90, 23);
-			this.saveSettings.TabIndex = 18;
-			this.saveSettings.Text = "Save Settings";
 			this.saveSettings.UseVisualStyleBackColor = true;
 			this.saveSettings.Click += new System.EventHandler(this.saveSettings_Click);
 			// 
 			// erasePRNGLbl
 			// 
-			this.erasePRNGLbl.AutoSize = true;
-			this.erasePRNGLbl.Location = new System.Drawing.Point(17, 169);
+			resources.ApplyResources(this.erasePRNGLbl, "erasePRNGLbl");
 			this.erasePRNGLbl.Name = "erasePRNGLbl";
-			this.erasePRNGLbl.Size = new System.Drawing.Size(131, 13);
-			this.erasePRNGLbl.TabIndex = 10;
-			this.erasePRNGLbl.Text = "Randomness data source:";
 			// 
 			// erasePRNG
 			// 
 			this.erasePRNG.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.erasePRNG.FormattingEnabled = true;
-			this.erasePRNG.Location = new System.Drawing.Point(267, 165);
+			resources.ApplyResources(this.erasePRNG, "erasePRNG");
 			this.erasePRNG.Name = "erasePRNG";
-			this.erasePRNG.Size = new System.Drawing.Size(290, 21);
-			this.erasePRNG.TabIndex = 11;
 			// 
 			// errorProvider
 			// 
@@ -364,78 +285,52 @@ namespace Eraser
 			// 
 			// plausibleDeniability
 			// 
-			this.plausibleDeniability.AutoSize = true;
-			this.plausibleDeniability.Location = new System.Drawing.Point(20, 240);
+			resources.ApplyResources(this.plausibleDeniability, "plausibleDeniability");
 			this.plausibleDeniability.Name = "plausibleDeniability";
-			this.plausibleDeniability.Size = new System.Drawing.Size(359, 17);
-			this.plausibleDeniability.TabIndex = 14;
-			this.plausibleDeniability.Text = "Replace erased files with the following files to allow plausible deniability";
 			this.plausibleDeniability.UseVisualStyleBackColor = true;
 			this.plausibleDeniability.CheckedChanged += new System.EventHandler(this.plausibleDeniability_CheckedChanged);
 			// 
 			// uiLanguageLbl
 			// 
-			this.uiLanguageLbl.AutoSize = true;
-			this.uiLanguageLbl.Location = new System.Drawing.Point(17, 29);
+			resources.ApplyResources(this.uiLanguageLbl, "uiLanguageLbl");
 			this.uiLanguageLbl.Name = "uiLanguageLbl";
-			this.uiLanguageLbl.Size = new System.Drawing.Size(123, 13);
-			this.uiLanguageLbl.TabIndex = 2;
-			this.uiLanguageLbl.Text = "User interface language:";
 			// 
 			// uiLanguage
 			// 
 			this.uiLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.uiLanguage.FormattingEnabled = true;
-			this.uiLanguage.Location = new System.Drawing.Point(267, 26);
+			resources.ApplyResources(this.uiLanguage, "uiLanguage");
 			this.uiLanguage.Name = "uiLanguage";
-			this.uiLanguage.Size = new System.Drawing.Size(290, 21);
-			this.uiLanguage.TabIndex = 3;
 			// 
 			// plausibleDeniabilityFiles
 			// 
-			this.plausibleDeniabilityFiles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.plausibleDeniabilityFiles, "plausibleDeniabilityFiles");
 			this.plausibleDeniabilityFiles.FormattingEnabled = true;
-			this.plausibleDeniabilityFiles.Location = new System.Drawing.Point(36, 263);
 			this.plausibleDeniabilityFiles.Name = "plausibleDeniabilityFiles";
-			this.plausibleDeniabilityFiles.Size = new System.Drawing.Size(673, 147);
-			this.plausibleDeniabilityFiles.TabIndex = 21;
 			// 
 			// plausibleDeniabilityFilesAddFile
 			// 
-			this.plausibleDeniabilityFilesAddFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.plausibleDeniabilityFilesAddFile.Location = new System.Drawing.Point(462, 236);
+			resources.ApplyResources(this.plausibleDeniabilityFilesAddFile, "plausibleDeniabilityFilesAddFile");
 			this.plausibleDeniabilityFilesAddFile.Name = "plausibleDeniabilityFilesAddFile";
-			this.plausibleDeniabilityFilesAddFile.Size = new System.Drawing.Size(75, 23);
-			this.plausibleDeniabilityFilesAddFile.TabIndex = 22;
-			this.plausibleDeniabilityFilesAddFile.Text = "Add File...";
 			this.plausibleDeniabilityFilesAddFile.UseVisualStyleBackColor = true;
 			this.plausibleDeniabilityFilesAddFile.Click += new System.EventHandler(this.plausibleDeniabilityFilesAddFile_Click);
 			// 
 			// plausibleDeniabilityFilesRemove
 			// 
-			this.plausibleDeniabilityFilesRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.plausibleDeniabilityFilesRemove.Location = new System.Drawing.Point(634, 236);
+			resources.ApplyResources(this.plausibleDeniabilityFilesRemove, "plausibleDeniabilityFilesRemove");
 			this.plausibleDeniabilityFilesRemove.Name = "plausibleDeniabilityFilesRemove";
-			this.plausibleDeniabilityFilesRemove.Size = new System.Drawing.Size(75, 23);
-			this.plausibleDeniabilityFilesRemove.TabIndex = 23;
-			this.plausibleDeniabilityFilesRemove.Text = "Remove";
 			this.plausibleDeniabilityFilesRemove.UseVisualStyleBackColor = true;
 			this.plausibleDeniabilityFilesRemove.Click += new System.EventHandler(this.plausibleDeniabilityFilesRemove_Click);
 			// 
 			// openFileDialog
 			// 
-			this.openFileDialog.Filter = "All Files (*.*)|*.*";
+			resources.ApplyResources(this.openFileDialog, "openFileDialog");
 			this.openFileDialog.Multiselect = true;
 			// 
 			// plausibleDeniabilityFilesAddFolder
 			// 
-			this.plausibleDeniabilityFilesAddFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.plausibleDeniabilityFilesAddFolder.Location = new System.Drawing.Point(543, 236);
+			resources.ApplyResources(this.plausibleDeniabilityFilesAddFolder, "plausibleDeniabilityFilesAddFolder");
 			this.plausibleDeniabilityFilesAddFolder.Name = "plausibleDeniabilityFilesAddFolder";
-			this.plausibleDeniabilityFilesAddFolder.Size = new System.Drawing.Size(85, 23);
-			this.plausibleDeniabilityFilesAddFolder.TabIndex = 24;
-			this.plausibleDeniabilityFilesAddFolder.Text = "Add Folder...";
 			this.plausibleDeniabilityFilesAddFolder.UseVisualStyleBackColor = true;
 			this.plausibleDeniabilityFilesAddFolder.Click += new System.EventHandler(this.plausibleDeniabilityFilesAddFolder_Click);
 			// 
@@ -443,7 +338,7 @@ namespace Eraser
 			// 
 			this.Controls.Add(this.saveSettings);
 			this.Name = "SettingsPanel";
-			this.Size = new System.Drawing.Size(752, 852);
+			resources.ApplyResources(this, "$this");
 			this.Controls.SetChildIndex(this.saveSettings, 0);
 			this.Controls.SetChildIndex(this.titleLbl, 0);
 			this.Controls.SetChildIndex(this.titleIcon, 0);

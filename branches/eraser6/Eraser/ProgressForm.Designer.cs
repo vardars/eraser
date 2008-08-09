@@ -73,167 +73,104 @@ namespace Eraser
 			// 
 			// overallProgressLbl
 			// 
-			this.overallProgressLbl.Location = new System.Drawing.Point(6, 174);
+			resources.ApplyResources(this.overallProgressLbl, "overallProgressLbl");
 			this.overallProgressLbl.Name = "overallProgressLbl";
-			this.overallProgressLbl.Size = new System.Drawing.Size(128, 15);
-			this.overallProgressLbl.TabIndex = 1;
-			this.overallProgressLbl.Text = "Total: 0%";
-			this.overallProgressLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// overallProgress
 			// 
-			this.overallProgress.Location = new System.Drawing.Point(6, 192);
+			resources.ApplyResources(this.overallProgress, "overallProgress");
 			this.overallProgress.Name = "overallProgress";
-			this.overallProgress.Size = new System.Drawing.Size(129, 15);
-			this.overallProgress.TabIndex = 2;
 			// 
 			// jobTitle
 			// 
-			this.jobTitle.AutoSize = true;
-			this.jobTitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.jobTitle.Location = new System.Drawing.Point(149, 8);
+			resources.ApplyResources(this.jobTitle, "jobTitle");
 			this.jobTitle.Name = "jobTitle";
-			this.jobTitle.Size = new System.Drawing.Size(0, 15);
-			this.jobTitle.TabIndex = 3;
 			// 
 			// status
 			// 
-			this.status.AutoSize = true;
-			this.status.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.status.Location = new System.Drawing.Point(215, 28);
+			resources.ApplyResources(this.status, "status");
 			this.status.Name = "status";
-			this.status.Size = new System.Drawing.Size(84, 15);
-			this.status.TabIndex = 5;
-			this.status.Text = "Overwriting...";
 			// 
 			// statusLbl
 			// 
-			this.statusLbl.AutoSize = true;
-			this.statusLbl.Location = new System.Drawing.Point(147, 28);
+			resources.ApplyResources(this.statusLbl, "statusLbl");
 			this.statusLbl.Name = "statusLbl";
-			this.statusLbl.Size = new System.Drawing.Size(42, 15);
-			this.statusLbl.TabIndex = 4;
-			this.statusLbl.Text = "Status:";
 			// 
 			// itemLbl
 			// 
-			this.itemLbl.AutoSize = true;
-			this.itemLbl.Location = new System.Drawing.Point(148, 61);
+			resources.ApplyResources(this.itemLbl, "itemLbl");
 			this.itemLbl.Name = "itemLbl";
-			this.itemLbl.Size = new System.Drawing.Size(34, 15);
-			this.itemLbl.TabIndex = 6;
-			this.itemLbl.Text = "Item:";
 			// 
 			// item
 			// 
-			this.item.Location = new System.Drawing.Point(215, 61);
+			resources.ApplyResources(this.item, "item");
 			this.item.Name = "item";
-			this.item.Size = new System.Drawing.Size(220, 30);
-			this.item.TabIndex = 7;
 			// 
 			// passLbl
 			// 
-			this.passLbl.AutoSize = true;
-			this.passLbl.Location = new System.Drawing.Point(148, 95);
+			resources.ApplyResources(this.passLbl, "passLbl");
 			this.passLbl.Name = "passLbl";
-			this.passLbl.Size = new System.Drawing.Size(33, 15);
-			this.passLbl.TabIndex = 8;
-			this.passLbl.Text = "Pass:";
 			// 
 			// pass
 			// 
-			this.pass.AutoSize = true;
-			this.pass.Location = new System.Drawing.Point(215, 95);
+			resources.ApplyResources(this.pass, "pass");
 			this.pass.Name = "pass";
-			this.pass.Size = new System.Drawing.Size(13, 15);
-			this.pass.TabIndex = 9;
-			this.pass.Text = "0";
 			// 
 			// title
 			// 
-			this.title.Image = ((System.Drawing.Image)(resources.GetObject("title.Image")));
-			this.title.Location = new System.Drawing.Point(6, 33);
+			resources.ApplyResources(this.title, "title");
 			this.title.Name = "title";
-			this.title.Size = new System.Drawing.Size(128, 128);
-			this.title.TabIndex = 11;
 			this.title.TabStop = false;
 			// 
 			// titleLbl
 			// 
-			this.titleLbl.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.titleLbl.Location = new System.Drawing.Point(6, 6);
+			resources.ApplyResources(this.titleLbl, "titleLbl");
 			this.titleLbl.Name = "titleLbl";
-			this.titleLbl.Size = new System.Drawing.Size(128, 18);
-			this.titleLbl.TabIndex = 0;
-			this.titleLbl.Text = "Erasing...";
-			this.titleLbl.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
 			// itemProgressLbl
 			// 
-			this.itemProgressLbl.AutoSize = true;
-			this.itemProgressLbl.Location = new System.Drawing.Point(413, 138);
+			resources.ApplyResources(this.itemProgressLbl, "itemProgressLbl");
 			this.itemProgressLbl.Name = "itemProgressLbl";
-			this.itemProgressLbl.Size = new System.Drawing.Size(23, 15);
-			this.itemProgressLbl.TabIndex = 13;
-			this.itemProgressLbl.Text = "0%";
 			// 
 			// itemProgress
 			// 
-			this.itemProgress.Location = new System.Drawing.Point(150, 137);
+			resources.ApplyResources(this.itemProgress, "itemProgress");
 			this.itemProgress.Name = "itemProgress";
-			this.itemProgress.Size = new System.Drawing.Size(257, 17);
-			this.itemProgress.TabIndex = 12;
 			// 
 			// stop
 			// 
-			this.stop.Location = new System.Drawing.Point(367, 184);
+			resources.ApplyResources(this.stop, "stop");
 			this.stop.Name = "stop";
-			this.stop.Size = new System.Drawing.Size(75, 23);
-			this.stop.TabIndex = 14;
-			this.stop.Text = "Stop";
 			this.stop.UseVisualStyleBackColor = true;
 			this.stop.Click += new System.EventHandler(this.stop_Click);
 			// 
 			// bevelLine1
 			// 
 			this.bevelLine1.Angle = 90;
-			this.bevelLine1.Location = new System.Drawing.Point(152, 51);
+			resources.ApplyResources(this.bevelLine1, "bevelLine1");
 			this.bevelLine1.Name = "bevelLine1";
-			this.bevelLine1.Size = new System.Drawing.Size(285, 2);
-			this.bevelLine1.TabIndex = 16;
 			// 
 			// bevelLine2
 			// 
 			this.bevelLine2.Angle = 0;
-			this.bevelLine2.Location = new System.Drawing.Point(140, 13);
+			resources.ApplyResources(this.bevelLine2, "bevelLine2");
 			this.bevelLine2.Name = "bevelLine2";
 			this.bevelLine2.Orientation = System.Windows.Forms.Orientation.Vertical;
-			this.bevelLine2.Size = new System.Drawing.Size(2, 190);
-			this.bevelLine2.TabIndex = 15;
 			// 
 			// timeLeftLbl
 			// 
-			this.timeLeftLbl.AutoSize = true;
-			this.timeLeftLbl.Location = new System.Drawing.Point(148, 114);
+			resources.ApplyResources(this.timeLeftLbl, "timeLeftLbl");
 			this.timeLeftLbl.Name = "timeLeftLbl";
-			this.timeLeftLbl.Size = new System.Drawing.Size(57, 15);
-			this.timeLeftLbl.TabIndex = 10;
-			this.timeLeftLbl.Text = "Time left:";
 			// 
 			// timeLeft
 			// 
-			this.timeLeft.AutoSize = true;
-			this.timeLeft.Location = new System.Drawing.Point(215, 114);
+			resources.ApplyResources(this.timeLeft, "timeLeft");
 			this.timeLeft.Name = "timeLeft";
-			this.timeLeft.Size = new System.Drawing.Size(76, 15);
-			this.timeLeft.TabIndex = 11;
-			this.timeLeft.Text = "Calculating...";
 			// 
 			// ProgressForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-			this.ClientSize = new System.Drawing.Size(449, 216);
 			this.Controls.Add(this.timeLeft);
 			this.Controls.Add(this.timeLeftLbl);
 			this.Controls.Add(this.bevelLine2);
@@ -252,13 +189,11 @@ namespace Eraser
 			this.Controls.Add(this.jobTitle);
 			this.Controls.Add(this.overallProgress);
 			this.Controls.Add(this.overallProgressLbl);
-			this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "ProgressForm";
 			this.ShowInTaskbar = false;
-			this.Text = "Erasure Progress";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ProgressForm_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.title)).EndInit();
 			this.ResumeLayout(false);

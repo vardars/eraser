@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,97 +117,111 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="titleLbl.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="Erase Schedule" xml:space="preserve">
+    <value>Erase Schedule</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="titleLbl.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 18pt</value>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
   </data>
-  <data name="titleLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>50, 17</value>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
   </data>
-  <data name="titleLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>119, 32</value>
+  <data name="Could not load task list. All task entries have" xml:space="preserve">
+    <value>Could not load task list. All task entries have </value>
   </data>
-  <data name="titleLbl.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="Eraser" xml:space="preserve">
+    <value>Eraser</value>
   </data>
-  <data name="titleLbl.Text" xml:space="preserve">
-    <value>PanelTitle</value>
+  <data name="Could not load list of files used for plausible" xml:space="preserve">
+    <value>Could not load list of files used for plausible </value>
   </data>
-  <data name="&gt;&gt;titleLbl.Name" xml:space="preserve">
-    <value>titleLbl</value>
+  <data name="Could not load plugin settings. All settings" xml:space="preserve">
+    <value>Could not load plugin settings. All settings </value>
   </data>
-  <data name="&gt;&gt;titleLbl.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="{0} out of {1}" xml:space="preserve">
+    <value>{0} out of {1}</value>
   </data>
-  <data name="&gt;&gt;titleLbl.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="{0} left" xml:space="preserve">
+    <value>{0} left</value>
   </data>
-  <data name="&gt;&gt;titleLbl.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="Total: {0}%" xml:space="preserve">
+    <value>Total: {0}%</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="content.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
+  <data name="Completed with warnings" xml:space="preserve">
+    <value>Completed with warnings</value>
   </data>
-  <data name="content.Location" type="System.Drawing.Point, System.Drawing">
-    <value>20, 52</value>
+  <data name="Completed with errors" xml:space="preserve">
+    <value>Completed with errors</value>
   </data>
-  <data name="content.Size" type="System.Drawing.Size, System.Drawing">
-    <value>712, 377</value>
+  <data name="Not completed" xml:space="preserve">
+    <value>Not completed</value>
   </data>
-  <data name="content.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="Completed" xml:space="preserve">
+    <value>Completed</value>
   </data>
-  <data name="&gt;&gt;content.Name" xml:space="preserve">
-    <value>content</value>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
   </data>
-  <data name="&gt;&gt;content.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Queued for execution" xml:space="preserve">
+    <value>Queued for execution</value>
   </data>
-  <data name="&gt;&gt;content.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="Not queued" xml:space="preserve">
+    <value>Not queued</value>
   </data>
-  <data name="&gt;&gt;content.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="Running..." xml:space="preserve">
+    <value>Running...</value>
   </data>
-  <data name="titleIcon.Location" type="System.Drawing.Point, System.Drawing">
-    <value>20, 21</value>
+  <data name="Queued for execution." xml:space="preserve">
+    <value>Queued for execution.</value>
   </data>
-  <data name="titleIcon.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 24</value>
+  <data name="User interface language" xml:space="preserve">
+    <value>User interface language</value>
   </data>
-  <data name="titleIcon.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+  <data name="Default file erasure method" xml:space="preserve">
+    <value>Default file erasure method</value>
   </data>
-  <data name="&gt;&gt;titleIcon.Name" xml:space="preserve">
-    <value>titleIcon</value>
+  <data name="Default unused space erasure method" xml:space="preserve">
+    <value>Default unused space erasure method</value>
   </data>
-  <data name="&gt;&gt;titleIcon.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Randomness data source" xml:space="preserve">
+    <value>Randomness data source</value>
   </data>
-  <data name="&gt;&gt;titleIcon.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="The following settings held invalid values:\n\n" xml:space="preserve">
+    <value>The following settings held invalid values:
+
+</value>
   </data>
-  <data name="&gt;&gt;titleIcon.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="An invalid language was selected." xml:space="preserve">
+    <value>An invalid language was selected.</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>17, 17, 17, 17</value>
+  <data name="An invalid file erasure method" xml:space="preserve">
+    <value>An invalid file erasure method </value>
   </data>
-  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>752, 449</value>
+  <data name="An invalid unused disk space" xml:space="preserve">
+    <value>An invalid unused disk space </value>
   </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>BasePanel</value>
+  <data name="An invalid randomness data" xml:space="preserve">
+    <value>An invalid randomness data </value>
   </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Erasures with plausible deniability" xml:space="preserve">
+    <value>Erasures with plausible deniability </value>
+  </data>
+  <data name="The new randomness data source will only be used when" xml:space="preserve">
+    <value>The new randomness data source will only be used when </value>
+  </data>
+  <data name="The erasure method selected does" xml:space="preserve">
+    <value>The erasure method selected does </value>
+  </data>
+  <data name="Invalid file path" xml:space="preserve">
+    <value>Invalid file path</value>
+  </data>
+  <data name="Invalid folder path" xml:space="preserve">
+    <value>Invalid folder path</value>
+  </data>
+  <data name="The task has no data to erase." xml:space="preserve">
+    <value>The task has no data to erase.</value>
+  </data>
+  <data name="The task needs to run" xml:space="preserve">
+    <value>The task needs to run </value>
   </data>
 </root>
