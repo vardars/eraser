@@ -144,7 +144,7 @@
     <EmbeddedResource Include="Strings.nl.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
-      <LastGenOutput>Strings.Designer.nl.cs</LastGenOutput>
+      <LastGenOutput>Strings.nl.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="SchedulerPanel.resx">
       <SubType>Designer</SubType>
@@ -208,6 +208,11 @@
     </Compile>
     <Compile Include="SettingsPanel.Designer.cs">
       <DependentUpon>SettingsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Strings.nl.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.nl.resx</DependentUpon>
     </Compile>
     <Compile Include="TaskDataSelectionForm.cs">
       <SubType>Form</SubType>
