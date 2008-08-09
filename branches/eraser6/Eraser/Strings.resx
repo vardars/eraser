@@ -207,8 +207,8 @@
   <data name="The new randomness data source will only be used when the next task is run.\nCurrently running tasks will use the old source." xml:space="preserve">
     <value>The new randomness data source will only be used when the next task is run.\nCurrently running tasks will use the old source.</value>
   </data>
-  <data name="The erasure method selected does" xml:space="preserve">
-    <value>The erasure method selected does </value>
+  <data name="The erasure method selected does not support unused disk space erasures." xml:space="preserve">
+    <value>The erasure method selected does not support unused disk space erasures.</value>
   </data>
   <data name="Invalid file path" xml:space="preserve">
     <value>Invalid file path</value>
@@ -219,7 +219,7 @@
   <data name="The task has no data to erase." xml:space="preserve">
     <value>The task has no data to erase.</value>
   </data>
-  <data name="The task needs to run" xml:space="preserve">
-    <value>The task needs to run </value>
+  <data name="The task needs to run on at least one day a week" xml:space="preserve">
+    <value>The task needs to run on at least one day a week</value>
   </data>
 </root>
