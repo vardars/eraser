@@ -29,6 +29,7 @@ using System.Globalization;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Resources;
+using System.Threading;
 
 namespace Eraser.Util
 {
@@ -63,9 +64,11 @@ namespace Eraser.Util
 
 			//First get the dictionary mapping assemblies and ResourceManagers (i.e. pick out
 			//the dictionary with ResourceManagers representing the current culture.)
-			if (!managers.ContainsKey(Language))
-				managers[Language] = new Dictionary<Assembly, ResourceManager>();
-			Dictionary<Assembly, ResourceManager> assemblies = managers[Language];
+			if (!managers.ContainsKey(Thread.CurrentThread.CurrentUICulture))
+				managers[Thread.CurrentThread.CurrentUICulture] =
+					new Dictionary<Assembly, ResourceManager>();
+			Dictionary<Assembly, ResourceManager> assemblies = managers[
+				Thread.CurrentThread.CurrentUICulture];
 
 			//Then look for the ResourceManager dealing with the calling assembly's
 			//resources
@@ -76,12 +79,13 @@ namespace Eraser.Util
 				//subfolder of the folder containing the main assembly
 				string languageID = string.Empty;
 				Assembly languageAssembly = LoadLanguage(Path.GetDirectoryName(
-					Assembly.GetEntryAssembly().Location), Language, assembly, out languageID);
+					Assembly.GetEntryAssembly().Location), Thread.CurrentThread.CurrentUICulture,
+					assembly, out languageID);
 
 				//If we found the language assembly to load, then we load it directly, otherwise
 				//fall back to the invariant culture.
 				string resourceName = Path.GetFileNameWithoutExtension(assembly.Location) +
-					".Languages.Strings" + (languageID.Length != 0 ? ("." + languageID) : "");
+					".Strings" + (languageID.Length != 0 ? ("." + languageID) : "");
 				res = new ResourceManager(resourceName,
 					languageAssembly != null ? languageAssembly : assembly);
 				assemblies[assembly] = res;
@@ -89,7 +93,32 @@ namespace Eraser.Util
 			else
 				res = assemblies[assembly];
 
-			return res.GetString(str, Language);
+			string result = res.GetString(Escape(str), Thread.CurrentThread.CurrentUICulture);
+			return result == null ? str : Unescape(result);
+		}
+
+		/// <summary>
+		/// Replaces non-printable codes used in the string to translate into translatable placeholders.
+		/// </summary>
+		/// <param name="str">The string to escape</param>
+		/// <returns>An escaped string</returns>
+		private static string Escape(string str)
+		{
+			str.Replace("\n", "\\n");
+			str.Replace("\r", "\\r");
+			return str;
+		}
+
+		/// <summary>
+		/// Replaces all escape codes used in the translated string into real character codes.
+		/// </summary>
+		/// <param name="str">The string to unescape</param>
+		/// <returns>An unescaped string</returns>
+		private static string Unescape(string str)
+		{
+			str.Replace("\\n", "\n");
+			str.Replace("\\r", "\r");
+			return str;
 		}
 
 		/// <summary>
@@ -126,10 +155,6 @@ namespace Eraser.Util
 			return null;
 		}
 
-		/// <summary>
-		/// The current culture to use when looking up for localizations.
-		/// </summary>
-		public static CultureInfo Language = CultureInfo.CurrentUICulture;
 		private static Dictionary<CultureInfo, Dictionary<Assembly, ResourceManager>> managers =
 			new Dictionary<CultureInfo, Dictionary<Assembly, ResourceManager>>();
 	}

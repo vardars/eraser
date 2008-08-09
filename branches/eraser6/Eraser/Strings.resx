@@ -126,17 +126,17 @@
   <data name="Help" xml:space="preserve">
     <value>Help</value>
   </data>
-  <data name="Could not load task list. All task entries have" xml:space="preserve">
-    <value>Could not load task list. All task entries have </value>
+  <data name="Could not load task list. All task entries have been lost." xml:space="preserve">
+    <value>Could not load task list. All task entries have been lost.</value>
   </data>
   <data name="Eraser" xml:space="preserve">
     <value>Eraser</value>
   </data>
-  <data name="Could not load list of files used for plausible" xml:space="preserve">
-    <value>Could not load list of files used for plausible </value>
+  <data name="Could not load list of files used for plausible deniability.\n\nThe list of files have been lost." xml:space="preserve">
+    <value>Could not load list of files used for plausible deniability.\n\nThe list of files have been lost.</value>
   </data>
-  <data name="Could not load plugin settings. All settings" xml:space="preserve">
-    <value>Could not load plugin settings. All settings </value>
+  <data name="Could not load plugin settings. All settings have been lost." xml:space="preserve">
+    <value>Could not load plugin settings. All settings have been lost.</value>
   </data>
   <data name="{0} out of {1}" xml:space="preserve">
     <value>{0} out of {1}</value>
@@ -186,28 +186,26 @@
   <data name="Randomness data source" xml:space="preserve">
     <value>Randomness data source</value>
   </data>
-  <data name="The following settings held invalid values:\n\n" xml:space="preserve">
-    <value>The following settings held invalid values:
-
-</value>
+  <data name="The following settings held invalid values:\n\n{0}\nThese settings have now been set to naive defaults.\n\nPlease check that the new settings suit your required level of security." xml:space="preserve">
+    <value>The following settings held invalid values:\n\n{0}\nThese settings have now been set to naive defaults.\n\nPlease check that the new settings suit your required level of security.</value>
   </data>
   <data name="An invalid language was selected." xml:space="preserve">
     <value>An invalid language was selected.</value>
   </data>
-  <data name="An invalid file erasure method" xml:space="preserve">
-    <value>An invalid file erasure method </value>
+  <data name="An invalid file erasure method was selected." xml:space="preserve">
+    <value>An invalid file erasure method was selected.</value>
   </data>
-  <data name="An invalid unused disk space" xml:space="preserve">
-    <value>An invalid unused disk space </value>
+  <data name="An invalid unused disk space erasure method was selected." xml:space="preserve">
+    <value>An invalid unused disk space erasure method was selected.</value>
   </data>
-  <data name="An invalid randomness data" xml:space="preserve">
-    <value>An invalid randomness data </value>
+  <data name="An invalid randomness data source was selected." xml:space="preserve">
+    <value>An invalid randomness data source was selected.</value>
   </data>
-  <data name="Erasures with plausible deniability" xml:space="preserve">
-    <value>Erasures with plausible deniability </value>
+  <data name="Erasures with plausible deniability was selected, but no files were selected to be used as decoys." xml:space="preserve">
+    <value>Erasures with plausible deniability was selected, but no files were selected to be used as decoys.</value>
   </data>
-  <data name="The new randomness data source will only be used when" xml:space="preserve">
-    <value>The new randomness data source will only be used when </value>
+  <data name="The new randomness data source will only be used when the next task is run.\nCurrently running tasks will use the old source." xml:space="preserve">
+    <value>The new randomness data source will only be used when the next task is run.\nCurrently running tasks will use the old source.</value>
   </data>
   <data name="The erasure method selected does" xml:space="preserve">
     <value>The erasure method selected does </value>

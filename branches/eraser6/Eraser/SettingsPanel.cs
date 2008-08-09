@@ -32,6 +32,7 @@ using Eraser.Manager.Plugin;
 using Microsoft.Win32;
 using System.Globalization;
 using Eraser.Util;
+using System.Threading;
 
 namespace Eraser
 {
@@ -140,7 +141,8 @@ namespace Eraser
 				defaultsList.Add(S._("User interface language"));
 				foreach (Language lang in uiLanguage.Items)
 					//TODO: This is an approximation - but that's the best I can think of at the moment
-					if (((CultureInfo)lang).ThreeLetterISOLanguageName == S.Language.ThreeLetterISOLanguageName)
+					if (((CultureInfo)lang).ThreeLetterISOLanguageName ==
+						Thread.CurrentThread.CurrentUICulture.ThreeLetterISOLanguageName)
 						uiLanguage.SelectedItem = lang;
 			}
 			if (eraseFilesMethod.SelectedIndex == -1)
@@ -183,7 +185,7 @@ namespace Eraser
 				MessageBox.Show(string.Format(S._("The following settings held invalid values:\n\n" +
 					"{0}\nThese settings have now been set to naive defaults.\n\n" +
 					"Please check that the new settings suit your required level of security."),
-					defaults), "Eraser", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					defaults), S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				saveSettings_Click(null, null);
 			}
 		}

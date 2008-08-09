@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,100 +117,109 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="titleIcon.Location" type="System.Drawing.Point, System.Drawing">
-    <value>20, 21</value>
+  <data name="Erase Schedule" xml:space="preserve">
+    <value>Planner</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="content.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="Settings" xml:space="preserve">
+    <value>Instellingen</value>
   </data>
-  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
-    <value>752, 449</value>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
   </data>
-  <data name="&gt;&gt;titleLbl.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="Could not load task list. All task entries have been lost." xml:space="preserve">
+    <value>Kan geen taak lijst vinden. Alle taken zijn verdwenen.</value>
   </data>
-  <data name="titleLbl.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="Eraser" xml:space="preserve">
+    <value>Eraser</value>
   </data>
-  <data name="&gt;&gt;content.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="Could not load list of files used for plausible deniability.\n\nThe list of files have been lost." xml:space="preserve">
+    <value>Kan geen taak lijst vinden. Alle taken zijn verdwenen.\n</value>
   </data>
-  <data name="&gt;&gt;titleLbl.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Could not load plugin settings. All settings have been lost." xml:space="preserve">
+    <value>Kan geen plugin lijst vinden. Alle plugins zijn verdwenen.</value>
   </data>
-  <data name="titleLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>50, 17</value>
+  <data name="{0} out of {1}" xml:space="preserve">
+    <value>{0} van {1}</value>
   </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>BasePanel</value>
+  <data name="{0} left" xml:space="preserve">
+    <value>{0} rechts</value>
   </data>
-  <data name="titleLbl.Text" xml:space="preserve">
-    <value>PanelTitle</value>
+  <data name="Total: {0}%" xml:space="preserve">
+    <value>Totaal: {0}%</value>
   </data>
-  <data name="&gt;&gt;content.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Completed with warnings" xml:space="preserve">
+    <value>Afgerond met waarschuwingen</value>
   </data>
-  <data name="titleIcon.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+  <data name="Completed with errors" xml:space="preserve">
+    <value>Afgerond met fouten</value>
   </data>
-  <data name="&gt;&gt;titleIcon.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="Not completed" xml:space="preserve">
+    <value>Niet afgerond</value>
   </data>
-  <data name="titleLbl.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 18pt</value>
+  <data name="Completed" xml:space="preserve">
+    <value>Afgerond</value>
   </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Close" xml:space="preserve">
+    <value>Sluiten</value>
   </data>
-  <data name="&gt;&gt;titleLbl.Name" xml:space="preserve">
-    <value>titleLbl</value>
+  <data name="Queued for execution" xml:space="preserve">
+    <value>In wachtrij geplaatst voor operatie</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="content.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
+  <data name="Not queued" xml:space="preserve">
+    <value>Niet in wachtrij geplaatst</value>
   </data>
-  <data name="titleLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>119, 32</value>
+  <data name="Running..." xml:space="preserve">
+    <value>Wordt uitgevoerd...</value>
   </data>
-  <data name="titleIcon.Size" type="System.Drawing.Size, System.Drawing">
-    <value>24, 24</value>
+  <data name="Queued for execution." xml:space="preserve">
+    <value>In wachtrij geplaatst voor operatie.</value>
   </data>
-  <data name="&gt;&gt;titleIcon.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="User interface language" xml:space="preserve">
+    <value>Gebruikers interface taal</value>
   </data>
-  <data name="&gt;&gt;content.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="Default file erasure method" xml:space="preserve">
+    <value>Standard bestand verwijder methode</value>
   </data>
-  <data name="titleLbl.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="Default unused space erasure method" xml:space="preserve">
+    <value>Standaard ongebruikte ruimte verwijder methode</value>
   </data>
-  <data name="$this.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>17, 17, 17, 17</value>
+  <data name="Randomness data source" xml:space="preserve">
+    <value>Willekeurige data bron</value>
   </data>
-  <data name="content.Location" type="System.Drawing.Point, System.Drawing">
-    <value>20, 52</value>
+  <data name="The following settings held invalid values:\n\n{0}\nThese settings have now been set to naive defaults.\n\nPlease check that the new settings suit your required level of security." xml:space="preserve">
+    <value>De volgende instellingen had ongeldige waarden:\n\n{0}\nDeze instellingen zijn omgezet naar lege standaards.\nKijk goed na of de nieuwe instelling u bevalt met de benodigde beveiliging niveau.</value>
   </data>
-  <data name="content.Size" type="System.Drawing.Size, System.Drawing">
-    <value>712, 377</value>
+  <data name="An invalid language was selected." xml:space="preserve">
+    <value>Een foutieve taal was geselecteerd.</value>
   </data>
-  <data name="&gt;&gt;titleLbl.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="An invalid file erasure method was selected." xml:space="preserve">
+    <value>Een foutieve wis methode was geselecteerd.</value>
   </data>
-  <data name="&gt;&gt;titleIcon.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="An invalid unused disk space erasure method was selected." xml:space="preserve">
+    <value>Een foutieve ongebruikte schijfruimte wis methode was geselecteerd.</value>
   </data>
-  <data name="&gt;&gt;titleIcon.Name" xml:space="preserve">
-    <value>titleIcon</value>
+  <data name="An invalid randomness data source was selected." xml:space="preserve">
+    <value>Een foutieve Willekeurige data bron was geselecteerd.</value>
   </data>
-  <data name="&gt;&gt;content.Name" xml:space="preserve">
-    <value>content</value>
+  <data name="Erasures with plausible deniability was selected, but no files were selected to be used as decoys." xml:space="preserve">
+    <value>Erasures with plausible deniability was selected, but no files were selected to be used as decoys.</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>Dutch</value>
-  </metadata>
+  <data name="The new randomness data source will only be used when the next task is run.\nCurrently running tasks will use the old source." xml:space="preserve">
+    <value>The new randomness data source will only be used when the next task is run.\nCurrently running tasks will use the old source.</value>
+  </data>
+  <data name="The erasure method selected does not support unused disk space erasures." xml:space="preserve">
+    <value>Deze geselecteerde wis methode kan geen ongebruikte schijfruimte te wissen.</value>
+  </data>
+  <data name="Invalid file path" xml:space="preserve">
+    <value>Foutief bestand</value>
+  </data>
+  <data name="Invalid folder path" xml:space="preserve">
+    <value>Foutieve folder</value>
+  </data>
+  <data name="The task has no data to erase." xml:space="preserve">
+    <value>De taak heeft geen data om te wissen.</value>
+  </data>
+  <data name="The task needs to run on at least one day a week" xml:space="preserve">
+    <value>De taak moet minstens eens per week uitgevoerd worden</value>
+  </data>
 </root>

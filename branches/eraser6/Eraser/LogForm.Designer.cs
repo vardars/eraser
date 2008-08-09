@@ -60,11 +60,15 @@ namespace Eraser
 			// 
 			// log
 			// 
+			this.log.AccessibleDescription = null;
+			this.log.AccessibleName = null;
 			resources.ApplyResources(this.log, "log");
+			this.log.BackgroundImage = null;
 			this.log.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.timestamp,
             this.severity,
             this.message});
+			this.log.Font = null;
 			this.log.FullRowSelect = true;
 			this.log.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.log.MultiSelect = false;
@@ -86,25 +90,37 @@ namespace Eraser
 			// 
 			// clear
 			// 
+			this.clear.AccessibleDescription = null;
+			this.clear.AccessibleName = null;
 			resources.ApplyResources(this.clear, "clear");
+			this.clear.BackgroundImage = null;
+			this.clear.Font = null;
 			this.clear.Name = "clear";
 			this.clear.UseVisualStyleBackColor = true;
 			this.clear.Click += new System.EventHandler(this.clear_Click);
 			// 
 			// close
 			// 
+			this.close.AccessibleDescription = null;
+			this.close.AccessibleName = null;
 			resources.ApplyResources(this.close, "close");
+			this.close.BackgroundImage = null;
+			this.close.Font = null;
 			this.close.Name = "close";
 			this.close.UseVisualStyleBackColor = true;
 			this.close.Click += new System.EventHandler(this.close_Click);
 			// 
 			// LogForm
 			// 
+			this.AccessibleDescription = null;
+			this.AccessibleName = null;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+			this.BackgroundImage = null;
 			this.Controls.Add(this.close);
 			this.Controls.Add(this.clear);
 			this.Controls.Add(this.log);
+			this.Icon = null;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "LogForm";

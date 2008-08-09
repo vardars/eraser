@@ -79,7 +79,7 @@
       <SubType>Designer</SubType>
       <DependentUpon>CustomMethodEditorForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Languages\Strings.resx">
+    <EmbeddedResource Include="Strings.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsForm.resx">

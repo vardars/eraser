@@ -114,8 +114,10 @@ namespace Eraser
 				(int)key.GetValue("ExecuteMissedTasksImmediately", (object)1) != 0;
 			PlausibleDeniability =
 				(int)key.GetValue("PlausibleDeniability", (object)0) != 0;
+
 			UILanguage = (string)key.GetValue("UILanguage", CultureInfo.CurrentUICulture.Name);
-			S.Language = new CultureInfo(UILanguage);
+			System.Threading.Thread.CurrentThread.CurrentUICulture =
+				new CultureInfo(UILanguage);
 
 			//Load the plausible deniability files
 			byte[] plausibleDeniabilityFiles = (byte[])

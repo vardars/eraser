@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Eraser.Languages {
+namespace Eraser {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Eraser.Languages {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Eraser.Languages.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Eraser.Strings", typeof(Strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -79,11 +79,11 @@ namespace Eraser.Languages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An invalid file erasure method .
+        ///   Looks up a localized string similar to An invalid file erasure method was selected..
         /// </summary>
-        internal static string An_invalid_file_erasure_method {
+        internal static string An_invalid_file_erasure_method_was_selected_ {
             get {
-                return ResourceManager.GetString("An invalid file erasure method", resourceCulture);
+                return ResourceManager.GetString("An invalid file erasure method was selected.", resourceCulture);
             }
         }
         
@@ -97,20 +97,20 @@ namespace Eraser.Languages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An invalid randomness data .
+        ///   Looks up a localized string similar to An invalid randomness data source was selected..
         /// </summary>
-        internal static string An_invalid_randomness_data {
+        internal static string An_invalid_randomness_data_source_was_selected_ {
             get {
-                return ResourceManager.GetString("An invalid randomness data", resourceCulture);
+                return ResourceManager.GetString("An invalid randomness data source was selected.", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An invalid unused disk space .
+        ///   Looks up a localized string similar to An invalid unused disk space erasure method was selected..
         /// </summary>
-        internal static string An_invalid_unused_disk_space {
+        internal static string An_invalid_unused_disk_space_erasure_method_was_selected_ {
             get {
-                return ResourceManager.GetString("An invalid unused disk space", resourceCulture);
+                return ResourceManager.GetString("An invalid unused disk space erasure method was selected.", resourceCulture);
             }
         }
         
@@ -151,29 +151,30 @@ namespace Eraser.Languages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Could not load list of files used for plausible .
+        ///   Looks up a localized string similar to Could not load list of files used for plausible deniability.\n\nThe list of files have been lost..
         /// </summary>
-        internal static string Could_not_load_list_of_files_used_for_plausible {
+        internal static string Could_not_load_list_of_files_used_for_plausible_deniability__n_nThe_list_of_files_have_been_lost_ {
             get {
-                return ResourceManager.GetString("Could not load list of files used for plausible", resourceCulture);
+                return ResourceManager.GetString("Could not load list of files used for plausible deniability.\\n\\nThe list of files" +
+                        " have been lost.", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Could not load plugin settings. All settings .
+        ///   Looks up a localized string similar to Could not load plugin settings. All settings have been lost..
         /// </summary>
-        internal static string Could_not_load_plugin_settings__All_settings {
+        internal static string Could_not_load_plugin_settings__All_settings_have_been_lost_ {
             get {
-                return ResourceManager.GetString("Could not load plugin settings. All settings", resourceCulture);
+                return ResourceManager.GetString("Could not load plugin settings. All settings have been lost.", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Could not load task list. All task entries have .
+        ///   Looks up a localized string similar to Could not load task list. All task entries have been lost..
         /// </summary>
-        internal static string Could_not_load_task_list__All_task_entries_have {
+        internal static string Could_not_load_task_list__All_task_entries_have_been_lost_ {
             get {
-                return ResourceManager.GetString("Could not load task list. All task entries have", resourceCulture);
+                return ResourceManager.GetString("Could not load task list. All task entries have been lost.", resourceCulture);
             }
         }
         
@@ -214,11 +215,12 @@ namespace Eraser.Languages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Erasures with plausible deniability .
+        ///   Looks up a localized string similar to Erasures with plausible deniability was selected, but no files were selected to be used as decoys..
         /// </summary>
-        internal static string Erasures_with_plausible_deniability {
+        internal static string Erasures_with_plausible_deniability_was_selected__but_no_files_were_selected_to_be_used_as_decoys_ {
             get {
-                return ResourceManager.GetString("Erasures with plausible deniability", resourceCulture);
+                return ResourceManager.GetString("Erasures with plausible deniability was selected, but no files were selected to b" +
+                        "e used as decoys.", resourceCulture);
             }
         }
         
@@ -322,22 +324,23 @@ namespace Eraser.Languages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following settings held invalid values:
-        ///
-        ///.
+        ///   Looks up a localized string similar to The following settings held invalid values:\n\n{0}\nThese settings have now been set to naive defaults.\n\nPlease check that the new settings suit your required level of security..
         /// </summary>
-        internal static string The_following_settings_held_invalid_values__n_n {
+        internal static string The_following_settings_held_invalid_values__n_n_0__nThese_settings_have_now_been_set_to_naive_defaults__n_nPlease_check_that_the_new_settings_suit_your_required_level_of_security_ {
             get {
-                return ResourceManager.GetString("The following settings held invalid values:\\n\\n", resourceCulture);
+                return ResourceManager.GetString("The following settings held invalid values:\\n\\n{0}\\nThese settings have now been " +
+                        "set to naive defaults.\\n\\nPlease check that the new settings suit your required " +
+                        "level of security.", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The new randomness data source will only be used when .
+        ///   Looks up a localized string similar to The new randomness data source will only be used when the next task is run.\nCurrently running tasks will use the old source..
         /// </summary>
-        internal static string The_new_randomness_data_source_will_only_be_used_when {
+        internal static string The_new_randomness_data_source_will_only_be_used_when_the_next_task_is_run__nCurrently_running_tasks_will_use_the_old_source_ {
             get {
-                return ResourceManager.GetString("The new randomness data source will only be used when", resourceCulture);
+                return ResourceManager.GetString("The new randomness data source will only be used when the next task is run.\\nCurr" +
+                        "ently running tasks will use the old source.", resourceCulture);
             }
         }
         

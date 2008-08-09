@@ -71,25 +71,42 @@ namespace Eraser
 			// 
 			// titleLbl
 			// 
+			this.titleLbl.AccessibleDescription = null;
+			this.titleLbl.AccessibleName = null;
 			resources.ApplyResources(this.titleLbl, "titleLbl");
 			// 
 			// titleIcon
 			// 
+			this.titleIcon.AccessibleDescription = null;
+			this.titleIcon.AccessibleName = null;
+			resources.ApplyResources(this.titleIcon, "titleIcon");
+			this.titleIcon.BackgroundImage = null;
+			this.titleIcon.Font = null;
 			this.titleIcon.Image = global::Eraser.Properties.Resources.ToolbarSchedule;
+			this.titleIcon.ImageLocation = null;
 			// 
 			// content
 			// 
+			this.content.AccessibleDescription = null;
+			this.content.AccessibleName = null;
+			resources.ApplyResources(this.content, "content");
+			this.content.BackgroundImage = null;
 			this.content.Controls.Add(this.schedulerProgress);
 			this.content.Controls.Add(this.scheduler);
+			this.content.Font = null;
 			// 
 			// scheduler
 			// 
+			this.scheduler.AccessibleDescription = null;
+			this.scheduler.AccessibleName = null;
 			resources.ApplyResources(this.scheduler, "scheduler");
+			this.scheduler.BackgroundImage = null;
 			this.scheduler.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.schedulerColName,
             this.schedulerColNextRun,
             this.schedulerColStatus});
 			this.scheduler.ContextMenuStrip = this.schedulerMenu;
+			this.scheduler.Font = null;
 			this.scheduler.FullRowSelect = true;
 			this.scheduler.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             ((System.Windows.Forms.ListViewGroup)(resources.GetObject("scheduler.Groups"))),
@@ -118,6 +135,11 @@ namespace Eraser
 			// 
 			// schedulerMenu
 			// 
+			this.schedulerMenu.AccessibleDescription = null;
+			this.schedulerMenu.AccessibleName = null;
+			resources.ApplyResources(this.schedulerMenu, "schedulerMenu");
+			this.schedulerMenu.BackgroundImage = null;
+			this.schedulerMenu.Font = null;
 			this.schedulerMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.runNowToolStripMenuItem,
             this.cancelTaskToolStripMenuItem,
@@ -127,57 +149,89 @@ namespace Eraser
             this.editTaskToolStripMenuItem,
             this.deleteTaskToolStripMenuItem});
 			this.schedulerMenu.Name = "schedulerMenu";
-			resources.ApplyResources(this.schedulerMenu, "schedulerMenu");
 			this.schedulerMenu.Opening += new System.ComponentModel.CancelEventHandler(this.schedulerMenu_Opening);
 			// 
 			// runNowToolStripMenuItem
 			// 
-			this.runNowToolStripMenuItem.Name = "runNowToolStripMenuItem";
+			this.runNowToolStripMenuItem.AccessibleDescription = null;
+			this.runNowToolStripMenuItem.AccessibleName = null;
 			resources.ApplyResources(this.runNowToolStripMenuItem, "runNowToolStripMenuItem");
+			this.runNowToolStripMenuItem.BackgroundImage = null;
+			this.runNowToolStripMenuItem.Name = "runNowToolStripMenuItem";
+			this.runNowToolStripMenuItem.ShortcutKeyDisplayString = null;
 			this.runNowToolStripMenuItem.Click += new System.EventHandler(this.runNowToolStripMenuItem_Click);
 			// 
 			// cancelTaskToolStripMenuItem
 			// 
-			this.cancelTaskToolStripMenuItem.Name = "cancelTaskToolStripMenuItem";
+			this.cancelTaskToolStripMenuItem.AccessibleDescription = null;
+			this.cancelTaskToolStripMenuItem.AccessibleName = null;
 			resources.ApplyResources(this.cancelTaskToolStripMenuItem, "cancelTaskToolStripMenuItem");
+			this.cancelTaskToolStripMenuItem.BackgroundImage = null;
+			this.cancelTaskToolStripMenuItem.Name = "cancelTaskToolStripMenuItem";
+			this.cancelTaskToolStripMenuItem.ShortcutKeyDisplayString = null;
 			this.cancelTaskToolStripMenuItem.Click += new System.EventHandler(this.cancelTaskToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator2
 			// 
-			this.toolStripSeparator2.Name = "toolStripSeparator2";
+			this.toolStripSeparator2.AccessibleDescription = null;
+			this.toolStripSeparator2.AccessibleName = null;
 			resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
+			this.toolStripSeparator2.Name = "toolStripSeparator2";
 			// 
 			// viewTaskLogToolStripMenuItem
 			// 
-			this.viewTaskLogToolStripMenuItem.Name = "viewTaskLogToolStripMenuItem";
+			this.viewTaskLogToolStripMenuItem.AccessibleDescription = null;
+			this.viewTaskLogToolStripMenuItem.AccessibleName = null;
 			resources.ApplyResources(this.viewTaskLogToolStripMenuItem, "viewTaskLogToolStripMenuItem");
+			this.viewTaskLogToolStripMenuItem.BackgroundImage = null;
+			this.viewTaskLogToolStripMenuItem.Name = "viewTaskLogToolStripMenuItem";
+			this.viewTaskLogToolStripMenuItem.ShortcutKeyDisplayString = null;
 			this.viewTaskLogToolStripMenuItem.Click += new System.EventHandler(this.viewTaskLogToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.AccessibleDescription = null;
+			this.toolStripSeparator1.AccessibleName = null;
 			resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
 			// 
 			// editTaskToolStripMenuItem
 			// 
-			this.editTaskToolStripMenuItem.Name = "editTaskToolStripMenuItem";
+			this.editTaskToolStripMenuItem.AccessibleDescription = null;
+			this.editTaskToolStripMenuItem.AccessibleName = null;
 			resources.ApplyResources(this.editTaskToolStripMenuItem, "editTaskToolStripMenuItem");
+			this.editTaskToolStripMenuItem.BackgroundImage = null;
+			this.editTaskToolStripMenuItem.Name = "editTaskToolStripMenuItem";
+			this.editTaskToolStripMenuItem.ShortcutKeyDisplayString = null;
 			this.editTaskToolStripMenuItem.Click += new System.EventHandler(this.editTaskToolStripMenuItem_Click);
 			// 
 			// deleteTaskToolStripMenuItem
 			// 
-			this.deleteTaskToolStripMenuItem.Name = "deleteTaskToolStripMenuItem";
+			this.deleteTaskToolStripMenuItem.AccessibleDescription = null;
+			this.deleteTaskToolStripMenuItem.AccessibleName = null;
 			resources.ApplyResources(this.deleteTaskToolStripMenuItem, "deleteTaskToolStripMenuItem");
+			this.deleteTaskToolStripMenuItem.BackgroundImage = null;
+			this.deleteTaskToolStripMenuItem.Name = "deleteTaskToolStripMenuItem";
+			this.deleteTaskToolStripMenuItem.ShortcutKeyDisplayString = null;
 			this.deleteTaskToolStripMenuItem.Click += new System.EventHandler(this.deleteTaskToolStripMenuItem_Click);
 			// 
 			// schedulerProgress
 			// 
+			this.schedulerProgress.AccessibleDescription = null;
+			this.schedulerProgress.AccessibleName = null;
 			resources.ApplyResources(this.schedulerProgress, "schedulerProgress");
+			this.schedulerProgress.BackgroundImage = null;
+			this.schedulerProgress.Font = null;
 			this.schedulerProgress.Name = "schedulerProgress";
 			// 
 			// SchedulerPanel
 			// 
+			this.AccessibleDescription = null;
+			this.AccessibleName = null;
+			resources.ApplyResources(this, "$this");
+			this.BackgroundImage = null;
 			this.DoubleBuffered = true;
+			this.Font = null;
 			this.Name = "SchedulerPanel";
 			this.Controls.SetChildIndex(this.titleLbl, 0);
 			this.Controls.SetChildIndex(this.titleIcon, 0);
