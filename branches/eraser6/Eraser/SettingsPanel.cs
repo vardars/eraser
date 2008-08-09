@@ -41,7 +41,6 @@ namespace Eraser
 		{
 			InitializeComponent();
 			Dock = DockStyle.None;
-			S.TranslateControl(this);
 
 			//For new plugins, register the callback.
 			Host.Instance.PluginLoad += new Host.OnPluginLoadEventHandler(OnNewPluginLoaded);

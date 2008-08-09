@@ -39,7 +39,6 @@ namespace Eraser
 		public ProgressForm(Task task)
 		{
 			InitializeComponent();
-			S.TranslateControl(this);
 			this.task = task;
 
 			//Register the event handlers

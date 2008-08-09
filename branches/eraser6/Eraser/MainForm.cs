@@ -47,9 +47,6 @@ namespace Eraser
 		public MainForm()
 		{
 			InitializeComponent();
-			S.TranslateControl(this);
-			S.TranslateControl(toolbarScheduleMenu);
-			S.TranslateControl(toolbarHelpMenu);
 
 			//Create the toolbar control
 			ToolBar.Name = "toolBar";

@@ -39,7 +39,6 @@ namespace Eraser
 		public SchedulerPanel()
 		{
 			InitializeComponent();
-			S.TranslateControl(this);
 
 			//Populate the scheduler list-view with the current task list
 			List<Task> tasks = Program.eraserClient.GetTasks();

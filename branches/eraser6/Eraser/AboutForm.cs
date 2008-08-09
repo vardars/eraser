@@ -35,7 +35,6 @@ namespace Eraser
 		public AboutForm()
 		{
 			InitializeComponent();
-			S.TranslateControl(this);
 		}
 
 		private void AboutForm_Click(object sender, EventArgs e)

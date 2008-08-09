@@ -35,7 +35,6 @@ namespace Eraser
 		public LightGroup()
 		{
 			InitializeComponent();
-			S.TranslateControl(this);
 		}
 
 		[Description("The label text for the group")]

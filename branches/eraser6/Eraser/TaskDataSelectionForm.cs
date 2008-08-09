@@ -51,7 +51,6 @@ namespace Eraser
 		{
 			//Create the UI
 			InitializeComponent();
-			S.TranslateControl(this);
 			file.Checked = true;
 
 			//Populate the drives list
