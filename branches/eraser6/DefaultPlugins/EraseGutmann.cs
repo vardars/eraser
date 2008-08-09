@@ -4,6 +4,9 @@
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By:
  * 
+ * The Gutmann Lite algorithm in this file is implemented using the description
+ * in EMIShredder (http://www.codeplex.com/EMISecurityShredder)
+ * 
  * This file is part of Eraser.
  * 
  * Eraser is free software: you can redistribute it and/or modify it under the
@@ -86,6 +89,44 @@ namespace Eraser.DefaultPlugins
 					new Pass(WriteRandom, null),
 					new Pass(WriteRandom, null),
 					new Pass(WriteRandom, null)                                    // 35
+				};
+			}
+		}
+	}
+
+	class GutmannLite : PassBasedErasureMethod
+	{
+		public override string Name
+		{
+			get { return S._("Gutmann Lite"); }
+		}
+
+		public override Guid GUID
+		{
+			get { return new Guid("{AE5EB764-41B0-4601-BDF2-326B5838D44A}"); }
+		}
+
+		protected override bool RandomizePasses
+		{
+			get { return false; }
+		}
+
+		protected override Pass[] PassesSet
+		{
+			get
+			{
+				return new Pass[]
+				{
+					new Pass(WriteRandom, null),								//Original pass 1
+					new Pass(WriteConstant, new byte[] {0x55}),					//Original pass 5
+					new Pass(WriteConstant, new byte[] {0xAA}),					//Original pass 6
+					new Pass(WriteConstant, new byte[] {0x92, 0x49, 0x24}),		//Original pass 7
+					new Pass(WriteConstant, new byte[] {0x49, 0x24, 0x92}),		//Original pass 8
+					new Pass(WriteConstant, new byte[] {0x24, 0x92, 0x49}),		//Original pass 9
+					new Pass(WriteConstant, new byte[] {0x4B}),
+					new Pass(WriteConstant, new byte[] {0xB4}),
+					new Pass(WriteConstant, new byte[] {0x00}),
+					new Pass(WriteConstant, new byte[] {0x11}),
 				};
 			}
 		}

@@ -1,8 +1,11 @@
 /* 
- * $Id$
+ * $Id: EraseDoD.cs 348 2008-04-02 13:05:06Z lowjoel $
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By:
+ * 
+ * The algorithm in this file is implemented using the description in EMIShredder
+ * (http://www.codeplex.com/EMISecurityShredder)
  * 
  * This file is part of Eraser.
  * 
@@ -27,16 +30,16 @@ using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
-	class Schneier : PassBasedErasureMethod
+	class GOSTP50739 : PassBasedErasureMethod
 	{
 		public override string Name
 		{
-			get { return S._("Schneier 7 pass"); }
+			get { return S._("Russian GOST P50739-95"); }
 		}
 
 		public override Guid GUID
 		{
-			get { return new Guid("{B1BFAB4A-31D3-43a5-914C-E9892C78AFD8}"); }
+			get { return new Guid("{92681583-F484-415f-A66C-CC210222EDC5}"); }
 		}
 
 		protected override bool RandomizePasses
@@ -50,12 +53,7 @@ namespace Eraser.DefaultPlugins
 			{
 				return new Pass[]
 				{
-					new Pass(WriteConstant, new byte[] { 1 }),
-					new Pass(WriteConstant, new byte[] { 0 }),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
+					new Pass(WriteConstant, new byte[] { (byte)0 }),
 					new Pass(WriteRandom, null)
 				};
 			}

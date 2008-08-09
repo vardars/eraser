@@ -43,6 +43,15 @@ namespace Eraser.DefaultPlugins
 			host.RegisterErasureMethod(new DoD_EcE());
 			host.RegisterErasureMethod(new DoD_E());
 			host.RegisterErasureMethod(new Pseudorandom());
+
+			host.RegisterErasureMethod(new HMGIS5Baseline());
+			host.RegisterErasureMethod(new GOSTP50739());
+			host.RegisterErasureMethod(new USAF5020());
+			host.RegisterErasureMethod(new HMGIS5Enhanced());
+			host.RegisterErasureMethod(new USArmyAR380_19());
+			host.RegisterErasureMethod(new VSITR());
+			host.RegisterErasureMethod(new RCMP_TSSIT_OPS_II());
+			host.RegisterErasureMethod(new GutmannLite());
 			host.RegisterPRNG(new ISAAC());
 			host.RegisterPRNG(new RNGCrypto());
 

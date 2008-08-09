@@ -52,6 +52,11 @@
     <Compile Include="EraseRandom.cs" />
     <Compile Include="EraseGutmann.cs" />
     <Compile Include="EraseFirstLast16KB.cs" />
+    <Compile Include="EraseHMGIS5.cs" />
+    <Compile Include="EraseGOSTP50739.cs" />
+    <Compile Include="EraseUSAF5020.cs" />
+    <Compile Include="EraseVSITR.cs" />
+    <Compile Include="EraseRCMP_TSSIT_OPS_II.cs" />
     <Compile Include="RNGISAAC.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,6 +68,7 @@
     <Compile Include="SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="EraseUSArmyAR380_19.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Manager\Manager.csproj">

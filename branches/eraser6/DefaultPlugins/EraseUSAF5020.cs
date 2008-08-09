@@ -1,8 +1,11 @@
 /* 
- * $Id$
+ * $Id: EraseDoD.cs 348 2008-04-02 13:05:06Z lowjoel $
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By:
+ * 
+ * The algorithm in this file is implemented using the description in EMIShredder
+ * (http://www.codeplex.com/EMISecurityShredder)
  * 
  * This file is part of Eraser.
  * 
@@ -27,16 +30,16 @@ using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
-	class Schneier : PassBasedErasureMethod
+	class USAF5020 : PassBasedErasureMethod
 	{
 		public override string Name
 		{
-			get { return S._("Schneier 7 pass"); }
+			get { return S._("US Air Force 5020"); }
 		}
 
 		public override Guid GUID
 		{
-			get { return new Guid("{B1BFAB4A-31D3-43a5-914C-E9892C78AFD8}"); }
+			get { return new Guid("{7BF5B185-8EA5-4e12-83F1-F6C2EFB3D2C2}"); }
 		}
 
 		protected override bool RandomizePasses
@@ -48,15 +51,14 @@ namespace Eraser.DefaultPlugins
 		{
 			get
 			{
+				PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
+				int rand = prng.Next();
+
 				return new Pass[]
 				{
-					new Pass(WriteConstant, new byte[] { 1 }),
-					new Pass(WriteConstant, new byte[] { 0 }),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null)
+					new Pass(WriteConstant, new byte[] { (byte)(rand & 0xFF) }),
+					new Pass(WriteConstant, new byte[] { (byte)((rand >> 8) & 0xFF) }),
+					new Pass(WriteConstant, new byte[] { (byte)((rand >> 16) & 0xFF) })
 				};
 			}
 		}

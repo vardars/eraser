@@ -1,8 +1,11 @@
 /* 
- * $Id$
+ * $Id: EraseDoD.cs 348 2008-04-02 13:05:06Z lowjoel $
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By:
+ * 
+ * The algorithm in this file is implemented using the description in EMIShredder
+ * (http://www.codeplex.com/EMISecurityShredder)
  * 
  * This file is part of Eraser.
  * 
@@ -27,16 +30,16 @@ using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
-	class Schneier : PassBasedErasureMethod
+	class HMGIS5Baseline : PassBasedErasureMethod
 	{
 		public override string Name
 		{
-			get { return S._("Schneier 7 pass"); }
+			get { return S._("British HMG IS5 (Baseline)"); }
 		}
 
 		public override Guid GUID
 		{
-			get { return new Guid("{B1BFAB4A-31D3-43a5-914C-E9892C78AFD8}"); }
+			get { return new Guid("{9ACDBD78-0406-4116-87E5-263E5E3B2E0D}"); }
 		}
 
 		protected override bool RandomizePasses
@@ -50,13 +53,38 @@ namespace Eraser.DefaultPlugins
 			{
 				return new Pass[]
 				{
-					new Pass(WriteConstant, new byte[] { 1 }),
-					new Pass(WriteConstant, new byte[] { 0 }),
+					new Pass(WriteConstant, new byte[] { (byte)0 })
+				};
+			}
+		}
+	}
+
+	class HMGIS5Enhanced : PassBasedErasureMethod
+	{
+		public override string Name
+		{
+			get { return S._("British HMG IS5 (Enhanced)"); }
+		}
+
+		public override Guid GUID
+		{
+			get { return new Guid("{45671DA4-9401-46e4-9C0D-89B94E89C8B5}"); }
+		}
+
+		protected override bool RandomizePasses
+		{
+			get { return false; }
+		}
+
+		protected override Pass[] PassesSet
+		{
+			get
+			{
+				return new Pass[]
+				{
+					new Pass(WriteConstant, new byte[] { (byte)0 }),
+					new Pass(WriteConstant, new byte[] { (byte)0x01 }),
 					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null)
 				};
 			}
 		}
