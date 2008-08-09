@@ -118,108 +118,108 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Erase Schedule" xml:space="preserve">
-    <value>Erase Schedule</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Help" xml:space="preserve">
-    <value>Help</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Eraser" xml:space="preserve">
-    <value>Eraser</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Could not load task list. All task entries have been lost." xml:space="preserve">
-    <value>Could not load task list. All task entries have been lost.</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Could not load list of files used for plausible deniability.\n\nThe list of files have been lost." xml:space="preserve">
-    <value>Could not load list of files used for plausible deniability.\n\nThe list of files have been lost.</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Could not load plugin settings. All settings have been lost." xml:space="preserve">
-    <value>Could not load plugin settings. All settings have been lost.</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="{0} out of {1}" xml:space="preserve">
-    <value>{0} out of {1}</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="{0} left" xml:space="preserve">
-    <value>{0} left</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Total: {0}%" xml:space="preserve">
-    <value>Total: {0}%</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Completed with warnings" xml:space="preserve">
-    <value>Completed with warnings</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Completed with errors" xml:space="preserve">
-    <value>Completed with errors</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Not completed" xml:space="preserve">
-    <value>Not completed</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Completed" xml:space="preserve">
-    <value>Completed</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Close</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Queued for execution" xml:space="preserve">
-    <value>Queued for execution</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Not queued" xml:space="preserve">
-    <value>Not queued</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Running..." xml:space="preserve">
-    <value>Running...</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Queued for execution." xml:space="preserve">
-    <value>Queued for execution.</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="User interface language" xml:space="preserve">
-    <value>User interface language</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Default file erasure method" xml:space="preserve">
-    <value>Default file erasure method</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Default unused space erasure method" xml:space="preserve">
-    <value>Default unused space erasure method</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Randomness data source" xml:space="preserve">
-    <value>Randomness data source</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="The following settings held invalid values:\n\n{0}\nThese settings have now been set to naive defaults.\n\nPlease check that the new settings suit your required level of security." xml:space="preserve">
-    <value>The following settings held invalid values:\n\n{0}\nThese settings have now been set to naive defaults.\n\nPlease check that the new settings suit your required level of security.</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="An invalid language was selected." xml:space="preserve">
-    <value>An invalid language was selected.</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="An invalid file erasure method was selected." xml:space="preserve">
-    <value>An invalid file erasure method was selected.</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="An invalid unused disk space erasure method was selected." xml:space="preserve">
-    <value>An invalid unused disk space erasure method was selected.</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="An invalid randomness data source was selected." xml:space="preserve">
-    <value>An invalid randomness data source was selected.</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Erasures with plausible deniability was selected, but no files were selected to be used as decoys." xml:space="preserve">
-    <value>Erasures with plausible deniability was selected, but no files were selected to be used as decoys.</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="The new randomness data source will only be used when the next task is run.\nCurrently running tasks will use the old source." xml:space="preserve">
-    <value>The new randomness data source will only be used when the next task is run.\nCurrently running tasks will use the old source.</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="The erasure method selected does not support unused disk space erasures." xml:space="preserve">
-    <value>The erasure method selected does not support unused disk space erasures.</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Invalid file path" xml:space="preserve">
-    <value>Invalid file path</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="Invalid folder path" xml:space="preserve">
-    <value>Invalid folder path</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="The task has no data to erase." xml:space="preserve">
-    <value>The task has no data to erase.</value>
+    <value>(Untranslated)</value>
   </data>
   <data name="The task needs to run on at least one day a week" xml:space="preserve">
-    <value>The task needs to run on at least one day a week</value>
+    <value>(Untranslated)</value>
   </data>
 </root>

@@ -79,6 +79,12 @@
       <SubType>Designer</SubType>
       <DependentUpon>CustomMethodEditorForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Strings.en.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Strings.nl.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Strings.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -98,5 +104,6 @@
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
+    <PreBuildEvent>csgettext --merge EN,NL "$(ProjectDir)\" Strings</PreBuildEvent>
   </PropertyGroup>
 </Project>

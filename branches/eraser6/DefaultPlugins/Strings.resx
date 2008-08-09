@@ -120,11 +120,11 @@
   <data name="The name of the custom method cannot be empty." xml:space="preserve">
     <value>The name of the custom method cannot be empty.</value>
   </data>
-  <data name="The method needs to have at least one pass" xml:space="preserve">
-    <value>The method needs to have at least one pass </value>
+  <data name="The method needs to have at least one pass defined." xml:space="preserve">
+    <value>The method needs to have at least one pass defined.</value>
   </data>
-  <data name="The pass is supposed to write a" xml:space="preserve">
-    <value>The pass is supposed to write a </value>
+  <data name="The pass is supposed to write a constant to the files to be erased, but no constant was defined." xml:space="preserve">
+    <value>The pass is supposed to write a constant to the files to be erased, but no constant was defined.</value>
   </data>
   <data name="US DoD 5220.22-M (8-306. / E, C and E)" xml:space="preserve">
     <value>US DoD 5220.22-M (8-306. / E, C and E)</value>
@@ -132,14 +132,14 @@
   <data name="US DoD 5220.22-M (8-306. / E)" xml:space="preserve">
     <value>US DoD 5220.22-M (8-306. / E)</value>
   </data>
-  <data name="The First/last 16KB erasure method" xml:space="preserve">
-    <value>The First/last 16KB erasure method </value>
+  <data name="The First/last 16KB erasure method requires another erasure method to erase the file.\n\nThis must be set in the Plugin Settings dialog." xml:space="preserve">
+    <value>The First/last 16KB erasure method requires another erasure method to erase the file.\n\nThis must be set in the Plugin Settings dialog.</value>
   </data>
   <data name="First/last 16KB Erasure" xml:space="preserve">
     <value>First/last 16KB Erasure</value>
   </data>
-  <data name="The amount of data erased should not be" xml:space="preserve">
-    <value>The amount of data erased should not be </value>
+  <data name="The amount of data erased should not be limited, since this is a self-limiting erasure method." xml:space="preserve">
+    <value>The amount of data erased should not be limited, since this is a self-limiting erasure method.</value>
   </data>
   <data name="Gutmann" xml:space="preserve">
     <value>Gutmann</value>

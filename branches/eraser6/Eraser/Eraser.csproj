@@ -133,15 +133,18 @@
       <SubType>Designer</SubType>
       <DependentUpon>SchedulerPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Strings.en.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Strings.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-	<EmbeddedResource Include="Strings.nl.resx">
-	  <Generator>ResXFileCodeGenerator</Generator>
+    <EmbeddedResource Include="Strings.nl.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
-	  <LastGenOutput>Strings.Designer.nl.cs</LastGenOutput>
+      <LastGenOutput>Strings.Designer.nl.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="SchedulerPanel.resx">
       <SubType>Designer</SubType>
@@ -256,7 +259,6 @@
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>csgettext --merge EN,NL "$(ProjectDir)\" Strings</PreBuildEvent>
   </PropertyGroup>
 </Project>
