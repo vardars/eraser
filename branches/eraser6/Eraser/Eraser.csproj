@@ -36,7 +36,7 @@
   <ItemGroup>
     <Reference Include="BevelLine, Version=1.0.2859.29240, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Libraries\C#\BevelLine\BevelLine\bin\Release\BevelLine.dll</HintPath>
+      <HintPath>..\Dependencies\BevelLine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
