@@ -315,7 +315,19 @@ namespace Eraser.Util
 
 			//Other errors.
 			if (handle.IsInvalid)
-				throw new Win32Exception(Marshal.GetLastWin32Error());
+			{
+				Win32Exception ex = new Win32Exception(Marshal.GetLastWin32Error());
+				switch (Marshal.GetLastWin32Error())
+				{
+					case 1008:													//ERROR_NO_TOKEN
+					case 5:														//ERROR_ACCESS_DENIED
+						throw new UnauthorizedAccessException(ex.Message);
+					case 32:
+						throw new IOException(ex.Message);
+					default:
+						throw ex;
+				}
+			}
 
 			//Return the FileStream
 			return new FileStream(handle, access);

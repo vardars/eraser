@@ -500,9 +500,12 @@ namespace Eraser.Manager
 			SubFoldersHandler subFolders = null;
 			subFolders = delegate(DirectoryInfo info)
 			{
+				foreach (FileSystemInfo fsInfo in info.GetFileSystemInfos())
 				try
 				{
-					foreach (FileInfo file in info.GetFiles())
+					if (fsInfo is FileInfo)
+					{
+						FileInfo file = (FileInfo)fsInfo;
 						if (Eraser.Util.File.IsProtectedSystemFile(file.FullName))
 							task.Log.Add(new LogEntry(string.Format("{0} did not have its cluster tips " +
 								"erased, because it is a system file", file.FullName), LogLevel.INFORMATION));
@@ -512,15 +515,25 @@ namespace Eraser.Manager
 								files.Add(file.FullName + ':' + i);
 							files.Add(file.FullName);
 						}
-
-					foreach (DirectoryInfo subDir in info.GetDirectories())
-						subFolders(subDir);
+					}
+					else if (fsInfo is DirectoryInfo)
+					{
+						DirectoryInfo dir = (DirectoryInfo)fsInfo;
+						foreach (DirectoryInfo subDir in dir.GetDirectories())
+							subFolders(subDir);
+					}
+					else
+						throw new NotImplementedException("Unknown FileSystemInfo type.");
 				}
-				catch (UnauthorizedAccessException)
+				catch (UnauthorizedAccessException e)
 				{
+					task.Log.Add(new LogEntry(string.Format("{0} did not have its cluster tips erased because of " +
+						"the following error: {1}", info.FullName, e.Message), LogLevel.ERROR));
 				}
-				catch (IOException)
+				catch (IOException e)
 				{
+					task.Log.Add(new LogEntry(string.Format("{0} did not have its cluster tips erased because of " +
+						"the following error: {1}", info.FullName, e.Message), LogLevel.ERROR));
 				}
 			};
 
@@ -529,7 +542,15 @@ namespace Eraser.Manager
 			//For every file, erase the cluster tips.
 			for (int i = 0, j = files.Count; i != j; ++i)
 			{
-				EraseFileClusterTips(files[i], method);
+				try
+				{
+					EraseFileClusterTips(files[i], method);
+				}
+				catch (Exception e)
+				{
+					task.Log.Add(new LogEntry(string.Format("{0} did not have its cluster tips " +
+						"erased. The error returned was: {1}", files[i], e.Message), LogLevel.ERROR));
+				}
 				callback(i, files[i], files.Count);
 			}
 		}
