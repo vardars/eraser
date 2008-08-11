@@ -38,20 +38,20 @@ namespace Eraser.DefaultPlugins
 			Settings = Manager.ManagerLibrary.Instance.Settings.GetSettings();
 
 			//Then register the erasure methods et al.
-			host.RegisterErasureMethod(new Gutmann());
-			host.RegisterErasureMethod(new Schneier());
-			host.RegisterErasureMethod(new DoD_EcE());
-			host.RegisterErasureMethod(new DoD_E());
-			host.RegisterErasureMethod(new Pseudorandom());
+			host.RegisterErasureMethod(new Gutmann());				//35 passes
+			host.RegisterErasureMethod(new GutmannLite());			//10 passes
+			host.RegisterErasureMethod(new DoD_EcE());				//7 passes
+			host.RegisterErasureMethod(new RCMP_TSSIT_OPS_II());	//7 passes
+			host.RegisterErasureMethod(new Schneier());				//7 passes
+			host.RegisterErasureMethod(new VSITR());				//7 passes
+			host.RegisterErasureMethod(new DoD_E());				//3 passes
+			host.RegisterErasureMethod(new HMGIS5Enhanced());		//3 passes
+			host.RegisterErasureMethod(new USAF5020());				//3 passes
+			host.RegisterErasureMethod(new USArmyAR380_19());		//3 passes
+			host.RegisterErasureMethod(new GOSTP50739());			//2 passes
+			host.RegisterErasureMethod(new HMGIS5Baseline());		//1 pass
+			host.RegisterErasureMethod(new Pseudorandom());			//1 pass
 
-			host.RegisterErasureMethod(new HMGIS5Baseline());
-			host.RegisterErasureMethod(new GOSTP50739());
-			host.RegisterErasureMethod(new USAF5020());
-			host.RegisterErasureMethod(new HMGIS5Enhanced());
-			host.RegisterErasureMethod(new USArmyAR380_19());
-			host.RegisterErasureMethod(new VSITR());
-			host.RegisterErasureMethod(new RCMP_TSSIT_OPS_II());
-			host.RegisterErasureMethod(new GutmannLite());
 			host.RegisterPRNG(new ISAAC());
 			host.RegisterPRNG(new RNGCrypto());
 
