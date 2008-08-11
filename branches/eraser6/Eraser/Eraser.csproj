@@ -264,6 +264,7 @@
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
-    <PreBuildEvent>csgettext --merge EN,NL "$(ProjectDir)\" Strings</PreBuildEvent>
+    <PreBuildEvent>csgettext --merge EN,NL "$(ProjectDir)\" Strings
+if ERRORLEVEL 0 exit 0</PreBuildEvent>
   </PropertyGroup>
 </Project>
