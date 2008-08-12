@@ -2,7 +2,7 @@
  * $Id$
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
- * Modified By:
+ * Modified By: Garrett Trant <gtrant@users.sourceforge.net>
  * 
  * This file is part of Eraser.
  * 
@@ -141,9 +141,9 @@ namespace Eraser.Util
 		/// </summary>
 		/// <param name="lpStartupInfo">A pointer to a STARTUPINFO structure that
 		/// receives the startup information.</param>
-		[DllImport("Kernel32.dll", EntryPoint = "GetStartupInfoW")]
+		[DllImport("Kernel32.dll", EntryPoint = "GetStartupInfo")]
 		public static extern void GetStartupInfo(out STARTUPINFO lpStartupInfo);
-
+        
 		/// <summary>
 		/// Retrieves information about the current system.
 		/// </summary>
@@ -300,7 +300,27 @@ namespace Eraser.Util
 			/// Reserved. This value is always 0.
 			/// </summary>
 			private ulong ullAvailExtendedVirtual;
-		}
+
+            public override int GetHashCode()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override bool Equals(Object obj)
+            {
+                throw new NotImplementedException();
+            }
+
+            public static bool operator ==(MEMORYSTATUSEX x, MEMORYSTATUSEX y)
+            {
+                throw new NotImplementedException();
+            }
+
+            public static bool operator !=(MEMORYSTATUSEX x, MEMORYSTATUSEX y)
+            {
+                throw new NotImplementedException();
+            }
+        }
 
 		/// <summary>
 		/// Contains information about the current computer system. This includes
@@ -412,7 +432,27 @@ namespace Eraser.Util
 			///								is the stepping letter and yz is the minor stepping.
 			/// </summary>
 			public ushort processorRevision;
-		}
+
+            public override int GetHashCode()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override bool Equals(Object obj)
+            {
+                throw new NotImplementedException();
+            }
+
+            public static bool operator ==(SYSTEM_INFO x, SYSTEM_INFO y)
+            {
+                throw new NotImplementedException();
+            }
+
+            public static bool operator !=(SYSTEM_INFO x, SYSTEM_INFO y)
+            {
+                throw new NotImplementedException();
+            }
+        }
 
 		/// <summary>
 		/// Specifies the window station, desktop, standard handles, and appearance
@@ -572,6 +612,26 @@ namespace Eraser.Util
 			/// buffer.
 			/// </summary>
 			public IntPtr hStdError;
-		}
+
+            public override int GetHashCode()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override bool Equals(Object obj)
+            {
+                throw new NotImplementedException();
+            }
+
+            public static bool operator ==(STARTUPINFO x, STARTUPINFO y)
+            {
+                throw new NotImplementedException();
+            }
+
+            public static bool operator !=(STARTUPINFO x, STARTUPINFO y)
+            {
+                throw new NotImplementedException();
+            }
+        }
 	}
 }
