@@ -142,37 +142,37 @@
     <value>The amount of data erased should not be limited, since this is a self-limiting erasure method.</value>
   </data>
   <data name="Russian GOST P50739-95" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Russian GOST P50739-95</value>
   </data>
   <data name="Gutmann" xml:space="preserve">
     <value>Gutmann</value>
   </data>
   <data name="Gutmann Lite" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Gutmann Lite</value>
   </data>
   <data name="British HMG IS5 (Baseline)" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>British HMG IS5 (Baseline)</value>
   </data>
   <data name="British HMG IS5 (Enhanced)" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>British HMG IS5 (Enhanced)</value>
   </data>
   <data name="Pseudorandom Data" xml:space="preserve">
     <value>Pseudorandom Data</value>
   </data>
   <data name="RCMP TSSIT OPS-II" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>RCMP TSSIT OPS-II</value>
   </data>
   <data name="Schneier 7 pass" xml:space="preserve">
     <value>Schneier 7 pass</value>
   </data>
   <data name="US Air Force 5020" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>US Air Force 5020</value>
   </data>
   <data name="US Army AR380-19" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>US Army AR380-19</value>
   </data>
   <data name="German VSITR" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>German VSITR</value>
   </data>
   <data name="Default Erasure Methods and PRNGs" xml:space="preserve">
     <value>Default Erasure Methods and PRNGs</value>

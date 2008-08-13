@@ -135,7 +135,7 @@ namespace Eraser.Manager.Plugin
 		public override void LoadPlugin(string filePath)
 		{
 			//Load the plugin
-			Assembly assembly = Assembly.LoadFile(filePath);
+			Assembly assembly = Assembly.LoadFrom(filePath);
 
 			//Iterate over every exported type, checking if it implements IPlugin
 			foreach (Type type in assembly.GetTypes())
