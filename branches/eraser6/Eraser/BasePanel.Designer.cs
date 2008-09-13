@@ -58,43 +58,28 @@ namespace Eraser
 			// 
 			// titleLbl
 			// 
-			this.titleLbl.AccessibleDescription = null;
-			this.titleLbl.AccessibleName = null;
 			resources.ApplyResources(this.titleLbl, "titleLbl");
 			this.titleLbl.Name = "titleLbl";
 			// 
 			// content
 			// 
-			this.content.AccessibleDescription = null;
-			this.content.AccessibleName = null;
 			resources.ApplyResources(this.content, "content");
-			this.content.BackgroundImage = null;
-			this.content.Font = null;
 			this.content.Name = "content";
 			// 
 			// titleIcon
 			// 
-			this.titleIcon.AccessibleDescription = null;
-			this.titleIcon.AccessibleName = null;
 			resources.ApplyResources(this.titleIcon, "titleIcon");
-			this.titleIcon.BackgroundImage = null;
-			this.titleIcon.Font = null;
-			this.titleIcon.ImageLocation = null;
 			this.titleIcon.Name = "titleIcon";
 			this.titleIcon.TabStop = false;
 			// 
 			// BasePanel
 			// 
-			this.AccessibleDescription = null;
-			this.AccessibleName = null;
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
-			resources.ApplyResources(this, "$this");
-			this.BackgroundImage = null;
 			this.Controls.Add(this.content);
 			this.Controls.Add(this.titleIcon);
 			this.Controls.Add(this.titleLbl);
-			this.Font = null;
 			this.Name = "BasePanel";
+			resources.ApplyResources(this, "$this");
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

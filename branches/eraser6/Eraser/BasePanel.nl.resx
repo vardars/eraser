@@ -121,7 +121,10 @@
   <data name="titleLbl.Size" type="System.Drawing.Size, System.Drawing">
     <value>106, 32</value>
   </data>
-  <data name="titleLbl.Text" xml:space="preserve">
-    <value>PanelTitle</value>
+  <data name="titleLbl.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="titleLbl.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 18pt</value>
   </data>
 </root>
