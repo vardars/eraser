@@ -106,6 +106,7 @@ namespace Eraser.Manager.Plugin
 		/// </summary>
 		public DefaultHost()
 		{
+			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(AssemblyResolve);
 			foreach (string fileName in Directory.GetFiles(PLUGINSFOLDER))
 			{
 				FileInfo file = new FileInfo(fileName);
@@ -148,20 +149,32 @@ namespace Eraser.Manager.Plugin
 				Type typeInterface = type.GetInterface("Eraser.Manager.Plugin.IPlugin", true);
 				if (typeInterface != null)
 				{
-					//Initialize the plugin
-					IPlugin pluginInterface = (IPlugin)Activator.CreateInstance(
-						assembly.GetType(type.ToString()));
-					pluginInterface.Initialize(this);
-
 					//Create the PluginInstance structure
-					PluginInstance instance = new PluginInstance(assembly, filePath, pluginInterface);
+					PluginInstance instance = new PluginInstance(assembly, filePath, null);
 
 					//Add the plugin to the list of loaded plugins
 					lock (plugins)
 						plugins.Add(instance);
+
+					//Initialize the plugin
+					IPlugin pluginInterface = (IPlugin)Activator.CreateInstance(
+						assembly.GetType(type.ToString()));
+					pluginInterface.Initialize(this);
+					instance.Plugin = pluginInterface;
+
+					//And broadcast the plugin load event
 					OnPluginLoad(instance);
 				}
 			}
+		}
+
+		Assembly AssemblyResolve(object sender, ResolveEventArgs args)
+		{
+			lock (plugins)
+				foreach (PluginInstance instance in plugins)
+					if (instance.Assembly.FullName == args.Name)
+						return instance.Assembly;
+			return null;
 		}
 
 		public override void RegisterErasureMethod(ErasureMethod method)
@@ -180,7 +193,7 @@ namespace Eraser.Manager.Plugin
 	/// <summary>
 	/// Structure holding the instance values of the plugin like handle and path.
 	/// </summary>
-	public struct PluginInstance
+	public class PluginInstance
 	{
 		internal PluginInstance(Assembly assembly, string path, IPlugin plugin)
 		{
