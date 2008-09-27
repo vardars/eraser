@@ -61,6 +61,12 @@ namespace Eraser.Manager
 		public abstract void QueueTask(Task task);
 
 		/// <summary>
+		/// Schedules the given task for execution.
+		/// </summary>
+		/// <param name="task">The task to schedule</param>
+		public abstract void ScheduleTask(Task task);
+
+		/// <summary>
 		/// Queues all tasks in the task list which are meant for restart execution.
 		/// This is a separate function rather than just running them by default on
 		/// task load because creating a new instance and loading the task list

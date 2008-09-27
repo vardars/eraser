@@ -349,16 +349,14 @@ namespace Eraser.Manager
 					case ScheduleUnit.DAILY:
 						//First assume that it is today that we are running the schedule
 						long daysToAdd = (DateTime.Now - nextRun).Days;
-						if (daysToAdd % frequency != 0)
-							daysToAdd += frequency - (daysToAdd % frequency);
 						nextRun = nextRun.AddDays(daysToAdd);
-						nextRun = nextRun.AddHours(executionTime.Hour);
-						nextRun = nextRun.AddMinutes(executionTime.Minute);
+						nextRun = nextRun.AddHours(executionTime.Hour - nextRun.Hour);
+						nextRun = nextRun.AddMinutes(executionTime.Minute - nextRun.Minute);
 
 						//If we have passed today's run time, schedule it after the next
 						//frequency
 						if (nextRun < DateTime.Now)
-							nextRun = nextRun.AddDays(1);
+							nextRun = nextRun.AddDays(frequency);
 						break;
 					case ScheduleUnit.WEEKDAYS:
 						while (nextRun < DateTime.Now ||
@@ -375,7 +373,7 @@ namespace Eraser.Manager
 
 						//Ok, we now need to find the earliest day of the week where
 						//the task will run.
-						throw new NotImplementedException("Weekly schedule calculation not implemented");
+						throw new NotImplementedException();
 					case ScheduleUnit.MONTHLY:
 						//Increment the month until we are past our current date.
 						nextRun = nextRun.AddMinutes(executionTime.Minute - nextRun.Minute);

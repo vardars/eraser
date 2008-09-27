@@ -88,7 +88,7 @@ namespace Eraser.Manager
 				//of schduled tasks.
 				else if (task.Schedule != Schedule.RunOnRestart)
 				{
-					scheduledTasks.Add((task.Schedule as RecurringSchedule).NextRun, task);
+					ScheduleTask(task);
 				}
 			}
 		}
@@ -141,6 +141,21 @@ namespace Eraser.Manager
 				scheduledTasks.Add(DateTime.Now, task);
 				schedulerInterrupt.Set();
 			}
+		}
+
+		public override void ScheduleTask(Task task)
+		{
+			RecurringSchedule schedule = (RecurringSchedule)task.Schedule;
+			if (schedule.NextRun < DateTime.Now &&
+				!ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately)
+			{
+				//OK, we've missed the schedule and the user wants the thing
+				//to follow up normally.
+				throw new NotImplementedException();
+			}
+			else
+				scheduledTasks.Add(schedule.NextRun, task);
+			schedulerInterrupt.Set();
 		}
 
 		public override void QueueRestartTasks()
@@ -219,10 +234,15 @@ namespace Eraser.Manager
 					nextId = 1;
 					foreach (uint id in tasks.Keys)
 					{
-						tasks[id].executor = this;
+						Task currentTask = tasks[id];
+						currentTask.executor = this;
 						while (id > nextId)
 							unusedIds.Add(++nextId);
 						++nextId;
+
+						//Check if the task is recurring. If it is, check if we missed it.
+						if (currentTask.Schedule is RecurringSchedule)
+							ScheduleTask(currentTask);	
 					}
 
 					//Decrement the ID, since the next ID will be preincremented
@@ -486,7 +506,7 @@ namespace Eraser.Manager
 			}
 
 
-			//NotImplemented: clear directory entries: Eraser.cpp@2321
+			//new NotImplementedException(): clear directory entries: Eraser.cpp@2321
 		}
 
 		private delegate void SubFoldersHandler(DirectoryInfo info);
