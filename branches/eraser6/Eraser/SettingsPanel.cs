@@ -44,7 +44,9 @@ namespace Eraser
 			Dock = DockStyle.None;
 
 			//For new plugins, register the callback.
-			Host.Instance.PluginLoad += new Host.OnPluginLoadEventHandler(OnNewPluginLoaded);
+			Host.Instance.PluginLoaded += new Host.PluginLoadedFunction(OnNewPluginLoaded);
+			ErasureMethodManager.MethodRegistered +=
+				new ErasureMethodManager.MethodRegisteredFunction(OnMethodRegistered);
 
 			//Load the values
 			LoadPluginDependantValues();
@@ -58,6 +60,14 @@ namespace Eraser
 			item.SubItems.Add(instance.Assembly.GetName().Version.ToString());
 			item.SubItems.Add(instance.Path);
 			item.Tag = instance;
+		}
+
+		private void OnMethodRegistered(Guid guid)
+		{
+			ErasureMethod method = ErasureMethodManager.GetInstance(guid);
+			eraseFilesMethod.Items.Add(method);
+			if (method is UnusedSpaceErasureMethod)
+				eraseUnusedMethod.Items.Add(method);
 		}
 
 		private void LoadPluginDependantValues()
