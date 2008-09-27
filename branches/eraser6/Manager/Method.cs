@@ -216,7 +216,7 @@ namespace Eraser.Manager
 			public static readonly PassFunction WriteRandom = ErasureMethod.WriteRandom;
 
 			/// <summary>
-			/// THe default pass function which writes a constant repeatedly to the
+			/// The default pass function which writes a constant repeatedly to the
 			/// stream. The Pass' OpaqueValue must be set.
 			/// </summary>
 			public static readonly PassFunction WriteConstant = ErasureMethod.WriteConstant;

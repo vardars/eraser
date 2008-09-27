@@ -38,6 +38,16 @@ namespace Eraser.Manager
 		protected internal abstract void Save();
 
 		/// <summary>
+		/// Loads all settings from storage.
+		/// </summary>
+		/// <remarks>Notes to inheritors: Always call the base class Load.</remarks>
+		protected internal virtual void Load()
+		{
+			if (SettingsChanged != null)
+				SettingsChanged();
+		}
+
+		/// <summary>
 		/// The language which all user interface elements should be presented in.
 		/// This is a GUID since languages are supplied through plugins.
 		/// </summary>
@@ -202,27 +212,6 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Retrieves the dictionary holding settings for the given plugin.
-		/// </summary>
-		/// <param name="plugin">The GUID of the plugin querying for settings</param>
-		/// <returns>A dictionary holding settings for the plugin. This dictionary
-		/// will be automatically saved when the program exits holding the settings
-		/// permanenently. An empty dictionary will be returned if no settings
-		/// currently exist.</returns>
-		public Dictionary<string, object> GetSettings(Guid plugin)
-		{
-			lock (pluginSettings)
-			{
-				if (pluginSettings.ContainsKey(plugin))
-					return pluginSettings[plugin];
-
-				Dictionary<string, object> result = new Dictionary<string, object>();
-				pluginSettings.Add(plugin, result);
-				return result;
-			}
-		}
-
-		/// <summary>
 		/// Retrieves the dictionary holding settings for the calling assembly.
 		/// </summary>
 		/// <returns>A dictionary holding settings for the plugin. This dictionary
@@ -236,15 +225,39 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// Gets the settings from the data source.
+		/// </summary>
+		/// <param name="guid">The GUID of the calling plugin</param>
+		/// <returns>The dictionary containing settings for the plugin</returns>
+		protected abstract Dictionary<string, object> GetSettings(Guid guid);
+
+		/// <summary>
 		/// Sets the settings for the calling plugin.
 		/// </summary>
 		/// <param name="settings">The settings of the plugin</param>
 		public void SetSettings(Dictionary<string, object> settings)
 		{
-			pluginSettings[new Guid(((GuidAttribute)Assembly.GetCallingAssembly().
-				GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value)]
-				= settings;
+			SetSettings(new Guid(((GuidAttribute)Assembly.GetCallingAssembly().
+				GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value), settings);
+			SettingsChanged();
 		}
+
+		/// <summary>
+		/// Saves the settings from the plugin into the data source.
+		/// </summary>
+		/// <param name="guid"></param>
+		/// <param name="settings"></param>
+		protected abstract void SetSettings(Guid guid, Dictionary<string, object> settings);
+
+		/// <summary>
+		/// The prototype of functions which will handle a SettingsChanged Event.
+		/// </summary>
+		public delegate void OnSettingsChangedEvent();
+
+		/// <summary>
+		/// The event handler handling a change in settings.
+		/// </summary>
+		public event OnSettingsChangedEvent SettingsChanged;
 
 		private string uiLanguage;
 		private Guid defaultFileErasureMethod = Guid.Empty;
@@ -255,8 +268,5 @@ namespace Eraser.Manager
 		private bool executeMissedTasksImmediately = true;
 		private bool plausibleDeniability = true;
 		private List<string> plausibleDeniabilityFiles = new List<string>();
-
-		protected Dictionary<Guid, Dictionary<string, object>> pluginSettings =
-			new Dictionary<Guid, Dictionary<string, object>>();
 	}
 }

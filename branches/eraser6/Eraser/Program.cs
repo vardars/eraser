@@ -99,6 +99,11 @@ namespace Eraser
 	{
 		public Settings()
 		{
+			Load();
+		}
+
+		protected override void Load()
+		{
 			RegistryKey key = Application.UserAppDataRegistry;
 			ActivePRNG = new Guid((string)
 				key.GetValue("PRNG", Guid.Empty.ToString()));
@@ -139,24 +144,7 @@ namespace Eraser
 					}
 				}
 
-			//Load the plugin settings.
-			byte[] pluginSettings = (byte[])key.GetValue("PluginSettings", new byte[0]);
-			if (pluginSettings.Length != 0)
-				using (MemoryStream stream = new MemoryStream(pluginSettings))
-				{
-					try
-					{
-						this.pluginSettings = (Dictionary<Guid, Dictionary<string, object>>)
-							new BinaryFormatter().Deserialize(stream);
-					}
-					catch (Exception)
-					{
-						key.DeleteValue("PluginSettings");
-						MessageBox.Show(S._("Could not load plugin settings. All settings " +
-							"have been lost."), S._("Eraser"), MessageBoxButtons.OK,
-							MessageBoxIcon.Error);
-					}
-				}
+			base.Load();
 		}
 
 		protected override void Save()
@@ -178,14 +166,61 @@ namespace Eraser
 
 			using (MemoryStream stream = new MemoryStream())
 			{
-				new BinaryFormatter().Serialize(stream, pluginSettings);
-				key.SetValue("PluginSettings", stream.ToArray(), RegistryValueKind.Binary);
-			}
-
-			using (MemoryStream stream = new MemoryStream())
-			{
 				new BinaryFormatter().Serialize(stream, PlausibleDeniabilityFiles);
 				key.SetValue("PlausibleDeniabilityFiles", stream.ToArray(), RegistryValueKind.Binary);
+			}
+		}
+
+		protected override Dictionary<string, object> GetSettings(Guid guid)
+		{
+			//Open the registry key containing the settings
+			RegistryKey pluginsKey = Application.UserAppDataRegistry.OpenSubKey(
+				"Plugins\\" + guid.ToString(), true);
+			Dictionary<string, object> result = new Dictionary<string, object>();
+
+			//Load every key/value pair into the dictionary
+			if (pluginsKey != null)
+				foreach (string key in pluginsKey.GetValueNames())
+				{
+					byte[] currentSetting = (byte[])pluginsKey.GetValue(key, null);
+					if (currentSetting.Length != 0)
+						using (MemoryStream stream = new MemoryStream(currentSetting))
+						{
+							try
+							{
+								result[key] = new BinaryFormatter().Deserialize(stream);
+							}
+							catch (Exception)
+							{
+								pluginsKey.DeleteValue(key);
+								MessageBox.Show(string.Format(S._("Could not load the setting {0} for plugin {1}." +
+									"The setting has been lost."), key, guid.ToString()),
+									S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+							}
+						}
+					else
+						result[key] = null;
+				}
+
+			//We're done!
+			return result;
+		}
+
+		protected override void SetSettings(Guid guid, Dictionary<string, object> settings)
+		{
+			//Open the registry key containing the settings
+			RegistryKey pluginKey = Application.UserAppDataRegistry.OpenSubKey(
+				"Plugins\\" + guid.ToString(), true);
+			if (pluginKey == null)
+				pluginKey = Application.UserAppDataRegistry.CreateSubKey("Plugins\\" + guid.ToString());
+
+			foreach (string key in settings.Keys)
+			{
+				using (MemoryStream stream = new MemoryStream())
+				{
+					new BinaryFormatter().Serialize(stream, settings[key]);
+					pluginKey.SetValue(key, stream.ToArray(), RegistryValueKind.Binary);
+				}
 			}
 		}
 	}
