@@ -87,30 +87,20 @@ namespace Eraser.Util
 			}
 
 			//Fill up the remaining members of the structure: file system, label, etc.
-			IntPtr volumeName = Marshal.AllocHGlobal(MaxPath * sizeof(char)),
-				   fileSystemName = Marshal.AllocHGlobal(MaxPath * sizeof(char));
-			try
+			StringBuilder volumeName = new StringBuilder(MaxPath * sizeof(char)),
+				   fileSystemName = new StringBuilder(MaxPath * sizeof(char));
+			uint serialNumber, maxComponentLength, filesystemFlags;
+			if (!GetVolumeInformation(volumeID, volumeName, MaxPath, out serialNumber,
+				out maxComponentLength, out filesystemFlags, fileSystemName, MaxPath))
 			{
-				uint serialNumber, maxComponentLength, filesystemFlags;
-				if (!GetVolumeInformation(volumeID, volumeName, MaxPath, out serialNumber,
-					out maxComponentLength, out filesystemFlags, fileSystemName, MaxPath))
-				{
-					if (Marshal.GetLastWin32Error() != 21 /*ERROR_NOT_READY*/)
-						throw new Win32Exception(Marshal.GetLastWin32Error(), "Eraser.Util.Volume.Volume");
-				}
-				else
-				{
-					//OK, the volume information's queried, store what we know.
-					driveFormat = Marshal.PtrToStringUni(fileSystemName);
-					volumeLabel = Marshal.PtrToStringUni(volumeName);
-					isReady = true;
-				}
+				if (Marshal.GetLastWin32Error() != 21 /*ERROR_NOT_READY*/)
+					throw new Win32Exception(Marshal.GetLastWin32Error(), "Eraser.Util.Volume.Volume");
 			}
-			finally
-			{
-				Marshal.FreeHGlobal(volumeName);
-				Marshal.FreeHGlobal(fileSystemName);
-			}
+			else
+				isReady = true;
+
+			volumeLabel = volumeName.ToString();
+			volumeFormat = fileSystemName.ToString();
 		}
 
 		/// <summary>
@@ -121,28 +111,21 @@ namespace Eraser.Util
 		public static List<Volume> GetVolumes()
 		{
 			List<Volume> result = new List<Volume>();
-			IntPtr nextVolume = Marshal.AllocHGlobal(LongPath * sizeof(char));
-			try
-			{
-				SafeHandle handle = FindFirstVolume(nextVolume, LongPath);
-				if (handle.IsInvalid)
-					return result;
-
-				//Iterate over the volume mountpoints
-				do
-					result.Add(new Volume(Marshal.PtrToStringUni(nextVolume)));
-				while (FindNextVolume(handle, nextVolume, LongPath));
-
-				//Close the handle
-				if (Marshal.GetLastWin32Error() == 18 /*ERROR_NO_MORE_FILES*/)
-					FindVolumeClose(handle);
-				
+			StringBuilder nextVolume = new StringBuilder(LongPath * sizeof(char));
+			SafeHandle handle = FindFirstVolume(nextVolume, LongPath);
+			if (handle.IsInvalid)
 				return result;
-			}
-			finally
-			{
-				Marshal.FreeHGlobal(nextVolume);
-			}
+
+			//Iterate over the volume mountpoints
+			do
+				result.Add(new Volume(nextVolume.ToString()));
+			while (FindNextVolume(handle, nextVolume, LongPath));
+
+			//Close the handle
+			if (Marshal.GetLastWin32Error() == 18 /*ERROR_NO_MORE_FILES*/)
+				FindVolumeClose(handle);
+			
+			return result;
 		}
 
 		/// <summary>
@@ -154,28 +137,22 @@ namespace Eraser.Util
 		public static Volume FromMountpoint(string mountpoint)
 		{
 			DirectoryInfo mountpointDir = new DirectoryInfo(mountpoint);
-			IntPtr volumeID = Marshal.AllocHGlobal(50 * sizeof(char));
-			try
-			{
-				do
-				{
-					string currentDir = mountpointDir.FullName;
-					if (currentDir.Length > 0 && currentDir[currentDir.Length - 1] != '\\')
-						currentDir += '\\';
-					if (GetVolumeNameForVolumeMountPoint(currentDir, volumeID, 50))
-						return new Volume(Marshal.PtrToStringUni(volumeID));
-					else if (Marshal.GetLastWin32Error() != 4390 /*ERROR_NOT_A_REPARSE_POINT*/)
-						throw new Win32Exception(Marshal.GetLastWin32Error());
-					mountpointDir = mountpointDir.Parent;
-				}
-				while (mountpointDir != null);
+			StringBuilder volumeID = new StringBuilder(50 * sizeof(char));
 
-				throw new Win32Exception(4390 /*ERROR_NOT_A_REPARSE_POINT*/);
-			}
-			finally
+			do
 			{
-				Marshal.FreeHGlobal(volumeID);
+				string currentDir = mountpointDir.FullName;
+				if (currentDir.Length > 0 && currentDir[currentDir.Length - 1] != '\\')
+					currentDir += '\\';
+				if (GetVolumeNameForVolumeMountPoint(currentDir, volumeID, 50))
+					return new Volume(volumeID.ToString());
+				else if (Marshal.GetLastWin32Error() != 4390 /*ERROR_NOT_A_REPARSE_POINT*/)
+					throw new Win32Exception(Marshal.GetLastWin32Error());
+				mountpointDir = mountpointDir.Parent;
 			}
+			while (mountpointDir != null);
+
+			throw new Win32Exception(4390 /*ERROR_NOT_A_REPARSE_POINT*/);
 		}
 
 		/// <summary>
@@ -204,10 +181,10 @@ namespace Eraser.Util
 		{
 			get
 			{
-				return driveFormat;
+				return volumeFormat;
 			}
 		}
-		private string driveFormat;
+		private string volumeFormat;
 
 		/// <summary>
 		/// Gets the drive type; returns one of the System.IO.DriveType values.
@@ -320,28 +297,22 @@ namespace Eraser.Util
 			get
 			{
 				List<Volume> result = new List<Volume>();
-				IntPtr nextMountpoint = Marshal.AllocHGlobal(LongPath * sizeof(char));
-				try
-				{
-					SafeHandle handle = FindFirstVolumeMountPoint(VolumeID,
-						nextMountpoint, LongPath);
-					if (handle.IsInvalid)
-						return result;
+				StringBuilder nextMountpoint = new StringBuilder(LongPath * sizeof(char));
 
-					//Iterate over the volume mountpoints
-					while (FindNextVolumeMountPoint(handle, nextMountpoint, LongPath))
-						result.Add(new Volume(Marshal.PtrToStringUni(nextMountpoint)));
-
-					//Close the handle
-					if (Marshal.GetLastWin32Error() == 18 /*ERROR_NO_MORE_FILES*/)
-						FindVolumeMountPointClose(handle);
-
+				SafeHandle handle = FindFirstVolumeMountPoint(VolumeID,
+					nextMountpoint, LongPath);
+				if (handle.IsInvalid)
 					return result;
-				}
-				finally
-				{
-					Marshal.FreeHGlobal(nextMountpoint);
-				}
+
+				//Iterate over the volume mountpoints
+				while (FindNextVolumeMountPoint(handle, nextMountpoint, LongPath))
+					result.Add(new Volume(nextMountpoint.ToString()));
+
+				//Close the handle
+				if (Marshal.GetLastWin32Error() == 18 /*ERROR_NO_MORE_FILES*/)
+					FindVolumeMountPointClose(handle);
+
+				return result;
 			}
 		}
 
@@ -434,12 +405,12 @@ namespace Eraser.Util
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool GetVolumeInformation(
 			string lpRootPathName,
-			IntPtr lpVolumeNameBuffer,
+			StringBuilder lpVolumeNameBuffer,
 			uint nVolumeNameSize,
 			out uint lpVolumeSerialNumber,
 			out uint lpMaximumComponentLength,
 			out uint lpFileSystemFlags,
-			IntPtr lpFileSystemNameBuffer,
+			StringBuilder lpFileSystemNameBuffer,
 			uint nFileSystemNameSize);
 
 		/// <summary>
@@ -552,8 +523,7 @@ namespace Eraser.Util
 		/// INVALID_HANDLE_VALUE error code. To get extended error information,
 		/// call GetLastError.</returns>
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-		internal static extern SafeFileHandle FindFirstVolume(
-			IntPtr lpszVolumeName,
+		internal static extern SafeFileHandle FindFirstVolume(StringBuilder lpszVolumeName,
 			uint cchBufferLength);
 
 		/// <summary>
@@ -575,7 +545,7 @@ namespace Eraser.Util
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool FindNextVolume(SafeHandle hFindVolume,
-			IntPtr lpszVolumeName, uint cchBufferLength);
+			StringBuilder lpszVolumeName, uint cchBufferLength);
 
 		/// <summary>
 		/// Closes the specified volume search handle. The FindFirstVolume and
@@ -611,8 +581,7 @@ namespace Eraser.Util
 		/// error information, call GetLastError.</returns>
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		internal static extern SafeFileHandle FindFirstVolumeMountPoint(
-			string lpszRootPathName,
-			IntPtr lpszVolumeMountPoint,
+			string lpszRootPathName, StringBuilder lpszVolumeMountPoint,
 			uint cchBufferLength);
 
 		/// <summary>
@@ -634,8 +603,8 @@ namespace Eraser.Util
 		/// that case, close the search with the FindVolumeMountPointClose function.</returns>
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		internal static extern bool FindNextVolumeMountPoint(SafeHandle hFindVolumeMountPoint,
-			IntPtr lpszVolumeMountPoint,
+		internal static extern bool FindNextVolumeMountPoint(
+			SafeHandle hFindVolumeMountPoint, StringBuilder lpszVolumeMountPoint,
 			uint cchBufferLength);
 
 		/// <summary>
@@ -673,8 +642,7 @@ namespace Eraser.Util
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool GetVolumeNameForVolumeMountPoint(
-			string lpszVolumeMountPoint,
-			IntPtr lpszVolumeName,
+			string lpszVolumeMountPoint, StringBuilder lpszVolumeName,
 			uint cchBufferLength);
 
 		/// <summary>
@@ -695,9 +663,7 @@ namespace Eraser.Util
 		/// <returns></returns>
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		internal static extern bool GetVolumePathNamesForVolumeName(
-			string lpszVolumeName,
-			IntPtr lpszVolumePathNames,
-			uint cchBufferLength,
+			string lpszVolumeName, IntPtr lpszVolumePathNames, uint cchBufferLength,
 			out uint lpcchReturnLength);
 
 		/// <summary>
