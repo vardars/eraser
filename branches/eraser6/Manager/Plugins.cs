@@ -82,18 +82,6 @@ namespace Eraser.Manager.Plugin
 		/// <param name="filePath">The absolute or relative file path to the
 		/// DLL.</param>
 		public abstract void LoadPlugin(string filePath);
-
-		/// <summary>
-		/// Registers an erasure method with the manager.
-		/// </summary>
-		/// <param name="method">The erasure method to register.</param>
-		public abstract void RegisterErasureMethod(ErasureMethod method);
-
-		/// <summary>
-		/// Registers a PRNG with the manager.
-		/// </summary>
-		/// <param name="prng">The PRNG algorithm to register.</param>
-		public abstract void RegisterPRNG(PRNG prng);
 	}
 
 	/// <summary>
@@ -175,16 +163,6 @@ namespace Eraser.Manager.Plugin
 					if (instance.Assembly.FullName == args.Name)
 						return instance.Assembly;
 			return null;
-		}
-
-		public override void RegisterErasureMethod(ErasureMethod method)
-		{
-			ErasureMethodManager.Register(method);
-		}
-
-		public override void RegisterPRNG(PRNG prng)
-		{
-			PRNGManager.Register(prng);
 		}
 
 		private List<PluginInstance> plugins = new List<PluginInstance>();
