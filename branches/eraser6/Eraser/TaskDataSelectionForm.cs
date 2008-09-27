@@ -54,21 +54,21 @@ namespace Eraser
 			file.Checked = true;
 
 			//Populate the drives list
-			string[] drives = Environment.GetLogicalDrives();
-			foreach (string drive in drives)
+			List<Volume> volumes = Volume.GetVolumes();
+			foreach (Volume volume in volumes)
 			{
-				DriveType driveType = new DriveInfo(drive).DriveType;
+				DriveType driveType = volume.VolumeType;
 				if (driveType != DriveType.Unknown &&
 					driveType != DriveType.NoRootDirectory &&
 					driveType != DriveType.CDRom &&
 					driveType != DriveType.Network)
 				{
 					DriveItem item = new DriveItem();
-					item.Drive = drive.Substring(0, drive.Length - 1);
-					item.Label = Eraser.Util.File.GetFileDescription(item.Drive +
-						Path.DirectorySeparatorChar);
-					item.Icon = Eraser.Util.File.GetFileIcon(item.Drive +
-						Path.DirectorySeparatorChar);
+					string volumePath = volume.IsMounted ?
+						volume.MountPoints[0] : volume.VolumeID;
+					item.Drive = volumePath.Substring(0, volumePath.Length - 1);
+					item.Label = Eraser.Util.File.GetFileDescription(volumePath);
+					item.Icon = Eraser.Util.File.GetFileIcon(volumePath);
 					unusedDisk.Items.Add(item);
 				}
 			}
