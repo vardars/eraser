@@ -34,6 +34,17 @@ namespace Eraser.DefaultPlugins
 	{
 		public FirstLast16KB()
 		{
+			//Load the settings
+			LoadSettings();
+
+			//Register for the Settings changed event: we need to be informed when
+			//the our dependent method changes.
+			ManagerLibrary.Instance.Settings.SettingsChanged +=
+				new Settings.SettingsChangedFunction(LoadSettings);
+		}
+
+		private void LoadSettings()
+		{
 			//Try to retrieve the set erasure method
 			if (DefaultPlugin.Settings.ContainsKey("FL16Method"))
 				method = ErasureMethodManager.GetInstance(
@@ -90,7 +101,7 @@ namespace Eraser.DefaultPlugins
 		}
 
 		public override void Erase(Stream strm, long erasureLength, PRNG prng,
-			OnProgress callback)
+			ProgressFunction callback)
 		{
 			//Make sure that the erasureLength passed in here is the maximum value
 			//for the size of long, since we don't want to write extra or write
