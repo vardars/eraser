@@ -22,11 +22,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.Serialization;
 
 using Eraser.Manager;
 
 namespace Eraser.DefaultPlugins
 {
+	[Serializable]
 	class EraseCustom : PassBasedErasureMethod
 	{
 		/// <summary>
@@ -64,11 +66,79 @@ namespace Eraser.DefaultPlugins
 	/// <summary>
 	/// Contains information necessary to create user-defined erasure methods.
 	/// </summary>
-	public class CustomErasureMethod
+	[Serializable]
+	public class CustomErasureMethod : ISerializable
 	{
+		public CustomErasureMethod()
+		{
+			Name = string.Empty;
+			GUID = Guid.Empty;
+			RandomizePasses = true;
+			Passes = null;
+		}
+
+		public CustomErasureMethod(SerializationInfo info, StreamingContext context)
+		{
+			Name = info.GetString("Name");
+			GUID = (Guid)info.GetValue("GUID", GUID.GetType());
+			RandomizePasses = info.GetBoolean("RandomizePasses");
+			List<PassData> passes = (List<PassData>)
+				info.GetValue("Passes", typeof(List<PassData>));
+
+			Passes = new ErasureMethod.Pass[passes.Count];
+			for (int i = 0; i != passes.Count; ++i)
+				Passes[i] = passes[i];
+		}
+
 		public string Name;
 		public Guid GUID;
 		public bool RandomizePasses;
 		public ErasureMethod.Pass[] Passes;
+
+		#region ISerializable Members
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue("Name", Name);
+			info.AddValue("GUID", GUID);
+			info.AddValue("RandomizePasses", RandomizePasses);
+
+			List<PassData> passes = new List<PassData>(Passes.Length);
+			foreach (ErasureMethod.Pass pass in Passes)
+				passes.Add(new PassData(pass));
+			info.AddValue("Passes", passes);
+		}
+
+		[Serializable]
+		private class PassData
+		{
+			public PassData(ErasureMethod.Pass pass)
+			{
+				if (pass.Function == ErasureMethod.Pass.WriteConstant)
+				{
+					Random = false;
+					OpaqueValue = pass.OpaqueValue;
+				}
+				else if (pass.Function == ErasureMethod.Pass.WriteRandom)
+				{
+					Random = true;
+					OpaqueValue = null;
+				}
+				else
+					throw new NotImplementedException("The custom erasure method can only comprise " +
+						"passes containining constat or random passes");
+			}
+
+			public static implicit operator ErasureMethod.Pass(PassData pass)
+			{
+				ErasureMethod.Pass result = new ErasureMethod.Pass(pass.Random ?
+					ErasureMethod.Pass.WriteRandom :
+					ErasureMethod.Pass.WriteConstant, pass.OpaqueValue);
+				return result;
+			}
+
+			object OpaqueValue;
+			bool Random;
+		}
+		#endregion
 	}
 }
