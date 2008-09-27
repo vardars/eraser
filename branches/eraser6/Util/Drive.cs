@@ -35,7 +35,7 @@ namespace Eraser.Util
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="volumeID">The ID of the volume.</param>
+		/// <param name="volumeID">The ID of the volume, in the form "\\?\Volume{GUID}\"</param>
 		public Volume(string volumeID)
 		{
 			//Set the volume Id
@@ -57,9 +57,12 @@ namespace Eraser.Util
 						currentBufferSize *= 2;
 						pathNamesBuffer = Marshal.AllocHGlobal((int)(currentBufferSize * sizeof(char)));
 					}
+					else
+						throw new Win32Exception(Marshal.GetLastWin32Error(),
+							"Eraser.Util.Volume.Volume");
 				}
 
-				pathNames = Marshal.PtrToStringAuto(pathNamesBuffer, (int)returnLength);
+				pathNames = Marshal.PtrToStringUni(pathNamesBuffer, (int)returnLength);
 			}
 			finally
 			{
@@ -82,6 +85,32 @@ namespace Eraser.Util
 						break;
 				}
 			}
+
+			//Fill up the remaining members of the structure: file system, label, etc.
+			IntPtr volumeName = Marshal.AllocHGlobal(MaxPath * sizeof(char)),
+				   fileSystemName = Marshal.AllocHGlobal(MaxPath * sizeof(char));
+			try
+			{
+				uint serialNumber, maxComponentLength, filesystemFlags;
+				if (!GetVolumeInformation(volumeID, volumeName, MaxPath, out serialNumber,
+					out maxComponentLength, out filesystemFlags, fileSystemName, MaxPath))
+				{
+					if (Marshal.GetLastWin32Error() != 21 /*ERROR_NOT_READY*/)
+						throw new Win32Exception(Marshal.GetLastWin32Error(), "Eraser.Util.Volume.Volume");
+				}
+				else
+				{
+					//OK, the volume information's queried, store what we know.
+					driveFormat = Marshal.PtrToStringUni(fileSystemName);
+					volumeLabel = Marshal.PtrToStringUni(volumeName);
+					isReady = true;
+				}
+			}
+			finally
+			{
+				Marshal.FreeHGlobal(volumeName);
+				Marshal.FreeHGlobal(fileSystemName);
+			}
 		}
 
 		/// <summary>
@@ -92,17 +121,17 @@ namespace Eraser.Util
 		public static List<Volume> GetVolumes()
 		{
 			List<Volume> result = new List<Volume>();
-			IntPtr nextVolume = Marshal.AllocHGlobal(MaxPath * sizeof(char));
+			IntPtr nextVolume = Marshal.AllocHGlobal(LongPath * sizeof(char));
 			try
 			{
-				SafeHandle handle = FindFirstVolume(nextVolume, MaxPath);
+				SafeHandle handle = FindFirstVolume(nextVolume, LongPath);
 				if (handle.IsInvalid)
 					return result;
 
 				//Iterate over the volume mountpoints
 				do
-					result.Add(new Volume(Marshal.PtrToStringAuto(nextVolume)));
-				while (FindNextVolume(handle, nextVolume, MaxPath));
+					result.Add(new Volume(Marshal.PtrToStringUni(nextVolume)));
+				while (FindNextVolume(handle, nextVolume, LongPath));
 
 				//Close the handle
 				if (Marshal.GetLastWin32Error() == 18 /*ERROR_NO_MORE_FILES*/)
@@ -117,65 +146,35 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
-		/// Determines the cluster size of the current volume.
+		/// Creates a Volume object from its mountpoint.
 		/// </summary>
-		/// <returns>The size of one cluster, in bytes.</returns>
-		public uint GetClusterSize()
+		/// <param name="mountpoint">The path to the mountpoint.</param>
+		/// <returns>The volume object if such a volume exists, or an exception
+		/// is thrown.</returns>
+		public static Volume FromMountpoint(string mountpoint)
 		{
-			UInt32 clusterSize, sectorSize, freeClusters, totalClusters;
-			if (GetDiskFreeSpace(mountPoints[0], out clusterSize, out sectorSize,
-				out freeClusters, out totalClusters))
-				return clusterSize * sectorSize;
-
-			throw new Win32Exception(Marshal.GetLastWin32Error(),
-				"Eraser.Util.Drive.GetClusterSize");
-		}
-
-		/// <summary>
-		/// Checks if the current user has disk quotas on the current volume.
-		/// </summary>
-		/// <returns>True if quotas are in effect.</returns>
-		public bool HasQuota()
-		{
-			UInt64 freeBytesAvailable, totalNumberOfBytes, totalNumberOfFreeBytes;
-			if (GetDiskFreeSpaceEx(VolumeID, out freeBytesAvailable, out totalNumberOfBytes,
-				out totalNumberOfFreeBytes))
-				return totalNumberOfFreeBytes != freeBytesAvailable;
-
-			throw new Win32Exception(Marshal.GetLastWin32Error(),
-				"Eraser.Util.Drive.HasQuota");
-		}
-
-		/// <summary>
-		/// Retrieves all mountpoints in the current volume, if the current volume
-		/// contains volume mountpoints.
-		/// </summary>
-		/// <returns>A list containing Volume objects, representing each of the
-		/// volumes at the mountpoints.</returns>
-		public List<Volume> GetMountpoints()
-		{
-			List<Volume> result = new List<Volume>();
-			IntPtr nextMountpoint = Marshal.AllocHGlobal(MaxPath * sizeof(char));
+			DirectoryInfo mountpointDir = new DirectoryInfo(mountpoint);
+			IntPtr volumeID = Marshal.AllocHGlobal(50 * sizeof(char));
 			try
 			{
-				SafeHandle handle = FindFirstVolumeMountPoint(VolumeID,
-					nextMountpoint, MaxPath);
-				if (handle.IsInvalid)
-					return result;
+				do
+				{
+					string currentDir = mountpointDir.FullName;
+					if (currentDir.Length > 0 && currentDir[currentDir.Length - 1] != '\\')
+						currentDir += '\\';
+					if (GetVolumeNameForVolumeMountPoint(currentDir, volumeID, 50))
+						return new Volume(Marshal.PtrToStringUni(volumeID));
+					else if (Marshal.GetLastWin32Error() != 4390 /*ERROR_NOT_A_REPARSE_POINT*/)
+						throw new Win32Exception(Marshal.GetLastWin32Error());
+					mountpointDir = mountpointDir.Parent;
+				}
+				while (mountpointDir != null);
 
-				//Iterate over the volume mountpoints
-				while (FindNextVolumeMountPoint(handle, nextMountpoint, MaxPath))
-					result.Add(new Volume(Marshal.PtrToStringAuto(nextMountpoint)));
-
-				//Close the handle
-				if (Marshal.GetLastWin32Error() == 18 /*ERROR_NO_MORE_FILES*/)
-					FindVolumeMountPointClose(handle);
-
-				return result;
+				throw new Win32Exception(4390 /*ERROR_NOT_A_REPARSE_POINT*/);
 			}
 			finally
 			{
-				Marshal.FreeHGlobal(nextMountpoint);
+				Marshal.FreeHGlobal(volumeID);
 			}
 		}
 
@@ -187,6 +186,164 @@ namespace Eraser.Util
 			get { return volumeID; }
 		}
 		private string volumeID;
+
+		/// <summary>
+		/// Gets or sets the volume label of a drive.
+		/// </summary>
+		public string VolumeLabel
+		{
+			get { return VolumeLabel; }
+			set { throw new NotImplementedException();  }
+		}
+		private string volumeLabel;
+
+		/// <summary>
+		/// Gets the name of the file system, such as NTFS or FAT32.
+		/// </summary>
+		public string VolumeFormat
+		{
+			get
+			{
+				return driveFormat;
+			}
+		}
+		private string driveFormat;
+
+		/// <summary>
+		/// Gets the drive type; returns one of the System.IO.DriveType values.
+		/// </summary>
+		public DriveType VolumeType
+		{
+			get
+			{
+				return (DriveType)GetDriveType(VolumeID);
+			}
+		}
+
+		/// <summary>
+		/// Determines the cluster size of the current volume.
+		/// </summary>
+		public int ClusterSize
+		{
+			get
+			{
+				uint clusterSize, sectorSize, freeClusters, totalClusters;
+				if (GetDiskFreeSpace(volumeID, out clusterSize, out sectorSize,
+					out freeClusters, out totalClusters))
+					return (int)(clusterSize * sectorSize);
+
+				throw new Win32Exception(Marshal.GetLastWin32Error(),
+					"Eraser.Util.Drive.GetClusterSize");
+			}
+		}
+
+		/// <summary>
+		/// Checks if the current user has disk quotas on the current volume.
+		/// </summary>
+		public bool HasQuota
+		{
+			get
+			{
+				ulong freeBytesAvailable, totalNumberOfBytes, totalNumberOfFreeBytes;
+				if (GetDiskFreeSpaceEx(volumeID, out freeBytesAvailable, out totalNumberOfBytes,
+					out totalNumberOfFreeBytes))
+					return totalNumberOfFreeBytes != freeBytesAvailable;
+
+				throw new Win32Exception(Marshal.GetLastWin32Error(),
+					"Eraser.Util.Drive.HasQuota");
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether a drive is ready.
+		/// </summary>
+		public bool IsReady
+		{
+			get { return isReady; }
+		}
+		private bool isReady = false;
+
+		/// <summary>
+		/// Gets the total amount of free space available on a drive.
+		/// </summary>
+		public long TotalFreeSpace
+		{
+			get
+			{
+				ulong result, dummy;
+				if (GetDiskFreeSpaceEx(volumeID, out dummy, out dummy, out result))
+					return (long)result;
+
+				throw new Win32Exception(Marshal.GetLastWin32Error(),
+					"Eraser.Util.Drive.TotalFreeSpace");
+			}
+		}
+		
+		/// <summary>
+		/// Gets the total size of storage space on a drive.
+		/// </summary>
+		public long TotalSize
+		{
+			get
+			{
+				UInt64 result, dummy;
+				if (GetDiskFreeSpaceEx(volumeID, out dummy, out result, out dummy))
+					return (long)result;
+
+				throw new Win32Exception(Marshal.GetLastWin32Error(),
+					"Eraser.Util.Drive.TotalSize");
+			}
+		}
+
+		/// <summary>
+		/// Indicates the amount of available free space on a drive.
+		/// </summary>
+		public long AvailableFreeSpace
+		{
+			get
+			{
+				UInt64 result, dummy;
+				if (GetDiskFreeSpaceEx(volumeID, out result, out dummy, out dummy))
+					return (long)result;
+
+				throw new Win32Exception(Marshal.GetLastWin32Error(),
+					"Eraser.Util.Drive.AvailableFreeSpace");
+			}
+		}
+
+		/// <summary>
+		/// Retrieves all mountpoints in the current volume, if the current volume
+		/// contains volume mountpoints.
+		/// </summary>
+		public List<Volume> MountedVolumes
+		{
+			get
+			{
+				List<Volume> result = new List<Volume>();
+				IntPtr nextMountpoint = Marshal.AllocHGlobal(LongPath * sizeof(char));
+				try
+				{
+					SafeHandle handle = FindFirstVolumeMountPoint(VolumeID,
+						nextMountpoint, LongPath);
+					if (handle.IsInvalid)
+						return result;
+
+					//Iterate over the volume mountpoints
+					while (FindNextVolumeMountPoint(handle, nextMountpoint, LongPath))
+						result.Add(new Volume(Marshal.PtrToStringUni(nextMountpoint)));
+
+					//Close the handle
+					if (Marshal.GetLastWin32Error() == 18 /*ERROR_NO_MORE_FILES*/)
+						FindVolumeMountPointClose(handle);
+
+					return result;
+				}
+				finally
+				{
+					Marshal.FreeHGlobal(nextMountpoint);
+				}
+			}
+		}
 
 		/// <summary>
 		/// The various mountpoints to the root of the volume. This list contains
@@ -208,20 +365,83 @@ namespace Eraser.Util
 			get { return mountPoints.Count != 0; }
 		}
 
-		/// <summary>
-		/// Gets the drive type; returns one of the System.IO.DriveType values.
-		/// </summary>
-		public DriveType VolumeType
-		{
-			get
-			{
-				return (DriveType)GetDriveType(VolumeID);
-			}
-		}
-
-		internal const int MaxPath = 32768;
-
 		#region Windows API Functions
+		internal const int MaxPath = 260;
+		internal const int LongPath = 32768;
+
+		/// <summary>
+		/// Retrieves information about the file system and volume associated with
+		/// the specified root directory.
+		/// 
+		/// To specify a handle when retrieving this information, use the
+		/// GetVolumeInformationByHandleW function.
+		/// 
+		/// To retrieve the current compression state of a file or directory, use
+		/// FSCTL_GET_COMPRESSION.
+		/// </summary>
+		/// <param name="lpRootPathName">    A pointer to a string that contains
+		/// the root directory of the volume to be described.
+		/// 
+		/// If this parameter is NULL, the root of the current directory is used.
+		/// A trailing backslash is required. For example, you specify
+		/// \\MyServer\MyShare as "\\MyServer\MyShare\", or the C drive as "C:\".</param>
+		/// <param name="lpVolumeNameBuffer">A pointer to a buffer that receives
+		/// the name of a specified volume. The maximum buffer size is MAX_PATH+1.</param>
+		/// <param name="nVolumeNameSize">The length of a volume name buffer, in
+		/// TCHARs. The maximum buffer size is MAX_PATH+1.
+		/// 
+		/// This parameter is ignored if the volume name buffer is not supplied.</param>
+		/// <param name="lpVolumeSerialNumber">A pointer to a variable that receives
+		/// the volume serial number.
+		/// 
+		/// This parameter can be NULL if the serial number is not required.
+		/// 
+		/// This function returns the volume serial number that the operating system
+		/// assigns when a hard disk is formatted. To programmatically obtain the
+		/// hard disk's serial number that the manufacturer assigns, use the
+		/// Windows Management Instrumentation (WMI) Win32_PhysicalMedia property
+		/// SerialNumber.</param>
+		/// <param name="lpMaximumComponentLength">A pointer to a variable that
+		/// receives the maximum length, in TCHARs, of a file name component that
+		/// a specified file system supports.
+		/// 
+		/// A file name component is the portion of a file name between backslashes.
+		/// 
+		/// The value that is stored in the variable that *lpMaximumComponentLength
+		/// points to is used to indicate that a specified file system supports
+		/// long names. For example, for a FAT file system that supports long names,
+		/// the function stores the value 255, rather than the previous 8.3 indicator.
+		/// Long names can also be supported on systems that use the NTFS file system.</param>
+		/// <param name="lpFileSystemFlags">A pointer to a variable that receives
+		/// flags associated with the specified file system.
+		/// 
+		/// This parameter can be one or more of the FS_FILE* flags. However,
+		/// FS_FILE_COMPRESSION and FS_VOL_IS_COMPRESSED are mutually exclusive.</param>
+		/// <param name="lpFileSystemNameBuffer">A pointer to a buffer that receives
+		/// the name of the file system, for example, the FAT file system or the
+		/// NTFS file system. The maximum buffer size is MAX_PATH+1.</param>
+		/// <param name="nFileSystemNameSize">The length of the file system name
+		/// buffer, in TCHARs. The maximum buffer size is MAX_PATH+1.
+		/// 
+		/// This parameter is ignored if the file system name buffer is not supplied.</param>
+		/// <returns>If all the requested information is retrieved, the return value
+		/// is nonzero.
+		/// 
+		/// 
+		/// If not all the requested information is retrieved, the return value is
+		/// zero (0). To get extended error information, call GetLastError.</returns>
+		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "GetVolumeInformationW")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool GetVolumeInformation(
+			[MarshalAs(UnmanagedType.LPWStr)] string lpRootPathName,
+			IntPtr lpVolumeNameBuffer,
+			uint nVolumeNameSize,
+			out uint lpVolumeSerialNumber,
+			out uint lpMaximumComponentLength,
+			out uint lpFileSystemFlags,
+			IntPtr lpFileSystemNameBuffer,
+			uint nFileSystemNameSize);
+
 		/// <summary>
 		/// Retrieves information about the specified disk, including the amount
 		/// of free space on the disk.
@@ -255,17 +475,63 @@ namespace Eraser.Util
 		/// total number of clusters on the disk.</param>
 		/// <returns>If the function succeeds, the return value is true. To get
 		/// extended error information, call Marshal.GetLastWin32Error().</returns>
-		[DllImport("Kernel32.dll", SetLastError = true)]
+		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "GetDiskFreeSpaceW")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool GetDiskFreeSpace(
-			[MarshalAs(UnmanagedType.LPStr)] string lpRootPathName,
+			[MarshalAs(UnmanagedType.LPWStr)] string lpRootPathName,
 			out UInt32 lpSectorsPerCluster, out UInt32 lpBytesPerSector,
 			out UInt32 lpNumberOfFreeClusters, out UInt32 lpTotalNumberOfClusters);
 
-		[DllImport("Kernel32.dll", SetLastError = true)]
+		/// <summary>
+		/// Retrieves information about the amount of space that is available on
+		/// a disk volume, which is the total amount of space, the total amount
+		/// of free space, and the total amount of free space available to the
+		/// user that is associated with the calling thread.
+		/// </summary>
+		/// <param name="lpDirectoryName">A directory on the disk.
+		/// 
+		/// If this parameter is NULL, the function uses the root of the current
+		/// disk.
+		/// 
+		/// If this parameter is a UNC name, it must include a trailing backslash,
+		/// for example, "\\MyServer\MyShare\".
+		/// 
+		/// This parameter does not have to specify the root directory on a disk.
+		/// The function accepts any directory on a disk.
+		/// 
+		/// The calling application must have FILE_LIST_DIRECTORY access rights
+		/// for this directory.</param>
+		/// <param name="lpFreeBytesAvailable">A pointer to a variable that receives
+		/// the total number of free bytes on a disk that are available to the
+		/// user who is associated with the calling thread.
+		/// 
+		/// This parameter can be NULL.
+		/// 
+		/// If per-user quotas are being used, this value may be less than the
+		/// total number of free bytes on a disk.</param>
+		/// <param name="lpTotalNumberOfBytes">A pointer to a variable that receives
+		/// the total number of bytes on a disk that are available to the user who
+		/// is associated with the calling thread.
+		/// 
+		/// This parameter can be NULL.
+		/// 
+		/// If per-user quotas are being used, this value may be less than the
+		/// total number of bytes on a disk.
+		/// 
+		/// To determine the total number of bytes on a disk or volume, use
+		/// IOCTL_DISK_GET_LENGTH_INFO.</param>
+		/// <param name="lpTotalNumberOfFreeBytes">A pointer to a variable that
+		/// receives the total number of free bytes on a disk.
+		/// 
+		/// This parameter can be NULL.</param>
+		/// <returns>If the function succeeds, the return value is nonzero.
+		/// 
+		/// If the function fails, the return value is zero (0). To get extended
+		/// error information, call GetLastError.</returns>
+		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "GetDiskFreeSpaceExW")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool GetDiskFreeSpaceEx(
-			[MarshalAs(UnmanagedType.LPStr)] string lpDirectoryName,
+			[MarshalAs(UnmanagedType.LPWStr)] string lpDirectoryName,
 			out UInt64 lpFreeBytesAvailable,
 			out UInt64 lpTotalNumberOfBytes,
 			out UInt64 lpTotalNumberOfFreeBytes);
@@ -388,6 +654,29 @@ namespace Eraser.Util
 		[DllImport("Kernel32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool FindVolumeMountPointClose(SafeHandle hFindVolumeMountPoint);
+
+		/// <summary>
+		/// Retrieves the unique volume name for the specified volume mount point or root directory.
+		/// </summary>
+		/// <param name="lpszVolumeMountPoint">The path of a volume mount point (with a trailing
+		/// backslash, "\") or a drive letter indicating a root directory (in the
+		/// form "D:\").</param>
+		/// <param name="lpszVolumeName">A pointer to a string that receives the
+		/// volume name. This name is a unique volume name of the form
+		/// "\\?\Volume{GUID}\" where GUID is the GUID that identifies the volume.</param>
+		/// <param name="cchBufferLength">The length of the output buffer, in TCHARs.
+		/// A reasonable size for the buffer to accommodate the largest possible
+		/// volume name is 50 characters.</param>
+		/// <returns>If the function succeeds, the return value is nonzero.
+		/// 
+		/// If the function fails, the return value is zero. To get extended
+		/// error information, call GetLastError.</returns>
+		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "GetVolumeNameForVolumeMountPointW")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool GetVolumeNameForVolumeMountPoint(
+			[MarshalAs(UnmanagedType.LPWStr)] string lpszVolumeMountPoint,
+			IntPtr lpszVolumeName,
+			uint cchBufferLength);
 
 		/// <summary>
 		/// Retrieves a list of path names for the specified volume name.
