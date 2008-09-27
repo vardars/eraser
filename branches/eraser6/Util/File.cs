@@ -64,7 +64,7 @@ namespace Eraser.Util
 					if (streamID.dwStreamId == BACKUP_ALTERNATE_DATA)
 					{
 						//Allocate memory to copy the stream name into, then copy the name
-						IntPtr pName = Marshal.AllocHGlobal((IntPtr)streamID.dwStreamNameSize);
+						IntPtr pName = Marshal.AllocHGlobal((int)streamID.dwStreamNameSize);
 						uint nameLength = streamID.dwStreamNameSize / sizeof(char);
 						char[] name = new char[nameLength];
 						BackupRead(streamHandle, pName, streamID.dwStreamNameSize, ref bytesRead,
@@ -422,7 +422,7 @@ namespace Eraser.Util
 			SHGFI_OVERLAYINDEX		= 0x000000040
 		}
 
-		[StructLayout(LayoutKind.Sequential)]
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 		private struct SHFILEINFO
 		{
 			/// <summary>
