@@ -34,17 +34,6 @@ namespace Eraser.DefaultPlugins
 	{
 		public FirstLast16KB()
 		{
-			//Load the settings
-			LoadSettings();
-
-			//Register for the Settings changed event: we need to be informed when
-			//the our dependent method changes.
-			ManagerLibrary.Instance.Settings.SettingsChanged +=
-				new Settings.SettingsChangedFunction(LoadSettings);
-		}
-
-		private void LoadSettings()
-		{
 			//Try to retrieve the set erasure method
 			if (DefaultPlugin.Settings.ContainsKey("FL16Method"))
 				method = ErasureMethodManager.GetInstance(
