@@ -200,11 +200,18 @@ namespace Eraser
 
 		private void MainForm_Resize(object sender, EventArgs e)
 		{
-			Bitmap bmp = new Bitmap(Width, Height);
-			Graphics dc = Graphics.FromImage(bmp);
-			DrawBackground(dc);
+			if (WindowState == FormWindowState.Normal)
+			{
+				Bitmap bmp = new Bitmap(Width, Height);
+				Graphics dc = Graphics.FromImage(bmp);
+				DrawBackground(dc);
 
-			CreateGraphics().DrawImage(bmp, new Point(0, 0));
+				CreateGraphics().DrawImage(bmp, new Point(0, 0));
+			}
+			else if (WindowState == FormWindowState.Minimized)
+			{
+				Hide();
+			}
 		}
 
 		private void aboutEraserToolStripMenuItem_Click(object sender, EventArgs e)
@@ -272,5 +279,21 @@ namespace Eraser
 			Resources.NotifyBusy9,
 			Resources.NotifyBusy10
 		};
+
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			if (sender == null)
+			{
+				e.Cancel = true;
+				Hide();
+			}
+		}
+
+		private void Show(object sender, EventArgs e)
+		{
+			Visible = true;
+			WindowState = FormWindowState.Normal;
+			Activate();
+		}
 	}
 }

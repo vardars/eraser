@@ -61,11 +61,11 @@ namespace Eraser
 			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutEraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.notificationIcon = new System.Windows.Forms.NotifyIcon(this.components);
-			this.notificationIconTimer = new System.Windows.Forms.Timer(this.components);
 			this.notificationMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.openEraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.notificationIconTimer = new System.Windows.Forms.Timer(this.components);
 			this.toolbarScheduleMenu.SuspendLayout();
 			this.toolbarHelpMenu.SuspendLayout();
 			this.notificationMenu.SuspendLayout();
@@ -131,10 +131,7 @@ namespace Eraser
 			// 
 			this.notificationIcon.ContextMenuStrip = this.notificationMenu;
 			resources.ApplyResources(this.notificationIcon, "notificationIcon");
-			// 
-			// notificationIconTimer
-			// 
-			this.notificationIconTimer.Tick += new System.EventHandler(this.notificationIconTimer_Tick);
+			this.notificationIcon.DoubleClick += new System.EventHandler(this.Show);
 			// 
 			// notificationMenu
 			// 
@@ -149,6 +146,7 @@ namespace Eraser
 			// 
 			this.openEraserToolStripMenuItem.Name = "openEraserToolStripMenuItem";
 			resources.ApplyResources(this.openEraserToolStripMenuItem, "openEraserToolStripMenuItem");
+			this.openEraserToolStripMenuItem.Click += new System.EventHandler(this.Show);
 			// 
 			// toolStripMenuItem1
 			// 
@@ -160,6 +158,10 @@ namespace Eraser
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
 			// 
+			// notificationIconTimer
+			// 
+			this.notificationIconTimer.Tick += new System.EventHandler(this.notificationIconTimer_Tick);
+			// 
 			// MainForm
 			// 
 			resources.ApplyResources(this, "$this");
@@ -168,6 +170,7 @@ namespace Eraser
 			this.Controls.Add(this.contentPanel);
 			this.Name = "MainForm";
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.Resize += new System.EventHandler(this.MainForm_Resize);
 			this.toolbarScheduleMenu.ResumeLayout(false);
 			this.toolbarHelpMenu.ResumeLayout(false);
