@@ -373,7 +373,8 @@ namespace Eraser.Util
 		{
 			return GetFileAttributesInternal("\\\\?\\" + lpFileName);
 		}
-		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "GetFileAttributes")]
+
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		private static extern uint GetFileAttributesInternal(string lpFileName);
 
 		/// <summary>
@@ -392,7 +393,8 @@ namespace Eraser.Util
 		{
 			return SetFileAttributesInternal("\\\\?\\" + lpFileName, dwFileAttributes);
 		}
-		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "SetFileAttributes")]
+
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool SetFileAttributesInternal(string lpFileName,
 			uint dwFileAttributes);

@@ -128,7 +128,7 @@ namespace Eraser.Util
 		/// <returns> If the function succeeds, the function returns nonzero (TRUE).
 		/// If the function fails, it returns zero (FALSE). For extended error
 		/// information, call Marshal.GetLastWin32Error.</returns>
-		[DllImport("Advapi32.dll", SetLastError = true)]
+		[DllImport("Advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool CryptAcquireContext(out SafeCryptHandle phProv,
 			string pszContainer, string pszProvider, uint dwProvType, uint dwFlags);

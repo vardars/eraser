@@ -271,7 +271,7 @@ namespace Eraser.Util
 		///		LOWORD = PE and HIWORD = 0						Windows 95, Windows 98: Microsoft Win32 console application
 		///														Windows NT, Windows 2000, Windows XP: Win32 console application or .bat file
 		/// </returns>
-		[DllImport("Shell32.dll")]
+		[DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
 		private static extern IntPtr SHGetFileInfo(string path, uint fileAttributes,
 			ref SHFILEINFO psfi, int fileInfo, SHGetFileInfoFlags flags);
 
@@ -471,10 +471,10 @@ namespace Eraser.Util
 		/// of 7 characters plus the terminating NULL character.</param>
 		/// <param name="dwFlags">Reserved.</param>
 		/// <returns>Returns TRUE if successful, or FALSE otherwise.</returns>
-		[DllImport("Shlwapi.dll")]
+		[DllImport("Shlwapi.dll", CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool PathCompactPathEx(
-			StringBuilder pszOut, string pszSrc, uint cchMax, uint dwFlags);
+		private static extern bool PathCompactPathEx(StringBuilder pszOut,
+			string pszSrc, uint cchMax, uint dwFlags);
 
 		/// <summary>
 		/// Determines whether the specified file is protected. Applications
@@ -488,10 +488,10 @@ namespace Eraser.Util
 		/// Marshal.GetLastWin32Error() returns ERROR_FILE_NOT_FOUND. If the
 		/// function fails, Marshal.GetLastWin32Error() will return a different
 		/// error code.</returns>
-		[DllImport("Sfc.dll", SetLastError = true)]
+		[DllImport("Sfc.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool SfcIsFileProtected(IntPtr RpcHandle,
-			[MarshalAs(UnmanagedType.LPWStr)]string ProtFileName);
+			string ProtFileName);
 
 		/// <summary>
 		/// The BackupRead function can be used to back up a file or directory,
@@ -701,7 +701,7 @@ namespace Eraser.Util
 		/// 
 		/// If the function fails, the return value is INVALID_HANDLE_VALUE.
 		/// To get extended error information, call Marshal.GetLastWin32Error().</returns>
-		[DllImport("Kernel32.dll", SetLastError = true)]
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		public static extern SafeFileHandle CreateFile(string lpFileName, uint dwDesiredAccess,
 			uint dwShareMode, IntPtr SecurityAttributes, uint dwCreationDisposition,
 			uint dwFlagsAndAttributes, IntPtr hTemplateFile);

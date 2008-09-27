@@ -430,10 +430,10 @@ namespace Eraser.Util
 		/// 
 		/// If not all the requested information is retrieved, the return value is
 		/// zero (0). To get extended error information, call GetLastError.</returns>
-		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "GetVolumeInformationW")]
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool GetVolumeInformation(
-			[MarshalAs(UnmanagedType.LPWStr)] string lpRootPathName,
+			string lpRootPathName,
 			IntPtr lpVolumeNameBuffer,
 			uint nVolumeNameSize,
 			out uint lpVolumeSerialNumber,
@@ -475,11 +475,10 @@ namespace Eraser.Util
 		/// total number of clusters on the disk.</param>
 		/// <returns>If the function succeeds, the return value is true. To get
 		/// extended error information, call Marshal.GetLastWin32Error().</returns>
-		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "GetDiskFreeSpaceW")]
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool GetDiskFreeSpace(
-			[MarshalAs(UnmanagedType.LPWStr)] string lpRootPathName,
-			out UInt32 lpSectorsPerCluster, out UInt32 lpBytesPerSector,
+			string lpRootPathName, out UInt32 lpSectorsPerCluster, out UInt32 lpBytesPerSector,
 			out UInt32 lpNumberOfFreeClusters, out UInt32 lpTotalNumberOfClusters);
 
 		/// <summary>
@@ -528,10 +527,10 @@ namespace Eraser.Util
 		/// 
 		/// If the function fails, the return value is zero (0). To get extended
 		/// error information, call GetLastError.</returns>
-		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "GetDiskFreeSpaceExW")]
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool GetDiskFreeSpaceEx(
-			[MarshalAs(UnmanagedType.LPWStr)] string lpDirectoryName,
+			string lpDirectoryName,
 			out UInt64 lpFreeBytesAvailable,
 			out UInt64 lpTotalNumberOfBytes,
 			out UInt64 lpTotalNumberOfFreeBytes);
@@ -552,7 +551,7 @@ namespace Eraser.Util
 		/// If the function fails to find any volumes, the return value is the
 		/// INVALID_HANDLE_VALUE error code. To get extended error information,
 		/// call GetLastError.</returns>
-		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "FindFirstVolumeW")]
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		internal static extern SafeFileHandle FindFirstVolume(
 			IntPtr lpszVolumeName,
 			uint cchBufferLength);
@@ -573,7 +572,7 @@ namespace Eraser.Util
 		/// information, call GetLastError. If no matching files can be found, the
 		/// GetLastError function returns the ERROR_NO_MORE_FILES error code. In
 		/// that case, close the search with the FindVolumeClose function.</returns>
-		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "FindNextVolumeW")]
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool FindNextVolume(SafeHandle hFindVolume,
 			IntPtr lpszVolumeName, uint cchBufferLength);
@@ -610,9 +609,9 @@ namespace Eraser.Util
 		/// If the function fails to find a volume mount point on the volume, the
 		/// return value is the INVALID_HANDLE_VALUE error code. To get extended
 		/// error information, call GetLastError.</returns>
-		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "FindFirstVolumeMountPointW")]
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		internal static extern SafeFileHandle FindFirstVolumeMountPoint(
-			[MarshalAs(UnmanagedType.LPWStr)] string lpszRootPathName,
+			string lpszRootPathName,
 			IntPtr lpszVolumeMountPoint,
 			uint cchBufferLength);
 
@@ -633,7 +632,7 @@ namespace Eraser.Util
 		/// information, call GetLastError. If no matching files can be found, the
 		/// GetLastError function returns the ERROR_NO_MORE_FILES error code. In
 		/// that case, close the search with the FindVolumeMountPointClose function.</returns>
-		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "FindNextVolumeMountPointW")]
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool FindNextVolumeMountPoint(SafeHandle hFindVolumeMountPoint,
 			IntPtr lpszVolumeMountPoint,
@@ -671,10 +670,10 @@ namespace Eraser.Util
 		/// 
 		/// If the function fails, the return value is zero. To get extended
 		/// error information, call GetLastError.</returns>
-		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "GetVolumeNameForVolumeMountPointW")]
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool GetVolumeNameForVolumeMountPoint(
-			[MarshalAs(UnmanagedType.LPWStr)] string lpszVolumeMountPoint,
+			string lpszVolumeMountPoint,
 			IntPtr lpszVolumeName,
 			uint cchBufferLength);
 
@@ -694,9 +693,9 @@ namespace Eraser.Util
 		/// this parameter is the size of the buffer required to hold the complete
 		/// list, in TCHARs.</param>
 		/// <returns></returns>
-		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "GetVolumePathNamesForVolumeNameW")]
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		internal static extern bool GetVolumePathNamesForVolumeName(
-			[MarshalAs(UnmanagedType.LPWStr)] string lpszVolumeName,
+			string lpszVolumeName,
 			IntPtr lpszVolumePathNames,
 			uint cchBufferLength,
 			out uint lpcchReturnLength);
@@ -711,9 +710,8 @@ namespace Eraser.Util
 		/// uses the root of the current directory.</param>
 		/// <returns>The return value specifies the type of drive, which can be
 		/// one of the DriveInfo.DriveType values.</returns>
-		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "GetDriveTypeW")]
-		internal static extern uint GetDriveType(
-			[MarshalAs(UnmanagedType.LPWStr)] string lpRootPathName);
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		internal static extern uint GetDriveType(string lpRootPathName);
 		#endregion
 	}
 }
