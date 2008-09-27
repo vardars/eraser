@@ -366,13 +366,13 @@ namespace Eraser.Manager
 				if (Environment.OSVersion.Platform == PlatformID.Win32NT &&
 					Environment.OSVersion.Version >= new Version(6, 0))
 				{
-					exceptionString += ". Run the program as administrator and retry the operation.";
+					exceptionString += ". Run the program as an administrator and retry the operation.";
 				}
 				throw new Exception(exceptionString);
 			}
 
 			//If the user is under disk quotas, log a warning message
-			if (Drive.HasQuota(target.Drive))
+			if (Volume.FromMountpoint(target.Drive).HasQuota)
 				task.Log.Add(new LogEntry("The drive which is having its unused space erased has " +
 					"disk quotas active. This will prevent the complete erasure of unused space and " +
 					"will pose a security concern", LogLevel.WARNING));
@@ -405,7 +405,7 @@ namespace Eraser.Manager
 			}
 
 			//Make a folder to dump our temporary files in
-			DirectoryInfo info = new DirectoryInfo(target.Drive).Root;
+			DirectoryInfo info = new DirectoryInfo(target.Drive);
 			{
 				string directoryName;
 				do
@@ -423,13 +423,13 @@ namespace Eraser.Manager
 
 				//Determine the total amount of data that needs to be written.
 				WriteStatistics statistics = new WriteStatistics();
-				DriveInfo driveInfo = new DriveInfo(info.Root.FullName);
+				Volume driveInfo = Volume.FromMountpoint(target.Drive);
 				long totalSize = method.CalculateEraseDataSize(null, driveInfo.TotalFreeSpace);
 
 				//Continue creating files while there is free space.
 				eventArgs.currentItemName = "Unused space";
 				task.OnProgressChanged(eventArgs);
-				while (driveInfo.TotalFreeSpace > 0)
+				while (driveInfo.AvailableFreeSpace > 0)
 				{
 					//Generate a non-existant file name
 					string currFile;
@@ -445,7 +445,7 @@ namespace Eraser.Manager
 						//Set the length of the file to be the amount of free space left
 						//or the maximum size of one of these dumps.
 						stream.SetLength(Math.Min(ErasureMethod.FreeSpaceFileUnit,
-							driveInfo.TotalFreeSpace));
+							driveInfo.AvailableFreeSpace));
 
 						//Then run the erase task
 						method.Erase(stream, long.MaxValue,
@@ -791,7 +791,8 @@ namespace Eraser.Manager
 		private static long GetFileArea(string filePath)
 		{
 			StreamInfo info = new StreamInfo(filePath);
-			uint clusterSize = Drive.GetClusterSize(info.Directory.Root.FullName);
+			Volume volume = Volume.FromMountpoint(info.Directory.FullName);
+			long clusterSize = volume.ClusterSize;
 			return (info.Length + (clusterSize - 1)) & ~(clusterSize - 1);
 		}
 
