@@ -38,27 +38,28 @@ namespace Eraser.DefaultPlugins
 			Settings = Manager.ManagerLibrary.Instance.Settings.GetSettings();
 
 			//Then register the erasure methods et al.
-			host.RegisterErasureMethod(new Gutmann());				//35 passes
-			host.RegisterErasureMethod(new GutmannLite());			//10 passes
-			host.RegisterErasureMethod(new DoD_EcE());				//7 passes
-			host.RegisterErasureMethod(new RCMP_TSSIT_OPS_II());	//7 passes
-			host.RegisterErasureMethod(new Schneier());				//7 passes
-			host.RegisterErasureMethod(new VSITR());				//7 passes
-			host.RegisterErasureMethod(new DoD_E());				//3 passes
-			host.RegisterErasureMethod(new HMGIS5Enhanced());		//3 passes
-			host.RegisterErasureMethod(new USAF5020());				//3 passes
-			host.RegisterErasureMethod(new USArmyAR380_19());		//3 passes
-			host.RegisterErasureMethod(new GOSTP50739());			//2 passes
-			host.RegisterErasureMethod(new HMGIS5Baseline());		//1 pass
-			host.RegisterErasureMethod(new Pseudorandom());			//1 pass
+			ErasureMethodManager.Register(new Gutmann());				//35 passes
+			ErasureMethodManager.Register(new GutmannLite());			//10 passes
+			ErasureMethodManager.Register(new DoD_EcE());				//7 passes
+			ErasureMethodManager.Register(new RCMP_TSSIT_OPS_II());	//7 passes
+			ErasureMethodManager.Register(new Schneier());				//7 passes
+			ErasureMethodManager.Register(new VSITR());				//7 passes
+			ErasureMethodManager.Register(new DoD_E());				//3 passes
+			ErasureMethodManager.Register(new HMGIS5Enhanced());		//3 passes
+			ErasureMethodManager.Register(new USAF5020());				//3 passes
+			ErasureMethodManager.Register(new USArmyAR380_19());		//3 passes
+			ErasureMethodManager.Register(new GOSTP50739());			//2 passes
+			ErasureMethodManager.Register(new HMGIS5Baseline());		//1 pass
+			ErasureMethodManager.Register(new Pseudorandom());			//1 pass
+			EraseCustom.RegisterAll();
 
-			host.RegisterPRNG(new ISAAC());
-			host.RegisterPRNG(new RNGCrypto());
+			PRNGManager.Register(new ISAAC());
+			PRNGManager.Register(new RNGCrypto());
 
 			//Done last
 			try
 			{
-				host.RegisterErasureMethod(new FirstLast16KB());
+				ErasureMethodManager.Register(new FirstLast16KB());
 			}
 			catch (Exception)
 			{

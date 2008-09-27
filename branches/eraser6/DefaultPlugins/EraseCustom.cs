@@ -40,6 +40,20 @@ namespace Eraser.DefaultPlugins
 			this.method = method;
 		}
 
+		/// <summary>
+		/// Registers all defined custom methods with the method manager.
+		/// </summary>
+		internal static void RegisterAll()
+		{
+			Dictionary<Guid, CustomErasureMethod> methods = (Dictionary<Guid, CustomErasureMethod>)
+				DefaultPlugin.Settings["EraseCustom"];
+			foreach (Guid guid in methods.Keys)
+			{
+				CustomErasureMethod method = methods[guid];
+				ErasureMethodManager.Register(new EraseCustom(method), new object[] { method });
+			}
+		}
+
 		public override string Name
 		{
 			get { return method.Name; }

@@ -67,8 +67,14 @@ namespace Eraser.DefaultPlugins
 			}
 
 			if (DefaultPlugin.Settings.ContainsKey("EraseCustom"))
+			{
 				customMethods = (Dictionary<Guid, CustomErasureMethod>)
 					DefaultPlugin.Settings["EraseCustom"];
+
+				//Display the whole set on the list.
+				foreach (Guid guid in customMethods.Keys)
+					AddMethod(customMethods[guid]);
+			}
 			else
 				customMethods = new Dictionary<Guid, CustomErasureMethod>();
 		}
@@ -80,10 +86,7 @@ namespace Eraser.DefaultPlugins
 			{
 				CustomErasureMethod method = form.Method;
 				addCustomMethods.Add(method);
-				
-				ListViewItem item = customMethod.Items.Add(method.Name);
-				item.SubItems.Add(method.Passes.Length.ToString());
-				item.Tag = method;
+				AddMethod(method);
 			}
 		}
 
@@ -115,6 +118,17 @@ namespace Eraser.DefaultPlugins
 			//Close the dialog
 			DialogResult = DialogResult.OK;
 			Close();
+		}
+
+		/// <summary>
+		/// Adds the given method to the custom methods list.
+		/// </summary>
+		/// <param name="method">The method to add.</param>
+		private void AddMethod(CustomErasureMethod method)
+		{
+			ListViewItem item = customMethod.Items.Add(method.Name);
+			item.SubItems.Add(method.Passes.Length.ToString());
+			item.Tag = method;
 		}
 
 		private Dictionary<Guid, CustomErasureMethod> customMethods;
