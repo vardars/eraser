@@ -423,13 +423,13 @@ namespace Eraser.Manager
 
 				//Determine the total amount of data that needs to be written.
 				WriteStatistics statistics = new WriteStatistics();
-				Volume driveInfo = Volume.FromMountpoint(target.Drive);
-				long totalSize = method.CalculateEraseDataSize(null, driveInfo.TotalFreeSpace);
+				Volume volInfo = Volume.FromMountpoint(target.Drive);
+				long totalSize = method.CalculateEraseDataSize(null, volInfo.TotalFreeSpace);
 
 				//Continue creating files while there is free space.
 				eventArgs.currentItemName = "Unused space";
 				task.OnProgressChanged(eventArgs);
-				while (driveInfo.AvailableFreeSpace > 0)
+				while (volInfo.AvailableFreeSpace > 0)
 				{
 					//Generate a non-existant file name
 					string currFile;
@@ -445,7 +445,7 @@ namespace Eraser.Manager
 						//Set the length of the file to be the amount of free space left
 						//or the maximum size of one of these dumps.
 						stream.SetLength(Math.Min(ErasureMethod.FreeSpaceFileUnit,
-							driveInfo.AvailableFreeSpace));
+							volInfo.AvailableFreeSpace));
 
 						//Then run the erase task
 						method.Erase(stream, long.MaxValue,
@@ -621,21 +621,20 @@ namespace Eraser.Manager
 		/// <param name="method">The method used to erase the records.</param>
 		private void EraseFilesystemRecords(DirectoryInfo info, ErasureMethod method)
 		{
-			DriveInfo driveInfo = new DriveInfo(info.Root.FullName);
-			string driveFormat = driveInfo.DriveFormat;
-			if (driveFormat == "NTFS")
+			Volume volInfo = Volume.FromMountpoint(info.FullName);
+			string volFormat = volInfo.VolumeFormat;
+			if (volFormat == "NTFS")
 			{
 				//If the volume is full, squeeze one-byte files.
 				try
 				{
-					FileInfo mftInfo = new FileInfo(driveInfo.RootDirectory.FullName +
-						Path.DirectorySeparatorChar + "$MFT");
+					StreamInfo mftInfo = new StreamInfo(Path.Combine(volInfo.VolumeID, "$MFT"));
 					long oldMFTSize = mftInfo.Length;
 					for ( ; ; )
 					{
 						//Open this stream
-						using (FileStream strm = new FileStream(info.FullName +
-							Path.DirectorySeparatorChar + GenerateRandomFileName(18),
+						using (FileStream strm = new FileStream(Path.Combine(
+							info.FullName, GenerateRandomFileName(18)),
 							FileMode.CreateNew, FileAccess.Write))
 						{
 							//Stretch the file size to the size of one MFT record
@@ -649,7 +648,7 @@ namespace Eraser.Manager
 
 						//Determine if we can stop. We will stop if the disk is not
 						//full and the MFT has grown in size.
-						if (driveInfo.TotalFreeSpace != 0 && mftInfo.Length != oldMFTSize)
+						if (volInfo.AvailableFreeSpace != 0 && mftInfo.Length != oldMFTSize)
 							break;
 					}
 				}
