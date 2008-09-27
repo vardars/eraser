@@ -143,8 +143,6 @@ namespace Eraser
 							S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
 				}
-
-			base.Load();
 		}
 
 		protected override void Save()

@@ -40,12 +40,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Loads all settings from storage.
 		/// </summary>
-		/// <remarks>Notes to inheritors: Always call the base class Load.</remarks>
-		protected internal virtual void Load()
-		{
-			if (SettingsChanged != null)
-				SettingsChanged();
-		}
+		protected internal abstract void Load();
 
 		/// <summary>
 		/// The language which all user interface elements should be presented in.
@@ -239,7 +234,6 @@ namespace Eraser.Manager
 		{
 			SetSettings(new Guid(((GuidAttribute)Assembly.GetCallingAssembly().
 				GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value), settings);
-			SettingsChanged();
 		}
 
 		/// <summary>
@@ -248,16 +242,6 @@ namespace Eraser.Manager
 		/// <param name="guid"></param>
 		/// <param name="settings"></param>
 		protected abstract void SetSettings(Guid guid, Dictionary<string, object> settings);
-
-		/// <summary>
-		/// The prototype of functions which will handle a SettingsChanged Event.
-		/// </summary>
-		public delegate void SettingsChangedFunction();
-
-		/// <summary>
-		/// The event handler handling a change in settings.
-		/// </summary>
-		public event SettingsChangedFunction SettingsChanged;
 
 		private string uiLanguage;
 		private Guid defaultFileErasureMethod = Guid.Empty;
