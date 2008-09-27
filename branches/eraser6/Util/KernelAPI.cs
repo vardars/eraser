@@ -141,9 +141,9 @@ namespace Eraser.Util
 		/// </summary>
 		/// <param name="lpStartupInfo">A pointer to a STARTUPINFO structure that
 		/// receives the startup information.</param>
-		[DllImport("Kernel32.dll")]
+		[DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
 		public static extern void GetStartupInfo(out STARTUPINFO lpStartupInfo);
-        
+
 		/// <summary>
 		/// Retrieves information about the current system.
 		/// </summary>
