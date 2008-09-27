@@ -233,14 +233,8 @@ namespace Eraser
 		/// <summary>
 		/// Item click event handler
 		/// </summary>
-		public ToolbarItemClickedHandler ToolbarItemClicked
-		{
-			get { return toolbarItemClicked; }
-			set { toolbarItemClicked = value; }
-		}
-
-		public delegate void ToolbarItemClickedHandler(object sender, EventArgs e);
-		private event ToolbarItemClickedHandler toolbarItemClicked;
+		public event ToolbarItemClickedEventFunction ToolbarItemClicked;
+		public delegate void ToolbarItemClickedEventFunction(object sender, EventArgs e);
 		internal void OnToolbarItemClicked(object sender)
 		{
 			if (ToolbarItemClicked != null)

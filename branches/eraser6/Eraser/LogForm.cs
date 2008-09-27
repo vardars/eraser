@@ -53,12 +53,12 @@ namespace Eraser
 			}
 
 			//Register our event handler to get live log messages
-			task.Log.OnLogged += new Logger.LogEvent(task_Logged);
+			task.Log.OnLogged += new Logger.LogEventFunction(task_Logged);
 		}
 
 		private void LogForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			task.Log.OnLogged -= new Logger.LogEvent(task_Logged);
+			task.Log.OnLogged -= new Logger.LogEventFunction(task_Logged);
 		}
 
 		private void task_Logged(LogEntry e)
@@ -68,7 +68,7 @@ namespace Eraser
 				//Todo: I get crashes here... but alas, I can't fix it!
 				try
 				{
-					Invoke(new Logger.LogEvent(task_Logged), new object[] { e });
+					Invoke(new Logger.LogEventFunction(task_Logged), new object[] { e });
 				}
 				catch (ObjectDisposedException)
 				{

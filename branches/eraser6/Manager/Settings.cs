@@ -252,12 +252,12 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The prototype of functions which will handle a SettingsChanged Event.
 		/// </summary>
-		public delegate void OnSettingsChangedEvent();
+		public delegate void SettingsChangedFunction();
 
 		/// <summary>
 		/// The event handler handling a change in settings.
 		/// </summary>
-		public event OnSettingsChangedEvent SettingsChanged;
+		public event SettingsChangedFunction SettingsChanged;
 
 		private string uiLanguage;
 		private Guid defaultFileErasureMethod = Guid.Empty;

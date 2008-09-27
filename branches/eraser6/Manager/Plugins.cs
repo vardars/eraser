@@ -59,21 +59,21 @@ namespace Eraser.Manager.Plugin
 		/// The plugin load event delegate.
 		/// </summary>
 		/// <param name="instance">The instance of the plugin loaded.</param>
-		public delegate void OnPluginLoadEventHandler(PluginInstance instance);
+		public delegate void PluginLoadedFunction(PluginInstance instance);
 
 		/// <summary>
 		/// The plugin loaded event.
 		/// </summary>
-		public event OnPluginLoadEventHandler PluginLoad;
+		public event PluginLoadedFunction PluginLoaded;
 
 		/// <summary>
 		/// Event callback executor for the OnPluginLoad Event
 		/// </summary>
 		/// <param name="instance"></param>
-		protected void OnPluginLoad(PluginInstance instance)
+		protected void OnPluginLoaded(PluginInstance instance)
 		{
-			if (PluginLoad != null)
-				PluginLoad(instance);
+			if (PluginLoaded != null)
+				PluginLoaded(instance);
 		}
 
 		/// <summary>
@@ -151,7 +151,7 @@ namespace Eraser.Manager.Plugin
 					instance.Plugin = pluginInterface;
 
 					//And broadcast the plugin load event
-					OnPluginLoad(instance);
+					OnPluginLoaded(instance);
 				}
 			}
 		}

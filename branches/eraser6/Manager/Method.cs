@@ -91,7 +91,7 @@ namespace Eraser.Manager
 		/// the last call to the delegate.</param>
 		/// <param name="currentPass">The current pass number. The total number
 		/// of passes can be found from the Passes property.</param>
-		public delegate void OnProgress(long lastWritten, int currentPass);
+		public delegate void ProgressFunction(long lastWritten, int currentPass);
 
 		/// <summary>
 		/// The main bit of the class! This function is called whenever data has
@@ -108,7 +108,7 @@ namespace Eraser.Manager
 		/// <param name="prng">The PRNG source for random data.</param>
 		/// <param name="callback">The progress callback function.</param>
 		public abstract void Erase(Stream strm, long erasureLength, PRNG prng,
-			OnProgress callback);
+			ProgressFunction callback);
 
 		/// <summary>
 		/// Disk operation write unit. Chosen such that this value mod 3, 4, 512,
@@ -252,7 +252,7 @@ namespace Eraser.Manager
 		/// <param name="strm">The stream which needs to be erased.</param>
 		/// <param name="prng">The PRNG source for random data.</param>
 		/// <param name="callback">The progress callback function.</param>
-		public virtual void EraseUnusedSpace(Stream strm, PRNG prng, OnProgress callback)
+		public virtual void EraseUnusedSpace(Stream strm, PRNG prng, ProgressFunction callback)
 		{
 			Erase(strm, long.MaxValue, prng, callback);
 		}
@@ -298,7 +298,7 @@ namespace Eraser.Manager
 		}
 
 		public override void Erase(Stream strm, long erasureLength, PRNG prng,
-			OnProgress callback)
+			ProgressFunction callback)
 		{
 			//Randomize the order of the passes
 			Pass[] randomizedPasses = PassesSet;
@@ -388,7 +388,7 @@ namespace Eraser.Manager
 			}
 
 			public override void Erase(Stream strm, long erasureLength, PRNG prng,
-				OnProgress callback)
+				ProgressFunction callback)
 			{
 				throw new NotImplementedException("The DefaultMethod class should never be " +
 					"used and should instead be replaced before execution!");
@@ -493,6 +493,9 @@ namespace Eraser.Manager
 				info.Parameters = parameters == null || parameters.Length == 0 ? null : parameters;
 				ManagerLibrary.Instance.ErasureMethodManager.methods.Add(method.GUID, info);
 			}
+
+			//Broadcast the event
+			OnMethodRegistered(method.GUID);
 		}
 
 		/// <summary>
@@ -516,6 +519,26 @@ namespace Eraser.Manager
 		/// </summary>
 		private Dictionary<Guid, MethodConstructorInfo> methods =
 			new Dictionary<Guid, MethodConstructorInfo>();
+
+		/// <summary>
+		/// The delegate prototype of the Method Registered event.
+		/// </summary>
+		/// <param name="method">The GUID of the method being registered.</param>
+		public delegate void MethodRegisteredFunction(Guid guid);
+
+		/// <summary>
+		/// Called whenever an erasure method is registered.
+		/// </summary>
+		public static event MethodRegisteredFunction MethodRegistered;
+
+		/// <summary>
+		/// Executes the MethodRegistered event handlers
+		/// </summary>
+		private static void OnMethodRegistered(Guid guid)
+		{
+			if (MethodRegistered != null)
+				MethodRegistered(guid);
+		}
 		#endregion
 
 		public static void Unregister(Guid guid)
