@@ -287,6 +287,7 @@ namespace Eraser.Manager
 						task.queued = false;
 						task.cancelled = false;
 						task.OnTaskStarted(new TaskEventArgs(task));
+						OnTaskProcessing(task);
 
 						//Start a new log session to separate this session's events
 						//from previous ones.
@@ -330,6 +331,10 @@ namespace Eraser.Manager
 						//And the task finished event.
 						task.OnTaskFinished(new TaskEventArgs(task));
 					}
+
+					//We've completed the task, say so.
+					OnTaskProcessed(currentTask);
+					currentTask = null;
 				}
 
 				//Wait for half a minute to check for the next scheduled task.

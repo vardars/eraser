@@ -139,9 +139,6 @@
   <data name="toolbarScheduleMenu.Size" type="System.Drawing.Size, System.Drawing">
     <value>151, 76</value>
   </data>
-  <data name="toolbarHelpMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>172, 70</value>
-  </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAA0AMDAAAAEACACoDgAA1gAAACAgAAABAAgAqAgAAH4PAAAYGAAAAQAIAMgGAAAmGAAAEBAAAAEA

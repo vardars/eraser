@@ -28,6 +28,8 @@ using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
 using Eraser.Util;
+using Eraser.Manager;
+using Eraser.Properties;
 
 namespace Eraser
 {
@@ -47,6 +49,12 @@ namespace Eraser
 		public MainForm()
 		{
 			InitializeComponent();
+
+			//Connect to the executor task processing and processed events.
+			Program.eraserClient.TaskProcessing +=
+				new Executor.TaskProcessingEvent(OnTaskProcessing);
+			Program.eraserClient.TaskProcessed +=
+				new Executor.TaskProcessedEvent(OnTaskProcessed);
 
 			//Create the toolbar control
 			ToolBar.Name = "toolBar";
@@ -216,5 +224,53 @@ namespace Eraser
 					SchedulerPage.AddTask(form.Task);
 			}
 		}
+
+		void OnTaskProcessing(Eraser.Manager.Task task)
+		{
+			if (InvokeRequired)
+			{
+				Invoke(new Executor.TaskProcessingEvent(OnTaskProcessing), task);
+				return;
+			}
+
+			ProcessingAnimationFrame = 0;
+			notificationIcon.Text = S._("Eraser") + " - " + S._("Processing: ") + task.UIText;
+			notificationIconTimer.Enabled = true;
+		}
+
+		void OnTaskProcessed(Eraser.Manager.Task task)
+		{
+			if (InvokeRequired)
+			{
+				Invoke(new Executor.TaskProcessedEvent(OnTaskProcessed), task);
+				return;
+			}
+
+			//Reset the notification area icon.
+			notificationIconTimer.Enabled = false;
+			ComponentResourceManager resources = new ComponentResourceManager(typeof(MainForm));
+			resources.ApplyResources(notificationIcon, "notificationIcon");
+		}
+
+		private void notificationIconTimer_Tick(object sender, EventArgs e)
+		{
+			notificationIcon.Icon = ProcessingAnimationFrames[ProcessingAnimationFrame++];
+			if (ProcessingAnimationFrame == ProcessingAnimationFrames.Length)
+				ProcessingAnimationFrame = 0;
+		}
+
+		private int ProcessingAnimationFrame = 0;
+		private Icon[] ProcessingAnimationFrames = new Icon[] {
+			Resources.NotifyBusy1,
+			Resources.NotifyBusy2,
+			Resources.NotifyBusy3,
+			Resources.NotifyBusy4,
+			Resources.NotifyBusy5,
+			Resources.NotifyBusy6,
+			Resources.NotifyBusy7,
+			Resources.NotifyBusy8,
+			Resources.NotifyBusy9,
+			Resources.NotifyBusy10
+		};
 	}
 }

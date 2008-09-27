@@ -240,6 +240,16 @@
     <None Include="Resources\ToolbarHelp.png" />
     <None Include="Resources\BackgroundLogo.png" />
     <None Include="Resources\Information.png" />
+    <None Include="Resources\step_01.ico" />
+    <None Include="Resources\step_02.ico" />
+    <None Include="Resources\step_03.ico" />
+    <None Include="Resources\step_04.ico" />
+    <None Include="Resources\step_05.ico" />
+    <None Include="Resources\step_06.ico" />
+    <None Include="Resources\step_07.ico" />
+    <None Include="Resources\step_08.ico" />
+    <None Include="Resources\step_09.ico" />
+    <None Include="Resources\step_10.ico" />
     <Content Include="Resources\ToolbarSchedule.png" />
     <Content Include="Resources\ToolbarSettings.png" />
   </ItemGroup>

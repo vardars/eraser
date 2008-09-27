@@ -108,6 +108,46 @@ namespace Eraser.Manager
 		public abstract void LoadTaskList(Stream stream);
 
 		/// <summary>
+		/// The delegate for handling the task processing event from the executor.
+		/// </summary>
+		/// <param name="task">The currently processing task.</param>
+		public delegate void TaskProcessingEvent(Task task);
+
+		/// <summary>
+		/// The task processing event object.
+		/// </summary>
+		public event TaskProcessingEvent TaskProcessing;
+
+		/// <summary>
+		/// Helper function for the Task processing event.
+		/// </summary>
+		protected void OnTaskProcessing(Task task)
+		{
+			if (TaskProcessing != null)
+				TaskProcessing(task);
+		}
+
+		/// <summary>
+		/// The delegate for handling the task processed event from the executor.
+		/// </summary>
+		/// <param name="task">The processed task.</param>
+		public delegate void TaskProcessedEvent(Task task);
+
+		/// <summary>
+		/// The task processed event object.
+		/// </summary>
+		public event TaskProcessedEvent TaskProcessed;
+
+		/// <summary>
+		/// Helper function for the Task processed event.
+		/// </summary>
+		protected void OnTaskProcessed(Task task)
+		{
+			if (TaskProcessed != null)
+				TaskProcessed(task);
+		}
+
+		/// <summary>
 		/// The number of times file names are renamed to erase the file name from
 		/// the MFT.
 		/// </summary>

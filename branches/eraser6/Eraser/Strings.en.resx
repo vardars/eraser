@@ -129,6 +129,9 @@
   <data name="Eraser" xml:space="preserve">
     <value>Eraser</value>
   </data>
+  <data name="Processing: " xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Could not load task list. All task entries have been lost." xml:space="preserve">
     <value>Could not load task list. All task entries have been lost.</value>
   </data>
