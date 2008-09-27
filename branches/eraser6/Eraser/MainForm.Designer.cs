@@ -62,8 +62,13 @@ namespace Eraser
 			this.aboutEraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.notificationIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.notificationIconTimer = new System.Windows.Forms.Timer(this.components);
+			this.notificationMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.openEraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolbarScheduleMenu.SuspendLayout();
 			this.toolbarHelpMenu.SuspendLayout();
+			this.notificationMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// contentPanel
@@ -95,13 +100,13 @@ namespace Eraser
 			// 
 			// toolbarScheduleMenuQueue
 			// 
-			this.toolbarScheduleMenuQueue.Name = "toolbarScheduleMenuQueue";
 			resources.ApplyResources(this.toolbarScheduleMenuQueue, "toolbarScheduleMenuQueue");
+			this.toolbarScheduleMenuQueue.Name = "toolbarScheduleMenuQueue";
 			// 
 			// viewLogToolStripMenuItem
 			// 
-			this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
 			resources.ApplyResources(this.viewLogToolStripMenuItem, "viewLogToolStripMenuItem");
+			this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
 			// 
 			// toolbarHelpMenu
 			// 
@@ -113,8 +118,8 @@ namespace Eraser
 			// 
 			// checkForUpdatesToolStripMenuItem
 			// 
-			this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
 			resources.ApplyResources(this.checkForUpdatesToolStripMenuItem, "checkForUpdatesToolStripMenuItem");
+			this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
 			// 
 			// aboutEraserToolStripMenuItem
 			// 
@@ -124,11 +129,36 @@ namespace Eraser
 			// 
 			// notificationIcon
 			// 
+			this.notificationIcon.ContextMenuStrip = this.notificationMenu;
 			resources.ApplyResources(this.notificationIcon, "notificationIcon");
 			// 
 			// notificationIconTimer
 			// 
 			this.notificationIconTimer.Tick += new System.EventHandler(this.notificationIconTimer_Tick);
+			// 
+			// notificationMenu
+			// 
+			this.notificationMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openEraserToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.exitToolStripMenuItem});
+			this.notificationMenu.Name = "notificationMenu";
+			resources.ApplyResources(this.notificationMenu, "notificationMenu");
+			// 
+			// openEraserToolStripMenuItem
+			// 
+			this.openEraserToolStripMenuItem.Name = "openEraserToolStripMenuItem";
+			resources.ApplyResources(this.openEraserToolStripMenuItem, "openEraserToolStripMenuItem");
+			// 
+			// toolStripMenuItem1
+			// 
+			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+			resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
+			// 
+			// exitToolStripMenuItem
+			// 
+			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+			resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
 			// 
 			// MainForm
 			// 
@@ -141,6 +171,7 @@ namespace Eraser
 			this.Resize += new System.EventHandler(this.MainForm_Resize);
 			this.toolbarScheduleMenu.ResumeLayout(false);
 			this.toolbarHelpMenu.ResumeLayout(false);
+			this.notificationMenu.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -158,6 +189,10 @@ namespace Eraser
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 		private System.Windows.Forms.NotifyIcon notificationIcon;
 		private System.Windows.Forms.Timer notificationIconTimer;
+		private System.Windows.Forms.ContextMenuStrip notificationMenu;
+		private System.Windows.Forms.ToolStripMenuItem openEraserToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
 
 	}
 }
