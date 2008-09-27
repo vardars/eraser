@@ -45,6 +45,9 @@ namespace Eraser.DefaultPlugins
 		/// </summary>
 		internal static void RegisterAll()
 		{
+			if (!DefaultPlugin.Settings.ContainsKey("EraseCustom"))
+				return;
+
 			Dictionary<Guid, CustomErasureMethod> methods = (Dictionary<Guid, CustomErasureMethod>)
 				DefaultPlugin.Settings["EraseCustom"];
 			foreach (Guid guid in methods.Keys)
