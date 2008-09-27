@@ -84,6 +84,11 @@ namespace Eraser.Util
 			}
 		}
 
+		/// <summary>
+		/// Lists all the volumes in the system.
+		/// </summary>
+		/// <returns>Returns a list of volumes representing all volumes present in
+		/// the system.</returns>
 		public static List<Volume> GetVolumes()
 		{
 			List<Volume> result = new List<Volume>();
@@ -112,7 +117,7 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
-		/// Determines the cluster size of the given volume.
+		/// Determines the cluster size of the current volume.
 		/// </summary>
 		/// <returns>The size of one cluster, in bytes.</returns>
 		public uint GetClusterSize()
@@ -127,7 +132,7 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
-		/// Checks if the current user has disk quotas on the volume provided.
+		/// Checks if the current user has disk quotas on the current volume.
 		/// </summary>
 		/// <returns>True if quotas are in effect.</returns>
 		public bool HasQuota()
@@ -142,8 +147,8 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
-		/// Retrieves all mountpoints in the drive, if the drive contains volume
-		/// mountpoints.
+		/// Retrieves all mountpoints in the current volume, if the current volume
+		/// contains volume mountpoints.
 		/// </summary>
 		/// <returns>A list containing Volume objects, representing each of the
 		/// volumes at the mountpoints.</returns>
@@ -210,7 +215,7 @@ namespace Eraser.Util
 		{
 			get
 			{
-				return (DriveType)GetDriveType(mountPoints[0]);
+				return (DriveType)GetDriveType(VolumeID);
 			}
 		}
 
@@ -341,7 +346,7 @@ namespace Eraser.Util
 		/// error information, call GetLastError.</returns>
 		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "FindFirstVolumeMountPointW")]
 		internal static extern SafeFileHandle FindFirstVolumeMountPoint(
-			[MarshalAs(UnmanagedType.LPTStr)] string lpszRootPathName,
+			[MarshalAs(UnmanagedType.LPWStr)] string lpszRootPathName,
 			IntPtr lpszVolumeMountPoint,
 			uint cchBufferLength);
 
@@ -402,7 +407,7 @@ namespace Eraser.Util
 		/// <returns></returns>
 		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "GetVolumePathNamesForVolumeNameW")]
 		internal static extern bool GetVolumePathNamesForVolumeName(
-			[MarshalAs(UnmanagedType.LPTStr)] string lpszVolumeName,
+			[MarshalAs(UnmanagedType.LPWStr)] string lpszVolumeName,
 			IntPtr lpszVolumePathNames,
 			uint cchBufferLength,
 			out uint lpcchReturnLength);
@@ -417,9 +422,9 @@ namespace Eraser.Util
 		/// uses the root of the current directory.</param>
 		/// <returns>The return value specifies the type of drive, which can be
 		/// one of the DriveInfo.DriveType values.</returns>
-		[DllImport("Kernel32.dll", SetLastError = true)]
+		[DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "GetDriveTypeW")]
 		internal static extern uint GetDriveType(
-			[MarshalAs(UnmanagedType.LPTStr)] string lpRootPathName);
+			[MarshalAs(UnmanagedType.LPWStr)] string lpRootPathName);
 		#endregion
 	}
 }
