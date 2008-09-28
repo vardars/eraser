@@ -56,6 +56,9 @@ namespace Eraser
 			Program.eraserClient.TaskProcessed +=
 				new Executor.TaskProcessedEvent(OnTaskProcessed);
 
+			//Check the notification area context menu's minimise to tray item.
+			hideWhenMinimiseToolStripMenuItem.Checked = HideWhenMinimised;
+
 			//Create the toolbar control
 			ToolBar.Name = "toolBar";
 			ToolBar.Location = new Point(14, 27);
@@ -185,8 +188,8 @@ namespace Eraser
 
 			//And the logo
 			Bitmap logo = Properties.Resources.BackgroundLogo;
-			dc.DrawImage(logo, new Point(ClientSize.Width - logo.Width - 10,
-				(contentPanel.Top - logo.Height) / 2));
+			dc.DrawImage(logo, new Rectangle(ClientSize.Width - logo.Width - 10,
+				(contentPanel.Top - logo.Height) / 2, logo.Width, logo.Height));
 
 			dc.SmoothingMode = SmoothingMode.AntiAlias;
 			dc.FillPath(Brushes.White, CreateRoundRect(11, 74, contentPanel.Width + 8, ClientSize.Height - 85, 3));
@@ -200,7 +203,7 @@ namespace Eraser
 
 		private void MainForm_Resize(object sender, EventArgs e)
 		{
-			if (WindowState == FormWindowState.Normal)
+			if (WindowState != FormWindowState.Minimized)
 			{
 				Bitmap bmp = new Bitmap(Width, Height);
 				Graphics dc = Graphics.FromImage(bmp);
@@ -208,7 +211,7 @@ namespace Eraser
 
 				CreateGraphics().DrawImage(bmp, new Point(0, 0));
 			}
-			else if (WindowState == FormWindowState.Minimized)
+			else if (HideWhenMinimised)
 			{
 				Hide();
 			}
@@ -232,6 +235,7 @@ namespace Eraser
 			}
 		}
 
+		#region Task processing code (for notification area animation)
 		void OnTaskProcessing(Eraser.Manager.Task task)
 		{
 			if (InvokeRequired)
@@ -279,21 +283,56 @@ namespace Eraser
 			Resources.NotifyBusy9,
 			Resources.NotifyBusy10
 		};
+		#endregion
 
+		#region Minimise to tray code
+		private bool HideWhenMinimised
+		{
+			get
+			{
+				Dictionary<string, object> settings =
+					ManagerLibrary.Instance.Settings.PluginSettings;
+				return settings.ContainsKey("HideWhenMinimised") ?
+					(bool)settings["HideWhenMinimised"] : true;
+			}
+
+			set
+			{
+				Dictionary<string, object> settings =
+					ManagerLibrary.Instance.Settings.PluginSettings;
+				settings["HideWhenMinimised"] = hideWhenMinimiseToolStripMenuItem.Checked;
+				ManagerLibrary.Instance.Settings.SetSettings(settings);
+			}
+		}
+
+		private bool closedFromNotificationIcon = false;
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			if (sender == null)
+			if (HideWhenMinimised && (
+				!closedFromNotificationIcon || e.CloseReason != CloseReason.UserClosing))
 			{
 				e.Cancel = true;
 				Hide();
 			}
 		}
 
-		private void Show(object sender, EventArgs e)
+		private void openToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			Visible = true;
 			WindowState = FormWindowState.Normal;
 			Activate();
 		}
+
+		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			closedFromNotificationIcon = true;
+			Close();
+		}
+
+		private void hideWhenMinimiseToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			HideWhenMinimised = hideWhenMinimiseToolStripMenuItem.Checked;
+		}
+		#endregion
 	}
 }

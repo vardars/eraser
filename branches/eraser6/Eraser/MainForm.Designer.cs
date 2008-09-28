@@ -64,6 +64,7 @@ namespace Eraser
 			this.notificationMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.openEraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+			this.hideWhenMinimiseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.notificationIconTimer = new System.Windows.Forms.Timer(this.components);
 			this.toolbarScheduleMenu.SuspendLayout();
@@ -131,13 +132,14 @@ namespace Eraser
 			// 
 			this.notificationIcon.ContextMenuStrip = this.notificationMenu;
 			resources.ApplyResources(this.notificationIcon, "notificationIcon");
-			this.notificationIcon.DoubleClick += new System.EventHandler(this.Show);
+			this.notificationIcon.DoubleClick += new System.EventHandler(this.openToolStripMenuItem_Click);
 			// 
 			// notificationMenu
 			// 
 			this.notificationMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openEraserToolStripMenuItem,
             this.toolStripMenuItem1,
+            this.hideWhenMinimiseToolStripMenuItem,
             this.exitToolStripMenuItem});
 			this.notificationMenu.Name = "notificationMenu";
 			resources.ApplyResources(this.notificationMenu, "notificationMenu");
@@ -146,17 +148,25 @@ namespace Eraser
 			// 
 			this.openEraserToolStripMenuItem.Name = "openEraserToolStripMenuItem";
 			resources.ApplyResources(this.openEraserToolStripMenuItem, "openEraserToolStripMenuItem");
-			this.openEraserToolStripMenuItem.Click += new System.EventHandler(this.Show);
+			this.openEraserToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
 			// 
 			// toolStripMenuItem1
 			// 
 			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
 			resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
 			// 
+			// hideWhenMinimiseToolStripMenuItem
+			// 
+			this.hideWhenMinimiseToolStripMenuItem.CheckOnClick = true;
+			this.hideWhenMinimiseToolStripMenuItem.Name = "hideWhenMinimiseToolStripMenuItem";
+			resources.ApplyResources(this.hideWhenMinimiseToolStripMenuItem, "hideWhenMinimiseToolStripMenuItem");
+			this.hideWhenMinimiseToolStripMenuItem.Click += new System.EventHandler(this.hideWhenMinimiseToolStripMenuItem_Click);
+			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
+			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
 			// notificationIconTimer
 			// 
@@ -196,6 +206,7 @@ namespace Eraser
 		private System.Windows.Forms.ToolStripMenuItem openEraserToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
 		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem hideWhenMinimiseToolStripMenuItem;
 
 	}
 }
