@@ -35,7 +35,7 @@ namespace Eraser.DefaultPlugins
 		public void Initialize(Host host)
 		{
 			//Get the settings dictionary
-			Settings = Manager.ManagerLibrary.Instance.Settings.GetSettings();
+			Settings = Manager.ManagerLibrary.Instance.Settings.PluginSettings;
 
 			//Then register the erasure methods et al.
 			ErasureMethodManager.Register(new Gutmann());				//35 passes

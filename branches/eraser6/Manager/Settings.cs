@@ -207,16 +207,15 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Retrieves the dictionary holding settings for the calling assembly.
+		/// Gets the dictionary holding settings for the calling assembly.
 		/// </summary>
-		/// <returns>A dictionary holding settings for the plugin. This dictionary
-		/// will be automatically saved when the program exits holding the settings
-		/// permanenently. An empty dictionary will be returned if no settings
-		/// currently exist.</returns>
-		public Dictionary<string, object> GetSettings()
+		public Dictionary<string, object> PluginSettings
 		{
-			return GetSettings(new Guid(((GuidAttribute)Assembly.GetCallingAssembly().
-				GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value));
+			get
+			{
+				return GetSettings(new Guid(((GuidAttribute)Assembly.GetCallingAssembly().
+					GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value));
+			}
 		}
 
 		/// <summary>
