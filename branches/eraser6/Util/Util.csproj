@@ -42,7 +42,7 @@
     <Compile Include="StreamInfo.cs" />
     <Compile Include="KernelAPI.cs" />
     <Compile Include="File.cs" />
-    <Compile Include="Drive.cs" />
+    <Compile Include="VolumeInfo.cs" />
     <Compile Include="NetAPI.cs" />
     <Compile Include="NTAPI.cs" />
     <Compile Include="Permissions.cs" />

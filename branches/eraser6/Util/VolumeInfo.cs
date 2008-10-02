@@ -30,13 +30,13 @@ using Microsoft.Win32.SafeHandles;
 
 namespace Eraser.Util
 {
-	public class Volume
+	public class VolumeInfo
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="volumeID">The ID of the volume, in the form "\\?\Volume{GUID}\"</param>
-		public Volume(string volumeID)
+		public VolumeInfo(string volumeID)
 		{
 			//Set the volume Id
 			this.volumeID = volumeID;
@@ -108,9 +108,9 @@ namespace Eraser.Util
 		/// </summary>
 		/// <returns>Returns a list of volumes representing all volumes present in
 		/// the system.</returns>
-		public static List<Volume> GetVolumes()
+		public static List<VolumeInfo> GetVolumes()
 		{
-			List<Volume> result = new List<Volume>();
+			List<VolumeInfo> result = new List<VolumeInfo>();
 			StringBuilder nextVolume = new StringBuilder(LongPath * sizeof(char));
 			SafeHandle handle = FindFirstVolume(nextVolume, LongPath);
 			if (handle.IsInvalid)
@@ -118,7 +118,7 @@ namespace Eraser.Util
 
 			//Iterate over the volume mountpoints
 			do
-				result.Add(new Volume(nextVolume.ToString()));
+				result.Add(new VolumeInfo(nextVolume.ToString()));
 			while (FindNextVolume(handle, nextVolume, LongPath));
 
 			//Close the handle
@@ -134,7 +134,7 @@ namespace Eraser.Util
 		/// <param name="mountpoint">The path to the mountpoint.</param>
 		/// <returns>The volume object if such a volume exists, or an exception
 		/// is thrown.</returns>
-		public static Volume FromMountpoint(string mountpoint)
+		public static VolumeInfo FromMountpoint(string mountpoint)
 		{
 			DirectoryInfo mountpointDir = new DirectoryInfo(mountpoint);
 			StringBuilder volumeID = new StringBuilder(50 * sizeof(char));
@@ -145,7 +145,7 @@ namespace Eraser.Util
 				if (currentDir.Length > 0 && currentDir[currentDir.Length - 1] != '\\')
 					currentDir += '\\';
 				if (GetVolumeNameForVolumeMountPoint(currentDir, volumeID, 50))
-					return new Volume(volumeID.ToString());
+					return new VolumeInfo(volumeID.ToString());
 				else if (Marshal.GetLastWin32Error() != 4390 /*ERROR_NOT_A_REPARSE_POINT*/)
 					throw new Win32Exception(Marshal.GetLastWin32Error());
 				mountpointDir = mountpointDir.Parent;
@@ -292,11 +292,11 @@ namespace Eraser.Util
 		/// Retrieves all mountpoints in the current volume, if the current volume
 		/// contains volume mountpoints.
 		/// </summary>
-		public List<Volume> MountedVolumes
+		public List<VolumeInfo> MountedVolumes
 		{
 			get
 			{
-				List<Volume> result = new List<Volume>();
+				List<VolumeInfo> result = new List<VolumeInfo>();
 				StringBuilder nextMountpoint = new StringBuilder(LongPath * sizeof(char));
 
 				SafeHandle handle = FindFirstVolumeMountPoint(VolumeID,
@@ -306,7 +306,7 @@ namespace Eraser.Util
 
 				//Iterate over the volume mountpoints
 				while (FindNextVolumeMountPoint(handle, nextMountpoint, LongPath))
-					result.Add(new Volume(nextMountpoint.ToString()));
+					result.Add(new VolumeInfo(nextMountpoint.ToString()));
 
 				//Close the handle
 				if (Marshal.GetLastWin32Error() == 18 /*ERROR_NO_MORE_FILES*/)

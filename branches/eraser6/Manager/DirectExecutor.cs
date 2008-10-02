@@ -397,7 +397,7 @@ namespace Eraser.Manager
 			}
 
 			//If the user is under disk quotas, log a warning message
-			if (Volume.FromMountpoint(target.Drive).HasQuota)
+			if (VolumeInfo.FromMountpoint(target.Drive).HasQuota)
 				task.Log.Add(new LogEntry("The drive which is having its unused space erased has " +
 					"disk quotas active. This will prevent the complete erasure of unused space and " +
 					"will pose a security concern", LogLevel.WARNING));
@@ -448,7 +448,7 @@ namespace Eraser.Manager
 
 				//Determine the total amount of data that needs to be written.
 				WriteStatistics statistics = new WriteStatistics();
-				Volume volInfo = Volume.FromMountpoint(target.Drive);
+				VolumeInfo volInfo = VolumeInfo.FromMountpoint(target.Drive);
 				long totalSize = method.CalculateEraseDataSize(null, volInfo.TotalFreeSpace);
 
 				//Continue creating files while there is free space.
@@ -646,7 +646,7 @@ namespace Eraser.Manager
 		/// <param name="method">The method used to erase the records.</param>
 		private void EraseFilesystemRecords(DirectoryInfo info, ErasureMethod method)
 		{
-			Volume volInfo = Volume.FromMountpoint(info.FullName);
+			VolumeInfo volInfo = VolumeInfo.FromMountpoint(info.FullName);
 			string volFormat = volInfo.VolumeFormat;
 			if (volFormat == "NTFS")
 			{
@@ -815,7 +815,7 @@ namespace Eraser.Manager
 		private static long GetFileArea(string filePath)
 		{
 			StreamInfo info = new StreamInfo(filePath);
-			Volume volume = Volume.FromMountpoint(info.Directory.FullName);
+			VolumeInfo volume = VolumeInfo.FromMountpoint(info.Directory.FullName);
 			long clusterSize = volume.ClusterSize;
 			return (info.Length + (clusterSize - 1)) & ~(clusterSize - 1);
 		}
