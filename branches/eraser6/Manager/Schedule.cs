@@ -343,37 +343,59 @@ namespace Eraser.Manager
 				DateTime nextRun = LastRun;
 				if (nextRun == DateTime.MinValue)
 					nextRun = DateTime.Now;
+				nextRun = nextRun.AddHours(executionTime.Hour - nextRun.Hour);
+				nextRun = nextRun.AddMinutes(executionTime.Minute - nextRun.Minute);
+				nextRun = nextRun.AddSeconds(executionTime.Second - nextRun.Second);
 
 				switch (Type)
 				{
 					case ScheduleUnit.DAILY:
+					{
 						//First assume that it is today that we are running the schedule
 						long daysToAdd = (DateTime.Now - nextRun).Days;
 						nextRun = nextRun.AddDays(daysToAdd);
-						nextRun = nextRun.AddHours(executionTime.Hour - nextRun.Hour);
-						nextRun = nextRun.AddMinutes(executionTime.Minute - nextRun.Minute);
 
 						//If we have passed today's run time, schedule it after the next
 						//frequency
 						if (nextRun < DateTime.Now)
 							nextRun = nextRun.AddDays(frequency);
 						break;
+					}
 					case ScheduleUnit.WEEKDAYS:
+					{
 						while (nextRun < DateTime.Now ||
 							lastRun.DayOfWeek == DayOfWeek.Saturday ||
 							lastRun.DayOfWeek == DayOfWeek.Sunday)
 							nextRun = nextRun.AddDays(1);
 						break;
+					}
 					case ScheduleUnit.WEEKLY:
-						//First find the next day of the week within this week.
-						for (DayOfWeek day = lastRun.DayOfWeek; day <= DayOfWeek.Sunday; ++day)
-							if (((int)weeklySchedule & (1 << (int)day)) != 0)
-								//Bullseye! Run the task next day in the week.
-								nextRun = nextRun.AddDays(day - lastRun.DayOfWeek);
+					{
+						if (weeklySchedule == 0)
+							break;
 
-						//Ok, we now need to find the earliest day of the week where
-						//the task will run.
-						throw new NotImplementedException();
+						//Find the next eligible day to run the task within this week.
+						do
+						{
+							if (CanRunOnDay(nextRun) && nextRun >= DateTime.Now)
+								break;
+							nextRun = nextRun.AddDays(1);
+						}
+						while (nextRun.DayOfWeek < DayOfWeek.Saturday);
+
+						while (nextRun < DateTime.Now || !CanRunOnDay(nextRun))
+						{
+							//Find the next eligible day to run the task
+							nextRun = nextRun.AddDays(7 * (frequency - 1));
+							for (int daysInWeek = 7; daysInWeek-- != 0; nextRun = nextRun.AddDays(1))
+							{
+								if (CanRunOnDay(nextRun) && nextRun >= DateTime.Now)
+									break;
+							}
+						}
+
+						break;
+					}
 					case ScheduleUnit.MONTHLY:
 						//Increment the month until we are past our current date.
 						nextRun = nextRun.AddMinutes(executionTime.Minute - nextRun.Minute);
@@ -389,6 +411,20 @@ namespace Eraser.Manager
 					lastRun.ToString(), UIText, nextRun.ToString()));
 				return nextRun;
 			}
+		}
+
+		/// <summary>
+		/// Returns true if the task can run on the given date. Applies only for
+		/// weekly tasks.
+		/// </summary>
+		/// <param name="date">The date to run on.</param>
+		/// <returns>True if the task will be run on the date.</returns>
+		private bool CanRunOnDay(DateTime date)
+		{
+			if (Type != ScheduleUnit.WEEKLY)
+				throw new ArgumentException("The ScheduleUnit of the schedule does " +
+					"not use the WeeklyScheduly value, this field would contain garbage");
+			return ((int)weeklySchedule & (1 << (int)date.DayOfWeek)) != 0;
 		}
 
 		/// <summary>
