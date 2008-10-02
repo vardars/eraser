@@ -417,6 +417,11 @@ namespace Eraser
             0,
             0,
             0});
+			this.scheduleMonthlyFreq.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
 			this.scheduleMonthlyFreq.Name = "scheduleMonthlyFreq";
 			this.scheduleMonthlyFreq.Value = new decimal(new int[] {
             1,
