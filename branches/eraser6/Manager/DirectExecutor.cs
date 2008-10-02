@@ -125,7 +125,13 @@ namespace Eraser.Manager
 				//Then replace the task if it is in the queue
 				for (int i = 0; i != scheduledTasks.Count; ++i)
 					if (scheduledTasks.Values[i].id == task.ID)
-						scheduledTasks.Values[i] = task;
+					{
+						scheduledTasks.RemoveAt(i);
+						if (task.Schedule is RecurringSchedule)
+							ScheduleTask(task);
+						else if (task.Schedule == Schedule.RunNow)
+							QueueTask(ref task);
+					}
 			}
 		}
 
@@ -509,9 +515,8 @@ namespace Eraser.Manager
 				//Remove the folder holding all our temporary files.
 				RemoveFolder(info);
 			}
-
-
-			//new NotImplementedException(): clear directory entries: Eraser.cpp@2321
+			
+			//new NotImplementedException(): clear directory entries: Eraser.cpp@2348
 		}
 
 		private delegate void SubFoldersHandler(DirectoryInfo info);
