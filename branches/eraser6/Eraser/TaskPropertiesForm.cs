@@ -163,6 +163,7 @@ namespace Eraser
 						break;
 					case RecurringSchedule.ScheduleUnit.WEEKLY:
 						scheduleWeeklyFreq.Value = schedule.Frequency;
+						scheduleWeekly.Checked = true;
 						scheduleWeeklyMonday.Checked =
 							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.MONDAY) != 0;
 						scheduleWeeklyTuesday.Checked =
@@ -179,6 +180,7 @@ namespace Eraser
 							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.SUNDAY) != 0;
 						break;
 					case RecurringSchedule.ScheduleUnit.MONTHLY:
+						scheduleMonthly.Checked = true;
 						scheduleMonthlyFreq.Value = schedule.Frequency;
 						scheduleMonthlyDayNumber.Value = schedule.MonthlySchedule;
 						break;
