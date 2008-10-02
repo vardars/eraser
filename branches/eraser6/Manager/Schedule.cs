@@ -227,13 +227,13 @@ namespace Eraser.Manager
 		/// </summary>
 		public enum DaysOfWeek
 		{
-			SUNDAY = 1,
-			MONDAY = 1 << 1,
-			TUESDAY = 1 << 2,
-			WEDNESDAY = 1 << 3,
-			THURSDAY = 1 << 4,
-			FRIDAY = 1 << 5,
-			SATURDAY = 1 << 6
+			SUNDAY = 1 << DayOfWeek.Sunday,
+			MONDAY = 1 << DayOfWeek.Monday,
+			TUESDAY = 1 << DayOfWeek.Tuesday,
+			WEDNESDAY = 1 << DayOfWeek.Wednesday,
+			THURSDAY = 1 << DayOfWeek.Thursday,
+			FRIDAY = 1 << DayOfWeek.Friday,
+			SATURDAY = 1 << DayOfWeek.Saturday
 		}
 
 		/// <summary>
@@ -397,9 +397,7 @@ namespace Eraser.Manager
 						break;
 					}
 					case ScheduleUnit.MONTHLY:
-						//Increment the month until we are past our current date.
-						nextRun = nextRun.AddMinutes(executionTime.Minute - nextRun.Minute);
-						nextRun = nextRun.AddHours(executionTime.Hour - nextRun.Hour);
+						//Set the next run date to be the day on which the task will run.
 						nextRun = nextRun.AddDays(-((int)monthlySchedule - nextRun.Day));
 						while (nextRun < DateTime.Now)
 							nextRun = nextRun.AddMonths((int)frequency);
