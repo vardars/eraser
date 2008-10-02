@@ -130,7 +130,7 @@ namespace Eraser.Manager
 						if (task.Schedule is RecurringSchedule)
 							ScheduleTask(task);
 						else if (task.Schedule == Schedule.RunNow)
-							QueueTask(ref task);
+							QueueTask(task);
 					}
 			}
 		}
