@@ -1,0 +1,22 @@
+HKCR
+{
+	NoRemove *
+	{
+		'%APPID%' = s 'EraserCtxMenu'
+		'EraserCtxMenu.DLL'
+		{
+			val AppID = s '%APPID%'
+		}
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {E8801615-19E6-48FB-9BFE-149FD5E97B7F} = s 'CompReg Class'
+		{
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{BBAA6A86-48FB-4F7B-B06F-7FACD6AFBD25}'
+		}
+	}
+}
