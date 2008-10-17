@@ -3,6 +3,7 @@
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By: Garrett Trant <gtrant@users.sourceforge.net>
+ *				Kasra Nasiri <cjax@users.sourceforge.net> @10/7/2008
  * 
  * This file is part of Eraser.
  * 
@@ -27,6 +28,23 @@ using System.Runtime.InteropServices;
 
 namespace Eraser.Util
 {
+	/// <summary>
+	/// Win32 Error codes : Marshal.GetLastWin32Error()
+	/// </summary>
+	public enum ERROR : int
+	{
+		ACCESS_DENIED = 0x5,
+		NOT_ENOUGH_MEMORY = 0x8,
+		INVALID_ACCESS = 0xC,
+		INVALID_DRIVE = 0xF,
+		NO_MORE_FILES = 0x12,
+		NOT_READY = 0x15,
+		MORE_DATA = 0xEA,
+		UNRECOGNIZED_VOLUME = 0x3ED,
+		NO_TOKEN = 0x3F0,
+		NOT_A_REPARSE_POINT = 0x1126,
+	};
+
 	public static class KernelAPI
 	{
 		/// <summary>
@@ -320,7 +338,7 @@ namespace Eraser.Util
             {
                 throw new NotImplementedException();
             }
-        }
+        }	
 
 		/// <summary>
 		/// Contains information about the current computer system. This includes
@@ -613,6 +631,7 @@ namespace Eraser.Util
 			/// </summary>
 			public IntPtr hStdError;
 
+
             public override int GetHashCode()
             {
                 throw new NotImplementedException();
@@ -633,5 +652,6 @@ namespace Eraser.Util
                 throw new NotImplementedException();
             }
         }
+
 	}
 }

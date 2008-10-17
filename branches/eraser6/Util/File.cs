@@ -2,7 +2,7 @@
  * $Id$
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
- * Modified By:
+ * Modified By: Kasra Nasiri <cjax@users.sourceforge.net> @10/7/2008
  * 
  * This file is part of Eraser.
  * 
@@ -123,7 +123,24 @@ namespace Eraser.Util
 			SHFILEINFO shfi = new SHFILEINFO();
 			SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
 				SHGetFileInfoFlags.SHGFI_SMALLICON | SHGetFileInfoFlags.SHGFI_ICON);
-			return Icon.FromHandle(shfi.hIcon);
+
+			/**  Possible Errors:
+			 * INVALID_ACCESS
+			 * NOT_ENOUGH_MEMORY
+			 * NO_TOKEN
+			 */
+			try
+			{
+				return Icon.FromHandle(shfi.hIcon);
+			}
+			catch (Exception ex)
+			{
+				int lastError = Marshal.GetLastWin32Error();
+				throw new Win32Exception(lastError, Environment.NewLine + 
+					"Icon load failed" + Environment.NewLine +
+					" path: \"" + path + "\"" + Environment.NewLine +
+					"\tmessage: " + ex.Message);
+			}
 		}
 
 		/// <summary>
