@@ -33,6 +33,7 @@ namespace Eraser.Util
 	/// </summary>
 	public enum ERROR : int
 	{
+		FILE_NOT_FOUND = 0x2,
 		ACCESS_DENIED = 0x5,
 		NOT_ENOUGH_MEMORY = 0x8,
 		INVALID_ACCESS = 0xC,
