@@ -88,6 +88,122 @@ namespace Eraser.Manager
 			private ErasureMethod method = null;
 		}
 
+		[Serializable]
+		public class RecycleBin : ErasureTarget
+		{
+			#region Serialization code
+			public RecycleBin(SerializationInfo info, StreamingContext context)
+			{
+				Guid methodGuid = (Guid)info.GetValue("Method", typeof(Guid));
+				if (methodGuid == Guid.Empty)
+					method = ErasureMethodManager.Default;
+				else
+					method = ErasureMethodManager.GetInstance(methodGuid);
+			}
+
+			public virtual void GetObjectData(SerializationInfo info,
+				StreamingContext context)
+			{
+				info.AddValue("Method", method.GUID);
+			}
+			#endregion
+
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			public RecycleBin()
+			{
+				if (method == null)
+					lock(ManagerLibrary.Instance.Settings)					
+						method = ErasureMethodManager.GetInstance(
+							ManagerLibrary.Instance.Settings.DefaultFileErasureMethod);
+			}
+			
+			public struct DirectoryDictionary
+			{
+				public long size;
+				public string directory;
+				public List<string> files;
+			};
+
+			/// <summary>
+			/// Retrieves the list of files/folders to erase as a list.
+			/// </summary>
+			/// <param name="totalSize">Returns the total size in bytes of the
+			/// items.</param>
+			/// <returns>A list containing the paths to all the files to be erased.</returns>
+			internal List<DirectoryDictionary> GetPaths(Task task)
+			{
+				List<DirectoryDictionary> dir_files_pair = new List<DirectoryDictionary>();
+				long totalSize;
+				foreach (DriveInfo drive in DriveInfo.GetDrives())
+				{
+					try
+					{
+						if (drive.DriveType == DriveType.CDRom ||
+							drive.DriveType == DriveType.Network ||
+							drive.DriveType == DriveType.Unknown)
+							continue;
+
+						string root = Path.Combine(drive.Name, @"RECYCLER\");
+						DirectoryInfo dir = new DirectoryInfo(root);
+						if (dir.Exists == false) continue;
+
+						foreach (DirectoryInfo director in dir.GetDirectories())
+						{
+							totalSize = 0;
+							List<string> files = new List<string>();
+							foreach (FileInfo info in director.GetFiles())
+							{
+								if ((info.Attributes & FileAttributes.Encrypted) != 0 )
+								{
+									task.log.Add(new LogEntry(
+										string.Format("\"{0}\"", info.FullName) +
+										"was not erased, because encrypted " +
+										"files cannot be wipped with Eraser.", LogLevel.NOTICE));
+								}
+
+								totalSize += info.Length;
+								files.Add(info.FullName);
+							}
+							DirectoryDictionary d = new DirectoryDictionary();
+							d.directory = director.FullName;
+							d.files = files;
+							d.size = totalSize;
+							dir_files_pair.Add(d);
+						}
+					}
+					catch (IOException) { /* oopts! */ }
+				}
+				return dir_files_pair;
+			}
+		
+
+			/// <summary>
+			/// The method used for erasing the file. If the variable is equal to
+			/// ErasureMethodManager.Default then the default is queried for the
+			/// task type.
+			/// </summary>
+			public ErasureMethod Method
+			{
+				get { return method; }
+				set { method = value; }
+			}
+
+			/// <summary>
+			/// Retrieves the text to display representing this task.
+			/// </summary>
+			public override string UIText
+			{
+				get
+				{
+					return "RecycleBin";
+				}
+			}
+
+			private ErasureMethod method = null;
+		}
+
 		/// <summary>
 		/// Class representing a tangible object (file/folder) to be erased.
 		/// </summary>
@@ -354,7 +470,7 @@ namespace Eraser.Manager
 			id = (uint)info.GetValue("ID", typeof(uint));
 			name = (string)info.GetValue("Name", typeof(string));
 			targets = (List<ErasureTarget>)info.GetValue("Targets", typeof(List<ErasureTarget>));
-			log = (Logger)info.GetValue("Log", typeof(Logger));
+			log = (LogManager)info.GetValue("Log", typeof(LogManager));
 
 			Schedule schedule = (Schedule)info.GetValue("Schedule", typeof(Schedule));
 			if (schedule.GetType() == Schedule.RunNow.GetType())
@@ -477,7 +593,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The log entries which this task has accumulated.
 		/// </summary>
-		public Logger Log
+		public LogManager Log
 		{
 			get { return log; }
 		}
@@ -553,7 +669,7 @@ namespace Eraser.Manager
 
 		private Schedule schedule = Schedule.RunNow;
 		private List<ErasureTarget> targets = new List<ErasureTarget>();
-		private Logger log = new Logger();
+		private LogManager log = new LogManager();
 	}
 
 	/// <summary>

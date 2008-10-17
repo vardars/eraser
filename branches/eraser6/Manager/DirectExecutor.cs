@@ -307,6 +307,8 @@ namespace Eraser.Manager
 									EraseUnusedSpace(task, (Task.UnusedSpace)target);
 								else if (target is Task.FilesystemObject)
 									EraseFilesystemObject(task, (Task.FilesystemObject)target);
+								else if (target is Task.RecycleBin)
+									EraseRecycleBin(task, (Task.RecycleBin)target);
 								else
 									throw new ArgumentException("Unknown erasure target.");
 							}
@@ -381,6 +383,42 @@ namespace Eraser.Manager
 			private DateTime lastSpeedCalc;
 			private long dataWritten;
 			private int lastSpeed;
+		}
+
+		public static List<string> GetFiles(DirectoryInfo root)
+		{			
+			List<string> files = new List<string>();
+
+			foreach (FileSystemInfo fsInfo in root.GetFileSystemInfos())
+				try
+				{
+					if (fsInfo is FileInfo)
+					{
+						FileInfo file = (FileInfo)fsInfo;
+						if (Eraser.Util.File.IsProtectedSystemFile(file.FullName))
+							;
+						else
+						{
+							foreach (string i in Util.File.GetADSes(file))
+								files.Add(file.FullName + ':' + i);
+
+							files.Add(file.FullName);
+						}
+					}
+					else if (fsInfo is DirectoryInfo)
+					{
+						DirectoryInfo dir = (DirectoryInfo)fsInfo;
+						foreach (DirectoryInfo subDir in dir.GetDirectories())
+							files.AddRange(GetFiles(subDir));
+					}
+				}
+				catch (UnauthorizedAccessException)
+				{
+				}
+				catch (IOException)
+				{
+				}
+			return files;
 		}
 
 		/// <summary>
@@ -522,12 +560,44 @@ namespace Eraser.Manager
 		private delegate void SubFoldersHandler(DirectoryInfo info);
 		private delegate void ClusterTipsEraseProgress(int currentFile,
 			string currentFilePath, int totalFiles);
+		private delegate void threadPoolHandler(ThreadPoolArgs args);
+
+		struct ThreadPoolArgs
+		{
+			public ThreadPoolArgs(Task _task, String _file,
+				ErasureMethod _method,
+				ClusterTipsEraseProgress _callBack)
+			{
+				task = _task;
+				file = _file;
+				method = _method;
+				callBack = _callBack;
+			}
+
+			public Task task;
+			public String file;
+			public ErasureMethod method;
+			public ClusterTipsEraseProgress callBack;
+						
+			public static void resetPool()
+			{
+				ObjectCount = TObjectCount = Mapped = 0;
+			}
+
+			public static long Mapped = 0;
+			public static long TObjectCount = 0;
+			public static long ObjectCount = 0;
+			public static object ThreadLock = new object();
+			public static EventWaitHandle Handle = new AutoResetEvent(true);
+		}
+		
 		private static void EraseClusterTips(Task task, Task.UnusedSpace target,
 			ErasureMethod method, ClusterTipsEraseProgress callback)
 		{
 			//List all the files which can be erased.
 			List<string> files = new List<string>();
 			SubFoldersHandler subFolders = null;
+
 			subFolders = delegate(DirectoryInfo info)
 			{
 				foreach (FileSystemInfo fsInfo in info.GetFileSystemInfos())
@@ -537,12 +607,13 @@ namespace Eraser.Manager
 					{
 						FileInfo file = (FileInfo)fsInfo;
 						if (Eraser.Util.File.IsProtectedSystemFile(file.FullName))
-							task.Log.Add(new LogEntry(string.Format("{0} did not have its cluster tips " +
-								"erased, because it is a system file", file.FullName), LogLevel.INFORMATION));
+							task.Log.Add(new LogEntry(string.Format("\"{0}\" did not have its cluster tips " +
+								"erased, because it is a protected system file", file.FullName), LogLevel.INFORMATION));
 						else
 						{
 							foreach (string i in Util.File.GetADSes(file))
 								files.Add(file.FullName + ':' + i);
+
 							files.Add(file.FullName);
 						}
 					}
@@ -553,90 +624,105 @@ namespace Eraser.Manager
 							subFolders(subDir);
 					}
 					else
-						throw new NotImplementedException("Unknown FileSystemInfo type.");
+						throw new NotImplementedException("Unknown FileSystemInfo type");
 				}
 				catch (UnauthorizedAccessException e)
 				{
-					task.Log.Add(new LogEntry(string.Format("{0} did not have its cluster tips erased because of " +
-						"the following error: {1}", info.FullName, e.Message), LogLevel.ERROR));
+					task.Log.Add(new LogEntry(string.Format("\"{0}\"  did not have its cluster tips erased because of " +
+						": {1}", info.FullName, e.Message), LogLevel.ERROR));
 				}
 				catch (IOException e)
 				{
-					task.Log.Add(new LogEntry(string.Format("{0} did not have its cluster tips erased because of " +
-						"the following error: {1}", info.FullName, e.Message), LogLevel.ERROR));
+					task.Log.Add(new LogEntry(string.Format("\"{0}\"  did not have its cluster tips erased because of " +
+						": {1}", info.FullName, e.Message), LogLevel.ERROR));
 				}
 			};
-
+	
 			subFolders(new DirectoryInfo(target.Drive));
+			ThreadPoolArgs.Handle.WaitOne();
 
-			//For every file, erase the cluster tips.
-			for (int i = 0, j = files.Count; i != j; ++i)
-			{
-				try
-				{
-					EraseFileClusterTips(files[i], method);
-				}
-				catch (Exception e)
-				{
-					task.Log.Add(new LogEntry(string.Format("{0} did not have its cluster tips " +
-						"erased. The error returned was: {1}", files[i], e.Message), LogLevel.ERROR));
-				}
-				callback(i, files[i], files.Count);
-			}
+
+			foreach (string file in files)
+				EraseClusterTips(task, target, method, callback);
+
 		}
 
 		/// <summary>
 		/// Erases the cluster tips of the given file.
+		/// This method is used for thread-pool tests
 		/// </summary>
 		/// <param name="file">The file to erase.</param>
 		/// <param name="method">The erasure method to use.</param>
-		private static void EraseFileClusterTips(string file, ErasureMethod method)
+		private static void EraseFileClusterTips(object args)
 		{
-			//Get the file access times
-			StreamInfo streamInfo = new StreamInfo(file);
-			DateTime lastAccess = DateTime.MinValue, lastWrite = DateTime.MinValue,
-			         created = DateTime.MinValue;
+			lock (ThreadPoolArgs.ThreadLock)
 			{
-				FileInfo info = streamInfo.File;
-				if (info != null)
-				{
-					lastAccess = info.LastAccessTime;
-					lastWrite = info.LastWriteTime;
-					created = info.CreationTime;
-				}
-			}
-
-			//Create the stream, lengthen the file, then tell the erasure method
-			//to erase the tips.
-			using (FileStream stream = streamInfo.Open(FileMode.Open, FileAccess.Write))
-			{
-				long fileLength = stream.Length;
-				long fileArea = GetFileArea(file);
+				ThreadPoolArgs arguments = (ThreadPoolArgs)args;
 
 				try
 				{
-					stream.SetLength(fileArea);
-					stream.Seek(fileLength, SeekOrigin.Begin);
+					//Get the file access times
+					StreamInfo streamInfo = new StreamInfo(arguments.file);
+					DateTime lastAccess = DateTime.MinValue, lastWrite = DateTime.MinValue,
+							 created = DateTime.MinValue;
+					{
+						FileInfo info = streamInfo.File;
+						if (info != null)
+						{
+							lastAccess = info.LastAccessTime;
+							lastWrite = info.LastWriteTime;
+							created = info.CreationTime;
+						}
+					}
 
-					//Erase the file
-					method.Erase(stream, long.MaxValue, PRNGManager.GetInstance(
-						ManagerLibrary.Instance.Settings.ActivePRNG), null);
+					//Create the stream, lengthen the file, then tell the erasure method
+					//to erase the tips.
+					using (FileStream stream = streamInfo.Open(FileMode.Open, FileAccess.Write))
+					{
+						long fileLength = stream.Length;
+						long fileArea = GetFileArea(arguments.file);
+
+						try
+						{
+							stream.SetLength(fileArea);
+							stream.Seek(fileLength, SeekOrigin.Begin);
+
+							//Erase the file
+							arguments.method.Erase(stream, long.MaxValue, PRNGManager.GetInstance(
+								ManagerLibrary.Instance.Settings.ActivePRNG), null);
+						}
+						finally
+						{
+							//Make sure the file is restored!
+							stream.SetLength(fileLength);
+						}
+					}
+
+					//Set the file times
+					FileInfo fileInfo = streamInfo.File;
+					if (fileInfo != null)
+					{
+						fileInfo.LastAccessTime = lastAccess;
+						fileInfo.LastWriteTime = lastWrite;
+						fileInfo.CreationTime = created;
+					}
+
+					arguments.callBack((int)Interlocked.Read(ref ThreadPoolArgs.ObjectCount),
+						arguments.file,
+						(int)(Interlocked.Read(ref ThreadPoolArgs.TObjectCount)
+						+ Interlocked.Read(ref ThreadPoolArgs.ObjectCount)));
+
+					Interlocked.Decrement(ref ThreadPoolArgs.ObjectCount);
 				}
-				finally
+				catch (Exception e)
 				{
-					//Make sure the file is restored!
-					stream.SetLength(fileLength);
+					arguments.task.Log.Add(new LogEntry(string.Format("\"{0}\" did not have its cluster tips " +
+						"erased because: {1}", arguments.file, e.Message), LogLevel.ERROR));
 				}
 			}
-
-			//Set the file times
-			FileInfo fileInfo = streamInfo.File;
-			if (fileInfo != null)
-			{
-				fileInfo.LastAccessTime = lastAccess;
-				fileInfo.LastWriteTime = lastWrite;
-				fileInfo.CreationTime = created;
-			}
+			if (Interlocked.Read(ref ThreadPoolArgs.ObjectCount) == -1 &&
+				Interlocked.Read(ref ThreadPoolArgs.Mapped) == 1)
+				ThreadPoolArgs.Handle.Set();
 		}
 
 		/// <summary>
@@ -690,6 +776,122 @@ namespace Eraser.Manager
 			else
 				throw new NotImplementedException("Could not erase old file system " +
 					"records: Unsupported File system");
+		}
+
+
+		/// <summary>
+		/// Erases the files in the RecycleBin of ALL dirves.
+		/// TODO: Add individual drive selection. (or should we?)
+		/// </summary>
+		/// <param name="task"></param>
+		/// <param name="target"></param>
+		private void EraseRecycleBin(Task task, Task.RecycleBin target)
+		{
+			//progress report
+			bool isReadOnly;
+			long dataTotal = 0;
+
+			//Retrieve the list of files to erase.
+			List<Task.RecycleBin.DirectoryDictionary> directories = target.GetPaths(task);
+
+			TaskProgressEventArgs eventArgs = new TaskProgressEventArgs(task, 0, 0);
+
+			//Record the start of the erasure pass so we can calculate speed of erasures
+			WriteStatistics statistics = new WriteStatistics();
+						
+			//Get the erasure method if the user specified he wants the default.
+			ErasureMethod method = target.Method;
+			if (method == null)
+				method = ErasureMethodManager.GetInstance(ManagerLibrary.Instance.Settings.DefaultFileErasureMethod);
+
+			//Calculate the total amount of data required to finish the wipe.
+			foreach (Task.RecycleBin.DirectoryDictionary d in directories)
+				dataTotal += d.size;
+			dataTotal = method.CalculateEraseDataSize(null, dataTotal);
+
+			foreach (Task.RecycleBin.DirectoryDictionary dir in directories)
+			{
+				foreach (string file in dir.files)
+				{
+					try
+					{
+						StreamInfo info = new StreamInfo(file);
+
+						//Remove the read-only flag, if it is set.
+						if (isReadOnly = info.IsReadOnly) info.IsReadOnly = false;
+
+						try
+						{
+							// create the file stream, and call the erasure method to write to
+							// the stream.
+							using (FileStream strm = info.Open(FileMode.Open, FileAccess.Write,
+								FileShare.None, FileOptions.WriteThrough))
+							{
+								// set the end of the stream after the wrap-round the cluster size
+								strm.SetLength(GetFileArea(file));
+
+								// nothing to do continue
+								if (strm.Length == 0) continue;
+							
+								// erase the file.
+								long itemWritten = 0, itemTotal = method.CalculateEraseDataSize(null, strm.Length);
+								method.Erase(strm, long.MaxValue,
+									PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
+									delegate(long lastWritten, int currentPass)
+									{
+										statistics.DataWritten += lastWritten;
+										eventArgs.currentPass = currentPass;
+
+										eventArgs.currentItemProgress = (int)
+											(((double)(itemWritten += lastWritten) * 100) / (double)itemTotal + 0.5);
+
+										eventArgs.overallProgress = (int)
+											((double)(statistics.DataWritten * 100) / (double)dataTotal + 0.5);
+
+										if (statistics.Speed != 0)
+										{
+											eventArgs.timeLeft = (int)
+												((double)((double)dataTotal - (double)statistics.DataWritten)
+												/ (double)statistics.Speed + 0.5);
+										}
+										else
+										{
+											eventArgs.timeLeft = -1;
+										}
+
+										task.OnProgressChanged(eventArgs);
+
+										lock (currentTask)
+											if (currentTask.cancelled)
+												throw new FatalException("The task was cancelled.");
+									} 
+								);
+								
+								// set the length of the file to 0.
+								strm.Seek(0, SeekOrigin.Begin);
+								strm.SetLength(0);
+							}
+
+							// remove the file.
+							FileInfo fileInfo = info.File;
+							if (fileInfo != null)
+								RemoveFile(fileInfo);
+						}
+						finally
+						{
+							// re-set the read-only flag
+							info.IsReadOnly = isReadOnly;
+						}
+					}
+					catch (Exception e)
+					{
+						// show as much exception info as possible
+						task.Log.Add(new LogEntry(string.Format("\"{0}\": Error {Message:{1},InnerException:{2},Source:{3},StackTrace:{4},TargetSite:{5}}", file,
+							e.Message, e.InnerException, e.Source, e.StackTrace, e.TargetSite), LogLevel.ERROR));
+					}
+				}
+				RemoveFolder(new DirectoryInfo(dir.directory));
+			}
 		}
 
 		/// <summary>
