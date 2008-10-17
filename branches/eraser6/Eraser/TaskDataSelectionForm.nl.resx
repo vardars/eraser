@@ -117,15 +117,36 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="ok.Location" type="System.Drawing.Point, System.Drawing">
+    <value>189, 348</value>
+  </data>
+  <data name="cancel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>270, 348</value>
+  </data>
   <data name="cancel.Text" xml:space="preserve">
     <value>Annuleer</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>349, 379</value>
+  </data>
+  <data name="unusedClusterTips.Location" type="System.Drawing.Point, System.Drawing">
+    <value>31, 300</value>
+  </data>
   <data name="unusedClusterTips.Size" type="System.Drawing.Size, System.Drawing">
     <value>105, 19</value>
   </data>
   <data name="unusedClusterTips.Text" xml:space="preserve">
     <value>Wis cluster tips</value>
+  </data>
+  <data name="method.Location" type="System.Drawing.Point, System.Drawing">
+    <value>129, 12</value>
+  </data>
+  <data name="method.Size" type="System.Drawing.Size, System.Drawing">
+    <value>216, 23</value>
+  </data>
+  <data name="methodLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>5, 15</value>
   </data>
   <data name="methodLbl.Size" type="System.Drawing.Size, System.Drawing">
     <value>80, 15</value>
@@ -133,11 +154,29 @@
   <data name="methodLbl.Text" xml:space="preserve">
     <value>Wis methode:</value>
   </data>
+  <data name="unusedDisk.Location" type="System.Drawing.Point, System.Drawing">
+    <value>31, 270</value>
+  </data>
+  <data name="unusedDisk.Size" type="System.Drawing.Size, System.Drawing">
+    <value>314, 24</value>
+  </data>
+  <data name="folderDelete.Location" type="System.Drawing.Point, System.Drawing">
+    <value>31, 220</value>
+  </data>
   <data name="folderDelete.Size" type="System.Drawing.Size, System.Drawing">
     <value>163, 19</value>
   </data>
   <data name="folderDelete.Text" xml:space="preserve">
     <value>Verwijder map indien leeg</value>
+  </data>
+  <data name="folderExclude.Location" type="System.Drawing.Point, System.Drawing">
+    <value>129, 191</value>
+  </data>
+  <data name="folderExclude.Size" type="System.Drawing.Size, System.Drawing">
+    <value>216, 23</value>
+  </data>
+  <data name="folderExcludeLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>28, 194</value>
   </data>
   <data name="folderExcludeLbl.Size" type="System.Drawing.Size, System.Drawing">
     <value>90, 15</value>
@@ -145,17 +184,47 @@
   <data name="folderExcludeLbl.Text" xml:space="preserve">
     <value>Mask uitsluiten:</value>
   </data>
+  <data name="folderInclude.Location" type="System.Drawing.Point, System.Drawing">
+    <value>129, 160</value>
+  </data>
+  <data name="folderInclude.Size" type="System.Drawing.Size, System.Drawing">
+    <value>216, 23</value>
+  </data>
+  <data name="folderIncludeLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>28, 163</value>
+  </data>
   <data name="folderIncludeLbl.Size" type="System.Drawing.Size, System.Drawing">
     <value>90, 15</value>
   </data>
   <data name="folderIncludeLbl.Text" xml:space="preserve">
     <value>Mask Invoegen:</value>
   </data>
+  <data name="folderBrowse.Location" type="System.Drawing.Point, System.Drawing">
+    <value>270, 126</value>
+  </data>
+  <data name="folderPath.Location" type="System.Drawing.Point, System.Drawing">
+    <value>31, 127</value>
+  </data>
+  <data name="folderPath.Size" type="System.Drawing.Size, System.Drawing">
+    <value>233, 23</value>
+  </data>
+  <data name="fileBrowse.Location" type="System.Drawing.Point, System.Drawing">
+    <value>270, 68</value>
+  </data>
+  <data name="filePath.Size" type="System.Drawing.Size, System.Drawing">
+    <value>233, 23</value>
+  </data>
+  <data name="unused.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 245</value>
+  </data>
   <data name="unused.Size" type="System.Drawing.Size, System.Drawing">
     <value>157, 19</value>
   </data>
   <data name="unused.Text" xml:space="preserve">
     <value>Ongebruikte schijfruimte</value>
+  </data>
+  <data name="folder.Location" type="System.Drawing.Point, System.Drawing">
+    <value>8, 102</value>
   </data>
   <data name="folder.Size" type="System.Drawing.Size, System.Drawing">
     <value>120, 19</value>
