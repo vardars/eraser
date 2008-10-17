@@ -2,7 +2,7 @@
  * $Id$
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
- * Modified By:
+ * Modified By: Kasra Nasiri <cjax@users.sourceforge.net> @10/7/2008
  * 
  * This file is part of Eraser.
  * 
@@ -214,9 +214,9 @@ namespace Eraser.Manager
 	internal class EntropyThread
 	{
 		public EntropyThread()
-		{
+		{			
 			//Create the pool.
-			pool = new byte[512];
+			pool = new byte[poolSize]; // {512,1024} bytes
 
 			//Initialize the pool with some default information.
 			{
@@ -232,8 +232,18 @@ namespace Eraser.Manager
 
 				FastAddEntropy();
 				SlowAddEntropy();
+
+				// set the default PRF algorithm
+				PRFAlgorithm = PRFAlgorithms.SHA512;
 				MixPool();
 			}
+
+			// apply whitening effect
+			PRFAlgorithm = PRFAlgorithms.RIPEMD160;
+			MixPool();
+
+			// set back to default hash algorithm
+			PRFAlgorithm = PRFAlgorithms.SHA512;
 
 			//Then start the thread which maintains the pool.
 			thread = new Thread(delegate()
@@ -242,6 +252,34 @@ namespace Eraser.Manager
 				}
 			);
 			thread.Start();
+		}
+		
+		/// <summary>
+		/// The algorithm used for mixing
+		/// </summary>
+		public enum PRFAlgorithms : int
+		{
+			MD5,
+			SHA1,
+			RIPEMD160,
+			SHA256,
+			SHA384,
+			SHA512,
+		};
+
+		/// <summary>
+		/// Property sheet for PRF algorithm
+		/// </summary>
+		public PRFAlgorithms PRFAlgorithm
+		{
+			get
+			{
+				return prfAlgorithm;
+			}
+			set
+			{
+				prfAlgorithm = value;
+			}
 		}
 
 		/// <summary>
@@ -261,14 +299,22 @@ namespace Eraser.Manager
 		{
 			//This entropy thread will utilize a polling loop.
 			DateTime lastAddedEntropy = DateTime.Now;
+			TimeSpan ManagerEntropySpan = new TimeSpan(0, 10, 0);
+			System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
 			while (thread.ThreadState != ThreadState.AbortRequested)
 			{
-				FastAddEntropy();
-				SlowAddEntropy();
-				Thread.Sleep(3000);
+				st.Start();
+				{
+					FastAddEntropy();
+					SlowAddEntropy();
+				}
+				
+				st.Stop(); 
+				Thread.Sleep(2000 + (int)(st.ElapsedTicks % 2049L));
+				st.Reset();
 
 				//Send entropy to the PRNGs for new seeds.
-				if (DateTime.Now - lastAddedEntropy > new TimeSpan(0, 10, 0))
+				if (DateTime.Now - lastAddedEntropy > ManagerEntropySpan)
 					ManagerLibrary.Instance.PRNGManager.AddEntropy(GetPool());
 			}
 		}
@@ -299,15 +345,31 @@ namespace Eraser.Manager
 		private void InvertPool()
 		{
 			lock (poolLock)
-			unsafe
-			{
-				fixed (byte* fPool = pool)
+				unsafe
 				{
-					int* pPool = (int*)fPool;
-					int poolLength = pool.Length / sizeof(int);
-					while (poolLength-- != 0)
-						*pPool = (int)(*pPool++ ^ unchecked((uint)-1));
+					fixed (byte* fPool = pool)
+					{
+						uint* pPool = (uint*)fPool;
+						uint poolLength = (uint)(pool.Length / sizeof(uint));
+						while (poolLength-- != 0)
+							*pPool = (uint)(*pPool++ ^ unchecked((uint)-1));
+					}
 				}
+		}
+
+		/// <summary>
+		/// Creates an instance of the requested PRF
+		/// </summary>
+		private void CheckPRF()
+		{
+			switch (prfAlgorithm)
+			{
+				case PRFAlgorithms.MD5:			PRF = new MD5CryptoServiceProvider(); break;
+				case PRFAlgorithms.SHA1:		PRF = new SHA1Managed(); break;
+				case PRFAlgorithms.RIPEMD160:	PRF = new RIPEMD160Managed();  break;
+				case PRFAlgorithms.SHA256:		PRF = new SHA256Managed();  break;
+				case PRFAlgorithms.SHA384:		PRF = new SHA384Managed(); break;
+				default: /*SHA512: */			PRF = new SHA512Managed(); break;
 			}
 		}
 
@@ -316,28 +378,33 @@ namespace Eraser.Manager
 		/// </summary>
 		private void MixPool()
 		{
+			CheckPRF();
+
 			lock (poolLock)
-			using (SHA512 hash = SHA512.Create())
 			{
 				//Mix the last 128 bytes first.
 				const int mixBlockSize = 128;
-				int hashSize = hash.HashSize / 8;
-				hash.ComputeHash(pool, pool.Length - mixBlockSize, mixBlockSize).CopyTo(pool, 0);
+				int hashSize = PRF.HashSize / 8;
+				PRF.ComputeHash(pool, pool.Length - mixBlockSize, mixBlockSize).CopyTo(pool, 0);
 
 				//Then mix the following bytes until wraparound is required
 				int i = 0;
 				for (; i < pool.Length - hashSize; i += hashSize)
-					hash.ComputeHash(pool, i, mixBlockSize).CopyTo(pool, i);
-
+					Buffer.BlockCopy(PRF.ComputeHash(pool, i, 
+						i + mixBlockSize >= pool.Length ? pool.Length - i : mixBlockSize),
+						0, pool, i, i + hashSize >= pool.Length ? pool.Length - i : hashSize);
+				
 				//Mix the remaining blocks which require copying from the front
 				byte[] combinedBuffer = new byte[mixBlockSize];
 				for (; i < pool.Length; i += hashSize)
 				{
-					for (int j = i; j < pool.Length; ++j)
-						combinedBuffer[j - i] = pool[j];
-					for (int j = 0, k = mixBlockSize - (pool.Length - i); j < k; ++j)
-						combinedBuffer[j + pool.Length - i] = pool[j];
-					hash.ComputeHash(combinedBuffer, 0, mixBlockSize).CopyTo(pool, i);
+					Buffer.BlockCopy(pool, i, combinedBuffer, 0, pool.Length - i);
+
+					Buffer.BlockCopy(pool, 0, combinedBuffer, pool.Length - i,
+								mixBlockSize - (pool.Length - i));
+
+					Buffer.BlockCopy(PRF.ComputeHash(combinedBuffer, 0, mixBlockSize), 0,
+						pool, i, pool.Length-i > hashSize ? hashSize : pool.Length-i);
 				}
 			}
 		}
@@ -350,16 +417,60 @@ namespace Eraser.Manager
 		public unsafe void AddEntropy(byte[] entropy)
 		{
 			lock (poolLock)
-			fixed (byte* pEntropy = entropy)
-			{
-				//Add entropy to the pool by XORing every value with the given entropy.
-				byte* bytes = (byte*)pEntropy;
-				for (int i = 0; i < entropy.Length; ++i)
+				fixed (byte* pEntropy = entropy)
+				fixed (byte* pPool = pool)
 				{
-					if (poolPosition == pool.Length)
-						poolPosition = 0;
-					pool[poolPosition++] ^= bytes[i];
+					//Add entropy to the pool by XORing every value with the given entropy.
+					poolPosition = CircularMemoryXor(new IntPtr(pPool), new IntPtr(pEntropy),
+										poolPosition, poolSize, entropy.Length);
 				}
+		}
+
+		/// <summary>
+		/// Optomised unmanaged circular memory xor
+		/// </summary>
+		/// <param name="dest">Destination Pointer</param>
+		/// <param name="source">Source Pointer</param>
+		/// <param name="size">Size in bytes</param>
+		private unsafe static int CircularMemoryXor(IntPtr destination, IntPtr source,
+			int destOffset, int destLength, int size)
+		{
+			uint* dest = (uint*)destination.ToPointer();
+			uint* src = (uint*)source.ToPointer();
+			while (size > 0)
+			{
+				if (size + destOffset < destLength)
+				{
+					IntPtr _gc = new IntPtr(destination.ToInt32() + destOffset);
+					MemoryXor(_gc, source, size);
+					destOffset += size;
+					size = 0;
+				}
+				else // (size + destOffset >= destLength)
+				{
+					IntPtr _gc = new IntPtr(destination.ToInt32() + destOffset);
+					MemoryXor(_gc, source, destLength - destOffset);
+					source = new IntPtr(source.ToInt32() + destLength - destOffset);
+					size -= destLength - destOffset;
+					destOffset = 0; 					
+				}
+			}
+
+			return destOffset;
+		}
+
+		private static unsafe void MemoryXor(IntPtr destination, IntPtr source, int size)
+		{
+			int wsize = size / sizeof(int); size -= wsize * sizeof(int);
+			uint* d = (uint*)destination.ToPointer();
+			uint* s = (uint*)source.ToPointer();
+			
+			while (wsize-- > 0) *d++ ^= *s++;
+
+			if (size > 0)
+			{
+				byte* db = (byte*)d, ds = (byte*)s;
+				while (size-- > 0)	*db++ ^= *ds++;
 			}
 		}
 
@@ -370,26 +481,57 @@ namespace Eraser.Manager
 		/// <param name="entropy">A value which will be XORed with pool contents.</param>
 		public unsafe void AddEntropy<T>(T entropy) where T : struct
 		{
-			int sizeofObject = Marshal.SizeOf(entropy);
-			IntPtr memory = Marshal.AllocHGlobal(sizeofObject);
 			try
 			{
-				Marshal.StructureToPtr(entropy, memory, false);
-				byte* pMemory = (byte*)memory.ToPointer();
-				byte[] dest = new byte[sizeofObject];
+				int sizeofObject = Marshal.SizeOf(entropy);
+				IntPtr memory = Marshal.AllocHGlobal(sizeofObject);
+				try
+				{
+					Marshal.StructureToPtr(entropy, memory, false);
+					byte[] dest = new byte[sizeofObject];
 
-				//Copy the memory
-				for (int i = 0; i != dest.Length; ++i)
-					dest[i] = *pMemory++;
+					//Copy the memory
+					Marshal.Copy(memory, dest, 0, sizeofObject);
 
-				//Add entropy
-				AddEntropy(dest);
+					//Add entropy
+					AddEntropy(dest);
+				}
+				finally
+				{
+					Marshal.FreeHGlobal(memory);
+				}
 			}
-			finally
+			catch (OutOfMemoryException ex1)
 			{
-				Marshal.FreeHGlobal(memory);
+				// ignore this entropy source, we don't have enough memory!
+				string ignored = ex1.Message;
 			}
 		}
+#if false
+		
+		/// <summary>
+		/// Optomosed constant memory xor
+		/// </summary>
+		/// <param name="dest">Destination buffer</param>
+		/// <param name="value">value the destination should be xored against</param>
+		/// <param name="size">size of destination in bytes</param>
+		private static unsafe void MemoryXor(IntPtr dest, byte value, int size)
+		{
+			int wsize = size / sizeof(int); size -= wsize * sizeof(int);
+			uint* d = (uint*)dest.ToPointer();
+			uint wvalue = 0; // a word containing values in  correct endian
+			for (int i = 0; i < sizeof(uint); i++, wvalue <<= 8)	wvalue |= value;			
+
+			while (wsize-- > 0)		*d++ ^= wvalue;
+
+			if (size > 0) // size%4 == 0 ?
+			{
+				byte* db = (byte*)d;
+				while (size-- > 0)
+					*db++ ^= value;
+			}
+		}
+#endif
 
 		/// <summary>
 		/// Adds entropy to the pool. The sources of the entropy data is queried
@@ -429,6 +571,7 @@ namespace Eraser.Manager
 			{
 				AddEntropy(memoryStatus.ullAvailPhys);
 				AddEntropy(memoryStatus.ullAvailVirtual);
+				AddEntropy(memoryStatus);
 			}
 
 			//Thread execution times
@@ -482,25 +625,24 @@ namespace Eraser.Manager
 				if (NetAPI.NetStatisticsGet(null, NetAPI.SERVICE_WORKSTATION,
 					0, 0, out netAPIStats) == 0)
 				{
-					//Get the size of the buffer
-					uint size = 0;
-					NetAPI.NetApiBufferSize(netAPIStats, out size);
-					byte[] entropy = new byte[size];
-
-					//Copy the buffer
-					fixed (byte* fEntropy = entropy)
+					try
 					{
-						byte* pSrc = (byte*)netAPIStats.ToPointer();
-						byte* pEntropy = fEntropy;
-						while (size-- != 0)
-							*pEntropy++ = *pSrc++;
+						//Get the size of the buffer
+						uint size = 0;
+						NetAPI.NetApiBufferSize(netAPIStats, out size);
+						byte[] entropy = new byte[size];
+
+						//Copy the buffer
+						Marshal.Copy(entropy, 0, netAPIStats, entropy.Length);
+
+						//And add it to the pool
+						AddEntropy(entropy);
 					}
-
-					//And add it to the pool
-					AddEntropy(entropy);
-
-					//Free the statistics buffer
-					NetAPI.NetApiBufferFree(netAPIStats);
+					finally
+					{
+						//Free the statistics buffer
+						NetAPI.NetApiBufferFree(netAPIStats);
+					}
 				}
 			}
 
@@ -553,12 +695,13 @@ namespace Eraser.Manager
 				if (result == 0 /*ERROR_SUCCESS*/ && dataWritten > 0)
 				{
 					byte[] entropy = new byte[dataWritten];
-					for (int i = 0; i < dataWritten; ++i)
-						entropy[i] = infoBuffer[i];
+					Buffer.BlockCopy(infoBuffer, 0, entropy, 0, (int)dataWritten);
 					AddEntropy(entropy);
 					totalEntropy += dataWritten;
 				}
 			}
+
+			AddEntropy(totalEntropy);
 
 			//Finally, our good friend CryptGenRandom()
 			byte[] cryptGenRandom = new byte[1536];
@@ -567,9 +710,29 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// PRF algorithm handle
+		/// </summary>
+		private HashAlgorithm PRF;
+
+		/// <summary>
+		/// PRF algorithm identifier
+		/// </summary>
+		private PRFAlgorithms prfAlgorithm;		
+
+		/// <summary>
 		/// The thread object.
 		/// </summary>
 		Thread thread;
+
+		/// <summary>
+		/// size of the netropy pool, should allways be exponent of 2.
+		/// </summary>
+		const int poolSize = sizeof(uint) * 128;
+
+		/// <summary>
+		/// Modulus of pool size
+		/// </summary>
+		const int poolMod = poolSize - 1;
 
 		/// <summary>
 		/// The pool of data which we currently maintain.
