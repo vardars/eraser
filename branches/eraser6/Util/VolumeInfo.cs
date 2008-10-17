@@ -140,9 +140,7 @@ namespace Eraser.Util
 				catch (Win32Exception ex0)
 				{
 					// VolumeInfo was not constructed wel, Ignore.
-					if (ex0.Message == "Eraser.Util.Volume.Volume")
-						/* Ignore */;
-					else
+					if (ex0.Message != "Eraser.Util.Volume.Volume")
 						throw ex0;
 				}
 			}
