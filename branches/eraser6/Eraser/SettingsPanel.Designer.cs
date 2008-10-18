@@ -2,7 +2,8 @@
  * $Id$
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
- * Modified By:
+ * Modified By: Kasra Nassiri <cjax@users.sourceforge.net> @10/18/2008
+ * Modified By: 
  * 
  * This file is part of Eraser.
  * 
@@ -307,6 +308,7 @@ namespace Eraser
 			resources.ApplyResources(this.plausibleDeniabilityFiles, "plausibleDeniabilityFiles");
 			this.plausibleDeniabilityFiles.FormattingEnabled = true;
 			this.plausibleDeniabilityFiles.Name = "plausibleDeniabilityFiles";
+			this.plausibleDeniabilityFiles.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			// 
 			// plausibleDeniabilityFilesAddFile
 			// 
@@ -337,6 +339,7 @@ namespace Eraser
 			// SettingsPanel
 			// 
 			this.Controls.Add(this.saveSettings);
+			this.DoubleBuffered = true;
 			this.Name = "SettingsPanel";
 			resources.ApplyResources(this, "$this");
 			this.Controls.SetChildIndex(this.saveSettings, 0);

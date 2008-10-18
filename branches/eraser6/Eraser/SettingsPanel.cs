@@ -2,7 +2,8 @@
  * $Id$
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
- * Modified By:
+ * Modified By: Kasra Nassiri <cjax@users.sourceforge.net> @10/18/2008
+ * Modified By: 
  * 
  * This file is part of Eraser.
  * 
@@ -113,7 +114,7 @@ namespace Eraser
 					eraseFilesMethod.SelectedItem = method;
 					break;
 				}
-			 
+
 			foreach (Object method in eraseUnusedMethod.Items)
 				if (((ErasureMethod)method).GUID == ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod)
 				{
@@ -191,7 +192,7 @@ namespace Eraser
 			{
 				string defaults = string.Empty;
 				foreach (string item in defaultsList)
-					defaults += "\t" + item +"\n";
+					defaults += "\t" + item + "\n";
 				MessageBox.Show(string.Format(S._("The following settings held invalid values:\n\n" +
 					"{0}\nDefault settings are loaded.\n\n" +
 					"Please, check that the new settings suit your required level of security."),
@@ -212,22 +213,44 @@ namespace Eraser
 				plausibleDeniability.Checked;
 		}
 
+		private void plausableDeniabilityFilesRemoveUpdate()
+		{
+			plausibleDeniabilityFilesRemove.Enabled =
+				plausibleDeniabilityFiles.Items.Count > 0;
+		}
+
 		private void plausibleDeniabilityFilesAddFile_Click(object sender, EventArgs e)
 		{
 			if (openFileDialog.ShowDialog() == DialogResult.OK)
 				plausibleDeniabilityFiles.Items.AddRange(openFileDialog.FileNames);
+
+			plausableDeniabilityFilesRemoveUpdate();
 		}
 
 		private void plausibleDeniabilityFilesAddFolder_Click(object sender, EventArgs e)
 		{
 			if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
 				plausibleDeniabilityFiles.Items.Add(folderBrowserDialog.SelectedPath);
+
+			plausableDeniabilityFilesRemoveUpdate();
 		}
 
 		private void plausibleDeniabilityFilesRemove_Click(object sender, EventArgs e)
 		{
 			if (plausibleDeniabilityFiles.SelectedIndex != -1)
-				plausibleDeniabilityFiles.Items.RemoveAt(plausibleDeniabilityFiles.SelectedIndex);
+			{
+				ListBox.SelectedObjectCollection items =
+					plausibleDeniabilityFiles.SelectedItems;
+				while (items.Count > 0)
+				{
+					for (int i = 0; i < items.Count; i++)
+						plausibleDeniabilityFiles.Items.Remove(items[i]);
+
+					items = plausibleDeniabilityFiles.SelectedItems;
+				}
+
+				plausableDeniabilityFilesRemoveUpdate();
+			}
 		}
 
 		private void pluginsMenu_Opening(object sender, CancelEventArgs e)
@@ -245,7 +268,7 @@ namespace Eraser
 		{
 			if (pluginsManager.SelectedItems.Count != 1)
 				return;
-			
+
 			PluginInstance instance = (PluginInstance)pluginsManager.SelectedItems[0].Tag;
 			instance.Plugin.DisplaySettings(this);
 		}
