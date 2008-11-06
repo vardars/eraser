@@ -22,7 +22,7 @@
 
 namespace Eraser
 {
-	partial class SettingsPanel
+	partial class SettingsPanel : Eraser.BasePanel
 	{
 		/// <summary>
 		/// Required designer variable.

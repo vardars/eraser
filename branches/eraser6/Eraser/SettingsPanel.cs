@@ -37,7 +37,7 @@ using System.Threading;
 
 namespace Eraser
 {
-	public partial class SettingsPanel : Eraser.BasePanel
+	public partial class SettingsPanel
 	{
 		public SettingsPanel()
 		{
