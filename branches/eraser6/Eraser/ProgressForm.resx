@@ -117,241 +117,154 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="overallProgressLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 174</value>
-  </data>
-  <data name="overallProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>128, 15</value>
-  </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="overallProgressLbl.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+  <data name="itemProgress.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
   </data>
-  <data name="overallProgressLbl.Text" xml:space="preserve">
-    <value>Total: 0%</value>
-  </data>
-  <data name="overallProgressLbl.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleCenter</value>
-  </data>
-  <data name="&gt;&gt;overallProgressLbl.Name" xml:space="preserve">
-    <value>overallProgressLbl</value>
-  </data>
-  <data name="&gt;&gt;overallProgressLbl.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;overallProgressLbl.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;overallProgressLbl.ZOrder" xml:space="preserve">
-    <value>17</value>
-  </data>
-  <data name="overallProgress.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 192</value>
-  </data>
-  <data name="overallProgress.Size" type="System.Drawing.Size, System.Drawing">
-    <value>129, 15</value>
-  </data>
-  <data name="overallProgress.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;overallProgress.Name" xml:space="preserve">
-    <value>overallProgress</value>
-  </data>
-  <data name="&gt;&gt;overallProgress.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;overallProgress.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;overallProgress.ZOrder" xml:space="preserve">
-    <value>16</value>
-  </data>
-  <data name="jobTitle.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="jobTitle.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 9pt, style=Bold</value>
-  </data>
-  <data name="jobTitle.Location" type="System.Drawing.Point, System.Drawing">
-    <value>149, 8</value>
-  </data>
-  <data name="jobTitle.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 15</value>
-  </data>
-  <data name="jobTitle.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;jobTitle.Name" xml:space="preserve">
-    <value>jobTitle</value>
-  </data>
-  <data name="&gt;&gt;jobTitle.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;jobTitle.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;jobTitle.ZOrder" xml:space="preserve">
-    <value>15</value>
-  </data>
-  <data name="status.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="status.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 9pt, style=Bold</value>
-  </data>
-  <data name="status.Location" type="System.Drawing.Point, System.Drawing">
-    <value>215, 28</value>
-  </data>
-  <data name="status.Size" type="System.Drawing.Size, System.Drawing">
-    <value>84, 15</value>
-  </data>
-  <data name="status.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="status.Text" xml:space="preserve">
-    <value>Overwriting...</value>
-  </data>
-  <data name="&gt;&gt;status.Name" xml:space="preserve">
-    <value>status</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="stop.Location" type="System.Drawing.Point, System.Drawing">
+    <value>367, 184</value>
   </data>
   <data name="&gt;&gt;status.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;status.Parent" xml:space="preserve">
+  <data name="status.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="passLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>148, 95</value>
+  </data>
+  <data name="bevelLine1.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="timeLeft.Location" type="System.Drawing.Point, System.Drawing">
+    <value>215, 114</value>
+  </data>
+  <data name="&gt;&gt;item.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;status.ZOrder" xml:space="preserve">
-    <value>14</value>
+  <data name="timeLeftLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>57, 15</value>
   </data>
-  <data name="statusLbl.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="&gt;&gt;timeLeft.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
-  <data name="statusLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>147, 28</value>
+  <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 9pt</value>
   </data>
-  <data name="statusLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>42, 15</value>
+  <data name="titleLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>128, 18</value>
   </data>
-  <data name="statusLbl.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
+  <data name="&gt;&gt;bevelLine1.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
-  <data name="statusLbl.Text" xml:space="preserve">
-    <value>Status:</value>
+  <data name="&gt;&gt;item.Name" xml:space="preserve">
+    <value>item</value>
   </data>
-  <data name="&gt;&gt;statusLbl.Name" xml:space="preserve">
-    <value>statusLbl</value>
+  <data name="&gt;&gt;bevelLine1.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
-  <data name="&gt;&gt;statusLbl.Type" xml:space="preserve">
+  <data name="&gt;&gt;jobTitle.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;statusLbl.Parent" xml:space="preserve">
+  <data name="&gt;&gt;itemProgress.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;statusLbl.ZOrder" xml:space="preserve">
-    <value>13</value>
+  <data name="&gt;&gt;timeLeftLbl.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
-  <data name="itemLbl.AutoSize" type="System.Boolean, mscorlib">
+  <data name="stop.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="title.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;passLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>449, 216</value>
+  </data>
+  <data name="&gt;&gt;title.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="passLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>33, 15</value>
+  </data>
+  <data name="timeLeftLbl.Text" xml:space="preserve">
+    <value>Time left:</value>
+  </data>
+  <data name="jobTitle.Location" type="System.Drawing.Point, System.Drawing">
+    <value>149, 8</value>
+  </data>
+  <data name="&gt;&gt;timeLeftLbl.Name" xml:space="preserve">
+    <value>timeLeftLbl</value>
+  </data>
+  <data name="&gt;&gt;pass.Name" xml:space="preserve">
+    <value>pass</value>
+  </data>
+  <data name="jobTitle.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="itemLbl.Location" type="System.Drawing.Point, System.Drawing">
     <value>148, 61</value>
   </data>
-  <data name="itemLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>34, 15</value>
+  <data name="itemProgress.Size" type="System.Drawing.Size, System.Drawing">
+    <value>257, 17</value>
   </data>
-  <data name="itemLbl.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
+  <data name="&gt;&gt;pass.ZOrder" xml:space="preserve">
+    <value>9</value>
   </data>
-  <data name="itemLbl.Text" xml:space="preserve">
-    <value>Item:</value>
+  <data name="titleLbl.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopCenter</value>
   </data>
-  <data name="&gt;&gt;itemLbl.Name" xml:space="preserve">
-    <value>itemLbl</value>
-  </data>
-  <data name="&gt;&gt;itemLbl.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;itemLbl.Parent" xml:space="preserve">
+  <data name="&gt;&gt;statusLbl.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;itemLbl.ZOrder" xml:space="preserve">
-    <value>12</value>
-  </data>
-  <data name="item.Location" type="System.Drawing.Point, System.Drawing">
-    <value>215, 61</value>
-  </data>
-  <data name="item.Size" type="System.Drawing.Size, System.Drawing">
-    <value>220, 30</value>
-  </data>
-  <data name="item.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;item.Name" xml:space="preserve">
-    <value>item</value>
+  <data name="status.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 9pt, style=Bold</value>
   </data>
   <data name="&gt;&gt;item.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;item.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Erasure Progress</value>
   </data>
-  <data name="&gt;&gt;item.ZOrder" xml:space="preserve">
-    <value>11</value>
+  <data name="titleLbl.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt, style=Bold</value>
   </data>
-  <data name="passLbl.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="itemLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>34, 15</value>
   </data>
-  <data name="passLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>148, 95</value>
+  <data name="&gt;&gt;bevelLine1.Name" xml:space="preserve">
+    <value>bevelLine1</value>
   </data>
-  <data name="passLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>33, 15</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>96, 96</value>
   </data>
-  <data name="passLbl.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
+  <data name="overallProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>128, 15</value>
   </data>
-  <data name="passLbl.Text" xml:space="preserve">
-    <value>Pass:</value>
+  <data name="bevelLine2.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
   </data>
-  <data name="&gt;&gt;passLbl.Name" xml:space="preserve">
-    <value>passLbl</value>
+  <data name="&gt;&gt;stop.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
-  <data name="&gt;&gt;passLbl.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;passLbl.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;passLbl.ZOrder" xml:space="preserve">
-    <value>10</value>
-  </data>
-  <data name="pass.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="pass.Location" type="System.Drawing.Point, System.Drawing">
-    <value>215, 95</value>
-  </data>
-  <data name="pass.Size" type="System.Drawing.Size, System.Drawing">
-    <value>13, 15</value>
-  </data>
-  <data name="pass.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
-  </data>
-  <data name="pass.Text" xml:space="preserve">
+  <data name="&gt;&gt;timeLeft.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;pass.Name" xml:space="preserve">
-    <value>pass</value>
+  <data name="overallProgressLbl.Text" xml:space="preserve">
+    <value>Total: 0%</value>
   </data>
-  <data name="&gt;&gt;pass.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="timeLeft.Size" type="System.Drawing.Size, System.Drawing">
+    <value>76, 15</value>
   </data>
-  <data name="&gt;&gt;pass.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="statusLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>147, 28</value>
   </data>
-  <data name="&gt;&gt;pass.ZOrder" xml:space="preserve">
-    <value>9</value>
+  <data name="statusLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
   </data>
   <data name="title.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -695,244 +608,334 @@
         AQr94mKkQFpZkKOhZe+Lpfu9DXaBq/T/AwU2UumcJL/XAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="title.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 33</value>
-  </data>
-  <data name="title.Size" type="System.Drawing.Size, System.Drawing">
-    <value>128, 128</value>
-  </data>
-  <data name="title.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
-  </data>
-  <data name="&gt;&gt;title.Name" xml:space="preserve">
-    <value>title</value>
-  </data>
-  <data name="&gt;&gt;title.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;title.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;title.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="titleLbl.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 10pt, style=Bold</value>
-  </data>
-  <data name="titleLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 6</value>
-  </data>
-  <data name="titleLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>128, 18</value>
-  </data>
-  <data name="titleLbl.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="titleLbl.Text" xml:space="preserve">
-    <value>Erasing...</value>
-  </data>
-  <data name="titleLbl.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopCenter</value>
-  </data>
-  <data name="&gt;&gt;titleLbl.Name" xml:space="preserve">
-    <value>titleLbl</value>
-  </data>
-  <data name="&gt;&gt;titleLbl.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;titleLbl.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;titleLbl.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="itemProgressLbl.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="itemProgressLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>413, 138</value>
-  </data>
-  <data name="itemProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>23, 15</value>
-  </data>
-  <data name="itemProgressLbl.TabIndex" type="System.Int32, mscorlib">
-    <value>13</value>
-  </data>
-  <data name="itemProgressLbl.Text" xml:space="preserve">
-    <value>0%</value>
-  </data>
-  <data name="&gt;&gt;itemProgressLbl.Name" xml:space="preserve">
-    <value>itemProgressLbl</value>
-  </data>
-  <data name="&gt;&gt;itemProgressLbl.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;itemProgressLbl.Parent" xml:space="preserve">
+  <data name="&gt;&gt;overallProgressLbl.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;itemProgressLbl.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="itemProgress.Location" type="System.Drawing.Point, System.Drawing">
-    <value>150, 137</value>
-  </data>
-  <data name="itemProgress.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 17</value>
-  </data>
-  <data name="itemProgress.TabIndex" type="System.Int32, mscorlib">
-    <value>12</value>
-  </data>
-  <data name="&gt;&gt;itemProgress.Name" xml:space="preserve">
-    <value>itemProgress</value>
-  </data>
-  <data name="&gt;&gt;itemProgress.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;itemProgress.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;itemProgress.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="stop.Location" type="System.Drawing.Point, System.Drawing">
-    <value>332, 184</value>
-  </data>
-  <data name="stop.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
-  </data>
-  <data name="stop.TabIndex" type="System.Int32, mscorlib">
-    <value>14</value>
-  </data>
-  <data name="stop.Text" xml:space="preserve">
-    <value>Stop</value>
-  </data>
-  <data name="&gt;&gt;stop.Name" xml:space="preserve">
-    <value>stop</value>
-  </data>
-  <data name="&gt;&gt;stop.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;stop.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;stop.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="bevelLine1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>152, 51</value>
-  </data>
-  <data name="bevelLine1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>285, 2</value>
-  </data>
-  <data name="bevelLine1.TabIndex" type="System.Int32, mscorlib">
-    <value>16</value>
-  </data>
-  <data name="&gt;&gt;bevelLine1.Name" xml:space="preserve">
-    <value>bevelLine1</value>
-  </data>
-  <data name="&gt;&gt;bevelLine1.Type" xml:space="preserve">
-    <value>Trustbridge.Windows.Controls.BevelLine, BevelLine, Version=1.0.2859.29240, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;bevelLine1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;bevelLine1.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="bevelLine2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>140, 13</value>
-  </data>
-  <data name="bevelLine2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>2, 2</value>
-  </data>
-  <data name="bevelLine2.TabIndex" type="System.Int32, mscorlib">
-    <value>15</value>
-  </data>
-  <data name="&gt;&gt;bevelLine2.Name" xml:space="preserve">
-    <value>bevelLine2</value>
-  </data>
-  <data name="&gt;&gt;bevelLine2.Type" xml:space="preserve">
-    <value>Trustbridge.Windows.Controls.BevelLine, BevelLine, Version=1.0.2859.29240, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;bevelLine2.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;bevelLine2.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <data name="timeLeftLbl.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
-  </data>
-  <data name="timeLeftLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>148, 114</value>
-  </data>
-  <data name="timeLeftLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>57, 15</value>
-  </data>
-  <data name="timeLeftLbl.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
-  </data>
-  <data name="timeLeftLbl.Text" xml:space="preserve">
-    <value>Time left:</value>
-  </data>
-  <data name="&gt;&gt;timeLeftLbl.Name" xml:space="preserve">
-    <value>timeLeftLbl</value>
-  </data>
-  <data name="&gt;&gt;timeLeftLbl.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;timeLeftLbl.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;timeLeftLbl.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="timeLeft.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="timeLeft.Location" type="System.Drawing.Point, System.Drawing">
-    <value>215, 114</value>
-  </data>
-  <data name="timeLeft.Size" type="System.Drawing.Size, System.Drawing">
-    <value>76, 15</value>
-  </data>
-  <data name="timeLeft.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
   </data>
   <data name="timeLeft.Text" xml:space="preserve">
     <value>Calculating...</value>
   </data>
-  <data name="&gt;&gt;timeLeft.Name" xml:space="preserve">
-    <value>timeLeft</value>
+  <data name="status.Location" type="System.Drawing.Point, System.Drawing">
+    <value>215, 28</value>
   </data>
-  <data name="&gt;&gt;timeLeft.Type" xml:space="preserve">
+  <data name="jobTitle.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 9pt, style=Bold</value>
+  </data>
+  <data name="passLbl.Text" xml:space="preserve">
+    <value>Pass:</value>
+  </data>
+  <data name="&gt;&gt;titleLbl.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;timeLeft.Parent" xml:space="preserve">
+  <data name="&gt;&gt;itemLbl.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;pass.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;timeLeft.ZOrder" xml:space="preserve">
+  <data name="overallProgressLbl.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="title.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 33</value>
+  </data>
+  <data name="item.Size" type="System.Drawing.Size, System.Drawing">
+    <value>220, 30</value>
+  </data>
+  <data name="&gt;&gt;itemLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="pass.Text" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <data name="&gt;&gt;itemProgressLbl.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="itemLbl.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
-  </metadata>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>96, 96</value>
   </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>444, 229</value>
+  <data name="&gt;&gt;timeLeftLbl.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
-  <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 9pt</value>
+  <data name="bevelLine1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>285, 2</value>
   </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>Erasure Progress</value>
+  <data name="bevelLine2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>2, 2</value>
+  </data>
+  <data name="itemProgressLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="&gt;&gt;item.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="statusLbl.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;statusLbl.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="&gt;&gt;stop.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;itemProgress.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;stop.Name" xml:space="preserve">
+    <value>stop</value>
+  </data>
+  <data name="&gt;&gt;overallProgress.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="itemProgressLbl.Text" xml:space="preserve">
+    <value>0%</value>
+  </data>
+  <data name="titleLbl.Text" xml:space="preserve">
+    <value>Erasing...</value>
+  </data>
+  <data name="itemProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>23, 15</value>
+  </data>
+  <data name="bevelLine1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>152, 51</value>
+  </data>
+  <data name="&gt;&gt;pass.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="title.Size" type="System.Drawing.Size, System.Drawing">
+    <value>128, 128</value>
+  </data>
+  <data name="&gt;&gt;itemProgressLbl.Name" xml:space="preserve">
+    <value>itemProgressLbl</value>
+  </data>
+  <data name="timeLeft.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ProgressForm</value>
   </data>
+  <data name="&gt;&gt;jobTitle.Name" xml:space="preserve">
+    <value>jobTitle</value>
+  </data>
+  <data name="&gt;&gt;passLbl.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;titleLbl.Name" xml:space="preserve">
+    <value>titleLbl</value>
+  </data>
+  <data name="&gt;&gt;titleLbl.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;timeLeftLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;bevelLine2.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;itemLbl.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="itemProgressLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>413, 138</value>
+  </data>
+  <data name="&gt;&gt;itemProgressLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="overallProgress.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 192</value>
+  </data>
+  <data name="&gt;&gt;itemProgress.Name" xml:space="preserve">
+    <value>itemProgress</value>
+  </data>
+  <data name="item.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="overallProgress.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="itemProgress.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 137</value>
+  </data>
+  <data name="status.Size" type="System.Drawing.Size, System.Drawing">
+    <value>84, 15</value>
+  </data>
+  <data name="&gt;&gt;jobTitle.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="titleLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="status.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;bevelLine2.Name" xml:space="preserve">
+    <value>bevelLine2</value>
+  </data>
+  <data name="&gt;&gt;stop.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="status.Text" xml:space="preserve">
+    <value>Overwriting...</value>
+  </data>
+  <data name="itemProgressLbl.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;overallProgress.ZOrder" xml:space="preserve">
+    <value>16</value>
+  </data>
+  <data name="jobTitle.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;title.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="itemLbl.Text" xml:space="preserve">
+    <value>Item:</value>
+  </data>
+  <data name="pass.Location" type="System.Drawing.Point, System.Drawing">
+    <value>215, 95</value>
+  </data>
+  <data name="stop.Text" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="statusLbl.Text" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="timeLeftLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="overallProgressLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 174</value>
+  </data>
+  <data name="&gt;&gt;titleLbl.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;passLbl.Name" xml:space="preserve">
+    <value>passLbl</value>
+  </data>
+  <data name="&gt;&gt;bevelLine2.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;title.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;timeLeft.Name" xml:space="preserve">
+    <value>timeLeft</value>
+  </data>
+  <data name="&gt;&gt;itemLbl.Name" xml:space="preserve">
+    <value>itemLbl</value>
+  </data>
+  <data name="&gt;&gt;status.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="titleLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 6</value>
+  </data>
+  <data name="bevelLine2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>140, 13</value>
+  </data>
+  <data name="pass.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;timeLeft.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;bevelLine1.Type" xml:space="preserve">
+    <value>Trustbridge.Windows.Controls.BevelLine, BevelLine, Version=1.0.2859.29240, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;overallProgressLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="jobTitle.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 15</value>
+  </data>
+  <data name="&gt;&gt;overallProgress.Name" xml:space="preserve">
+    <value>overallProgress</value>
+  </data>
+  <data name="timeLeftLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>148, 114</value>
+  </data>
+  <data name="passLbl.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;bevelLine2.Type" xml:space="preserve">
+    <value>Trustbridge.Windows.Controls.BevelLine, BevelLine, Version=1.0.2859.29240, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="passLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;title.Name" xml:space="preserve">
+    <value>title</value>
+  </data>
+  <data name="&gt;&gt;overallProgress.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="itemLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;status.Name" xml:space="preserve">
+    <value>status</value>
+  </data>
+  <data name="statusLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>42, 15</value>
+  </data>
+  <data name="&gt;&gt;jobTitle.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="stop.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="timeLeft.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="pass.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;itemProgress.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="item.Location" type="System.Drawing.Point, System.Drawing">
+    <value>215, 61</value>
+  </data>
+  <data name="&gt;&gt;statusLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="overallProgressLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;overallProgressLbl.ZOrder" xml:space="preserve">
+    <value>17</value>
+  </data>
+  <data name="&gt;&gt;overallProgressLbl.Name" xml:space="preserve">
+    <value>overallProgressLbl</value>
+  </data>
+  <data name="pass.Size" type="System.Drawing.Size, System.Drawing">
+    <value>13, 15</value>
+  </data>
+  <data name="overallProgress.Size" type="System.Drawing.Size, System.Drawing">
+    <value>129, 15</value>
+  </data>
+  <data name="&gt;&gt;statusLbl.Name" xml:space="preserve">
+    <value>statusLbl</value>
+  </data>
+  <data name="&gt;&gt;passLbl.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;status.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>Dutch</value>
+  </metadata>
 </root>

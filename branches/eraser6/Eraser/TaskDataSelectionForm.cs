@@ -53,19 +53,6 @@ namespace Eraser
 			InitializeComponent();
 			file.Checked = true;
 
-			{ // stack frame
-				string str = (string)Microsoft.Win32.Registry.GetValue(
-					@"HKEY_LOCAL_MACHINE\SOFTWARE\Classes\CLSID\{645FF040-5081-101B-9F08-00AA002F954E}\DefaultIcon\",
-					"Full", new object());
-
-				DriveItem item = new DriveItem();
-				item.Drive = "C:";
-				item.Label = "RecycleBin";
-				item.Icon = ShellIcon.GetIcon(str);
-				unusedDisk.Items.Add(item);
-			}
-
-
 			//Populate the drives list
 			List<VolumeInfo> volumes = VolumeInfo.GetVolumes();
 			foreach (VolumeInfo volume in volumes)
@@ -125,21 +112,13 @@ namespace Eraser
 					folderTask.ExcludeMask = folderExclude.Text;
 					folderTask.DeleteIfEmpty = folderDelete.Checked;
 				}
-				else if(unused.Checked)
+				else
 				{
-					if (unusedDisk.SelectedIndex == 0) // RecycleBin
-					{
-						Task.RecycleBin recycleBinTask = new Task.RecycleBin();
-						result = (Task.ErasureTarget)recycleBinTask;
-					}
-					else
-					{
-						Task.UnusedSpace unusedSpaceTask = new Task.UnusedSpace();
-						result = unusedSpaceTask;
+					Task.UnusedSpace unusedSpaceTask = new Task.UnusedSpace();
+					result = unusedSpaceTask;
 
-						unusedSpaceTask.Drive = ((DriveItem)unusedDisk.SelectedItem).Drive;
-						unusedSpaceTask.EraseClusterTips = unusedClusterTips.Checked;
-					}
+					unusedSpaceTask.Drive = ((DriveItem)unusedDisk.SelectedItem).Drive;
+					unusedSpaceTask.EraseClusterTips = unusedClusterTips.Checked;
 				}
 
 				result.Method = (ErasureMethod)this.method.SelectedItem;
@@ -177,12 +156,8 @@ namespace Eraser
 							unusedDisk.SelectedItem = item;
 					unusedClusterTips.Checked = unusedSpaceTask.EraseClusterTips;
 				}
-				else if (value is Task.RecycleBin)
-				{
-					unused.Checked = true;
-					Task.RecycleBin unusedSpaceTask = new Task.RecycleBin();
-					// TODO some GUI work
-				}
+				else
+					throw new NotImplementedException("Unknown erasure target.");
 			}
 		}
 

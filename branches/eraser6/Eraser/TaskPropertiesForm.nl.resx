@@ -121,9 +121,6 @@
     <value>Annuleer</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>358, 462</value>
-  </data>
   <data name="typeRestart.Location" type="System.Drawing.Point, System.Drawing">
     <value>162, 71</value>
   </data>
@@ -175,23 +172,11 @@
   <data name="dataColMethod.Text" xml:space="preserve">
     <value>Wis methode</value>
   </data>
-  <data name="data.Size" type="System.Drawing.Size, System.Drawing">
-    <value>324, 238</value>
-  </data>
-  <data name="dataAdd.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 355</value>
-  </data>
   <data name="dataAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>114, 23</value>
   </data>
   <data name="dataAdd.Text" xml:space="preserve">
     <value>Data toevoegen</value>
-  </data>
-  <data name="containerTask.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="containerTask.Size" type="System.Drawing.Size, System.Drawing">
-    <value>339, 388</value>
   </data>
   <data name="containerTask.Text" xml:space="preserve">
     <value>Taak</value>
@@ -340,9 +325,6 @@
   <data name="scheduleMonthly.Text" xml:space="preserve">
     <value>Maandelijks</value>
   </data>
-  <data name="schedulePattern.Size" type="System.Drawing.Size, System.Drawing">
-    <value>327, 307</value>
-  </data>
   <data name="schedulePattern.Text" xml:space="preserve">
     <value>Herhalingspatroon</value>
   </data>
@@ -357,15 +339,6 @@
   </data>
   <data name="scheduleTimeLbl.Text" xml:space="preserve">
     <value>Voer deze taak uit op:</value>
-  </data>
-  <data name="tableLayoutPanel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>333, 382</value>
-  </data>
-  <data name="containerSchedule.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <data name="containerSchedule.Size" type="System.Drawing.Size, System.Drawing">
-    <value>339, 388</value>
   </data>
   <data name="containerSchedule.Text" xml:space="preserve">
     <value>Planner</value>

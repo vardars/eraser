@@ -134,8 +134,7 @@ namespace Eraser
 			foreach (Task.ErasureTarget target in task.Targets)
 			{
 				ListViewItem item = data.Items.Add(target.UIText);
-				if(target.Method != null)
-					item.SubItems.Add(target.Method.Name);
+				item.SubItems.Add(target.Method.Name);
 			}
 
 			//And the schedule, if selected.
@@ -273,7 +272,7 @@ namespace Eraser
 		{
 			if (data.Items.Count == 0)
 			{
-				errorProvider.SetIconPadding(data, 16);
+				errorProvider.SetIconPadding(data, -16);
 				errorProvider.SetIconAlignment(data, ErrorIconAlignment.BottomRight);
 				errorProvider.SetError(data, S._("The task has no data to erase."));
 				container.SelectedIndex = 0;

@@ -121,9 +121,6 @@
     <value>Totaal: 0%</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="overallProgress.Location" type="System.Drawing.Point, System.Drawing">
-    <value>5, 192</value>
-  </data>
   <data name="status.Size" type="System.Drawing.Size, System.Drawing">
     <value>94, 15</value>
   </data>
@@ -490,12 +487,6 @@
   <data name="titleLbl.Text" xml:space="preserve">
     <value>Wissen...</value>
   </data>
-  <data name="itemProgress.Location" type="System.Drawing.Point, System.Drawing">
-    <value>152, 138</value>
-  </data>
-  <data name="stop.Location" type="System.Drawing.Point, System.Drawing">
-    <value>362, 184</value>
-  </data>
   <data name="timeLeftLbl.Size" type="System.Drawing.Size, System.Drawing">
     <value>56, 15</value>
   </data>
@@ -510,9 +501,6 @@
   </data>
   <data name="timeLeft.Text" xml:space="preserve">
     <value>Berekenen...</value>
-  </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>457, 224</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Verloop van wissen</value>
