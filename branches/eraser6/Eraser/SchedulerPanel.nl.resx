@@ -119,10 +119,10 @@
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="titleLbl.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 8.25pt</value>
+    <value>Segoe UI, 18pt</value>
   </data>
   <data name="titleLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>43, 13</value>
+    <value>95, 32</value>
   </data>
   <data name="titleLbl.Text" xml:space="preserve">
     <value>Planner</value>

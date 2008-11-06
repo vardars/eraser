@@ -203,11 +203,8 @@
   <data name="uiContextMenu.Text" xml:space="preserve">
     <value>Integreer Eraser in Windows Explorer</value>
   </data>
-  <data name="titleLbl.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 8.25pt</value>
-  </data>
   <data name="titleLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>68, 13</value>
+    <value>139, 32</value>
   </data>
   <data name="titleLbl.Text" xml:space="preserve">
     <value>Instellingen</value>

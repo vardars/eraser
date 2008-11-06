@@ -120,8 +120,9 @@
   <data name="schedulerColNextRun.Text" xml:space="preserve">
     <value>Next Run</value>
   </data>
-  <data name="&gt;&gt;runNowToolStripMenuItem.Name" xml:space="preserve">
-    <value>runNowToolStripMenuItem</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="schedulerProgress.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 23</value>
   </data>
   <data name="&gt;&gt;deleteTaskToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -133,21 +134,26 @@
   <data name="&gt;&gt;titleIcon.Type" xml:space="preserve">
     <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;content.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="&gt;&gt;schedulerColName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="&gt;&gt;runNowToolStripMenuItem.Name" xml:space="preserve">
+    <value>runNowToolStripMenuItem</value>
+  </data>
   <data name="editTaskToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>149, 22</value>
   </data>
-  <data name="cancelTaskToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>149, 22</value>
+  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>146, 6</value>
   </data>
   <data name="schedulerMenu.Size" type="System.Drawing.Size, System.Drawing">
     <value>150, 126</value>
   </data>
   <data name="&gt;&gt;schedulerColNextRun.Name" xml:space="preserve">
     <value>schedulerColNextRun</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>SchedulerPanel</value>
   </data>
   <data name="schedulerColNextRun.Width" type="System.Int32, mscorlib">
     <value>200</value>
@@ -177,6 +183,9 @@
   <data name="runNowToolStripMenuItem.Text" xml:space="preserve">
     <value>Run Now</value>
   </data>
+  <data name="&gt;&gt;editTaskToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;schedulerMenu.Name" xml:space="preserve">
     <value>schedulerMenu</value>
   </data>
@@ -202,32 +211,29 @@
   <data name="schedulerColStatus.Width" type="System.Int32, mscorlib">
     <value>200</value>
   </data>
+  <data name="titleLbl.Text" xml:space="preserve">
+    <value>Erase Schedule</value>
+  </data>
   <data name="&gt;&gt;schedulerProgress.Type" xml:space="preserve">
     <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;titleIcon.Name" xml:space="preserve">
     <value>titleIcon</value>
   </data>
-  <data name="&gt;&gt;schedulerColName.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="cancelTaskToolStripMenuItem.Text" xml:space="preserve">
     <value>Cancel Task</value>
   </data>
-  <data name="&gt;&gt;titleIcon.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 6</value>
+  <data name="&gt;&gt;schedulerMenu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;schedulerColStatus.Name" xml:space="preserve">
     <value>schedulerColStatus</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>Eraser.BasePanel, Eraser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>146, 6</value>
   </data>
   <data name="viewTaskLogToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>149, 22</value>
@@ -258,26 +264,17 @@
   <data name="&gt;&gt;schedulerProgress.Parent" xml:space="preserve">
     <value>content</value>
   </data>
-  <data name="&gt;&gt;runNowToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;titleLbl.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
   <data name="editTaskToolStripMenuItem.Text" xml:space="preserve">
     <value>Edit Task</value>
   </data>
   <data name="&gt;&gt;cancelTaskToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;schedulerColNextRun.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;schedulerProgress.Name" xml:space="preserve">
-    <value>schedulerProgress</value>
-  </data>
-  <data name="schedulerProgress.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+  <data name="cancelTaskToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>149, 22</value>
   </data>
   <data name="scheduler.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -294,6 +291,9 @@
   <data name="&gt;&gt;schedulerColName.Name" xml:space="preserve">
     <value>schedulerColName</value>
   </data>
+  <data name="&gt;&gt;viewTaskLogToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;viewTaskLogToolStripMenuItem.Name" xml:space="preserve">
     <value>viewTaskLogToolStripMenuItem</value>
   </data>
@@ -303,26 +303,23 @@
   <data name="&gt;&gt;content.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="schedulerProgress.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
   </data>
-  <data name="&gt;&gt;schedulerColStatus.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;schedulerProgress.Name" xml:space="preserve">
+    <value>schedulerProgress</value>
   </data>
-  <data name="&gt;&gt;deleteTaskToolStripMenuItem.Name" xml:space="preserve">
-    <value>deleteTaskToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;content.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
   <data name="schedulerProgress.Location" type="System.Drawing.Point, System.Drawing">
     <value>481, 28</value>
   </data>
-  <data name="titleLbl.Text" xml:space="preserve">
-    <value>Erase Schedule</value>
-  </data>
   <data name="&gt;&gt;editTaskToolStripMenuItem.Name" xml:space="preserve">
     <value>editTaskToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;runNowToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;cancelTaskToolStripMenuItem.Name" xml:space="preserve">
     <value>cancelTaskToolStripMenuItem</value>
@@ -336,26 +333,29 @@
   <data name="deleteTaskToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>149, 22</value>
   </data>
-  <data name="&gt;&gt;viewTaskLogToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;schedulerColStatus.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="schedulerProgress.Size" type="System.Drawing.Size, System.Drawing">
-    <value>200, 23</value>
+  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>146, 6</value>
   </data>
   <data name="&gt;&gt;scheduler.Type" xml:space="preserve">
     <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;deleteTaskToolStripMenuItem.Name" xml:space="preserve">
+    <value>deleteTaskToolStripMenuItem</value>
+  </data>
   <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
     <value>toolStripSeparator2</value>
   </data>
-  <data name="&gt;&gt;editTaskToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;titleIcon.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>SchedulerPanel</value>
+  <data name="&gt;&gt;schedulerColNextRun.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;schedulerMenu.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;titleLbl.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
   <data name="schedulerProgress.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
