@@ -124,18 +124,11 @@ namespace Eraser.Util
 			SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
 				SHGetFileInfoFlags.SHGFI_SMALLICON | SHGetFileInfoFlags.SHGFI_ICON);
 
-			/**  Possible Errors:
-			 * INVALID_ACCESS
-			 * NOT_ENOUGH_MEMORY
-			 * NO_TOKEN */
-			if (shfi.hIcon != new IntPtr(0))
+			if (shfi.hIcon != IntPtr.Zero)
 				return Icon.FromHandle(shfi.hIcon);
 			else
-			{
-				int lastError = Marshal.GetLastWin32Error();
-				throw new Win32Exception(lastError,
-					string.Format("Icon load failed\n\tpath: \"{0}\"\n\terrno: \"{1}\"", path, lastError));
-			}
+				throw new Win32Exception(Marshal.GetLastWin32Error(),
+					string.Format("Could not load file icon from {0}", path));
 		}
 
 		/// <summary>
@@ -211,6 +204,7 @@ namespace Eraser.Util
 					return compressionStatus != COMPRESSION_FORMAT_NONE;
 				}
 			}
+
 			throw new Win32Exception("Unknown DeviceIoControl error.");
 		}
 
@@ -285,7 +279,7 @@ namespace Eraser.Util
 		[DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
 		private static extern IntPtr SHGetFileInfo(string path, uint fileAttributes,
 			ref SHFILEINFO psfi, int fileInfo, SHGetFileInfoFlags flags);
-	
+
 		enum SHGetFileInfoFlags
 		{
 			/// <summary>

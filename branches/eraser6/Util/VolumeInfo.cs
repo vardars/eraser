@@ -2,7 +2,7 @@
  * $Id$
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
- * Modified By: Kasra Nasiri <cjax@users.sourceforge.net> @10/7/2008
+ * Modified By:
  * 
  * This file is part of Eraser.
  * 
@@ -52,7 +52,7 @@ namespace Eraser.Util
 				while (!GetVolumePathNamesForVolumeName(volumeID, pathNamesBuffer, currentBufferSize,
 					out returnLength))
 				{
-					if (Marshal.GetLastWin32Error() == (int)ERROR.MORE_DATA)
+					if (Marshal.GetLastWin32Error() == 234/*ERROR_MORE_DATA*/)
 					{
 						currentBufferSize *= 2;
 						pathNamesBuffer = Marshal.AllocHGlobal((int)(currentBufferSize * sizeof(char)));
@@ -74,20 +74,13 @@ namespace Eraser.Util
 			//of strings containing all of the volumes mountpoints; because the
 			//GetVolumePathNamesForVolumeName function returns a convoluted structure
 			//containing the path names.
-
-
-			/* for virtual devices pathNames == "\0",
-			 * which causes unexpected exceptions being thrown
-			 * simply avoid them, by throwing an expected exception */
-			if (pathNames == "\0" && pathNames.Length <= 0)
-				throw new Win32Exception("Eraser.Util.Volume.Volume");
-
 			for (int lastIndex = 0, i = 0; i != pathNames.Length; ++i)
 			{
 				if (pathNames[i] == '\0')
 				{
 					mountPoints.Add(pathNames.Substring(lastIndex, i - lastIndex));
 
+					lastIndex = i + 1;
 					if (pathNames[lastIndex] == '\0')
 						break;
 				}
@@ -96,17 +89,12 @@ namespace Eraser.Util
 			//Fill up the remaining members of the structure: file system, label, etc.
 			StringBuilder volumeName = new StringBuilder(MaxPath * sizeof(char)),
 				   fileSystemName = new StringBuilder(MaxPath * sizeof(char));
-
 			uint serialNumber, maxComponentLength, filesystemFlags;
-
 			if (!GetVolumeInformation(volumeID, volumeName, MaxPath, out serialNumber,
 				out maxComponentLength, out filesystemFlags, fileSystemName, MaxPath))
 			{
-				//ERROR.NOT_READY
-				//ERROR.UNRECOGNIZED_VOLUME
-				//ERROR.INVALID_DRIVE
-				int lastError = Marshal.GetLastWin32Error();
-				throw new Win32Exception(lastError, "Eraser.Util.Volume.Volume");
+				if (Marshal.GetLastWin32Error() != 21 /*ERROR_NOT_READY*/)
+					throw new Win32Exception(Marshal.GetLastWin32Error(), "Eraser.Util.Volume.Volume");
 			}
 			else
 				isReady = true;
@@ -130,24 +118,11 @@ namespace Eraser.Util
 
 			//Iterate over the volume mountpoints
 			do
-			{
-				VolumeInfo info; // keep out of the stack frame
-				try
-				{
-					info = new VolumeInfo(nextVolume.ToString());
-					result.Add(info);
-				}
-				catch (Win32Exception ex0)
-				{
-					// VolumeInfo was not constructed wel, Ignore.
-					if (ex0.Message != "Eraser.Util.Volume.Volume")
-						throw ex0;
-				}
-			}
+				result.Add(new VolumeInfo(nextVolume.ToString()));
 			while (FindNextVolume(handle, nextVolume, LongPath));
 
 			//Close the handle
-			if (Marshal.GetLastWin32Error() == (int)ERROR.NO_MORE_FILES )
+			if (Marshal.GetLastWin32Error() == 18 /*ERROR_NO_MORE_FILES*/)
 				FindVolumeClose(handle);
 			
 			return result;
@@ -171,13 +146,13 @@ namespace Eraser.Util
 					currentDir += '\\';
 				if (GetVolumeNameForVolumeMountPoint(currentDir, volumeID, 50))
 					return new VolumeInfo(volumeID.ToString());
-				else if (Marshal.GetLastWin32Error() != (int)ERROR.NOT_A_REPARSE_POINT)
+				else if (Marshal.GetLastWin32Error() != 4390 /*ERROR_NOT_A_REPARSE_POINT*/)
 					throw new Win32Exception(Marshal.GetLastWin32Error());
 				mountpointDir = mountpointDir.Parent;
 			}
 			while (mountpointDir != null);
 
-			throw new Win32Exception((int)ERROR.NOT_A_REPARSE_POINT);
+			throw new Win32Exception(4390 /*ERROR_NOT_A_REPARSE_POINT*/);
 		}
 
 		/// <summary>
@@ -334,7 +309,7 @@ namespace Eraser.Util
 					result.Add(new VolumeInfo(nextMountpoint.ToString()));
 
 				//Close the handle
-				if (Marshal.GetLastWin32Error() == (int)ERROR.NO_MORE_FILES)
+				if (Marshal.GetLastWin32Error() == 18 /*ERROR_NO_MORE_FILES*/)
 					FindVolumeMountPointClose(handle);
 
 				return result;
