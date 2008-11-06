@@ -491,6 +491,7 @@ namespace Eraser
 			this.errorProvider.SetIconPadding(this.plausibleDeniabilityFiles, ((int)(resources.GetObject("plausibleDeniabilityFiles.IconPadding"))));
 			this.plausibleDeniabilityFiles.Name = "plausibleDeniabilityFiles";
 			this.plausibleDeniabilityFiles.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+			this.plausibleDeniabilityFiles.SelectedIndexChanged += new System.EventHandler(this.plausibleDeniabilityFiles_SelectedIndexChanged);
 			// 
 			// plausibleDeniabilityFilesAddFile
 			// 

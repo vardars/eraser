@@ -206,17 +206,22 @@ namespace Eraser
 			lockedConfirm.Enabled = lockedAllow.Checked;
 		}
 
+		private void plausableDeniabilityFilesRemoveUpdate()
+		{
+			plausibleDeniabilityFilesRemove.Enabled = plausibleDeniability.Checked &&
+				plausibleDeniabilityFiles.SelectedIndices.Count > 0;
+		}
+
 		private void plausibleDeniability_CheckedChanged(object sender, EventArgs e)
 		{
 			plausibleDeniabilityFiles.Enabled = plausibleDeniabilityFilesAddFile.Enabled =
-				plausibleDeniabilityFilesAddFolder.Enabled = plausibleDeniabilityFilesRemove.Enabled =
-				plausibleDeniability.Checked;
+				plausibleDeniabilityFilesAddFolder.Enabled = plausibleDeniability.Checked;
+			plausableDeniabilityFilesRemoveUpdate();
 		}
 
-		private void plausableDeniabilityFilesRemoveUpdate()
+		private void plausibleDeniabilityFiles_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			plausibleDeniabilityFilesRemove.Enabled =
-				plausibleDeniabilityFiles.Items.Count > 0;
+			plausableDeniabilityFilesRemoveUpdate();
 		}
 
 		private void plausibleDeniabilityFilesAddFile_Click(object sender, EventArgs e)

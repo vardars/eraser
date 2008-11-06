@@ -177,8 +177,8 @@
   <data name="eraseUnusedMethod.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
   </data>
-  <data name="&gt;&gt;plausibleDeniability.Parent" xml:space="preserve">
-    <value>content</value>
+  <data name="&gt;&gt;titleIcon.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="ui.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 10, 0, 5</value>
@@ -303,9 +303,6 @@
   <data name="eraseFilesMethodLbl.IconPadding" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="titleLbl.Text" xml:space="preserve">
-    <value>Settings</value>
-  </data>
   <data name="schedulerMissedImmediate.Text" xml:space="preserve">
     <value>execute the task when Eraser next starts</value>
   </data>
@@ -342,9 +339,6 @@
   <data name="eraseFilesMethodLbl.Error" xml:space="preserve">
     <value />
   </data>
-  <data name="content.IconPadding" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
   <data name="plausibleDeniabilityFilesRemove.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
     <value>MiddleRight</value>
   </data>
@@ -372,6 +366,9 @@
   <data name="saveSettings.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
+  <data name="plausibleDeniabilityFilesAddFile.Location" type="System.Drawing.Point, System.Drawing">
+    <value>462, 236</value>
+  </data>
   <data name="plugins.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
@@ -390,13 +387,16 @@
   <data name="eraseFilesMethodLbl.Size" type="System.Drawing.Size, System.Drawing">
     <value>136, 13</value>
   </data>
-  <data name="&gt;&gt;eraseFilesMethod.ZOrder" xml:space="preserve">
-    <value>16</value>
+  <data name="&gt;&gt;content.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;erasePRNGLbl.Parent" xml:space="preserve">
     <value>content</value>
   </data>
-  <data name="&gt;&gt;erasePRNG.Parent" xml:space="preserve">
+  <data name="pluginsManagerColAuthor.Width" type="System.Int32, mscorlib">
+    <value>140</value>
+  </data>
+  <data name="&gt;&gt;plausibleDeniability.Parent" xml:space="preserve">
     <value>content</value>
   </data>
   <data name="&gt;&gt;titleLbl.Type" xml:space="preserve">
@@ -414,8 +414,8 @@
   <data name="plausibleDeniabilityFiles.Location" type="System.Drawing.Point, System.Drawing">
     <value>36, 263</value>
   </data>
-  <data name="pluginsManagerColPath.Text" xml:space="preserve">
-    <value>File Path</value>
+  <data name="erasePRNG.Error" xml:space="preserve">
+    <value />
   </data>
   <data name="&gt;&gt;pluginsManagerColPath.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -425,9 +425,6 @@
   </data>
   <data name="eraseUnusedMethodLbl.IconPadding" type="System.Int32, mscorlib">
     <value>0</value>
-  </data>
-  <data name="&gt;&gt;eraseUnusedMethod.ZOrder" xml:space="preserve">
-    <value>15</value>
   </data>
   <data name="plausibleDeniabilityFilesAddFolder.Location" type="System.Drawing.Point, System.Drawing">
     <value>543, 236</value>
@@ -450,8 +447,8 @@
   <data name="&gt;&gt;plausibleDeniabilityFiles.Type" xml:space="preserve">
     <value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;saveSettings.ZOrder" xml:space="preserve">
-    <value>3</value>
+  <data name="pluginsManagerColPath.Text" xml:space="preserve">
+    <value>File Path</value>
   </data>
   <data name="&gt;&gt;plausibleDeniabilityFilesAddFolder.Parent" xml:space="preserve">
     <value>content</value>
@@ -498,8 +495,8 @@
   <data name="&gt;&gt;uiContextMenu.ZOrder" xml:space="preserve">
     <value>22</value>
   </data>
-  <data name="lockedAllow.Location" type="System.Drawing.Point, System.Drawing">
-    <value>20, 193</value>
+  <data name="schedulerMissedImmediate.Error" xml:space="preserve">
+    <value />
   </data>
   <data name="schedulerMissedIgnore.Location" type="System.Drawing.Point, System.Drawing">
     <value>36, 484</value>
@@ -540,14 +537,11 @@
   <data name="&gt;&gt;plausibleDeniabilityFilesRemove.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="erasePRNG.IconPadding" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
   <data name="&gt;&gt;lockedAllow.Name" xml:space="preserve">
     <value>lockedAllow</value>
   </data>
-  <data name="eraseUnusedMethod.Location" type="System.Drawing.Point, System.Drawing">
-    <value>267, 138</value>
+  <data name="pluginsManagerColVersion.Text" xml:space="preserve">
+    <value>Version</value>
   </data>
   <data name="schedulerMissed.Error" xml:space="preserve">
     <value />
@@ -555,8 +549,8 @@
   <data name="eraseUnusedMethod.Size" type="System.Drawing.Size, System.Drawing">
     <value>290, 21</value>
   </data>
-  <data name="&gt;&gt;titleIcon.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="plausibleDeniabilityFilesAddFolder.IconPadding" type="System.Int32, mscorlib">
+    <value>0</value>
   </data>
   <data name="schedulerMissedIgnore.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -566,6 +560,9 @@
   </data>
   <data name="scheduler.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
+  </data>
+  <data name="scheduler.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
+    <value>MiddleRight</value>
   </data>
   <data name="&gt;&gt;erase.Name" xml:space="preserve">
     <value>erase</value>
@@ -600,6 +597,9 @@
   <data name="uiContextMenu.Size" type="System.Drawing.Size, System.Drawing">
     <value>209, 17</value>
   </data>
+  <data name="&gt;&gt;schedulerMissedIgnore.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
   <data name="&gt;&gt;scheduler.Parent" xml:space="preserve">
     <value>content</value>
   </data>
@@ -612,8 +612,8 @@
   <data name="&gt;&gt;erase.Parent" xml:space="preserve">
     <value>content</value>
   </data>
-  <data name="&gt;&gt;erasePRNG.ZOrder" xml:space="preserve">
-    <value>7</value>
+  <data name="&gt;&gt;eraseUnusedMethod.ZOrder" xml:space="preserve">
+    <value>15</value>
   </data>
   <data name="erasePRNGLbl.Location" type="System.Drawing.Point, System.Drawing">
     <value>17, 169</value>
@@ -648,8 +648,8 @@
   <data name="erasePRNGLbl.IconPadding" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;titleIcon.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="eraseFilesMethod.Size" type="System.Drawing.Size, System.Drawing">
+    <value>290, 21</value>
   </data>
   <data name="&gt;&gt;erasePRNG.Name" xml:space="preserve">
     <value>erasePRNG</value>
@@ -687,6 +687,9 @@
   <data name="plausibleDeniability.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
   </data>
+  <data name="schedulerMissed.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
   <data name="schedulerMissedIgnore.Text" xml:space="preserve">
     <value>ignore the missed schedule and run only at the next appointed time</value>
   </data>
@@ -711,8 +714,8 @@
   <data name="plausibleDeniabilityFiles.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
-  <data name="pluginsManagerColAuthor.Width" type="System.Int32, mscorlib">
-    <value>140</value>
+  <data name="plausibleDeniability.Error" xml:space="preserve">
+    <value />
   </data>
   <data name="plausibleDeniabilityFilesAddFile.IconPadding" type="System.Int32, mscorlib">
     <value>0</value>
@@ -744,8 +747,8 @@
   <data name="plugins.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>0, 10, 0, 5</value>
   </data>
-  <data name="pluginsManagerColVersion.Text" xml:space="preserve">
-    <value>Version</value>
+  <data name="lockedAllow.IconPadding" type="System.Int32, mscorlib">
+    <value>0</value>
   </data>
   <data name="uiLanguageLbl.IconPadding" type="System.Int32, mscorlib">
     <value>0</value>
@@ -756,8 +759,8 @@
   <data name="&gt;&gt;scheduler.Name" xml:space="preserve">
     <value>scheduler</value>
   </data>
-  <data name="plausibleDeniabilityFilesAddFile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>462, 236</value>
+  <data name="eraseFilesMethodLbl.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
   <data name="&gt;&gt;uiContextMenu.Type" xml:space="preserve">
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -771,8 +774,8 @@
   <data name="eraseFilesMethod.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
-  <data name="eraseFilesMethodLbl.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="erasePRNG.IconPadding" type="System.Int32, mscorlib">
+    <value>0</value>
   </data>
   <data name="saveSettings.Size" type="System.Drawing.Size, System.Drawing">
     <value>90, 23</value>
@@ -789,8 +792,8 @@
   <data name="ui.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
-  <data name="&gt;&gt;errorProvider.Name" xml:space="preserve">
-    <value>errorProvider</value>
+  <data name="eraseUnusedMethod.Location" type="System.Drawing.Point, System.Drawing">
+    <value>267, 138</value>
   </data>
   <data name="plugins.TabIndex" type="System.Int32, mscorlib">
     <value>19</value>
@@ -807,11 +810,11 @@
   <data name="lockedAllow.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="&gt;&gt;titleLbl.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
   <data name="&gt;&gt;lockedConfirm.Name" xml:space="preserve">
     <value>lockedConfirm</value>
-  </data>
-  <data name="&gt;&gt;schedulerMissedIgnore.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;lockedAllow.Type" xml:space="preserve">
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -828,23 +831,14 @@
   <data name="eraseUnusedMethodLbl.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
-  <data name="eraseFilesMethodLbl.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
-    <value>MiddleRight</value>
+  <data name="&gt;&gt;titleIcon.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
   <data name="&gt;&gt;uiContextMenu.Name" xml:space="preserve">
     <value>uiContextMenu</value>
   </data>
-  <data name="lockedAllow.TabIndex" type="System.Int32, mscorlib">
-    <value>12</value>
-  </data>
   <data name="&gt;&gt;eraseFilesMethodLbl.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;eraseUnusedMethod.Parent" xml:space="preserve">
-    <value>content</value>
-  </data>
-  <data name="plausibleDeniabilityFilesAddFolder.Text" xml:space="preserve">
-    <value>Add Folder...</value>
   </data>
   <data name="eraseUnusedMethod.Error" xml:space="preserve">
     <value />
@@ -882,8 +876,8 @@
   <data name="plausibleDeniabilityFilesAddFile.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
   </data>
-  <data name="schedulerMissed.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="lockedAllow.Location" type="System.Drawing.Point, System.Drawing">
+    <value>20, 193</value>
   </data>
   <data name="&gt;&gt;pluginsManager.Parent" xml:space="preserve">
     <value>content</value>
@@ -903,8 +897,11 @@
   <data name="&gt;&gt;pluginsMenu.Type" xml:space="preserve">
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="scheduler.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
-    <value>MiddleRight</value>
+  <data name="&gt;&gt;saveSettings.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;uiLanguage.ZOrder" xml:space="preserve">
+    <value>4</value>
   </data>
   <data name="eraseFilesMethodLbl.Location" type="System.Drawing.Point, System.Drawing">
     <value>17, 115</value>
@@ -942,23 +939,23 @@
   <data name="&gt;&gt;lockedAllow.Parent" xml:space="preserve">
     <value>content</value>
   </data>
-  <data name="lockedConfirm.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 17</value>
+  <data name="&gt;&gt;erasePRNG.Parent" xml:space="preserve">
+    <value>content</value>
   </data>
-  <data name="&gt;&gt;content.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;erasePRNG.ZOrder" xml:space="preserve">
+    <value>7</value>
   </data>
   <data name="lockedAllow.Error" xml:space="preserve">
     <value />
   </data>
-  <data name="&gt;&gt;titleIcon.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="titleLbl.Text" xml:space="preserve">
+    <value>Settings</value>
   </data>
   <data name="&gt;&gt;pluginsManagerColAuthor.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;schedulerMissedIgnore.ZOrder" xml:space="preserve">
-    <value>9</value>
+  <data name="&gt;&gt;titleIcon.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="$this.IconPadding" type="System.Int32, mscorlib">
     <value>0</value>
@@ -975,14 +972,17 @@
   <data name="plugins.Error" xml:space="preserve">
     <value />
   </data>
-  <data name="&gt;&gt;uiLanguage.ZOrder" xml:space="preserve">
-    <value>4</value>
+  <data name="&gt;&gt;eraseFilesMethod.ZOrder" xml:space="preserve">
+    <value>16</value>
   </data>
   <data name="&gt;&gt;schedulerMissedIgnore.Name" xml:space="preserve">
     <value>schedulerMissedIgnore</value>
   </data>
   <data name="&gt;&gt;openFileDialog.Name" xml:space="preserve">
     <value>openFileDialog</value>
+  </data>
+  <data name="content.Error" xml:space="preserve">
+    <value />
   </data>
   <data name="uiLanguage.Location" type="System.Drawing.Point, System.Drawing">
     <value>267, 26</value>
@@ -993,14 +993,17 @@
   <data name="&gt;&gt;saveSettings.Name" xml:space="preserve">
     <value>saveSettings</value>
   </data>
-  <data name="plausibleDeniabilityFilesAddFolder.IconPadding" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="&gt;&gt;erase.Type" xml:space="preserve">
+    <value>Eraser.LightGroup, Eraser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;erasePRNGLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;titleIcon.Name" xml:space="preserve">
     <value>titleIcon</value>
   </data>
-  <data name="eraseFilesMethod.Size" type="System.Drawing.Size, System.Drawing">
-    <value>290, 21</value>
+  <data name="content.IconPadding" type="System.Int32, mscorlib">
+    <value>0</value>
   </data>
   <data name="&gt;&gt;plausibleDeniabilityFilesAddFolder.ZOrder" xml:space="preserve">
     <value>0</value>
@@ -1017,8 +1020,8 @@
   <data name="settingsToolStripMenuItem.Text" xml:space="preserve">
     <value>Settings...</value>
   </data>
-  <data name="&gt;&gt;titleLbl.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="lockedConfirm.Size" type="System.Drawing.Size, System.Drawing">
+    <value>182, 17</value>
   </data>
   <data name="&gt;&gt;saveSettings.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -1029,8 +1032,8 @@
   <data name="eraseFilesMethodLbl.Text" xml:space="preserve">
     <value>Default file erasure method:</value>
   </data>
-  <data name="&gt;&gt;erase.Type" xml:space="preserve">
-    <value>Eraser.LightGroup, Eraser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  <data name="&gt;&gt;errorProvider.Name" xml:space="preserve">
+    <value>errorProvider</value>
   </data>
   <data name="&gt;&gt;lockedConfirm.ZOrder" xml:space="preserve">
     <value>20</value>
@@ -1053,8 +1056,8 @@
   <data name="pluginsMenu.Size" type="System.Drawing.Size, System.Drawing">
     <value>126, 26</value>
   </data>
-  <data name="erase.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
+  <data name="eraseFilesMethodLbl.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
+    <value>MiddleRight</value>
   </data>
   <data name="&gt;&gt;eraseFilesMethodLbl.ZOrder" xml:space="preserve">
     <value>18</value>
@@ -1071,8 +1074,8 @@
   <data name="scheduler.Size" type="System.Drawing.Size, System.Drawing">
     <value>712, 32</value>
   </data>
-  <data name="lockedAllow.IconPadding" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="plausibleDeniabilityFilesAddFolder.Text" xml:space="preserve">
+    <value>Add Folder...</value>
   </data>
   <data name="&gt;&gt;plugins.Name" xml:space="preserve">
     <value>plugins</value>
@@ -1080,8 +1083,8 @@
   <data name="schedulerMissedImmediate.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
     <value>MiddleRight</value>
   </data>
-  <data name="plausibleDeniability.Error" xml:space="preserve">
-    <value />
+  <data name="&gt;&gt;eraseUnusedMethod.Parent" xml:space="preserve">
+    <value>content</value>
   </data>
   <data name="&gt;&gt;ui.Type" xml:space="preserve">
     <value>Eraser.LightGroup, Eraser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
@@ -1113,9 +1116,6 @@
   <data name="&gt;&gt;schedulerMissedImmediate.ZOrder" xml:space="preserve">
     <value>10</value>
   </data>
-  <data name="schedulerMissedImmediate.Error" xml:space="preserve">
-    <value />
-  </data>
   <data name="saveSettings.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
     <value>MiddleRight</value>
   </data>
@@ -1140,14 +1140,14 @@
   <data name="plausibleDeniabilityFilesRemove.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
   </data>
-  <data name="content.Error" xml:space="preserve">
-    <value />
+  <data name="lockedAllow.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
   </data>
   <data name="&gt;&gt;lockedConfirm.Parent" xml:space="preserve">
     <value>content</value>
   </data>
-  <data name="&gt;&gt;erasePRNGLbl.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;schedulerMissedIgnore.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="plausibleDeniability.Location" type="System.Drawing.Point, System.Drawing">
     <value>20, 240</value>
@@ -1158,8 +1158,8 @@
   <data name="&gt;&gt;plausibleDeniability.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="erasePRNG.Error" xml:space="preserve">
-    <value />
+  <data name="erase.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
   </data>
   <data name="plausibleDeniabilityFiles.TabIndex" type="System.Int32, mscorlib">
     <value>21</value>
