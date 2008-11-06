@@ -94,32 +94,16 @@ namespace Eraser
 			// 
 			// titleLbl
 			// 
-			this.titleLbl.AccessibleDescription = null;
-			this.titleLbl.AccessibleName = null;
-			resources.ApplyResources(this.titleLbl, "titleLbl");
-			this.errorProvider.SetError(this.titleLbl, resources.GetString("titleLbl.Error"));
 			this.errorProvider.SetIconAlignment(this.titleLbl, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("titleLbl.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.titleLbl, ((int)(resources.GetObject("titleLbl.IconPadding"))));
+			resources.ApplyResources(this.titleLbl, "titleLbl");
 			// 
 			// titleIcon
 			// 
-			this.titleIcon.AccessibleDescription = null;
-			this.titleIcon.AccessibleName = null;
-			resources.ApplyResources(this.titleIcon, "titleIcon");
-			this.titleIcon.BackgroundImage = null;
-			this.errorProvider.SetError(this.titleIcon, resources.GetString("titleIcon.Error"));
-			this.titleIcon.Font = null;
 			this.errorProvider.SetIconAlignment(this.titleIcon, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("titleIcon.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.titleIcon, ((int)(resources.GetObject("titleIcon.IconPadding"))));
 			this.titleIcon.Image = global::Eraser.Properties.Resources.ToolbarSettings;
-			this.titleIcon.ImageLocation = null;
 			// 
 			// content
 			// 
-			this.content.AccessibleDescription = null;
-			this.content.AccessibleName = null;
-			resources.ApplyResources(this.content, "content");
-			this.content.BackgroundImage = null;
 			this.content.Controls.Add(this.plausibleDeniabilityFilesAddFolder);
 			this.content.Controls.Add(this.plausibleDeniabilityFilesRemove);
 			this.content.Controls.Add(this.plausibleDeniabilityFilesAddFile);
@@ -144,159 +128,93 @@ namespace Eraser
 			this.content.Controls.Add(this.lockedAllow);
 			this.content.Controls.Add(this.uiContextMenu);
 			this.content.Controls.Add(this.ui);
-			this.errorProvider.SetError(this.content, resources.GetString("content.Error"));
-			this.content.Font = null;
 			this.errorProvider.SetIconAlignment(this.content, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("content.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.content, ((int)(resources.GetObject("content.IconPadding"))));
+			resources.ApplyResources(this.content, "content");
 			// 
 			// ui
 			// 
-			this.ui.AccessibleDescription = null;
-			this.ui.AccessibleName = null;
 			resources.ApplyResources(this.ui, "ui");
-			this.ui.BackgroundImage = null;
-			this.errorProvider.SetError(this.ui, resources.GetString("ui.Error"));
-			this.ui.Font = null;
 			this.errorProvider.SetIconAlignment(this.ui, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("ui.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.ui, ((int)(resources.GetObject("ui.IconPadding"))));
 			this.ui.Label = "Shell integration";
 			this.ui.Name = "ui";
 			// 
 			// uiContextMenu
 			// 
-			this.uiContextMenu.AccessibleDescription = null;
-			this.uiContextMenu.AccessibleName = null;
 			resources.ApplyResources(this.uiContextMenu, "uiContextMenu");
-			this.uiContextMenu.BackgroundImage = null;
 			this.uiContextMenu.Checked = true;
 			this.uiContextMenu.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.errorProvider.SetError(this.uiContextMenu, resources.GetString("uiContextMenu.Error"));
-			this.uiContextMenu.Font = null;
 			this.errorProvider.SetIconAlignment(this.uiContextMenu, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("uiContextMenu.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.uiContextMenu, ((int)(resources.GetObject("uiContextMenu.IconPadding"))));
 			this.uiContextMenu.Name = "uiContextMenu";
 			this.uiContextMenu.UseVisualStyleBackColor = true;
 			// 
 			// lockedAllow
 			// 
-			this.lockedAllow.AccessibleDescription = null;
-			this.lockedAllow.AccessibleName = null;
 			resources.ApplyResources(this.lockedAllow, "lockedAllow");
-			this.lockedAllow.BackgroundImage = null;
 			this.lockedAllow.Checked = true;
 			this.lockedAllow.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.errorProvider.SetError(this.lockedAllow, resources.GetString("lockedAllow.Error"));
-			this.lockedAllow.Font = null;
 			this.errorProvider.SetIconAlignment(this.lockedAllow, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("lockedAllow.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.lockedAllow, ((int)(resources.GetObject("lockedAllow.IconPadding"))));
 			this.lockedAllow.Name = "lockedAllow";
 			this.lockedAllow.UseVisualStyleBackColor = true;
 			this.lockedAllow.CheckedChanged += new System.EventHandler(this.lockedAllow_CheckedChanged);
 			// 
 			// lockedConfirm
 			// 
-			this.lockedConfirm.AccessibleDescription = null;
-			this.lockedConfirm.AccessibleName = null;
 			resources.ApplyResources(this.lockedConfirm, "lockedConfirm");
-			this.lockedConfirm.BackgroundImage = null;
-			this.errorProvider.SetError(this.lockedConfirm, resources.GetString("lockedConfirm.Error"));
-			this.lockedConfirm.Font = null;
 			this.errorProvider.SetIconAlignment(this.lockedConfirm, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("lockedConfirm.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.lockedConfirm, ((int)(resources.GetObject("lockedConfirm.IconPadding"))));
 			this.lockedConfirm.Name = "lockedConfirm";
 			this.lockedConfirm.UseVisualStyleBackColor = true;
 			// 
 			// erase
 			// 
-			this.erase.AccessibleDescription = null;
-			this.erase.AccessibleName = null;
 			resources.ApplyResources(this.erase, "erase");
-			this.erase.BackgroundImage = null;
-			this.errorProvider.SetError(this.erase, resources.GetString("erase.Error"));
-			this.erase.Font = null;
 			this.errorProvider.SetIconAlignment(this.erase, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("erase.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.erase, ((int)(resources.GetObject("erase.IconPadding"))));
 			this.erase.Label = "Instellingen";
 			this.erase.Name = "erase";
 			// 
 			// eraseFilesMethodLbl
 			// 
-			this.eraseFilesMethodLbl.AccessibleDescription = null;
-			this.eraseFilesMethodLbl.AccessibleName = null;
 			resources.ApplyResources(this.eraseFilesMethodLbl, "eraseFilesMethodLbl");
-			this.errorProvider.SetError(this.eraseFilesMethodLbl, resources.GetString("eraseFilesMethodLbl.Error"));
-			this.eraseFilesMethodLbl.Font = null;
 			this.errorProvider.SetIconAlignment(this.eraseFilesMethodLbl, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("eraseFilesMethodLbl.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.eraseFilesMethodLbl, ((int)(resources.GetObject("eraseFilesMethodLbl.IconPadding"))));
 			this.eraseFilesMethodLbl.Name = "eraseFilesMethodLbl";
 			// 
 			// eraseUnusedMethodLbl
 			// 
-			this.eraseUnusedMethodLbl.AccessibleDescription = null;
-			this.eraseUnusedMethodLbl.AccessibleName = null;
 			resources.ApplyResources(this.eraseUnusedMethodLbl, "eraseUnusedMethodLbl");
-			this.errorProvider.SetError(this.eraseUnusedMethodLbl, resources.GetString("eraseUnusedMethodLbl.Error"));
-			this.eraseUnusedMethodLbl.Font = null;
 			this.errorProvider.SetIconAlignment(this.eraseUnusedMethodLbl, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("eraseUnusedMethodLbl.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.eraseUnusedMethodLbl, ((int)(resources.GetObject("eraseUnusedMethodLbl.IconPadding"))));
 			this.eraseUnusedMethodLbl.Name = "eraseUnusedMethodLbl";
 			// 
 			// eraseFilesMethod
 			// 
-			this.eraseFilesMethod.AccessibleDescription = null;
-			this.eraseFilesMethod.AccessibleName = null;
-			resources.ApplyResources(this.eraseFilesMethod, "eraseFilesMethod");
-			this.eraseFilesMethod.BackgroundImage = null;
 			this.eraseFilesMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.errorProvider.SetError(this.eraseFilesMethod, resources.GetString("eraseFilesMethod.Error"));
-			this.eraseFilesMethod.Font = null;
 			this.errorProvider.SetIconAlignment(this.eraseFilesMethod, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("eraseFilesMethod.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.eraseFilesMethod, ((int)(resources.GetObject("eraseFilesMethod.IconPadding"))));
+			resources.ApplyResources(this.eraseFilesMethod, "eraseFilesMethod");
 			this.eraseFilesMethod.Name = "eraseFilesMethod";
 			// 
 			// eraseUnusedMethod
 			// 
-			this.eraseUnusedMethod.AccessibleDescription = null;
-			this.eraseUnusedMethod.AccessibleName = null;
-			resources.ApplyResources(this.eraseUnusedMethod, "eraseUnusedMethod");
-			this.eraseUnusedMethod.BackgroundImage = null;
 			this.eraseUnusedMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.errorProvider.SetError(this.eraseUnusedMethod, resources.GetString("eraseUnusedMethod.Error"));
-			this.eraseUnusedMethod.Font = null;
 			this.errorProvider.SetIconAlignment(this.eraseUnusedMethod, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("eraseUnusedMethod.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.eraseUnusedMethod, ((int)(resources.GetObject("eraseUnusedMethod.IconPadding"))));
+			resources.ApplyResources(this.eraseUnusedMethod, "eraseUnusedMethod");
 			this.eraseUnusedMethod.Name = "eraseUnusedMethod";
 			// 
 			// plugins
 			// 
-			this.plugins.AccessibleDescription = null;
-			this.plugins.AccessibleName = null;
 			resources.ApplyResources(this.plugins, "plugins");
-			this.plugins.BackgroundImage = null;
-			this.errorProvider.SetError(this.plugins, resources.GetString("plugins.Error"));
-			this.plugins.Font = null;
 			this.errorProvider.SetIconAlignment(this.plugins, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("plugins.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.plugins, ((int)(resources.GetObject("plugins.IconPadding"))));
 			this.plugins.Label = "Plugins";
 			this.plugins.Name = "plugins";
 			// 
 			// pluginsManager
 			// 
-			this.pluginsManager.AccessibleDescription = null;
-			this.pluginsManager.AccessibleName = null;
 			resources.ApplyResources(this.pluginsManager, "pluginsManager");
-			this.pluginsManager.BackgroundImage = null;
 			this.pluginsManager.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.pluginsManagerColName,
             this.pluginsManagerColAuthor,
             this.pluginsManagerColVersion,
             this.pluginsManagerColPath});
 			this.pluginsManager.ContextMenuStrip = this.pluginsMenu;
-			this.errorProvider.SetError(this.pluginsManager, resources.GetString("pluginsManager.Error"));
-			this.pluginsManager.Font = null;
 			this.pluginsManager.FullRowSelect = true;
 			this.errorProvider.SetIconAlignment(this.pluginsManager, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("pluginsManager.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.pluginsManager, ((int)(resources.GetObject("pluginsManager.IconPadding"))));
 			this.pluginsManager.Name = "pluginsManager";
 			this.pluginsManager.UseCompatibleStateImageBehavior = false;
 			this.pluginsManager.View = System.Windows.Forms.View.Details;
@@ -319,218 +237,126 @@ namespace Eraser
 			// 
 			// pluginsMenu
 			// 
-			this.pluginsMenu.AccessibleDescription = null;
-			this.pluginsMenu.AccessibleName = null;
-			resources.ApplyResources(this.pluginsMenu, "pluginsMenu");
-			this.pluginsMenu.BackgroundImage = null;
-			this.errorProvider.SetError(this.pluginsMenu, resources.GetString("pluginsMenu.Error"));
-			this.pluginsMenu.Font = null;
 			this.errorProvider.SetIconAlignment(this.pluginsMenu, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("pluginsMenu.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.pluginsMenu, ((int)(resources.GetObject("pluginsMenu.IconPadding"))));
 			this.pluginsMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.settingsToolStripMenuItem});
 			this.pluginsMenu.Name = "pluginsContextMenu";
+			resources.ApplyResources(this.pluginsMenu, "pluginsMenu");
 			this.pluginsMenu.Opening += new System.ComponentModel.CancelEventHandler(this.pluginsMenu_Opening);
 			// 
 			// settingsToolStripMenuItem
 			// 
-			this.settingsToolStripMenuItem.AccessibleDescription = null;
-			this.settingsToolStripMenuItem.AccessibleName = null;
-			resources.ApplyResources(this.settingsToolStripMenuItem, "settingsToolStripMenuItem");
-			this.settingsToolStripMenuItem.BackgroundImage = null;
 			this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-			this.settingsToolStripMenuItem.ShortcutKeyDisplayString = null;
+			resources.ApplyResources(this.settingsToolStripMenuItem, "settingsToolStripMenuItem");
 			this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
 			// 
 			// scheduler
 			// 
-			this.scheduler.AccessibleDescription = null;
-			this.scheduler.AccessibleName = null;
 			resources.ApplyResources(this.scheduler, "scheduler");
-			this.scheduler.BackgroundImage = null;
-			this.errorProvider.SetError(this.scheduler, resources.GetString("scheduler.Error"));
-			this.scheduler.Font = null;
 			this.errorProvider.SetIconAlignment(this.scheduler, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("scheduler.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.scheduler, ((int)(resources.GetObject("scheduler.IconPadding"))));
 			this.scheduler.Label = "Planner instellingen";
 			this.scheduler.Name = "scheduler";
 			// 
 			// schedulerMissed
 			// 
-			this.schedulerMissed.AccessibleDescription = null;
-			this.schedulerMissed.AccessibleName = null;
 			resources.ApplyResources(this.schedulerMissed, "schedulerMissed");
-			this.errorProvider.SetError(this.schedulerMissed, resources.GetString("schedulerMissed.Error"));
-			this.schedulerMissed.Font = null;
 			this.errorProvider.SetIconAlignment(this.schedulerMissed, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("schedulerMissed.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.schedulerMissed, ((int)(resources.GetObject("schedulerMissed.IconPadding"))));
 			this.schedulerMissed.Name = "schedulerMissed";
 			// 
 			// schedulerMissedImmediate
 			// 
-			this.schedulerMissedImmediate.AccessibleDescription = null;
-			this.schedulerMissedImmediate.AccessibleName = null;
 			resources.ApplyResources(this.schedulerMissedImmediate, "schedulerMissedImmediate");
-			this.schedulerMissedImmediate.BackgroundImage = null;
 			this.schedulerMissedImmediate.Checked = true;
-			this.errorProvider.SetError(this.schedulerMissedImmediate, resources.GetString("schedulerMissedImmediate.Error"));
-			this.schedulerMissedImmediate.Font = null;
 			this.errorProvider.SetIconAlignment(this.schedulerMissedImmediate, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("schedulerMissedImmediate.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.schedulerMissedImmediate, ((int)(resources.GetObject("schedulerMissedImmediate.IconPadding"))));
 			this.schedulerMissedImmediate.Name = "schedulerMissedImmediate";
 			this.schedulerMissedImmediate.TabStop = true;
 			this.schedulerMissedImmediate.UseVisualStyleBackColor = true;
 			// 
 			// schedulerMissedIgnore
 			// 
-			this.schedulerMissedIgnore.AccessibleDescription = null;
-			this.schedulerMissedIgnore.AccessibleName = null;
 			resources.ApplyResources(this.schedulerMissedIgnore, "schedulerMissedIgnore");
-			this.schedulerMissedIgnore.BackgroundImage = null;
-			this.errorProvider.SetError(this.schedulerMissedIgnore, resources.GetString("schedulerMissedIgnore.Error"));
-			this.schedulerMissedIgnore.Font = null;
 			this.errorProvider.SetIconAlignment(this.schedulerMissedIgnore, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("schedulerMissedIgnore.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.schedulerMissedIgnore, ((int)(resources.GetObject("schedulerMissedIgnore.IconPadding"))));
 			this.schedulerMissedIgnore.Name = "schedulerMissedIgnore";
 			this.schedulerMissedIgnore.TabStop = true;
 			this.schedulerMissedIgnore.UseVisualStyleBackColor = true;
 			// 
 			// saveSettings
 			// 
-			this.saveSettings.AccessibleDescription = null;
-			this.saveSettings.AccessibleName = null;
 			resources.ApplyResources(this.saveSettings, "saveSettings");
-			this.saveSettings.BackgroundImage = null;
-			this.errorProvider.SetError(this.saveSettings, resources.GetString("saveSettings.Error"));
-			this.saveSettings.Font = null;
 			this.errorProvider.SetIconAlignment(this.saveSettings, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("saveSettings.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.saveSettings, ((int)(resources.GetObject("saveSettings.IconPadding"))));
 			this.saveSettings.Name = "saveSettings";
 			this.saveSettings.UseVisualStyleBackColor = true;
 			this.saveSettings.Click += new System.EventHandler(this.saveSettings_Click);
 			// 
 			// erasePRNGLbl
 			// 
-			this.erasePRNGLbl.AccessibleDescription = null;
-			this.erasePRNGLbl.AccessibleName = null;
 			resources.ApplyResources(this.erasePRNGLbl, "erasePRNGLbl");
-			this.errorProvider.SetError(this.erasePRNGLbl, resources.GetString("erasePRNGLbl.Error"));
-			this.erasePRNGLbl.Font = null;
 			this.errorProvider.SetIconAlignment(this.erasePRNGLbl, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("erasePRNGLbl.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.erasePRNGLbl, ((int)(resources.GetObject("erasePRNGLbl.IconPadding"))));
 			this.erasePRNGLbl.Name = "erasePRNGLbl";
 			// 
 			// erasePRNG
 			// 
-			this.erasePRNG.AccessibleDescription = null;
-			this.erasePRNG.AccessibleName = null;
-			resources.ApplyResources(this.erasePRNG, "erasePRNG");
-			this.erasePRNG.BackgroundImage = null;
 			this.erasePRNG.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.errorProvider.SetError(this.erasePRNG, resources.GetString("erasePRNG.Error"));
-			this.erasePRNG.Font = null;
 			this.erasePRNG.FormattingEnabled = true;
 			this.errorProvider.SetIconAlignment(this.erasePRNG, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("erasePRNG.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.erasePRNG, ((int)(resources.GetObject("erasePRNG.IconPadding"))));
+			resources.ApplyResources(this.erasePRNG, "erasePRNG");
 			this.erasePRNG.Name = "erasePRNG";
 			// 
 			// errorProvider
 			// 
 			this.errorProvider.ContainerControl = this;
-			resources.ApplyResources(this.errorProvider, "errorProvider");
 			// 
 			// plausibleDeniability
 			// 
-			this.plausibleDeniability.AccessibleDescription = null;
-			this.plausibleDeniability.AccessibleName = null;
 			resources.ApplyResources(this.plausibleDeniability, "plausibleDeniability");
-			this.plausibleDeniability.BackgroundImage = null;
-			this.errorProvider.SetError(this.plausibleDeniability, resources.GetString("plausibleDeniability.Error"));
-			this.plausibleDeniability.Font = null;
 			this.errorProvider.SetIconAlignment(this.plausibleDeniability, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("plausibleDeniability.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.plausibleDeniability, ((int)(resources.GetObject("plausibleDeniability.IconPadding"))));
 			this.plausibleDeniability.Name = "plausibleDeniability";
 			this.plausibleDeniability.UseVisualStyleBackColor = true;
 			this.plausibleDeniability.CheckedChanged += new System.EventHandler(this.plausibleDeniability_CheckedChanged);
 			// 
 			// uiLanguageLbl
 			// 
-			this.uiLanguageLbl.AccessibleDescription = null;
-			this.uiLanguageLbl.AccessibleName = null;
 			resources.ApplyResources(this.uiLanguageLbl, "uiLanguageLbl");
-			this.errorProvider.SetError(this.uiLanguageLbl, resources.GetString("uiLanguageLbl.Error"));
-			this.uiLanguageLbl.Font = null;
 			this.errorProvider.SetIconAlignment(this.uiLanguageLbl, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("uiLanguageLbl.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.uiLanguageLbl, ((int)(resources.GetObject("uiLanguageLbl.IconPadding"))));
 			this.uiLanguageLbl.Name = "uiLanguageLbl";
 			// 
 			// uiLanguage
 			// 
-			this.uiLanguage.AccessibleDescription = null;
-			this.uiLanguage.AccessibleName = null;
-			resources.ApplyResources(this.uiLanguage, "uiLanguage");
-			this.uiLanguage.BackgroundImage = null;
 			this.uiLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.errorProvider.SetError(this.uiLanguage, resources.GetString("uiLanguage.Error"));
-			this.uiLanguage.Font = null;
 			this.uiLanguage.FormattingEnabled = true;
 			this.errorProvider.SetIconAlignment(this.uiLanguage, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("uiLanguage.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.uiLanguage, ((int)(resources.GetObject("uiLanguage.IconPadding"))));
+			resources.ApplyResources(this.uiLanguage, "uiLanguage");
 			this.uiLanguage.Name = "uiLanguage";
 			// 
 			// plausibleDeniabilityFiles
 			// 
-			this.plausibleDeniabilityFiles.AccessibleDescription = null;
-			this.plausibleDeniabilityFiles.AccessibleName = null;
 			resources.ApplyResources(this.plausibleDeniabilityFiles, "plausibleDeniabilityFiles");
-			this.plausibleDeniabilityFiles.BackgroundImage = null;
-			this.errorProvider.SetError(this.plausibleDeniabilityFiles, resources.GetString("plausibleDeniabilityFiles.Error"));
-			this.plausibleDeniabilityFiles.Font = null;
 			this.plausibleDeniabilityFiles.FormattingEnabled = true;
 			this.errorProvider.SetIconAlignment(this.plausibleDeniabilityFiles, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("plausibleDeniabilityFiles.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.plausibleDeniabilityFiles, ((int)(resources.GetObject("plausibleDeniabilityFiles.IconPadding"))));
 			this.plausibleDeniabilityFiles.Name = "plausibleDeniabilityFiles";
 			this.plausibleDeniabilityFiles.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this.plausibleDeniabilityFiles.SelectedIndexChanged += new System.EventHandler(this.plausibleDeniabilityFiles_SelectedIndexChanged);
 			// 
 			// plausibleDeniabilityFilesAddFile
 			// 
-			this.plausibleDeniabilityFilesAddFile.AccessibleDescription = null;
-			this.plausibleDeniabilityFilesAddFile.AccessibleName = null;
 			resources.ApplyResources(this.plausibleDeniabilityFilesAddFile, "plausibleDeniabilityFilesAddFile");
-			this.plausibleDeniabilityFilesAddFile.BackgroundImage = null;
-			this.errorProvider.SetError(this.plausibleDeniabilityFilesAddFile, resources.GetString("plausibleDeniabilityFilesAddFile.Error"));
-			this.plausibleDeniabilityFilesAddFile.Font = null;
 			this.errorProvider.SetIconAlignment(this.plausibleDeniabilityFilesAddFile, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("plausibleDeniabilityFilesAddFile.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.plausibleDeniabilityFilesAddFile, ((int)(resources.GetObject("plausibleDeniabilityFilesAddFile.IconPadding"))));
 			this.plausibleDeniabilityFilesAddFile.Name = "plausibleDeniabilityFilesAddFile";
 			this.plausibleDeniabilityFilesAddFile.UseVisualStyleBackColor = true;
 			this.plausibleDeniabilityFilesAddFile.Click += new System.EventHandler(this.plausibleDeniabilityFilesAddFile_Click);
 			// 
 			// plausibleDeniabilityFilesRemove
 			// 
-			this.plausibleDeniabilityFilesRemove.AccessibleDescription = null;
-			this.plausibleDeniabilityFilesRemove.AccessibleName = null;
 			resources.ApplyResources(this.plausibleDeniabilityFilesRemove, "plausibleDeniabilityFilesRemove");
-			this.plausibleDeniabilityFilesRemove.BackgroundImage = null;
-			this.errorProvider.SetError(this.plausibleDeniabilityFilesRemove, resources.GetString("plausibleDeniabilityFilesRemove.Error"));
-			this.plausibleDeniabilityFilesRemove.Font = null;
 			this.errorProvider.SetIconAlignment(this.plausibleDeniabilityFilesRemove, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("plausibleDeniabilityFilesRemove.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.plausibleDeniabilityFilesRemove, ((int)(resources.GetObject("plausibleDeniabilityFilesRemove.IconPadding"))));
 			this.plausibleDeniabilityFilesRemove.Name = "plausibleDeniabilityFilesRemove";
 			this.plausibleDeniabilityFilesRemove.UseVisualStyleBackColor = true;
 			this.plausibleDeniabilityFilesRemove.Click += new System.EventHandler(this.plausibleDeniabilityFilesRemove_Click);
 			// 
 			// plausibleDeniabilityFilesAddFolder
 			// 
-			this.plausibleDeniabilityFilesAddFolder.AccessibleDescription = null;
-			this.plausibleDeniabilityFilesAddFolder.AccessibleName = null;
 			resources.ApplyResources(this.plausibleDeniabilityFilesAddFolder, "plausibleDeniabilityFilesAddFolder");
-			this.plausibleDeniabilityFilesAddFolder.BackgroundImage = null;
-			this.errorProvider.SetError(this.plausibleDeniabilityFilesAddFolder, resources.GetString("plausibleDeniabilityFilesAddFolder.Error"));
-			this.plausibleDeniabilityFilesAddFolder.Font = null;
 			this.errorProvider.SetIconAlignment(this.plausibleDeniabilityFilesAddFolder, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("plausibleDeniabilityFilesAddFolder.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.plausibleDeniabilityFilesAddFolder, ((int)(resources.GetObject("plausibleDeniabilityFilesAddFolder.IconPadding"))));
 			this.plausibleDeniabilityFilesAddFolder.Name = "plausibleDeniabilityFilesAddFolder";
 			this.plausibleDeniabilityFilesAddFolder.UseVisualStyleBackColor = true;
 			this.plausibleDeniabilityFilesAddFolder.Click += new System.EventHandler(this.plausibleDeniabilityFilesAddFolder_Click);
@@ -540,22 +366,12 @@ namespace Eraser
 			resources.ApplyResources(this.openFileDialog, "openFileDialog");
 			this.openFileDialog.Multiselect = true;
 			// 
-			// folderBrowserDialog
-			// 
-			resources.ApplyResources(this.folderBrowserDialog, "folderBrowserDialog");
-			// 
 			// SettingsPanel
 			// 
-			this.AccessibleDescription = null;
-			this.AccessibleName = null;
-			resources.ApplyResources(this, "$this");
-			this.BackgroundImage = null;
 			this.Controls.Add(this.saveSettings);
-			this.errorProvider.SetError(this, resources.GetString("$this.Error"));
-			this.Font = null;
 			this.errorProvider.SetIconAlignment(this, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("$this.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this, ((int)(resources.GetObject("$this.IconPadding"))));
 			this.Name = "SettingsPanel";
+			resources.ApplyResources(this, "$this");
 			this.Controls.SetChildIndex(this.saveSettings, 0);
 			this.Controls.SetChildIndex(this.titleLbl, 0);
 			this.Controls.SetChildIndex(this.titleIcon, 0);
