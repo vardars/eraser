@@ -225,6 +225,9 @@ namespace Eraser.Util
 				if (GetDiskFreeSpaceEx(volumeID, out freeBytesAvailable, out totalNumberOfBytes,
 					out totalNumberOfFreeBytes))
 					return totalNumberOfFreeBytes != freeBytesAvailable;
+				else if (Marshal.GetLastWin32Error() == 21 /*ERROR_NOT_READY*/)
+					//For the lack of more appropriate responses.
+					return false;
 
 				throw new Win32Exception(Marshal.GetLastWin32Error(),
 					"Eraser.Util.Drive.HasQuota");
