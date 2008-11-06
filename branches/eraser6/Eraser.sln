@@ -1,6 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4AA1FBC2-DA5C-4204-B152-B5929516DC48}"
+	ProjectSection(SolutionItems) = preProject
+		TODO.txt = TODO.txt
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eraser", "Eraser\Eraser.csproj", "{A9884ABF-46E8-42C1-A30B-9A3DD6C38004}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Manager", "Manager\Manager.csproj", "{C1AC3255-0939-499D-A69D-725E3DD4F574}"
@@ -8,11 +13,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Util", "Util\Util.csproj", "{D083E1A8-3A4C-4683-9B3F-D5FEDE61B9C9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefaultPlugins", "DefaultPlugins\DefaultPlugins.csproj", "{21752123-7BD7-4B44-B512-14A963C55FD8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4AA1FBC2-DA5C-4204-B152-B5929516DC48}"
-	ProjectSection(SolutionItems) = preProject
-		TODO.txt = TODO.txt
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
