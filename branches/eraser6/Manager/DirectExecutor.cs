@@ -104,9 +104,11 @@ namespace Eraser.Manager
 					unusedIds.Add(taskId);
 				tasks.Remove(taskId);
 
-				for (int i = 0; i != scheduledTasks.Count; ++i)
+				for (int i = 0; i != scheduledTasks.Count; )
 					if (scheduledTasks.Values[i].id == taskId)
 						scheduledTasks.RemoveAt(i);
+					else
+						++i;
 			}
 
 			return true;
