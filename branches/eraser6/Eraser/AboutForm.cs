@@ -66,10 +66,10 @@ namespace Eraser
 				"All the methods are selected to effectively remove magnetic remnants from the drive in a " +
 				"secure and easy way.\n\n" +
 				"Eraser Development Team:\n" +
-				"\u2022 Garrett Trant: Mentor\n" +
-				"\u2022 Joel Low: Developer Lead\n" +
-				"\u2022 Dennis van Lith: Designer\n" +
-				"\u2022 Kasra Nasiri: Developer\n");
+				"\u2022 Garrett Trant:		Mentor/Researcher\n" +
+				"\u2022 Joel Low:		Developer Lead\n" +
+				"\u2022 Dennis van Lith:		Designer\n" +
+				"\u2022 Kasra Nasiri:		Developer\n");
 
 			//Create the About bitmap localised for the current version (sans scrolling
 			//text) so it can be drawn quickly later.
