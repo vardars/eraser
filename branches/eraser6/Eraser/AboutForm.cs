@@ -24,19 +24,19 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Text;
 using System.Windows.Forms;
-using Eraser.Util;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using Eraser.Util;
 
 namespace Eraser
 {
 	public partial class AboutForm : Form
 	{
-		private Bitmap ParentBitmap;
-		private int ParentBitmapOpacity;
-		private Bitmap BaseBitmap;
+		private Bitmap AboutBitmap;
+		private Point AboutBitmapPos;
 		private readonly string AboutText = "The Gutmann method used for overwriting is based on Peter " +
 			"Gutmann's paper \"Secure Deletion of Data from Magnetic and Solid-State Memory\".\n" +
 			"The Schneier 7-pass method is based on Bruce Schneier's algorithm using a Random Number " +
@@ -50,52 +50,35 @@ namespace Eraser
 			"\u2022 Dennis van Lith: Designer\n" +
 			"\u2022 Kasra Nasiri: Developer\n" +
 			"\u2022 Garrett Trant: Mentor\n";
-		private Bitmap AboutBitmap;
-		private SizeF AboutBitmapSize;
+		private Bitmap AboutTextBitmap;
+		private Rectangle AboutTextRect;
+
+		private Bitmap ParentBitmap;
+		private int ParentOpacity;
+		private int AboutTextScrollTop;
+
+		private Bitmap DoubleBufferBitmap;
 
 		public AboutForm(Control parent)
 		{
-			//Get the parent dialog's screen buffer.
-			ParentBitmap = new Bitmap(parent.ClientSize.Width, parent.ClientSize.Height);
-			using (Graphics dest = Graphics.FromImage(ParentBitmap))
-			using (Graphics g = parent.CreateGraphics())
-			{
-				Point parentPos = parent.PointToScreen(new Point(0, 0));
-				dest.CopyFromScreen(parentPos, new Point(0, 0), parent.ClientSize);
-			}
-
-			//Create the dialog
+			//Create and position the dialog
 			InitializeComponent();
 			ClientSize = new Size(parent.ClientSize.Width, parent.ClientSize.Height);
 			Point point = parent.PointToScreen(new Point(0, 0));
 			Left = point.X;
 			Top = point.Y;
 
-			ParentBitmapOpacity = 0;
-			BaseBitmap = null;
-			fadeTimer_Tick(null, null);
-		}
-
-		private void fadeTimer_Tick(object sender, EventArgs e)
-		{
-			//Darken the thing.
-			Rectangle rect = new Rectangle(0, 0, ParentBitmap.Width, ParentBitmap.Height);
-			Bitmap newBmp = ParentBitmap.Clone(rect, System.Drawing.Imaging.PixelFormat.DontCare);
-			using (Graphics g = Graphics.FromImage(newBmp))
+			//Create the About bitmap localised for the current version (sans scrolling
+			//text) so it can be drawn quickly later.
+			AboutBitmap = Properties.Resources.AboutDialog;
+			AboutBitmap = AboutBitmap.Clone(new Rectangle(0, 0, AboutBitmap.Width,
+				AboutBitmap.Height), PixelFormat.DontCare);
+			using (Graphics g = Graphics.FromImage(AboutBitmap))
 			{
-				Brush brush = new SolidBrush(Color.FromArgb(ParentBitmapOpacity += 8, 0, 0, 0));
-				g.FillRectangle(brush, rect);
-
-				//Draw the background bitmap
-				Point boxPos = new Point((ClientSize.Width - Properties.Resources.AboutDialog.Width) / 2,
-					(ClientSize.Height - Properties.Resources.AboutDialog.Height) / 2);
-				g.DrawImage(Properties.Resources.AboutDialog, boxPos.X, boxPos.Y);
-				boxPos.Offset(19, 20);
-
 				//Version number
 				Font boldFont = new Font(Font, FontStyle.Bold);
 				Brush textBrush = new SolidBrush(Color.White);
-				PointF eraserPos = new PointF(boxPos.X + 149, boxPos.Y + 60);
+				PointF eraserPos = new PointF(168, 80);
 				SizeF eraserSize = g.MeasureString(S._("Eraser"), boldFont);
 				g.DrawString(S._("Eraser"), boldFont, textBrush, eraserPos);
 				g.DrawString(Assembly.GetExecutingAssembly().GetName().Version.ToString(),
@@ -118,20 +101,6 @@ namespace Eraser
 				SizeF disclaimerSize = g.MeasureString(disclaimerText, Font);
 				g.DrawString(disclaimerText, Font, textBrush, disclaimerPos);
 
-				//About text: Break it up into managable chunks.
-				if (AboutBitmap == null)
-				{
-					Size textMaxSize = Properties.Resources.AboutDialog.Size;
-					textMaxSize.Width -= (int)eraserPos.X - 42; //The left alignment and the padding
-					AboutBitmap = new Bitmap(textMaxSize.Width, 500);
-					using (Graphics aboutTextGraphics = Graphics.FromImage(AboutBitmap))
-					{
-						aboutTextGraphics.Clear(Color.FromArgb(0, 0, 0, 0));
-						AboutBitmapSize = DrawMultilineString(aboutTextGraphics, AboutText, Font,
-							textBrush, new PointF(0, 0), textMaxSize.Width);
-					}
-				}
-				
 				//Donation statement
 				string donationText = S._("Please help us continue develop Eraser, donate some coffee...");
 				PointF donationPos = new PointF(disclaimerPos.X, disclaimerPos.Y + 170);
@@ -139,38 +108,39 @@ namespace Eraser
 				g.DrawString(donationText, Font, textBrush, donationPos);
 			}
 
-			aboutPicBox.Image = newBmp;
-			if (ParentBitmapOpacity >= 128)
-			{
-				//We are at the end of the fading animation. Duplicate the backing bitmap
-				//so that we can start text scrolling.
-				BaseBitmap = newBmp;
-				fadeTimer.Enabled = false;
-				scrollTimer.Enabled = true;
-				GC.Collect();
-			}
-		}
+			//Calculate the position of the About bitmap
+			AboutBitmapPos = new Point((ClientSize.Width - AboutBitmap.Width) / 2,
+				(ClientSize.Height - AboutBitmap.Height) / 2);
 
-		private int top = 0;
-		private void scrollTimer_Tick(object sender, EventArgs e)
-		{
-			Bitmap workingBitmap = BaseBitmap.Clone(new Rectangle(0, 0, BaseBitmap.Width,
-				BaseBitmap.Height), System.Drawing.Imaging.PixelFormat.DontCare);
-			using (Graphics g = Graphics.FromImage(workingBitmap))
-			{
-				Point boxPos = new Point((ClientSize.Width - Properties.Resources.AboutDialog.Width) / 2,
-					(ClientSize.Height - Properties.Resources.AboutDialog.Height) / 2);
-				boxPos.Offset(19, 20);
-				boxPos.Offset(149, 147);
+			//And calculate the bounds of the About Text.
+			AboutTextRect = new Rectangle(AboutBitmapPos.X + 19 + 149, AboutBitmapPos.Y + 20 + 147,
+				AboutBitmap.Width - 19 - 149 - 20, 130);
 
-				g.Clip = new Region(new Rectangle(new Point(boxPos.X, boxPos.Y + 4), new Size(400, 130)));
-				if (AboutBitmapSize.Height < -top)
-					boxPos.Offset(0, top = 130);
-				else
-					boxPos.Offset(0, top -= 1);
-				g.DrawImage(AboutBitmap, boxPos);
+			//Create the About Text laid out on screen.
+			SizeF aboutTextSize = SizeF.Empty;
+			using (Bitmap b = new Bitmap(1, 1))
+			using (Graphics g = Graphics.FromImage(b))
+				aboutTextSize = g.MeasureString(AboutText, Font, AboutTextRect.Width);
+			AboutTextBitmap = new Bitmap(AboutTextRect.Width, (int)aboutTextSize.Height);
+			using (Graphics g = Graphics.FromImage(AboutTextBitmap))
+			{
+				g.Clear(Color.FromArgb(0, 0, 0, 0));
+				g.DrawString(AboutText, Font, new SolidBrush(Color.White), new RectangleF(
+					0.0f, 0.0f, AboutTextRect.Width, aboutTextSize.Height));
 			}
-			aboutPicBox.Image = workingBitmap;
+
+			//Get the parent dialog's screen buffer.
+			ParentBitmap = new Bitmap(parent.ClientSize.Width, parent.ClientSize.Height);
+			using (Graphics dest = Graphics.FromImage(ParentBitmap))
+			{
+				parent.Refresh();
+				Point parentPos = parent.PointToScreen(new Point(0, 0));
+				dest.CopyFromScreen(parentPos, new Point(0, 0), parent.ClientSize);
+			}
+
+			ParentOpacity = 0;
+			AboutTextScrollTop = AboutTextRect.Height / 2;
+			animationTimer_Tick(null, null);
 		}
 
 		private void AboutForm_Click(object sender, EventArgs e)
@@ -180,73 +150,44 @@ namespace Eraser
 			Close();
 		}
 
-		private static SizeF DrawMultilineString(Graphics g, string s, Font font,
-			Brush brush, PointF pos, float wrapWidth)
+		private void animationTimer_Tick(object sender, EventArgs e)
 		{
-			List<string> aboutTexts = new List<string>();
-			for (int i = 0, lastStart = 0; ; )
+			if (ParentOpacity <= 128)
+				ParentOpacity += 8;
+			if (AboutTextBitmap.Height < -AboutTextScrollTop)
 			{
-				if (i >= s.Length)
-				{
-					if (lastStart < s.Length)
-						aboutTexts.Add(s.Substring(lastStart));
-					break;
-				}
-				else if (Environment.NewLine.IndexOf(s[i]) != -1)
-				{
-					aboutTexts.Add(s.Substring(lastStart, i - lastStart));
-					lastStart = ++i;
-				}
-				else
-					++i;
+				AboutTextScrollTop = AboutTextRect.Height;
+				GC.Collect();
+			}
+			else
+				AboutTextScrollTop -= 1;
+
+			DrawComposite();
+		}
+
+		private void DrawComposite()
+		{
+			if (DoubleBufferBitmap == null)
+				DoubleBufferBitmap = new Bitmap(ClientSize.Width, ClientSize.Height);
+			using (Graphics g = Graphics.FromImage(DoubleBufferBitmap))
+			{
+				//Draw the parent image with a fading out effect
+				Brush brush = new SolidBrush(Color.FromArgb(ParentOpacity, 0, 0, 0));
+				g.DrawImageUnscaled(ParentBitmap, 0, 0);
+				g.FillRectangle(brush, ClientRectangle);
+
+				//Then draw the About bitmap (which we cached in the constructor)
+				g.DrawImageUnscaled(AboutBitmap, AboutBitmapPos);
+
+				//And the scrolling text
+				g.Clip = new Region(AboutTextRect);
+				g.DrawImageUnscaled(AboutTextBitmap, AboutTextRect.Left,
+					AboutTextRect.Top + AboutTextScrollTop);
+				g.ResetClip();
 			}
 
-			//Draw each line, one at a time, wrapping it as we go.
-			foreach (string line in aboutTexts)
-			{
-				//Determine where we can wrap.
-				List<int> wrapPos = new List<int>();
-				for (int last = 0; last != -1; )
-				{
-					int wrap = line.IndexOfAny(new char[] { ' ', '\t' }, last);
-					if (wrap != -1)
-						wrapPos.Insert(0, wrap++);
-					last = wrap;
-				}
-
-				List<string> wrapLines = new List<string>();
-				List<int> reuseIndices = new List<int>();
-				int lastIndex = 0;
-				do
-				{
-					string thisLine = line.Substring(lastIndex);
-					SizeF textSize = g.MeasureString(thisLine, font);
-					while (textSize.Width > wrapWidth)
-					{
-						reuseIndices.Add(wrapPos[0]);
-						thisLine = thisLine.Remove(wrapPos[0] - lastIndex);
-						textSize = g.MeasureString(thisLine, font);
-						wrapPos.RemoveAt(0);
-					}
-					wrapLines.Add(thisLine);
-					lastIndex += thisLine.Length + 1;
-					wrapPos.Clear();
-					wrapPos.AddRange(reuseIndices);
-					reuseIndices.Clear();
-				}
-				while (lastIndex < line.Length);
-
-				//Then write the strings to screen.
-				foreach (string wrapLine in wrapLines)
-				{
-					SizeF wrapLineSize = g.MeasureString(wrapLine == string.Empty ?
-						" " : wrapLine, font);
-					g.DrawString(wrapLine, font, brush, pos);
-					pos.Y += wrapLineSize.Height;
-				}
-			}
-
-			return new SizeF(wrapWidth, pos.Y);
+			using (Graphics g = CreateGraphics())
+				g.DrawImageUnscaled(DoubleBufferBitmap, 0, 0);
 		}
 	}
 }
