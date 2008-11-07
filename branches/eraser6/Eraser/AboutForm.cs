@@ -37,19 +37,7 @@ namespace Eraser
 	{
 		private Bitmap AboutBitmap;
 		private Point AboutBitmapPos;
-		private readonly string AboutText = "The Gutmann method used for overwriting is based on Peter " +
-			"Gutmann's paper \"Secure Deletion of Data from Magnetic and Solid-State Memory\".\n" +
-			"The Schneier 7-pass method is based on Bruce Schneier's algorithm using a Random Number " +
-			"Generator to wipe with random data.\n" +
-			"The DoD 3-, 7- and N-pass method is based on the US Department of Defense's \"National " +
-			"Industrial Security Program Operating Manual.\n\n" +
-			"All the methods are selected to effectively remove magnetic remnants from the drive in a " +
-			"secure and easy way.\n\n" +
-			"Eraser Development Team:\n" +
-			"\u2022 Joel Low: v6 Lead Developer\n" +
-			"\u2022 Dennis van Lith: Designer\n" +
-			"\u2022 Kasra Nasiri: Developer\n" +
-			"\u2022 Garrett Trant: Mentor\n";
+		private string AboutText;
 		private Bitmap AboutTextBitmap;
 		private Rectangle AboutTextRect;
 
@@ -67,6 +55,21 @@ namespace Eraser
 			Point point = parent.PointToScreen(new Point(0, 0));
 			Left = point.X;
 			Top = point.Y;
+
+			//Load the localised About Text
+			AboutText = S._("The Gutmann method used for overwriting is based on Peter " +
+				"Gutmann's paper \"Secure Deletion of Data from Magnetic and Solid-State Memory\".\n" +
+				"The Schneier 7-pass method is based on Bruce Schneier's algorithm using a Random Number " +
+				"Generator to wipe with random data.\n" +
+				"The DoD 3-, 7- and N-pass method is based on the US Department of Defense's \"National " +
+				"Industrial Security Program Operating Manual.\n\n" +
+				"All the methods are selected to effectively remove magnetic remnants from the drive in a " +
+				"secure and easy way.\n\n" +
+				"Eraser Development Team:\n" +
+				"\u2022 Garrett Trant: Mentor\n" +
+				"\u2022 Joel Low: Developer Lead\n" +
+				"\u2022 Dennis van Lith: Designer\n" +
+				"\u2022 Kasra Nasiri: Developer\n");
 
 			//Create the About bitmap localised for the current version (sans scrolling
 			//text) so it can be drawn quickly later.
