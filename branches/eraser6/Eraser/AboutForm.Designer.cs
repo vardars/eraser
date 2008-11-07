@@ -49,34 +49,50 @@ namespace Eraser
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutForm));
-			this.pictureBox1 = new System.Windows.Forms.PictureBox();
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+			this.aboutPicBox = new System.Windows.Forms.PictureBox();
+			this.fadeTimer = new System.Windows.Forms.Timer(this.components);
+			this.scrollTimer = new System.Windows.Forms.Timer(this.components);
+			((System.ComponentModel.ISupportInitialize)(this.aboutPicBox)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// pictureBox1
+			// aboutPicBox
 			// 
-			this.pictureBox1.Image = global::Eraser.Properties.Resources.AboutDialog;
-			resources.ApplyResources(this.pictureBox1, "pictureBox1");
-			this.pictureBox1.Name = "pictureBox1";
-			this.pictureBox1.TabStop = false;
-			this.pictureBox1.Click += new System.EventHandler(this.AboutForm_Click);
+			resources.ApplyResources(this.aboutPicBox, "aboutPicBox");
+			this.aboutPicBox.Image = global::Eraser.Properties.Resources.AboutDialog;
+			this.aboutPicBox.Name = "aboutPicBox";
+			this.aboutPicBox.TabStop = false;
+			this.aboutPicBox.Click += new System.EventHandler(this.AboutForm_Click);
+			// 
+			// fadeTimer
+			// 
+			this.fadeTimer.Enabled = true;
+			this.fadeTimer.Interval = 10;
+			this.fadeTimer.Tick += new System.EventHandler(this.fadeTimer_Tick);
+			// 
+			// scrollTimer
+			// 
+			this.scrollTimer.Interval = 50;
+			this.scrollTimer.Tick += new System.EventHandler(this.scrollTimer_Tick);
 			// 
 			// AboutForm
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
 			resources.ApplyResources(this, "$this");
-			this.Controls.Add(this.pictureBox1);
+			this.Controls.Add(this.aboutPicBox);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Name = "AboutForm";
 			this.ShowInTaskbar = false;
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.aboutPicBox)).EndInit();
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.PictureBox pictureBox1;
+		private System.Windows.Forms.PictureBox aboutPicBox;
+		private System.Windows.Forms.Timer fadeTimer;
+		private System.Windows.Forms.Timer scrollTimer;
 	}
 }

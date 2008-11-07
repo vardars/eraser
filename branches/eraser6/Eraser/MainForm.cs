@@ -219,7 +219,7 @@ namespace Eraser
 
 		private void aboutEraserToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			using (AboutForm form = new AboutForm())
+			using (AboutForm form = new AboutForm(this))
 			{
 				form.ShowDialog();
 			}
