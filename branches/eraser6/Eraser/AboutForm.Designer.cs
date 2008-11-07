@@ -68,6 +68,8 @@ namespace Eraser
 			this.Name = "AboutForm";
 			this.ShowInTaskbar = false;
 			this.Click += new System.EventHandler(this.AboutForm_Click);
+			this.MouseLeave += new System.EventHandler(this.AboutForm_MouseLeave);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.AboutForm_MouseMove);
 			this.ResumeLayout(false);
 
 		}

@@ -30,6 +30,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using Eraser.Util;
+using System.Diagnostics;
 
 namespace Eraser
 {
@@ -44,6 +45,9 @@ namespace Eraser
 		private Bitmap ParentBitmap;
 		private int ParentOpacity;
 		private int AboutTextScrollTop;
+
+		private Rectangle WebsiteRect;
+		private Rectangle DonateRect;
 
 		private Bitmap DoubleBufferBitmap;
 
@@ -80,6 +84,7 @@ namespace Eraser
 			{
 				//Version number
 				Font boldFont = new Font(Font, FontStyle.Bold);
+				Font underlineFont = new Font(Font, FontStyle.Underline);
 				Brush textBrush = new SolidBrush(Color.White);
 				PointF eraserPos = new PointF(168, 80);
 				SizeF eraserSize = g.MeasureString(S._("Eraser"), boldFont);
@@ -96,7 +101,9 @@ namespace Eraser
 				string websiteText = "http://eraser.sourceforge.net/";
 				PointF websitePos = new PointF(copyrightPos.X, copyrightPos.Y + copyrightSize.Height);
 				SizeF websiteSize = g.MeasureString(websiteText, Font);
-				g.DrawString(websiteText, Font, textBrush, websitePos);
+				g.DrawString(websiteText, underlineFont, textBrush, websitePos);
+				WebsiteRect = new Rectangle((int)websitePos.X, (int)websitePos.Y,
+					(int)websiteSize.Width, (int)websiteSize.Height);
 
 				//Open source disclaimer.
 				string disclaimerText = S._("Eraser is free open-source software!");
@@ -109,11 +116,17 @@ namespace Eraser
 				PointF donationPos = new PointF(disclaimerPos.X, disclaimerPos.Y + 170);
 				SizeF donationSize = g.MeasureString(donationText, Font);
 				g.DrawString(donationText, Font, textBrush, donationPos);
+				DonateRect = new Rectangle((int)donationPos.X, (int)donationPos.Y,
+					(int)donationSize.Width, (int)donationSize.Height);
 			}
 
 			//Calculate the position of the About bitmap
 			AboutBitmapPos = new Point((ClientSize.Width - AboutBitmap.Width) / 2,
 				(ClientSize.Height - AboutBitmap.Height) / 2);
+			WebsiteRect.X += AboutBitmapPos.X;
+			WebsiteRect.Y += AboutBitmapPos.Y;
+			DonateRect.X += AboutBitmapPos.X;
+			DonateRect.Y += AboutBitmapPos.Y;
 
 			//And calculate the bounds of the About Text.
 			AboutTextRect = new Rectangle(AboutBitmapPos.X + 19 + 149, AboutBitmapPos.Y + 20 + 147,
@@ -148,9 +161,27 @@ namespace Eraser
 
 		private void AboutForm_Click(object sender, EventArgs e)
 		{
-			//This is the only component around, so when clicked, dismiss the
-			//dialog.
-			Close();
+			Point cursorPos = PointToClient(Cursor.Position);
+			if (WebsiteRect.IntersectsWith(new Rectangle(cursorPos, new Size(1, 1))))
+				Process.Start("http://heidi.ie/eraser/");
+			else if (DonateRect.IntersectsWith(new Rectangle(cursorPos, new Size(1, 1))))
+				Process.Start("https://euro.swreg.org/cgi-bin/s.cgi?r=1&s=80181&db_key=1512312&x=0&lang=&lnk=");
+			else
+				//Dismiss the dialog.
+				Close();
+		}
+
+		private void AboutForm_MouseMove(object sender, MouseEventArgs e)
+		{
+			Cursor.Current = Cursors.Default;
+			if (WebsiteRect.IntersectsWith(new Rectangle(e.Location, new Size(1, 1))) ||
+				DonateRect.IntersectsWith(new Rectangle(e.Location, new Size(1, 1))))
+				Cursor.Current = Cursors.Hand;
+		}
+
+		private void AboutForm_MouseLeave(object sender, EventArgs e)
+		{
+			Cursor.Current = Cursors.Default;
 		}
 
 		private void animationTimer_Tick(object sender, EventArgs e)
