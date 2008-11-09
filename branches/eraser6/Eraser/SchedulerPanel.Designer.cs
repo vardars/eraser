@@ -222,6 +222,7 @@ namespace Eraser
 			resources.ApplyResources(this.schedulerProgress, "schedulerProgress");
 			this.schedulerProgress.BackgroundImage = null;
 			this.schedulerProgress.Font = null;
+			this.schedulerProgress.Maximum = 1000;
 			this.schedulerProgress.Name = "schedulerProgress";
 			// 
 			// SchedulerPanel

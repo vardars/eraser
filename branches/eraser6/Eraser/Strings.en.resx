@@ -156,11 +156,11 @@
   <data name="{0} out of {1}" xml:space="preserve">
     <value>{0} out of {1}</value>
   </data>
-  <data name="{0} left" xml:space="preserve">
-    <value>{0} left</value>
+  <data name="{0:hh:mm:ss} left" xml:space="preserve">
+    <value>{0:hh:mm:ss} left</value>
   </data>
-  <data name="Total: {0}%" xml:space="preserve">
-    <value>Total: {0}%</value>
+  <data name="Total: {0,2:#0.00%}" xml:space="preserve">
+    <value>Total: {0,2:#0.00%}</value>
   </data>
   <data name="Completed with warnings" xml:space="preserve">
     <value>Completed with warnings</value>

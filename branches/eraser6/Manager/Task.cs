@@ -706,21 +706,15 @@ namespace Eraser.Manager
 		/// Constructor.
 		/// </summary>
 		/// <param name="task">The task being run.</param>
-		/// <param name="overallProgress">The overall progress of the task.</param>
-		/// <param name="currentItemProgress">The progress for the individual
-		/// component of the task.</param>
-		public TaskProgressEventArgs(Task task, int overallProgress,
-			int currentItemProgress)
+		public TaskProgressEventArgs(Task task)
 			: base(task)
 		{
-			this.overallProgress = overallProgress;
-			this.currentItemProgress = currentItemProgress;
 		}
 
 		/// <summary>
-		/// A number from 0 to 100 detailing the overall progress of the task.
+		/// A number from 0 to 1 detailing the overall progress of the task.
 		/// </summary>
-		public int OverallProgress
+		public float OverallProgress
 		{
 			get { return overallProgress; }
 		}
@@ -728,9 +722,9 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The amount of time left for the operation to complete, in seconds.
 		/// </summary>
-		public int TimeLeft
+		public TimeSpan TimeLeft
 		{
-			get { return timeLeft; }
+			get { return new TimeSpan(timeLeft * 10000000L); }
 		}
 
 		/// <summary>
@@ -742,9 +736,26 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// A number from 0 to 100 detailing the overall progress of the item.
+		/// The current index of the target.
 		/// </summary>
-		public int CurrentItemProgress
+		public int CurrentTargetIndex
+		{
+			get { return currentTargetIndex; }
+		}
+
+		/// <summary>
+		/// The total number of passes to complete before this erasure method is
+		/// completed.
+		/// </summary>
+		public int CurrentTargetTotalPasses
+		{
+			get { return currentTargetTotalPasses; }
+		}
+
+		/// <summary>
+		/// A number from 0 to 1 detailing the overall progress of the item.
+		/// </summary>
+		public float CurrentItemProgress
 		{
 			get { return currentItemProgress; }
 		}
@@ -760,26 +771,30 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The pass number of a multi-pass erasure method.
 		/// </summary>
-		public int CurrentPass
+		public int CurrentItemPass
 		{
-			get { return currentPass; }
+			get { return currentItemPass; }
 		}
 
-		/// <summary>
-		/// The total number of passes to complete before this erasure method is
-		/// completed.
-		/// </summary>
-		public int TotalPasses
+		internal float CurrentTargetProgress
 		{
-			get { return totalPasses; }
+			set
+			{
+				overallProgress = Math.Min(
+					(value + (float)(CurrentTargetIndex - 1)) / Task.Targets.Count,
+					1.0f);
+			}
 		}
 
-		internal int overallProgress;
-		internal int timeLeft;
+		private float overallProgress = 0.0f;
+		internal int timeLeft = -1;
+
 		internal Task.ErasureTarget currentTarget;
-		internal int currentItemProgress;
+		internal int currentTargetIndex = 0;
+		internal int currentTargetTotalPasses;
+
+		internal float currentItemProgress = 0.0f;
 		internal string currentItemName;
-		internal int currentPass = 1;
-		internal int totalPasses;
+		internal int currentItemPass = 1;
 	}
 }

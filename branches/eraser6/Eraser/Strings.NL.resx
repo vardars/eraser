@@ -156,11 +156,11 @@
   <data name="{0} out of {1}" xml:space="preserve">
     <value>{0} van {1}</value>
   </data>
-  <data name="{0} left" xml:space="preserve">
-    <value>{0} rechts</value>
+  <data name="{0:hh:mm:ss} left" xml:space="preserve">
+    <value>(Untranslated)</value>
   </data>
-  <data name="Total: {0}%" xml:space="preserve">
-    <value>Totaal: {0}%</value>
+  <data name="Total: {0,2:#0.00%}" xml:space="preserve">
+    <value>(Untranslated)</value>
   </data>
   <data name="Completed with warnings" xml:space="preserve">
     <value>Afgerond met waarschuwingen</value>

@@ -171,7 +171,7 @@ namespace Eraser
 			ListViewItem item = GetTaskItem(e.Task);
 
 			//Update the progress bar
-			schedulerProgress.Value = e.OverallProgress;
+			schedulerProgress.Value = (int)(e.OverallProgress * 1000.0);
 		}
 
 		/// <summary>

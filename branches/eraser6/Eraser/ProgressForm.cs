@@ -64,15 +64,15 @@ namespace Eraser
 			}
 
 			item.Text = File.GetCompactPath(e.CurrentItemName, item.Width * 2, item.Font);
-			pass.Text = e.TotalPasses != 0 ?
-				string.Format(S._("{0} out of {1}"), e.CurrentPass, e.TotalPasses) :
-				string.Format("{0}", e.CurrentPass);
-			timeLeft.Text = string.Format(S._("{0} left"), new TimeSpan(0, 0, e.TimeLeft).ToString());
+			pass.Text = e.CurrentTargetTotalPasses != 0 ?
+				string.Format(S._("{0} out of {1}"), e.CurrentItemPass, e.CurrentTargetTotalPasses) :
+				string.Format("{0}", e.CurrentItemPass);
+			timeLeft.Text = string.Format(S._("{0:hh:mm:ss} left"), e.TimeLeft);
 
-			itemProgress.Value = e.CurrentItemProgress;
-			itemProgressLbl.Text = string.Format("{0}%", e.CurrentItemProgress);
-			overallProgress.Value = e.OverallProgress;
-			overallProgressLbl.Text = string.Format(S._("Total: {0}%"), e.OverallProgress);
+			itemProgress.Value = (int)(e.CurrentItemProgress * 1000);
+			itemProgressLbl.Text = e.CurrentItemProgress.ToString("#0%");
+			overallProgress.Value = (int)(e.OverallProgress * 1000);
+			overallProgressLbl.Text = string.Format(S._("Total: {0,2:#0.00%}"), e.OverallProgress);
 		}
 
 		void task_TaskFinished(TaskEventArgs e)

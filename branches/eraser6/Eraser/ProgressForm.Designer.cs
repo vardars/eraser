@@ -86,6 +86,7 @@ namespace Eraser
 			resources.ApplyResources(this.overallProgress, "overallProgress");
 			this.overallProgress.BackgroundImage = null;
 			this.overallProgress.Font = null;
+			this.overallProgress.Maximum = 1000;
 			this.overallProgress.Name = "overallProgress";
 			// 
 			// jobTitle
@@ -175,6 +176,7 @@ namespace Eraser
 			resources.ApplyResources(this.itemProgress, "itemProgress");
 			this.itemProgress.BackgroundImage = null;
 			this.itemProgress.Font = null;
+			this.itemProgress.Maximum = 1000;
 			this.itemProgress.Name = "itemProgress";
 			// 
 			// stop
