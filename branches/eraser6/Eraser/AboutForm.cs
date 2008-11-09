@@ -61,19 +61,39 @@ namespace Eraser
 			Top = point.Y;
 
 			//Load the localised About Text
-			AboutText = S._("The Gutmann method used for overwriting is based on Peter " +
-				"Gutmann's paper \"Secure Deletion of Data from Magnetic and Solid-State Memory\".\n" +
-				"The Schneier 7-pass method is based on Bruce Schneier's algorithm using a Random Number " +
-				"Generator to wipe with random data.\n" +
-				"The DoD 3-, 7- and N-pass method is based on the US Department of Defense's \"National " +
-				"Industrial Security Program Operating Manual.\n\n" +
-				"All the methods are selected to effectively remove magnetic remnants from the drive in a " +
-				"secure and easy way.\n\n" +
-				"Eraser Development Team:\n" +
-				"\u2022 Garrett Trant:		Mentor/Researcher\n" +
-				"\u2022 Joel Low:		Developer Lead\n" +
-				"\u2022 Dennis van Lith:		Designer\n" +
-				"\u2022 Kasra Nasiri:		Developer\n");
+			AboutText = S._(@"Eraser is an advanced security tool for Windows, which allows you to completely remove sensitive data from your hard drive by overwriting it several times with carefully selected patterns.  Eraser is Free software and its source code is released under GNU General Public License.
+
+Erasure Method Credits:
+Gutmann (35 Pass):	 	Copyright Peter Gutmann & Colin Plumb
+Gutmann Lite (10 pass): 		Copyright Peter Gutmann & Colin Plumb
+US DoD (7 pass):			Copyright United States Department of
+				Defense
+US DoD (3 pass):			Copyright United States Department of
+				Defense
+US Air Force 5020 (3 pass):		Copyright United States Department of
+				Defense
+US Army AR380-19 (3 pass):	Copyright United States Department of
+				Defense
+RCMP TSSIT OPS-II (7 pass):	Copyright Government of Canada,
+				Royal Canadian Mounted Police
+Schneier’s Method (7 pass):	Copyright Bruce Schneier
+German VSITR (7 pass):		Copyright Germany BSI Verschlusssachen
+				-IT-Richtlinien
+British HMG IS5 (3 pass):		Copyright British Government
+British HMG IS5 (1 pass):		Copyright British Government
+Russian GOST P50739-95 (2 pass):	Copyright Government of the Soviet
+				Union 
+Pseudorandom data (1 pass):	Public Domain
+First/Last 16Kb:			Copyright The Eraser Project
+
+Eraser Copyright " + "\u00A9" + @" The Eraser Project
+
+Eraser Project Members:
+" + "\u2022" + @" Sami Tolvanen:		Initiator/Developer
+" + "\u2022" + @" Garrett Trant:		Mentor/Researcher
+" + "\u2022" + @" Joel Low:		Lead Developer
+" + "\u2022" + @" Dennis van Lith:		Designer
+" + "\u2022" + @" Kasra Nasiri:		Security Researcher");
 
 			//Create the About bitmap localised for the current version (sans scrolling
 			//text) so it can be drawn quickly later.
