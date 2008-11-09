@@ -143,6 +143,14 @@ namespace Eraser.Manager
 	public class PRNGManager
 	{
 		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public PRNGManager()
+		{
+			entropyThread.AddEntropySource(new KernelEntropySource());
+		}
+
+		/// <summary>
 		/// Retrieves all currently registered erasure methods.
 		/// </summary>
 		/// <returns>A mutable list, with an instance of each PRNG.</returns>
@@ -217,15 +225,34 @@ namespace Eraser.Manager
 	/// </summary>
 	class EntropyPoller
 	{
+		/// <summary>
+		/// The algorithm used for mixing
+		/// </summary>
+		private enum PRFAlgorithms
+		{
+			MD5,
+			SHA1,
+			RIPEMD160,
+			SHA256,
+			SHA384,
+			SHA512,
+		};
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public EntropyPoller()
-		{	
+		{
+			//Create the pool.
+			pool = new byte[sizeof(uint) * 128];
+
 			//Then start the thread which maintains the pool.
-			thread = new Thread(delegate()
+			Thread = new Thread(delegate()
 				{
 					this.Main();
 				}
 			);
-			thread.Start();
+			Thread.Start();
 		}
 
 		/// <summary>
@@ -240,13 +267,15 @@ namespace Eraser.Manager
 			TimeSpan managerEntropySpan = new TimeSpan(0, 10, 0);
 			Stopwatch st = new Stopwatch();
 
-			while (thread.ThreadState != System.Threading.ThreadState.AbortRequested)
+			while (Thread.ThreadState != System.Threading.ThreadState.AbortRequested)
 			{
 				st.Start();
-				{
-					FastAddEntropy();
-					SlowAddEntropy();
-				}
+				lock (EntropySources)
+					foreach (EntropySource src in EntropySources)
+					{
+						byte[] entropy = src.GetEntropy();
+						AddEntropy(entropy);
+					}
 				
 				st.Stop(); 
 				Thread.Sleep(2000 + (int)(st.ElapsedTicks % 2049L));
@@ -263,64 +292,24 @@ namespace Eraser.Manager
 		/// </summary>
 		public void Abort()
 		{
-			thread.Abort();
+			Thread.Abort();
 		}
 
 		/// <summary>
-		/// The thread object.
+		/// Adds a new Entropy Source to the Poller.
 		/// </summary>
-		Thread thread;		
-	}
-	
-	/// <summary>
-	/// Provides means of generating random entropy from the system, user data
-	/// available from the kernel or dedicated harware.
-	/// </summary>
-	public class EntropySource
-	{
-		/// <summary>
-		/// The algorithm used for mixing
-		/// </summary>
-		private enum PRFAlgorithms
+		/// <param name="source">The EntropySource object to add.</param>
+		public void AddEntropySource(EntropySource source)
 		{
-			MD5,
-			SHA1,
-			RIPEMD160,
-			SHA256,
-			SHA384,
-			SHA512,
-		};
+			lock (EntropySources)
+				EntropySources.Add(source);
 
-		public EntropySource()
-		{
-			//Create the pool.
-			pool = new byte[sizeof(uint) * 128];
-
-			//Initialize the pool with some default information.
-			{
-				//Process startup information
-				KernelAPI.STARTUPINFO startupInfo = new KernelAPI.STARTUPINFO();
-				KernelAPI.GetStartupInfo(out startupInfo);
-				AddEntropy(startupInfo);
-
-				//System information
-				KernelAPI.SYSTEM_INFO systemInfo = new KernelAPI.SYSTEM_INFO();
-				KernelAPI.GetSystemInfo(out systemInfo);
-				AddEntropy(systemInfo);
-
-				FastAddEntropy();
-				SlowAddEntropy();
-
-				// set the default PRF algorithm
-				PRFAlgorithm = PRFAlgorithms.SHA512;
-				MixPool();
-			}
-
-			// apply whitening effect
-			PRFAlgorithm = PRFAlgorithms.RIPEMD160;
+			AddEntropy(source.GetPrimer());
 			MixPool();
 
-			// set back to default hash algorithm
+			//Apply whitening effect
+			PRFAlgorithm = PRFAlgorithms.RIPEMD160;
+			MixPool();
 			PRFAlgorithm = PRFAlgorithms.SHA512;
 		}
 
@@ -435,7 +424,7 @@ namespace Eraser.Manager
 			size -= wsize * sizeof(uint);
 			uint* d = (uint*)destination;
 			uint* s = (uint*)source;
-			
+
 			while (wsize-- > 0)
 				*d++ ^= *s++;
 
@@ -449,78 +438,205 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Adds data which is random to the pool
+		/// PRF algorithm handle
 		/// </summary>
-		/// <typeparam name="T">Any value type</typeparam>
-		/// <param name="entropy">A value which will be XORed with pool contents.</param>
-		public unsafe void AddEntropy<T>(T entropy) where T : struct
+		private HashAlgorithm PRF
 		{
-			try
+			get
 			{
-				int sizeofObject = Marshal.SizeOf(entropy);
-				IntPtr memory = Marshal.AllocHGlobal(sizeofObject);
-				try
+				Type type = null;
+				switch (PRFAlgorithm)
 				{
-					Marshal.StructureToPtr(entropy, memory, false);
-					byte[] dest = new byte[sizeofObject];
-
-					//Copy the memory
-					Marshal.Copy(memory, dest, 0, sizeofObject);
-
-					//Add entropy
-					AddEntropy(dest);
+					case PRFAlgorithms.MD5:
+						type = typeof(MD5CryptoServiceProvider);
+						break;
+					case PRFAlgorithms.SHA1:
+						type = typeof(SHA1Managed);
+						break;
+					case PRFAlgorithms.RIPEMD160:
+						type = typeof(RIPEMD160Managed);
+						break;
+					case PRFAlgorithms.SHA256:
+						type = typeof(SHA256Managed);
+						break;
+					case PRFAlgorithms.SHA384:
+						type = typeof(SHA384Managed);
+						break;
+					default:
+						type = typeof(SHA512Managed);
+						break;
 				}
-				finally
-				{
-					Marshal.FreeHGlobal(memory);
-				}
-			}
-			catch (OutOfMemoryException ex1)
-			{
-				// ignore this entropy source, we don't have enough memory!
-				string ignored = ex1.Message;
+
+				if (type.IsInstanceOfType(prfCache))
+					return prfCache;
+				ConstructorInfo hashConstructor = type.GetConstructor(Type.EmptyTypes);
+				return prfCache = (HashAlgorithm)hashConstructor.Invoke(null);
 			}
 		}
 
 		/// <summary>
-		/// Adds entropy to the pool. The sources of the entropy data is queried
-		/// quickly.
+		/// The last created PRF algorithm handle.
 		/// </summary>
-		private void FastAddEntropy()
+		private HashAlgorithm prfCache;
+
+		/// <summary>
+		/// PRF algorithm identifier
+		/// </summary>
+		private PRFAlgorithms PRFAlgorithm = PRFAlgorithms.SHA512;
+
+		/// <summary>
+		/// The pool of data which we currently maintain.
+		/// </summary>
+		private byte[] pool;
+
+		/// <summary>
+		/// The next position where entropy will be added to the pool.
+		/// </summary>
+		private int poolPosition = 0;
+
+		/// <summary>
+		/// The lock guarding the pool array and the current entropy addition index.
+		/// </summary>
+		private object poolLock = new object();
+
+		/// <summary>
+		/// The thread object.
+		/// </summary>
+		Thread Thread;
+
+		/// <summary>
+		/// The list of entropy sources registered with the Poller.
+		/// </summary>
+		private List<EntropySource> EntropySources = new List<EntropySource>();
+	}
+	
+	/// <summary>
+	/// Provides an abstract interface to allow multiple sources of entropy into
+	/// the EntropyPoller class.
+	/// </summary>
+	public abstract class EntropySource
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public EntropySource()
 		{
+		}
+
+		/// <summary>
+		/// Gets a primer to add to the pool when this source is first initialised, to
+		/// further add entropy to the pool.
+		/// </summary>
+		/// <returns>A byte array containing the entropy.</returns>
+		public abstract byte[] GetPrimer();
+
+		/// <summary>
+		/// Gets entropy from the entropy source. This will be called repetitively.
+		/// </summary>
+		/// <returns>A byte array containing the entropy.</returns>
+		public abstract byte[] GetEntropy();
+
+		/// <summary>
+		/// Converts value types into a byte array. This is a helper function to allow
+		/// inherited classes to convert value types into byte arrays which can be
+		/// returned to the EntropyPoller class.
+		/// </summary>
+		/// <typeparam name="T">Any value type</typeparam>
+		/// <param name="entropy">A value which will be XORed with pool contents.</param>
+		protected unsafe static byte[] StructToBuffer<T>(T entropy) where T: struct
+		{
+			int sizeofObject = Marshal.SizeOf(entropy);
+			IntPtr memory = Marshal.AllocHGlobal(sizeofObject);
+			try
+			{
+				Marshal.StructureToPtr(entropy, memory, false);
+				byte[] dest = new byte[sizeofObject];
+
+				//Copy the memory
+				Marshal.Copy(memory, dest, 0, sizeofObject);
+				return dest;
+			}
+			finally
+			{
+				Marshal.FreeHGlobal(memory);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Provides means of generating random entropy from the system or user space
+	/// randomness.
+	/// </summary>
+	internal class KernelEntropySource : EntropySource
+	{
+		public override byte[] GetPrimer()
+		{
+			List<byte> result = new List<byte>();
+
+			//Process startup information
+			KernelAPI.STARTUPINFO startupInfo = new KernelAPI.STARTUPINFO();
+			KernelAPI.GetStartupInfo(out startupInfo);
+			result.AddRange(StructToBuffer(startupInfo));
+
+			//System information
+			KernelAPI.SYSTEM_INFO systemInfo = new KernelAPI.SYSTEM_INFO();
+			KernelAPI.GetSystemInfo(out systemInfo);
+			result.AddRange(StructToBuffer(systemInfo));
+
+			result.AddRange(GetFastEntropy());
+			result.AddRange(GetSlowEntropy());
+			return result.ToArray();
+		}
+
+		public override byte[] GetEntropy()
+		{
+			List<byte> result = new List<byte>();
+			result.AddRange(GetFastEntropy());
+			result.AddRange(GetSlowEntropy());
+			
+			return result.ToArray();
+		}
+
+		/// <summary>
+		/// Retrieves entropy from quick sources.
+		/// </summary>
+		private byte[] GetFastEntropy()
+		{
+			List<byte> result = new List<byte>();
+
 			//Add the free disk space to the pool
-			AddEntropy(new DriveInfo(new DirectoryInfo(Environment.SystemDirectory).
-				Root.FullName).TotalFreeSpace);
+			result.AddRange(StructToBuffer(new DriveInfo(new DirectoryInfo(Environment.SystemDirectory).
+				Root.FullName).TotalFreeSpace));
 
 			//Miscellaneous window handles
-			AddEntropy(UserAPI.GetCapture());
-			AddEntropy(UserAPI.GetClipboardOwner());
-			AddEntropy(UserAPI.GetClipboardViewer());
-			AddEntropy(UserAPI.GetDesktopWindow());
-			AddEntropy(UserAPI.GetForegroundWindow());
-			AddEntropy(UserAPI.GetMessagePos());
-			AddEntropy(UserAPI.GetMessageTime());
-			AddEntropy(UserAPI.GetOpenClipboardWindow());
-			AddEntropy(UserAPI.GetProcessWindowStation());
-			AddEntropy(KernelAPI.GetCurrentProcessId());
-			AddEntropy(KernelAPI.GetCurrentThreadId());
-			AddEntropy(KernelAPI.GetProcessHeap());
+			result.AddRange(StructToBuffer(UserAPI.GetCapture()));
+			result.AddRange(StructToBuffer(UserAPI.GetClipboardOwner()));
+			result.AddRange(StructToBuffer(UserAPI.GetClipboardViewer()));
+			result.AddRange(StructToBuffer(UserAPI.GetDesktopWindow()));
+			result.AddRange(StructToBuffer(UserAPI.GetForegroundWindow()));
+			result.AddRange(StructToBuffer(UserAPI.GetMessagePos()));
+			result.AddRange(StructToBuffer(UserAPI.GetMessageTime()));
+			result.AddRange(StructToBuffer(UserAPI.GetOpenClipboardWindow()));
+			result.AddRange(StructToBuffer(UserAPI.GetProcessWindowStation()));
+			result.AddRange(StructToBuffer(KernelAPI.GetCurrentProcessId()));
+			result.AddRange(StructToBuffer(KernelAPI.GetCurrentThreadId()));
+			result.AddRange(StructToBuffer(KernelAPI.GetProcessHeap()));
 
 			//The caret and cursor positions
 			UserAPI.POINT point;
 			UserAPI.GetCaretPos(out point);
-			AddEntropy(point);
+			result.AddRange(StructToBuffer(point));
 			UserAPI.GetCursorPos(out point);
-			AddEntropy(point);
+			result.AddRange(StructToBuffer(point));
 
 			//Amount of free memory
 			KernelAPI.MEMORYSTATUSEX memoryStatus = new KernelAPI.MEMORYSTATUSEX();
 			memoryStatus.dwLength = (uint)Marshal.SizeOf(memoryStatus);
 			if (KernelAPI.GlobalMemoryStatusEx(ref memoryStatus))
 			{
-				AddEntropy(memoryStatus.ullAvailPhys);
-				AddEntropy(memoryStatus.ullAvailVirtual);
-				AddEntropy(memoryStatus);
+				result.AddRange(StructToBuffer(memoryStatus.ullAvailPhys));
+				result.AddRange(StructToBuffer(memoryStatus.ullAvailVirtual));
+				result.AddRange(StructToBuffer(memoryStatus));
 			}
 
 			//Thread execution times
@@ -528,45 +644,49 @@ namespace Eraser.Manager
 			if (KernelAPI.GetThreadTimes(KernelAPI.GetCurrentThread(), out creationTime,
 				out exitTime, out kernelTime, out userTime))
 			{
-				AddEntropy(creationTime);
-				AddEntropy(kernelTime);
-				AddEntropy(userTime);
+				result.AddRange(StructToBuffer(creationTime));
+				result.AddRange(StructToBuffer(kernelTime));
+				result.AddRange(StructToBuffer(userTime));
 			}
 
 			//Process execution times
 			if (KernelAPI.GetProcessTimes(KernelAPI.GetCurrentProcess(), out creationTime,
 				out exitTime, out kernelTime, out userTime))
 			{
-				AddEntropy(creationTime);
-				AddEntropy(kernelTime);
-				AddEntropy(userTime);
+				result.AddRange(StructToBuffer(creationTime));
+				result.AddRange(StructToBuffer(kernelTime));
+				result.AddRange(StructToBuffer(userTime));
 			}
 
 			//Current system time
-			AddEntropy(DateTime.Now.Ticks);
+			result.AddRange(StructToBuffer(DateTime.Now.Ticks));
 
 			//The high resolution performance counter
 			long perfCount = 0;
 			if (KernelAPI.QueryPerformanceCounter(out perfCount))
-				AddEntropy(perfCount);
+				result.AddRange(StructToBuffer(perfCount));
 
 			//Ticks since start up
 			uint tickCount = KernelAPI.GetTickCount();
 			if (tickCount != 0)
-				AddEntropy(tickCount);
+				result.AddRange(StructToBuffer(tickCount));
 
 			//CryptGenRandom
 			byte[] cryptGenRandom = new byte[160];
 			if (CryptAPI.CryptGenRandom(cryptGenRandom))
-				AddEntropy(cryptGenRandom);
+				result.AddRange(cryptGenRandom);
+
+			return result.ToArray();
 		}
 
 		/// <summary>
-		/// Adds entropy to the pool. The sources of the entropy data is queried
-		/// relatively slowly compared to the FastAddEntropy function.
+		/// Retrieves entropy from sources which are relatively slower than those from
+		/// the FastAddEntropy function.
 		/// </summary>
-		private void SlowAddEntropy()
+		private byte[] GetSlowEntropy()
 		{
+			List<byte> result = new List<byte>();
+
 			//NetAPI statistics
 			unsafe
 			{
@@ -585,7 +705,7 @@ namespace Eraser.Manager
 						Marshal.Copy(entropy, 0, netAPIStats, entropy.Length);
 
 						//And add it to the pool
-						AddEntropy(entropy);
+						result.AddRange(entropy);
 					}
 					finally
 					{
@@ -638,86 +758,26 @@ namespace Eraser.Manager
 			uint totalEntropy = 0;
 			for (uint infoType = 0; infoType < 64; ++infoType)
 			{
-				uint result = NTAPI.NtQuerySystemInformation(infoType, infoBuffer,
+				uint sysInfo = NTAPI.NtQuerySystemInformation(infoType, infoBuffer,
 					(uint)infoBuffer.Length, out dataWritten);
 
-				if (result == 0 /*ERROR_SUCCESS*/ && dataWritten > 0)
+				if (sysInfo == 0 /*ERROR_SUCCESS*/ && dataWritten > 0)
 				{
 					byte[] entropy = new byte[dataWritten];
 					Buffer.BlockCopy(infoBuffer, 0, entropy, 0, (int)dataWritten);
-					AddEntropy(entropy);
+					result.AddRange(entropy);
 					totalEntropy += dataWritten;
 				}
 			}
 
-			AddEntropy(totalEntropy);
+			result.AddRange(StructToBuffer(totalEntropy));
 
 			//Finally, our good friend CryptGenRandom()
 			byte[] cryptGenRandom = new byte[1536];
 			if (CryptAPI.CryptGenRandom(cryptGenRandom))
-				AddEntropy(cryptGenRandom);
+				result.AddRange(cryptGenRandom);
+
+			return result.ToArray();
 		}
-
-		/// <summary>
-		/// PRF algorithm handle
-		/// </summary>
-		private HashAlgorithm PRF
-		{
-			get
-			{
-				Type type = null;
-				switch (PRFAlgorithm)
-				{
-					case PRFAlgorithms.MD5:
-						type = typeof(MD5CryptoServiceProvider);
-						break;
-					case PRFAlgorithms.SHA1:
-						type = typeof(SHA1Managed);
-						break;
-					case PRFAlgorithms.RIPEMD160:
-						type = typeof(RIPEMD160Managed);
-						break;
-					case PRFAlgorithms.SHA256:
-						type = typeof(SHA256Managed);
-						break;
-					case PRFAlgorithms.SHA384:
-						type = typeof(SHA384Managed);
-						break;
-					default:
-						type = typeof(SHA512Managed);
-						break;
-				}
-
-				if (type.IsInstanceOfType(prfCache))
-					return prfCache;
-				ConstructorInfo hashConstructor = type.GetConstructor(Type.EmptyTypes);
-				return prfCache = (HashAlgorithm)hashConstructor.Invoke(null);
-			}
-		}
-
-		/// <summary>
-		/// The last created PRF algorithm handle.
-		/// </summary>
-		private HashAlgorithm prfCache;
-
-		/// <summary>
-		/// PRF algorithm identifier
-		/// </summary>
-		private PRFAlgorithms PRFAlgorithm;
-
-		/// <summary>
-		/// The pool of data which we currently maintain.
-		/// </summary>
-		private byte[] pool;
-
-		/// <summary>
-		/// The next position where entropy will be added to the pool.
-		/// </summary>
-		private int poolPosition = 0;
-
-		/// <summary>
-		/// The lock guarding the pool array and the current entropy addition index.
-		/// </summary>
-		private object poolLock = new object();
 	}
 }
