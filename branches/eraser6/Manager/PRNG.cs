@@ -3,7 +3,6 @@
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By: Kasra Nasiri <cjax@users.sourceforge.net> @10/7/2008
- * Modified By:
  * 
  * This file is part of Eraser.
  * 
@@ -27,11 +26,9 @@ using System.Text;
 using System.Threading;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.Reflection;
-using System.IO;
-using Microsoft.Win32.SafeHandles;
 using Eraser.Util;
+using Microsoft.Win32.SafeHandles;
+using System.IO;
 
 namespace Eraser.Manager
 {
@@ -212,27 +209,75 @@ namespace Eraser.Manager
 	}
 
 	/// <summary>
-	/// A thread class that will get data from the system to let PRNGs use as seeds.
+	/// A class which uses EntropyPoll class to fetch system data as a source of
+	/// randomness at "reqular" but "random" intervals
 	/// </summary>
-	internal class EntropyThread
+	class EntropyPoller : EntropySource
 	{
+		public EntropyPoller()
+		{	
+			//Then start the thread which maintains the pool.
+			thread = new Thread(delegate()
+				{
+					this.Main();
+				}
+			);
+			thread.Start();
+		}
+		
 		/// <summary>
-		/// The algorithm used for mixing
+		/// The PRNG entropy thread. This thread will run in the background, getting
+		/// random data to be used for entropy. This will maintain the integrity
+		/// of generated data from the PRNGs.
 		/// </summary>
-		private enum PRFAlgorithms
+		private void Main()
 		{
-			MD5,
-			SHA1,
-			RIPEMD160,
-			SHA256,
-			SHA384,
-			SHA512,
-		};
+			//This entropy thread will utilize a polling loop.
+			DateTime lastAddedEntropy = DateTime.Now;
+			TimeSpan managerEntropySpan = new TimeSpan(0, 10, 0);
+			System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
+			while (thread.ThreadState != ThreadState.AbortRequested)
+			{
+				st.Start();
+				{					
+				 	FastAddEntropy();
+					SlowAddEntropy();
+				}
+				
+				st.Stop(); 
+				Thread.Sleep(2000 + (int)(st.ElapsedTicks % 2049L));
+				st.Reset();
 
-		public EntropyThread()
+				//Send entropy to the PRNGs for new seeds.
+				if (DateTime.Now - lastAddedEntropy > managerEntropySpan)
+					ManagerLibrary.Instance.PRNGManager.AddEntropy(GetPool());
+			}
+		}
+		
+		/// <summary>
+		/// Stops the execution of the thread.
+		/// </summary>
+		public void Abort()
+		{
+			thread.Abort();
+		}
+
+		/// <summary>
+		/// The thread object.
+		/// </summary>
+		Thread thread;		
+	}
+	
+	/// <summary>
+	/// Provides means of generating random entropy from the system, user data
+	/// available from the kernel or dedicated harware.
+	/// </summary>
+	public class EntropySource
+	{
+		public EntropySource()
 		{
 			//Create the pool.
-			pool = new byte[sizeof(uint) * 128];
+			pool = new byte[poolSize]; // {512,1024} bytes
 
 			//Initialize the pool with some default information.
 			{
@@ -260,54 +305,36 @@ namespace Eraser.Manager
 
 			// set back to default hash algorithm
 			PRFAlgorithm = PRFAlgorithms.SHA512;
-
-			//Then start the thread which maintains the pool.
-			thread = new Thread(delegate()
-				{
-					this.Main();
-				}
-			);
-			thread.Start();
 		}
 
 		/// <summary>
-		/// Stops the execution of the thread.
+		/// The algorithm used for mixing
 		/// </summary>
-		public void Abort()
+		public enum PRFAlgorithms : int
 		{
-			thread.Abort();
-		}
+			MD5,
+			SHA1,
+			RIPEMD160,
+			SHA256,
+			SHA384,
+			SHA512,
+		};
 
 		/// <summary>
-		/// The PRNG entropy thread. This thread will run in the background, getting
-		/// random data to be used for entropy. This will maintain the integrity
-		/// of generated data from the PRNGs.
+		/// Property sheet for PRF algorithm
 		/// </summary>
-		private void Main()
+		public PRFAlgorithms PRFAlgorithm
 		{
-			//This entropy thread will utilize a polling loop.
-			DateTime lastAddedEntropy = DateTime.Now;
-			TimeSpan managerEntropySpan = new TimeSpan(0, 10, 0);
-			Stopwatch st = new Stopwatch();
-
-			while (thread.ThreadState != System.Threading.ThreadState.AbortRequested)
+			get
 			{
-				st.Start();
-				{
-					FastAddEntropy();
-					SlowAddEntropy();
-				}
-				
-				st.Stop(); 
-				Thread.Sleep(2000 + (int)(st.ElapsedTicks % 2049L));
-				st.Reset();
-
-				//Send entropy to the PRNGs for new seeds.
-				if (DateTime.Now - lastAddedEntropy > managerEntropySpan)
-					ManagerLibrary.Instance.PRNGManager.AddEntropy(GetPool());
+				return prfAlgorithm;
+			}
+			set
+			{
+				prfAlgorithm = value;
 			}
 		}
-
+		
 		/// <summary>
 		/// Retrieves the current contents of the entropy pool.
 		/// </summary>
@@ -329,58 +356,6 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Inverts the contents of the pool
-		/// </summary>
-		private void InvertPool()
-		{
-			lock (poolLock)
-				unsafe
-				{
-					fixed (byte* fPool = pool)
-					{
-						uint* pPool = (uint*)fPool;
-						uint poolLength = (uint)(pool.Length / sizeof(uint));
-						while (poolLength-- != 0)
-							*pPool = (uint)(*pPool++ ^ unchecked((uint)-1));
-					}
-				}
-		}
-
-		/// <summary>
-		/// Mixes the contents of the pool.
-		/// </summary>
-		private void MixPool()
-		{
-			lock (poolLock)
-			{
-				//Mix the last 128 bytes first.
-				const int mixBlockSize = 128;
-				int hashSize = PRF.HashSize / 8;
-				PRF.ComputeHash(pool, pool.Length - mixBlockSize, mixBlockSize).CopyTo(pool, 0);
-
-				//Then mix the following bytes until wraparound is required
-				int i = 0;
-				for (; i < pool.Length - hashSize; i += hashSize)
-					Buffer.BlockCopy(PRF.ComputeHash(pool, i, 
-						i + mixBlockSize >= pool.Length ? pool.Length - i : mixBlockSize),
-						0, pool, i, i + hashSize >= pool.Length ? pool.Length - i : hashSize);
-				
-				//Mix the remaining blocks which require copying from the front
-				byte[] combinedBuffer = new byte[mixBlockSize];
-				for (; i < pool.Length; i += hashSize)
-				{
-					Buffer.BlockCopy(pool, i, combinedBuffer, 0, pool.Length - i);
-
-					Buffer.BlockCopy(pool, 0, combinedBuffer, pool.Length - i,
-								mixBlockSize - (pool.Length - i));
-
-					Buffer.BlockCopy(PRF.ComputeHash(combinedBuffer, 0, mixBlockSize), 0,
-						pool, i, pool.Length-i > hashSize ? hashSize : pool.Length-i);
-				}
-			}
-		}
-
-		/// <summary>
 		/// Adds data which is random to the pool
 		/// </summary>
 		/// <param name="entropy">An array of data which will be XORed with pool
@@ -391,45 +366,10 @@ namespace Eraser.Manager
 				fixed (byte* pEntropy = entropy)
 				fixed (byte* pPool = pool)
 				{
-					int size = entropy.Length;
-					byte* mpEntropy = pEntropy;
-					while (size > 0)
-					{
-						//Bring the pool position back to the front if we are at our end
-						if (poolPosition >= pool.Length)
-							poolPosition = 0;
-
-						int amountToMix = Math.Min(size, pool.Length - poolPosition);
-						MemoryXor(pPool + poolPosition, mpEntropy, amountToMix);
-						mpEntropy = mpEntropy + amountToMix;
-						size -= amountToMix;
-					}
+					//Add entropy to the pool by XORing every value with the given entropy.
+					poolPosition = Unsafe.CircularMemoryXor(new IntPtr(pPool), new IntPtr(pEntropy),
+										poolPosition, poolSize, entropy.Length);
 				}
-		}
-
-		/// <summary>
-		/// XOR's memory a DWORD at a time.
-		/// </summary>
-		/// <param name="destination">The destination buffer to be XOR'ed</param>
-		/// <param name="source">The source buffer to XOR with</param>
-		/// <param name="size">The size of the source buffer</param>
-		private static unsafe void MemoryXor(byte* destination, byte* source, int size)
-		{
-			int wsize = size / sizeof(uint);
-			size -= wsize * sizeof(uint);
-			uint* d = (uint*)destination;
-			uint* s = (uint*)source;
-			
-			while (wsize-- > 0)
-				*d++ ^= *s++;
-
-			if (size > 0)
-			{
-				byte* db = (byte*)d,
-				      ds = (byte*)s;
-				while (size-- > 0)
-					*db++ ^= *ds++;
-			}
 		}
 
 		/// <summary>
@@ -470,7 +410,7 @@ namespace Eraser.Manager
 		/// Adds entropy to the pool. The sources of the entropy data is queried
 		/// quickly.
 		/// </summary>
-		private void FastAddEntropy()
+		public void FastAddEntropy()
 		{
 			//Add the free disk space to the pool
 			AddEntropy(new DriveInfo(new DirectoryInfo(Environment.SystemDirectory).
@@ -549,7 +489,7 @@ namespace Eraser.Manager
 		/// Adds entropy to the pool. The sources of the entropy data is queried
 		/// relatively slowly compared to the FastAddEntropy function.
 		/// </summary>
-		private void SlowAddEntropy()
+		public void SlowAddEntropy()
 		{
 			//NetAPI statistics
 			unsafe
@@ -641,72 +581,110 @@ namespace Eraser.Manager
 			if (CryptAPI.CryptGenRandom(cryptGenRandom))
 				AddEntropy(cryptGenRandom);
 		}
+		
+		/// <summary>
+		/// Inverts the contents of the pool
+		/// </summary>
+		private void InvertPool()
+		{
+			lock (poolLock)
+				unsafe
+				{
+					fixed (byte* fPool = pool)
+					{
+						uint* pPool = (uint*)fPool;
+						uint poolLength = (uint)(pool.Length / sizeof(uint));
+						while (poolLength-- != 0)
+							*pPool = (uint)(*pPool++ ^ unchecked((uint)-1));
+					}
+				}
+		}
 
 		/// <summary>
-		/// PRF algorithm handle
+		/// Creates an instance of the requested PRF
 		/// </summary>
-		private HashAlgorithm PRF
+		private void CheckPRF()
 		{
-			get
+			switch (prfAlgorithm)
 			{
-				Type type = null;
-				switch (PRFAlgorithm)
-				{
-					case PRFAlgorithms.MD5:
-						type = typeof(MD5CryptoServiceProvider);
-						break;
-					case PRFAlgorithms.SHA1:
-						type = typeof(SHA1Managed);
-						break;
-					case PRFAlgorithms.RIPEMD160:
-						type = typeof(RIPEMD160Managed);
-						break;
-					case PRFAlgorithms.SHA256:
-						type = typeof(SHA256Managed);
-						break;
-					case PRFAlgorithms.SHA384:
-						type = typeof(SHA384Managed);
-						break;
-					default:
-						type = typeof(SHA512Managed);
-						break;
-				}
-
-				if (type.IsInstanceOfType(prfCache))
-					return prfCache;
-				ConstructorInfo hashConstructor = type.GetConstructor(Type.EmptyTypes);
-				return prfCache = (HashAlgorithm)hashConstructor.Invoke(null);
+				case PRFAlgorithms.MD5: PRF = new MD5CryptoServiceProvider(); break;
+				case PRFAlgorithms.SHA1: PRF = new SHA1Managed(); break;
+				case PRFAlgorithms.RIPEMD160: PRF = new RIPEMD160Managed(); break;
+				case PRFAlgorithms.SHA256: PRF = new SHA256Managed(); break;
+				case PRFAlgorithms.SHA384: PRF = new SHA384Managed(); break;
+				default: /*SHA512: */ PRF = new SHA512Managed(); break;
 			}
 		}
 
 		/// <summary>
-		/// The last created PRF algorithm handle.
+		/// Mixes the contents of the pool.
 		/// </summary>
-		private HashAlgorithm prfCache;
+		private void MixPool()
+		{
+			CheckPRF();
+
+			lock (poolLock)
+			{
+				//Mix the last 128 bytes first.
+				const int mixBlockSize = 128;
+				int hashSize = PRF.HashSize / 8;
+				PRF.ComputeHash(pool, pool.Length - mixBlockSize, mixBlockSize).CopyTo(pool, 0);
+
+				//Then mix the following bytes until wraparound is required
+				int i = 0;
+				for (; i < pool.Length - hashSize; i += hashSize)
+					Buffer.BlockCopy(PRF.ComputeHash(pool, i,
+						i + mixBlockSize >= pool.Length ? pool.Length - i : mixBlockSize),
+						0, pool, i, i + hashSize >= pool.Length ? pool.Length - i : hashSize);
+
+				//Mix the remaining blocks which require copying from the front
+				byte[] combinedBuffer = new byte[mixBlockSize];
+				for (; i < pool.Length; i += hashSize)
+				{
+					Buffer.BlockCopy(pool, i, combinedBuffer, 0, pool.Length - i);
+
+					Buffer.BlockCopy(pool, 0, combinedBuffer, pool.Length - i,
+								mixBlockSize - (pool.Length - i));
+
+					Buffer.BlockCopy(PRF.ComputeHash(combinedBuffer, 0, mixBlockSize), 0,
+						pool, i, pool.Length - i > hashSize ? hashSize : pool.Length - i);
+				}
+			}
+		}
+
+		/// <summary>
+		/// PRF algorithm handle
+		/// </summary>
+		private HashAlgorithm PRF;
 
 		/// <summary>
 		/// PRF algorithm identifier
 		/// </summary>
-		private PRFAlgorithms PRFAlgorithm;		
+		private PRFAlgorithms prfAlgorithm;
 
 		/// <summary>
-		/// The thread object.
+		/// size of the netropy pool, should allways be exponent of 2.
 		/// </summary>
-		private Thread thread;
+		const int poolSize = sizeof(uint) * 128;
+
+		/// <summary>
+		/// Modulus of pool size
+		/// </summary>
+		const int poolMod = poolSize - 1;
 
 		/// <summary>
 		/// The pool of data which we currently maintain.
 		/// </summary>
-		private byte[] pool;
+		byte[] pool;
 
 		/// <summary>
 		/// The next position where entropy will be added to the pool.
 		/// </summary>
-		private int poolPosition = 0;
+		int poolPosition = 0;
 
 		/// <summary>
 		/// The lock guarding the pool array and the current entropy addition index.
 		/// </summary>
-		private object poolLock = new object();
+		object poolLock = new object();
 	}
 }
