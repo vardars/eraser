@@ -95,13 +95,6 @@ namespace Eraser.Properties {
             }
         }
         
-        internal static System.Drawing.Icon NotifyBusy10 {
-            get {
-                object obj = ResourceManager.GetObject("NotifyBusy10", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
         internal static System.Drawing.Icon NotifyBusy2 {
             get {
                 object obj = ResourceManager.GetObject("NotifyBusy2", resourceCulture);
@@ -126,34 +119,6 @@ namespace Eraser.Properties {
         internal static System.Drawing.Icon NotifyBusy5 {
             get {
                 object obj = ResourceManager.GetObject("NotifyBusy5", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Icon NotifyBusy6 {
-            get {
-                object obj = ResourceManager.GetObject("NotifyBusy6", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Icon NotifyBusy7 {
-            get {
-                object obj = ResourceManager.GetObject("NotifyBusy7", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Icon NotifyBusy8 {
-            get {
-                object obj = ResourceManager.GetObject("NotifyBusy8", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Icon NotifyBusy9 {
-            get {
-                object obj = ResourceManager.GetObject("NotifyBusy9", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

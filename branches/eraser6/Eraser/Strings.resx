@@ -141,8 +141,8 @@
   <data name="Help" xml:space="preserve">
     <value>Help</value>
   </data>
-  <data name="Processing: " xml:space="preserve">
-    <value>Processing: </value>
+  <data name="Processing:" xml:space="preserve">
+    <value>Processing:</value>
   </data>
   <data name="Could not load task list. All task entries have been lost." xml:space="preserve">
     <value>Could not load task list. All task entries have been lost.</value>

@@ -244,8 +244,12 @@ namespace Eraser
 				return;
 			}
 
+			string iconText = S._("Eraser") + " - " + S._("Processing:") + ' ' + task.UIText;
+			if (iconText.Length >= 64)
+				iconText = iconText.Remove(60) + "...";
+
 			ProcessingAnimationFrame = 0;
-			notificationIcon.Text = S._("Eraser") + " - " + S._("Processing: ") + task.UIText;
+			notificationIcon.Text = iconText;
 			notificationIconTimer.Enabled = true;
 		}
 
@@ -277,11 +281,10 @@ namespace Eraser
 			Resources.NotifyBusy3,
 			Resources.NotifyBusy4,
 			Resources.NotifyBusy5,
-			Resources.NotifyBusy6,
-			Resources.NotifyBusy7,
-			Resources.NotifyBusy8,
-			Resources.NotifyBusy9,
-			Resources.NotifyBusy10
+			Resources.NotifyBusy4,
+			Resources.NotifyBusy3,
+			Resources.NotifyBusy2,
+			Resources.NotifyBusy1
 		};
 		#endregion
 

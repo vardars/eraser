@@ -133,9 +133,6 @@
   <data name="NotifyBusy1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\NotifyIcon1.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="NotifyBusy10" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NotifyIcon10.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="NotifyBusy2" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\NotifyIcon2.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -147,18 +144,6 @@
   </data>
   <data name="NotifyBusy5" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\NotifyIcon5.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NotifyBusy6" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NotifyIcon6.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NotifyBusy7" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NotifyIcon7.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NotifyBusy8" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NotifyIcon8.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="NotifyBusy9" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\NotifyIcon9.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ToolbarArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ToolbarArrow.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
