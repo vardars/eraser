@@ -161,7 +161,6 @@ namespace Eraser
 		/// <param name="pe">Paint event object.</param>
 		protected override void OnPaint(PaintEventArgs pe)
 		{
-			// TODO: Add custom paint code here
 			Draw(pe.Graphics);
 
 			// Calling the base class OnPaint
