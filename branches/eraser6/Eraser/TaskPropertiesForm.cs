@@ -135,6 +135,7 @@ namespace Eraser
 			{
 				ListViewItem item = data.Items.Add(target.UIText);
 				item.SubItems.Add(target.MethodDefined ? target.Method.Name : S._("(default)"));
+				item.Tag = target;
 			}
 
 			//And the schedule, if selected.
@@ -203,8 +204,9 @@ namespace Eraser
 				{
 					Task.ErasureTarget target = form.Target;
 					ListViewItem item = data.Items.Add(target.UIText);
-
 					item.SubItems.Add(target.MethodDefined ? target.Method.Name : S._("(default)"));
+					item.Tag = target;
+
 					task.Targets.Add(target);
 					errorProvider.Clear();
 				}
@@ -233,6 +235,43 @@ namespace Eraser
 			}
 		}
 
+		/// <summary>
+		/// Generated when the user right-clicks on the data selection list-view.
+		/// </summary>
+		/// <param name="sender">The menu being opened.</param>
+		/// <param name="e">Event argument.</param>
+		private void dataContextMenuStrip_Opening(object sender, CancelEventArgs e)
+		{
+			if (data.SelectedIndices.Count == 0)
+			{
+				e.Cancel = true;
+				return;
+			}
+		}
+
+		/// <summary>
+		/// Generated when the user selects the menu itm to remove the selected
+		/// data from the list of data to erase.
+		/// </summary>
+		/// <param name="sender">The object triggering the event.</param>
+		/// <param name="e">Event argument.</param>
+		private void deleteDataToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (data.SelectedIndices.Count == 0)
+				return;
+
+			foreach (ListViewItem obj in data.SelectedItems)
+			{
+				task.Targets.Remove((Task.ErasureTarget)obj.Tag);
+				data.Items.Remove(obj);
+			}
+		}
+
+		/// <summary>
+		/// Generated when the task schedule type changes.
+		/// </summary>
+		/// <param name="sender">The object triggering the event.</param>
+		/// <param name="e">Event argument.</param>
 		private void taskType_CheckedChanged(object sender, EventArgs e)
 		{
 			scheduleTimeLbl.Enabled = scheduleTime.Enabled = schedulePattern.Enabled =
@@ -243,6 +282,11 @@ namespace Eraser
 			scheduleSpan_CheckedChanged(sender, e);
 		}
 
+		/// <summary>
+		/// Generated when the scheduling frequency is changed.
+		/// </summary>
+		/// <param name="sender">The object triggering the event.</param>
+		/// <param name="e">Event argument.</param>
 		private void scheduleSpan_CheckedChanged(object sender, EventArgs e)
 		{
 			scheduleDailyByDay.Enabled = scheduleDailyByDayLbl.Enabled =
@@ -262,12 +306,22 @@ namespace Eraser
 			scheduleDailySpan_CheckedChanged(sender, e);
 		}
 
+		/// <summary>
+		/// Generated when the daily frequency argument is changed.
+		/// </summary>
+		/// <param name="sender">The object triggering the event.</param>
+		/// <param name="e">Event argument.</param>
 		private void scheduleDailySpan_CheckedChanged(object sender, EventArgs e)
 		{
 			scheduleDailyByDayFreq.Enabled = scheduleDailyByDay.Checked &&
 				scheduleDaily.Checked && typeRecurring.Checked;
 		}
 
+		/// <summary>
+		/// Generated when the dialog is closed.
+		/// </summary>
+		/// <param name="sender">The object triggering the event.</param>
+		/// <param name="e">Event argument.</param>
 		private void ok_Click(object sender, EventArgs e)
 		{
 			if (data.Items.Count == 0)
@@ -300,6 +354,9 @@ namespace Eraser
 			Close();
 		}
 
+		/// <summary>
+		/// The task being edited.
+		/// </summary>
 		private Task task = new Task();
 	}
 }
