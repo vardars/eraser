@@ -146,8 +146,15 @@ namespace Eraser.Util
 					currentDir += '\\';
 				if (GetVolumeNameForVolumeMountPoint(currentDir, volumeID, 50))
 					return new VolumeInfo(volumeID.ToString());
-				else if (Marshal.GetLastWin32Error() != 4390 /*ERROR_NOT_A_REPARSE_POINT*/)
-					throw new Win32Exception(Marshal.GetLastWin32Error());
+				else
+					switch (Marshal.GetLastWin32Error())
+					{
+						case 1:
+						case 4390:
+							break;
+						default:
+							throw new Win32Exception(Marshal.GetLastWin32Error());
+					}
 				mountpointDir = mountpointDir.Parent;
 			}
 			while (mountpointDir != null);

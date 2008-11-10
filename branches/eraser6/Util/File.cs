@@ -205,7 +205,7 @@ namespace Eraser.Util
 				}
 			}
 
-			throw new Win32Exception("Unknown DeviceIoControl error.");
+			return false;
 		}
 
 		/// <summary>
