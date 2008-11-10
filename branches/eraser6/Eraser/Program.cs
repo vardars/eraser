@@ -81,6 +81,7 @@ namespace Eraser
 				}
 
 				//Run the program
+				eraserClient.Run();
 				Application.Run(form);
 
 				//Save the task list

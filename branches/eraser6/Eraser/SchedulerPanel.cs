@@ -90,18 +90,13 @@ namespace Eraser
 			item.Text = task.UIText;
 
 			//Set the next run time of the task
-			if (task.Schedule is RecurringSchedule)
-			{
+			if (task.Queued)
+				item.SubItems[1].Text = S._("Queued for execution");
+			else if (task.Schedule is RecurringSchedule)
 				item.SubItems[1].Text = ((task.Schedule as RecurringSchedule).NextRun.
 					ToString(DateTimeFormatInfo.CurrentInfo.FullDateTimePattern));
-			}
 			else if (task.Schedule == Schedule.RunNow)
-			{
-				if (task.Queued)
-					item.SubItems[1].Text = S._("Queued for execution");
-				else
-					item.SubItems[1].Text = S._("Not queued");
-			}
+				item.SubItems[1].Text = S._("Not queued");
 			else
 				item.SubItems[1].Text = task.Schedule.UIText;
 

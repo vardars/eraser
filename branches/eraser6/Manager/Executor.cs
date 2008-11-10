@@ -34,6 +34,11 @@ namespace Eraser.Manager
 	public abstract class Executor
 	{
 		/// <summary>
+		/// Starts the execution of tasks queued.
+		/// </summary>
+		public abstract void Run();
+
+		/// <summary>
 		/// Adds a new task to be executed in the future.
 		/// </summary>
 		/// <param name="task">The Task object describing the details of the task.

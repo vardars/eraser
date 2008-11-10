@@ -47,14 +47,17 @@ namespace Eraser.Manager
 					Main();
 				}
 			);
-
-			thread.Start();
 		}
 
 		void IDisposable.Dispose()
 		{
 			thread.Abort();
 			schedulerInterrupt.Set();
+		}
+
+		public override void Run()
+		{
+			thread.Start();
 		}
 
 		public override void AddTask(ref Task task)
@@ -346,10 +349,9 @@ namespace Eraser.Manager
 
 						//And the task finished event.
 						task.OnTaskFinished(new TaskEventArgs(task));
+						OnTaskProcessed(currentTask);
 					}
 
-					//We've completed the task, say so.
-					OnTaskProcessed(currentTask);
 					currentTask = null;
 				}
 
