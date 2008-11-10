@@ -292,6 +292,10 @@ namespace Eraser.Manager
 
 					try
 					{
+						//Prevent the system from sleeping.
+						KernelAPI.SetThreadExecutionState(KernelAPI.EXECUTION_STATE.ES_CONTINUOUS |
+							KernelAPI.EXECUTION_STATE.ES_SYSTEM_REQUIRED);
+
 						//Broadcast the task started event.
 						task.queued = false;
 						task.cancelled = false;
@@ -331,6 +335,10 @@ namespace Eraser.Manager
 					}
 					finally
 					{
+						//Allow the system to sleep again.
+						KernelAPI.SetThreadExecutionState(KernelAPI.EXECUTION_STATE.ES_CONTINUOUS |
+							KernelAPI.EXECUTION_STATE.ES_SYSTEM_REQUIRED);
+
 						//If the task is a recurring task, reschedule it since we are done.
 						if (task.Schedule is RecurringSchedule)
 							((RecurringSchedule)task.Schedule).Reschedule(DateTime.Now);
