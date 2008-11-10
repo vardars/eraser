@@ -118,7 +118,7 @@ namespace Eraser
 					schedule.MonthlySchedule = (int)scheduleMonthlyDayNumber.Value;
 				}
 				else
-					throw new NotImplementedException("No such scheduling method.");
+					throw new Exception("No such scheduling method.");
 			}
 		}
 
@@ -186,7 +186,7 @@ namespace Eraser
 						scheduleMonthlyDayNumber.Value = schedule.MonthlySchedule;
 						break;
 					default:
-						throw new NotImplementedException("Unknown schedule type.");
+						throw new Exception("Unknown schedule type.");
 				}
 			}
 		}

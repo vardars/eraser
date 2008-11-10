@@ -162,7 +162,7 @@ namespace Eraser
 					unusedClusterTips.Checked = unusedSpaceTask.EraseClusterTips;
 				}
 				else
-					throw new NotImplementedException("Unknown erasure target.");
+					throw new Exception("Unknown erasure target.");
 			}
 		}
 

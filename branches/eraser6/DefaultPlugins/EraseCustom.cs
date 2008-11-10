@@ -142,7 +142,7 @@ namespace Eraser.DefaultPlugins
 				}
 				else
 					throw new NotImplementedException("The custom erasure method can only comprise " +
-						"passes containining constat or random passes");
+						"passes containining constant or random passes");
 			}
 
 			public static implicit operator ErasureMethod.Pass(PassData pass)
