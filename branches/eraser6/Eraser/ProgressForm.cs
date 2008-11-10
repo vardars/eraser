@@ -67,7 +67,11 @@ namespace Eraser
 			pass.Text = e.CurrentTargetTotalPasses != 0 ?
 				string.Format(S._("{0} out of {1}"), e.CurrentItemPass, e.CurrentTargetTotalPasses) :
 				string.Format("{0}", e.CurrentItemPass);
-			timeLeft.Text = string.Format(S._("{0:hh:mm:ss} left"), e.TimeLeft);
+
+			if (e.TimeLeft >= TimeSpan.Zero)
+				timeLeft.Text = string.Format(S._("About {0:hh:mm:ss} left"), e.TimeLeft);
+			else
+				timeLeft.Text = string.Format(S._("Unknown"), e.TimeLeft);
 
 			itemProgress.Value = (int)(e.CurrentItemProgress * 1000);
 			itemProgressLbl.Text = e.CurrentItemProgress.ToString("#0%");
