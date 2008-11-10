@@ -61,7 +61,7 @@ namespace Eraser
 			Top = point.Y;
 
 			//Load the localised About Text
-			AboutText = S._(@"Eraser is an advanced security tool for Windows, which allows you to completely remove sensitive data from your hard drive by overwriting it several times with carefully selected patterns.  Eraser is Free software and its source code is released under GNU General Public License.
+			AboutText = S._(@"Eraser is an advanced security tool for Windows, which allows you to completely remove sensitive data from your hard drive by overwriting it several times with carefully selected patterns. Eraser is Free software and its source code is released under GNU General Public License.
 
 Erasure Method Credits:
 Gutmann (35 Pass):	 	Copyright Peter Gutmann & Colin Plumb
@@ -76,7 +76,7 @@ US Army AR380-19 (3 pass):	Copyright United States Department of
 				Defense
 RCMP TSSIT OPS-II (7 pass):	Copyright Government of Canada,
 				Royal Canadian Mounted Police
-Schneier’s Method (7 pass):	Copyright Bruce Schneier
+Schneier's Method (7 pass):	Copyright Bruce Schneier
 German VSITR (7 pass):		Copyright Germany BSI Verschlusssachen
 				-IT-Richtlinien
 British HMG IS5 (3 pass):		Copyright British Government
