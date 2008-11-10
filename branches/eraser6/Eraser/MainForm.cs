@@ -263,8 +263,11 @@ namespace Eraser
 
 			//Reset the notification area icon.
 			notificationIconTimer.Enabled = false;
-			ComponentResourceManager resources = new ComponentResourceManager(typeof(MainForm));
-			resources.ApplyResources(notificationIcon, "notificationIcon");
+			if (notificationIcon.Icon != null)
+			{
+				ComponentResourceManager resources = new ComponentResourceManager(typeof(MainForm));
+				resources.ApplyResources(notificationIcon, "notificationIcon");
+			}
 		}
 
 		private void notificationIconTimer_Tick(object sender, EventArgs e)

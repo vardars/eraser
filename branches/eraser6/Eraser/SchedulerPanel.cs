@@ -175,7 +175,7 @@ namespace Eraser
 		/// <param name="e">The task event object.</param>
 		void task_TaskFinished(TaskEventArgs e)
 		{
-			if (scheduler.InvokeRequired)
+			if (InvokeRequired)
 			{
 				Task.TaskEventFunction func =
 					new Task.TaskEventFunction(task_TaskFinished);
@@ -185,6 +185,8 @@ namespace Eraser
 
 			//Get the list view item
 			ListViewItem item = GetTaskItem(e.Task);
+			if (item == null)
+				return;
 
 			//Update the status.
 			item.SubItems[1].Text = S._("Completed");
