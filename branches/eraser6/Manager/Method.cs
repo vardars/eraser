@@ -72,7 +72,8 @@ namespace Eraser.Manager
 		/// This is mainly for use by the Manager to determine how much data needs
 		/// to be written to disk.
 		/// </summary>
-		/// <param name="paths">The list containing the file paths to erase.</param>
+		/// <param name="paths">The list containing the file paths to erase. This
+		/// may be null if the list of paths are unknown.</param>
 		/// <param name="targetSize">The precomputed value of the total size of
 		/// the files to be erased.</param>
 		/// <returns>The total size of the files that need to be erased.</returns>
