@@ -104,9 +104,7 @@ namespace Eraser.Util
 		/// <returns>An escaped string</returns>
 		private static string Escape(string str)
 		{
-			str.Replace("\n", "\\n");
-			str.Replace("\r", "\\r");
-			return str;
+			return str.Replace("\n", "\\n").Replace("\r", "\\r");
 		}
 
 		/// <summary>
