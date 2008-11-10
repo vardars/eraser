@@ -94,8 +94,8 @@ namespace Eraser
 			// 
 			// titleLbl
 			// 
-			this.errorProvider.SetIconAlignment(this.titleLbl, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("titleLbl.IconAlignment"))));
 			resources.ApplyResources(this.titleLbl, "titleLbl");
+			this.errorProvider.SetIconAlignment(this.titleLbl, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("titleLbl.IconAlignment"))));
 			// 
 			// titleIcon
 			// 
@@ -168,7 +168,7 @@ namespace Eraser
 			// 
 			resources.ApplyResources(this.erase, "erase");
 			this.errorProvider.SetIconAlignment(this.erase, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("erase.IconAlignment"))));
-			this.erase.Label = "Instellingen";
+			this.erase.Label = "Erase settings";
 			this.erase.Name = "erase";
 			// 
 			// eraseFilesMethodLbl
@@ -254,7 +254,7 @@ namespace Eraser
 			// 
 			resources.ApplyResources(this.scheduler, "scheduler");
 			this.errorProvider.SetIconAlignment(this.scheduler, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("scheduler.IconAlignment"))));
-			this.scheduler.Label = "Planner instellingen";
+			this.scheduler.Label = "Scheduler settings";
 			this.scheduler.Name = "scheduler";
 			// 
 			// schedulerMissed

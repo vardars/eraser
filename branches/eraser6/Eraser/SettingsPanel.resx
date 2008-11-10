@@ -120,9 +120,6 @@
   <metadata name="errorProvider.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>Dutch</value>
-  </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -133,7 +130,6 @@
   <data name="saveSettings.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
     <value>TopLeft</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="saveSettings.Location" type="System.Drawing.Point, System.Drawing">
     <value>639, 27</value>
   </data>
@@ -217,7 +213,7 @@
     <value>SettingsPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>Eraser.BasePanel, Eraser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Eraser.BasePanel, Eraser, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="titleIcon.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
     <value>TopLeft</value>
@@ -604,7 +600,7 @@
     <value>scheduler</value>
   </data>
   <data name="&gt;&gt;scheduler.Type" xml:space="preserve">
-    <value>Eraser.LightGroup, Eraser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Eraser.LightGroup, Eraser, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;scheduler.Parent" xml:space="preserve">
     <value>content</value>
@@ -709,7 +705,7 @@
     <value>plugins</value>
   </data>
   <data name="&gt;&gt;plugins.Type" xml:space="preserve">
-    <value>Eraser.LightGroup, Eraser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Eraser.LightGroup, Eraser, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;plugins.Parent" xml:space="preserve">
     <value>content</value>
@@ -850,7 +846,7 @@
     <value>erase</value>
   </data>
   <data name="&gt;&gt;erase.Type" xml:space="preserve">
-    <value>Eraser.LightGroup, Eraser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Eraser.LightGroup, Eraser, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;erase.Parent" xml:space="preserve">
     <value>content</value>
@@ -973,7 +969,7 @@
     <value>ui</value>
   </data>
   <data name="&gt;&gt;ui.Type" xml:space="preserve">
-    <value>Eraser.LightGroup, Eraser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Eraser.LightGroup, Eraser, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ui.Parent" xml:space="preserve">
     <value>content</value>
@@ -1003,7 +999,7 @@
     <value>TopLeft</value>
   </data>
   <data name="titleLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>101, 32</value>
+    <value>45, 13</value>
   </data>
   <data name="titleLbl.Text" xml:space="preserve">
     <value>Settings</value>

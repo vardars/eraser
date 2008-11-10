@@ -176,6 +176,9 @@ namespace Eraser.Manager
 			executionTime = (DateTime)info.GetValue("ExecutionTime", typeof(DateTime));
 			weeklySchedule = (DaysOfWeek)info.GetValue("WeeklySchedule", typeof(DaysOfWeek));
 			monthlySchedule = (int)info.GetValue("MonthlySchedule", typeof(int));
+
+			lastRun = (DateTime)info.GetDateTime("LastRun");
+			nextRun = (DateTime)info.GetDateTime("NextRun");
 		}
 
 		public override void GetObjectData(SerializationInfo info,
@@ -186,6 +189,8 @@ namespace Eraser.Manager
 			info.AddValue("ExecutionTime", executionTime);
 			info.AddValue("WeeklySchedule", weeklySchedule);
 			info.AddValue("MonthlySchedule", monthlySchedule);
+			info.AddValue("LastRun", lastRun);
+			info.AddValue("NextRun", nextRun);
 		}
 		#endregion
 
@@ -331,8 +336,9 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Based on the last run time and the current schedule, the next run time
-		/// will be computed.
+		/// Computes the next run time based on the last run time, the current
+		/// schedule, and the current time. The timestamp returned will be the next
+		/// time from now which fulfils the schedule.
 		/// </summary>
 		public DateTime NextRun
 		{
@@ -412,6 +418,17 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// Gets whether the previous run was missed.
+		/// </summary>
+		public bool MissedPreviousSchedule
+		{
+			get
+			{
+				return lastRun != DateTime.MinValue && NextRun != nextRun;
+			}
+		}
+
+		/// <summary>
 		/// Returns true if the task can run on the given date. Applies only for
 		/// weekly tasks.
 		/// </summary>
@@ -432,6 +449,7 @@ namespace Eraser.Manager
 		internal void Reschedule(DateTime lastRun)
 		{
 			this.lastRun = lastRun;
+			nextRun = NextRun;
 		}
 
 		private ScheduleUnit type;
@@ -441,5 +459,6 @@ namespace Eraser.Manager
 		private int monthlySchedule;
 
 		private DateTime lastRun;
+		private DateTime nextRun;
 	}
 }

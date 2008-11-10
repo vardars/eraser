@@ -49,7 +49,6 @@ namespace Eraser.Manager
 			);
 
 			thread.Start();
-			Thread.Sleep(0);
 		}
 
 		void IDisposable.Dispose()
@@ -155,16 +154,13 @@ namespace Eraser.Manager
 		public override void ScheduleTask(Task task)
 		{
 			RecurringSchedule schedule = (RecurringSchedule)task.Schedule;
-			if (schedule.NextRun < DateTime.Now &&
-				!ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately)
-			{
+			if (schedule.MissedPreviousSchedule &&
+				ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately)
 				//OK, we've missed the schedule and the user wants the thing
-				//to follow up normally.
-				throw new NotImplementedException();
-			}
+				//to follow up immediately.
+				scheduledTasks.Add(DateTime.Now, task);
 			else
 				scheduledTasks.Add(schedule.NextRun, task);
-			schedulerInterrupt.Set();
 		}
 
 		public override void QueueRestartTasks()
@@ -246,7 +242,7 @@ namespace Eraser.Manager
 						Task currentTask = tasks[id];
 						currentTask.executor = this;
 						while (id > nextId)
-							unusedIds.Add(++nextId);
+							unusedIds.Add(nextId++);
 						++nextId;
 
 						//Check if the task is recurring. If it is, check if we missed it.
