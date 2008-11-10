@@ -130,6 +130,7 @@
   <data name="saveSettings.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
     <value>TopLeft</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="saveSettings.Location" type="System.Drawing.Point, System.Drawing">
     <value>639, 27</value>
   </data>
@@ -584,6 +585,9 @@
   <data name="scheduler.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
     <value>TopLeft</value>
   </data>
+  <data name="scheduler.Label" xml:space="preserve">
+    <value>Scheduler settings</value>
+  </data>
   <data name="scheduler.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 413</value>
   </data>
@@ -688,6 +692,9 @@
   </data>
   <data name="plugins.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
     <value>TopLeft</value>
+  </data>
+  <data name="plugins.Label" xml:space="preserve">
+    <value>Plugins</value>
   </data>
   <data name="plugins.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 507</value>
@@ -830,6 +837,9 @@
   <data name="erase.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
     <value>TopLeft</value>
   </data>
+  <data name="erase.Label" xml:space="preserve">
+    <value>Erase settings</value>
+  </data>
   <data name="erase.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 76</value>
   </data>
@@ -953,6 +963,9 @@
   <data name="ui.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
     <value>TopLeft</value>
   </data>
+  <data name="ui.Label" xml:space="preserve">
+    <value>Shell integration</value>
+  </data>
   <data name="ui.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, -6</value>
   </data>
@@ -999,7 +1012,7 @@
     <value>TopLeft</value>
   </data>
   <data name="titleLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>45, 13</value>
+    <value>101, 32</value>
   </data>
   <data name="titleLbl.Text" xml:space="preserve">
     <value>Settings</value>

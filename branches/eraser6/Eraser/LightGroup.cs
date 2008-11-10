@@ -38,6 +38,8 @@ namespace Eraser
 		}
 
 		[Description("The label text for the group")]
+		[Category("Appearance")]
+		[Localizable(true)]
 		public string Label
 		{
 			get { return label.Text; }

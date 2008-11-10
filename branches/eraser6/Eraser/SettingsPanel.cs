@@ -313,8 +313,14 @@ namespace Eraser
 				return;
 			}
 
-			ManagerLibrary.Instance.Settings.UILanguage =
-				((Language)uiLanguage.SelectedItem).Name;
+			if (((Language)uiLanguage.SelectedItem).Name !=
+				ManagerLibrary.Instance.Settings.UILanguage)
+			{
+				ManagerLibrary.Instance.Settings.UILanguage =
+					((Language)uiLanguage.SelectedItem).Name;
+				MessageBox.Show(S._("The new UI language will take only effect when Eraser is restarted."),
+					S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
 			ManagerLibrary.Instance.Settings.DefaultFileErasureMethod =
 				((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
 			ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod =

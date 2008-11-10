@@ -94,8 +94,8 @@ namespace Eraser
 			// 
 			// titleLbl
 			// 
-			resources.ApplyResources(this.titleLbl, "titleLbl");
 			this.errorProvider.SetIconAlignment(this.titleLbl, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("titleLbl.IconAlignment"))));
+			resources.ApplyResources(this.titleLbl, "titleLbl");
 			// 
 			// titleIcon
 			// 
@@ -135,7 +135,6 @@ namespace Eraser
 			// 
 			resources.ApplyResources(this.ui, "ui");
 			this.errorProvider.SetIconAlignment(this.ui, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("ui.IconAlignment"))));
-			this.ui.Label = "Shell integration";
 			this.ui.Name = "ui";
 			// 
 			// uiContextMenu
@@ -168,7 +167,6 @@ namespace Eraser
 			// 
 			resources.ApplyResources(this.erase, "erase");
 			this.errorProvider.SetIconAlignment(this.erase, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("erase.IconAlignment"))));
-			this.erase.Label = "Erase settings";
 			this.erase.Name = "erase";
 			// 
 			// eraseFilesMethodLbl
@@ -201,7 +199,6 @@ namespace Eraser
 			// 
 			resources.ApplyResources(this.plugins, "plugins");
 			this.errorProvider.SetIconAlignment(this.plugins, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("plugins.IconAlignment"))));
-			this.plugins.Label = "Plugins";
 			this.plugins.Name = "plugins";
 			// 
 			// pluginsManager
@@ -254,7 +251,6 @@ namespace Eraser
 			// 
 			resources.ApplyResources(this.scheduler, "scheduler");
 			this.errorProvider.SetIconAlignment(this.scheduler, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("scheduler.IconAlignment"))));
-			this.scheduler.Label = "Scheduler settings";
 			this.scheduler.Name = "scheduler";
 			// 
 			// schedulerMissed
