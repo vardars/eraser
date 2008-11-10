@@ -134,7 +134,7 @@ namespace Eraser
 			foreach (Task.ErasureTarget target in task.Targets)
 			{
 				ListViewItem item = data.Items.Add(target.UIText);
-				item.SubItems.Add(target.Method.Name);
+				item.SubItems.Add(target.MethodDefined ? target.Method.Name : S._("(default)"));
 			}
 
 			//And the schedule, if selected.
@@ -203,8 +203,8 @@ namespace Eraser
 				{
 					Task.ErasureTarget target = form.Target;
 					ListViewItem item = data.Items.Add(target.UIText);
-					
-					item.SubItems.Add(target.Method.Name);
+
+					item.SubItems.Add(target.MethodDefined ? target.Method.Name : S._("(default)"));
 					task.Targets.Add(target);
 					errorProvider.Clear();
 				}
@@ -228,7 +228,7 @@ namespace Eraser
 					Task.ErasureTarget target = form.Target;
 					task.Targets[item.Index] = target;
 					item.Text = target.UIText;
-					item.SubItems[1].Text = target.Method.Name;
+					item.SubItems[1].Text = target.MethodDefined ? target.Method.Name : S._("(default)");
 				}
 			}
 		}

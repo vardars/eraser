@@ -71,10 +71,23 @@ namespace Eraser.Manager
 			/// ErasureMethodManager.Default then the default is queried for the
 			/// task type.
 			/// </summary>
-			public ErasureMethod Method
+			public abstract ErasureMethod Method
 			{
-				get { return method; }
-				set { method = value; }
+				get;
+				set;
+			}
+
+			/// <summary>
+			/// Checks whether a method has been selected for this target. This is
+			/// because the Method property will return non-default erasure methods
+			/// only.
+			/// </summary>
+			public bool MethodDefined
+			{
+				get
+				{
+					return method != ErasureMethodManager.Default;
+				}
 			}
 
 			/// <summary>
@@ -85,7 +98,16 @@ namespace Eraser.Manager
 				get;
 			}
 
-			private ErasureMethod method = null;
+			/// <summary>
+			/// Retrieves the amount of data that needs to be written in order to
+			/// complete the erasure.
+			/// </summary>
+			public abstract long TotalData
+			{
+				get;
+			}
+
+			protected ErasureMethod method = null;
 		}
 
 		/// <summary>
@@ -153,9 +175,34 @@ namespace Eraser.Manager
 				set { path = value; }
 			}
 
+			public override ErasureMethod Method
+			{
+				get
+				{
+					if (method != ErasureMethodManager.Default)
+						return method;
+					return ErasureMethodManager.GetInstance(
+						ManagerLibrary.Instance.Settings.DefaultFileErasureMethod);
+				}
+				set
+				{
+					method = value;
+				}
+			}
+
 			public override string UIText
 			{
 				get { return Path; }
+			}
+
+			public override long TotalData
+			{
+				get
+				{
+					long totalSize = 0;
+					List<string> paths = GetPaths(out totalSize);
+					return Method.CalculateEraseDataSize(paths, totalSize);
+				}
 			}
 
 			private string path;
@@ -191,9 +238,33 @@ namespace Eraser.Manager
 			{
 			}
 
+			public override ErasureMethod Method
+			{
+				get
+				{
+					if (method != ErasureMethodManager.Default)
+						return method;
+					return ErasureMethodManager.GetInstance(
+						ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod);
+				}
+				set
+				{
+					method = value;
+				}
+			}
+
 			public override string UIText
 			{
 				get { return string.Format("Unused disk space ({0})", Drive); }
+			}
+
+			public override long TotalData
+			{
+				get
+				{
+					VolumeInfo info = VolumeInfo.FromMountpoint(Drive);
+					return Method.CalculateEraseDataSize(null, info.AvailableFreeSpace);
+				}
 			}
 
 			/// <summary>
@@ -682,7 +753,7 @@ namespace Eraser.Manager
 		/// </summary>
 		public TimeSpan TimeLeft
 		{
-			get { return new TimeSpan(timeLeft * 10000000L); }
+			get { return timeLeft; }
 		}
 
 		/// <summary>
@@ -745,7 +816,7 @@ namespace Eraser.Manager
 		}
 
 		private float overallProgress = 0.0f;
-		internal int timeLeft = -1;
+		internal TimeSpan timeLeft = new TimeSpan(0, 0, -1);
 
 		internal Task.ErasureTarget currentTarget;
 		internal int currentTargetIndex = 0;
