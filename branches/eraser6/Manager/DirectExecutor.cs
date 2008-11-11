@@ -332,6 +332,10 @@ namespace Eraser.Manager
 					{
 						task.Log.Add(new LogEntry(e.Message, LogLevel.FATAL));
 					}
+					catch (Exception e)
+					{
+						task.Log.Add(new LogEntry(e.Message, LogLevel.ERROR));
+					}
 					finally
 					{
 						//Allow the system to sleep again.
@@ -537,9 +541,8 @@ namespace Eraser.Manager
 							}
 							catch (IOException)
 							{
-								long amountToReduce = 32 * volInfo.ClusterSize;
-								if (streamLength > amountToReduce)
-									streamLength -= amountToReduce;
+								if (streamLength > volInfo.ClusterSize)
+									streamLength -= volInfo.ClusterSize;
 								else
 									throw;
 							}
@@ -655,18 +658,9 @@ namespace Eraser.Manager
 		{
 			//Get the file access times
 			StreamInfo streamInfo = new StreamInfo(file);
-			DateTime lastAccess = DateTime.MinValue, lastWrite = DateTime.MinValue,
+			DateTime lastAccess = DateTime.MinValue,
+			         lastWrite = DateTime.MinValue,
 			         created = DateTime.MinValue;
-			{
-				FileInfo info = streamInfo.File;
-				if (info != null)
-				{
-					lastAccess = info.LastAccessTime;
-					lastWrite = info.LastWriteTime;
-					created = info.CreationTime;
-				}
-			}
-
 			//Create the stream, lengthen the file, then tell the erasure method
 			//to erase the tips.
 			using (FileStream stream = streamInfo.Open(FileMode.Open, FileAccess.Write))
@@ -676,6 +670,15 @@ namespace Eraser.Manager
 
 				try
 				{
+					//Get the file access times
+					FileInfo info = streamInfo.File;
+					if (info != null)
+					{
+						lastAccess = info.LastAccessTime;
+						lastWrite = info.LastWriteTime;
+						created = info.CreationTime;
+					}
+
 					stream.SetLength(fileArea);
 					stream.Seek(fileLength, SeekOrigin.Begin);
 
@@ -687,16 +690,16 @@ namespace Eraser.Manager
 				{
 					//Make sure the file is restored!
 					stream.SetLength(fileLength);
-				}
-			}
 
-			//Set the file times
-			FileInfo fileInfo = streamInfo.File;
-			if (fileInfo != null)
-			{
-				fileInfo.LastAccessTime = lastAccess;
-				fileInfo.LastWriteTime = lastWrite;
-				fileInfo.CreationTime = created;
+					//Set the file times
+					FileInfo fileInfo = streamInfo.File;
+					if (fileInfo != null)
+					{
+						fileInfo.LastAccessTime = lastAccess;
+						fileInfo.LastWriteTime = lastWrite;
+						fileInfo.CreationTime = created;
+					}
+				}
 			}
 		}
 		
