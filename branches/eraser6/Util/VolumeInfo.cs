@@ -152,6 +152,8 @@ namespace Eraser.Util
 						case 1:
 						case 4390:
 							break;
+						case 2:
+							throw new FileNotFoundException();
 						default:
 							throw new Win32Exception(Marshal.GetLastWin32Error());
 					}
