@@ -107,6 +107,9 @@ namespace Eraser.Manager
 				get;
 			}
 
+			/// <summary>
+			/// Erasure method to use for the target.
+			/// </summary>
 			protected ErasureMethod method = null;
 		}
 
