@@ -70,7 +70,7 @@ US DoD (7 pass):			Copyright United States Department of
 				Defense
 US DoD (3 pass):			Copyright United States Department of
 				Defense
-US Air Force 5020 (3 pass):		Copyright United States Department of
+US Air Force 5020 (3 pass):	Copyright United States Department of
 				Defense
 US Army AR380-19 (3 pass):	Copyright United States Department of
 				Defense
@@ -89,7 +89,7 @@ First/Last 16Kb:			Copyright The Eraser Project
 Eraser Copyright " + "\u00A9" + @" The Eraser Project
 
 Eraser Project Members:
-" + "\u2022" + @" Sami Tolvanen:		Initiator/Developer
+" + "\u2022" + @" Sami Tolvanen:		Mentor/Initiator
 " + "\u2022" + @" Garrett Trant:		Mentor/Researcher
 " + "\u2022" + @" Joel Low:		Lead Developer
 " + "\u2022" + @" Dennis van Lith:		Designer
