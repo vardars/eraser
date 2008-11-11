@@ -82,7 +82,7 @@ namespace Eraser.DefaultPlugins
 			this.fl16MethodCmb.FormattingEnabled = true;
 			this.fl16MethodCmb.Location = new System.Drawing.Point(31, 27);
 			this.fl16MethodCmb.Name = "fl16MethodCmb";
-			this.fl16MethodCmb.Size = new System.Drawing.Size(321, 23);
+			this.fl16MethodCmb.Size = new System.Drawing.Size(301, 23);
 			this.fl16MethodCmb.TabIndex = 1;
 			// 
 			// customPassGrp
@@ -94,14 +94,15 @@ namespace Eraser.DefaultPlugins
 			this.customPassGrp.Controls.Add(this.customMethod);
 			this.customPassGrp.Location = new System.Drawing.Point(15, 56);
 			this.customPassGrp.Name = "customPassGrp";
-			this.customPassGrp.Size = new System.Drawing.Size(337, 315);
+			this.customPassGrp.Size = new System.Drawing.Size(317, 295);
 			this.customPassGrp.TabIndex = 3;
 			this.customPassGrp.TabStop = false;
 			this.customPassGrp.Text = "Custom Erasure Methods";
 			// 
 			// customMethodAdd
 			// 
-			this.customMethodAdd.Location = new System.Drawing.Point(6, 286);
+			this.customMethodAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.customMethodAdd.Location = new System.Drawing.Point(6, 266);
 			this.customMethodAdd.Name = "customMethodAdd";
 			this.customMethodAdd.Size = new System.Drawing.Size(90, 23);
 			this.customMethodAdd.TabIndex = 1;
@@ -117,13 +118,15 @@ namespace Eraser.DefaultPlugins
 			this.customMethod.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.customPassName,
             this.customPassPassCount});
+			this.customMethod.FullRowSelect = true;
 			this.customMethod.Location = new System.Drawing.Point(6, 22);
 			this.customMethod.MultiSelect = false;
 			this.customMethod.Name = "customMethod";
-			this.customMethod.Size = new System.Drawing.Size(325, 258);
+			this.customMethod.Size = new System.Drawing.Size(305, 238);
 			this.customMethod.TabIndex = 0;
 			this.customMethod.UseCompatibleStateImageBehavior = false;
 			this.customMethod.View = System.Windows.Forms.View.Details;
+			this.customMethod.ItemActivate += new System.EventHandler(this.customMethod_ItemActivate);
 			// 
 			// customPassName
 			// 
@@ -137,7 +140,7 @@ namespace Eraser.DefaultPlugins
 			// okBtn
 			// 
 			this.okBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.okBtn.Location = new System.Drawing.Point(196, 377);
+			this.okBtn.Location = new System.Drawing.Point(176, 357);
 			this.okBtn.Name = "okBtn";
 			this.okBtn.Size = new System.Drawing.Size(75, 23);
 			this.okBtn.TabIndex = 4;
@@ -149,7 +152,7 @@ namespace Eraser.DefaultPlugins
 			// 
 			this.cancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.cancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelBtn.Location = new System.Drawing.Point(277, 377);
+			this.cancelBtn.Location = new System.Drawing.Point(257, 357);
 			this.cancelBtn.Name = "cancelBtn";
 			this.cancelBtn.Size = new System.Drawing.Size(75, 23);
 			this.cancelBtn.TabIndex = 5;
@@ -166,7 +169,7 @@ namespace Eraser.DefaultPlugins
 			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.CancelButton = this.cancelBtn;
-			this.ClientSize = new System.Drawing.Size(364, 412);
+			this.ClientSize = new System.Drawing.Size(344, 392);
 			this.Controls.Add(this.okBtn);
 			this.Controls.Add(this.cancelBtn);
 			this.Controls.Add(this.customPassGrp);
@@ -176,6 +179,7 @@ namespace Eraser.DefaultPlugins
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
+			this.MinimumSize = new System.Drawing.Size(344, 392);
 			this.Name = "SettingsForm";
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

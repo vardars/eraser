@@ -500,6 +500,20 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// Unregisters an erasure method from the registrar.
+		/// </summary>
+		/// <param name="guid">The erasure method to unregister.</param>
+		public static void Unregister(Guid guid)
+		{
+			if (!ManagerLibrary.Instance.ErasureMethodManager.methods.ContainsKey(guid))
+				throw new ArgumentException("The GUID of the erasure method to remove " +
+					"refers to an invalid erasure method.");
+
+			ManagerLibrary.Instance.ErasureMethodManager.methods.Remove(guid);
+			OnMethodUnregistered(guid);
+		}
+
+		/// <summary>
 		/// Holds information on how to construct a new instance of an erasure method.
 		/// </summary>
 		private struct MethodConstructorInfo
@@ -531,20 +545,37 @@ namespace Eraser.Manager
 		/// Called whenever an erasure method is registered.
 		/// </summary>
 		public static event MethodRegisteredFunction MethodRegistered;
+		
+		/// <summary>
+		/// The delegate prototype of the Method Unregistered event.
+		/// </summary>
+		/// <param name="method">The GUID of the method being registered.</param>
+		public delegate void MethodUnregisteredFunction(Guid guid);
 
 		/// <summary>
-		/// Executes the MethodRegistered event handlers
+		/// Called whenever an erasure method is unregistered.
 		/// </summary>
+		public static event MethodUnregisteredFunction MethodUnregistered;
+
+		/// <summary>
+		/// Executes the MethodRegistered event handlers.
+		/// </summary>
+		/// <param name="guid">The GUID of the newly registered erasure method.</param>
 		private static void OnMethodRegistered(Guid guid)
 		{
 			if (MethodRegistered != null)
 				MethodRegistered(guid);
 		}
-		#endregion
 
-		public static void Unregister(Guid guid)
+		/// <summary>
+		/// Performs the MethodUnregistered event handlers.
+		/// </summary>
+		/// <param name="guid">The GUID of the unregistered erasure method.</param>
+		private static void OnMethodUnregistered(Guid guid)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			if (MethodUnregistered != null)
+				MethodUnregistered(guid);
 		}
+		#endregion
 	}
 }

@@ -104,7 +104,6 @@ namespace Eraser.DefaultPlugins
 			this.passesLv.FullRowSelect = true;
 			this.passesLv.HideSelection = false;
 			this.passesLv.Location = new System.Drawing.Point(12, 60);
-			this.passesLv.MultiSelect = false;
 			this.passesLv.Name = "passesLv";
 			this.passesLv.Size = new System.Drawing.Size(254, 139);
 			this.passesLv.TabIndex = 3;
@@ -200,7 +199,6 @@ namespace Eraser.DefaultPlugins
 			this.passTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.passTxt.Enabled = false;
 			this.passTxt.Location = new System.Drawing.Point(9, 50);
 			this.passTxt.Multiline = true;
 			this.passTxt.Name = "passTxt";
@@ -223,7 +221,6 @@ namespace Eraser.DefaultPlugins
 			// 
 			this.passTypeText.AutoSize = true;
 			this.passTypeText.Checked = true;
-			this.passTypeText.Enabled = false;
 			this.passTypeText.Location = new System.Drawing.Point(3, 3);
 			this.passTypeText.Name = "passTypeText";
 			this.passTypeText.Size = new System.Drawing.Size(47, 19);
@@ -236,7 +233,6 @@ namespace Eraser.DefaultPlugins
 			// passTypeHex
 			// 
 			this.passTypeHex.AutoSize = true;
-			this.passTypeHex.Enabled = false;
 			this.passTypeHex.Location = new System.Drawing.Point(56, 3);
 			this.passTypeHex.Name = "passTypeHex";
 			this.passTypeHex.Size = new System.Drawing.Size(93, 19);
@@ -248,7 +244,6 @@ namespace Eraser.DefaultPlugins
 			// passTypeRandom
 			// 
 			this.passTypeRandom.AutoSize = true;
-			this.passTypeRandom.Enabled = false;
 			this.passTypeRandom.Location = new System.Drawing.Point(155, 3);
 			this.passTypeRandom.Name = "passTypeRandom";
 			this.passTypeRandom.Size = new System.Drawing.Size(70, 19);
@@ -269,6 +264,7 @@ namespace Eraser.DefaultPlugins
 			// 
 			// okBtn
 			// 
+			this.okBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.okBtn.Location = new System.Drawing.Point(206, 353);
 			this.okBtn.Name = "okBtn";
 			this.okBtn.Size = new System.Drawing.Size(75, 23);
@@ -279,6 +275,7 @@ namespace Eraser.DefaultPlugins
 			// 
 			// cancelBtn
 			// 
+			this.cancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.cancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.cancelBtn.Location = new System.Drawing.Point(287, 353);
 			this.cancelBtn.Name = "cancelBtn";
@@ -316,6 +313,7 @@ namespace Eraser.DefaultPlugins
 			this.MinimizeBox = false;
 			this.Name = "CustomMethodEditorForm";
 			this.ShowInTaskbar = false;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Custom Erasure Method Editor";
 			this.passGrp.ResumeLayout(false);
 			this.passGrp.PerformLayout();

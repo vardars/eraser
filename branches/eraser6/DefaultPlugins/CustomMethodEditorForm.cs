@@ -2,7 +2,7 @@
  * $Id$
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
- * Modified By:
+ * Modified By:	Kasra Nassiri <cjax@users.sourceforge.net> @10-11-2008 04:18:04
  * 
  * This file is part of Eraser.
  * 
@@ -72,17 +72,45 @@ namespace Eraser.DefaultPlugins
 
 				return method;
 			}
+			set
+			{
+				method = value;
+
+				//Method name.
+				nameTxt.Text = method.Name;
+
+				//Randomize passes
+				randomizeChk.Checked = method.RandomizePasses;
+
+				//Every pass.
+				foreach (ErasureMethod.Pass pass in method.Passes)
+					AddPass(pass);
+			}
+		}
+
+		/// <summary>
+		/// Adds the given pass to the displayed list of passes.
+		/// </summary>
+		/// <param name="pass">The pass to add.</param>
+		/// <returns>The item added to the list view.</returns>
+		private ListViewItem AddPass(ErasureMethod.Pass pass)
+		{
+			ListViewItem item = new ListViewItem((passesLv.Items.Count + 1).ToString());
+			item.Tag = pass;
+			if (pass.Function == ErasureMethod.Pass.WriteRandom)
+				item.SubItems.Add("Random Data");
+			else
+				item.SubItems.Add(string.Format("Constant ({0} bytes)", ((byte[])pass.OpaqueValue).Length));
+
+			passesLv.Items.Add(item);
+			return item;
 		}
 
 		/// <summary>
 		/// Saves the currently edited pass details to memory.
 		/// </summary>
-		private void SavePass()
+		private void SavePass(ListViewItem item)
 		{
-			if (passesLv.SelectedIndices.Count != 1)
-				return;
-
-			ListViewItem item = passesLv.SelectedItems[0];
 			ErasureMethod.Pass pass = (ErasureMethod.Pass)item.Tag;
 			if (passTypeRandom.Checked)
 			{
@@ -92,7 +120,7 @@ namespace Eraser.DefaultPlugins
 			}
 			else
 			{
-				SavePassConstant(passTypeHex.Checked);
+				byte[] passConstant = ParseConstantStr(passTxt.Text, passTypeHex.Checked);
 				pass.Function = ErasureMethod.Pass.WriteConstant;
 				pass.OpaqueValue = passConstant;
 				item.SubItems[1].Text = string.Format("Constant ({0} bytes)", passConstant.Length);
@@ -100,54 +128,53 @@ namespace Eraser.DefaultPlugins
 		}
 
 		/// <summary>
-		/// Holds the constant that will be written in the currently selected pass.
-		/// </summary>
-		private byte[] passConstant = null;
-
-		/// <summary>
 		/// Saves the pass constant currently in the pass constant text field.
 		/// </summary>
+		/// <param name="text">The text to parse.</param>
 		/// <param name="parseHex">Parse the constant in the field as a string of
 		/// hexadecimal numbers.</param>
-		private void SavePassConstant(bool parseHex)
+		/// <returns>An array containing the byte-wise representation of the input
+		/// string.</returns>
+		private static byte[] ParseConstantStr(string text, bool parseHex)
 		{
 			if (parseHex)
 			{
 				List<byte> passConstantList = new List<byte>();
-				string str = passTxt.Text.Replace(" ", "").ToUpper();
-				for (int i = 0, j = str.Length; i < j; i += 2)
-					passConstantList.Add(Convert.ToByte(str.Substring(i, 2), 16));
-				if (str.Length % 2 == 1)
-					passConstantList.Add(Convert.ToByte(str.Substring(str.Length - 1), 16));
+				string str = text.Replace(" ", "").ToUpper();
 
-				passConstant = new byte[passConstantList.Count];
-				passConstantList.CopyTo(passConstant);
+				for (int i = 0, j = str.Length - 2; i < j; i += 2)
+					passConstantList.Add(Convert.ToByte(str.Substring(i, 2), 16));
+				passConstantList.Add(Convert.ToByte(str.Substring(str.Length - 2), 16));
+
+				byte[] result = new byte[passConstantList.Count];
+				passConstantList.CopyTo(result);
+				return result;
 			}
 			else
 			{
-				passConstant = Encoding.UTF8.GetBytes(passTxt.Text);
+				return Encoding.UTF8.GetBytes(text);
 			}
 		}
 
 		/// <summary>
 		/// Displays the pass constant stored by the SavePassConstant function.
 		/// </summary>
-		/// <param name="displayHex">Displays the buffer as a list of bytes in
-		/// hexadecimal if true, parses as UTF8 string otherwise.</param>
-		private void DisplayPassConstant(bool displayHex)
+		/// <param name="array">The array containing the constant to display.</param>
+		/// <param name="asHex">Sets whether the array should be displayed as a
+		/// hexadecimal string.</param>
+		/// <returns>A string containing the user-visible representation of the
+		/// input array.</returns>
+		private static string DisplayConstantArray(byte[] array, bool asHex)
 		{
-			if (displayHex)
+			if (asHex)
 			{
 				StringBuilder displayText = new StringBuilder();
-				foreach (byte b in passConstant)
+				foreach (byte b in array)
 					displayText.Append(string.Format("{0,2} ", Convert.ToString(b, 16)));
+				return displayText.ToString();
+			}
 
-				passTxt.Text = displayText.ToString();
-			}
-			else
-			{
-				passTxt.Text = Encoding.UTF8.GetString(passConstant);
-			}
+			return Encoding.UTF8.GetString(array);
 		}
 
 		/// <summary>
@@ -159,21 +186,44 @@ namespace Eraser.DefaultPlugins
 				item.Text = (item.Index + 1).ToString();
 		}
 
+		/// <summary>
+		/// Enables buttons relevant to the currently selected items.
+		/// </summary>
+		private void EnableButtons()
+		{
+			passesRemoveBtn.Enabled = passesDuplicateBtn.Enabled = passesMoveUpBtn.Enabled =
+				passesMoveDownBtn.Enabled = passesLv.SelectedItems.Count >= 1;
+			passGrp.Enabled = passTypeText.Enabled = passTypeHex.Enabled =
+				passTypeRandom.Enabled = passTxt.Enabled =
+				passesLv.SelectedItems.Count == 1;
+
+			ListView.SelectedIndexCollection indices = passesLv.SelectedIndices;
+			if (indices.Count > 0)
+			{
+				int index = indices[indices.Count - 1];
+				passesMoveUpBtn.Enabled = passesMoveUpBtn.Enabled && index > 0;
+				passesMoveDownBtn.Enabled = passesMoveDownBtn.Enabled && index < passesLv.Items.Count - 1;
+			}
+		}
+
 		private void passesAddBtn_Click(object sender, EventArgs e)
 		{
-			ListViewItem item = new ListViewItem((passesLv.Items.Count + 1).ToString());
-			item.SubItems.Add("Random Data");
-
 			ErasureMethod.Pass pass = new ErasureMethod.Pass(ErasureMethod.Pass.WriteRandom, null);
-			item.Tag = pass;
+			ListViewItem item = AddPass(pass);
 
-			passesLv.Items.Add(item);
+			if (passesLv.SelectedIndices.Count > 0)
+			{
+				item.Remove();
+				passesLv.Items.Insert(passesLv.SelectedIndices[passesLv.SelectedIndices.Count - 1],
+					item);
+				RenumberPasses();
+			}
 		}
 
 		private void passesRemoveBtn_Click(object sender, EventArgs e)
 		{
-			foreach (int index in passesLv.SelectedIndices)
-				passesLv.Items.RemoveAt(index);
+			foreach (ListViewItem item in passesLv.SelectedItems)
+				passesLv.Items.Remove(item);
 
 			RenumberPasses();
 		}
@@ -202,6 +252,7 @@ namespace Eraser.DefaultPlugins
 			passesLv.Items.RemoveAt(selectedIndex);
 			passesLv.Items.Insert(selectedIndex - 1, item);
 			RenumberPasses();
+			EnableButtons();
 		}
 
 		private void passesMoveDownBtn_Click(object sender, EventArgs e)
@@ -216,35 +267,31 @@ namespace Eraser.DefaultPlugins
 			passesLv.Items.RemoveAt(selectedIndex);
 			passesLv.Items.Insert(selectedIndex + 1, item);
 			RenumberPasses();
+			EnableButtons();
 		}
 
 		private void passesLv_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
 		{
 			ErasureMethod.Pass pass = (ErasureMethod.Pass)e.Item.Tag;
-
-			//Enable or disable the pass edit controls and the pass list modifiers
-			passesRemoveBtn.Enabled = passesDuplicateBtn.Enabled = passesMoveUpBtn.Enabled =
-				passesMoveDownBtn.Enabled = passGrp.Enabled = passTypeText.Enabled =
-				passTypeHex.Enabled = passTypeRandom.Enabled = passTxt.Enabled =
-				passesLv.SelectedItems.Count == 1;
+			EnableButtons();
 
 			//Determine if we should load or save the pass information
 			if (!e.Item.Selected)
 			{
-				SavePass();
+				if (passesLv.SelectedIndices.Count == 0 && passTxt.Text.Length > 0)
+					SavePass(e.Item);
 			}
 			else
 			{
 				try
 				{
 					//Disable the pass display events
-					passTypeText.CheckedChanged -= new System.EventHandler(passType_CheckedChanged);
-					passTypeHex.CheckedChanged -= new System.EventHandler(passType_CheckedChanged);
-					passTypeRandom.CheckedChanged -= new System.EventHandler(passType_CheckedChanged);
+					passTypeText.CheckedChanged -= new EventHandler(passType_CheckedChanged);
+					passTypeHex.CheckedChanged -= new EventHandler(passType_CheckedChanged);
+					passTypeRandom.CheckedChanged -= new EventHandler(passType_CheckedChanged);
 
 					//Get the pass data from the method structure.
 					passTxt.Text = string.Empty;
-					passConstant = (byte[])pass.OpaqueValue;
 
 					//Set the pass type to be undefined, to be set later.
 					passTypeText.Checked = passTypeHex.Checked = passTypeRandom.Checked = false;
@@ -252,9 +299,9 @@ namespace Eraser.DefaultPlugins
 				finally
 				{
 					//Reenable the pass display events
-					passTypeText.CheckedChanged += new System.EventHandler(passType_CheckedChanged);
-					passTypeHex.CheckedChanged += new System.EventHandler(passType_CheckedChanged);
-					passTypeRandom.CheckedChanged += new System.EventHandler(passType_CheckedChanged);
+					passTypeText.CheckedChanged += new EventHandler(passType_CheckedChanged);
+					passTypeHex.CheckedChanged += new EventHandler(passType_CheckedChanged);
+					passTypeRandom.CheckedChanged += new EventHandler(passType_CheckedChanged);
 				}
 
 				//Set the pass type
@@ -262,21 +309,16 @@ namespace Eraser.DefaultPlugins
 					passTypeRandom.Checked = true;
 				else if (pass.Function == ErasureMethod.Pass.WriteConstant)
 				{
-					Encoding coder = (Encoding)Encoding.UTF8.Clone();
-					coder.DecoderFallback = new DecoderExceptionFallback();
-					try
-					{
-						coder.GetString(passConstant);
-						passTypeText.Checked = true;
-					}
-					catch (DecoderFallbackException)
-					{
-						passTypeHex.Checked = true;
-					}
+					passTypeHex.Checked = true;
+					passTxt.Text = DisplayConstantArray((byte[])pass.OpaqueValue, true);
 				}
 				else
 					throw new ArgumentException("Unknown pass data.");
 			}
+
+			//Blank the pass text if it is not editable
+			if (!passTxt.Enabled)
+				passTxt.Text = string.Empty;
 		}
 
 		private void passType_CheckedChanged(object sender, EventArgs e)
@@ -285,21 +327,26 @@ namespace Eraser.DefaultPlugins
 			passTxt.Enabled = !passTypeRandom.Checked;
 
 			//Copy or load the constant into the text field
-			if (sender != passTypeRandom)
-				if (!((RadioButton)sender).Checked)
-					SavePassConstant(sender == passTypeHex);
-				else if (passConstant != null && passConstant.Length != 0)
-					DisplayPassConstant(sender == passTypeHex);
+			if (sender != passTypeRandom && !passTypeRandom.Checked)
+			{
+				byte[] constant = null;
+				if (passTxt.Text.Length != 0)
+					constant = ParseConstantStr(passTxt.Text, sender == passTypeHex);
+
+				if (constant != null && constant.Length != 0)
+					passTxt.Text = DisplayConstantArray(constant, passTypeHex.Checked);
+			}
 		}
 
 		private void okBtn_Click(object sender, EventArgs e)
 		{
-			//Save the currently edited pass.
-			SavePass();
-
 			//Clear the errorProvider status
 			errorProvider.Clear();
 			bool hasError = false;
+
+			//Save the currently edited pass.
+			if (passesLv.SelectedItems.Count == 1)
+				SavePass(passesLv.SelectedItems[0]);
 
 			//Validate the information
 			if (nameTxt.Text.Length == 0)
