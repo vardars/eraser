@@ -311,22 +311,36 @@ namespace Eraser.Util
 		public struct SYSTEM_INFO
 		{
 			/// <summary>
-			/// The processor architecture of the installed operating system.
-			/// This member can be one of the following values:
-			/// 
-			/// PROCESSOR_ARCHITECTURE_AMD64 (9)
-			/// x64 (AMD or Intel)
-			/// 
-			/// PROCESSOR_ARCHITECTURE_IA64 (6)
-			/// Intel Itanium Processor Family (IPF)
-			/// 
-			/// PROCESSOR_ARCHITECTURE_INTEL (0)
-			/// x86
-			/// 
-			/// PROCESSOR_ARCHITECTURE_UNKNOWN (0xffff)
-			/// Unknown architecture.
+			/// Represents a list of processor architectures.
 			/// </summary>
-			public ushort processorArchitecture;
+			public enum ProcessorArchitecture : ushort
+			{
+				/// <summary>
+				/// x64 (AMD or Intel).
+				/// </summary>
+				PROCESSOR_ARCHITECTURE_AMD64 = 9,
+
+				/// <summary>
+				/// Intel Itanium Processor Family (IPF).
+				/// </summary>
+				PROCESSOR_ARCHITECTURE_IA64 = 6,
+
+				/// <summary>
+				/// x86.
+				/// </summary>
+				PROCESSOR_ARCHITECTURE_INTEL = 0,
+
+				/// <summary>
+				/// Unknown architecture.
+				/// </summary>
+				PROCESSOR_ARCHITECTURE_UNKNOWN = 0xffff
+			}
+
+			/// <summary>
+			/// The processor architecture of the installed operating system.
+			/// This member can be one of the ProcessorArchitecture values.
+			/// </summary>
+			public ProcessorArchitecture processorArchitecture;
 
 			/// <summary>
 			/// This member is reserved for future use.
