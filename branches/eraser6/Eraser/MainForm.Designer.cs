@@ -178,6 +178,7 @@ namespace Eraser
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.Controls.Add(this.contentPanel);
+			this.DoubleBuffered = true;
 			this.Name = "MainForm";
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
