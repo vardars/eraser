@@ -41,10 +41,10 @@ namespace Eraser.DefaultPlugins
 			ErasureMethodManager.Register(new Gutmann());				//35 passes
 			ErasureMethodManager.Register(new GutmannLite());			//10 passes
 			ErasureMethodManager.Register(new DoD_EcE());				//7 passes
-			ErasureMethodManager.Register(new RCMP_TSSIT_OPS_II());	//7 passes
+			ErasureMethodManager.Register(new RCMP_TSSIT_OPS_II());		//7 passes
 			ErasureMethodManager.Register(new Schneier());				//7 passes
-			ErasureMethodManager.Register(new VSITR());				//7 passes
-			ErasureMethodManager.Register(new DoD_E());				//3 passes
+			ErasureMethodManager.Register(new VSITR());					//7 passes
+			ErasureMethodManager.Register(new DoD_E());					//3 passes
 			ErasureMethodManager.Register(new HMGIS5Enhanced());		//3 passes
 			ErasureMethodManager.Register(new USAF5020());				//3 passes
 			ErasureMethodManager.Register(new USArmyAR380_19());		//3 passes

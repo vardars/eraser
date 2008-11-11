@@ -50,6 +50,7 @@ namespace Eraser.DefaultPlugins
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CustomMethodEditorForm));
 			this.nameLbl = new System.Windows.Forms.Label();
 			this.nameTxt = new System.Windows.Forms.TextBox();
 			this.passesLv = new System.Windows.Forms.ListView();
@@ -77,211 +78,132 @@ namespace Eraser.DefaultPlugins
 			// 
 			// nameLbl
 			// 
-			this.nameLbl.AutoSize = true;
-			this.nameLbl.Location = new System.Drawing.Point(12, 9);
+			resources.ApplyResources(this.nameLbl, "nameLbl");
 			this.nameLbl.Name = "nameLbl";
-			this.nameLbl.Size = new System.Drawing.Size(42, 15);
-			this.nameLbl.TabIndex = 0;
-			this.nameLbl.Text = "Name:";
 			// 
 			// nameTxt
 			// 
-			this.nameTxt.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.nameTxt.Location = new System.Drawing.Point(94, 6);
+			resources.ApplyResources(this.nameTxt, "nameTxt");
 			this.nameTxt.Name = "nameTxt";
-			this.nameTxt.Size = new System.Drawing.Size(268, 23);
-			this.nameTxt.TabIndex = 1;
 			// 
 			// passesLv
 			// 
-			this.passesLv.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.passesLv, "passesLv");
 			this.passesLv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.passesColNumber,
             this.passesColType});
 			this.passesLv.FullRowSelect = true;
 			this.passesLv.HideSelection = false;
-			this.passesLv.Location = new System.Drawing.Point(12, 60);
 			this.passesLv.Name = "passesLv";
-			this.passesLv.Size = new System.Drawing.Size(254, 139);
-			this.passesLv.TabIndex = 3;
 			this.passesLv.UseCompatibleStateImageBehavior = false;
 			this.passesLv.View = System.Windows.Forms.View.Details;
 			this.passesLv.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.passesLv_ItemSelectionChanged);
 			// 
 			// passesColNumber
 			// 
-			this.passesColNumber.Text = "Pass Number";
-			this.passesColNumber.Width = 90;
+			resources.ApplyResources(this.passesColNumber, "passesColNumber");
 			// 
 			// passesColType
 			// 
-			this.passesColType.Text = "Data";
-			this.passesColType.Width = 135;
+			resources.ApplyResources(this.passesColType, "passesColType");
 			// 
 			// passesAddBtn
 			// 
-			this.passesAddBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.passesAddBtn.Location = new System.Drawing.Point(272, 60);
+			resources.ApplyResources(this.passesAddBtn, "passesAddBtn");
 			this.passesAddBtn.Name = "passesAddBtn";
-			this.passesAddBtn.Size = new System.Drawing.Size(90, 23);
-			this.passesAddBtn.TabIndex = 4;
-			this.passesAddBtn.Text = "Add";
 			this.passesAddBtn.UseVisualStyleBackColor = true;
 			this.passesAddBtn.Click += new System.EventHandler(this.passesAddBtn_Click);
 			// 
 			// passesRemoveBtn
 			// 
-			this.passesRemoveBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.passesRemoveBtn.Enabled = false;
-			this.passesRemoveBtn.Location = new System.Drawing.Point(272, 89);
+			resources.ApplyResources(this.passesRemoveBtn, "passesRemoveBtn");
 			this.passesRemoveBtn.Name = "passesRemoveBtn";
-			this.passesRemoveBtn.Size = new System.Drawing.Size(90, 23);
-			this.passesRemoveBtn.TabIndex = 5;
-			this.passesRemoveBtn.Text = "Remove";
 			this.passesRemoveBtn.UseVisualStyleBackColor = true;
 			this.passesRemoveBtn.Click += new System.EventHandler(this.passesRemoveBtn_Click);
 			// 
 			// passesDuplicateBtn
 			// 
-			this.passesDuplicateBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.passesDuplicateBtn.Enabled = false;
-			this.passesDuplicateBtn.Location = new System.Drawing.Point(272, 118);
+			resources.ApplyResources(this.passesDuplicateBtn, "passesDuplicateBtn");
 			this.passesDuplicateBtn.Name = "passesDuplicateBtn";
-			this.passesDuplicateBtn.Size = new System.Drawing.Size(90, 23);
-			this.passesDuplicateBtn.TabIndex = 6;
-			this.passesDuplicateBtn.Text = "Duplicate";
 			this.passesDuplicateBtn.UseVisualStyleBackColor = true;
 			this.passesDuplicateBtn.Click += new System.EventHandler(this.passesDuplicateBtn_Click);
 			// 
 			// passesMoveUpBtn
 			// 
-			this.passesMoveUpBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.passesMoveUpBtn.Enabled = false;
-			this.passesMoveUpBtn.Location = new System.Drawing.Point(272, 147);
+			resources.ApplyResources(this.passesMoveUpBtn, "passesMoveUpBtn");
 			this.passesMoveUpBtn.Name = "passesMoveUpBtn";
-			this.passesMoveUpBtn.Size = new System.Drawing.Size(90, 23);
-			this.passesMoveUpBtn.TabIndex = 7;
-			this.passesMoveUpBtn.Text = "Move Up";
 			this.passesMoveUpBtn.UseVisualStyleBackColor = true;
 			this.passesMoveUpBtn.Click += new System.EventHandler(this.passesMoveUpBtn_Click);
 			// 
 			// passesMoveDownBtn
 			// 
-			this.passesMoveDownBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.passesMoveDownBtn.Enabled = false;
-			this.passesMoveDownBtn.Location = new System.Drawing.Point(272, 176);
+			resources.ApplyResources(this.passesMoveDownBtn, "passesMoveDownBtn");
 			this.passesMoveDownBtn.Name = "passesMoveDownBtn";
-			this.passesMoveDownBtn.Size = new System.Drawing.Size(90, 23);
-			this.passesMoveDownBtn.TabIndex = 8;
-			this.passesMoveDownBtn.Text = "Move Down";
 			this.passesMoveDownBtn.UseVisualStyleBackColor = true;
 			this.passesMoveDownBtn.Click += new System.EventHandler(this.passesMoveDownBtn_Click);
 			// 
 			// passGrp
 			// 
-			this.passGrp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.passGrp, "passGrp");
 			this.passGrp.Controls.Add(this.passTxt);
 			this.passGrp.Controls.Add(this.passTypeGrp);
-			this.passGrp.Enabled = false;
-			this.passGrp.Location = new System.Drawing.Point(15, 205);
 			this.passGrp.Name = "passGrp";
-			this.passGrp.Size = new System.Drawing.Size(347, 142);
-			this.passGrp.TabIndex = 9;
 			this.passGrp.TabStop = false;
-			this.passGrp.Text = "Pass Data";
 			// 
 			// passTxt
 			// 
-			this.passTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.passTxt.Location = new System.Drawing.Point(9, 50);
-			this.passTxt.Multiline = true;
+			resources.ApplyResources(this.passTxt, "passTxt");
 			this.passTxt.Name = "passTxt";
-			this.passTxt.Size = new System.Drawing.Size(332, 86);
-			this.passTxt.TabIndex = 4;
 			// 
 			// passTypeGrp
 			// 
-			this.passTypeGrp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.passTypeGrp, "passTypeGrp");
 			this.passTypeGrp.Controls.Add(this.passTypeText);
 			this.passTypeGrp.Controls.Add(this.passTypeHex);
 			this.passTypeGrp.Controls.Add(this.passTypeRandom);
-			this.passTypeGrp.Location = new System.Drawing.Point(6, 17);
 			this.passTypeGrp.Name = "passTypeGrp";
-			this.passTypeGrp.Size = new System.Drawing.Size(335, 27);
-			this.passTypeGrp.TabIndex = 3;
 			// 
 			// passTypeText
 			// 
-			this.passTypeText.AutoSize = true;
+			resources.ApplyResources(this.passTypeText, "passTypeText");
 			this.passTypeText.Checked = true;
-			this.passTypeText.Location = new System.Drawing.Point(3, 3);
 			this.passTypeText.Name = "passTypeText";
-			this.passTypeText.Size = new System.Drawing.Size(47, 19);
-			this.passTypeText.TabIndex = 0;
 			this.passTypeText.TabStop = true;
-			this.passTypeText.Text = "Text";
 			this.passTypeText.UseVisualStyleBackColor = true;
 			this.passTypeText.CheckedChanged += new System.EventHandler(this.passType_CheckedChanged);
 			// 
 			// passTypeHex
 			// 
-			this.passTypeHex.AutoSize = true;
-			this.passTypeHex.Location = new System.Drawing.Point(56, 3);
+			resources.ApplyResources(this.passTypeHex, "passTypeHex");
 			this.passTypeHex.Name = "passTypeHex";
-			this.passTypeHex.Size = new System.Drawing.Size(93, 19);
-			this.passTypeHex.TabIndex = 1;
-			this.passTypeHex.Text = "Hexadecimal";
 			this.passTypeHex.UseVisualStyleBackColor = true;
 			this.passTypeHex.CheckedChanged += new System.EventHandler(this.passType_CheckedChanged);
 			// 
 			// passTypeRandom
 			// 
-			this.passTypeRandom.AutoSize = true;
-			this.passTypeRandom.Location = new System.Drawing.Point(155, 3);
+			resources.ApplyResources(this.passTypeRandom, "passTypeRandom");
 			this.passTypeRandom.Name = "passTypeRandom";
-			this.passTypeRandom.Size = new System.Drawing.Size(70, 19);
-			this.passTypeRandom.TabIndex = 2;
-			this.passTypeRandom.Text = "Random";
 			this.passTypeRandom.UseVisualStyleBackColor = true;
 			this.passTypeRandom.CheckedChanged += new System.EventHandler(this.passType_CheckedChanged);
 			// 
 			// randomizeChk
 			// 
-			this.randomizeChk.AutoSize = true;
-			this.randomizeChk.Location = new System.Drawing.Point(15, 35);
+			resources.ApplyResources(this.randomizeChk, "randomizeChk");
 			this.randomizeChk.Name = "randomizeChk";
-			this.randomizeChk.Size = new System.Drawing.Size(142, 19);
-			this.randomizeChk.TabIndex = 3;
-			this.randomizeChk.Text = "Randomize pass order";
 			this.randomizeChk.UseVisualStyleBackColor = true;
 			// 
 			// okBtn
 			// 
-			this.okBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.okBtn.Location = new System.Drawing.Point(206, 353);
+			resources.ApplyResources(this.okBtn, "okBtn");
 			this.okBtn.Name = "okBtn";
-			this.okBtn.Size = new System.Drawing.Size(75, 23);
-			this.okBtn.TabIndex = 10;
-			this.okBtn.Text = "OK";
 			this.okBtn.UseVisualStyleBackColor = true;
 			this.okBtn.Click += new System.EventHandler(this.okBtn_Click);
 			// 
 			// cancelBtn
 			// 
-			this.cancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.cancelBtn, "cancelBtn");
 			this.cancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelBtn.Location = new System.Drawing.Point(287, 353);
 			this.cancelBtn.Name = "cancelBtn";
-			this.cancelBtn.Size = new System.Drawing.Size(75, 23);
-			this.cancelBtn.TabIndex = 11;
-			this.cancelBtn.Text = "Cancel";
 			this.cancelBtn.UseVisualStyleBackColor = true;
 			// 
 			// errorProvider
@@ -291,10 +213,9 @@ namespace Eraser.DefaultPlugins
 			// CustomMethodEditorForm
 			// 
 			this.AcceptButton = this.okBtn;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.CancelButton = this.cancelBtn;
-			this.ClientSize = new System.Drawing.Size(374, 388);
 			this.Controls.Add(this.okBtn);
 			this.Controls.Add(this.cancelBtn);
 			this.Controls.Add(this.randomizeChk);
@@ -307,14 +228,11 @@ namespace Eraser.DefaultPlugins
 			this.Controls.Add(this.passesLv);
 			this.Controls.Add(this.nameTxt);
 			this.Controls.Add(this.nameLbl);
-			this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "CustomMethodEditorForm";
 			this.ShowInTaskbar = false;
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "Custom Erasure Method Editor";
 			this.passGrp.ResumeLayout(false);
 			this.passGrp.PerformLayout();
 			this.passTypeGrp.ResumeLayout(false);

@@ -79,6 +79,28 @@ namespace Eraser.DefaultPlugins
 				customMethods = new Dictionary<Guid, CustomErasureMethod>();
 		}
 
+		private void customMethod_ItemActivate(object sender, EventArgs e)
+		{
+			//Create the dialog
+			CustomMethodEditorForm editorForm = new CustomMethodEditorForm();
+			ListViewItem item = customMethod.SelectedItems[0];
+			editorForm.Method = (CustomErasureMethod)item.Tag;
+
+			if (editorForm.ShowDialog() == DialogResult.OK)
+			{
+				//Remove the old definition of the erasure method
+				CustomErasureMethod method = editorForm.Method;
+				removeCustomMethods.Add(method.GUID);
+				customMethod.Items.Remove(item);
+				customMethods.Remove(method.GUID);
+
+				//Add the new definition
+				method = editorForm.Method;
+				addCustomMethods.Add(method);
+				AddMethod(method);
+			}
+		}
+
 		private void customMethodAdd_Click(object sender, EventArgs e)
 		{
 			CustomMethodEditorForm form = new CustomMethodEditorForm();
@@ -87,6 +109,20 @@ namespace Eraser.DefaultPlugins
 				CustomErasureMethod method = form.Method;
 				addCustomMethods.Add(method);
 				AddMethod(method);
+			}
+		}
+
+		private void customMethodContextMenuStrip_Opening(object sender, CancelEventArgs e)
+		{
+			e.Cancel = customMethod.SelectedIndices.Count == 0;
+		}
+
+		private void deleteMethodToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			foreach (ListViewItem item in customMethod.SelectedItems)
+			{
+				removeCustomMethods.Add(((CustomErasureMethod)item.Tag).GUID);
+				customMethod.Items.Remove(item);
 			}
 		}
 
@@ -129,28 +165,6 @@ namespace Eraser.DefaultPlugins
 			ListViewItem item = customMethod.Items.Add(method.Name);
 			item.SubItems.Add(method.Passes.Length.ToString());
 			item.Tag = method;
-		}
-
-		private void customMethod_ItemActivate(object sender, EventArgs e)
-		{
-			//Create the dialog
-			CustomMethodEditorForm editorForm = new CustomMethodEditorForm();
-			ListViewItem item = customMethod.SelectedItems[0];
-			editorForm.Method = (CustomErasureMethod)item.Tag;
-
-			if (editorForm.ShowDialog() == DialogResult.OK)
-			{
-				//Remove the old definition of the erasure method
-				CustomErasureMethod method = editorForm.Method;
-				removeCustomMethods.Add(method.GUID);
-				customMethod.Items.Remove(item);
-				customMethods.Remove(method.GUID);
-				
-				//Add the new definition
-				method = editorForm.Method;
-				addCustomMethods.Add(method);
-				AddMethod(method);
-			}
 		}
 
 		private Dictionary<Guid, CustomErasureMethod> customMethods;

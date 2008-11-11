@@ -50,6 +50,7 @@ namespace Eraser.DefaultPlugins
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
 			this.fl16MethodLbl = new System.Windows.Forms.Label();
 			this.fl16MethodCmb = new System.Windows.Forms.ComboBox();
 			this.customPassGrp = new System.Windows.Forms.GroupBox();
@@ -60,132 +61,113 @@ namespace Eraser.DefaultPlugins
 			this.okBtn = new System.Windows.Forms.Button();
 			this.cancelBtn = new System.Windows.Forms.Button();
 			this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+			this.customMethodContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.deleteMethodToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.customPassGrp.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
+			this.customMethodContextMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// fl16MethodLbl
 			// 
-			this.fl16MethodLbl.AutoSize = true;
-			this.fl16MethodLbl.Location = new System.Drawing.Point(12, 9);
+			resources.ApplyResources(this.fl16MethodLbl, "fl16MethodLbl");
 			this.fl16MethodLbl.Name = "fl16MethodLbl";
-			this.fl16MethodLbl.Size = new System.Drawing.Size(189, 15);
-			this.fl16MethodLbl.TabIndex = 0;
-			this.fl16MethodLbl.Text = "Erasure method for first/last 16 KB:";
 			// 
 			// fl16MethodCmb
 			// 
-			this.fl16MethodCmb.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.fl16MethodCmb, "fl16MethodCmb");
 			this.fl16MethodCmb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.fl16MethodCmb.FormattingEnabled = true;
-			this.fl16MethodCmb.Location = new System.Drawing.Point(31, 27);
 			this.fl16MethodCmb.Name = "fl16MethodCmb";
-			this.fl16MethodCmb.Size = new System.Drawing.Size(301, 23);
-			this.fl16MethodCmb.TabIndex = 1;
 			// 
 			// customPassGrp
 			// 
-			this.customPassGrp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.customPassGrp, "customPassGrp");
 			this.customPassGrp.Controls.Add(this.customMethodAdd);
 			this.customPassGrp.Controls.Add(this.customMethod);
-			this.customPassGrp.Location = new System.Drawing.Point(15, 56);
 			this.customPassGrp.Name = "customPassGrp";
-			this.customPassGrp.Size = new System.Drawing.Size(317, 295);
-			this.customPassGrp.TabIndex = 3;
 			this.customPassGrp.TabStop = false;
-			this.customPassGrp.Text = "Custom Erasure Methods";
 			// 
 			// customMethodAdd
 			// 
-			this.customMethodAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.customMethodAdd.Location = new System.Drawing.Point(6, 266);
+			resources.ApplyResources(this.customMethodAdd, "customMethodAdd");
 			this.customMethodAdd.Name = "customMethodAdd";
-			this.customMethodAdd.Size = new System.Drawing.Size(90, 23);
-			this.customMethodAdd.TabIndex = 1;
-			this.customMethodAdd.Text = "Add Method";
 			this.customMethodAdd.UseVisualStyleBackColor = true;
 			this.customMethodAdd.Click += new System.EventHandler(this.customMethodAdd_Click);
 			// 
 			// customMethod
 			// 
-			this.customMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.customMethod, "customMethod");
 			this.customMethod.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.customPassName,
             this.customPassPassCount});
+			this.customMethod.ContextMenuStrip = this.customMethodContextMenuStrip;
 			this.customMethod.FullRowSelect = true;
-			this.customMethod.Location = new System.Drawing.Point(6, 22);
 			this.customMethod.MultiSelect = false;
 			this.customMethod.Name = "customMethod";
-			this.customMethod.Size = new System.Drawing.Size(305, 238);
-			this.customMethod.TabIndex = 0;
 			this.customMethod.UseCompatibleStateImageBehavior = false;
 			this.customMethod.View = System.Windows.Forms.View.Details;
 			this.customMethod.ItemActivate += new System.EventHandler(this.customMethod_ItemActivate);
 			// 
 			// customPassName
 			// 
-			this.customPassName.Text = "Method Name";
-			this.customPassName.Width = 240;
+			resources.ApplyResources(this.customPassName, "customPassName");
 			// 
 			// customPassPassCount
 			// 
-			this.customPassPassCount.Text = "Passes";
+			resources.ApplyResources(this.customPassPassCount, "customPassPassCount");
 			// 
 			// okBtn
 			// 
-			this.okBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.okBtn.Location = new System.Drawing.Point(176, 357);
+			resources.ApplyResources(this.okBtn, "okBtn");
 			this.okBtn.Name = "okBtn";
-			this.okBtn.Size = new System.Drawing.Size(75, 23);
-			this.okBtn.TabIndex = 4;
-			this.okBtn.Text = "OK";
 			this.okBtn.UseVisualStyleBackColor = true;
 			this.okBtn.Click += new System.EventHandler(this.okBtn_Click);
 			// 
 			// cancelBtn
 			// 
-			this.cancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			resources.ApplyResources(this.cancelBtn, "cancelBtn");
 			this.cancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelBtn.Location = new System.Drawing.Point(257, 357);
 			this.cancelBtn.Name = "cancelBtn";
-			this.cancelBtn.Size = new System.Drawing.Size(75, 23);
-			this.cancelBtn.TabIndex = 5;
-			this.cancelBtn.Text = "Cancel";
 			this.cancelBtn.UseVisualStyleBackColor = true;
 			// 
 			// errorProvider
 			// 
 			this.errorProvider.ContainerControl = this;
 			// 
+			// customMethodContextMenuStrip
+			// 
+			this.customMethodContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deleteMethodToolStripMenuItem});
+			this.customMethodContextMenuStrip.Name = "customMethodContextMenuStrip";
+			resources.ApplyResources(this.customMethodContextMenuStrip, "customMethodContextMenuStrip");
+			this.customMethodContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.customMethodContextMenuStrip_Opening);
+			// 
+			// deleteMethodToolStripMenuItem
+			// 
+			this.deleteMethodToolStripMenuItem.Name = "deleteMethodToolStripMenuItem";
+			resources.ApplyResources(this.deleteMethodToolStripMenuItem, "deleteMethodToolStripMenuItem");
+			this.deleteMethodToolStripMenuItem.Click += new System.EventHandler(this.deleteMethodToolStripMenuItem_Click);
+			// 
 			// SettingsForm
 			// 
 			this.AcceptButton = this.okBtn;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.CancelButton = this.cancelBtn;
-			this.ClientSize = new System.Drawing.Size(344, 392);
 			this.Controls.Add(this.okBtn);
 			this.Controls.Add(this.cancelBtn);
 			this.Controls.Add(this.customPassGrp);
 			this.Controls.Add(this.fl16MethodCmb);
 			this.Controls.Add(this.fl16MethodLbl);
-			this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.MinimumSize = new System.Drawing.Size(344, 392);
 			this.Name = "SettingsForm";
 			this.ShowInTaskbar = false;
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "Default Plugin - Settings";
 			this.customPassGrp.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
+			this.customMethodContextMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -203,5 +185,7 @@ namespace Eraser.DefaultPlugins
 		private System.Windows.Forms.ColumnHeader customPassName;
 		private System.Windows.Forms.ColumnHeader customPassPassCount;
 		private System.Windows.Forms.Button customMethodAdd;
+		private System.Windows.Forms.ContextMenuStrip customMethodContextMenuStrip;
+		private System.Windows.Forms.ToolStripMenuItem deleteMethodToolStripMenuItem;
 	}
 }

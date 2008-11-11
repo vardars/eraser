@@ -48,6 +48,8 @@ namespace Eraser
 			Host.Instance.PluginLoaded += new Host.PluginLoadedFunction(OnNewPluginLoaded);
 			ErasureMethodManager.MethodRegistered +=
 				new ErasureMethodManager.MethodRegisteredFunction(OnMethodRegistered);
+			ErasureMethodManager.MethodUnregistered +=
+				new ErasureMethodManager.MethodUnregisteredFunction(OnMethodUnregistered);
 
 			//Load the values
 			LoadPluginDependantValues();
@@ -69,6 +71,28 @@ namespace Eraser
 			eraseFilesMethod.Items.Add(method);
 			if (method is UnusedSpaceErasureMethod)
 				eraseUnusedMethod.Items.Add(method);
+		}
+
+		private void OnMethodUnregistered(Guid guid)
+		{
+			foreach (object obj in eraseFilesMethod.Items)
+				if (((ErasureMethod)obj).GUID == guid)
+				{
+					eraseFilesMethod.Items.Remove(obj);
+					break;
+				}
+
+			foreach (object obj in eraseUnusedMethod.Items)
+				if (((ErasureMethod)obj).GUID == guid)
+				{
+					eraseUnusedMethod.Items.Remove(obj);
+					break;
+				}
+
+			if (eraseFilesMethod.SelectedIndex == -1)
+				eraseFilesMethod.SelectedIndex = 0;
+			if (eraseUnusedMethod.SelectedIndex == -1)
+				eraseUnusedMethod.SelectedIndex = 0;
 		}
 
 		private void LoadPluginDependantValues()
