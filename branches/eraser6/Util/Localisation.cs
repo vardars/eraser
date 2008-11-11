@@ -114,9 +114,7 @@ namespace Eraser.Util
 		/// <returns>An unescaped string</returns>
 		private static string Unescape(string str)
 		{
-			str.Replace("\\n", "\n");
-			str.Replace("\\r", "\r");
-			return str;
+			return str.Replace("\\n", "\n").Replace("\\r", "\r");
 		}
 
 		/// <summary>
