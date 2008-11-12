@@ -97,7 +97,7 @@ namespace Eraser
 		/// <param name="e">Event argument.</param>
 		private void updateListDownloader_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
-			//The return result will normally be null unless there are errors during the download.
+			//The Error property will normally be null unless there are errors during the download.
 			if (e.Error != null)
 			{
 				MessageBox.Show(this, e.Error.Message, S._("Eraser"),
@@ -164,6 +164,7 @@ namespace Eraser
 					item.Checked = true;
 
 					updatesLv.Items.Add(item);
+					uiUpdates.Add(update, new UpdateData(update, item));
 				}
 			}
 		}
@@ -186,13 +187,15 @@ namespace Eraser
 			foreach (ListViewItem item in updatesLv.Items)
 				if (item.Checked)
 				{
-					UpdateManager.Update upd = (UpdateManager.Update)item.Tag;
-					ListViewItem lvItem = downloadingLv.Items.Add(item.Text);
-					lvItem.SubItems.Add(upd.FileSize.ToString());
-					lvItem.Tag = upd;
+					item.Remove();
+					item.SubItems.RemoveAt(1);
+					item.SubItems.RemoveAt(1);
+					downloadingLv.Items.Add(item);
 
 					updatesToInstall.Add((UpdateManager.Update)item.Tag);
 				}
+				else
+					uiUpdates.Remove((UpdateManager.Update)item.Tag);
 
 			//Then run the thread.
 			downloader.RunWorkerAsync(updatesToInstall);
@@ -231,42 +234,40 @@ namespace Eraser
 				return;
 			}
 
-			foreach (ListViewItem item in downloadingLv.Items)
-				if (((UpdateManager.Update)item.Tag).Equals(((UpdateManager.Update)e.UserState)))
-				{
-					UpdateManager.Update update = (UpdateManager.Update)item.Tag;
-					int amountLeft = (int)((1 - e.ProgressPercentage) * update.FileSize);
+			UpdateData update = uiUpdates[(UpdateManager.Update)e.UserState];
+			int amountLeft = (int)((1 - e.ProgressPercentage) * update.Update.FileSize);
 
-					if (e is UpdateManager.ProgressErrorEventArgs)
-					{
-						item.ImageIndex = 3;
-						item.SubItems[1].Text = S._("Error");
-					}
-					else
-					{
-						if (amountLeft == 0)
-						{
-							item.ImageIndex = -1;
-							item.SubItems[1].Text = S._("Downloaded");
-						}
-						else
-						{
-							item.ImageIndex = 0;
-							item.SubItems[1].Text = amountLeft.ToString();
-						}
-					}
+			if (e is UpdateManager.ProgressErrorEventArgs)
+			{
+				update.Error = ((UpdateManager.ProgressErrorEventArgs)e).Exception;
+				update.LVItem.ImageIndex = 3;
+				update.LVItem.SubItems[1].Text = S._("Error");
+				update.LVItem.ToolTipText = update.Error.Message;
+			}
+			else
+			{
+				if (amountLeft == 0)
+				{
+					update.LVItem.ImageIndex = -1;
+					update.LVItem.SubItems[1].Text = S._("Downloaded");
 				}
+				else
+				{
+					update.LVItem.ImageIndex = 0;
+					update.LVItem.SubItems[1].Text = amountLeft.ToString();
+				}
+			}
 
 			downloadingItemLbl.Text = e.Message;
 			downloadingItemPb.Value = (int)(e.ProgressPercentage * 100);
 			downloadingOverallPb.Value = (int)(e.OverallProgressPercentage * 100);
 
 			long amountToDownload = 0;
-			foreach (ListViewItem item in downloadingLv.Items)
+			foreach (ListViewItem lvItem in downloadingLv.Items)
 				try
 				{
 					amountToDownload +=
-						Convert.ToInt32(item.SubItems[1].Text);
+						Convert.ToInt32(lvItem.SubItems[1].Text);
 				}
 				catch (FormatException)
 				{
@@ -288,6 +289,7 @@ namespace Eraser
 				MessageBox.Show(this, e.Error.Message, S._("Eraser"), MessageBoxButtons.OK,
 					MessageBoxIcon.Error);
 				Close();
+				return;
 			}
 
 			downloadingPnl.Visible = false;
@@ -295,8 +297,15 @@ namespace Eraser
 
 			foreach (ListViewItem item in downloadingLv.Items)
 			{
-				ListViewItem newItem = installingLv.Items.Add(item.Text);
-				newItem.Tag = item.Tag;
+				item.Remove();
+				installingLv.Items.Add(item);
+
+				UpdateData update = uiUpdates[(UpdateManager.Update)item.Tag];
+				if (update.Error == null)
+					item.SubItems[1].Text = string.Empty;
+				else
+					item.SubItems[1].Text = string.Format(S._("Error: {0}"),
+						update.Error.Message);
 			}
 
 			installer.RunWorkerAsync(e.Result);
@@ -336,24 +345,23 @@ namespace Eraser
 				return;
 			}
 
-			foreach (ListViewItem item in installingLv.Items)
-				if (item.Tag.Equals(e.UserState))
+			UpdateData update = uiUpdates[(UpdateManager.Update)e.UserState];
+			if (e is UpdateManager.ProgressErrorEventArgs)
+			{
+				update.Error = ((UpdateManager.ProgressErrorEventArgs)e).Exception;
+				update.LVItem.ImageIndex = 3;
+				update.LVItem.SubItems[1].Text = string.Format(S._("Error: {0}"),
+					update.Error.Message);
+			}
+			else
+				switch (update.LVItem.ImageIndex)
 				{
-					if (e is UpdateManager.ProgressErrorEventArgs)
-					{
-						item.ImageIndex = 3;
-						item.ToolTipText = ((UpdateManager.ProgressErrorEventArgs)e).Exception.Message;
-					}
-					else
-						switch (item.ImageIndex)
-						{
-							case -1:
-								item.ImageIndex = 1;
-								break;
-							case 1:
-								item.ImageIndex = 2;
-								break;
-						}
+					case -1:
+						update.LVItem.ImageIndex = 1;
+						break;
+					case 1:
+						update.LVItem.ImageIndex = 2;
+						break;
 				}
 		}
 		#endregion
@@ -362,6 +370,49 @@ namespace Eraser
 		/// The Update manager instance used by this form.
 		/// </summary>
 		UpdateManager updates;
+
+		/// <summary>
+		/// Maps listview items to the UpdateManager.Update object.
+		/// </summary>
+		Dictionary<UpdateManager.Update, UpdateData> uiUpdates =
+			new Dictionary<UpdateManager.Update, UpdateData>();
+
+		/// <summary>
+		/// Manages information associated with the update.
+		/// </summary>
+		private class UpdateData
+		{
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="update">The UpdateManager.Update object containing the
+			/// internal representation of the update.</param>
+			/// <param name="item">The ListViewItem used for the display of the
+			/// update.</param>
+			public UpdateData(UpdateManager.Update update, ListViewItem item)
+			{
+				Update = update;
+				LVItem = item;
+				Error = null;
+			}
+
+			/// <summary>
+			/// The UpdateManager.Update object containing the internal representation
+			/// of the update.
+			/// </summary>
+			public UpdateManager.Update Update;
+
+			/// <summary>
+			/// The ListViewItem used for the display of the update.
+			/// </summary>
+			public ListViewItem LVItem;
+
+			/// <summary>
+			/// The error raised when downloading/installing the update, if any. Null
+			/// otherwise.
+			/// </summary>
+			public Exception Error;
+		}
 	}
 
 	public class UpdateManager
@@ -654,7 +705,7 @@ namespace Eraser
 				catch (Exception e)
 				{
 					OnProgress(new ProgressErrorEventArgs(new ProgressEventArgs(1.0f,
-						(float)currUpdate, update,
+						(float)currUpdate / updates.Count, update,
 							string.Format(S._("Error downloading {0}: {1}"), update.Name, e.Message)),
 						e));
 				}

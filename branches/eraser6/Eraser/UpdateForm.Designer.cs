@@ -80,6 +80,7 @@ namespace Eraser
 			this.installingLvNameCol = new System.Windows.Forms.ColumnHeader();
 			this.installingLbl = new System.Windows.Forms.Label();
 			this.installer = new System.ComponentModel.BackgroundWorker();
+			this.installingLvStatusCol = new System.Windows.Forms.ColumnHeader();
 			this.updatesPanel.SuspendLayout();
 			this.progressPanel.SuspendLayout();
 			this.downloadingPnl.SuspendLayout();
@@ -249,8 +250,9 @@ namespace Eraser
 			// installingLv
 			// 
 			this.installingLv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.installingLvNameCol});
-			this.installingLv.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            this.installingLvNameCol,
+            this.installingLvStatusCol});
+			this.installingLv.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			resources.ApplyResources(this.installingLv, "installingLv");
 			this.installingLv.Name = "installingLv";
 			this.installingLv.ShowItemToolTips = true;
@@ -270,8 +272,10 @@ namespace Eraser
 			// installer
 			// 
 			this.installer.DoWork += new System.ComponentModel.DoWorkEventHandler(this.installer_DoWork);
-			this.installer.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.installer_RunWorkerCompleted);
-			this.installer.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.installer_ProgressChanged);
+			// 
+			// installingLvStatusCol
+			// 
+			resources.ApplyResources(this.installingLvStatusCol, "installingLvStatusCol");
 			// 
 			// UpdateForm
 			// 
@@ -328,5 +332,6 @@ namespace Eraser
 		private System.Windows.Forms.ListView installingLv;
 		private System.Windows.Forms.ColumnHeader installingLvNameCol;
 		private System.ComponentModel.BackgroundWorker installer;
+		private System.Windows.Forms.ColumnHeader installingLvStatusCol;
 	}
 }
