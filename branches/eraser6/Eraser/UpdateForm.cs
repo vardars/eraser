@@ -283,6 +283,13 @@ namespace Eraser
 		/// <param name="e">Event argument.</param>
 		private void downloader_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
+			if (e.Error != null)
+			{
+				MessageBox.Show(this, e.Error.Message, S._("Eraser"), MessageBoxButtons.OK,
+					MessageBoxIcon.Error);
+				Close();
+			}
+
 			downloadingPnl.Visible = false;
 			installingPnl.Show();
 
@@ -297,6 +304,11 @@ namespace Eraser
 		#endregion
 
 		#region Update installer
+		/// <summary>
+		/// Background thread to install downloaded updates
+		/// </summary>
+		/// <param name="sender">The object triggering this event/</param>
+		/// <param name="e">Event argument.</param>
 		private void installer_DoWork(object sender, DoWorkEventArgs e)
 		{
 			try
@@ -310,6 +322,11 @@ namespace Eraser
 			}
 		}
 
+		/// <summary>
+		/// Handles the progress events generated during update installation.
+		/// </summary>
+		/// <param name="sender">The object triggering this event/</param>
+		/// <param name="e">Event argument.</param>
 		private void installer_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
 			if (InvokeRequired)
@@ -338,11 +355,6 @@ namespace Eraser
 								break;
 						}
 				}
-		}
-
-		private void installer_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-
 		}
 		#endregion
 
@@ -611,7 +623,7 @@ namespace Eraser
 						byte[] tempBuffer = new byte[16384];
 						string tempFilePath = Path.Combine(
 							tempDir.FullName, string.Format("{0}-{1}", ++currUpdate,
-							reqUri.GetComponents(UriComponents.Path, UriFormat.Unescaped)));
+							Path.GetFileName(reqUri.GetComponents(UriComponents.Path, UriFormat.Unescaped))));
 
 						using (Stream strm = resp.GetResponseStream())
 						using (FileStream tempStrm = new FileStream(tempFilePath, FileMode.CreateNew))
@@ -639,7 +651,7 @@ namespace Eraser
 							update, string.Format(S._("Downloaded: {0}"), update.Name)));
 					}
 				}
-				catch (WebException e)
+				catch (Exception e)
 				{
 					OnProgress(new ProgressErrorEventArgs(new ProgressEventArgs(1.0f,
 						(float)currUpdate, update,

@@ -282,4 +282,10 @@
   <data name="Installed {0}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
+  <data name="Error installing {0}" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="The installer exited with an error code {0}" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
 </root>
