@@ -53,6 +53,8 @@ namespace Eraser
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UpdateForm));
 			this.updateListDownloader = new System.ComponentModel.BackgroundWorker();
 			this.updatesPanel = new System.Windows.Forms.Panel();
+			this.updatesMirrorCmb = new System.Windows.Forms.ComboBox();
+			this.updatesMirrorLbl = new System.Windows.Forms.Label();
 			this.updatesLv = new System.Windows.Forms.ListView();
 			this.updatesLvNameCol = new System.Windows.Forms.ColumnHeader();
 			this.updatesLvVersionCol = new System.Windows.Forms.ColumnHeader();
@@ -78,9 +80,9 @@ namespace Eraser
 			this.installingPnl = new System.Windows.Forms.Panel();
 			this.installingLv = new System.Windows.Forms.ListView();
 			this.installingLvNameCol = new System.Windows.Forms.ColumnHeader();
+			this.installingLvStatusCol = new System.Windows.Forms.ColumnHeader();
 			this.installingLbl = new System.Windows.Forms.Label();
 			this.installer = new System.ComponentModel.BackgroundWorker();
-			this.installingLvStatusCol = new System.Windows.Forms.ColumnHeader();
 			this.updatesPanel.SuspendLayout();
 			this.progressPanel.SuspendLayout();
 			this.downloadingPnl.SuspendLayout();
@@ -94,11 +96,24 @@ namespace Eraser
 			// 
 			// updatesPanel
 			// 
+			this.updatesPanel.Controls.Add(this.updatesMirrorCmb);
+			this.updatesPanel.Controls.Add(this.updatesMirrorLbl);
 			this.updatesPanel.Controls.Add(this.updatesLv);
 			this.updatesPanel.Controls.Add(this.updatesBtn);
 			this.updatesPanel.Controls.Add(this.updatesLbl);
 			resources.ApplyResources(this.updatesPanel, "updatesPanel");
 			this.updatesPanel.Name = "updatesPanel";
+			// 
+			// updatesMirrorCmb
+			// 
+			resources.ApplyResources(this.updatesMirrorCmb, "updatesMirrorCmb");
+			this.updatesMirrorCmb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.updatesMirrorCmb.Name = "updatesMirrorCmb";
+			// 
+			// updatesMirrorLbl
+			// 
+			resources.ApplyResources(this.updatesMirrorLbl, "updatesMirrorLbl");
+			this.updatesMirrorLbl.Name = "updatesMirrorLbl";
 			// 
 			// updatesLv
 			// 
@@ -264,6 +279,10 @@ namespace Eraser
 			// 
 			resources.ApplyResources(this.installingLvNameCol, "installingLvNameCol");
 			// 
+			// installingLvStatusCol
+			// 
+			resources.ApplyResources(this.installingLvStatusCol, "installingLvStatusCol");
+			// 
 			// installingLbl
 			// 
 			resources.ApplyResources(this.installingLbl, "installingLbl");
@@ -273,17 +292,13 @@ namespace Eraser
 			// 
 			this.installer.DoWork += new System.ComponentModel.DoWorkEventHandler(this.installer_DoWork);
 			// 
-			// installingLvStatusCol
-			// 
-			resources.ApplyResources(this.installingLvStatusCol, "installingLvStatusCol");
-			// 
 			// UpdateForm
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+			this.Controls.Add(this.updatesPanel);
 			this.Controls.Add(this.installingPnl);
 			this.Controls.Add(this.downloadingPnl);
-			this.Controls.Add(this.updatesPanel);
 			this.Controls.Add(this.progressPanel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
@@ -333,5 +348,7 @@ namespace Eraser
 		private System.Windows.Forms.ColumnHeader installingLvNameCol;
 		private System.ComponentModel.BackgroundWorker installer;
 		private System.Windows.Forms.ColumnHeader installingLvStatusCol;
+		private System.Windows.Forms.Label updatesMirrorLbl;
+		private System.Windows.Forms.ComboBox updatesMirrorCmb;
 	}
 }

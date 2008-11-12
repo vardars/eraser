@@ -107,10 +107,14 @@ namespace Eraser
 			}
 
 			progressPanel.Visible = false;
-
 			updatesPanel.Show();
-			updatesPanel.Visible = true;
-			updatesPanel.ResumeLayout();
+
+			//First list all available mirrors
+			Dictionary<string, UpdateManager.Mirror>.Enumerator iter =
+				updates.Mirrors.GetEnumerator();
+			while (iter.MoveNext())
+				updatesMirrorCmb.Items.Add(iter.Current.Value);
+			updatesMirrorCmb.SelectedIndex = 0;
 
 			//Get a list of translatable categories (this will change as more categories
 			//are added)
@@ -182,6 +186,10 @@ namespace Eraser
 			downloadingPnl.Show();
 			List<UpdateManager.Update> updatesToInstall =
 				new List<UpdateManager.Update>();
+
+			//Set the mirror
+			updates.SelectedMirror = (UpdateManager.Mirror)
+				updatesMirrorCmb.SelectedItem;
 
 			//Collect the items that need to be installed
 			foreach (ListViewItem item in updatesLv.Items)
@@ -418,6 +426,33 @@ namespace Eraser
 	public class UpdateManager
 	{
 		/// <summary>
+		/// Represents a download mirror.
+		/// </summary>
+		public struct Mirror
+		{
+			public Mirror(string location, string link)
+			{
+				Location = location;
+				Link = link;
+			}
+
+			/// <summary>
+			/// The location where the mirror is at.
+			/// </summary>
+			public string Location;
+
+			/// <summary>
+			/// The URL prefix to utilise the mirror.
+			/// </summary>
+			public string Link;
+
+			public override string ToString()
+			{
+				return Location;
+			}
+		}
+
+		/// <summary>
 		/// Represents an update available on the server.
 		/// </summary>
 		public struct Update
@@ -565,7 +600,7 @@ namespace Eraser
 			//Read the descendants of the updateList node (which are categories,
 			//except for the <mirrors> element)
 			XmlReader categories = rdr.ReadSubtree();
-			bool cont = categories.ReadToDescendant("updates");
+			bool cont = categories.ReadToDescendant("mirrors");
 			while (cont)
 			{
 				if (categories.NodeType == XmlNodeType.Element)
@@ -576,7 +611,8 @@ namespace Eraser
 							ParseMirror(categories.ReadSubtree());
 						Dictionary<string, string>.Enumerator e = mirrorsList.GetEnumerator();
 						while (e.MoveNext())
-							this.mirrors.Add(e.Current.Key, e.Current.Value);
+							this.mirrors.Add(e.Current.Key,
+								new Mirror(e.Current.Value, e.Current.Key));
 					}
 					else
 						updates.Add(categories.Name, ParseUpdateCategory(categories.ReadSubtree()));
@@ -600,10 +636,11 @@ namespace Eraser
 			//Load every element.
 			do
 			{
-				if (rdr.Name != "mirror")
+				if (rdr.NodeType != XmlNodeType.Element || rdr.Name != "mirror")
 					continue;
 
-				result.Add(rdr.ReadElementContentAsString(), rdr.GetAttribute("location"));
+				string location = rdr.GetAttribute("location");
+				result.Add(rdr.ReadElementContentAsString(), location);
 			}
 			while (rdr.ReadToNextSibling("mirror"));
 
@@ -649,7 +686,6 @@ namespace Eraser
 		/// <returns>An opaque object for use with InstallUpdates.</returns>
 		public object DownloadUpdates(List<Update> updates)
 		{
-			string mirror = "http://eraser.sourceforge.net";
 			//Create a folder to hold all our updates.
 			DirectoryInfo tempDir = new DirectoryInfo(Path.GetTempPath());
 			tempDir = tempDir.CreateSubdirectory("eraser" + Environment.TickCount.ToString());
@@ -663,10 +699,12 @@ namespace Eraser
 					//Decide on the URL to connect to. The Link of the update may
 					//be a relative path (relative to the selected mirror) or an
 					//absolute path (which we have no choice)
-					Uri reqUri = new Uri(update.Link);
-					if (!reqUri.IsAbsoluteUri)
-						reqUri = new Uri(new Uri(mirror), update.Link);
-
+					Uri reqUri = null;
+					if (Uri.IsWellFormedUriString(update.Link, UriKind.Absolute))
+						reqUri = new Uri(update.Link);
+					else
+						reqUri = new Uri(new Uri(SelectedMirror.Link), update.Link);
+					
 					//Then grab the download.
 					HttpWebRequest req = (HttpWebRequest)WebRequest.Create(reqUri);
 					using (WebResponse resp = req.GetResponse())
@@ -786,6 +824,45 @@ namespace Eraser
 		}
 
 		/// <summary>
+		/// Retrieves the list of mirrors which the server has indicated to exist.
+		/// </summary>
+		public Dictionary<string, Mirror> Mirrors
+		{
+			get
+			{
+				return mirrors;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the active mirror to use to download mirrored updates.
+		/// </summary>
+		public Mirror SelectedMirror
+		{
+			get
+			{
+				if (selectedMirror.Link.Length == 0)
+				{
+					Dictionary<string, Mirror>.Enumerator iter = mirrors.GetEnumerator();
+					if (iter.MoveNext())
+						return iter.Current.Value;
+				}
+				return selectedMirror;
+			}
+			set
+			{
+				foreach (Mirror mirror in Mirrors.Values)
+					if (mirror.Equals(value))
+					{
+						selectedMirror = value;
+						return;
+					}
+
+				throw new IndexOutOfRangeException();
+			}
+		}
+
+		/// <summary>
 		/// Retrieves the categories available.
 		/// </summary>
 		public Dictionary<string, List<Update>>.KeyCollection Categories
@@ -823,7 +900,13 @@ namespace Eraser
 		/// <summary>
 		/// The list of mirrors to download updates from.
 		/// </summary>
-		private Dictionary<string, string> mirrors = new Dictionary<string, string>();
+		private Dictionary<string, Mirror> mirrors =
+			new Dictionary<string, Mirror>();
+
+		/// <summary>
+		/// The currently selected mirror.
+		/// </summary>
+		private Mirror selectedMirror;
 
 		/// <summary>
 		/// The list of updates downloaded.
