@@ -128,6 +128,7 @@ namespace Eraser
 			this.updatesLv.Name = "updatesLv";
 			this.updatesLv.UseCompatibleStateImageBehavior = false;
 			this.updatesLv.View = System.Windows.Forms.View.Details;
+			this.updatesLv.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.updatesLv_ItemChecked);
 			// 
 			// updatesLvNameCol
 			// 

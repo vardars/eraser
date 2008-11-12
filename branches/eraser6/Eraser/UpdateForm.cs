@@ -178,6 +178,26 @@ namespace Eraser
 
 		#region Update downloader
 		/// <summary>
+		/// Handles the update checked event.
+		/// </summary>
+		/// <param name="sender">The object triggering this event/</param>
+		/// <param name="e">Event argument.</param>
+		private void updatesLv_ItemChecked(object sender, ItemCheckedEventArgs e)
+		{
+			if (selectedUpdates == -1 || updatesCount != updatesLv.Items.Count)
+			{
+				updatesCount = updatesLv.Items.Count;
+				selectedUpdates = 0;
+				foreach (ListViewItem item in updatesLv.Items)
+					if (item.Checked)
+						++selectedUpdates;
+			}
+			else
+				selectedUpdates += e.Item.Checked ? 1 : -1;
+			updatesBtn.Text = selectedUpdates == 0 ? S._("Close") : S._("Install");
+		}
+
+		/// <summary>
 		/// Handles the Install button click; fetches and installs the updates selected.
 		/// </summary>
 		/// <param name="sender">The object triggering this event/</param>
@@ -208,8 +228,11 @@ namespace Eraser
 				else
 					uiUpdates.Remove((UpdateManager.Update)item.Tag);
 
-			//Then run the thread.
-			downloader.RunWorkerAsync(updatesToInstall);
+			//Then run the thread if there are updates.
+			if (updatesToInstall.Count > 0)
+				downloader.RunWorkerAsync(updatesToInstall);
+			else
+				Close();
 		}
 
 		/// <summary>
@@ -434,6 +457,17 @@ namespace Eraser
 			/// </summary>
 			public Exception Error;
 		}
+
+		/// <summary>
+		/// The number of updates selected for download.
+		/// </summary>
+		private int selectedUpdates = -1;
+
+		/// <summary>
+		/// The number of updates present in the previous count, so the Selected
+		/// Updates number can be deemed invalid.
+		/// </summary>
+		private int updatesCount = -1;
 	}
 
 	public class UpdateManager
