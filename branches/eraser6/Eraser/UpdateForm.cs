@@ -43,6 +43,7 @@ namespace Eraser
 		public UpdateForm()
 		{
 			InitializeComponent();
+			ControlBox = false;
 
 			updates = new UpdateManager();
 			updateListDownloader.RunWorkerAsync();
@@ -106,6 +107,7 @@ namespace Eraser
 				return;
 			}
 
+			ControlBox = true;
 			progressPanel.Visible = false;
 			updatesPanel.Show();
 
@@ -184,6 +186,7 @@ namespace Eraser
 		{
 			updatesPanel.Visible = false;
 			downloadingPnl.Show();
+			ControlBox = false;
 			List<UpdateManager.Update> updatesToInstall =
 				new List<UpdateManager.Update>();
 
@@ -371,6 +374,16 @@ namespace Eraser
 						update.LVItem.ImageIndex = 2;
 						break;
 				}
+		}
+
+		/// <summary>
+		/// Re-enables the close dialog button.
+		/// </summary>
+		/// <param name="sender">The object triggering this event/</param>
+		/// <param name="e">Event argument.</param>
+		private void installer_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			ControlBox = true;
 		}
 		#endregion
 
@@ -736,7 +749,7 @@ namespace Eraser
 						tempFilesMap.Add(tempFilePath, update);
 
 						//Let the event handler know the download is complete.
-						OnProgress(new ProgressEventArgs(1.0f, currUpdate - 1,
+						OnProgress(new ProgressEventArgs(1.0f, (float)currUpdate / updates.Count,
 							update, string.Format(S._("Downloaded: {0}"), update.Name)));
 					}
 				}

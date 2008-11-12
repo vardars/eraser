@@ -291,6 +291,7 @@ namespace Eraser
 			// installer
 			// 
 			this.installer.DoWork += new System.ComponentModel.DoWorkEventHandler(this.installer_DoWork);
+			this.installer.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.installer_RunWorkerCompleted);
 			// 
 			// UpdateForm
 			// 
