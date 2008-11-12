@@ -29,6 +29,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="License.rtf" />
+    <Content Include="Resources\Exclamation.ico" />
+    <Content Include="Resources\Information.ico" />
+    <Content Include="Resources\New Folder.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <!--

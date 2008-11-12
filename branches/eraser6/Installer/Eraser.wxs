@@ -26,6 +26,10 @@
 		<Package InstallerVersion="200" Compressed="yes" />
 		<Media Id="1" Cabinet="Installer.cab" EmbedCab="yes" />
 
+		<Condition Message='This setup requires the .NET Framework 2.0 or higher.'>
+			<![CDATA[MsiNetAssemblySupport >= "2.0.50727"]]>
+		</Condition>
+
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder">
 				<Directory Id="INSTALLLOCATION" Name="Eraser">
@@ -99,6 +103,8 @@
 		<UIRef Id="WixUI_Mondo" />
 		<UIRef Id="WixUI_ErrorProgressText" />
 		<WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+		<WixVariable Id="WixUIBannerBmp" Value="Resources\Banner.bmp" />
+		<WixVariable Id="WixUIDialogBmp" Value="Resources\Dialog.bmp" />
 		<WixVariable Id="WixUIExclamationIco" Value="Resources\Exclamation.ico" />
 		<WixVariable Id="WixUIInfoIco" Value="Resources\Information.ico" />
 		<WixVariable Id="WixUINewIco" Value="Resources\New Folder.ico" />

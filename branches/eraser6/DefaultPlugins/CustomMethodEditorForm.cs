@@ -137,23 +137,35 @@ namespace Eraser.DefaultPlugins
 		/// string.</returns>
 		private static byte[] ParseConstantStr(string text, bool parseHex)
 		{
-			if (parseHex)
+			List<byte> passConstantList = new List<byte>();
+			try
 			{
-				List<byte> passConstantList = new List<byte>();
-				string str = text.Replace(" ", "").ToUpper();
+				if (parseHex)
+				{
+					string str = text.Replace(" ", "").ToUpper();
 
-				for (int i = 0, j = str.Length - 2; i < j; i += 2)
-					passConstantList.Add(Convert.ToByte(str.Substring(i, 2), 16));
-				passConstantList.Add(Convert.ToByte(str.Substring(str.Length - 2), 16));
+					for (int i = 0, j = str.Length - 2; i < j; i += 2)
+						passConstantList.Add(Convert.ToByte(str.Substring(i, 2), 16));
+					passConstantList.Add(Convert.ToByte(str.Substring(str.Length - 2), 16));
 
+					byte[] result = new byte[passConstantList.Count];
+					passConstantList.CopyTo(result);
+					return result;
+				}
+			}
+			catch (FormatException ex)
+			{
+				MessageBox.Show(ex.Message,
+					"Invalid input string",
+					MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+				// return as much as we could comprehend
 				byte[] result = new byte[passConstantList.Count];
 				passConstantList.CopyTo(result);
 				return result;
 			}
-			else
-			{
-				return Encoding.UTF8.GetBytes(text);
-			}
+
+			return Encoding.UTF8.GetBytes(text);
 		}
 
 		/// <summary>
@@ -166,12 +178,21 @@ namespace Eraser.DefaultPlugins
 		/// input array.</returns>
 		private static string DisplayConstantArray(byte[] array, bool asHex)
 		{
-			if (asHex)
+			try
 			{
-				StringBuilder displayText = new StringBuilder();
-				foreach (byte b in array)
-					displayText.Append(string.Format("{0,2} ", Convert.ToString(b, 16)));
-				return displayText.ToString();
+				if (asHex)
+				{
+					StringBuilder displayText = new StringBuilder();
+					foreach (byte b in array)
+						displayText.Append(string.Format("{0,2} ", Convert.ToString(b, 16)));
+					return displayText.ToString();
+				}
+			}
+			catch (FormatException ex)
+			{
+				MessageBox.Show(ex.Message,
+					"Invalid input string",
+					MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 
 			return Encoding.UTF8.GetString(array);
