@@ -49,6 +49,7 @@ namespace Eraser
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UpdateForm));
 			this.updateListDownloader = new System.ComponentModel.BackgroundWorker();
 			this.updatesPanel = new System.Windows.Forms.Panel();
@@ -72,18 +73,23 @@ namespace Eraser
 			this.downloadingLv = new System.Windows.Forms.ListView();
 			this.downloadingLvColName = new System.Windows.Forms.ColumnHeader();
 			this.downloadingLvColAmount = new System.Windows.Forms.ColumnHeader();
+			this.updatesImageList = new System.Windows.Forms.ImageList(this.components);
 			this.downloadingLbl = new System.Windows.Forms.Label();
+			this.installingPnl = new System.Windows.Forms.Panel();
+			this.installingLv = new System.Windows.Forms.ListView();
+			this.installingLvNameCol = new System.Windows.Forms.ColumnHeader();
+			this.installingLbl = new System.Windows.Forms.Label();
+			this.installer = new System.ComponentModel.BackgroundWorker();
 			this.updatesPanel.SuspendLayout();
 			this.progressPanel.SuspendLayout();
 			this.downloadingPnl.SuspendLayout();
+			this.installingPnl.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// updateListDownloader
 			// 
-			this.updateListDownloader.WorkerReportsProgress = true;
 			this.updateListDownloader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.updateListDownloader_DoWork);
 			this.updateListDownloader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.updateListDownloader_RunWorkerCompleted);
-			this.updateListDownloader.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.updateListDownloader_ProgressChanged);
 			// 
 			// updatesPanel
 			// 
@@ -162,10 +168,8 @@ namespace Eraser
 			// 
 			// downloader
 			// 
-			this.downloader.WorkerReportsProgress = true;
 			this.downloader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.downloader_DoWork);
 			this.downloader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.downloader_RunWorkerCompleted);
-			this.downloader.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.downloader_ProgressChanged);
 			// 
 			// downloadingPnl
 			// 
@@ -206,8 +210,10 @@ namespace Eraser
 			this.downloadingLv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.downloadingLvColName,
             this.downloadingLvColAmount});
+			this.downloadingLv.FullRowSelect = true;
 			this.downloadingLv.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.downloadingLv.Name = "downloadingLv";
+			this.downloadingLv.SmallImageList = this.updatesImageList;
 			this.downloadingLv.UseCompatibleStateImageBehavior = false;
 			this.downloadingLv.View = System.Windows.Forms.View.Details;
 			// 
@@ -219,15 +225,59 @@ namespace Eraser
 			// 
 			resources.ApplyResources(this.downloadingLvColAmount, "downloadingLvColAmount");
 			// 
+			// updatesImageList
+			// 
+			this.updatesImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("updatesImageList.ImageStream")));
+			this.updatesImageList.TransparentColor = System.Drawing.Color.Transparent;
+			this.updatesImageList.Images.SetKeyName(0, "Downloading.png");
+			this.updatesImageList.Images.SetKeyName(1, "Installing.png");
+			this.updatesImageList.Images.SetKeyName(2, "Installed.png");
+			this.updatesImageList.Images.SetKeyName(3, "Error.png");
+			// 
 			// downloadingLbl
 			// 
 			resources.ApplyResources(this.downloadingLbl, "downloadingLbl");
 			this.downloadingLbl.Name = "downloadingLbl";
 			// 
+			// installingPnl
+			// 
+			this.installingPnl.Controls.Add(this.installingLv);
+			this.installingPnl.Controls.Add(this.installingLbl);
+			resources.ApplyResources(this.installingPnl, "installingPnl");
+			this.installingPnl.Name = "installingPnl";
+			// 
+			// installingLv
+			// 
+			this.installingLv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.installingLvNameCol});
+			this.installingLv.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+			resources.ApplyResources(this.installingLv, "installingLv");
+			this.installingLv.Name = "installingLv";
+			this.installingLv.ShowItemToolTips = true;
+			this.installingLv.SmallImageList = this.updatesImageList;
+			this.installingLv.UseCompatibleStateImageBehavior = false;
+			this.installingLv.View = System.Windows.Forms.View.Details;
+			// 
+			// installingLvNameCol
+			// 
+			resources.ApplyResources(this.installingLvNameCol, "installingLvNameCol");
+			// 
+			// installingLbl
+			// 
+			resources.ApplyResources(this.installingLbl, "installingLbl");
+			this.installingLbl.Name = "installingLbl";
+			// 
+			// installer
+			// 
+			this.installer.DoWork += new System.ComponentModel.DoWorkEventHandler(this.installer_DoWork);
+			this.installer.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.installer_RunWorkerCompleted);
+			this.installer.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.installer_ProgressChanged);
+			// 
 			// UpdateForm
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+			this.Controls.Add(this.installingPnl);
 			this.Controls.Add(this.downloadingPnl);
 			this.Controls.Add(this.updatesPanel);
 			this.Controls.Add(this.progressPanel);
@@ -241,6 +291,8 @@ namespace Eraser
 			this.progressPanel.ResumeLayout(false);
 			this.downloadingPnl.ResumeLayout(false);
 			this.downloadingPnl.PerformLayout();
+			this.installingPnl.ResumeLayout(false);
+			this.installingPnl.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -270,5 +322,11 @@ namespace Eraser
 		private System.Windows.Forms.Label downloadingLbl;
 		private System.Windows.Forms.ColumnHeader downloadingLvColName;
 		private System.Windows.Forms.ColumnHeader downloadingLvColAmount;
+		private System.Windows.Forms.ImageList updatesImageList;
+		private System.Windows.Forms.Panel installingPnl;
+		private System.Windows.Forms.Label installingLbl;
+		private System.Windows.Forms.ListView installingLv;
+		private System.Windows.Forms.ColumnHeader installingLvNameCol;
+		private System.ComponentModel.BackgroundWorker installer;
 	}
 }

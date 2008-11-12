@@ -56,31 +56,14 @@ namespace Eraser
 		/// <param name="e">Event argument.</param>
 		private void updateListDownloader_DoWork(object sender, DoWorkEventArgs e)
 		{
-			UpdateManager.ProgressEventFunction progressFunc = null;
-			progressFunc = delegate(float itemProgress, float overallProgress, string status)
-			{
-				if (InvokeRequired)
-				{
-					Invoke(progressFunc, itemProgress, overallProgress, status);
-					return;
-				}
-
-				updateListDownloader.ReportProgress((int)(overallProgress * 100));
-				progressLbl.Text = status;
-			};
-
 			try
 			{
-				updates.OnProgressEvent += progressFunc;
+				updates.OnProgressEvent += updateListDownloader_ProgressChanged;
 				updates.GetUpdates();
-			}
-			catch (Exception ex)
-			{
-				e.Result = ex;
 			}
 			finally
 			{
-				updates.OnProgressEvent -= progressFunc;
+				updates.OnProgressEvent -= updateListDownloader_ProgressChanged;
 			}
 		}
 
@@ -89,10 +72,18 @@ namespace Eraser
 		/// </summary>
 		/// <param name="sender">The object triggering this event/</param>
 		/// <param name="e">Event argument.</param>
-		private void updateListDownloader_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		private void updateListDownloader_ProgressChanged(object sender, UpdateManager.ProgressEventArgs e)
 		{
+			if (InvokeRequired)
+			{
+				Invoke(new UpdateManager.ProgressEventFunction(updateListDownloader_ProgressChanged),
+					sender, e);
+				return;
+			}
+
 			progressPb.Style = ProgressBarStyle.Continuous;
-			progressPb.Value = e.ProgressPercentage;
+			progressPb.Value = (int)(e.OverallProgressPercentage * 100);
+			progressLbl.Text = e.Message;
 
 			if (progressPb.Value == 100)
 				progressProgressLbl.Text = S._("Processing update list...");
@@ -107,10 +98,11 @@ namespace Eraser
 		private void updateListDownloader_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
 			//The return result will normally be null unless there are errors during the download.
-			if (e.Result != null)
+			if (e.Error != null)
 			{
-				MessageBox.Show(this, ((Exception)e.Result).Message, S._("Eraser"),
+				MessageBox.Show(this, e.Error.Message, S._("Eraser"),
 					MessageBoxButtons.OK, MessageBoxIcon.Error);
+				Close();
 				return;
 			}
 
@@ -178,6 +170,11 @@ namespace Eraser
 		#endregion
 
 		#region Update downloader
+		/// <summary>
+		/// Handles the Install button click; fetches and installs the updates selected.
+		/// </summary>
+		/// <param name="sender">The object triggering this event/</param>
+		/// <param name="e">Event argument.</param>
 		private void updatesBtn_Click(object sender, EventArgs e)
 		{
 			updatesPanel.Visible = false;
@@ -201,44 +198,149 @@ namespace Eraser
 			downloader.RunWorkerAsync(updatesToInstall);
 		}
 
+		/// <summary>
+		/// Background thread to do the downloading and installing of updates.
+		/// </summary>
+		/// <param name="sender">The object triggering this event/</param>
+		/// <param name="e">Event argument.</param>
 		private void downloader_DoWork(object sender, DoWorkEventArgs e)
 		{
-			UpdateManager.ProgressEventFunction progressFunc = null;
-			progressFunc = delegate(float itemProgress, float overallProgress, string status)
-				{
-					if (InvokeRequired)
-					{
-						Invoke(progressFunc, itemProgress, overallProgress, status);
-						return;
-					}
-
-					downloadingItemLbl.Text = status;
-					downloadingItemPb.Value = (int)(itemProgress * 100);
-					downloadingOverallPb.Value = (int)(overallProgress * 100);
-
-					long amountToDownload = 0;
-					foreach (ListViewItem item in downloadingLv.Items)
-						amountToDownload +=
-							Convert.ToInt32(item.SubItems[1].Text);
-				};
-
 			try
 			{
-				updates.OnProgressEvent += progressFunc;
-				updates.InstallUpdates((List<UpdateManager.Update>)e.Argument);
+				updates.OnProgressEvent += downloader_ProgressChanged;
+				object downloadedUpdates = updates.DownloadUpdates((List<UpdateManager.Update>)e.Argument);
+				e.Result = downloadedUpdates;
 			}
 			finally
 			{
-				updates.OnProgressEvent -= progressFunc;
+				updates.OnProgressEvent -= downloader_ProgressChanged;
 			}
 		}
 
-		private void downloader_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		/// <summary>
+		/// Handles the download progress changed event.
+		/// </summary>
+		/// <param name="sender">The object triggering this event/</param>
+		/// <param name="e">Event argument.</param>
+		private void downloader_ProgressChanged(object sender, UpdateManager.ProgressEventArgs e)
 		{
+			if (InvokeRequired)
+			{
+				Invoke(new UpdateManager.ProgressEventFunction(downloader_ProgressChanged),
+					sender, e);
+				return;
+			}
 
+			foreach (ListViewItem item in downloadingLv.Items)
+				if (((UpdateManager.Update)item.Tag).Equals(((UpdateManager.Update)e.UserState)))
+				{
+					UpdateManager.Update update = (UpdateManager.Update)item.Tag;
+					int amountLeft = (int)((1 - e.ProgressPercentage) * update.FileSize);
+
+					if (e is UpdateManager.ProgressErrorEventArgs)
+					{
+						item.ImageIndex = 3;
+						item.SubItems[1].Text = S._("Error");
+					}
+					else
+					{
+						if (amountLeft == 0)
+						{
+							item.ImageIndex = -1;
+							item.SubItems[1].Text = S._("Downloaded");
+						}
+						else
+						{
+							item.ImageIndex = 0;
+							item.SubItems[1].Text = amountLeft.ToString();
+						}
+					}
+				}
+
+			downloadingItemLbl.Text = e.Message;
+			downloadingItemPb.Value = (int)(e.ProgressPercentage * 100);
+			downloadingOverallPb.Value = (int)(e.OverallProgressPercentage * 100);
+
+			long amountToDownload = 0;
+			foreach (ListViewItem item in downloadingLv.Items)
+				try
+				{
+					amountToDownload +=
+						Convert.ToInt32(item.SubItems[1].Text);
+				}
+				catch (FormatException)
+				{
+				}
+
+			downloadingOverallLbl.Text = string.Format(S._("Overall progress: {0} bytes left"),
+				amountToDownload);
 		}
 
+		/// <summary>
+		/// Handles the completion of updating event
+		/// </summary>
+		/// <param name="sender">The object triggering this event/</param>
+		/// <param name="e">Event argument.</param>
 		private void downloader_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			downloadingPnl.Visible = false;
+			installingPnl.Show();
+
+			foreach (ListViewItem item in downloadingLv.Items)
+			{
+				ListViewItem newItem = installingLv.Items.Add(item.Text);
+				newItem.Tag = item.Tag;
+			}
+
+			installer.RunWorkerAsync(e.Result);
+		}
+		#endregion
+
+		#region Update installer
+		private void installer_DoWork(object sender, DoWorkEventArgs e)
+		{
+			try
+			{
+				updates.OnProgressEvent += installer_ProgressChanged;
+				updates.InstallUpdates(e.Argument);
+			}
+			finally
+			{
+				updates.OnProgressEvent -= installer_ProgressChanged;
+			}
+		}
+
+		private void installer_ProgressChanged(object sender, ProgressChangedEventArgs e)
+		{
+			if (InvokeRequired)
+			{
+				Invoke(new UpdateManager.ProgressEventFunction(installer_ProgressChanged),
+					sender, e);
+				return;
+			}
+
+			foreach (ListViewItem item in installingLv.Items)
+				if (item.Tag.Equals(e.UserState))
+				{
+					if (e is UpdateManager.ProgressErrorEventArgs)
+					{
+						item.ImageIndex = 3;
+						item.ToolTipText = ((UpdateManager.ProgressErrorEventArgs)e).Exception.Message;
+					}
+					else
+						switch (item.ImageIndex)
+						{
+							case -1:
+								item.ImageIndex = 1;
+								break;
+							case 1:
+								item.ImageIndex = 2;
+								break;
+						}
+				}
+		}
+
+		private void installer_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
 
 		}
@@ -266,6 +368,90 @@ namespace Eraser
 		}
 
 		/// <summary>
+		/// Specialised progress event argument, containing message describing
+		/// current action, and overall progress percentage.
+		/// </summary>
+		public class ProgressEventArgs : ProgressChangedEventArgs
+		{
+			public ProgressEventArgs(float progressPercentage, float overallPercentage,
+				object userState, string message)
+				: base((int)(progressPercentage * 100), userState)
+			{
+				this.progressPercentage = progressPercentage;
+				this.overallProgressPercentage = overallPercentage;
+				this.message = message;
+			}
+
+			/// <summary>
+			/// Gets the asynchronous task progress percentage.
+			/// </summary>
+			public new float ProgressPercentage
+			{
+				get
+				{
+					return progressPercentage;
+				}
+			}
+
+			/// <summary>
+			/// Gets the asynchronous task overall progress percentage.
+			/// </summary>
+			public float OverallProgressPercentage
+			{
+				get
+				{
+					return overallProgressPercentage;
+				}
+			}
+
+			/// <summary>
+			/// Gets the message associated with the current task.
+			/// </summary>
+			public string Message
+			{
+				get
+				{
+					return message;
+				}
+			}
+
+			float progressPercentage;
+			float overallProgressPercentage;
+			string message;
+		}
+
+		/// <summary>
+		/// Extends the ProgressEventArgs further by allowing for the inclusion of
+		/// an exception.
+		/// </summary>
+		public class ProgressErrorEventArgs : ProgressEventArgs
+		{
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="e">The base ProgressEventArgs object.</param>
+			/// <param name="ex">The exception</param>
+			public ProgressErrorEventArgs(ProgressEventArgs e, Exception ex)
+				: base(e.ProgressPercentage, e.OverallProgressPercentage, e.UserState, e.Message)
+			{
+				this.exception = ex;
+			}
+
+			/// <summary>
+			/// The exception associated with the progress event.
+			/// </summary>
+			public Exception Exception
+			{
+				get
+				{
+					return exception;
+				}
+			}
+
+			private Exception exception;
+		}
+
+		/// <summary>
 		/// Retrieves the update list from the server.
 		/// </summary>
 		public void GetUpdates()
@@ -290,9 +476,9 @@ namespace Eraser
 					responseBuffer.AddRange(tmpDest);
 
 					float progress = responseBuffer.Count / (float)resp.ContentLength;
-					OnProgress(progress, progress, string.Format(
-						S._("{0} of {1} bytes downloaded"),
-						responseBuffer.Count, resp.ContentLength));
+					OnProgress(new ProgressEventArgs(progress, progress, null,
+						string.Format(S._("{0} of {1} bytes downloaded"),
+							responseBuffer.Count, resp.ContentLength)));
 				}
 
 				//Parse it.
@@ -394,98 +580,131 @@ namespace Eraser
 		}
 
 		/// <summary>
-		/// Downloads and installs the list of updates.
+		/// Downloads the list of updates.
 		/// </summary>
 		/// <param name="updates">The updates to retrieve and install.</param>
-		public void InstallUpdates(List<Update> updates)
+		/// <returns>An opaque object for use with InstallUpdates.</returns>
+		public object DownloadUpdates(List<Update> updates)
 		{
 			string mirror = "http://eraser.sourceforge.net";
 			//Create a folder to hold all our updates.
 			DirectoryInfo tempDir = new DirectoryInfo(Path.GetTempPath());
 			tempDir = tempDir.CreateSubdirectory("eraser" + Environment.TickCount.ToString());
 
+			int currUpdate = 0;
+			Dictionary<string, Update> tempFilesMap = new Dictionary<string, Update>();
+			foreach (Update update in updates)
+			{
+				try
+				{
+					//Decide on the URL to connect to. The Link of the update may
+					//be a relative path (relative to the selected mirror) or an
+					//absolute path (which we have no choice)
+					Uri reqUri = new Uri(update.Link);
+					if (!reqUri.IsAbsoluteUri)
+						reqUri = new Uri(new Uri(mirror), update.Link);
+
+					//Then grab the download.
+					HttpWebRequest req = (HttpWebRequest)WebRequest.Create(reqUri);
+					using (WebResponse resp = req.GetResponse())
+					{
+						byte[] tempBuffer = new byte[16384];
+						string tempFilePath = Path.Combine(
+							tempDir.FullName, string.Format("{0}-{1}", ++currUpdate,
+							reqUri.GetComponents(UriComponents.Path, UriFormat.Unescaped)));
+
+						using (Stream strm = resp.GetResponseStream())
+						using (FileStream tempStrm = new FileStream(tempFilePath, FileMode.CreateNew))
+						using (BufferedStream bufStrm = new BufferedStream(tempStrm))
+						{
+							//Copy the information into the file stream
+							int readBytes = 0;
+							while ((readBytes = strm.Read(tempBuffer, 0, tempBuffer.Length)) != 0)
+							{
+								bufStrm.Write(tempBuffer, 0, readBytes);
+
+								//Compute progress
+								float itemProgress = tempStrm.Position / (float)resp.ContentLength;
+								float overallProgress = (currUpdate - 1 + itemProgress) / updates.Count;
+								OnProgress(new ProgressEventArgs(itemProgress, overallProgress,
+									update, string.Format(S._("Downloading: {0}"), update.Name)));
+							}
+						}
+
+						//Store the filename-to-update mapping
+						tempFilesMap.Add(tempFilePath, update);
+
+						//Let the event handler know the download is complete.
+						OnProgress(new ProgressEventArgs(1.0f, currUpdate - 1,
+							update, string.Format(S._("Downloaded: {0}"), update.Name)));
+					}
+				}
+				catch (WebException e)
+				{
+					OnProgress(new ProgressErrorEventArgs(new ProgressEventArgs(1.0f,
+						(float)currUpdate, update,
+							string.Format(S._("Error downloading {0}: {1}"), update.Name, e.Message)),
+						e));
+				}
+			}
+
+			return tempFilesMap;
+		}
+
+		public void InstallUpdates(object downloadObject)
+		{
+			Dictionary<string, Update> tempFiles = (Dictionary<string, Update>)downloadObject;
+			Dictionary<string, Update>.KeyCollection files = tempFiles.Keys;
+			int currItem = 0;
+
 			try
 			{
-				//Step 1: download those updates!
-				int currUpdate = 0;
-				Dictionary<string, Update> tempFilesMap = new Dictionary<string, Update>();
-				foreach (Update update in updates)
-				{
-					try
-					{
-						//Decide on the URL to connect to. The Link of the update may
-						//be a relative path (relative to the selected mirror) or an
-						//absolute path (which we have no choice)
-						Uri reqUri = new Uri(update.Link);
-						if (!reqUri.IsAbsoluteUri)
-							reqUri = new Uri(new Uri(mirror), update.Link);
-
-						//Then grab the download.
-						HttpWebRequest req = (HttpWebRequest)WebRequest.Create(reqUri);
-						using (WebResponse resp = req.GetResponse())
-						{
-							byte[] tempBuffer = new byte[16384];
-							string tempFilePath = Path.Combine(
-								tempDir.FullName, string.Format("{0}-{1}", ++currUpdate,
-								reqUri.GetComponents(UriComponents.Path, UriFormat.Unescaped)));
-
-							using (Stream strm = resp.GetResponseStream())
-							using (FileStream tempStrm = new FileStream(tempFilePath, FileMode.CreateNew))
-							using (BufferedStream bufStrm = new BufferedStream(tempStrm))
-							{
-								//Copy the information into the file stream
-								int readBytes = 0;
-								while ((readBytes = strm.Read(tempBuffer, 0, tempBuffer.Length)) != 0)
-								{
-									bufStrm.Write(tempBuffer, 0, readBytes);
-
-									//Compute progress
-									float itemProgress = tempStrm.Position / (float)resp.ContentLength;
-									float overallProgress = (currUpdate - 1 + itemProgress) / updates.Count;
-									OnProgress(itemProgress, overallProgress / 2,
-										S._(string.Format("Downloading {0}", update.Name)));
-								}
-							}
-
-							//Store the filename-to-update mapping
-							tempFilesMap.Add(tempFilePath, update);
-						}
-					}
-					catch (WebException e)
-					{
-						OnProgress(1.0f, (float)currUpdate / 2,
-							S._(string.Format("Error downloading {0}: {1}", update.Name,
-								e.Message)));
-					}
-				}
-
-				//Step 2: Install them.
-				Dictionary<string, Update>.KeyCollection files = tempFilesMap.Keys;
-				int currItem = 0;
 				foreach (string path in files)
 				{
-					OnProgress(0.0f, (float)currItem++ / 2 + 0.5f,
-						S._(string.Format("Installing {0}", tempFilesMap[path].Name)));
-					System.Diagnostics.Process.Start(path);
-				}
+					Update item = tempFiles[path];
+					float progress = (float)currItem++ / files.Count;
+					OnProgress(new ProgressEventArgs(0.0f, progress,
+						item, string.Format(S._("Installing {0}"), item.Name)));
 
-				OnProgress(0.0f, 1.0f, S._("Complete."));
+					System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo();
+					info.FileName = path;
+					info.UseShellExecute = true;
+
+					System.Diagnostics.Process process = System.Diagnostics.Process.Start(info);
+					process.WaitForExit(Int32.MaxValue);
+					if (process.ExitCode == 0)
+						OnProgress(new ProgressEventArgs(1.0f, progress,
+							item, string.Format(S._("Installed {0}"), item.Name)));
+					else
+						OnProgress(new ProgressErrorEventArgs(new ProgressEventArgs(1.0f,
+							progress, item, string.Format(S._("Error installing {0}"), item.Name)),
+							new Exception(string.Format(S._("The installer exited with an error code {0}"),
+								process.ExitCode))));
+				}
 			}
 			finally
 			{
 				//Clean up after ourselves
-				tempDir.Delete(true);
+				foreach (string file in files)
+				{
+					DirectoryInfo tempDir = null;
+					{
+						FileInfo info = new FileInfo(file);
+						tempDir = info.Directory;
+					}
+
+					tempDir.Delete(true);
+				}
 			}
 		}
 
 		/// <summary>
 		/// Prototype of the callback functions from this object.
 		/// </summary>
-		/// <param name="progress">A number, from 0 to 1, indcating the progress
-		/// of the previous operation.</param>
-		/// <param name="overallProgress">The progress of the operation, from 0 to 1</param>
-		/// <param name="status">The status of the current operation.</param>
-		public delegate void ProgressEventFunction(float progress, float overallProgress, string status);
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="arg">The ProgressEventArgs object holding information
+		/// about the progress of the current operation.</param>
+		public delegate void ProgressEventFunction(object sender, ProgressEventArgs arg);
 
 		/// <summary>
 		/// Called when the progress of the operation changes.
@@ -495,13 +714,12 @@ namespace Eraser
 		/// <summary>
 		/// Helper function: invokes the OnProgressEvent delegate.
 		/// </summary>
-		/// <param name="itemProgress">The progress of the current item, from 0 to 1</param>
-		/// <param name="overallProgress">The progress of the operation, from 0 to 1</param>
-		/// <param name="status">The status of the current operation.</param>
-		private void OnProgress(float itemProgress, float overallProgress, string status)
+		/// <param name="arg">The ProgressEventArgs object holding information
+		/// about the progress of the current operation.</param>
+		private void OnProgress(ProgressEventArgs arg)
 		{
 			if (OnProgressEvent != null)
-				OnProgressEvent(itemProgress, overallProgress, status);
+				OnProgressEvent(this, arg);
 		}
 
 		/// <summary>
