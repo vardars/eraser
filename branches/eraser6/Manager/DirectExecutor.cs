@@ -420,8 +420,14 @@ namespace Eraser.Manager
 			/// </summary>
 			public long DataWritten
 			{
-				get;
-				set;
+				get
+				{
+					return dataWritten;
+				}
+				set
+				{
+					dataWritten = value;
+				}
 			}
 
 			/// <summary>
@@ -430,14 +436,22 @@ namespace Eraser.Manager
 			/// </summary>
 			public TaskProgressEventArgs Event
 			{
-				get;
-				set;
+				get
+				{
+					return evt;
+				}
+				set
+				{
+					evt = value;
+				}
 			}
 
 			private long totalData;
 			private DateTime startTime;
 			private DateTime lastSpeedCalc;
 			private int lastSpeed;
+			private long dataWritten;
+			private TaskProgressEventArgs evt;
 		}
 
 		/// <summary>
