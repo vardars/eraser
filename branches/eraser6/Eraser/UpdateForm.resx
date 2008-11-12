@@ -1,0 +1,642 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <metadata name="updateListDownloader.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="updatesLv.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="updatesLvNameCol.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="updatesLvNameCol.Width" type="System.Int32, mscorlib">
+    <value>150</value>
+  </data>
+  <data name="updatesLvVersionCol.Text" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="updatesLvVersionCol.Width" type="System.Int32, mscorlib">
+    <value>75</value>
+  </data>
+  <data name="updatesLvPublisherCol.Text" xml:space="preserve">
+    <value>Publisher</value>
+  </data>
+  <data name="updatesLvPublisherCol.Width" type="System.Int32, mscorlib">
+    <value>90</value>
+  </data>
+  <data name="updatesLvFilesizeCol.Text" xml:space="preserve">
+    <value>Size (bytes)</value>
+  </data>
+  <data name="updatesLvFilesizeCol.Width" type="System.Int32, mscorlib">
+    <value>80</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="updatesLv.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 36</value>
+  </data>
+  <data name="updatesLv.Size" type="System.Drawing.Size, System.Drawing">
+    <value>414, 182</value>
+  </data>
+  <data name="updatesLv.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;updatesLv.Name" xml:space="preserve">
+    <value>updatesLv</value>
+  </data>
+  <data name="&gt;&gt;updatesLv.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesLv.Parent" xml:space="preserve">
+    <value>updatesPanel</value>
+  </data>
+  <data name="&gt;&gt;updatesLv.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="updatesBtn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>342, 224</value>
+  </data>
+  <data name="updatesBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="updatesBtn.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="updatesBtn.Text" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="&gt;&gt;updatesBtn.Name" xml:space="preserve">
+    <value>updatesBtn</value>
+  </data>
+  <data name="&gt;&gt;updatesBtn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesBtn.Parent" xml:space="preserve">
+    <value>updatesPanel</value>
+  </data>
+  <data name="&gt;&gt;updatesBtn.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="updatesLbl.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="updatesLbl.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 18pt</value>
+  </data>
+  <data name="updatesLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="updatesLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 32</value>
+  </data>
+  <data name="updatesLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="updatesLbl.Text" xml:space="preserve">
+    <value>Available Updates</value>
+  </data>
+  <data name="&gt;&gt;updatesLbl.Name" xml:space="preserve">
+    <value>updatesLbl</value>
+  </data>
+  <data name="&gt;&gt;updatesLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesLbl.Parent" xml:space="preserve">
+    <value>updatesPanel</value>
+  </data>
+  <data name="&gt;&gt;updatesLbl.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="updatesPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 12</value>
+  </data>
+  <data name="updatesPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>420, 250</value>
+  </data>
+  <data name="updatesPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="updatesPanel.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;updatesPanel.Name" xml:space="preserve">
+    <value>updatesPanel</value>
+  </data>
+  <data name="&gt;&gt;updatesPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesPanel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;updatesPanel.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="progressProgressLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="progressProgressLbl.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="progressProgressLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>156, 166</value>
+  </data>
+  <data name="progressProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>261, 17</value>
+  </data>
+  <data name="progressProgressLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="progressProgressLbl.Text" xml:space="preserve">
+    <value>Downloading update list...</value>
+  </data>
+  <data name="progressProgressLbl.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopRight</value>
+  </data>
+  <data name="&gt;&gt;progressProgressLbl.Name" xml:space="preserve">
+    <value>progressProgressLbl</value>
+  </data>
+  <data name="&gt;&gt;progressProgressLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;progressProgressLbl.Parent" xml:space="preserve">
+    <value>progressPanel</value>
+  </data>
+  <data name="&gt;&gt;progressProgressLbl.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="progressPb.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="progressPb.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="progressPb.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 139</value>
+  </data>
+  <data name="progressPb.Size" type="System.Drawing.Size, System.Drawing">
+    <value>411, 24</value>
+  </data>
+  <data name="progressPb.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;progressPb.Name" xml:space="preserve">
+    <value>progressPb</value>
+  </data>
+  <data name="&gt;&gt;progressPb.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;progressPb.Parent" xml:space="preserve">
+    <value>progressPanel</value>
+  </data>
+  <data name="&gt;&gt;progressPb.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="progressLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="progressLbl.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 12pt</value>
+  </data>
+  <data name="progressLbl.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="progressLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 48</value>
+  </data>
+  <data name="progressLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>414, 37</value>
+  </data>
+  <data name="progressLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="progressLbl.Text" xml:space="preserve">
+    <value>Checking for updates...</value>
+  </data>
+  <data name="progressLbl.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;progressLbl.Name" xml:space="preserve">
+    <value>progressLbl</value>
+  </data>
+  <data name="&gt;&gt;progressLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;progressLbl.Parent" xml:space="preserve">
+    <value>progressPanel</value>
+  </data>
+  <data name="&gt;&gt;progressLbl.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="progressPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 12</value>
+  </data>
+  <data name="progressPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>420, 250</value>
+  </data>
+  <data name="progressPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;progressPanel.Name" xml:space="preserve">
+    <value>progressPanel</value>
+  </data>
+  <data name="&gt;&gt;progressPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;progressPanel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;progressPanel.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <metadata name="downloader.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>192, 17</value>
+  </metadata>
+  <data name="downloadingOverallPb.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left, Right</value>
+  </data>
+  <data name="downloadingOverallPb.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 226</value>
+  </data>
+  <data name="downloadingOverallPb.Size" type="System.Drawing.Size, System.Drawing">
+    <value>417, 24</value>
+  </data>
+  <data name="downloadingOverallPb.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallPb.Name" xml:space="preserve">
+    <value>downloadingOverallPb</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallPb.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallPb.Parent" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallPb.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="downloadingOverallLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left, Right</value>
+  </data>
+  <data name="downloadingOverallLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 206</value>
+  </data>
+  <data name="downloadingOverallLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>417, 17</value>
+  </data>
+  <data name="downloadingOverallLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="downloadingOverallLbl.Text" xml:space="preserve">
+    <value>Overall Progress:</value>
+  </data>
+  <data name="downloadingOverallLbl.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallLbl.Name" xml:space="preserve">
+    <value>downloadingOverallLbl</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallLbl.Parent" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallLbl.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="downloadingItemPb.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left, Right</value>
+  </data>
+  <data name="downloadingItemPb.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 179</value>
+  </data>
+  <data name="downloadingItemPb.Size" type="System.Drawing.Size, System.Drawing">
+    <value>417, 24</value>
+  </data>
+  <data name="downloadingItemPb.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemPb.Name" xml:space="preserve">
+    <value>downloadingItemPb</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemPb.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemPb.Parent" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemPb.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="downloadingItemLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left, Right</value>
+  </data>
+  <data name="downloadingItemLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 159</value>
+  </data>
+  <data name="downloadingItemLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>417, 17</value>
+  </data>
+  <data name="downloadingItemLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="downloadingItemLbl.Text" xml:space="preserve">
+    <value>Downloading: </value>
+  </data>
+  <data name="downloadingItemLbl.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemLbl.Name" xml:space="preserve">
+    <value>downloadingItemLbl</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemLbl.Parent" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemLbl.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="downloadingLv.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="downloadingLvColName.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="downloadingLvColName.Width" type="System.Int32, mscorlib">
+    <value>280</value>
+  </data>
+  <data name="downloadingLvColAmount.Text" xml:space="preserve">
+    <value>Amount (bytes)</value>
+  </data>
+  <data name="downloadingLvColAmount.Width" type="System.Int32, mscorlib">
+    <value>110</value>
+  </data>
+  <data name="downloadingLv.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 36</value>
+  </data>
+  <data name="downloadingLv.Size" type="System.Drawing.Size, System.Drawing">
+    <value>417, 120</value>
+  </data>
+  <data name="downloadingLv.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;downloadingLv.Name" xml:space="preserve">
+    <value>downloadingLv</value>
+  </data>
+  <data name="&gt;&gt;downloadingLv.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingLv.Parent" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingLv.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="downloadingLbl.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="downloadingLbl.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 18pt</value>
+  </data>
+  <data name="downloadingLbl.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="downloadingLbl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="downloadingLbl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>251, 32</value>
+  </data>
+  <data name="downloadingLbl.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="downloadingLbl.Text" xml:space="preserve">
+    <value>Downloading Updates</value>
+  </data>
+  <data name="&gt;&gt;downloadingLbl.Name" xml:space="preserve">
+    <value>downloadingLbl</value>
+  </data>
+  <data name="&gt;&gt;downloadingLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingLbl.Parent" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingLbl.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="downloadingPnl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 12</value>
+  </data>
+  <data name="downloadingPnl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>420, 250</value>
+  </data>
+  <data name="downloadingPnl.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="downloadingPnl.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;downloadingPnl.Name" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingPnl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingPnl.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;downloadingPnl.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>96, 96</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>444, 274</value>
+  </data>
+  <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 9pt</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Eraser Updater</value>
+  </data>
+  <data name="&gt;&gt;updateListDownloader.Name" xml:space="preserve">
+    <value>updateListDownloader</value>
+  </data>
+  <data name="&gt;&gt;updateListDownloader.Type" xml:space="preserve">
+    <value>System.ComponentModel.BackgroundWorker, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesLvNameCol.Name" xml:space="preserve">
+    <value>updatesLvNameCol</value>
+  </data>
+  <data name="&gt;&gt;updatesLvNameCol.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesLvVersionCol.Name" xml:space="preserve">
+    <value>updatesLvVersionCol</value>
+  </data>
+  <data name="&gt;&gt;updatesLvVersionCol.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesLvPublisherCol.Name" xml:space="preserve">
+    <value>updatesLvPublisherCol</value>
+  </data>
+  <data name="&gt;&gt;updatesLvPublisherCol.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesLvFilesizeCol.Name" xml:space="preserve">
+    <value>updatesLvFilesizeCol</value>
+  </data>
+  <data name="&gt;&gt;updatesLvFilesizeCol.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloader.Name" xml:space="preserve">
+    <value>downloader</value>
+  </data>
+  <data name="&gt;&gt;downloader.Type" xml:space="preserve">
+    <value>System.ComponentModel.BackgroundWorker, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingLvColName.Name" xml:space="preserve">
+    <value>downloadingLvColName</value>
+  </data>
+  <data name="&gt;&gt;downloadingLvColName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingLvColAmount.Name" xml:space="preserve">
+    <value>downloadingLvColAmount</value>
+  </data>
+  <data name="&gt;&gt;downloadingLvColAmount.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>UpdateForm</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

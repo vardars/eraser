@@ -246,4 +246,28 @@
   <data name="The task needs to run on at least one day a week" xml:space="preserve">
     <value>The task needs to run on at least one day a week</value>
   </data>
+  <data name="Processing update list..." xml:space="preserve">
+    <value>Processing update list...</value>
+  </data>
+  <data name="Updates" xml:space="preserve">
+    <value>Updates</value>
+  </data>
+  <data name="Plugins" xml:space="preserve">
+    <value>Plugins</value>
+  </data>
+  <data name="{0} of {1} bytes downloaded" xml:space="preserve">
+    <value>{0} of {1} bytes downloaded</value>
+  </data>
+  <data name="Downloading {0}" xml:space="preserve">
+    <value>Downloading {0}</value>
+  </data>
+  <data name="Error downloading {0}: {1}" xml:space="preserve">
+    <value>Error downloading {0}: {1}</value>
+  </data>
+  <data name="Installing {0}" xml:space="preserve">
+    <value>Installing {0}</value>
+  </data>
+  <data name="Complete." xml:space="preserve">
+    <value>Complete.</value>
+  </data>
 </root>

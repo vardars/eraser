@@ -217,14 +217,6 @@ namespace Eraser
 			}
 		}
 
-		private void aboutEraserToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			using (AboutForm form = new AboutForm(this))
-			{
-				form.ShowDialog();
-			}
-		}
-
 		private void newTaskToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			ToolStripDropDownItem item = sender as ToolStripDropDownItem;
@@ -232,6 +224,22 @@ namespace Eraser
 			{
 				if (form.ShowDialog() == DialogResult.OK)
 					SchedulerPage.AddTask(form.Task);
+			}
+		}
+
+		private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (UpdateForm form = new UpdateForm())
+			{
+				form.ShowDialog();
+			}
+		}
+
+		private void aboutEraserToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (AboutForm form = new AboutForm(this))
+			{
+				form.ShowDialog();
 			}
 		}
 
