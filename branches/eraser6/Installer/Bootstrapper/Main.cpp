@@ -175,6 +175,15 @@ std::wstring Application::GetPath()
 }
 
 std::map<HWND, MainWindow::WndProcData> MainWindow::OldWndProcs;
+MainWindow::~MainWindow()
+{
+	DestroyWindow(hWndStatusLbl);
+	DestroyWindow(hWndProgressBar);
+	DestroyWindow(hWndCancelBtn);
+	DestroyWindow(hWndPanel);
+	DestroyWindow(hWnd);
+}
+
 bool MainWindow::Create()
 {
 	if (!InitInstance())
@@ -285,7 +294,7 @@ void MainWindow::SetMessage(std::wstring message)
 	SetWindowTextW(hWndStatusLbl, message.c_str());
 }
 
-LRESULT MainWindow::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam,
+LRESULT MainWindow::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM /*lParam*/,
 	bool& handled)
 {
 	handled = false;
@@ -296,6 +305,8 @@ LRESULT MainWindow::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 			PostQuitMessage(1);
 		break;
 	}
+
+	return 0;
 }
 
 void MainWindow::SubclassWindow(MainWindow& owner, HWND hWnd, WNDPROC wndProc)

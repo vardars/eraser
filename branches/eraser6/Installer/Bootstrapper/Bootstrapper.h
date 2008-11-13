@@ -38,6 +38,9 @@ public:
 		hWnd = hWndStatusLbl = hWndProgressBar = hWndCancelBtn = NULL;
 	}
 
+	/// Destructor.
+	~MainWindow();
+
 	/// Creates the Window.
 	bool Create();
 

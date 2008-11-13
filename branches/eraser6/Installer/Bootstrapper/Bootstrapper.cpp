@@ -22,6 +22,28 @@
 #include "stdafx.h"
 #include "Bootstrapper.h"
 
+class Handle
+{
+public:
+	Handle(HANDLE handle)
+	{
+		thisHandle = handle;
+	}
+
+	~Handle()
+	{
+		CloseHandle(thisHandle);
+	}
+
+	operator HANDLE()
+	{
+		return thisHandle;
+	}
+
+private:
+	HANDLE thisHandle;
+};
+
 /// ISzInStream interface for extracting the archives.
 struct LZFileStream
 {
@@ -109,13 +131,13 @@ void ExtractTempFiles(std::wstring pathToExtract)
 
 	//Open the file
 #if _DEBUG
-	HANDLE srcFile = CreateFileW((Application::Get().GetPath() + L".7z").c_str(),
-		GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	Handle srcFile(CreateFileW((Application::Get().GetPath() + L".7z").c_str(),
+		GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL));
 	if (srcFile == INVALID_HANDLE_VALUE)
 		throw GetErrorMessage(GetLastError());
 #else
-	HANDLE srcFile = CreateFileW(Application::Get().GetPath().c_str(), GENERIC_READ,
-		FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	Handle srcFile(CreateFileW(Application::Get().GetPath().c_str(), GENERIC_READ,
+		FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL));
 	if (srcFile == INVALID_HANDLE_VALUE)
 		throw GetErrorMessage(GetLastError());
 
@@ -146,23 +168,23 @@ void ExtractTempFiles(std::wstring pathToExtract)
 	//Read the database for files
 	unsigned blockIndex = 0;
 	Byte* outBuffer = NULL;
-    size_t outBufferSize = 524288;
+    size_t outBufferSize = 0;
 	for (unsigned i = 0; i < db.Database.NumFiles; ++i)
 	{
 		size_t offset = 0;
 		size_t processedSize = 0;
-		CFileItem *f = db.Database.Files + i;
+		CFileItem* file = db.Database.Files + i;
 		SZ_RESULT result = SZ_OK;
 
 		//Create the output file
 		size_t convertedChars = 0;
 		wchar_t fileName[MAX_PATH];
-		mbstowcs_s(&convertedChars, fileName, f->Name, sizeof(fileName) / sizeof(fileName[0]));
-		HANDLE destFile = CreateFileW((pathToExtract + fileName).c_str(), GENERIC_WRITE, 0,
-			NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		mbstowcs_s(&convertedChars, fileName, file->Name, sizeof(fileName) / sizeof(fileName[0]));
+		Handle destFile(CreateFileW((pathToExtract + fileName).c_str(), GENERIC_WRITE, 0,
+			NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL));
 		if (destFile == INVALID_HANDLE_VALUE)
 			throw GetErrorMessage(GetLastError());
-		unsigned long long destFileSize = f->Size;
+		unsigned long long destFileSize = file->Size;
 
 		//Extract the file
 		while (result == SZ_OK && destFileSize)
@@ -171,7 +193,7 @@ void ExtractTempFiles(std::wstring pathToExtract)
 				&outBuffer, &outBufferSize, &offset, &processedSize, &allocImp,
 				&allocTempImp);
 			if (result != SZ_OK)
-				_asm int 3;
+				throw std::wstring(L"Could not decompress data as it is corrupt.");
 
 			DWORD bytesWritten = 0;
 			if (!WriteFile(destFile, outBuffer + offset, processedSize, &bytesWritten, NULL) ||
@@ -180,9 +202,8 @@ void ExtractTempFiles(std::wstring pathToExtract)
 			destFileSize -= bytesWritten;
 			Application::Get().Yield();
 		}
-
-		CloseHandle(destFile);
 	}
+
 	allocImp.Free(outBuffer);
 }
 
@@ -275,7 +296,7 @@ bool InstallNetFramework(std::wstring tempDir)
 	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]) == std::wstring::npos)
 		tempDir += L"\\";
 	std::wstring commandLine(L'"' + tempDir);
-	commandLine += L"dotnetfx.exe\"";
+	commandLine += L"dotnetfx35.exe\"";
 
 	//And the return code is true if the process exited with 0.
 	return CreateProcessAndWait(commandLine) == 0;
