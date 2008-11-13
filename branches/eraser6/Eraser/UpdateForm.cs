@@ -65,6 +65,16 @@ namespace Eraser
 			}
 		}
 
+		/// <summary>
+		/// Called when any of the Cancel buttons are clicked.
+		/// </summary>
+		/// <param name="sender">The object triggering this event/</param>
+		/// <param name="e">Event argument.</param>
+		private void cancelBtn_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
+
 		#region Update List retrieval
 		/// <summary>
 		/// Downloads and parses the list of updates available for this client.

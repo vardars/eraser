@@ -120,18 +120,105 @@
   <metadata name="updateListDownloader.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="&gt;&gt;updatesMirrorCmb.Name" xml:space="preserve">
+    <value>updatesMirrorCmb</value>
+  </data>
+  <data name="&gt;&gt;updatesMirrorCmb.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesMirrorCmb.Parent" xml:space="preserve">
+    <value>updatesPanel</value>
+  </data>
+  <data name="&gt;&gt;updatesMirrorCmb.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;updatesMirrorLbl.Name" xml:space="preserve">
+    <value>updatesMirrorLbl</value>
+  </data>
+  <data name="&gt;&gt;updatesMirrorLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesMirrorLbl.Parent" xml:space="preserve">
+    <value>updatesPanel</value>
+  </data>
+  <data name="&gt;&gt;updatesMirrorLbl.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;updatesLv.Name" xml:space="preserve">
+    <value>updatesLv</value>
+  </data>
+  <data name="&gt;&gt;updatesLv.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesLv.Parent" xml:space="preserve">
+    <value>updatesPanel</value>
+  </data>
+  <data name="&gt;&gt;updatesLv.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;updatesBtn.Name" xml:space="preserve">
+    <value>updatesBtn</value>
+  </data>
+  <data name="&gt;&gt;updatesBtn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesBtn.Parent" xml:space="preserve">
+    <value>updatesPanel</value>
+  </data>
+  <data name="&gt;&gt;updatesBtn.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;updatesLbl.Name" xml:space="preserve">
+    <value>updatesLbl</value>
+  </data>
+  <data name="&gt;&gt;updatesLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesLbl.Parent" xml:space="preserve">
+    <value>updatesPanel</value>
+  </data>
+  <data name="&gt;&gt;updatesLbl.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="updatesPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="updatesPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="updatesPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>444, 274</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="updatesPanel.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="updatesPanel.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;updatesPanel.Name" xml:space="preserve">
+    <value>updatesPanel</value>
+  </data>
+  <data name="&gt;&gt;updatesPanel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesPanel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;updatesPanel.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
   <data name="updatesMirrorCmb.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="updatesMirrorCmb.Location" type="System.Drawing.Point, System.Drawing">
     <value>156, 210</value>
   </data>
   <data name="updatesMirrorCmb.Size" type="System.Drawing.Size, System.Drawing">
     <value>276, 23</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="updatesMirrorCmb.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
@@ -177,6 +264,27 @@
   <data name="updatesLv.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="updatesLv.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 47</value>
+  </data>
+  <data name="updatesLv.Size" type="System.Drawing.Size, System.Drawing">
+    <value>422, 157</value>
+  </data>
+  <data name="updatesLv.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;updatesLv.Name" xml:space="preserve">
+    <value>updatesLv</value>
+  </data>
+  <data name="&gt;&gt;updatesLv.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;updatesLv.Parent" xml:space="preserve">
+    <value>updatesPanel</value>
+  </data>
+  <data name="&gt;&gt;updatesLv.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
   <data name="updatesLvNameCol.Text" xml:space="preserve">
     <value>Name</value>
   </data>
@@ -200,27 +308,6 @@
   </data>
   <data name="updatesLvFilesizeCol.Width" type="System.Int32, mscorlib">
     <value>80</value>
-  </data>
-  <data name="updatesLv.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 47</value>
-  </data>
-  <data name="updatesLv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>422, 157</value>
-  </data>
-  <data name="updatesLv.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;updatesLv.Name" xml:space="preserve">
-    <value>updatesLv</value>
-  </data>
-  <data name="&gt;&gt;updatesLv.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;updatesLv.Parent" xml:space="preserve">
-    <value>updatesPanel</value>
-  </data>
-  <data name="&gt;&gt;updatesLv.ZOrder" xml:space="preserve">
-    <value>2</value>
   </data>
   <data name="updatesBtn.Location" type="System.Drawing.Point, System.Drawing">
     <value>357, 239</value>
@@ -276,32 +363,29 @@
   <data name="&gt;&gt;updatesLbl.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="updatesPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
+  <data name="progressCancelBtn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>357, 239</value>
   </data>
-  <data name="updatesPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+  <data name="progressCancelBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
   </data>
-  <data name="updatesPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>444, 274</value>
+  <data name="progressCancelBtn.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
   </data>
-  <data name="updatesPanel.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
+  <data name="progressCancelBtn.Text" xml:space="preserve">
+    <value>Cancel</value>
   </data>
-  <data name="updatesPanel.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
+  <data name="&gt;&gt;progressCancelBtn.Name" xml:space="preserve">
+    <value>progressCancelBtn</value>
   </data>
-  <data name="&gt;&gt;updatesPanel.Name" xml:space="preserve">
-    <value>updatesPanel</value>
+  <data name="&gt;&gt;progressCancelBtn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;updatesPanel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;progressCancelBtn.Parent" xml:space="preserve">
+    <value>progressPanel</value>
   </data>
-  <data name="&gt;&gt;updatesPanel.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;updatesPanel.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="&gt;&gt;progressCancelBtn.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="progressExplainLbl.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 47</value>
@@ -325,7 +409,7 @@
     <value>progressPanel</value>
   </data>
   <data name="&gt;&gt;progressExplainLbl.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="progressProgressLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -334,10 +418,10 @@
     <value>NoControl</value>
   </data>
   <data name="progressProgressLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>147, 219</value>
+    <value>12, 207</value>
   </data>
   <data name="progressProgressLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>285, 17</value>
+    <value>420, 19</value>
   </data>
   <data name="progressProgressLbl.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -346,7 +430,7 @@
     <value>Downloading update list...</value>
   </data>
   <data name="progressProgressLbl.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopRight</value>
+    <value>MiddleLeft</value>
   </data>
   <data name="&gt;&gt;progressProgressLbl.Name" xml:space="preserve">
     <value>progressProgressLbl</value>
@@ -358,7 +442,7 @@
     <value>progressPanel</value>
   </data>
   <data name="&gt;&gt;progressProgressLbl.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="progressPb.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -367,10 +451,10 @@
     <value>NoControl</value>
   </data>
   <data name="progressPb.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 190</value>
+    <value>15, 180</value>
   </data>
   <data name="progressPb.Size" type="System.Drawing.Size, System.Drawing">
-    <value>414, 24</value>
+    <value>417, 24</value>
   </data>
   <data name="progressPb.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -385,7 +469,7 @@
     <value>progressPanel</value>
   </data>
   <data name="&gt;&gt;progressPb.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="progressLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -424,7 +508,7 @@
     <value>progressPanel</value>
   </data>
   <data name="&gt;&gt;progressLbl.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="progressPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -448,16 +532,127 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;progressPanel.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>0</value>
   </data>
   <metadata name="downloader.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>192, 17</value>
   </metadata>
+  <data name="&gt;&gt;downloadingCancelBtn.Name" xml:space="preserve">
+    <value>downloadingCancelBtn</value>
+  </data>
+  <data name="&gt;&gt;downloadingCancelBtn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingCancelBtn.Parent" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingCancelBtn.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallPb.Name" xml:space="preserve">
+    <value>downloadingOverallPb</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallPb.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallPb.Parent" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallPb.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallLbl.Name" xml:space="preserve">
+    <value>downloadingOverallLbl</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallLbl.Parent" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingOverallLbl.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemPb.Name" xml:space="preserve">
+    <value>downloadingItemPb</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemPb.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemPb.Parent" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemPb.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemLbl.Name" xml:space="preserve">
+    <value>downloadingItemLbl</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemLbl.Parent" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingItemLbl.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;downloadingLv.Name" xml:space="preserve">
+    <value>downloadingLv</value>
+  </data>
+  <data name="&gt;&gt;downloadingLv.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingLv.Parent" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingLv.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;downloadingLbl.Name" xml:space="preserve">
+    <value>downloadingLbl</value>
+  </data>
+  <data name="&gt;&gt;downloadingLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingLbl.Parent" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingLbl.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="downloadingPnl.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="downloadingPnl.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="downloadingPnl.Size" type="System.Drawing.Size, System.Drawing">
+    <value>444, 274</value>
+  </data>
+  <data name="downloadingPnl.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="downloadingPnl.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;downloadingPnl.Name" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingPnl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingPnl.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;downloadingPnl.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
   <data name="downloadingOverallPb.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left, Right</value>
   </data>
   <data name="downloadingOverallPb.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 239</value>
+    <value>12, 203</value>
   </data>
   <data name="downloadingOverallPb.Size" type="System.Drawing.Size, System.Drawing">
     <value>420, 24</value>
@@ -475,13 +670,13 @@
     <value>downloadingPnl</value>
   </data>
   <data name="&gt;&gt;downloadingOverallPb.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="downloadingOverallLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left, Right</value>
   </data>
   <data name="downloadingOverallLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 217</value>
+    <value>9, 181</value>
   </data>
   <data name="downloadingOverallLbl.Size" type="System.Drawing.Size, System.Drawing">
     <value>423, 19</value>
@@ -505,13 +700,13 @@
     <value>downloadingPnl</value>
   </data>
   <data name="&gt;&gt;downloadingOverallLbl.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="downloadingItemPb.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left, Right</value>
   </data>
   <data name="downloadingItemPb.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 186</value>
+    <value>12, 150</value>
   </data>
   <data name="downloadingItemPb.Size" type="System.Drawing.Size, System.Drawing">
     <value>420, 24</value>
@@ -529,13 +724,13 @@
     <value>downloadingPnl</value>
   </data>
   <data name="&gt;&gt;downloadingItemPb.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="downloadingItemLbl.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left, Right</value>
   </data>
   <data name="downloadingItemLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 164</value>
+    <value>9, 128</value>
   </data>
   <data name="downloadingItemLbl.Size" type="System.Drawing.Size, System.Drawing">
     <value>423, 19</value>
@@ -559,7 +754,7 @@
     <value>downloadingPnl</value>
   </data>
   <data name="&gt;&gt;downloadingItemLbl.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="downloadingLv.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
@@ -580,7 +775,7 @@
     <value>12, 47</value>
   </data>
   <data name="downloadingLv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>420, 114</value>
+    <value>420, 78</value>
   </data>
   <metadata name="updatesImageList.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>309, 17</value>
@@ -592,83 +787,83 @@
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAACe
         EwAAAk1TRnQBSQFMAgEBBAEAAQwBAAEEAQABEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
         AwABIAMAAQEBAAEgBgABIP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8A/wD/AP8ANgADOQFfA1QBrwFi
-        Ak8B7wFUAgAB/wFiAk8B7wNUAa8DOQFfJAADOQFfA1QBrwFPAWIBTwHvAQABVAEAAf8BTwFiAU8B7wNU
-        Aa8DOQFfJAADOQFfA1QBrwFKAWIBSgHvAQABWQEAAf8BSgFiAUoB7wNUAa8DOQFfJAADOQFfA1QBrwJP
-        AWIB7wIeAawB/wJTAWsB8QNUAa8DOQFfHAADFgEfAVwCWQHPAVQCAAH/AVQCAAH/AVQCAAH/AbICbQH/
-        AVQCAAH/AVQCAAH/AVQCAAH/AVwCWQHPAxYBHxQAAxYBHwFZAVwBWQHPAQABVAEAAf8BAAFUAQAB/wEA
-        AVQBAAH/AQABVAEAAf8BAAFUAQAB/wEAAVQBAAH/AQABVAEAAf8BWQFcAVkBzwMWAR8UAAMWAR8BWQFc
-        AVkBzwEAAVkBAAH/AQABWQEAAf8BAAFZAQAB/wEAAVkBAAH/AQABWQEAAf8BAAFZAQAB/wEAAVkBAAH/
-        AVkBXAFZAc8DFgEfFAADFgEfAlkBXAHPAgABmQH/AgABmQH/AoABzAn/Ai4BswH/AgABmQH/AlkBXAHP
-        AxYBHxAAAxYBHwFiAk8B7wFUAgAB/wFUAgAB/wFUAgAB/wHFAp8F/wHFAp8B/wFUAgAB/wFUAgAB/wFU
-        AgAB/wFiAk8B7wMWAR8MAAMWAR8BTwFiAU8B7wEAAVQBAAH/AQABVAEAAf8BAAFUAQAB/wEAAVQBAAH/
-        AQABVAEAAf8BjwG8AY8B/wEAAV0BAAH/AQABVAEAAf8BAAFUAQAB/wFPAWIBTwHvAxYBHwwAAxYBHwFK
-        AWIBSgHvAQABWQEAAf8BAAFZAQAB/wEAAVkBAAH/AQABWQEAAf8BAAFZAQAB/wEAAVkBAAH/AQABWQEA
-        Af8BAAFZAQAB/wEAAVkBAAH/AUoBYgFKAe8DFgEfDAADFgEfAk8BYgHvAgABmQH/AgABmQH/AgABmQH/
-        ArAB3wn/AoABzAH/AgABmQH/AgABmQH/Ak8BYgHvAxYBHwwAAVwCWQHPAVQCAAH/AVQCAAH/AVQCAAH/
-        AakCXQ3/AakCXQH/AVQCAAH/AVQCAAH/AVQCAAH/AVwCWQHPDAABWQFcAVkBzwEAAVQBAAH/AQABVAEA
-        Af8BAAFUAQAB/wEAAVQBAAH/AQABVAEAAf8BAAFUAQAB/wG/AdkBvwH/Ac8B4gHPAf8BAAFdAQAB/wEA
-        AVQBAAH/AQABVAEAAf8BWQFcAVkBzwwAAVkBXAFZAc8BAAFZAQAB/wEAAVkBAAH/AQABWQEAAf8BKAGG
-        ASgB/wFeAaYBXgH/ASgBhgEoAf8BAAFZAQAB/wEAAVkBAAH/AQABWQEAAf8BAAFZAQAB/wEAAVkBAAH/
-        AVkBXAFZAc8MAAJZAVwBzwIAAZkB/wIAAZkB/wIAAZkB/wIAAZkB/wIeAawB/wKwAd8B/wKgAdkB/wIA
-        AZ8B/wIAAZkB/wIAAZkB/wIAAZkB/wJZAVwBzwgAAzkBXwFUAgAB/wFUAgAB/wFUAgAB/wGfAk0V/wGf
-        Ak0B/wFUAgAB/wFUAgAB/wFUAgAB/wM5AV8EAAM5AV8BAAFUAQAB/wEAAVQBAAH/AQABVAEAAf8BAAFU
-        AQAB/wEAAVQBAAH/AQABVAEAAf8BAAFUAQAB/wG/AdkBvwX/Ae8B9QHvAf8BHQGCAR0B/wEAAVQBAAH/
-        AQABVAEAAf8DOQFfBAADOQFfAQABWQEAAf8BAAFZAQAB/wEAAVoBAAH/AUMBlgFDAf8B3QHrAd0B/wP+
-        Af8B+gH8AfoB/wEvAYoBLwH/AQABWQEAAf8BAAFZAQAB/wEAAVkBAAH/AQABWQEAAf8BAAFZAQAB/wM5
+        AlIB7wFSAgAB/wFiAlIB7wNUAa8DOQFfJAADOQFfA1QBrwFSAWIBUgHvAQABUgEAAf8BUgFiAVIB7wNU
+        Aa8DOQFfJAADOQFfA1QBrwFMAWIBTAHvAQABVwEAAf8BTAFiAUwB7wNUAa8DOQFfJAADOQFfA1QBrwJS
+        AWIB7wIcAawB/wJTAWcB8QNUAa8DOQFfHAADFgEfAVwCWQHPAVICAAH/AVICAAH/AVICAAH/AbICawH/
+        AVICAAH/AVICAAH/AVICAAH/AVwCWQHPAxYBHxQAAxYBHwFZAVwBWQHPAQABUgEAAf8BAAFSAQAB/wEA
+        AVIBAAH/AQABUgEAAf8BAAFSAQAB/wEAAVIBAAH/AQABUgEAAf8BWQFcAVkBzwMWAR8UAAMWAR8BWQFc
+        AVkBzwEAAVcBAAH/AQABVwEAAf8BAAFXAQAB/wEAAVcBAAH/AQABVwEAAf8BAAFXAQAB/wEAAVcBAAH/
+        AVkBXAFZAc8DFgEfFAADFgEfAlkBXAHPAgABmQH/AgABmQH/AoABzAn/AiwBswH/AgABmQH/AlkBXAHP
+        AxYBHxAAAxYBHwFiAlIB7wFSAgAB/wFSAgAB/wFSAgAB/wHFAp8F/wHFAp8B/wFSAgAB/wFSAgAB/wFS
+        AgAB/wFiAlIB7wMWAR8MAAMWAR8BUgFiAVIB7wEAAVIBAAH/AQABUgEAAf8BAAFSAQAB/wEAAVIBAAH/
+        AQABUgEAAf8BjwG8AY8B/wEAAVsBAAH/AQABUgEAAf8BAAFSAQAB/wFSAWIBUgHvAxYBHwwAAxYBHwFM
+        AWIBTAHvAQABVwEAAf8BAAFXAQAB/wEAAVcBAAH/AQABVwEAAf8BAAFXAQAB/wEAAVcBAAH/AQABVwEA
+        Af8BAAFXAQAB/wEAAVcBAAH/AUwBYgFMAe8DFgEfDAADFgEfAlIBYgHvAgABmQH/AgABmQH/AgABmQH/
+        ArAB3wn/AoABzAH/AgABmQH/AgABmQH/AlIBYgHvAxYBHwwAAVwCWQHPAVICAAH/AVICAAH/AVICAAH/
+        AakCWw3/AakCWwH/AVICAAH/AVICAAH/AVICAAH/AVwCWQHPDAABWQFcAVkBzwEAAVIBAAH/AQABUgEA
+        Af8BAAFSAQAB/wEAAVIBAAH/AQABUgEAAf8BAAFSAQAB/wG/AdkBvwH/Ac8B4gHPAf8BAAFbAQAB/wEA
+        AVIBAAH/AQABUgEAAf8BWQFcAVkBzwwAAVkBXAFZAc8BAAFXAQAB/wEAAVcBAAH/AQABVwEAAf8BJgGG
+        ASYB/wFcAaYBXAH/ASYBhgEmAf8BAAFXAQAB/wEAAVcBAAH/AQABVwEAAf8BAAFXAQAB/wEAAVcBAAH/
+        AVkBXAFZAc8MAAJZAVwBzwIAAZkB/wIAAZkB/wIAAZkB/wIAAZkB/wIcAawB/wKwAd8B/wKgAdkB/wIA
+        AZ8B/wIAAZkB/wIAAZkB/wIAAZkB/wJZAVwBzwgAAzkBXwFSAgAB/wFSAgAB/wFSAgAB/wGfAksV/wGf
+        AksB/wFSAgAB/wFSAgAB/wFSAgAB/wM5AV8EAAM5AV8BAAFSAQAB/wEAAVIBAAH/AQABUgEAAf8BAAFS
+        AQAB/wEAAVIBAAH/AQABUgEAAf8BAAFSAQAB/wG/AdkBvwX/Ae8B9QHvAf8BGwGCARsB/wEAAVIBAAH/
+        AQABUgEAAf8DOQFfBAADOQFfAQABVwEAAf8BAAFXAQAB/wEAAVgBAAH/AUEBlgFBAf8B3QHrAd0B/wP+
+        Af8B+gH8AfoB/wEtAYoBLQH/AQABVwEAAf8BAAFXAQAB/wEAAVcBAAH/AQABVwEAAf8BAAFXAQAB/wM5
         AV8EAAM5AV8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZ
-        Af8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZAf8DOQFfBAADVAGvAVQCAAH/AVQCAAH/AYICHQH/AfUC7xX/
-        AfUC7wH/AYICHQH/AVQCAAH/AVQCAAH/A1QBrwQAA1QBrwEAAVQBAAH/AQABXQEAAf8BLQGMAS0B/wEt
-        AYwBLQH/AS0BjAEtAf8BLQGMAS0B/wEtAYwBLQH/Ac8B4gHPCf8B7wH1Ae8B/wEdAYIBHQH/AQABVAEA
-        Af8DVAGvBAADVAGvAQABWQEAAf8BAAFZAQAB/wFnAawBZwH/AfsB/QH7Af8D/gH/AfoB/AH6Bf8B2gHp
-        AdoB/wEbAXEBGwH/AQABWQEAAf8BAAFZAQAB/wEAAVkBAAH/AQABWQEAAf8DVAGvBAADVAGvAgABmQH/
-        AgABmQH/AgABmQH/AgABmQH/AgABmQH/Ai4Bswn/AgABmQH/AgABmQH/AgABmQH/AgABmQH/AgABmQH/
-        A1QBrwQAAWICTwHvAVQCAAH/AWcCDQH/AfUC7x3/AfUC7wH/AWcCDQH/AVQCAAH/AWICTwHvBAABTwFi
-        AU8B7wEAAVQBAAH/AS0BjAEtJf8B7wH1Ae8B/wEdAYIBHQH/AU8BYgFPAe8EAAFKAWIBSgHvAQABWQEA
-        Af8BAAFZAQAB/wHXAecB1wH/Af0B/gH9Af8B2QHoAdkB/wFHAZgBRwH/AegB8QHoAf8B/QH+Af0B/wG9
-        AdcBvQH/AQABWQEAAf8BAAFZAQAB/wEAAVkBAAH/AQABWQEAAf8BSgFiAUoB7wQAAk8BYgHvAgABmQH/
-        AgABmQH/AgABmQH/AgABmQH/AgABmQH/Ai4Bswn/AgABmQH/AgABmQH/AgABmQH/AgABmQH/AgABmQH/
-        Ak8BYgHvBAABVAIAAf8BVAIAAf8BvAKQAf8B2QLAAf8B2QLAAf8B4gLPDf8B4gLPAf8B2QLAAf8B2QLA
-        Af8BvAKQAf8BVAIAAf8BVAIAAf8FAAFUAQAB/wEAAVQBAAH/AS0BjAEtKf8B3wHsAd8B/wEAAVQBAAH/
-        BQABWQEAAf8BAAFZAQAB/wEAAVkBAAH/AV0BpgFdAf8BbAGvAWwB/wECAWIBAgH/AQABWQEAAf8BSAGZ
-        AUgB/wH7Af0B+wH/Af0B/gH9Af8BiwG5AYsB/wEAAVsBAAH/AQABWQEAAf8BAAFZAQAB/wEAAVkBAAH/
-        BgABmQH/AgABmQH/AgABmQH/AgABmQH/AgABmQH/AgABmQH/Ai4Bswn/Ai4BswH/AgABmQH/AgABmQH/
-        AgABmQH/AgABmQH/AgABmQH/BAABYgJPAe8BVAIAAf8BVAIAAf8BVAIAAf8BVAIAAf8BjAItDf8BjAIt
-        Af8BVAIAAf8BVAIAAf8BVAIAAf8BVAIAAf8BYgJPAe8EAAFPAWIBTwHvAQABVAEAAf8BLQGMAS0l/wHv
-        AfUB7wH/AR4BgwEeAf8BTwFiAU8B7wQAAUoBYgFKAe8BAAFZAQAB/wEAAVkBAAH/AQABWQEAAf8BAAFZ
-        AQAB/wEAAVkBAAH/AQABWQEAAf8BAAFZAQAB/wGWAcABlgH/Af0B/gH9Af8B/AH9AfwB/wFjAakBYwH/
-        AQABWQEAAf8BAAFZAQAB/wFKAWIBSgHvBAACTwFiAe8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZ
-        Af8CLgGzCf8CLgGzAf8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZAf8CTwFiAe8EAANUAa8BVAIAAf8BVAIA
-        Af8BVAIAAf8BVAIAAf8BjAItDf8BjAItAf8BVAIAAf8BVAIAAf8BVAIAAf8BVAIAAf8DVAGvBAADVAGv
-        AQABVAEAAf8BAAFUAQAB/wEAAVQBAAH/AQABVAEAAf8BAAFUAQAB/wEAAVQBAAH/AQABVAEAAf8BvwHZ
-        Ab8J/wHPAeIBzwH/AQABXgEAAf8BAAFUAQAB/wNUAa8EAANUAa8BAAFZAQAB/wEAAVkBAAH/AQABWQEA
-        Af8BAAFZAQAB/wEAAVkBAAH/AQABWQEAAf8BAAFZAQAB/wEAAWABAAH/Ab4B2AG+Af8D/gH/Ae4B9QHu
-        Af8BMAGLATAB/wEAAVkBAAH/A1QBrwQAA1QBrwIAAZkB/wIAAZkB/wIAAZkB/wIAAZkB/wIAAZkB/wJe
-        AcYJ/wIuAbMB/wIAAZkB/wIAAZkB/wIAAZkB/wIAAZkB/wNUAa8EAAM5AV8BVAIAAf8BVAIAAf8BVAIA
-        Af8BVAIAAf8BjAItDf8BjAItAf8BVAIAAf8BVAIAAf8BVAIAAf8BVAIAAf8DOQFfBAADOQFfAQABVAEA
-        Af8BAAFUAQAB/wEAAVQBAAH/AQABVAEAAf8BAAFUAQAB/wEAAVQBAAH/AQABVAEAAf8BvwHZAb8F/wHP
-        AeIBzwH/AQABXgEAAf8BAAFUAQAB/wEAAVQBAAH/AzkBXwQAAzkBXwEAAVkBAAH/AQABWQEAAf8BAAFZ
-        AQAB/wEAAVkBAAH/AQABWQEAAf8BAAFZAQAB/wEAAVkBAAH/AQABWQEAAf8BCAFmAQgB/wHRAeMB0QH/
-        AfoB/AH6Af8BbQGvAW0B/wEAAVkBAAH/AzkBXwQAAzkBXwIAAZkB/wIAAZkB/wIAAZkB/wIAAZkB/wIA
-        AZkB/wKAAcwJ/wIuAbMB/wIAAZkB/wIAAZkB/wIAAZkB/wIAAZkB/wM5AV8IAAFcAlkBzwFUAgAB/wFU
-        AgAB/wFUAgAB/wGMAi0N/wGMAi0B/wFUAgAB/wFUAgAB/wFUAgAB/wFcAlkBzwwAAVkBXAFZAc8BAAFU
-        AQAB/wEAAVQBAAH/AQABVAEAAf8BAAFUAQAB/wEAAVQBAAH/AQABVAEAAf8BvwHZAb8B/wHPAeIBzwH/
-        AQABXgEAAf8BAAFUAQAB/wEAAVQBAAH/AVkBXAFZAc8MAAFZAVwBWQHPAQABWQEAAf8BAAFZAQAB/wEA
-        AVkBAAH/AQABWQEAAf8BAAFZAQAB/wEAAVkBAAH/AQABWQEAAf8BAAFZAQAB/wEvAYoBLwH/AWwBrwFs
-        Af8BMAGLATAB/wFZAVwBWQHPDAACWQFcAc8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZAf8CgAHMCf8CXgHG
-        Af8CAAGZAf8CAAGZAf8CAAGZAf8CWQFcAc8MAAMXASABYgJPAe8BVAIAAf8BVAIAAf8BjAItDf8BjAIt
-        Af8BVAIAAf8BVAIAAf8BYgJPAe8DFwEgDAADFwEgAU8BYgFPAe8BAAFUAQAB/wEAAVQBAAH/AQABVAEA
-        Af8BAAFUAQAB/wEAAVQBAAH/AY8BvAGPAf8BAAFeAQAB/wEAAVQBAAH/AQABVAEAAf8BTwFiAU8B7wMX
-        ASAMAAMXASABSgFiAUoB7wEAAVkBAAH/AQABWQEAAf8BAAFZAQAB/wEAAVkBAAH/AQABWQEAAf8BAAFZ
-        AQAB/wEAAVkBAAH/AQABWQEAAf8BAAFZAQAB/wFKAWIBSgHvAxcBIAwAAxcBIAJPAWIB7wIAAZkB/wIA
-        AZkB/wIAAZkB/wKAAcwJ/wKAAcwB/wIAAZkB/wIAAZkB/wJPAWIB7wMXASAQAAMXASABXAJZAc8BVAIA
-        Af8BVAIAAf8BVAIAAf8BVAIAAf8BVAIAAf8BVAIAAf8BVAIAAf8BXAJZAc8DFwEgFAADFwEgAVkBXAFZ
-        Ac8BAAFUAQAB/wEAAVQBAAH/AQABVAEAAf8BAAFUAQAB/wEAAVQBAAH/AQABVAEAAf8BAAFUAQAB/wFZ
-        AVwBWQHPAxcBIBQAAxcBIAFZAVwBWQHPAQABWQEAAf8BAAFZAQAB/wEAAVkBAAH/AQABWQEAAf8BAAFZ
-        AQAB/wEAAVkBAAH/AQABWQEAAf8BWQFcAVkBzwMXASAUAAMXASACWQFcAc8CAAGZAf8CAAGZAf8CLgGz
-        Af8CgAHMAf8CgAHMAf8CLgGzAf8CAAGZAf8CWQFcAc8DFwEgHAABOgI5AWABVQJTAbABYgJPAe8BVAIA
-        Af8BYgJPAe8BVQJTAbABOgI5AWAkAAE5AToBOQFgAVMBVQFTAbABTwFiAU8B7wEAAVQBAAH/AU8BYgFP
-        Ae8BUwFVAVMBsAE5AToBOQFgJAABOQE6ATkBYAFTAVUBUwGwAUoBYgFKAe8BAAFZAQAB/wFKAWIBSgHv
-        AVMBVQFTAbABOQE6ATkBYCQAAjkBOgFgAlMBVQGwAk8BYgHvAgABmQH/Ak8BYgHvAlMBVQGwAjkBOgFg
+        Af8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZAf8DOQFfBAADVAGvAVICAAH/AVICAAH/AYICGwH/AfUC7xX/
+        AfUC7wH/AYICGwH/AVICAAH/AVICAAH/A1QBrwQAA1QBrwEAAVIBAAH/AQABWwEAAf8BKwGMASsB/wEr
+        AYwBKwH/ASsBjAErAf8BKwGMASsB/wErAYwBKwH/Ac8B4gHPCf8B7wH1Ae8B/wEbAYIBGwH/AQABUgEA
+        Af8DVAGvBAADVAGvAQABVwEAAf8BAAFXAQAB/wFlAawBZQH/AfsB/QH7Af8D/gH/AfoB/AH6Bf8B2gHp
+        AdoB/wEZAW8BGQH/AQABVwEAAf8BAAFXAQAB/wEAAVcBAAH/AQABVwEAAf8DVAGvBAADVAGvAgABmQH/
+        AgABmQH/AgABmQH/AgABmQH/AgABmQH/AiwBswn/AgABmQH/AgABmQH/AgABmQH/AgABmQH/AgABmQH/
+        A1QBrwQAAWICUgHvAVICAAH/AWUCCwH/AfUC7x3/AfUC7wH/AWUCCwH/AVICAAH/AWICUgHvBAABUgFi
+        AVIB7wEAAVIBAAH/ASsBjAErJf8B7wH1Ae8B/wEbAYIBGwH/AVIBYgFSAe8EAAFMAWIBTAHvAQABVwEA
+        Af8BAAFXAQAB/wHXAecB1wH/Af0B/gH9Af8B2QHoAdkB/wFFAZgBRQH/AegB8QHoAf8B/QH+Af0B/wG9
+        AdcBvQH/AQABVwEAAf8BAAFXAQAB/wEAAVcBAAH/AQABVwEAAf8BTAFiAUwB7wQAAlIBYgHvAgABmQH/
+        AgABmQH/AgABmQH/AgABmQH/AgABmQH/AiwBswn/AgABmQH/AgABmQH/AgABmQH/AgABmQH/AgABmQH/
+        AlIBYgHvBAABUgIAAf8BUgIAAf8BvAKQAf8B2QLAAf8B2QLAAf8B4gLPDf8B4gLPAf8B2QLAAf8B2QLA
+        Af8BvAKQAf8BUgIAAf8BUgIAAf8FAAFSAQAB/wEAAVIBAAH/ASsBjAErKf8B3wHsAd8B/wEAAVIBAAH/
+        BQABVwEAAf8BAAFXAQAB/wEAAVcBAAH/AVsBpgFbAf8BagGvAWoB/wEAAWABAAH/AQABVwEAAf8BRgGZ
+        AUYB/wH7Af0B+wH/Af0B/gH9Af8BiwG5AYsB/wEAAVkBAAH/AQABVwEAAf8BAAFXAQAB/wEAAVcBAAH/
+        BgABmQH/AgABmQH/AgABmQH/AgABmQH/AgABmQH/AgABmQH/AiwBswn/AiwBswH/AgABmQH/AgABmQH/
+        AgABmQH/AgABmQH/AgABmQH/BAABYgJSAe8BUgIAAf8BUgIAAf8BUgIAAf8BUgIAAf8BjAIrDf8BjAIr
+        Af8BUgIAAf8BUgIAAf8BUgIAAf8BUgIAAf8BYgJSAe8EAAFSAWIBUgHvAQABUgEAAf8BKwGMASsl/wHv
+        AfUB7wH/ARwBgwEcAf8BUgFiAVIB7wQAAUwBYgFMAe8BAAFXAQAB/wEAAVcBAAH/AQABVwEAAf8BAAFX
+        AQAB/wEAAVcBAAH/AQABVwEAAf8BAAFXAQAB/wGWAcABlgH/Af0B/gH9Af8B/AH9AfwB/wFhAakBYQH/
+        AQABVwEAAf8BAAFXAQAB/wFMAWIBTAHvBAACUgFiAe8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZ
+        Af8CLAGzCf8CLAGzAf8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZAf8CUgFiAe8EAANUAa8BUgIAAf8BUgIA
+        Af8BUgIAAf8BUgIAAf8BjAIrDf8BjAIrAf8BUgIAAf8BUgIAAf8BUgIAAf8BUgIAAf8DVAGvBAADVAGv
+        AQABUgEAAf8BAAFSAQAB/wEAAVIBAAH/AQABUgEAAf8BAAFSAQAB/wEAAVIBAAH/AQABUgEAAf8BvwHZ
+        Ab8J/wHPAeIBzwH/AQABXAEAAf8BAAFSAQAB/wNUAa8EAANUAa8BAAFXAQAB/wEAAVcBAAH/AQABVwEA
+        Af8BAAFXAQAB/wEAAVcBAAH/AQABVwEAAf8BAAFXAQAB/wEAAV4BAAH/Ab4B2AG+Af8D/gH/Ae4B9QHu
+        Af8BLgGLAS4B/wEAAVcBAAH/A1QBrwQAA1QBrwIAAZkB/wIAAZkB/wIAAZkB/wIAAZkB/wIAAZkB/wJc
+        AcYJ/wIsAbMB/wIAAZkB/wIAAZkB/wIAAZkB/wIAAZkB/wNUAa8EAAM5AV8BUgIAAf8BUgIAAf8BUgIA
+        Af8BUgIAAf8BjAIrDf8BjAIrAf8BUgIAAf8BUgIAAf8BUgIAAf8BUgIAAf8DOQFfBAADOQFfAQABUgEA
+        Af8BAAFSAQAB/wEAAVIBAAH/AQABUgEAAf8BAAFSAQAB/wEAAVIBAAH/AQABUgEAAf8BvwHZAb8F/wHP
+        AeIBzwH/AQABXAEAAf8BAAFSAQAB/wEAAVIBAAH/AzkBXwQAAzkBXwEAAVcBAAH/AQABVwEAAf8BAAFX
+        AQAB/wEAAVcBAAH/AQABVwEAAf8BAAFXAQAB/wEAAVcBAAH/AQABVwEAAf8BBgFkAQYB/wHRAeMB0QH/
+        AfoB/AH6Af8BawGvAWsB/wEAAVcBAAH/AzkBXwQAAzkBXwIAAZkB/wIAAZkB/wIAAZkB/wIAAZkB/wIA
+        AZkB/wKAAcwJ/wIsAbMB/wIAAZkB/wIAAZkB/wIAAZkB/wIAAZkB/wM5AV8IAAFcAlkBzwFSAgAB/wFS
+        AgAB/wFSAgAB/wGMAisN/wGMAisB/wFSAgAB/wFSAgAB/wFSAgAB/wFcAlkBzwwAAVkBXAFZAc8BAAFS
+        AQAB/wEAAVIBAAH/AQABUgEAAf8BAAFSAQAB/wEAAVIBAAH/AQABUgEAAf8BvwHZAb8B/wHPAeIBzwH/
+        AQABXAEAAf8BAAFSAQAB/wEAAVIBAAH/AVkBXAFZAc8MAAFZAVwBWQHPAQABVwEAAf8BAAFXAQAB/wEA
+        AVcBAAH/AQABVwEAAf8BAAFXAQAB/wEAAVcBAAH/AQABVwEAAf8BAAFXAQAB/wEtAYoBLQH/AWoBrwFq
+        Af8BLgGLAS4B/wFZAVwBWQHPDAACWQFcAc8CAAGZAf8CAAGZAf8CAAGZAf8CAAGZAf8CgAHMCf8CXAHG
+        Af8CAAGZAf8CAAGZAf8CAAGZAf8CWQFcAc8MAAMXASABYgJSAe8BUgIAAf8BUgIAAf8BjAIrDf8BjAIr
+        Af8BUgIAAf8BUgIAAf8BYgJSAe8DFwEgDAADFwEgAVIBYgFSAe8BAAFSAQAB/wEAAVIBAAH/AQABUgEA
+        Af8BAAFSAQAB/wEAAVIBAAH/AY8BvAGPAf8BAAFcAQAB/wEAAVIBAAH/AQABUgEAAf8BUgFiAVIB7wMX
+        ASAMAAMXASABTAFiAUwB7wEAAVcBAAH/AQABVwEAAf8BAAFXAQAB/wEAAVcBAAH/AQABVwEAAf8BAAFX
+        AQAB/wEAAVcBAAH/AQABVwEAAf8BAAFXAQAB/wFMAWIBTAHvAxcBIAwAAxcBIAJSAWIB7wIAAZkB/wIA
+        AZkB/wIAAZkB/wKAAcwJ/wKAAcwB/wIAAZkB/wIAAZkB/wJSAWIB7wMXASAQAAMXASABXAJZAc8BUgIA
+        Af8BUgIAAf8BUgIAAf8BUgIAAf8BUgIAAf8BUgIAAf8BUgIAAf8BXAJZAc8DFwEgFAADFwEgAVkBXAFZ
+        Ac8BAAFSAQAB/wEAAVIBAAH/AQABUgEAAf8BAAFSAQAB/wEAAVIBAAH/AQABUgEAAf8BAAFSAQAB/wFZ
+        AVwBWQHPAxcBIBQAAxcBIAFZAVwBWQHPAQABVwEAAf8BAAFXAQAB/wEAAVcBAAH/AQABVwEAAf8BAAFX
+        AQAB/wEAAVcBAAH/AQABVwEAAf8BWQFcAVkBzwMXASAUAAMXASACWQFcAc8CAAGZAf8CAAGZAf8CLAGz
+        Af8CgAHMAf8CgAHMAf8CLAGzAf8CAAGZAf8CWQFcAc8DFwEgHAABOgI5AWABVQJTAbABYgJSAe8BUgIA
+        Af8BYgJSAe8BVQJTAbABOgI5AWAkAAE5AToBOQFgAVMBVQFTAbABUgFiAVIB7wEAAVIBAAH/AVIBYgFS
+        Ae8BUwFVAVMBsAE5AToBOQFgJAABOQE6ATkBYAFTAVUBUwGwAUwBYgFMAe8BAAFXAQAB/wFMAWIBTAHv
+        AVMBVQFTAbABOQE6ATkBYCQAAjkBOgFgAlMBVQGwAlIBYgHvAgABmQH/AlIBYgHvAlMBVQGwAjkBOgFg
         /wARAAFCAU0BPgcAAT4DAAEoAwABQAMAASADAAEBAQABAQYAAQEWAAP/gQAB+AEPAfgBDwH4AQ8B+AEP
         AeABAwHgAQMB4AEDAeABAwHAAQEBwAEBAcABAQHAAQEBwAEBAcABAQHAAQEBwAEBAYABAAGAAQABgAEA
         AYABAAGAAQABgAEAAYABAAGAAQABgAEAAYABAAGAAQABgAEAAYABAAGAAQABgAEAAYABAAGAAQABgAEA
@@ -689,7 +884,7 @@
     <value>downloadingPnl</value>
   </data>
   <data name="&gt;&gt;downloadingLv.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="downloadingLbl.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -722,33 +917,57 @@
     <value>downloadingPnl</value>
   </data>
   <data name="&gt;&gt;downloadingLbl.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
-  <data name="downloadingPnl.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="&gt;&gt;installingLv.Name" xml:space="preserve">
+    <value>installingLv</value>
+  </data>
+  <data name="&gt;&gt;installingLv.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;installingLv.Parent" xml:space="preserve">
+    <value>installingPnl</value>
+  </data>
+  <data name="&gt;&gt;installingLv.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;installingLbl.Name" xml:space="preserve">
+    <value>installingLbl</value>
+  </data>
+  <data name="&gt;&gt;installingLbl.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;installingLbl.Parent" xml:space="preserve">
+    <value>installingPnl</value>
+  </data>
+  <data name="&gt;&gt;installingLbl.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="installingPnl.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="downloadingPnl.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="installingPnl.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
-  <data name="downloadingPnl.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="installingPnl.Size" type="System.Drawing.Size, System.Drawing">
     <value>444, 274</value>
   </data>
-  <data name="downloadingPnl.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+  <data name="installingPnl.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
   </data>
-  <data name="downloadingPnl.Visible" type="System.Boolean, mscorlib">
+  <data name="installingPnl.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="&gt;&gt;downloadingPnl.Name" xml:space="preserve">
-    <value>downloadingPnl</value>
+  <data name="&gt;&gt;installingPnl.Name" xml:space="preserve">
+    <value>installingPnl</value>
   </data>
-  <data name="&gt;&gt;downloadingPnl.Type" xml:space="preserve">
+  <data name="&gt;&gt;installingPnl.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;downloadingPnl.Parent" xml:space="preserve">
+  <data name="&gt;&gt;installingPnl.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;downloadingPnl.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;installingPnl.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
   <data name="installingLvNameCol.Text" xml:space="preserve">
@@ -814,36 +1033,36 @@
   <data name="&gt;&gt;installingLbl.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="installingPnl.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="installingPnl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="installingPnl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>444, 274</value>
-  </data>
-  <data name="installingPnl.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="installingPnl.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;installingPnl.Name" xml:space="preserve">
-    <value>installingPnl</value>
-  </data>
-  <data name="&gt;&gt;installingPnl.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;installingPnl.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;installingPnl.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <metadata name="installer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>456, 17</value>
   </metadata>
+  <data name="downloadingCancelBtn.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="downloadingCancelBtn.Location" type="System.Drawing.Point, System.Drawing">
+    <value>357, 239</value>
+  </data>
+  <data name="downloadingCancelBtn.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="downloadingCancelBtn.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="downloadingCancelBtn.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="&gt;&gt;downloadingCancelBtn.Name" xml:space="preserve">
+    <value>downloadingCancelBtn</value>
+  </data>
+  <data name="&gt;&gt;downloadingCancelBtn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadingCancelBtn.Parent" xml:space="preserve">
+    <value>downloadingPnl</value>
+  </data>
+  <data name="&gt;&gt;downloadingCancelBtn.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>

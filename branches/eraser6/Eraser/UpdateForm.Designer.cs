@@ -63,6 +63,7 @@ namespace Eraser
 			this.updatesBtn = new System.Windows.Forms.Button();
 			this.updatesLbl = new System.Windows.Forms.Label();
 			this.progressPanel = new System.Windows.Forms.Panel();
+			this.progressCancelBtn = new System.Windows.Forms.Button();
 			this.progressExplainLbl = new System.Windows.Forms.Label();
 			this.progressProgressLbl = new System.Windows.Forms.Label();
 			this.progressPb = new System.Windows.Forms.ProgressBar();
@@ -84,6 +85,7 @@ namespace Eraser
 			this.installingLvStatusCol = new System.Windows.Forms.ColumnHeader();
 			this.installingLbl = new System.Windows.Forms.Label();
 			this.installer = new System.ComponentModel.BackgroundWorker();
+			this.downloadingCancelBtn = new System.Windows.Forms.Button();
 			this.updatesPanel.SuspendLayout();
 			this.progressPanel.SuspendLayout();
 			this.downloadingPnl.SuspendLayout();
@@ -165,6 +167,7 @@ namespace Eraser
 			// 
 			// progressPanel
 			// 
+			this.progressPanel.Controls.Add(this.progressCancelBtn);
 			this.progressPanel.Controls.Add(this.progressExplainLbl);
 			this.progressPanel.Controls.Add(this.progressProgressLbl);
 			this.progressPanel.Controls.Add(this.progressPb);
@@ -172,6 +175,14 @@ namespace Eraser
 			resources.ApplyResources(this.progressPanel, "progressPanel");
 			this.progressPanel.Name = "progressPanel";
 			this.progressPanel.UseWaitCursor = true;
+			// 
+			// progressCancelBtn
+			// 
+			resources.ApplyResources(this.progressCancelBtn, "progressCancelBtn");
+			this.progressCancelBtn.Name = "progressCancelBtn";
+			this.progressCancelBtn.UseVisualStyleBackColor = true;
+			this.progressCancelBtn.UseWaitCursor = true;
+			this.progressCancelBtn.Click += new System.EventHandler(this.cancelBtn_Click);
 			// 
 			// progressExplainLbl
 			// 
@@ -207,6 +218,7 @@ namespace Eraser
 			// 
 			// downloadingPnl
 			// 
+			this.downloadingPnl.Controls.Add(this.downloadingCancelBtn);
 			this.downloadingPnl.Controls.Add(this.downloadingOverallPb);
 			this.downloadingPnl.Controls.Add(this.downloadingOverallLbl);
 			this.downloadingPnl.Controls.Add(this.downloadingItemPb);
@@ -315,14 +327,22 @@ namespace Eraser
 			this.installer.DoWork += new System.ComponentModel.DoWorkEventHandler(this.installer_DoWork);
 			this.installer.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.installer_RunWorkerCompleted);
 			// 
+			// downloadingCancelBtn
+			// 
+			resources.ApplyResources(this.downloadingCancelBtn, "downloadingCancelBtn");
+			this.downloadingCancelBtn.Name = "downloadingCancelBtn";
+			this.downloadingCancelBtn.UseVisualStyleBackColor = true;
+			this.downloadingCancelBtn.UseWaitCursor = true;
+			this.downloadingCancelBtn.Click += new System.EventHandler(this.cancelBtn_Click);
+			// 
 			// UpdateForm
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+			this.Controls.Add(this.progressPanel);
 			this.Controls.Add(this.installingPnl);
 			this.Controls.Add(this.downloadingPnl);
 			this.Controls.Add(this.updatesPanel);
-			this.Controls.Add(this.progressPanel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
@@ -376,5 +396,7 @@ namespace Eraser
 		private System.Windows.Forms.Label updatesMirrorLbl;
 		private System.Windows.Forms.ComboBox updatesMirrorCmb;
 		private System.Windows.Forms.Label progressExplainLbl;
+		private System.Windows.Forms.Button progressCancelBtn;
+		private System.Windows.Forms.Button downloadingCancelBtn;
 	}
 }
