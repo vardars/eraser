@@ -62,7 +62,9 @@ namespace {
 
 		~TempDir()
 		{
-			//TODO: remove files in the directory.
+			//Clean up the files in the directory.
+
+
 			RemoveDirectoryW(DirName.c_str());
 		}
 
@@ -217,7 +219,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 	TempDir dir(tempDir);
 	ExtractTempFiles(tempDir);
 
-	// Main message loop:
+	//Install the .NET framework
+	if (!HasNetFramework())
+		InstallNetFramework(tempDir);
+
+	//Then install Eraser!
+	InstallEraser();
+
+	//Main message loop
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
 	{

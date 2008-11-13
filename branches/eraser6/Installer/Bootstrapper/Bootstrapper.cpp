@@ -226,6 +226,88 @@ bool HasNetFramework()
 	return !highestVer.empty();
 }
 
-void InstallNetFramework()
+int CreateProcessAndWait(const std::wstring& commandLine)
 {
+	//Get a mutable version of the command line
+	wchar_t* cmdLine = new wchar_t[commandLine.length() + 1];
+	wcscpy(cmdLine, commandLine.c_str());
+
+	//Launch the process
+	STARTUPINFOW startupInfo;
+	PROCESS_INFORMATIONW pInfo;
+	::ZeroMemory(&startupInfo, sizeof(startupInfo));
+	::ZeroMemory(&pInfo, sizeof(pInfo));
+	if (!CreateProcessW(NULL, cmdLine, NULL, NULL, false, 0, NULL,  NULL, &startupInfo,
+		&pInfo))
+	{
+		delete[] cmdLine;
+		throw GetErrorMessage(GetLastError());
+	}
+	delete[] cmdLine;
+
+	//Ok the process was created, wait for it to terminate.
+	DWORD lastWait = 0;
+	while ((lastWait = WaitForSingleObject(pInfo.hProcess, 50)) == WAIT_TIMEOUT)
+		Yield();
+	if (lastWait == WAIT_ABANDONED)
+		throw std::wstring(L"The condition waiting on the termination of the .NET installer was abandoned.");
+
+	//Get the exit code
+	DWORD exitCode = 0;
+	if (!GetExitCodeProcess(pInfo.hProcess, &exitCode))
+		throw GetErrorMessage(GetLastError());
+
+	//Clean up
+	CloseHandle(pInfo.hProcess);
+	CloseHandle(pInfo.hThread);
+
+	//Return the exit code.
+	return exitCode;
+}
+
+bool InstallNetFramework(std::wstring tempDir)
+{
+	//Update the UI
+	SetProgressIndeterminate();
+	SetMessage(L"Installing .NET Framework...");
+
+	//Get the path to the installer
+	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]))
+		tempDir += L"\\";
+	std::wstring commandLine('"' + tempDir);
+	commandLine += L"dotnetfx.exe\"";
+
+	//And the return code is true if the process exited with 0.
+	return CreateProcessAndWait(commandLine) == 0;
+}
+
+bool InstallEraser(std::wstring tempDir)
+{
+	SetProgressIndeterminate();
+	SetMessage(L"Installing Eraser...");
+
+	//Determine the system architecture.
+	SYSTEM_INFO sysInfo;
+	ZeroMemory(&sysInfo, sizeof(sysInfo));
+	sysInfo.cbSize = sizeof(sysInfo);
+	GetSystemInfo(&sysInfo);
+
+	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]))
+		tempDir += L"\\";
+	switch (sysInfo.wProcessorArchitecture)
+	{
+	case PROCESSOR_ARCHITECTURE_AMD64:
+		tempDir += L"Eraser (x64).msi";
+		break;
+
+	default:
+		tempDir += L"Eraser (x86).msi";
+		break;
+	}
+
+	std::wstring commandLine(L"msiexec.exe /i ");
+	commandLine += '"' + tempDir + '"';
+	
+	//And the return code is true if the process exited with 0.
+	return CreateProcessAndWait(commandLine) == 0;
 }

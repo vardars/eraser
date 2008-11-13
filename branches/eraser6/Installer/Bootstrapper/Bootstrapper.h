@@ -52,4 +52,13 @@ void ExtractTempFiles(std::wstring pathToExtract);
 bool HasNetFramework();
 
 /// Extracts the included .NET framework installer and runs it.
-void InstallNetFramework();
+/// 
+/// \param[in] srcDir The path to the directory holding dotnetfx.exe.
+/// \return True if the .NET framework was successfully installed.
+bool InstallNetFramework(std::wstring srcDir);
+
+/// Installs the version of Eraser suited for the current operating platform.
+///
+/// \param[in] srcDir The path to the directory holding the installers.
+/// \return True if Eraser was successfully installed.
+bool InstallEraser(std::wstring srcDir);
