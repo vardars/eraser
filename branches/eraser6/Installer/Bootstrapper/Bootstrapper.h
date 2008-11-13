@@ -64,9 +64,11 @@ private:
 	HWND hWndCancelBtn;
 
 private:
-
 	/// Registers the main window class and creates it.
 	bool InitInstance();
+
+	/// Helper function to set the window font for created windows to the system default.
+	void SetWindowFont(HWND hWnd);
 };
 
 class Application

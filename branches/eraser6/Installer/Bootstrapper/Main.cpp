@@ -36,9 +36,6 @@ namespace {
 
 	//Static variables
 	HINSTANCE hInstance = NULL;
-
-	bool              InitInstance(HINSTANCE hInstance, HWND& hWnd);
-	void              SetWindowFont(HWND hWnd);
 	LRESULT __stdcall WndProc(HWND, UINT, WPARAM, LPARAM);
 
 	/// Creates a temporary directory with the given name. The directory and files in it
@@ -81,38 +78,6 @@ namespace {
 	private:
 		std::wstring DirName;
 	};
-
-	
-	
-
-	/// Helper function to set the window font for created windows to the system default.
-	void SetWindowFont(HWND hWnd)
-	{
-		HFONT hWndFont = NULL;
-		if (!hWndFont)
-		{
-			NONCLIENTMETRICS ncm;
-			::ZeroMemory(&ncm, sizeof(ncm));
-			ncm.cbSize = sizeof(ncm);
-
-			if ( !::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0) )
-			{
-#if WINVER >= 0x0600
-				// a new field has been added to NONCLIENTMETRICS under Vista, so
-				// the call to SystemParametersInfo() fails if we use the struct
-				// size incorporating this new value on an older system -- retry
-				// without it
-				ncm.cbSize -= sizeof(int);
-				if ( !::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0) )
-#endif
-					return;
-			}
-
-			hWndFont = CreateFontIndirectW(&ncm.lfMessageFont);
-		}
-
-		SendMessage(hWnd, WM_SETFONT, (WPARAM)hWndFont, MAKELPARAM(TRUE, 0));
-	}
 
 	/// Processes messages for the main window.
 	/// 
@@ -283,6 +248,34 @@ bool MainWindow::InitInstance()
 	//Set default settings (font)
 	SetWindowFont(hWnd);
 	return true;
+}
+
+void MainWindow::SetWindowFont(HWND hWnd)
+{
+	HFONT hWndFont = NULL;
+	if (!hWndFont)
+	{
+		NONCLIENTMETRICS ncm;
+		::ZeroMemory(&ncm, sizeof(ncm));
+		ncm.cbSize = sizeof(ncm);
+
+		if ( !::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0) )
+		{
+#if WINVER >= 0x0600
+			// a new field has been added to NONCLIENTMETRICS under Vista, so
+			// the call to SystemParametersInfo() fails if we use the struct
+			// size incorporating this new value on an older system -- retry
+			// without it
+			ncm.cbSize -= sizeof(int);
+			if ( !::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0) )
+#endif
+				return;
+		}
+
+		hWndFont = CreateFontIndirectW(&ncm.lfMessageFont);
+	}
+
+	SendMessage(hWnd, WM_SETFONT, (WPARAM)hWndFont, MAKELPARAM(TRUE, 0));
 }
 
 void MainWindow::SetProgress(float progress)
