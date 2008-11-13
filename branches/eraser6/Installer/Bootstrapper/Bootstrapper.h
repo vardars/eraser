@@ -36,6 +36,10 @@ void Yield();
 /// Retrieves the application's top level window.
 HWND GetTopWindow();
 
+void SetProgress(float progress);
+void SetProgressIndeterminate();
+void SetMessage(std::wstring message);
+
 /// Retrieves the path to the executable file.
 std::wstring GetApplicationPath();
 

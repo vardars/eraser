@@ -34,6 +34,22 @@ public:
 		InStream.Read = LZFileStreamRead;
 		InStream.Seek = LzFileStreamSeek;
 		FileHandle = fileHandle;
+
+		FileRead = FileRead = 0;
+		LARGE_INTEGER largeInt;
+		largeInt.QuadPart = 0;
+		if (!SetFilePointerEx(FileHandle, largeInt, &largeInt, FILE_CURRENT))
+			throw GetErrorMessage(GetLastError());
+
+		long long currPos = largeInt.QuadPart;
+		largeInt.QuadPart = 0;
+		if (!SetFilePointerEx(FileHandle, largeInt, &largeInt, FILE_END))
+			throw GetErrorMessage(GetLastError());
+		FileSize = largeInt.QuadPart - currPos;
+
+		largeInt.QuadPart = currPos;
+		if (!SetFilePointerEx(FileHandle, largeInt, NULL, FILE_BEGIN))
+			throw GetErrorMessage(GetLastError());
 	}
 
 	~LZFileStream()
@@ -42,9 +58,12 @@ public:
 	}
 
 	ISzInStream InStream;
-	HANDLE FileHandle;
 
 private:
+	HANDLE FileHandle;
+	long long FileRead;
+	long long FileSize;
+
 	static SZ_RESULT LZFileStreamRead(void* object, void** bufferPtr, size_t size,
 		size_t* processedSize)
 	{
@@ -60,6 +79,9 @@ private:
 		{
 			*bufferPtr = buffer;
 			*processedSize = readSize;
+			s->FileRead += readSize;
+
+			SetProgress((double)s->FileRead / s->FileSize);
 		}
 
 		return SZ_OK;
@@ -127,7 +149,7 @@ void ExtractTempFiles(std::wstring pathToExtract)
 	//Read the database for files
 	unsigned blockIndex = 0;
 	Byte* outBuffer = NULL;
-    size_t outBufferSize = 0;
+    size_t outBufferSize = 524288;
 	for (unsigned i = 0; i < db.Database.NumFiles; ++i)
 	{
 		size_t offset = 0;

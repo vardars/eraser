@@ -37,6 +37,9 @@ namespace {
 	//Static variables
 	HINSTANCE hInstance = NULL;
 	HWND hWndParent = NULL;
+	HWND hWndStatusLbl = NULL;
+	HWND hWndProgressBar = NULL;
+	HWND hWndCancelBtn = NULL;
 
 	bool              InitInstance(HINSTANCE hInstance, HWND& hWnd);
 	void              SetWindowFont(HWND hWnd);
@@ -59,6 +62,7 @@ namespace {
 
 		~TempDir()
 		{
+			//TODO: remove files in the directory.
 			RemoveDirectoryW(DirName.c_str());
 		}
 
@@ -110,14 +114,14 @@ namespace {
 
 			if ( !::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0) )
 			{
-	#if WINVER >= 0x0600
+#if WINVER >= 0x0600
 				// a new field has been added to NONCLIENTMETRICS under Vista, so
 				// the call to SystemParametersInfo() fails if we use the struct
 				// size incorporating this new value on an older system -- retry
 				// without it
 				ncm.cbSize -= sizeof(int);
 				if ( !::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0) )
-	#endif
+#endif
 					return;
 			}
 
@@ -180,11 +184,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 
 	HWND hWndPanel = CreateWindowExW(0, STATIC_CLASS, NULL, WS_CHILD | WS_VISIBLE,
 		0, 0, 294, 104, hWndParent, NULL, hInstance, NULL);
-	HWND hWndStatusLbl = CreateWindowExW(0, STATIC_CLASS, L"Extracting setup files...",
+	hWndStatusLbl = CreateWindowExW(0, STATIC_CLASS, L"Extracting setup files...",
 		WS_CHILD | WS_VISIBLE, 13, 38, 270, 19, hWndPanel, NULL, hInstance, NULL);
-	HWND hWndProgressBar = CreateWindowExW(0, PROGRESS_CLASS, NULL,
-		WS_CHILD | WS_VISIBLE, 13, 13, 270, 24, hWndPanel, NULL, hInstance, NULL);
-	HWND hWndCancelBtn = CreateWindowExW(0, BUTTON_CLASS, L"Cancel", WS_TABSTOP |
+	hWndProgressBar = CreateWindowExW(0, PROGRESS_CLASS, NULL,
+		WS_CHILD | WS_VISIBLE | PBS_SMOOTH, 13, 13, 270, 24, hWndPanel, NULL,
+		hInstance, NULL);
+	hWndCancelBtn = CreateWindowExW(0, BUTTON_CLASS, L"Cancel", WS_TABSTOP |
 		WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON, 193, 65, 90, 23, hWndPanel, NULL,
 		hInstance, NULL);
 	if (!hWndPanel || !hWndStatusLbl || !hWndProgressBar || !hWndCancelBtn)
@@ -194,6 +199,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 	SetWindowFont(hWndStatusLbl);
 	SetWindowFont(hWndProgressBar);
 	SetWindowFont(hWndCancelBtn);
+	SendMessage(hWndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0, 1000));
 
 	ShowWindow(hWndParent, nCmdShow);
 	UpdateWindow(hWndParent);
@@ -225,6 +231,24 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 HWND GetTopWindow()
 {
 	return hWndParent;
+}
+
+void SetProgress(float progress)
+{
+	SetWindowLong(hWndProgressBar, GWL_STYLE,
+		GetWindowLong(hWndProgressBar, GWL_STYLE) & (~PBS_MARQUEE));
+	SendMessage(hWndProgressBar, PBM_SETPOS, (int)(progress * 1000), 0);
+}
+
+void SetProgressIndeterminate()
+{
+	SetWindowLong(hWndProgressBar, GWL_STYLE,
+		GetWindowLong(hWndProgressBar, GWL_STYLE) | PBS_MARQUEE);
+	SendMessage(hWndProgressBar, PBM_SETMARQUEE, true, 100);
+}
+
+void SetMessage(std::wstring message)
+{
 }
 
 void Yield()
