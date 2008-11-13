@@ -301,6 +301,7 @@ void MainWindow::SetProgressIndeterminate()
 
 void MainWindow::SetMessage(std::wstring message)
 {
+	SetWindowTextW(hWndStatusLbl, message.c_str());
 }
 
 std::wstring GetErrorMessage(DWORD lastError)
