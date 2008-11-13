@@ -27,22 +27,6 @@
 #include "resource.h"
 #undef Yield
 
-class Application
-{
-public:
-	/// Gets the Singleton instance of the Application object.
-	static Application& Get();
-
-	/// Processes messages in the message queue.
-	void Yield();
-
-	/// Retrieves the MainWindow object representing the Application's top window.
-	class MainWindow& GetTopWindow();
-
-private:
-	Application();
-};
-
 class MainWindow
 {
 public:
@@ -85,12 +69,33 @@ private:
 	bool InitInstance();
 };
 
+class Application
+{
+public:
+	/// Gets the Singleton instance of the Application object.
+	static Application& Get();
+
+	/// Retrieves the path to the executable file.
+	std::wstring GetPath();
+
+	/// Processes messages in the message queue.
+	void Yield();
+
+	/// Retrieves the MainWindow object representing the Application's top window.
+	MainWindow& GetTopWindow();
+
+private:
+	/// Constructor.
+	Application();
+
+private:
+	/// The Application main window.
+	MainWindow MainWin;
+};
+
 /// Formats the system error code using FormatMessage, returning the message as
 /// a std::wstring.
 std::wstring GetErrorMessage(DWORD lastError);
-
-/// Retrieves the path to the executable file.
-std::wstring GetApplicationPath();
 
 /// Extracts the setup files to the users' temporary folder.
 /// 

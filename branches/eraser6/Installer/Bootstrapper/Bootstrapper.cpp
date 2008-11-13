@@ -109,8 +109,8 @@ void ExtractTempFiles(std::wstring pathToExtract)
 
 	//Open the file
 #if _DEBUG
-	HANDLE srcFile = CreateFileW((GetApplicationPath() + L".7z").c_str(), GENERIC_READ, FILE_SHARE_READ,
-		NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL , NULL);
+	HANDLE srcFile = CreateFileW((Application::Get().GetPath() + L".7z").c_str(),
+		GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (srcFile == INVALID_HANDLE_VALUE)
 		throw GetErrorMessage(GetLastError());
 
@@ -118,8 +118,8 @@ void ExtractTempFiles(std::wstring pathToExtract)
 	LARGE_INTEGER fPos;
 	fPos.QuadPart = 0;
 #else
-	HANDLE srcFile = CreateFileW(GetApplicationPath().c_str(), GENERIC_READ, FILE_SHARE_READ,
-		NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL , NULL);
+	HANDLE srcFile = CreateFileW(Application::Get().GetPath().c_str(), GENERIC_READ,
+		FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (srcFile == INVALID_HANDLE_VALUE)
 		throw GetErrorMessage(GetLastError());
 

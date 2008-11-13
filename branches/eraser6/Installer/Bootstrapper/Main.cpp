@@ -36,7 +36,6 @@ namespace {
 
 	//Static variables
 	HINSTANCE hInstance = NULL;
-	MainWindow MainWin;
 
 	bool              InitInstance(HINSTANCE hInstance, HWND& hWnd);
 	void              SetWindowFont(HWND hWnd);
@@ -149,11 +148,11 @@ namespace {
 }
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
-                       LPTSTR /*lpCmdLine*/, int nCmdShow)
+                       LPTSTR /*lpCmdLine*/, int /*nCmdShow*/)
 {
 	//Create the parent window and the child controls
 	::hInstance = hInstance;
-	MainWin.Create();
+	Application::Get();
 
 	try
 	{
@@ -186,6 +185,46 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 	return 0;
 }
 
+Application::Application()
+{
+	MainWin.Create();
+}
+
+Application& Application::Get()
+{
+	static Application Instance;
+	return Instance;
+}
+
+MainWindow& Application::GetTopWindow()
+{
+	return MainWin;
+}
+
+void Application::Yield()
+{
+	MSG msg;
+	while (PeekMessage(&msg, (HWND)0, 0, 0, PM_NOREMOVE) && msg.message != WM_QUIT)
+	{
+		if (GetMessageW(&msg, NULL, 0, 0) == 0)
+			return;
+
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
+
+std::wstring Application::GetPath()
+{
+	wchar_t filePath[MAX_PATH];
+	DWORD result = GetModuleFileNameW(hInstance, filePath,
+		sizeof(filePath) / sizeof(filePath[0]));
+
+	if (result == 0)
+		throw GetErrorMessage(GetLastError());
+	return std::wstring(filePath, result);
+}
+
 bool MainWindow::Create()
 {
 	if (!InitInstance())
@@ -210,8 +249,9 @@ bool MainWindow::Create()
 	SetWindowFont(hWndCancelBtn);
 	SendMessage(hWndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0, 1000));
 
-	ShowWindow(hWnd, nCmdShow);
+	ShowWindow(hWnd, SW_SHOWDEFAULT);
 	UpdateWindow(hWnd);
+	return true;
 }
 
 bool MainWindow::InitInstance()
@@ -261,30 +301,6 @@ void MainWindow::SetProgressIndeterminate()
 
 void MainWindow::SetMessage(std::wstring message)
 {
-}
-
-void Application::Yield()
-{
-	MSG msg;
-	while (PeekMessage(&msg, (HWND)0, 0, 0, PM_NOREMOVE) && msg.message != WM_QUIT)
-	{
-		if (GetMessageW(&msg, NULL, 0, 0) == 0)
-			return;
-
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-}
-
-std::wstring GetApplicationPath()
-{
-	wchar_t filePath[MAX_PATH];
-	DWORD result = GetModuleFileNameW(hInstance, filePath,
-		sizeof(filePath) / sizeof(filePath[0]));
-
-	if (result == 0)
-		throw GetErrorMessage(GetLastError());
-	return std::wstring(filePath, result);
 }
 
 std::wstring GetErrorMessage(DWORD lastError)
