@@ -273,6 +273,9 @@ bool HasNetFramework()
 			result = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
 				(L"SOFTWARE\\Wow6432Node\\Microsoft\\NET Framework Setup\\NDP\\" + keys[i]).c_str(),
 				0, KEY_READ, &key);
+
+			if (result == ERROR_FILE_NOT_FOUND)
+				continue;
 		}
 
 		if (result != ERROR_SUCCESS)

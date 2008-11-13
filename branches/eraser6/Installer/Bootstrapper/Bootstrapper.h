@@ -131,7 +131,7 @@ private:
 };
 
 /// The offset where the package data is stored.
-const unsigned DataOffset = 160 * 1024;
+const unsigned DataOffset = 192 * 1024;
 
 /// Formats the system error code using FormatMessage, returning the message as
 /// a std::wstring.
