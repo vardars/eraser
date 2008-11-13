@@ -36,9 +36,14 @@
     <WixExtension Include="WixUIExtension">
       <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
     </WixExtension>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
+    </WixExtension>
   </ItemGroup>
   <ItemGroup>
     <Content Include="License.rtf" />
+    <Content Include="Resources\Banner.bmp" />
+    <Content Include="Resources\Dialog.bmp" />
     <Content Include="Resources\Exclamation.ico" />
     <Content Include="Resources\Information.ico" />
     <Content Include="Resources\New Folder.ico" />
