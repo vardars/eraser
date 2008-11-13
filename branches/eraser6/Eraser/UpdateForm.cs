@@ -163,7 +163,7 @@ namespace Eraser
 					ListViewItem item = new ListViewItem(update.Name);
 					item.SubItems.Add(update.Version.ToString());
 					item.SubItems.Add(update.Publisher);
-					item.SubItems.Add(update.FileSize.ToString());
+					item.SubItems.Add(Util.File.GetHumanReadableFilesize(update.FileSize));
 
 					item.Tag = update;
 					item.Group = group;
@@ -269,7 +269,7 @@ namespace Eraser
 			}
 
 			UpdateData update = uiUpdates[(UpdateManager.Update)e.UserState];
-			int amountLeft = (int)((1 - e.ProgressPercentage) * update.Update.FileSize);
+			long amountLeft = (long)((1 - e.ProgressPercentage) * update.Update.FileSize);
 
 			if (e is UpdateManager.ProgressErrorEventArgs)
 			{
@@ -280,15 +280,17 @@ namespace Eraser
 			}
 			else
 			{
-				if (amountLeft == 0)
+				if (e.ProgressPercentage >= 1.0f)
 				{
 					update.LVItem.ImageIndex = -1;
 					update.LVItem.SubItems[1].Text = S._("Downloaded");
 				}
 				else
 				{
+					update.amountDownloaded = (long)(e.ProgressPercentage * update.Update.FileSize);
 					update.LVItem.ImageIndex = 0;
-					update.LVItem.SubItems[1].Text = amountLeft.ToString();
+					update.LVItem.SubItems[1].Text = Util.File.GetHumanReadableFilesize(
+						update.Update.FileSize - update.amountDownloaded);
 				}
 			}
 
@@ -297,18 +299,10 @@ namespace Eraser
 			downloadingOverallPb.Value = (int)(e.OverallProgressPercentage * 100);
 
 			long amountToDownload = 0;
-			foreach (ListViewItem lvItem in downloadingLv.Items)
-				try
-				{
-					amountToDownload +=
-						Convert.ToInt32(lvItem.SubItems[1].Text);
-				}
-				catch (FormatException)
-				{
-				}
-
-			downloadingOverallLbl.Text = string.Format(S._("Overall progress: {0} bytes left"),
-				amountToDownload);
+			foreach (UpdateData upd in uiUpdates.Values)
+				amountToDownload += upd.Update.FileSize - upd.amountDownloaded;
+			downloadingOverallLbl.Text = string.Format(S._("Overall progress: {0} left"),
+				Util.File.GetHumanReadableFilesize(amountToDownload));
 		}
 
 		/// <summary>
@@ -407,6 +401,7 @@ namespace Eraser
 		private void installer_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
 			ControlBox = true;
+			installingPnl.UseWaitCursor = false;
 		}
 		#endregion
 
@@ -437,6 +432,7 @@ namespace Eraser
 			{
 				Update = update;
 				LVItem = item;
+				amountDownloaded = 0;
 				Error = null;
 			}
 
@@ -450,6 +446,11 @@ namespace Eraser
 			/// The ListViewItem used for the display of the update.
 			/// </summary>
 			public ListViewItem LVItem;
+
+			/// <summary>
+			/// The amount of the download already completed.
+			/// </summary>
+			public long amountDownloaded;
 
 			/// <summary>
 			/// The error raised when downloading/installing the update, if any. Null
@@ -622,8 +623,9 @@ namespace Eraser
 
 					float progress = responseBuffer.Count / (float)resp.ContentLength;
 					OnProgress(new ProgressEventArgs(progress, progress, null,
-						string.Format(S._("{0} of {1} bytes downloaded"),
-							responseBuffer.Count, resp.ContentLength)));
+						string.Format(S._("{0} of {1} downloaded"),
+							Util.File.GetHumanReadableFilesize(responseBuffer.Count),
+							Util.File.GetHumanReadableFilesize(resp.ContentLength))));
 				}
 
 				//Parse it.
@@ -842,6 +844,7 @@ namespace Eraser
 					}
 
 					tempDir.Delete(true);
+					break;
 				}
 			}
 		}

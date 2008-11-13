@@ -763,5 +763,39 @@ namespace Eraser.Util
 		private const uint FSCTL_SET_COMPRESSION = 0x9C040;
 		private const ushort COMPRESSION_FORMAT_NONE = 0x0000;
 		private const ushort COMPRESSION_FORMAT_DEFAULT = 0x0001;
+
+		/// <summary>
+		/// Gets the human-readable representation of a file size from the byte-wise
+		/// length of a file. This returns a KB = 1024 bytes (Windows convention.)
+		/// </summary>
+		/// <param name="bytes">The file size to scale.</param>
+		/// <returns>A string containing the file size and the associated unit.
+		/// Files larger than 1MB will be accurate to 2 decimal places.</returns>
+		public static string GetHumanReadableFilesize(long bytes)
+		{
+			//List of units, in ascending scale
+			string[] units = new string[] {
+				"bytes",
+				"KB",
+				"MB",
+				"GB",
+				"TB",
+				"PB",
+				"EB"
+			};
+
+			double dBytes = (double)bytes;
+			for (int i = 0; i != units.Length; ++i)
+			{
+				if (dBytes < 1020.0)
+					if (i <= 1)
+						return string.Format("{0} {1}", (int)dBytes, units[i]);
+					else
+						return string.Format("{0:0.00} {1}", dBytes, units[i]);
+				dBytes /= 1024.0;
+			}
+
+			return string.Format("{0, 2} {1}", dBytes, units[units.Length - 1]);
+		}
 	}
 }

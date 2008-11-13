@@ -264,13 +264,13 @@
   <data name="Downloaded" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="Overall progress: {0} bytes left" xml:space="preserve">
+  <data name="Overall progress: {0} left" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Error: {0}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="{0} of {1} bytes downloaded" xml:space="preserve">
+  <data name="{0} of {1} downloaded" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Downloading: {0}" xml:space="preserve">

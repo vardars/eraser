@@ -264,14 +264,14 @@
   <data name="Downloaded" xml:space="preserve">
     <value>Downloaded</value>
   </data>
-  <data name="Overall progress: {0} bytes left" xml:space="preserve">
-    <value>Overall progress: {0} bytes left</value>
+  <data name="Overall progress: {0} left" xml:space="preserve">
+    <value>Overall progress: {0} left</value>
   </data>
   <data name="Error: {0}" xml:space="preserve">
     <value>Error: {0}</value>
   </data>
-  <data name="{0} of {1} bytes downloaded" xml:space="preserve">
-    <value>{0} of {1} bytes downloaded</value>
+  <data name="{0} of {1} downloaded" xml:space="preserve">
+    <value>{0} of {1} downloaded</value>
   </data>
   <data name="Downloading: {0}" xml:space="preserve">
     <value>Downloading: {0}</value>

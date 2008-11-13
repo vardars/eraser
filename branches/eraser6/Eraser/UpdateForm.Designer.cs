@@ -63,6 +63,7 @@ namespace Eraser
 			this.updatesBtn = new System.Windows.Forms.Button();
 			this.updatesLbl = new System.Windows.Forms.Label();
 			this.progressPanel = new System.Windows.Forms.Panel();
+			this.progressExplainLbl = new System.Windows.Forms.Label();
 			this.progressProgressLbl = new System.Windows.Forms.Label();
 			this.progressPb = new System.Windows.Forms.ProgressBar();
 			this.progressLbl = new System.Windows.Forms.Label();
@@ -96,6 +97,7 @@ namespace Eraser
 			// 
 			// updatesPanel
 			// 
+			this.updatesPanel.BackColor = System.Drawing.SystemColors.Control;
 			this.updatesPanel.Controls.Add(this.updatesMirrorCmb);
 			this.updatesPanel.Controls.Add(this.updatesMirrorLbl);
 			this.updatesPanel.Controls.Add(this.updatesLv);
@@ -113,6 +115,7 @@ namespace Eraser
 			// updatesMirrorLbl
 			// 
 			resources.ApplyResources(this.updatesMirrorLbl, "updatesMirrorLbl");
+			this.updatesMirrorLbl.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.updatesMirrorLbl.Name = "updatesMirrorLbl";
 			// 
 			// updatesLv
@@ -156,32 +159,44 @@ namespace Eraser
 			// updatesLbl
 			// 
 			resources.ApplyResources(this.updatesLbl, "updatesLbl");
+			this.updatesLbl.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.updatesLbl.Name = "updatesLbl";
 			// 
 			// progressPanel
 			// 
+			this.progressPanel.Controls.Add(this.progressExplainLbl);
 			this.progressPanel.Controls.Add(this.progressProgressLbl);
 			this.progressPanel.Controls.Add(this.progressPb);
 			this.progressPanel.Controls.Add(this.progressLbl);
 			resources.ApplyResources(this.progressPanel, "progressPanel");
 			this.progressPanel.Name = "progressPanel";
+			this.progressPanel.UseWaitCursor = true;
+			// 
+			// progressExplainLbl
+			// 
+			resources.ApplyResources(this.progressExplainLbl, "progressExplainLbl");
+			this.progressExplainLbl.Name = "progressExplainLbl";
+			this.progressExplainLbl.UseWaitCursor = true;
 			// 
 			// progressProgressLbl
 			// 
 			resources.ApplyResources(this.progressProgressLbl, "progressProgressLbl");
 			this.progressProgressLbl.Name = "progressProgressLbl";
+			this.progressProgressLbl.UseWaitCursor = true;
 			// 
 			// progressPb
 			// 
 			resources.ApplyResources(this.progressPb, "progressPb");
 			this.progressPb.Name = "progressPb";
 			this.progressPb.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
+			this.progressPb.UseWaitCursor = true;
 			// 
 			// progressLbl
 			// 
 			resources.ApplyResources(this.progressLbl, "progressLbl");
 			this.progressLbl.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.progressLbl.Name = "progressLbl";
+			this.progressLbl.UseWaitCursor = true;
 			// 
 			// downloader
 			// 
@@ -262,6 +277,7 @@ namespace Eraser
 			this.installingPnl.Controls.Add(this.installingLbl);
 			resources.ApplyResources(this.installingPnl, "installingPnl");
 			this.installingPnl.Name = "installingPnl";
+			this.installingPnl.UseWaitCursor = true;
 			// 
 			// installingLv
 			// 
@@ -274,6 +290,7 @@ namespace Eraser
 			this.installingLv.ShowItemToolTips = true;
 			this.installingLv.SmallImageList = this.updatesImageList;
 			this.installingLv.UseCompatibleStateImageBehavior = false;
+			this.installingLv.UseWaitCursor = true;
 			this.installingLv.View = System.Windows.Forms.View.Details;
 			// 
 			// installingLvNameCol
@@ -288,6 +305,7 @@ namespace Eraser
 			// 
 			resources.ApplyResources(this.installingLbl, "installingLbl");
 			this.installingLbl.Name = "installingLbl";
+			this.installingLbl.UseWaitCursor = true;
 			// 
 			// installer
 			// 
@@ -298,9 +316,9 @@ namespace Eraser
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-			this.Controls.Add(this.updatesPanel);
 			this.Controls.Add(this.installingPnl);
 			this.Controls.Add(this.downloadingPnl);
+			this.Controls.Add(this.updatesPanel);
 			this.Controls.Add(this.progressPanel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
@@ -310,6 +328,7 @@ namespace Eraser
 			this.updatesPanel.ResumeLayout(false);
 			this.updatesPanel.PerformLayout();
 			this.progressPanel.ResumeLayout(false);
+			this.progressPanel.PerformLayout();
 			this.downloadingPnl.ResumeLayout(false);
 			this.downloadingPnl.PerformLayout();
 			this.installingPnl.ResumeLayout(false);
@@ -352,5 +371,6 @@ namespace Eraser
 		private System.Windows.Forms.ColumnHeader installingLvStatusCol;
 		private System.Windows.Forms.Label updatesMirrorLbl;
 		private System.Windows.Forms.ComboBox updatesMirrorCmb;
+		private System.Windows.Forms.Label progressExplainLbl;
 	}
 }
