@@ -22,9 +22,6 @@
 #include "stdafx.h"
 #include "Bootstrapper.h"
 
-#define STATIC_CLASS L"STATIC"
-#define BUTTON_CLASS L"BUTTON"
-
 //Common Controls Version 6
 #pragma comment(linker, "\"/manifestdependency:type='Win32' " \
     "name='Microsoft.Windows.Common-Controls' version='6.0.0.0' "\
@@ -32,14 +29,146 @@
     "language='*'\"")
 
 namespace {
-	wchar_t* szWindowClass = L"EraserBootstrapper";
+	//Constants
+	const wchar_t* STATIC_CLASS = L"STATIC";
+	const wchar_t* BUTTON_CLASS = L"BUTTON";
+	const wchar_t* szWindowClass = L"EraserBootstrapper";
+
+	//Static variables
 	HINSTANCE hInstance = NULL;
 	HWND hWndParent = NULL;
-}
 
-bool              InitInstance(HINSTANCE hInstance, HWND& hWnd);
-void              SetWindowFont(HWND hWnd);
-LRESULT __stdcall WndProc(HWND, UINT, WPARAM, LPARAM);
+	bool              InitInstance(HINSTANCE hInstance, HWND& hWnd);
+	void              SetWindowFont(HWND hWnd);
+	LRESULT __stdcall WndProc(HWND, UINT, WPARAM, LPARAM);
+
+	/// Creates a temporary directory with the given name. The directory and files in it
+	/// are deleted when this object is destroyed.
+	class TempDir
+	{
+	public:
+		/// Constructor.
+		///
+		/// \param[in] dirName The path to the directory. This directory will be created.
+		TempDir(std::wstring dirName)
+			: DirName(dirName)
+		{
+			if (!CreateDirectoryW(dirName.c_str(), NULL))
+				throw GetErrorMessage(GetLastError());
+		}
+
+		~TempDir()
+		{
+			RemoveDirectoryW(DirName.c_str());
+		}
+
+	private:
+		std::wstring DirName;
+	};
+
+	/// Registers the main window class and creates it.
+	bool InitInstance(HINSTANCE hInstance, HWND& hWnd)
+	{
+		WNDCLASSEX wcex;
+		::ZeroMemory(&wcex, sizeof(wcex));
+
+		wcex.cbSize         = sizeof(WNDCLASSEX);
+		wcex.style			= CS_HREDRAW | CS_VREDRAW;
+		wcex.lpfnWndProc	= WndProc;
+		wcex.cbClsExtra		= 0;
+		wcex.cbWndExtra		= 0;
+		wcex.hInstance		= hInstance;
+		wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(BOOTSTRAPPER_ICON));
+		wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+		wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW + 1);
+		wcex.lpszClassName	= szWindowClass;
+		wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(BOOTSTRAPPER_ICON));
+		RegisterClassExW(&wcex);
+		InitCommonControls();
+
+		//Create the window
+		hWnd = CreateWindowW(szWindowClass, L"Eraser Setup", WS_CAPTION | WS_SYSMENU,
+			CW_USEDEFAULT, 0, 300, 130, NULL, NULL, hInstance, NULL);
+
+		if (!hWnd)
+			return false;
+
+		//Set default settings (font)
+		SetWindowFont(hWnd);
+		return true;
+	}
+
+	/// Helper function to set the window font for created windows to the system default.
+	void SetWindowFont(HWND hWnd)
+	{
+		HFONT hWndFont = NULL;
+		if (!hWndFont)
+		{
+			NONCLIENTMETRICS ncm;
+			::ZeroMemory(&ncm, sizeof(ncm));
+			ncm.cbSize = sizeof(ncm);
+
+			if ( !::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0) )
+			{
+	#if WINVER >= 0x0600
+				// a new field has been added to NONCLIENTMETRICS under Vista, so
+				// the call to SystemParametersInfo() fails if we use the struct
+				// size incorporating this new value on an older system -- retry
+				// without it
+				ncm.cbSize -= sizeof(int);
+				if ( !::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0) )
+	#endif
+					return;
+			}
+
+			hWndFont = CreateFontIndirectW(&ncm.lfMessageFont);
+		}
+
+		SendMessage(hWnd, WM_SETFONT, (WPARAM)hWndFont, MAKELPARAM(TRUE, 0));
+	}
+
+	/// Processes messages for the main window.
+	/// 
+	/// Current messages processed:
+	/// WM_COMMAND	- process the application menu
+	/// WM_PAINT	- Paint the main window
+	/// WM_DESTROY	- post a quit message and return
+	LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+	{
+		switch (message)
+		{
+		case WM_COMMAND:
+		{
+			/*int wmId    = LOWORD(wParam);
+			switch (wmId)
+			{
+			default:
+				
+			}*/
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
+
+		case WM_PAINT:
+		{
+			PAINTSTRUCT ps;
+			HDC hdc = BeginPaint(hWnd, &ps);
+
+			// TODO: Add any drawing code here...
+			EndPaint(hWnd, &ps);
+			break;
+		}
+
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			break;
+
+		default:
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
+
+		return 0;
+	}
+}
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
                        LPTSTR /*lpCmdLine*/, int nCmdShow)
@@ -68,14 +197,19 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 
 	ShowWindow(hWndParent, nCmdShow);
 	UpdateWindow(hWndParent);
-	
-	//Check for .NET Framework
-	if (!HasNetFramework())
-	{
-		//Install the .NET framework.
-	}
 
-	ExtractTempFiles();
+	//OK, now we do the hard work. Create a folder to place our payload into
+	wchar_t tempPath[MAX_PATH];
+	DWORD result = GetTempPathW(sizeof(tempPath) / sizeof(tempPath[0]), tempPath);
+	if (!result)
+		throw GetErrorMessage(GetLastError());
+
+	std::wstring tempDir(tempPath, result);
+	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]) == std::wstring::npos)
+		tempDir += L"\\";
+	tempDir += L"eraserInstallBootstrapper\\";
+	TempDir dir(tempDir);
+	ExtractTempFiles(tempDir);
 
 	// Main message loop:
 	MSG msg;
@@ -86,109 +220,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 	}
 
 	return (int) msg.wParam;
-}
-
-/// Registers the main window class and creates it.
-bool InitInstance(HINSTANCE hInstance, HWND& hWnd)
-{
-	WNDCLASSEX wcex;
-	::ZeroMemory(&wcex, sizeof(wcex));
-
-	wcex.cbSize         = sizeof(WNDCLASSEX);
-	wcex.style			= CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc	= WndProc;
-	wcex.cbClsExtra		= 0;
-	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= hInstance;
-	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(BOOTSTRAPPER_ICON));
-	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW + 1);
-	wcex.lpszClassName	= szWindowClass;
-	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(BOOTSTRAPPER_ICON));
-	RegisterClassExW(&wcex);
-	InitCommonControls();
-
-	//Create the window
-	hWnd = CreateWindowW(szWindowClass, L"Eraser Setup", WS_CAPTION | WS_SYSMENU,
-		CW_USEDEFAULT, 0, 300, 130, NULL, NULL, hInstance, NULL);
-
-	if (!hWnd)
-		return false;
-
-	//Set default settings (font)
-	SetWindowFont(hWnd);
-	return true;
-}
-
-/// Helper function to set the window font for created windows to the system default.
-void SetWindowFont(HWND hWnd)
-{
-	HFONT hWndFont = NULL;
-	if (!hWndFont)
-	{
-		NONCLIENTMETRICS ncm;
-		::ZeroMemory(&ncm, sizeof(ncm));
-		ncm.cbSize = sizeof(ncm);
-
-		if ( !::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0) )
-		{
-#if WINVER >= 0x0600
-			// a new field has been added to NONCLIENTMETRICS under Vista, so
-			// the call to SystemParametersInfo() fails if we use the struct
-			// size incorporating this new value on an older system -- retry
-			// without it
-			ncm.cbSize -= sizeof(int);
-			if ( !::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &ncm, 0) )
-#endif
-				return;
-		}
-
-		hWndFont = CreateFontIndirectW(&ncm.lfMessageFont);
-	}
-
-	SendMessage(hWnd, WM_SETFONT, (WPARAM)hWndFont, MAKELPARAM(TRUE, 0));
-}
-
-/// Processes messages for the main window.
-/// 
-/// Current messages processed:
-/// WM_COMMAND	- process the application menu
-/// WM_PAINT	- Paint the main window
-/// WM_DESTROY	- post a quit message and return
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	switch (message)
-	{
-	case WM_COMMAND:
-	{
-		/*int wmId    = LOWORD(wParam);
-		switch (wmId)
-		{
-		default:
-			
-		}*/
-		return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-
-	case WM_PAINT:
-	{
-		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(hWnd, &ps);
-
-		// TODO: Add any drawing code here...
-		EndPaint(hWnd, &ps);
-		break;
-	}
-
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-
-	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-
-	return 0;
 }
 
 HWND GetTopWindow()
