@@ -30,10 +30,10 @@
 // Windows Header Files:
 #include <windows.h>
 #include <commctrl.h>
-#undef min
 
 #include <tchar.h>
 #include <string>
+#include <map>
 
 //7-zip SDK
 extern "C" {

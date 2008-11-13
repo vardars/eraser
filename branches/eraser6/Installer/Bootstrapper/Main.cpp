@@ -49,14 +49,34 @@ namespace {
 		TempDir(std::wstring dirName)
 			: DirName(dirName)
 		{
+			//Ensure there is a trailing slash
 			if (std::wstring(L"\\/").find(dirName[dirName.length() - 1]) == std::wstring::npos)
 				dirName += L"\\";
 
 			if (!CreateDirectoryW(dirName.c_str(), NULL))
-				throw GetErrorMessage(GetLastError());
+				switch (GetLastError())
+				{
+				case ERROR_ALREADY_EXISTS:
+					DeleteContents();
+					break;
+
+				default:
+					throw GetErrorMessage(GetLastError());
+				}
 		}
 
 		~TempDir()
+		{
+			DeleteContents();
+			RemoveDirectoryW(DirName.c_str());
+		}
+
+	private:
+		/// The path to the directory.
+		std::wstring DirName;
+
+	private:
+		void DeleteContents()
 		{
 			//Clean up the files in the directory.
 			WIN32_FIND_DATAW findData;
@@ -72,44 +92,8 @@ namespace {
 
 			//Clean up.
 			FindClose(findHandle);
-			RemoveDirectoryW(DirName.c_str());
 		}
-
-	private:
-		std::wstring DirName;
 	};
-
-	/// Processes messages for the main window.
-	/// 
-	/// Current messages processed:
-	/// WM_COMMAND	- process the application menu
-	/// WM_PAINT	- Paint the main window
-	/// WM_DESTROY	- post a quit message and return
-	LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-	{
-		switch (message)
-		{
-		case WM_COMMAND:
-		{
-			/*int wmId    = LOWORD(wParam);
-			switch (wmId)
-			{
-			default:
-				
-			}*/
-			return DefWindowProc(hWnd, message, wParam, lParam);
-		}
-
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			break;
-
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
-		}
-
-		return 0;
-	}
 }
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
@@ -190,12 +174,13 @@ std::wstring Application::GetPath()
 	return std::wstring(filePath, result);
 }
 
+std::map<HWND, MainWindow::WndProcData> MainWindow::OldWndProcs;
 bool MainWindow::Create()
 {
 	if (!InitInstance())
 		return false;
 
-	HWND hWndPanel = CreateWindowExW(0, STATIC_CLASS, NULL, WS_CHILD | WS_VISIBLE,
+	hWndPanel = CreateWindowExW(0, STATIC_CLASS, NULL, WS_CHILD | WS_VISIBLE,
 		0, 0, 294, 104, hWnd, NULL, hInstance, NULL);
 	hWndStatusLbl = CreateWindowExW(0, STATIC_CLASS, L"Extracting setup files...",
 		WS_CHILD | WS_VISIBLE, 13, 38, 270, 19, hWndPanel, NULL, hInstance, NULL);
@@ -212,7 +197,10 @@ bool MainWindow::Create()
 	SetWindowFont(hWndStatusLbl);
 	SetWindowFont(hWndProgressBar);
 	SetWindowFont(hWndCancelBtn);
+
 	SendMessage(hWndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0, 1000));
+	SubclassWindow(*this, hWndCancelBtn, WndProc);
+	SubclassWindow(*this, hWndPanel, WndProc);
 
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
 	UpdateWindow(hWnd);
@@ -280,21 +268,69 @@ void MainWindow::SetWindowFont(HWND hWnd)
 
 void MainWindow::SetProgress(float progress)
 {
-	SetWindowLong(hWndProgressBar, GWL_STYLE,
-		GetWindowLong(hWndProgressBar, GWL_STYLE) & (~PBS_MARQUEE));
+	SetWindowLongPtr(hWndProgressBar, GWL_STYLE,
+		GetWindowLongPtr(hWndProgressBar, GWL_STYLE) & (~PBS_MARQUEE));
 	SendMessage(hWndProgressBar, PBM_SETPOS, (int)(progress * 1000), 0);
 }
 
 void MainWindow::SetProgressIndeterminate()
 {
-	SetWindowLong(hWndProgressBar, GWL_STYLE,
-		GetWindowLong(hWndProgressBar, GWL_STYLE) | PBS_MARQUEE);
+	SetWindowLongPtr(hWndProgressBar, GWL_STYLE,
+		GetWindowLongPtr(hWndProgressBar, GWL_STYLE) | PBS_MARQUEE);
 	SendMessage(hWndProgressBar, PBM_SETMARQUEE, true, 100);
 }
 
 void MainWindow::SetMessage(std::wstring message)
 {
 	SetWindowTextW(hWndStatusLbl, message.c_str());
+}
+
+LRESULT MainWindow::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam,
+	bool& handled)
+{
+	handled = false;
+	switch (message)
+	{
+	case WM_COMMAND:
+		if (hWnd == hWndCancelBtn && HIWORD(wParam) == BN_CLICKED)
+			PostQuitMessage(1);
+		break;
+	}
+}
+
+void MainWindow::SubclassWindow(MainWindow& owner, HWND hWnd, WNDPROC wndProc)
+{
+	OldWndProcs.insert(std::make_pair(
+		hWnd, WndProcData(reinterpret_cast<WNDPROC>(SetWindowLongPtr(hWnd,
+			GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(wndProc))), owner)
+	));
+}
+
+LRESULT __stdcall MainWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	std::map<HWND, WndProcData>::const_iterator iter = OldWndProcs.find(hWnd);
+	if (iter != OldWndProcs.end())
+	{
+		bool handled = false;
+		LRESULT result = iter->second.Owner->WindowProc(hWnd, message, wParam,
+			lParam, handled);
+		if (handled)
+			return result;
+
+		return CallWindowProc(iter->second.OldWndProc, hWnd, message, wParam, lParam);
+	}
+
+	switch (message)
+	{
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
+	}
+
+	return 0;
 }
 
 std::wstring GetErrorMessage(DWORD lastError)

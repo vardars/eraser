@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib 7z_C.lib"
+				AdditionalDependencies="comctl32.lib 7z_Cd.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -133,7 +133,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib D:\Development\Libraries\C++\LZMA\C\Archive\7z\LzDecode.obj"
+				AdditionalDependencies="comctl32.lib 7z_C.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"

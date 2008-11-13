@@ -113,10 +113,6 @@ void ExtractTempFiles(std::wstring pathToExtract)
 		GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (srcFile == INVALID_HANDLE_VALUE)
 		throw GetErrorMessage(GetLastError());
-
-	//Seek to the 128th kb.
-	LARGE_INTEGER fPos;
-	fPos.QuadPart = 0;
 #else
 	HANDLE srcFile = CreateFileW(Application::Get().GetPath().c_str(), GENERIC_READ,
 		FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -125,11 +121,11 @@ void ExtractTempFiles(std::wstring pathToExtract)
 
 	//Seek to the 128th kb.
 	LARGE_INTEGER fPos;
-	fPos.QuadPart = 128 * 1024;
-#endif
+	fPos.QuadPart = DataOffset;
 
 	if (!SetFilePointerEx(srcFile, fPos, &fPos, FILE_BEGIN))
 		throw GetErrorMessage(GetLastError());
+#endif
 
 	//7z archive database structure
 	CArchiveDatabaseEx db;
@@ -182,6 +178,7 @@ void ExtractTempFiles(std::wstring pathToExtract)
 				bytesWritten != processedSize)
 				throw GetErrorMessage(GetLastError());
 			destFileSize -= bytesWritten;
+			Application::Get().Yield();
 		}
 
 		CloseHandle(destFile);

@@ -23,9 +23,11 @@
 
 #include <windows.h>
 #include <string>
+#include <map>
 
 #include "resource.h"
 #undef Yield
+#undef min
 
 class MainWindow
 {
@@ -59,16 +61,46 @@ public:
 
 private:
 	HWND hWnd;
+	HWND hWndPanel;
 	HWND hWndStatusLbl;
 	HWND hWndProgressBar;
 	HWND hWndCancelBtn;
+
+	struct WndProcData
+	{
+		WndProcData(WNDPROC oldWndProc, MainWindow& owner)
+			: OldWndProc(oldWndProc), Owner(&owner)
+		{
+		}
+
+		WNDPROC OldWndProc;
+		MainWindow* Owner;
+	};
+
+	static std::map<HWND, WndProcData> OldWndProcs;
 
 private:
 	/// Registers the main window class and creates it.
 	bool InitInstance();
 
 	/// Helper function to set the window font for created windows to the system default.
+	/// 
+	/// \param[in] hWnd The window whose font needs to be set.
 	void SetWindowFont(HWND hWnd);
+
+	/// Handles messages from user interactions.
+	LRESULT WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam,
+		bool& handled);
+
+	/// Subclasses the given window.
+	/// 
+	/// \param[in] owner The owner of the window.
+	/// \param[in] hWnd The handle to the window to subclass.
+	/// \param[in] wndProc The window message processor.
+	static void SubclassWindow(MainWindow& owner, HWND hWnd, WNDPROC wndProc);
+
+	/// Processes messages for the main window.
+	static LRESULT __stdcall WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 
 class Application
@@ -94,6 +126,9 @@ private:
 	/// The Application main window.
 	MainWindow MainWin;
 };
+
+/// The offset where the package data is stored.
+const unsigned DataOffset = 160 * 1024;
 
 /// Formats the system error code using FormatMessage, returning the message as
 /// a std::wstring.
