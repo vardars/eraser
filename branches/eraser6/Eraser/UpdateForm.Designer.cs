@@ -92,6 +92,7 @@ namespace Eraser
 			// 
 			// updateListDownloader
 			// 
+			this.updateListDownloader.WorkerSupportsCancellation = true;
 			this.updateListDownloader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.updateListDownloader_DoWork);
 			this.updateListDownloader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.updateListDownloader_RunWorkerCompleted);
 			// 
@@ -200,6 +201,7 @@ namespace Eraser
 			// 
 			// downloader
 			// 
+			this.downloader.WorkerSupportsCancellation = true;
 			this.downloader.DoWork += new System.ComponentModel.DoWorkEventHandler(this.downloader_DoWork);
 			this.downloader.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.downloader_RunWorkerCompleted);
 			// 
@@ -309,6 +311,7 @@ namespace Eraser
 			// 
 			// installer
 			// 
+			this.installer.WorkerSupportsCancellation = true;
 			this.installer.DoWork += new System.ComponentModel.DoWorkEventHandler(this.installer_DoWork);
 			this.installer.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.installer_RunWorkerCompleted);
 			// 
@@ -325,6 +328,7 @@ namespace Eraser
 			this.MinimizeBox = false;
 			this.Name = "UpdateForm";
 			this.ShowInTaskbar = false;
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UpdateForm_FormClosing);
 			this.updatesPanel.ResumeLayout(false);
 			this.updatesPanel.PerformLayout();
 			this.progressPanel.ResumeLayout(false);

@@ -43,10 +43,26 @@ namespace Eraser
 		public UpdateForm()
 		{
 			InitializeComponent();
-			ControlBox = false;
 
 			updates = new UpdateManager();
 			updateListDownloader.RunWorkerAsync();
+		}
+
+		/// <summary>
+		/// Called when the form is about to be closed.
+		/// </summary>
+		/// <param name="sender">The object triggering this event/</param>
+		/// <param name="e">Event argument.</param>
+		private void UpdateForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			//Cancel all running background tasks
+			if (updateListDownloader.IsBusy || downloader.IsBusy || installer.IsBusy)
+			{
+				updateListDownloader.CancelAsync();
+				downloader.CancelAsync();
+				installer.CancelAsync();
+				e.Cancel = true;
+			}
 		}
 
 		#region Update List retrieval
@@ -77,6 +93,9 @@ namespace Eraser
 		{
 			if (InvokeRequired)
 			{
+				if (updateListDownloader.CancellationPending)
+					throw new OperationCanceledException();
+
 				Invoke(new UpdateManager.ProgressEventFunction(updateListDownloader_ProgressChanged),
 					sender, e);
 				return;
@@ -101,13 +120,14 @@ namespace Eraser
 			//The Error property will normally be null unless there are errors during the download.
 			if (e.Error != null)
 			{
-				MessageBox.Show(this, e.Error.Message, S._("Eraser"),
-					MessageBoxButtons.OK, MessageBoxIcon.Error);
+				if (!(e.Error is OperationCanceledException))
+					MessageBox.Show(this, e.Error.Message, S._("Eraser"),
+						MessageBoxButtons.OK, MessageBoxIcon.Error);
+
 				Close();
 				return;
 			}
 
-			ControlBox = true;
 			progressPanel.Visible = false;
 			updatesPanel.Show();
 
@@ -206,7 +226,6 @@ namespace Eraser
 		{
 			updatesPanel.Visible = false;
 			downloadingPnl.Show();
-			ControlBox = false;
 			List<UpdateManager.Update> updatesToInstall =
 				new List<UpdateManager.Update>();
 
@@ -263,6 +282,9 @@ namespace Eraser
 		{
 			if (InvokeRequired)
 			{
+				if (updateListDownloader.CancellationPending)
+					throw new OperationCanceledException();
+
 				Invoke(new UpdateManager.ProgressEventFunction(downloader_ProgressChanged),
 					sender, e);
 				return;
@@ -314,8 +336,10 @@ namespace Eraser
 		{
 			if (e.Error != null)
 			{
-				MessageBox.Show(this, e.Error.Message, S._("Eraser"), MessageBoxButtons.OK,
-					MessageBoxIcon.Error);
+				if (!(e.Error is OperationCanceledException))
+					MessageBox.Show(this, e.Error.Message, S._("Eraser"),
+						MessageBoxButtons.OK, MessageBoxIcon.Error);
+
 				Close();
 				return;
 			}
@@ -368,6 +392,9 @@ namespace Eraser
 		{
 			if (InvokeRequired)
 			{
+				if (updateListDownloader.CancellationPending)
+					throw new OperationCanceledException();
+
 				Invoke(new UpdateManager.ProgressEventFunction(installer_ProgressChanged),
 					sender, e);
 				return;
@@ -400,7 +427,9 @@ namespace Eraser
 		/// <param name="e">Event argument.</param>
 		private void installer_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
-			ControlBox = true;
+			if (e.Error is OperationCanceledException)
+				Close();
+
 			installingPnl.UseWaitCursor = false;
 		}
 		#endregion
