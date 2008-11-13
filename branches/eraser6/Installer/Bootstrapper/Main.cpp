@@ -56,6 +56,9 @@ namespace {
 		TempDir(std::wstring dirName)
 			: DirName(dirName)
 		{
+			if (std::wstring(L"\\/").find(dirName[dirName.length() - 1]) == std::wstring::npos)
+				dirName += L"\\";
+
 			if (!CreateDirectoryW(dirName.c_str(), NULL))
 				throw GetErrorMessage(GetLastError());
 		}
@@ -63,8 +66,19 @@ namespace {
 		~TempDir()
 		{
 			//Clean up the files in the directory.
+			WIN32_FIND_DATAW findData;
+			ZeroMemory(&findData, sizeof(findData));
+			HANDLE findHandle = FindFirstFileW((DirName + L"*").c_str(), &findData);
+			if (findHandle == INVALID_HANDLE_VALUE)
+				throw GetErrorMessage(GetLastError());
 
+			//Delete!
+			do
+				DeleteFileW((DirName + findData.cFileName).c_str());
+			while (FindNextFileW(findHandle, &findData));
 
+			//Clean up.
+			FindClose(findHandle);
 			RemoveDirectoryW(DirName.c_str());
 		}
 
@@ -154,16 +168,6 @@ namespace {
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 
-		case WM_PAINT:
-		{
-			PAINTSTRUCT ps;
-			HDC hdc = BeginPaint(hWnd, &ps);
-
-			// TODO: Add any drawing code here...
-			EndPaint(hWnd, &ps);
-			break;
-		}
-
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			break;
@@ -206,35 +210,34 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 	ShowWindow(hWndParent, nCmdShow);
 	UpdateWindow(hWndParent);
 
-	//OK, now we do the hard work. Create a folder to place our payload into
-	wchar_t tempPath[MAX_PATH];
-	DWORD result = GetTempPathW(sizeof(tempPath) / sizeof(tempPath[0]), tempPath);
-	if (!result)
-		throw GetErrorMessage(GetLastError());
-
-	std::wstring tempDir(tempPath, result);
-	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]) == std::wstring::npos)
-		tempDir += L"\\";
-	tempDir += L"eraserInstallBootstrapper\\";
-	TempDir dir(tempDir);
-	ExtractTempFiles(tempDir);
-
-	//Install the .NET framework
-	if (!HasNetFramework())
-		InstallNetFramework(tempDir);
-
-	//Then install Eraser!
-	InstallEraser();
-
-	//Main message loop
-	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0))
+	try
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		//OK, now we do the hard work. Create a folder to place our payload into
+		wchar_t tempPath[MAX_PATH];
+		DWORD result = GetTempPathW(sizeof(tempPath) / sizeof(tempPath[0]), tempPath);
+		if (!result)
+			throw GetErrorMessage(GetLastError());
+
+		std::wstring tempDir(tempPath, result);
+		if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]) == std::wstring::npos)
+			tempDir += L"\\";
+		tempDir += L"eraserInstallBootstrapper\\";
+		TempDir dir(tempDir);
+		ExtractTempFiles(tempDir);
+
+		//Install the .NET framework
+		if (!HasNetFramework())
+			InstallNetFramework(tempDir);
+
+		//Then install Eraser!
+		InstallEraser(tempDir);
+	}
+	catch (const std::wstring& e)
+	{
+		MessageBoxW(GetTopWindow(), e.c_str(), L"Eraser Setup", MB_OK | MB_ICONERROR);
 	}
 
-	return (int) msg.wParam;
+	return 0;
 }
 
 HWND GetTopWindow()
@@ -264,10 +267,13 @@ void Yield()
 {
 	MSG msg;
 	while (PeekMessage(&msg, (HWND)0, 0, 0, PM_NOREMOVE) && msg.message != WM_QUIT)
-    {
+	{
+		if (GetMessageW(&msg, NULL, 0, 0) == 0)
+			return;
+
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
-    }
+	}
 }
 
 std::wstring GetApplicationPath()

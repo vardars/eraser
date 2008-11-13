@@ -81,7 +81,7 @@ private:
 			*processedSize = readSize;
 			s->FileRead += readSize;
 
-			SetProgress((double)s->FileRead / s->FileSize);
+			SetProgress((float)((double)s->FileRead / s->FileSize));
 		}
 
 		return SZ_OK;
@@ -103,7 +103,7 @@ private:
 
 void ExtractTempFiles(std::wstring pathToExtract)
 {
-	if (std::wstring(L"\\/").find(pathToExtract[pathToExtract.length() - 1]))
+	if (std::wstring(L"\\/").find(pathToExtract[pathToExtract.length() - 1]) == std::wstring::npos)
 		pathToExtract += L"\\";
 
 	//Open the file
@@ -158,8 +158,9 @@ void ExtractTempFiles(std::wstring pathToExtract)
 		SZ_RESULT result = SZ_OK;
 
 		//Create the output file
+		size_t convertedChars = 0;
 		wchar_t fileName[MAX_PATH];
-		mbstowcs(fileName, f->Name, sizeof(fileName) / sizeof(fileName[0]));
+		mbstowcs_s(&convertedChars, fileName, f->Name, sizeof(fileName) / sizeof(fileName[0]));
 		HANDLE destFile = CreateFileW((pathToExtract + fileName).c_str(), GENERIC_WRITE, 0,
 			NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (destFile == INVALID_HANDLE_VALUE)
@@ -230,11 +231,11 @@ int CreateProcessAndWait(const std::wstring& commandLine)
 {
 	//Get a mutable version of the command line
 	wchar_t* cmdLine = new wchar_t[commandLine.length() + 1];
-	wcscpy(cmdLine, commandLine.c_str());
+	wcscpy_s(cmdLine, commandLine.length() + 1, commandLine.c_str());
 
 	//Launch the process
 	STARTUPINFOW startupInfo;
-	PROCESS_INFORMATIONW pInfo;
+	PROCESS_INFORMATION pInfo;
 	::ZeroMemory(&startupInfo, sizeof(startupInfo));
 	::ZeroMemory(&pInfo, sizeof(pInfo));
 	if (!CreateProcessW(NULL, cmdLine, NULL, NULL, false, 0, NULL,  NULL, &startupInfo,
@@ -272,9 +273,9 @@ bool InstallNetFramework(std::wstring tempDir)
 	SetMessage(L"Installing .NET Framework...");
 
 	//Get the path to the installer
-	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]))
+	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]) == std::wstring::npos)
 		tempDir += L"\\";
-	std::wstring commandLine('"' + tempDir);
+	std::wstring commandLine(L'"' + tempDir);
 	commandLine += L"dotnetfx.exe\"";
 
 	//And the return code is true if the process exited with 0.
@@ -289,10 +290,9 @@ bool InstallEraser(std::wstring tempDir)
 	//Determine the system architecture.
 	SYSTEM_INFO sysInfo;
 	ZeroMemory(&sysInfo, sizeof(sysInfo));
-	sysInfo.cbSize = sizeof(sysInfo);
 	GetSystemInfo(&sysInfo);
 
-	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]))
+	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]) == std::wstring::npos)
 		tempDir += L"\\";
 	switch (sysInfo.wProcessorArchitecture)
 	{
@@ -306,7 +306,7 @@ bool InstallEraser(std::wstring tempDir)
 	}
 
 	std::wstring commandLine(L"msiexec.exe /i ");
-	commandLine += '"' + tempDir + '"';
+	commandLine += L'"' + tempDir + L'"';
 	
 	//And the return code is true if the process exited with 0.
 	return CreateProcessAndWait(commandLine) == 0;
