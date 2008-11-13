@@ -79,43 +79,10 @@ private:
 	}
 };
 
-/// Creates a temporary directory with the given name. The directory and files in it
-/// are deleted when this object is destroyed.
-class TempDir
+void ExtractTempFiles(std::wstring pathToExtract)
 {
-public:
-	/// Constructor.
-	///
-	/// \param[in] dirName The path to the directory. This directory will be created.
-	TempDir(std::wstring dirName)
-		: DirName(dirName)
-	{
-		if (!CreateDirectoryW(dirName.c_str(), NULL))
-			throw GetErrorMessage(GetLastError());
-	}
-
-	~TempDir()
-	{
-		RemoveDirectoryW(DirName.c_str());
-	}
-
-private:
-	std::wstring DirName;
-};
-
-void ExtractTempFiles()
-{
-	//Get the path to the temporary folder
-	wchar_t tempPath[MAX_PATH];
-	DWORD result = GetTempPathW(sizeof(tempPath) / sizeof(tempPath[0]), tempPath);
-	if (!result)
-		throw GetErrorMessage(GetLastError());
-
-	std::wstring tempDir(tempPath, result);
-	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]) == std::wstring::npos)
-		tempDir += L"\\";
-	tempDir += L"eraserInstallBootstrapper\\";
-	TempDir dir(tempDir);
+	if (std::wstring(L"\\/").find(pathToExtract[pathToExtract.length() - 1]))
+		pathToExtract += L"\\";
 
 	//Open the file
 #if _DEBUG
@@ -171,7 +138,7 @@ void ExtractTempFiles()
 		//Create the output file
 		wchar_t fileName[MAX_PATH];
 		mbstowcs(fileName, f->Name, sizeof(fileName) / sizeof(fileName[0]));
-		HANDLE destFile = CreateFileW((tempDir + fileName).c_str(), GENERIC_WRITE, 0,
+		HANDLE destFile = CreateFileW((pathToExtract + fileName).c_str(), GENERIC_WRITE, 0,
 			NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (destFile == INVALID_HANDLE_VALUE)
 			throw GetErrorMessage(GetLastError());

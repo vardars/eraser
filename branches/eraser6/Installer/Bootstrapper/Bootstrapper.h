@@ -40,7 +40,9 @@ HWND GetTopWindow();
 std::wstring GetApplicationPath();
 
 /// Extracts the setup files to the users' temporary folder.
-void ExtractTempFiles();
+/// 
+/// \param[in] pathToExtract The path to extract the temporary files to.
+void ExtractTempFiles(std::wstring pathToExtract);
 
 /// Checks for the presence of the .NET Framework on the client computer.
 bool HasNetFramework();
