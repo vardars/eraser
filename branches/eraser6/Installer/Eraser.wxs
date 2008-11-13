@@ -31,66 +31,30 @@
 		</Condition>
 
 		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="ProgramFilesFolder">
-				<Directory Id="INSTALLLOCATION" Name="Eraser">
-					<Component Id="EraserMain" Guid="D9D7F28B-1F5E-4da4-8FF2-4F8DC031E472">
-						<File Id="EraserExe" Name="Eraser.exe" DiskId="1" Source="..\bin\Release\Eraser.exe">
-							<Shortcut Advertise="yes" Id="EraserExeProgramMenuShortcut" Directory="ProgramMenuFolder"
-								Name="Eraser" Icon="Eraser.exe" IconIndex="0" />
-							<Shortcut Advertise="yes" Id="EraserExeDesktopShortcut" Directory="DesktopFolder"
-								Name="Eraser" Icon="Eraser.exe" IconIndex="0" />
-						</File>
-						<File Id="BevelLine" Name="BevelLine.dll" DiskId="1" Source="..\bin\Release\BevelLine.dll" />
-						<File Id="EraserManager" Name="Eraser.Manager.dll" DiskId="1" Source="..\bin\Release\Eraser.Manager.dll" />
-						<File Id="EraserUtil" Name="Eraser.Util.dll" DiskId="1" Source="..\bin\Release\Eraser.Util.dll" />
-					</Component>
-						
-					<Directory Id="EraserLangEnDir" Name="en">
-						<Component Id="EraserLangEn" Guid="5BB2BEF6-1271-4786-9A40-552DD6223B1F">
-							<File Id="EraserEn" Name="Eraser.resources.dll" DiskId="1" Source="..\bin\Release\en\Eraser.resources.dll" />
-						</Component>
-					</Directory>
-					<Directory Id="EraserLangNlDir" Name="nl">
-						<Component Id="EraserLangNl" Guid="A404FC89-2216-4e14-96D5-30F54D120FBB">
-							<File Id="EraserNl" Name="Eraser.resources.dll" DiskId="1" Source="..\bin\Release\nl\Eraser.resources.dll" />
-						</Component>
-					</Directory>
-
-					<Directory Id="EraserPluginsDir" Name="Plugins">
-						<Component Id="EraserPlugins" Guid="39A307BD-4244-4972-BC12-A5F5A76E684A">
-							<File Id="DefaultPlugins" Name="Eraser.DefaultPlugins.dll" DiskId="1" Source="..\bin\Release\Plugins\Eraser.DefaultPlugins.dll" />
-							<File Id="ISAAC" Name="ISAAC.dll" DiskId="1" Source="..\bin\Release\Plugins\ISAAC.dll" />
-						</Component>
-
-						<Directory Id="EraserPluginsLangEnDir" Name="en">
-							<Component Id="EraserPluginsLangEn" Guid="23B2B7DD-C518-4dde-A229-94CA9122B995">
-								<File Id="EraserDefaultPluginsEn" Name="Eraser.DefaultPlugins.resources.dll" DiskId="1"
-									Source="..\bin\Release\Plugins\en\Eraser.DefaultPlugins.resources.dll" />
-							</Component>
-						</Directory>
-						<Directory Id="EraserPluginsLangNlDir" Name="nl">
-							<Component Id="EraserPluginsLangNl" Guid="CD85AC3F-2B4E-4ac8-8FF9-6BD3BC90BD3D">
-								<File Id="EraserDefaultPluginsNl" Name="Eraser.DefaultPlugins.resources.dll" DiskId="1"
-									Source="..\bin\Release\Plugins\nl\Eraser.DefaultPlugins.resources.dll" />
-							</Component>
-						</Directory>
-					</Directory>
+			<?if $(sys.BUILDARCH) = "x64"?>
+				<Directory Id="ProgramFiles64Folder">
+					<Directory Id="PFFolder" />
 				</Directory>
-			</Directory>
+			<?else?>
+				<Directory Id="ProgramFilesFolder">
+					<Directory Id="PFFolder" />
+				</Directory>
+			<?endif?>
 
 			<Directory Id="ProgramMenuFolder" Name="ProgramMenu" />
 			<Directory Id="DesktopFolder" Name="Desktop" />
 		</Directory>
 
 		<Feature Id="EraserMain" Title="Eraser" Description="The main Eraser program files." Level="1"
-				ConfigurableDirectory="INSTALLLOCATION">
+				ConfigurableDirectory="INSTALLLOCATION" AllowAdvertise="system" Display="expand">
 			<ComponentRef Id="EraserMain" />
 			<ComponentRef Id="EraserLangEn" />
 			<ComponentRef Id="EraserPlugins" />
 			<ComponentRef Id="EraserPluginsLangEn" />
 
 			<Feature Id="EraserLanguages" Title="Alternative Languages"
-				Description="Alternative localised version of Eraser" Level="10">
+					Description="Alternative localised version of Eraser." Level="10"
+					Display="expand">
 				<Feature Id="EraserLanguagesNl" Title="Dutch" Description="Dutch localisation" Level="10">
 					<ComponentRef Id="EraserLangNl" />
 					<ComponentRef Id="EraserPluginsLangNl" />
@@ -109,4 +73,67 @@
 		<WixVariable Id="WixUIInfoIco" Value="Resources\Information.ico" />
 		<WixVariable Id="WixUINewIco" Value="Resources\New Folder.ico" />
 	</Product>
+
+	<Fragment Id="EraserMainFragment">
+		<DirectoryRef Id="PFFolder">
+			<Directory Id="INSTALLLOCATION" Name="Eraser">
+				<Component Id="EraserMain" Guid="D9D7F28B-1F5E-4da4-8FF2-4F8DC031E472">
+					<File Id="EraserExe" Name="Eraser.exe" Source="..\bin\Release\Eraser.exe"
+							ProcessorArchitecture="msil" KeyPath="yes">
+						<Shortcut Advertise="yes" Id="EraserExeProgramMenuShortcut" Directory="ProgramMenuFolder"
+							Name="Eraser" Icon="Eraser.exe" IconIndex="0" />
+						<Shortcut Advertise="yes" Id="EraserExeDesktopShortcut" Directory="DesktopFolder"
+							Name="Eraser" Icon="Eraser.exe" IconIndex="0" />
+					</File>
+					<File Id="BevelLine" Name="BevelLine.dll" Source="..\bin\Release\BevelLine.dll"
+						ProcessorArchitecture="msil"/>
+					<File Id="EraserManager" Name="Eraser.Manager.dll"
+						Source="..\bin\Release\Eraser.Manager.dll" ProcessorArchitecture="msil" />
+					<File Id="EraserUtil" Name="Eraser.Util.dll"
+						Source="..\bin\Release\Eraser.Util.dll" ProcessorArchitecture="msil" />
+				</Component>
+
+				<Directory Id="EraserLangEnDir" Name="en">
+					<Component Id="EraserLangEn" Guid="5BB2BEF6-1271-4786-9A40-552DD6223B1F">
+						<File Id="EraserEn" Name="Eraser.resources.dll"
+							Source="..\bin\Release\en\Eraser.resources.dll"
+							ProcessorArchitecture="msil" />
+					</Component>
+				</Directory>
+				<Directory Id="EraserLangNlDir" Name="nl">
+					<Component Id="EraserLangNl" Guid="A404FC89-2216-4e14-96D5-30F54D120FBB">
+						<File Id="EraserNl" Name="Eraser.resources.dll"
+							Source="..\bin\Release\nl\Eraser.resources.dll"
+							ProcessorArchitecture="msil" />
+					</Component>
+				</Directory>
+
+				<Directory Id="EraserPluginsDir" Name="Plugins">
+					<Component Id="EraserPlugins" Guid="39A307BD-4244-4972-BC12-A5F5A76E684A">
+						<File Id="DefaultPlugins" Name="Eraser.DefaultPlugins.dll"
+							Source="..\bin\Release\Plugins\Eraser.DefaultPlugins.dll"
+							ProcessorArchitecture="msil" />
+						<File Id="ISAAC" Name="ISAAC.dll"
+							Source="..\bin\Release\Plugins\ISAAC.dll"
+							ProcessorArchitecture="msil" />
+					</Component>
+
+					<Directory Id="EraserPluginsLangEnDir" Name="en">
+						<Component Id="EraserPluginsLangEn" Guid="23B2B7DD-C518-4dde-A229-94CA9122B995">
+							<File Id="EraserDefaultPluginsEn" Name="Eraser.DefaultPlugins.resources.dll"
+								Source="..\bin\Release\Plugins\en\Eraser.DefaultPlugins.resources.dll"
+								ProcessorArchitecture="msil" />
+						</Component>
+					</Directory>
+					<Directory Id="EraserPluginsLangNlDir" Name="nl">
+						<Component Id="EraserPluginsLangNl" Guid="CD85AC3F-2B4E-4ac8-8FF9-6BD3BC90BD3D">
+							<File Id="EraserDefaultPluginsNl" Name="Eraser.DefaultPlugins.resources.dll"
+								Source="..\bin\Release\Plugins\nl\Eraser.DefaultPlugins.resources.dll"
+								ProcessorArchitecture="msil" />
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+		</DirectoryRef>
+	</Fragment>
 </Wix>
