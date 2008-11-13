@@ -59,10 +59,8 @@ int Integrate(const std::wstring& destItem, const std::wstring& package)
 		throw GetErrorMessage(GetLastError());
 
 	DWORD lastOperation = 0;
-	//char buffer[262144];
-	char* buffer = new char[2621440];
-	unsigned bufsize = 2621440;
-	while (ReadFile(srcFile, buffer, bufsize, &lastOperation, NULL) && lastOperation)
+	char buffer[262144];
+	while (ReadFile(srcFile, buffer, sizeof(buffer), &lastOperation, NULL) && lastOperation)
 		WriteFile(destFile, buffer, lastOperation, &lastOperation, NULL);
 
 	//Fill to the predetermined file position
@@ -70,10 +68,10 @@ int Integrate(const std::wstring& destItem, const std::wstring& package)
 	if (amountToWrite < 0)
 		throw std::wstring(L"The file size of the binary is larger than the data "
 			L"offset position; recompile the package, increasing DataOffset.");
-	ZeroMemory(buffer, bufsize);
+	ZeroMemory(buffer, sizeof(buffer));
 	while (amountToWrite > 0)
 	{
-		WriteFile(destFile, buffer, std::min<unsigned>(amountToWrite, bufsize),
+		WriteFile(destFile, buffer, std::min<unsigned>(amountToWrite, sizeof(buffer)),
 			&lastOperation, NULL);
 		amountToWrite -= lastOperation;
 	}
@@ -85,7 +83,7 @@ int Integrate(const std::wstring& destItem, const std::wstring& package)
 		throw GetErrorMessage(GetLastError());
 	int error;
 	SetLastError(0);
-	while (ReadFile(packageFile, buffer, bufsize, &lastOperation, NULL) && lastOperation)
+	while (ReadFile(packageFile, buffer, sizeof(buffer), &lastOperation, NULL) && lastOperation)
 	{
 		WriteFile(destFile, buffer, lastOperation, &lastOperation, NULL);
 		error = GetLastError();

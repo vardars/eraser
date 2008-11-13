@@ -133,7 +133,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 
 		//Create the parent window and the child controls
 		::hInstance = hInstance;
-		Application::Get();
+		Application& app = Application::Get();
+		MainWindow& mainWin = app.GetTopWindow();
 
 		//OK, now we do the hard work. Create a folder to place our payload into
 		wchar_t tempPath[MAX_PATH];
@@ -147,12 +148,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 		tempDir += L"eraserInstallBootstrapper\\";
 		TempDir dir(tempDir);
 		ExtractTempFiles(tempDir);
+		mainWin.EnableCancellation(false);
 
 		//Install the .NET framework
 		if (!HasNetFramework())
 			InstallNetFramework(tempDir);
 
 		//Then install Eraser!
+		mainWin.Show(false);
 		InstallEraser(tempDir);
 	}
 	catch (const std::wstring& e)
@@ -266,7 +269,7 @@ bool MainWindow::InitInstance()
 	InitCommonControls();
 
 	//Create the window
-	hWnd = CreateWindowW(szWindowClass, L"Eraser Setup", WS_CAPTION | WS_SYSMENU,
+	hWnd = CreateWindowW(szWindowClass, L"Eraser Setup", WS_CAPTION,
 		CW_USEDEFAULT, 0, 300, 130, NULL, NULL, hInstance, NULL);
 
 	if (!hWnd)
@@ -303,6 +306,16 @@ void MainWindow::SetWindowFont(HWND hWnd)
 	}
 
 	SendMessage(hWnd, WM_SETFONT, (WPARAM)hWndFont, MAKELPARAM(TRUE, 0));
+}
+
+void MainWindow::Show(bool show)
+{
+	ShowWindow(hWnd, show ? SW_SHOW : SW_HIDE);
+}
+
+void MainWindow::EnableCancellation(bool enable)
+{
+	EnableWindow(hWndCancelBtn, enable);
 }
 
 void MainWindow::SetProgress(float progress)

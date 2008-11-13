@@ -44,6 +44,12 @@ public:
 	/// Creates the Window.
 	bool Create();
 
+	/// Shows or hides the window.
+	void Show(bool show);
+
+	/// Enables or disables the cancel button.
+	void EnableCancellation(bool enable);
+
 	/// Sets the progress of the current operation.
 	/// 
 	/// \param[in] progress The percentage of the operation complete. This is a real
