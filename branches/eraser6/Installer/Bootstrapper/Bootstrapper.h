@@ -21,24 +21,73 @@
 
 #pragma once
 
+#include <windows.h>
 #include <string>
 
 #include "resource.h"
+#undef Yield
+
+class Application
+{
+public:
+	/// Gets the Singleton instance of the Application object.
+	static Application& Get();
+
+	/// Processes messages in the message queue.
+	void Yield();
+
+	/// Retrieves the MainWindow object representing the Application's top window.
+	class MainWindow& GetTopWindow();
+
+private:
+	Application();
+};
+
+class MainWindow
+{
+public:
+	/// Constructor.
+	MainWindow()
+	{
+		hWnd = hWndStatusLbl = hWndProgressBar = hWndCancelBtn = NULL;
+	}
+
+	/// Creates the Window.
+	bool Create();
+
+	/// Sets the progress of the current operation.
+	/// 
+	/// \param[in] progress The percentage of the operation complete. This is a real
+	///                     number from 0 to 1.
+	void SetProgress(float progress);
+
+	/// Sets the progress bar to an indeterminate state.
+	void SetProgressIndeterminate();
+
+	/// Sets the dialog label to display a short message.
+	void SetMessage(std::wstring message);
+
+	/// Gets the raw window handle.
+	HWND GetHandle()
+	{
+		return hWnd;
+	}
+
+private:
+	HWND hWnd;
+	HWND hWndStatusLbl;
+	HWND hWndProgressBar;
+	HWND hWndCancelBtn;
+
+private:
+
+	/// Registers the main window class and creates it.
+	bool InitInstance();
+};
 
 /// Formats the system error code using FormatMessage, returning the message as
 /// a std::wstring.
 std::wstring GetErrorMessage(DWORD lastError);
-
-/// Processes existing messages, to prevent the application from being "unresponsive"
-#undef Yield
-void Yield();
-
-/// Retrieves the application's top level window.
-HWND GetTopWindow();
-
-void SetProgress(float progress);
-void SetProgressIndeterminate();
-void SetMessage(std::wstring message);
 
 /// Retrieves the path to the executable file.
 std::wstring GetApplicationPath();

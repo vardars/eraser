@@ -36,10 +36,7 @@ namespace {
 
 	//Static variables
 	HINSTANCE hInstance = NULL;
-	HWND hWndParent = NULL;
-	HWND hWndStatusLbl = NULL;
-	HWND hWndProgressBar = NULL;
-	HWND hWndCancelBtn = NULL;
+	MainWindow MainWin;
 
 	bool              InitInstance(HINSTANCE hInstance, HWND& hWnd);
 	void              SetWindowFont(HWND hWnd);
@@ -86,37 +83,8 @@ namespace {
 		std::wstring DirName;
 	};
 
-	/// Registers the main window class and creates it.
-	bool InitInstance(HINSTANCE hInstance, HWND& hWnd)
-	{
-		WNDCLASSEX wcex;
-		::ZeroMemory(&wcex, sizeof(wcex));
-
-		wcex.cbSize         = sizeof(WNDCLASSEX);
-		wcex.style			= CS_HREDRAW | CS_VREDRAW;
-		wcex.lpfnWndProc	= WndProc;
-		wcex.cbClsExtra		= 0;
-		wcex.cbWndExtra		= 0;
-		wcex.hInstance		= hInstance;
-		wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(BOOTSTRAPPER_ICON));
-		wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-		wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW + 1);
-		wcex.lpszClassName	= szWindowClass;
-		wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(BOOTSTRAPPER_ICON));
-		RegisterClassExW(&wcex);
-		InitCommonControls();
-
-		//Create the window
-		hWnd = CreateWindowW(szWindowClass, L"Eraser Setup", WS_CAPTION | WS_SYSMENU,
-			CW_USEDEFAULT, 0, 300, 130, NULL, NULL, hInstance, NULL);
-
-		if (!hWnd)
-			return false;
-
-		//Set default settings (font)
-		SetWindowFont(hWnd);
-		return true;
-	}
+	
+	
 
 	/// Helper function to set the window font for created windows to the system default.
 	void SetWindowFont(HWND hWnd)
@@ -185,30 +153,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 {
 	//Create the parent window and the child controls
 	::hInstance = hInstance;
-	if (!InitInstance(hInstance, hWndParent))
-		return false;
-
-	HWND hWndPanel = CreateWindowExW(0, STATIC_CLASS, NULL, WS_CHILD | WS_VISIBLE,
-		0, 0, 294, 104, hWndParent, NULL, hInstance, NULL);
-	hWndStatusLbl = CreateWindowExW(0, STATIC_CLASS, L"Extracting setup files...",
-		WS_CHILD | WS_VISIBLE, 13, 38, 270, 19, hWndPanel, NULL, hInstance, NULL);
-	hWndProgressBar = CreateWindowExW(0, PROGRESS_CLASS, NULL,
-		WS_CHILD | WS_VISIBLE | PBS_SMOOTH, 13, 13, 270, 24, hWndPanel, NULL,
-		hInstance, NULL);
-	hWndCancelBtn = CreateWindowExW(0, BUTTON_CLASS, L"Cancel", WS_TABSTOP |
-		WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON, 193, 65, 90, 23, hWndPanel, NULL,
-		hInstance, NULL);
-	if (!hWndPanel || !hWndStatusLbl || !hWndProgressBar || !hWndCancelBtn)
-		return false;
-
-	SetWindowFont(hWndPanel);
-	SetWindowFont(hWndStatusLbl);
-	SetWindowFont(hWndProgressBar);
-	SetWindowFont(hWndCancelBtn);
-	SendMessage(hWndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0, 1000));
-
-	ShowWindow(hWndParent, nCmdShow);
-	UpdateWindow(hWndParent);
+	MainWin.Create();
 
 	try
 	{
@@ -234,36 +179,91 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 	}
 	catch (const std::wstring& e)
 	{
-		MessageBoxW(GetTopWindow(), e.c_str(), L"Eraser Setup", MB_OK | MB_ICONERROR);
+		MessageBoxW(Application::Get().GetTopWindow().GetHandle(), e.c_str(),
+			L"Eraser Setup", MB_OK | MB_ICONERROR);
 	}
 
 	return 0;
 }
 
-HWND GetTopWindow()
+bool MainWindow::Create()
 {
-	return hWndParent;
+	if (!InitInstance())
+		return false;
+
+	HWND hWndPanel = CreateWindowExW(0, STATIC_CLASS, NULL, WS_CHILD | WS_VISIBLE,
+		0, 0, 294, 104, hWnd, NULL, hInstance, NULL);
+	hWndStatusLbl = CreateWindowExW(0, STATIC_CLASS, L"Extracting setup files...",
+		WS_CHILD | WS_VISIBLE, 13, 38, 270, 19, hWndPanel, NULL, hInstance, NULL);
+	hWndProgressBar = CreateWindowExW(0, PROGRESS_CLASS, NULL,
+		WS_CHILD | WS_VISIBLE | PBS_SMOOTH, 13, 13, 270, 24, hWndPanel, NULL,
+		hInstance, NULL);
+	hWndCancelBtn = CreateWindowExW(0, BUTTON_CLASS, L"Cancel", WS_TABSTOP |
+		WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON, 193, 65, 90, 23, hWndPanel, NULL,
+		hInstance, NULL);
+	if (!hWndPanel || !hWndStatusLbl || !hWndProgressBar || !hWndCancelBtn)
+		return false;
+
+	SetWindowFont(hWndPanel);
+	SetWindowFont(hWndStatusLbl);
+	SetWindowFont(hWndProgressBar);
+	SetWindowFont(hWndCancelBtn);
+	SendMessage(hWndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0, 1000));
+
+	ShowWindow(hWnd, nCmdShow);
+	UpdateWindow(hWnd);
 }
 
-void SetProgress(float progress)
+bool MainWindow::InitInstance()
+{
+	WNDCLASSEX wcex;
+	::ZeroMemory(&wcex, sizeof(wcex));
+
+	wcex.cbSize         = sizeof(WNDCLASSEX);
+	wcex.style			= CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc	= WndProc;
+	wcex.cbClsExtra		= 0;
+	wcex.cbWndExtra		= 0;
+	wcex.hInstance		= hInstance;
+	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(BOOTSTRAPPER_ICON));
+	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW + 1);
+	wcex.lpszClassName	= szWindowClass;
+	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(BOOTSTRAPPER_ICON));
+	RegisterClassExW(&wcex);
+	InitCommonControls();
+
+	//Create the window
+	hWnd = CreateWindowW(szWindowClass, L"Eraser Setup", WS_CAPTION | WS_SYSMENU,
+		CW_USEDEFAULT, 0, 300, 130, NULL, NULL, hInstance, NULL);
+
+	if (!hWnd)
+		return false;
+
+	//Set default settings (font)
+	SetWindowFont(hWnd);
+	return true;
+}
+
+void MainWindow::SetProgress(float progress)
 {
 	SetWindowLong(hWndProgressBar, GWL_STYLE,
 		GetWindowLong(hWndProgressBar, GWL_STYLE) & (~PBS_MARQUEE));
 	SendMessage(hWndProgressBar, PBM_SETPOS, (int)(progress * 1000), 0);
 }
 
-void SetProgressIndeterminate()
+void MainWindow::SetProgressIndeterminate()
 {
 	SetWindowLong(hWndProgressBar, GWL_STYLE,
 		GetWindowLong(hWndProgressBar, GWL_STYLE) | PBS_MARQUEE);
 	SendMessage(hWndProgressBar, PBM_SETMARQUEE, true, 100);
 }
 
-void SetMessage(std::wstring message)
+void MainWindow::SetMessage(std::wstring message)
 {
 }
 
-void Yield()
+void Application::Yield()
 {
 	MSG msg;
 	while (PeekMessage(&msg, (HWND)0, 0, 0, PM_NOREMOVE) && msg.message != WM_QUIT)

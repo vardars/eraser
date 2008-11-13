@@ -81,7 +81,8 @@ private:
 			*processedSize = readSize;
 			s->FileRead += readSize;
 
-			SetProgress((float)((double)s->FileRead / s->FileSize));
+			MainWindow& mainWin = Application::Get().GetTopWindow();
+			mainWin.SetProgress((float)((double)s->FileRead / s->FileSize));
 		}
 
 		return SZ_OK;
@@ -249,7 +250,7 @@ int CreateProcessAndWait(const std::wstring& commandLine)
 	//Ok the process was created, wait for it to terminate.
 	DWORD lastWait = 0;
 	while ((lastWait = WaitForSingleObject(pInfo.hProcess, 50)) == WAIT_TIMEOUT)
-		Yield();
+		Application::Get().Yield();
 	if (lastWait == WAIT_ABANDONED)
 		throw std::wstring(L"The condition waiting on the termination of the .NET installer was abandoned.");
 
@@ -269,8 +270,9 @@ int CreateProcessAndWait(const std::wstring& commandLine)
 bool InstallNetFramework(std::wstring tempDir)
 {
 	//Update the UI
-	SetProgressIndeterminate();
-	SetMessage(L"Installing .NET Framework...");
+	MainWindow& mainWin = Application::Get().GetTopWindow();
+	mainWin.SetProgressIndeterminate();
+	mainWin.SetMessage(L"Installing .NET Framework...");
 
 	//Get the path to the installer
 	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]) == std::wstring::npos)
@@ -284,8 +286,9 @@ bool InstallNetFramework(std::wstring tempDir)
 
 bool InstallEraser(std::wstring tempDir)
 {
-	SetProgressIndeterminate();
-	SetMessage(L"Installing Eraser...");
+	MainWindow& mainWin = Application::Get().GetTopWindow();
+	mainWin.SetProgressIndeterminate();
+	mainWin.SetMessage(L"Installing Eraser...");
 
 	//Determine the system architecture.
 	SYSTEM_INFO sysInfo;
