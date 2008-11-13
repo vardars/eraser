@@ -30,6 +30,7 @@
 // Windows Header Files:
 #include <windows.h>
 #include <commctrl.h>
+#include <Shellapi.h>
 
 #include <tchar.h>
 #include <string>

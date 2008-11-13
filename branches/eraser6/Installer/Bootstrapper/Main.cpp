@@ -97,14 +97,44 @@ namespace {
 }
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
-                       LPTSTR /*lpCmdLine*/, int /*nCmdShow*/)
+                       LPTSTR lpCmdLine, int /*nCmdShow*/)
 {
-	//Create the parent window and the child controls
-	::hInstance = hInstance;
-	Application::Get();
-
 	try
 	{
+		//Parse the command line.
+		int argc = 0;
+		LPWSTR* argv = CommandLineToArgvW(lpCmdLine, & argc);
+		if (argv == NULL)
+			throw GetErrorMessage(GetLastError());
+
+		for (int i = 0; i != argc; ++i)
+		{
+			if (wcscmp(argv[i], L"--integrate") == 0)
+			{
+				//OK, integrate ourselves.
+				std::wstring destItem, package;
+				if (++i != argc)
+					package = argv[i];
+
+				for (++i; i < argc; ++i)
+				{
+					std::wstring arg(argv[i]);
+					if (arg.substr(0, 9) == L"--out")
+					{
+						if (++i != argc)
+							destItem = argv[i];
+					}
+				}
+
+				if (!destItem.empty() && !package.empty())
+					return Integrate(destItem, package);
+			}
+		}
+
+		//Create the parent window and the child controls
+		::hInstance = hInstance;
+		Application::Get();
+
 		//OK, now we do the hard work. Create a folder to place our payload into
 		wchar_t tempPath[MAX_PATH];
 		DWORD result = GetTempPathW(sizeof(tempPath) / sizeof(tempPath[0]), tempPath);

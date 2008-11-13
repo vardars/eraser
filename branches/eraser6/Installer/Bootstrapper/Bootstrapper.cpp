@@ -44,6 +44,55 @@ private:
 	HANDLE thisHandle;
 };
 
+int Integrate(const std::wstring& destItem, const std::wstring& package)
+{
+	//Open a handle to ourselves
+	Handle srcFile(CreateFileW(Application::Get().GetPath().c_str(), GENERIC_READ,
+		FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL));
+	if (srcFile == INVALID_HANDLE_VALUE)
+		throw GetErrorMessage(GetLastError());
+
+	//Copy ourselves, in essence.
+	Handle destFile(CreateFileW(destItem.c_str(), GENERIC_WRITE, 0, NULL,
+		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL));
+	if (destFile == INVALID_HANDLE_VALUE)
+		throw GetErrorMessage(GetLastError());
+
+	DWORD lastOperation = 0;
+	//char buffer[262144];
+	char* buffer = new char[2621440];
+	unsigned bufsize = 2621440;
+	while (ReadFile(srcFile, buffer, bufsize, &lastOperation, NULL) && lastOperation)
+		WriteFile(destFile, buffer, lastOperation, &lastOperation, NULL);
+
+	//Fill to the predetermined file position
+	int amountToWrite = DataOffset - GetFileSize(srcFile, NULL);
+	if (amountToWrite < 0)
+		throw std::wstring(L"The file size of the binary is larger than the data "
+			L"offset position; recompile the package, increasing DataOffset.");
+	ZeroMemory(buffer, bufsize);
+	while (amountToWrite > 0)
+	{
+		WriteFile(destFile, buffer, std::min<unsigned>(amountToWrite, bufsize),
+			&lastOperation, NULL);
+		amountToWrite -= lastOperation;
+	}
+
+	//Then copy the package
+	Handle packageFile(CreateFileW(package.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
+		OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL));
+	if (packageFile == INVALID_HANDLE_VALUE)
+		throw GetErrorMessage(GetLastError());
+	int error;
+	SetLastError(0);
+	while (ReadFile(packageFile, buffer, bufsize, &lastOperation, NULL) && lastOperation)
+	{
+		WriteFile(destFile, buffer, lastOperation, &lastOperation, NULL);
+		error = GetLastError();
+	}
+	return 0;
+}
+
 /// ISzInStream interface for extracting the archives.
 struct LZFileStream
 {
@@ -57,21 +106,16 @@ public:
 		InStream.Seek = LzFileStreamSeek;
 		FileHandle = fileHandle;
 
-		FileRead = FileRead = 0;
+		FileRead = 0;
 		LARGE_INTEGER largeInt;
 		largeInt.QuadPart = 0;
 		if (!SetFilePointerEx(FileHandle, largeInt, &largeInt, FILE_CURRENT))
 			throw GetErrorMessage(GetLastError());
+		DataOffset = largeInt.QuadPart;
 
-		long long currPos = largeInt.QuadPart;
-		largeInt.QuadPart = 0;
-		if (!SetFilePointerEx(FileHandle, largeInt, &largeInt, FILE_END))
+		if (!GetFileSizeEx(fileHandle, &largeInt))
 			throw GetErrorMessage(GetLastError());
-		FileSize = largeInt.QuadPart - currPos;
-
-		largeInt.QuadPart = currPos;
-		if (!SetFilePointerEx(FileHandle, largeInt, NULL, FILE_BEGIN))
-			throw GetErrorMessage(GetLastError());
+		FileSize = largeInt.QuadPart - DataOffset;
 	}
 
 	~LZFileStream()
@@ -83,6 +127,7 @@ public:
 
 private:
 	HANDLE FileHandle;
+	long long DataOffset;
 	long long FileRead;
 	long long FileSize;
 
@@ -94,7 +139,10 @@ private:
 		//Since we can allocate as much as we want to allocate, take a decent amount
 		//of memory and stop.
 		size = std::min(1048576u * 4, size);
-		char* buffer = new char[size];
+		static char* buffer = NULL;
+		if (buffer)
+			delete[] buffer;
+		buffer = new char[size];
 
 		DWORD readSize = 0;
 		if (ReadFile(s->FileHandle, buffer, size, &readSize, NULL) && readSize != 0)
@@ -115,8 +163,7 @@ private:
 		LZFileStream* s = static_cast<LZFileStream*>(object);
 
 		LARGE_INTEGER value;
-		value.LowPart = (DWORD)pos;
-		value.HighPart = (LONG)((UInt64)pos >> 32);
+		value.QuadPart = pos + s->DataOffset;
 		if (!SetFilePointerEx(s->FileHandle, value, NULL, FILE_BEGIN) &&
 			GetLastError() != NO_ERROR)
 			return SZE_FAIL;
@@ -131,17 +178,17 @@ void ExtractTempFiles(std::wstring pathToExtract)
 
 	//Open the file
 #if _DEBUG
-	Handle srcFile(CreateFileW((Application::Get().GetPath() + L".7z").c_str(),
-		GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL));
+	HANDLE srcFile = CreateFileW((Application::Get().GetPath() + L".7z").c_str(),
+		GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (srcFile == INVALID_HANDLE_VALUE)
 		throw GetErrorMessage(GetLastError());
 #else
-	Handle srcFile(CreateFileW(Application::Get().GetPath().c_str(), GENERIC_READ,
-		FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL));
+	HANDLE srcFile = CreateFileW(Application::Get().GetPath().c_str(), GENERIC_READ,
+		FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (srcFile == INVALID_HANDLE_VALUE)
 		throw GetErrorMessage(GetLastError());
 
-	//Seek to the 128th kb.
+	//Seek to the 196th kb.
 	LARGE_INTEGER fPos;
 	fPos.QuadPart = DataOffset;
 

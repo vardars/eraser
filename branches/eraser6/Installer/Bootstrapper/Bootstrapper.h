@@ -137,6 +137,9 @@ const unsigned DataOffset = 160 * 1024;
 /// a std::wstring.
 std::wstring GetErrorMessage(DWORD lastError);
 
+/// Integrates the distribution package to the installer.
+int Integrate(const std::wstring& destItem, const std::wstring& package);
+
 /// Extracts the setup files to the users' temporary folder.
 /// 
 /// \param[in] pathToExtract The path to extract the temporary files to.
