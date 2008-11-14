@@ -319,7 +319,29 @@ namespace Eraser
 
 		private void saveSettings_Click(object sender, EventArgs e)
 		{
-			//Error checks first.
+			EraserSettings settings = new EraserSettings();
+			ManagerSettings managerSettings = ManagerLibrary.Instance.Settings;
+
+			//Save the settings that don't fail first.
+			managerSettings.EraseLockedFilesOnRestart = lockedAllow.Checked;
+			managerSettings.ConfirmEraseOnRestart = lockedConfirm.Checked;
+			managerSettings.ExecuteMissedTasksImmediately = schedulerMissedImmediate.Checked;
+
+			List<Guid> approvedPlugins = managerSettings.ApprovedPlugins;
+			foreach (ListViewItem item in pluginsManager.Items)
+			{
+				PluginInstance plugin = (PluginInstance)item.Tag;
+				if (item.Checked)
+				{
+					if (approvedPlugins.IndexOf(plugin.AssemblyInfo.GUID) == -1)
+						approvedPlugins.Add(plugin.AssemblyInfo.GUID);
+				}
+				else
+					approvedPlugins.Remove(plugin.AssemblyInfo.GUID);
+			}
+			managerSettings.ApprovedPlugins = approvedPlugins;
+
+			//Error checks for the rest that do.
 			errorProvider.Clear();
 			if (uiLanguage.SelectedIndex == -1)
 			{
@@ -352,8 +374,6 @@ namespace Eraser
 				return;
 			}
 
-			EraserSettings settings = new EraserSettings();
-			ManagerSettings managerSettings = ManagerLibrary.Instance.Settings;
 			if (((Language)uiLanguage.SelectedItem).Name != settings.Language)
 			{
 				settings.Language = ((Language)uiLanguage.SelectedItem).Name;
@@ -373,28 +393,12 @@ namespace Eraser
 					S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 				managerSettings.ActivePRNG = newPRNG.GUID;
 			}
-			managerSettings.EraseLockedFilesOnRestart = lockedAllow.Checked;
-			managerSettings.ConfirmEraseOnRestart = lockedConfirm.Checked;
-
+			
 			managerSettings.PlausibleDeniability = plausibleDeniability.Checked;
 			List<string> plausibleDeniabilityFilesList = new List<string>();
 			foreach (string str in this.plausibleDeniabilityFiles.Items)
 				plausibleDeniabilityFilesList.Add(str);
 			managerSettings.PlausibleDeniabilityFiles = plausibleDeniabilityFilesList;
-
-			managerSettings.ExecuteMissedTasksImmediately = schedulerMissedImmediate.Checked;
-
-			foreach (ListViewItem item in pluginsManager.Items)
-			{
-				PluginInstance plugin = (PluginInstance)item.Tag;
-				if (item.Checked)
-				{
-					if (managerSettings.ApprovedPlugins.IndexOf(plugin.AssemblyInfo.GUID) == -1)
-						managerSettings.ApprovedPlugins.Add(plugin.AssemblyInfo.GUID);
-				}
-				else
-					managerSettings.ApprovedPlugins.Remove(plugin.AssemblyInfo.GUID);
-			}
 		}
 	}
 }
