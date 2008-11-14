@@ -67,11 +67,6 @@ namespace Eraser.Manager
 		internal PRNGManager PRNGManager;
 
 		/// <summary>
-		/// Entropy source manager global instance.
-		/// </summary>
-		internal EntropySourceManager EntropySourceManager;
-
-		/// <summary>
 		/// Global instance of the Language Manager.
 		/// </summary>
 		internal LanguageManager LanguageManager;
