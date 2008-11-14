@@ -39,7 +39,7 @@ namespace Eraser.Manager
 	/// An interface class for all pseudorandom number generators used for the
 	/// random data erase passes.
 	/// </summary>
-	public abstract class PRNG : Random
+	public abstract class PRNG
 	{
 		public override string ToString()
 		{
@@ -73,14 +73,33 @@ namespace Eraser.Manager
 		protected internal abstract void Reseed(byte[] seed);
 
 		#region Random members
-		public override int Next(int maxValue)
+		/// <summary>
+		/// Returns a nonnegative random number less than the specified maximum.
+		/// </summary>
+		/// <param name="maxValue">The exclusive upper bound of the random number
+		/// to be generated. maxValue must be greater than or equal to zero.</param>
+		/// <returns>A 32-bit signed integer greater than or equal to zero, and
+		/// less than maxValue; that is, the range of return values ordinarily
+		/// includes zero but not maxValue. However, if maxValue equals zero,
+		/// maxValue is returned.</returns>
+		public int Next(int maxValue)
 		{
 			if (maxValue == 0)
 				return 0;
 			return Next() % maxValue;
 		}
 
-		public override int Next(int minValue, int maxValue)
+		/// <summary>
+		/// Returns a random number within a specified range.
+		/// </summary>
+		/// <param name="minValue">The inclusive lower bound of the random number
+		/// returned.</param>
+		/// <param name="maxValue">The exclusive upper bound of the random number
+		/// returned. maxValue must be greater than or equal to minValue.</param>
+		/// <returns>A 32-bit signed integer greater than or equal to minValue and
+		/// less than maxValue; that is, the range of return values includes minValue
+		/// but not maxValue. If minValue equals maxValue, minValue is returned.</returns>
+		public int Next(int minValue, int maxValue)
 		{
 			if (minValue > maxValue)
 				throw new ArgumentOutOfRangeException("minValue", minValue, "minValue is greater than maxValue");
@@ -89,7 +108,12 @@ namespace Eraser.Manager
 			return (Next() % (maxValue - minValue)) + minValue;
 		}
 
-		public unsafe override int Next()
+		/// <summary>
+		/// Returns a nonnegative random number.
+		/// </summary>
+		/// <returns>A 32-bit signed integer greater than or equal to zero and less
+		/// than System.Int32.MaxValue.</returns>
+		public unsafe int Next()
 		{
 			//Declare a return variable
 			int result;
@@ -111,29 +135,11 @@ namespace Eraser.Manager
 			return Math.Abs(result);
 		}
 
-		protected unsafe override double Sample()
-		{
-			//Declare a return variable
-			double result;
-			double* fResult = &result;
-
-			//Get the random-valued bytes to fill the int.
-			byte[] rand = new byte[sizeof(double)];
-			NextBytes(rand);
-
-			//Copy the random buffer into the int.
-			fixed (byte* fRand = rand)
-			{
-				byte* pResult = (byte*)fResult;
-				byte* pRand = fRand;
-				for (int i = 0; i != sizeof(double); ++i)
-					*pResult++ = *pRand++;
-			}
-
-			return result;
-		}
-
-		public abstract override void NextBytes(byte[] buffer);
+		/// <summary>
+		/// Fills the elements of a specified array of bytes with random numbers.
+		/// </summary>
+		/// <param name="buffer">An array of bytes to contain random numbers.</param>
+		public abstract void NextBytes(byte[] buffer);
 		#endregion
 	}
 
