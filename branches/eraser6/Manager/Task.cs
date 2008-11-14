@@ -367,7 +367,8 @@ namespace Eraser.Manager
 						Replace("\\?", ".");
 					Regex excludePattern = new Regex(regex, RegexOptions.IgnoreCase);
 					foreach (FileInfo file in files)
-						if (excludePattern.Matches(file.FullName).Count == 0)
+						if ((file.Attributes & FileAttributes.ReparsePoint) == 0 &&
+							excludePattern.Matches(file.FullName).Count == 0)
 						{
 							totalSize += file.Length;
 							GetPathADSes(ref result, ref totalSize, file.FullName);
@@ -377,6 +378,9 @@ namespace Eraser.Manager
 				else
 					foreach (FileInfo file in files)
 					{
+						if ((file.Attributes & FileAttributes.ReparsePoint) != 0)
+							continue;
+
 						totalSize += file.Length;
 						GetPathADSes(ref result, ref totalSize, file.FullName);
 						result.Add(file.FullName);

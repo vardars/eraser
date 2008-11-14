@@ -618,10 +618,24 @@ namespace Eraser.Manager
 			{
 				try
 				{
+					//Skip this directory if it is a reparse point
+					if ((info.Attributes & FileAttributes.ReparsePoint) != 0)
+					{
+						task.Log.Add(new LogEntry(string.Format(S._("Files in {0} did not have " +
+							"their cluster tips erased because it is a hard link or a symbolic " +
+							"link."), info.FullName), LogLevel.INFORMATION);
+						return;
+					}
+
 					foreach (FileInfo file in info.GetFiles())
-						if (Eraser.Util.File.IsProtectedSystemFile(file.FullName))
-							task.Log.Add(new LogEntry(string.Format("{0} did not have its cluster tips " +
-								"erased, because it is a system file", file.FullName), LogLevel.INFORMATION));
+						if (Util.File.IsProtectedSystemFile(file.FullName))
+							task.Log.Add(new LogEntry(string.Format("{0} did not have its " +
+								"cluster tips erased, because it is a system file", file.FullName),
+								LogLevel.INFORMATION));
+						else if ((file.Attributes & FileAttributes.ReparsePoint) != 0)
+							task.Log.Add(new LogEntry(string.Format(S._("{0} did not have its " +
+								"cluster tips erased because it is a hard link or a symbolic link."),
+								file.FullName), LogLevel.INFORMATION);
 						else
 						{
 							foreach (string i in Util.File.GetADSes(file))
@@ -806,8 +820,7 @@ namespace Eraser.Manager
 				StreamInfo info = new StreamInfo(paths[i]);
 				if ((info.Attributes & FileAttributes.Compressed) != 0 ||
 					(info.Attributes & FileAttributes.Encrypted) != 0 ||
-					(info.Attributes & FileAttributes.SparseFile) != 0 ||
-					(info.Attributes & FileAttributes.ReparsePoint) != 0)
+					(info.Attributes & FileAttributes.SparseFile) != 0
 				{
 					//Log the error
 					throw new ArgumentException("Compressed, encrypted, or sparse" +
