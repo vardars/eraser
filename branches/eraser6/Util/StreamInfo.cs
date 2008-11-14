@@ -371,7 +371,7 @@ namespace Eraser.Util
 		/// The attributes can be one or more of the FILE_ATTRIBUTE_* values.</returns>
 		private static uint GetFileAttributes(string lpFileName)
 		{
-			return GetFileAttributesInternal("\\\\?\\" + lpFileName);
+			return GetFileAttributesInternal(lpFileName);
 		}
 
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode,
@@ -392,7 +392,7 @@ namespace Eraser.Util
 		/// information, call Marshal.GetLastWin32Error.</returns>
 		private static bool SetFileAttributes(string lpFileName, uint dwFileAttributes)
 		{
-			return SetFileAttributesInternal("\\\\?\\" + lpFileName, dwFileAttributes);
+			return SetFileAttributesInternal(lpFileName, dwFileAttributes);
 		}
 
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode,
