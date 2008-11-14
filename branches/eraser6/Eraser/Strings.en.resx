@@ -147,9 +147,6 @@
   <data name="Could not load task list. All task entries have been lost." xml:space="preserve">
     <value>Could not load task list. All task entries have been lost.</value>
   </data>
-  <data name="Could not load list of files used for plausible deniability.\n\nThe list of files have been lost." xml:space="preserve">
-    <value>Could not load list of files used for plausible deniability.\n\nThe list of files have been lost.</value>
-  </data>
   <data name="Could not load the setting {0} for plugin {1}.The setting has been lost." xml:space="preserve">
     <value>Could not load the setting {0} for plugin {1}.The setting has been lost.</value>
   </data>

@@ -31,10 +31,10 @@ namespace Eraser.Manager
 	/// </summary>
 	public class ManagerLibrary : IDisposable
 	{
-		public ManagerLibrary(Settings settings)
+		public ManagerLibrary(SettingsManager settings)
 		{
 			Instance = this;
-			Settings = settings;
+			SettingsManager = settings;
 
 			EntropySourceManager = new EntropySourceManager();
 			LanguageManager = new LanguageManager(); 
@@ -47,7 +47,7 @@ namespace Eraser.Manager
 		{
 			EntropySourceManager.Poller.Abort();
 			Host.Dispose();
-			Settings.Save();
+			SettingsManager.Save();
 			Instance = null;
 		}
 
@@ -77,9 +77,21 @@ namespace Eraser.Manager
 		internal ErasureMethodManager ErasureMethodManager;
 
 		/// <summary>
-		/// Global instance of the Settings object.
+		/// Global instance of the Settings manager.
 		/// </summary>
-		public Settings Settings;
+		public SettingsManager SettingsManager;
+
+		/// <summary>
+		/// Gets the settings object representing the settings for the Eraser
+		/// Manager. This is just shorthand for the local classes.
+		/// </summary>
+		public ManagerSettings Settings
+		{
+			get
+			{
+				return new ManagerSettings();
+			}
+		}
 
 		/// <summary>
 		/// The global instance of the Plugin host.

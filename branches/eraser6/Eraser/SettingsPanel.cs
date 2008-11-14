@@ -125,8 +125,9 @@ namespace Eraser
 
 		private void LoadSettings()
 		{
+			EraserSettings settings = new EraserSettings();
 			foreach (Object lang in uiLanguage.Items)
-				if (((Language)lang).Name == ManagerLibrary.Instance.Settings.UILanguage)
+				if (((Language)lang).Name == settings.Language)
 				{
 					uiLanguage.SelectedItem = lang;
 					break;
@@ -337,11 +338,10 @@ namespace Eraser
 				return;
 			}
 
-			if (((Language)uiLanguage.SelectedItem).Name !=
-				ManagerLibrary.Instance.Settings.UILanguage)
+			EraserSettings settings = new EraserSettings();
+			if (((Language)uiLanguage.SelectedItem).Name != settings.Language)
 			{
-				ManagerLibrary.Instance.Settings.UILanguage =
-					((Language)uiLanguage.SelectedItem).Name;
+				settings.Language = ((Language)uiLanguage.SelectedItem).Name;
 				MessageBox.Show(S._("The new UI language will take only effect when Eraser is restarted."),
 					S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
@@ -373,6 +373,47 @@ namespace Eraser
 			ManagerLibrary.Instance.Settings.PlausibleDeniability =
 				plausibleDeniability.Checked;
 		}
+	}
+
+	internal class EraserSettings
+	{
+		public EraserSettings()
+		{
+			settings = Manager.ManagerLibrary.Instance.SettingsManager.ModuleSettings;
+		}
+
+		/// <summary>
+		/// Gets or sets a value containing the language the UI should be displayed in.
+		/// </summary>
+		public string Language
+		{
+			get
+			{
+				return (string)settings["Language"];
+			}
+			set
+			{
+				settings["Language"] = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value on whether the main frame should be minimised to the
+		/// system notification area.
+		/// </summary>
+		public bool HideWhenMinimised
+		{
+			get
+			{
+				return (bool)settings["HideWhenMinimised"];
+			}
+			set
+			{
+				settings["HideWhenMinimised"] = value;
+			}
+		}
+
+		private Manager.Settings settings;
 	}
 }
 

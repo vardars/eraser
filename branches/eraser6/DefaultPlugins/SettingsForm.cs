@@ -42,17 +42,14 @@ namespace Eraser.DefaultPlugins
 					fl16MethodCmb.Items.Add(method);
 
 			//Load the settings.
-			Dictionary<string, object> settings = DefaultPlugin.Settings;
-			if (settings.ContainsKey("FL16Method"))
-			{
-				Guid fl16Method = (Guid)settings["FL16Method"];
+			DefaultPluginSettings settings = DefaultPlugin.Settings;
+			if (settings.FL16Method != Guid.Empty)
 				foreach (object item in fl16MethodCmb.Items)
-					if (((ErasureMethod)item).GUID == fl16Method)
+					if (((ErasureMethod)item).GUID == settings.FL16Method)
 					{
 						fl16MethodCmb.SelectedItem = item;
 						break;
 					}
-			}
 
 			if (fl16MethodCmb.SelectedIndex == -1)
 			{
@@ -66,10 +63,9 @@ namespace Eraser.DefaultPlugins
 					} 
 			}
 
-			if (DefaultPlugin.Settings.ContainsKey("EraseCustom"))
+			if (DefaultPlugin.Settings.EraseCustom != null)
 			{
-				customMethods = (Dictionary<Guid, CustomErasureMethod>)
-					DefaultPlugin.Settings["EraseCustom"];
+				customMethods = DefaultPlugin.Settings.EraseCustom;
 
 				//Display the whole set on the list.
 				foreach (Guid guid in customMethods.Keys)
@@ -107,6 +103,7 @@ namespace Eraser.DefaultPlugins
 			if (form.ShowDialog() == DialogResult.OK)
 			{
 				CustomErasureMethod method = form.Method;
+				customMethods.Add(method.GUID, method);
 				addCustomMethods.Add(method);
 				AddMethod(method);
 			}
@@ -135,10 +132,10 @@ namespace Eraser.DefaultPlugins
 				return;
 			}
 
-			DefaultPlugin.Settings["FL16Method"] = ((ErasureMethod)fl16MethodCmb.SelectedItem).GUID;
+			DefaultPlugin.Settings.FL16Method = ((ErasureMethod)fl16MethodCmb.SelectedItem).GUID;
 
 			//Save the list of custom erasure methods
-			DefaultPlugin.Settings["EraseCustom"] = customMethods;
+			DefaultPlugin.Settings.EraseCustom = customMethods;
 
 			//Remove the old methods.
 			foreach (Guid guid in removeCustomMethods)
@@ -146,10 +143,7 @@ namespace Eraser.DefaultPlugins
 
 			//Update the Erasure method manager on the methods
 			foreach (CustomErasureMethod method in addCustomMethods)
-			{
-				customMethods.Add(method.GUID, method);
 				ErasureMethodManager.Register(new EraseCustom(method), new object[] { method });
-			}
 
 			//Close the dialog
 			DialogResult = DialogResult.OK;

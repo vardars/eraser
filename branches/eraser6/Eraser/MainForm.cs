@@ -304,18 +304,17 @@ namespace Eraser
 		{
 			get
 			{
-				Dictionary<string, object> settings =
-					ManagerLibrary.Instance.Settings.PluginSettings;
-				return settings.ContainsKey("HideWhenMinimised") ?
-					(bool)settings["HideWhenMinimised"] : true;
+				Manager.Settings settings =
+					ManagerLibrary.Instance.SettingsManager.ModuleSettings;
+				return settings["HideWhenMinimised"] == null ? true :
+					(bool)settings["HideWhenMinimised"];
 			}
 
 			set
 			{
-				Dictionary<string, object> settings =
-					ManagerLibrary.Instance.Settings.PluginSettings;
+				Manager.Settings settings =
+					ManagerLibrary.Instance.SettingsManager.ModuleSettings;
 				settings["HideWhenMinimised"] = hideWhenMinimiseToolStripMenuItem.Checked;
-				ManagerLibrary.Instance.Settings.SetSettings(settings);
 			}
 		}
 

@@ -27,20 +27,48 @@ using System.Runtime.InteropServices;
 
 namespace Eraser.Manager
 {
+	public abstract class SettingsManager
+	{
+		/// <summary>
+		/// Saves all the settings to persistent storage.
+		/// </summary>
+		public abstract void Save();
+
+		/// <summary>
+		/// Gets the dictionary holding settings for the calling assembly.
+		/// </summary>
+		public Settings ModuleSettings
+		{
+			get
+			{
+				return GetSettings(new Guid(((GuidAttribute)Assembly.GetCallingAssembly().
+					GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value));
+			}
+		}
+
+		/// <summary>
+		/// Gets the settings from the data source.
+		/// </summary>
+		/// <param name="guid">The GUID of the calling plugin</param>
+		/// <returns>The Settings object which will act as the data store.</returns>
+		protected abstract Settings GetSettings(Guid guid);
+	}
+
 	/// <summary>
-	/// Settings class. Holds the defaults for the manager's operations.
+	/// Settings class. Represents settings to a given client.
 	/// </summary>
 	public abstract class Settings
 	{
 		/// <summary>
-		/// Saves all the settings to any persistent storage.
+		/// Gets the setting
 		/// </summary>
-		protected internal abstract void Save();
-
-		/// <summary>
-		/// Loads all settings from storage.
-		/// </summary>
-		protected internal abstract void Load();
+		/// <param name="setting">The name of the setting.</param>
+		/// <returns>The object stored in the settings database, or null if undefined.</returns>
+		public abstract object this[string setting]
+		{
+			get;
+			set;
+		}
 
 		/// <summary>
 		/// The language which all user interface elements should be presented in.
@@ -60,6 +88,24 @@ namespace Eraser.Manager
 			}
 		}
 
+		private string uiLanguage;
+	}
+
+	/// <summary>
+	/// Handles the settings related to the Eraser Manager.
+	/// </summary>
+	public class ManagerSettings
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="settings">The Settings object which is the data store for
+		/// this object.</param>
+		public ManagerSettings()
+		{
+			settings = ManagerLibrary.Instance.SettingsManager.ModuleSettings;
+		}
+
 		/// <summary>
 		/// The default file erasure method. This is a GUID since methods are
 		/// implemented through plugins and plugins may not be loaded and missing
@@ -69,13 +115,12 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				lock (this)
-					return defaultFileErasureMethod;
+				return settings["DefaultFileErasureMethod"] == null ? Guid.Empty :
+					(Guid)settings["DefaultFileErasureMethod"];
 			}
 			set
 			{
-				lock (this)
-					defaultFileErasureMethod = value;
+				settings["DefaultFileErasureMethod"] = value;
 			}
 		}
 
@@ -88,13 +133,12 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				lock (this)
-					return defaultUnusedSpaceErasureMethod;
+				return settings["DefaultUnusedSpaceErasureMethod"] == null ? Guid.Empty :
+					(Guid)settings["DefaultUnusedSpaceErasureMethod"];
 			}
 			set
 			{
-				lock (this)
-					defaultUnusedSpaceErasureMethod = value;
+				settings["DefaultUnusedSpaceErasureMethod"] = value;
 			}
 		}
 
@@ -106,13 +150,12 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				lock (this)
-					return activePRNG;
+				return settings["ActivePRNG"] == null ? Guid.Empty :
+					(Guid)settings["ActivePRNG"];
 			}
 			set
 			{
-				lock (this)
-					activePRNG = value;
+				settings["ActivePRNG"] = value;
 			}
 		}
 
@@ -124,13 +167,12 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				lock (this)
-					return eraseLockedFilesOnRestart;
+				return settings["EraseLockedFilesOnRestart"] == null ? true :
+					(bool)settings["EraseLockedFilesOnRestart"];
 			}
 			set
 			{
-				lock (this)
-					eraseLockedFilesOnRestart = value;
+				settings["EraseLockedFilesOnRestart"] = value;
 			}
 		}
 
@@ -142,13 +184,12 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				lock (this)
-					return confirmEraseOnRestart;
+				return settings["ConfirmEraseOnRestart"] == null ?
+					true : (bool)settings["ConfirmEraseOnRestart"];
 			}
 			set
 			{
-				lock (this)
-					confirmEraseOnRestart = value;
+				settings["ConfirmEraseOnRestart"] = value;
 			}
 		}
 
@@ -159,13 +200,12 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				lock (this)
-					return executeMissedTasksImmediately;
+				return settings["ExecuteMissedTasksImmediately"] == null ?
+					true : (bool)settings["ExecuteMissedTasksImmediately"];
 			}
 			set
 			{
-				lock (this)
-					executeMissedTasksImmediately = value;
+				settings["ExecuteMissedTasksImmediately"] = value;
 			}
 		}
 
@@ -179,13 +219,12 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				lock (this)
-					return plausibleDeniability;
+				return settings["PlausibleDeniability"] == null ? false :
+					(bool)settings["PlausibleDeniability"];
 			}
 			set
 			{
-				lock (this)
-					plausibleDeniability = value;
+				settings["PlausibleDeniability"] = value;
 			}
 		}
 
@@ -196,60 +235,19 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				lock (this)
-					return plausibleDeniabilityFiles;
+				return settings["PlausibleDeniabilityFiles"] == null ?
+					new List<string>() :
+					(List<string>)settings["PlausibleDeniabilityFiles"];
 			}
 			set
 			{
-				lock (this)
-					plausibleDeniabilityFiles = value;
+				settings["PlausibleDeniabilityFiles"] = value;
 			}
 		}
 
 		/// <summary>
-		/// Gets the dictionary holding settings for the calling assembly.
+		/// The Settings object which is the data store of this object.
 		/// </summary>
-		public Dictionary<string, object> PluginSettings
-		{
-			get
-			{
-				return GetSettings(new Guid(((GuidAttribute)Assembly.GetCallingAssembly().
-					GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value));
-			}
-		}
-
-		/// <summary>
-		/// Gets the settings from the data source.
-		/// </summary>
-		/// <param name="guid">The GUID of the calling plugin</param>
-		/// <returns>The dictionary containing settings for the plugin</returns>
-		protected abstract Dictionary<string, object> GetSettings(Guid guid);
-
-		/// <summary>
-		/// Sets the settings for the calling plugin.
-		/// </summary>
-		/// <param name="settings">The settings of the plugin</param>
-		public void SetSettings(Dictionary<string, object> settings)
-		{
-			SetSettings(new Guid(((GuidAttribute)Assembly.GetCallingAssembly().
-				GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value), settings);
-		}
-
-		/// <summary>
-		/// Saves the settings from the plugin into the data source.
-		/// </summary>
-		/// <param name="guid"></param>
-		/// <param name="settings"></param>
-		protected abstract void SetSettings(Guid guid, Dictionary<string, object> settings);
-
-		private string uiLanguage;
-		private Guid defaultFileErasureMethod = Guid.Empty;
-		private Guid defaultUnusedSpaceErasureMethod = Guid.Empty;
-		private Guid activePRNG = Guid.Empty;
-		private bool eraseLockedFilesOnRestart = true;
-		private bool confirmEraseOnRestart = true;
-		private bool executeMissedTasksImmediately = true;
-		private bool plausibleDeniability = true;
-		private List<string> plausibleDeniabilityFiles = new List<string>();
+		private Settings settings;
 	}
 }

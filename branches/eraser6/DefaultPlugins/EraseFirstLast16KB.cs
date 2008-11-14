@@ -35,9 +35,9 @@ namespace Eraser.DefaultPlugins
 		public FirstLast16KB()
 		{
 			//Try to retrieve the set erasure method
-			if (DefaultPlugin.Settings.ContainsKey("FL16Method"))
+			if (DefaultPlugin.Settings.FL16Method != Guid.Empty)
 				method = ErasureMethodManager.GetInstance(
-					(Guid)DefaultPlugin.Settings["FL16Method"]);
+					DefaultPlugin.Settings.FL16Method);
 			else
 				try
 				{

@@ -96,131 +96,79 @@ namespace Eraser
 		public static DirectExecutor eraserClient;
 	}
 
-	public class Settings : Manager.Settings
+	public class Settings : Manager.SettingsManager
 	{
-		public Settings()
+		/// <summary>
+		/// Registry-based storage backing for the Settings class.
+		/// </summary>
+		private class RegistrySettings : Manager.Settings
 		{
-			Load();
-		}
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="key">The registry key to look for the settings in.</param>
+			public RegistrySettings(Guid pluginID, RegistryKey key)
+			{
+				this.key = key;
+			}
 
-		protected override void Load()
-		{
-			RegistryKey key = Application.UserAppDataRegistry;
-			ActivePRNG = new Guid((string)
-				key.GetValue("PRNG", Guid.Empty.ToString()));
-			EraseLockedFilesOnRestart =
-				(int)key.GetValue("EraseOnRestart", (object)1) != 0;
-			ConfirmEraseOnRestart =
-				(int)key.GetValue("ConfirmEraseOnRestart", (object)0) != 0;
-			DefaultFileErasureMethod = new Guid((string)
-				key.GetValue("DefaultFileErasureMethod", Guid.Empty.ToString()));
-			DefaultUnusedSpaceErasureMethod = new Guid((string)
-				key.GetValue("DefaultUnusedSpaceErasureMethod", Guid.Empty.ToString()));
-			ExecuteMissedTasksImmediately =
-				(int)key.GetValue("ExecuteMissedTasksImmediately", (object)1) != 0;
-			PlausibleDeniability =
-				(int)key.GetValue("PlausibleDeniability", (object)0) != 0;
-
-			UILanguage = (string)key.GetValue("UILanguage", CultureInfo.CurrentUICulture.Name);
-			System.Threading.Thread.CurrentThread.CurrentUICulture =
-				new CultureInfo(UILanguage);
-
-			//Load the plausible deniability files
-			byte[] plausibleDeniabilityFiles = (byte[])
-				key.GetValue("PlausibleDeniabilityFiles", new byte[0]);
-			if (plausibleDeniabilityFiles.Length != 0)
-				using (MemoryStream stream = new MemoryStream(plausibleDeniabilityFiles))
+			public override object this[string setting]
+			{
+				get
 				{
-					try
+					byte[] currentSetting = (byte[])key.GetValue(setting, null);
+					if (currentSetting != null && currentSetting.Length != 0)
+						using (MemoryStream stream = new MemoryStream(currentSetting))
+							try
+							{
+								return new BinaryFormatter().Deserialize(stream);
+							}
+							catch (Exception)
+							{
+								key.DeleteValue(setting);
+								MessageBox.Show(string.Format(S._("Could not load the setting {0} for plugin {1}." +
+									"The setting has been lost."), key, pluginID.ToString()),
+									S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+							}
+
+					return null;
+				}
+				set
+				{
+					using (MemoryStream stream = new MemoryStream())
 					{
-						this.PlausibleDeniabilityFiles = (List<string>)
-							new BinaryFormatter().Deserialize(stream);
-					}
-					catch (Exception)
-					{
-						key.DeleteValue("PlausibleDeniabilityFiles");
-						MessageBox.Show(S._("Could not load list of files used for plausible " +
-							"deniability.\n\nThe list of files have been lost."),
-							S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+						new BinaryFormatter().Serialize(stream, value);
+						key.SetValue(setting, stream.ToArray(), RegistryValueKind.Binary);
 					}
 				}
-		}
-
-		protected override void Save()
-		{
-			RegistryKey key = Application.UserAppDataRegistry;
-			key.SetValue("PRNG", ActivePRNG);
-			key.SetValue("EraseOnRestart", EraseLockedFilesOnRestart,
-				RegistryValueKind.DWord);
-			key.SetValue("ConfirmEraseOnRestart", ConfirmEraseOnRestart,
-				RegistryValueKind.DWord);
-			key.SetValue("DefaultFileErasureMethod", DefaultFileErasureMethod);
-			key.SetValue("DefaultUnusedSpaceErasureMethod",
-				DefaultUnusedSpaceErasureMethod);
-			key.SetValue("ExecuteMissedTasksImmediately",
-				ExecuteMissedTasksImmediately, RegistryValueKind.DWord);
-			key.SetValue("PlausibleDeniability", PlausibleDeniability,
-				RegistryValueKind.DWord);
-			key.SetValue("UILanguage", UILanguage);
-
-			using (MemoryStream stream = new MemoryStream())
-			{
-				new BinaryFormatter().Serialize(stream, PlausibleDeniabilityFiles);
-				key.SetValue("PlausibleDeniabilityFiles", stream.ToArray(), RegistryValueKind.Binary);
 			}
+
+			/// <summary>
+			/// The GUID of the plugin whose settings this object is storing.
+			/// </summary>
+			private Guid pluginID;
+
+			/// <summary>
+			/// The registry key where the data is stored.
+			/// </summary>
+			private RegistryKey key;
 		}
 
-		protected override Dictionary<string, object> GetSettings(Guid guid)
+		public override void Save()
+		{
+		}
+
+		protected override Manager.Settings GetSettings(Guid guid)
 		{
 			//Open the registry key containing the settings
 			RegistryKey pluginsKey = Application.UserAppDataRegistry.OpenSubKey(
 				"Plugins\\" + guid.ToString(), true);
-			Dictionary<string, object> result = new Dictionary<string, object>();
+			if (pluginsKey == null)
+				pluginsKey = Application.UserAppDataRegistry.CreateSubKey(
+					"Plugins\\" + guid.ToString());
 
-			//Load every key/value pair into the dictionary
-			if (pluginsKey != null)
-				foreach (string key in pluginsKey.GetValueNames())
-				{
-					byte[] currentSetting = (byte[])pluginsKey.GetValue(key, null);
-					if (currentSetting.Length != 0)
-						using (MemoryStream stream = new MemoryStream(currentSetting))
-						{
-							try
-							{
-								result[key] = new BinaryFormatter().Deserialize(stream);
-							}
-							catch (Exception)
-							{
-								pluginsKey.DeleteValue(key);
-								MessageBox.Show(string.Format(S._("Could not load the setting {0} for plugin {1}." +
-									"The setting has been lost."), key, guid.ToString()),
-									S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error);
-							}
-						}
-					else
-						result[key] = null;
-				}
-
-			//We're done!
-			return result;
-		}
-
-		protected override void SetSettings(Guid guid, Dictionary<string, object> settings)
-		{
-			//Open the registry key containing the settings
-			RegistryKey pluginKey = Application.UserAppDataRegistry.OpenSubKey(
-				"Plugins\\" + guid.ToString(), true);
-			if (pluginKey == null)
-				pluginKey = Application.UserAppDataRegistry.CreateSubKey("Plugins\\" + guid.ToString());
-
-			foreach (string key in settings.Keys)
-			{
-				using (MemoryStream stream = new MemoryStream())
-				{
-					new BinaryFormatter().Serialize(stream, settings[key]);
-					pluginKey.SetValue(key, stream.ToArray(), RegistryValueKind.Binary);
-				}
-			}
+			//Return the Settings object.
+			return new RegistrySettings(guid, pluginsKey);
 		}
 	}
 }

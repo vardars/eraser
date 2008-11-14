@@ -34,8 +34,7 @@ namespace Eraser.DefaultPlugins
 	{
 		public void Initialize(Host host)
 		{
-			//Get the settings dictionary
-			Settings = Manager.ManagerLibrary.Instance.Settings.PluginSettings;
+			Settings = new DefaultPluginSettings();
 
 			//Then register the erasure methods et al.
 			ErasureMethodManager.Register(new Gutmann());				//35 passes
@@ -68,7 +67,6 @@ namespace Eraser.DefaultPlugins
 
 		public void Dispose()
 		{
-			Manager.ManagerLibrary.Instance.Settings.SetSettings(Settings);
 		}
 
 		public string Name
@@ -95,6 +93,53 @@ namespace Eraser.DefaultPlugins
 		/// <summary>
 		/// The dictionary holding settings for this plugin.
 		/// </summary>
-		public static Dictionary<string, object> Settings = null;
+		internal static DefaultPluginSettings Settings = null;
+	}
+
+	/// <summary>
+	/// A concrete class to manage the settings for this plugin.
+	/// </summary>
+	internal class DefaultPluginSettings
+	{
+		public DefaultPluginSettings()
+		{
+			settings = Manager.ManagerLibrary.Instance.SettingsManager.ModuleSettings;
+		}
+
+		/// <summary>
+		/// The First/last 16 kilobyte erasure method.
+		/// </summary>
+		public Guid FL16Method
+		{
+			get
+			{
+				return settings["FL16Method"] == null ? Guid.Empty :
+					(Guid)settings["FL16Method"];
+			}
+			set
+			{
+				settings["FL16Method"] = value;
+			}
+		}
+
+		/// <summary>
+		/// The set of custom erasure methods.
+		/// </summary>
+		public Dictionary<Guid, CustomErasureMethod> EraseCustom
+		{
+			get
+			{
+				return (Dictionary<Guid, CustomErasureMethod>)settings["EraseCustom"];
+			}
+			set
+			{
+				settings["EraseCustom"] = value;
+			}
+		}
+
+		/// <summary>
+		/// The data store for our settings.
+		/// </summary>
+		Settings settings;
 	}
 }
