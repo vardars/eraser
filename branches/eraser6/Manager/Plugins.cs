@@ -32,6 +32,8 @@ namespace Eraser.Manager.Plugin
 	/// The plugins host interface which is used for communicating with the host
 	/// program.
 	/// </summary>
+	/// <remarks>Remember to call Load to load the plugins into memory, otherwise
+	/// they will never be loaded.</remarks>
 	public abstract class Host : IDisposable
 	{
 		/// <summary>
@@ -49,6 +51,11 @@ namespace Eraser.Manager.Plugin
 		{
 			get;
 		}
+
+		/// <summary>
+		/// Loads all plugins into memory.
+		/// </summary>
+		public abstract void Load();
 
 		/// <summary>
 		/// Cleans up resources used by the host. Also unloads all loaded plugins.
@@ -93,6 +100,10 @@ namespace Eraser.Manager.Plugin
 		/// Constructor. Loads all plugins in the Plugins folder.
 		/// </summary>
 		public DefaultHost()
+		{
+		}
+
+		public override void Load()
 		{
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(AssemblyResolve);
 			string pluginsFolder = Path.Combine(

@@ -41,6 +41,7 @@ namespace Eraser.Manager
 			PRNGManager = new PRNGManager();
 			ErasureMethodManager = new ErasureMethodManager();
 			Host = new Plugin.DefaultHost();
+			Host.Load();
 		}
 
 		public void Dispose()
