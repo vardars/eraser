@@ -433,7 +433,7 @@ namespace Eraser
 		#region GetSubItemRect
 		[DllImport("User32.dll")]
 		private static extern UIntPtr SendMessage(IntPtr HWND, uint Message,
-			UIntPtr wParam, IntPtr lParam);
+			UIntPtr wParam, out Rect lParam);
 
 		private struct Rect
 		{
@@ -443,12 +443,12 @@ namespace Eraser
 			public int bottom;
 		};
 
-		private unsafe Rectangle GetSubItemRect(int index, int subItemIndex)
+		private Rectangle GetSubItemRect(int index, int subItemIndex)
 		{
 			Rect pRect = new Rect();
 			pRect.top = subItemIndex;
 			pRect.left = 0; //LVIR_BOUNDS
-			SendMessage(scheduler.Handle, 0x1000 + 56, (UIntPtr)index, (IntPtr)(&pRect));
+			SendMessage(scheduler.Handle, 0x1000 + 56, (UIntPtr)index, out pRect);
 
 			return new Rectangle(pRect.left, pRect.top, pRect.right - pRect.left,
 				pRect.bottom - pRect.top);
