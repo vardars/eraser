@@ -623,7 +623,7 @@ namespace Eraser.Manager
 					{
 						task.Log.Add(new LogEntry(string.Format(S._("Files in {0} did not have " +
 							"their cluster tips erased because it is a hard link or a symbolic " +
-							"link."), info.FullName), LogLevel.INFORMATION);
+							"link."), info.FullName), LogLevel.INFORMATION));
 						return;
 					}
 
@@ -635,7 +635,7 @@ namespace Eraser.Manager
 						else if ((file.Attributes & FileAttributes.ReparsePoint) != 0)
 							task.Log.Add(new LogEntry(string.Format(S._("{0} did not have its " +
 								"cluster tips erased because it is a hard link or a symbolic link."),
-								file.FullName), LogLevel.INFORMATION);
+								file.FullName), LogLevel.INFORMATION));
 						else
 						{
 							foreach (string i in Util.File.GetADSes(file))
@@ -820,7 +820,7 @@ namespace Eraser.Manager
 				StreamInfo info = new StreamInfo(paths[i]);
 				if ((info.Attributes & FileAttributes.Compressed) != 0 ||
 					(info.Attributes & FileAttributes.Encrypted) != 0 ||
-					(info.Attributes & FileAttributes.SparseFile) != 0
+					(info.Attributes & FileAttributes.SparseFile) != 0)
 				{
 					//Log the error
 					throw new ArgumentException("Compressed, encrypted, or sparse" +
