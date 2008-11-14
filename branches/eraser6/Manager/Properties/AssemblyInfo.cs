@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Eraser Manager")]
 [assembly: AssemblyDescription("Eraser task manager and client library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Eraser Project")]
+[assembly: AssemblyCompany("The Eraser Project")]
 [assembly: AssemblyProduct("Eraser")]
 [assembly: AssemblyCopyright("Copyright © 2008 The Eraser Project")]
 [assembly: AssemblyTrademark("")]

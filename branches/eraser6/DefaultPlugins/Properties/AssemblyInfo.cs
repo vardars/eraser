@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Default Plugins")]
 [assembly: AssemblyDescription("Default PRNG and Erasure Methods for Eraser")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Eraser Project")]
+[assembly: AssemblyCompany("The Eraser Project")]
 [assembly: AssemblyProduct("Eraser")]
 [assembly: AssemblyCopyright("Copyright © 2008 The Eraser Project")]
 [assembly: AssemblyTrademark("")]
