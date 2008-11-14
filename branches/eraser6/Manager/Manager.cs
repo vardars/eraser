@@ -36,8 +36,8 @@ namespace Eraser.Manager
 			Instance = this;
 			Settings = settings;
 
-
 			EntropySourceManager = new EntropySourceManager();
+			LanguageManager = new LanguageManager(); 
 			PRNGManager = new PRNGManager();
 			ErasureMethodManager = new ErasureMethodManager();
 			Host = new Plugin.DefaultHost();
@@ -65,6 +65,11 @@ namespace Eraser.Manager
 		/// The global instance of the PRNG Manager.
 		/// </summary>
 		internal PRNGManager PRNGManager;
+
+		/// <summary>
+		/// Entropy source manager global instance.
+		/// </summary>
+		internal EntropySourceManager EntropySourceManager;
 
 		/// <summary>
 		/// Global instance of the Language Manager.
