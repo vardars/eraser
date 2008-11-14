@@ -23,7 +23,8 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Product Id="f4024002-a3ea-498a-993d-c0d32e205dfc" Name="Eraser" Language="1033" Version="6.0.0.0"
 			Manufacturer="The Eraser Project" UpgradeCode="073882b4-e059-4fb4-9d36-11e88d14ae87">
-		<Package InstallerVersion="200" Compressed="yes" />
+		<Package Id="*" InstallerVersion="200" Compressed="yes" Keywords="Eraser"
+			Description="Eraser Installer" Manufacturer="The Eraser Project" />
 		<Media Id="1" Cabinet="Installer.cab" EmbedCab="yes" />
 
 		<Condition Message='This setup requires the .NET Framework 2.0 or higher.'>
