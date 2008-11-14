@@ -95,7 +95,12 @@ namespace Eraser.Manager.Plugin
 		public DefaultHost()
 		{
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(AssemblyResolve);
-			foreach (string fileName in Directory.GetFiles(PLUGINSFOLDER))
+			string pluginsFolder = Path.Combine(
+				Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), //Assembly location
+				PLUGINSFOLDER //Plugins folder
+			);
+
+			foreach (string fileName in Directory.GetFiles(pluginsFolder))
 			{
 				FileInfo file = new FileInfo(fileName);
 				if (file.Extension.Equals(".dll"))
@@ -114,7 +119,7 @@ namespace Eraser.Manager.Plugin
 		/// <summary>
 		/// The path to the folder containing the plugins.
 		/// </summary>
-		public const string PLUGINSFOLDER = "Plugins/";
+		public const string PLUGINSFOLDER = "Plugins";
 
 		public override List<PluginInstance> Plugins
 		{
