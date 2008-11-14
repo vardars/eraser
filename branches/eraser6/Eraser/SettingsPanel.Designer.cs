@@ -204,6 +204,7 @@ namespace Eraser
 			// pluginsManager
 			// 
 			resources.ApplyResources(this.pluginsManager, "pluginsManager");
+			this.pluginsManager.CheckBoxes = true;
 			this.pluginsManager.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.pluginsManagerColName,
             this.pluginsManagerColAuthor,

@@ -25,6 +25,7 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace Eraser.Manager.Plugin
 {
@@ -105,7 +106,8 @@ namespace Eraser.Manager.Plugin
 
 		public override void Load()
 		{
-			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(AssemblyResolve);
+			AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
+			AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += ResolveReflectionDependency;
 			string pluginsFolder = Path.Combine(
 				Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), //Assembly location
 				PLUGINSFOLDER //Plugins folder
@@ -115,7 +117,16 @@ namespace Eraser.Manager.Plugin
 			{
 				FileInfo file = new FileInfo(fileName);
 				if (file.Extension.Equals(".dll"))
-					LoadPlugin(file.FullName);
+					try
+					{
+						LoadPlugin(file.FullName);
+					}
+					catch (BadImageFormatException)
+					{
+					}
+					catch (FileLoadException)
+					{
+					}
 			}
 		}
 
@@ -139,37 +150,54 @@ namespace Eraser.Manager.Plugin
 
 		public override void LoadPlugin(string filePath)
 		{
-			//Load the plugin
-			Assembly assembly = Assembly.LoadFrom(filePath);
+			//Create the PluginInstance structure
+			Assembly reflectAssembly = Assembly.ReflectionOnlyLoadFrom(filePath);
+			PluginInstance instance = new PluginInstance(reflectAssembly, null);
+			Type typePlugin = null;
 
 			//Iterate over every exported type, checking if it implements IPlugin
-			foreach (Type type in assembly.GetTypes())
+			foreach (Type type in instance.Assembly.GetExportedTypes())
 			{
-				if (!type.IsPublic || type.IsAbstract)
-					//Not interesting.
-					continue;
-
 				//Check for an implementation of IPlugin
 				Type typeInterface = type.GetInterface("Eraser.Manager.Plugin.IPlugin", true);
 				if (typeInterface != null)
 				{
-					//Create the PluginInstance structure
-					PluginInstance instance = new PluginInstance(assembly, filePath, null);
-
-					//Add the plugin to the list of loaded plugins
-					lock (plugins)
-						plugins.Add(instance);
-
-					//Initialize the plugin
-					IPlugin pluginInterface = (IPlugin)Activator.CreateInstance(
-						assembly.GetType(type.ToString()));
-					pluginInterface.Initialize(this);
-					instance.Plugin = pluginInterface;
-
-					//And broadcast the plugin load event
-					OnPluginLoaded(instance);
+					typePlugin = type;
+					break;
 				}
 			}
+
+			//If the typePlugin type is empty the assembly doesn't implement IPlugin; we
+			//aren't interested.
+			if (typePlugin == null)
+				return;
+
+			//OK this assembly is a plugin
+			lock (plugins)
+				plugins.Add(instance);
+
+			//First check the plugin for the presence of a signature.
+			if (reflectAssembly.GetName().GetPublicKey().Length == 0)
+			{
+				//If the user did not allow the plug-in to load, don't load it.
+				if (ManagerLibrary.Instance.Settings.ApprovedPlugins.
+					IndexOf(instance.AssemblyInfo.GUID) == -1)
+				{
+					return;
+				}
+			}
+
+			//Load the plugin
+			instance.Assembly = Assembly.LoadFrom(filePath);
+
+			//Initialize the plugin
+			IPlugin pluginInterface = (IPlugin)Activator.CreateInstance(
+				instance.Assembly.GetType(typePlugin.ToString()));
+			pluginInterface.Initialize(this);
+			instance.Plugin = pluginInterface;
+
+			//And broadcast the plugin load event
+			OnPluginLoaded(instance);
 		}
 
 		Assembly AssemblyResolve(object sender, ResolveEventArgs args)
@@ -181,6 +209,11 @@ namespace Eraser.Manager.Plugin
 			return null;
 		}
 
+		Assembly ResolveReflectionDependency(object sender, ResolveEventArgs args)
+		{
+			return Assembly.ReflectionOnlyLoad(args.Name);
+		}
+
 		private List<PluginInstance> plugins = new List<PluginInstance>();
 	}
 
@@ -189,16 +222,95 @@ namespace Eraser.Manager.Plugin
 	/// </summary>
 	public class PluginInstance
 	{
-		internal PluginInstance(Assembly assembly, string path, IPlugin plugin)
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="assembly">The assembly representing this plugin.</param>
+		/// <param name="path">The path to the ass</param>
+		/// <param name="plugin"></param>
+		internal PluginInstance(Assembly assembly, IPlugin plugin)
 		{
 			Assembly = assembly;
-			Path = path;
 			Plugin = plugin;
 		}
 
-		public Assembly Assembly;
-		public string Path;
-		public IPlugin Plugin;
+		/// <summary>
+		/// Gets the Assembly this plugin instance came from.
+		/// </summary>
+		public Assembly Assembly
+		{
+			get
+			{
+				return assembly;
+			}
+			internal set
+			{
+				assembly = value;
+
+				assemblyInfo.Version = assembly.GetName().Version;
+				IList<CustomAttributeData> attributes = CustomAttributeData.GetCustomAttributes(assembly);
+				foreach (CustomAttributeData attr in attributes)
+					if (attr.Constructor.DeclaringType == typeof(GuidAttribute))
+						assemblyInfo.GUID = new Guid((string)attr.ConstructorArguments[0].Value);
+					else if (attr.Constructor.DeclaringType == typeof(AssemblyCompanyAttribute))
+						assemblyInfo.Author = (string)attr.ConstructorArguments[0].Value;
+			}
+		}
+
+		/// <summary>
+		/// Gets the attributes of the assembly, loading from reflection-only sources.
+		/// </summary>
+		public AssemblyInfo AssemblyInfo
+		{
+			get
+			{
+				return assemblyInfo;
+			}
+			internal set
+			{
+				assemblyInfo = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets the IPlugin interface which the plugin exposed.
+		/// </summary>
+		public IPlugin Plugin
+		{
+			get
+			{
+				return plugin;
+			}
+			internal set
+			{
+				plugin = value;
+			}
+		}
+
+		private Assembly assembly;
+		private AssemblyInfo assemblyInfo;
+		private IPlugin plugin;
+	}
+
+	/// <summary>
+	/// Reflection-only information retrieved from the assembly.
+	/// </summary>
+	public struct AssemblyInfo
+	{
+		/// <summary>
+		/// The GUID of the assembly.
+		/// </summary>
+		public Guid GUID;
+
+		/// <summary>
+		/// The publisher of the assembly.
+		/// </summary>
+		public string Author;
+
+		/// <summary>
+		/// The version of the assembly.
+		/// </summary>
+		public Version Version;
 	}
 
 	/// <summary>

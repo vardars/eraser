@@ -58,11 +58,25 @@ namespace Eraser
 
 		private void OnNewPluginLoaded(PluginInstance instance)
 		{
-			ListViewItem item = pluginsManager.Items.Add(instance.Plugin.Name);
-			item.SubItems.Add(instance.Plugin.Author);
+			ListViewItem item = new ListViewItem();
+			if (instance.Plugin == null)
+			{
+				item.Text = System.IO.Path.GetFileNameWithoutExtension(instance.Assembly.Location);
+				item.SubItems.Add(instance.AssemblyInfo.Author);
+			}
+			else
+			{
+				item.Text = instance.Plugin.Name;
+				item.SubItems.Add(instance.Plugin.Author);
+			}
+
+			item.Checked = instance.Plugin != null ||
+				Manager.ManagerLibrary.Instance.Settings.ApprovedPlugins.IndexOf(
+					instance.AssemblyInfo.GUID) != -1;
 			item.SubItems.Add(instance.Assembly.GetName().Version.ToString());
-			item.SubItems.Add(instance.Path);
+			item.SubItems.Add(instance.Assembly.Location);
 			item.Tag = instance;
+			pluginsManager.Items.Add(item);
 		}
 
 		private void OnMethodRegistered(Guid guid)
@@ -339,39 +353,48 @@ namespace Eraser
 			}
 
 			EraserSettings settings = new EraserSettings();
+			ManagerSettings managerSettings = ManagerLibrary.Instance.Settings;
 			if (((Language)uiLanguage.SelectedItem).Name != settings.Language)
 			{
 				settings.Language = ((Language)uiLanguage.SelectedItem).Name;
 				MessageBox.Show(S._("The new UI language will take only effect when Eraser is restarted."),
 					S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
-			ManagerLibrary.Instance.Settings.DefaultFileErasureMethod =
+			managerSettings.DefaultFileErasureMethod =
 				((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
-			ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod =
+			managerSettings.DefaultUnusedSpaceErasureMethod =
 				((ErasureMethod)eraseUnusedMethod.SelectedItem).GUID;
 
 			PRNG newPRNG = (PRNG)erasePRNG.SelectedItem;
-			if (newPRNG.GUID != ManagerLibrary.Instance.Settings.ActivePRNG)
+			if (newPRNG.GUID != managerSettings.ActivePRNG)
 			{
 				MessageBox.Show(S._("The new randomness data source will only be used when " +
 					"the next task is run.\nCurrently running tasks will use the old source."),
 					S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information);
-				ManagerLibrary.Instance.Settings.ActivePRNG = newPRNG.GUID;
+				managerSettings.ActivePRNG = newPRNG.GUID;
 			}
-			ManagerLibrary.Instance.Settings.EraseLockedFilesOnRestart =
-				lockedAllow.Checked;
-			ManagerLibrary.Instance.Settings.ConfirmEraseOnRestart =
-				lockedConfirm.Checked;
+			managerSettings.EraseLockedFilesOnRestart = lockedAllow.Checked;
+			managerSettings.ConfirmEraseOnRestart = lockedConfirm.Checked;
 
+			managerSettings.PlausibleDeniability = plausibleDeniability.Checked;
 			List<string> plausibleDeniabilityFilesList = new List<string>();
 			foreach (string str in this.plausibleDeniabilityFiles.Items)
 				plausibleDeniabilityFilesList.Add(str);
-			ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles = plausibleDeniabilityFilesList;
+			managerSettings.PlausibleDeniabilityFiles = plausibleDeniabilityFilesList;
 
-			ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately =
-				schedulerMissedImmediate.Checked;
-			ManagerLibrary.Instance.Settings.PlausibleDeniability =
-				plausibleDeniability.Checked;
+			managerSettings.ExecuteMissedTasksImmediately = schedulerMissedImmediate.Checked;
+
+			foreach (ListViewItem item in pluginsManager.Items)
+			{
+				PluginInstance plugin = (PluginInstance)item.Tag;
+				if (item.Checked)
+				{
+					if (managerSettings.ApprovedPlugins.IndexOf(plugin.AssemblyInfo.GUID) == -1)
+						managerSettings.ApprovedPlugins.Add(plugin.AssemblyInfo.GUID);
+				}
+				else
+					managerSettings.ApprovedPlugins.Remove(plugin.AssemblyInfo.GUID);
+			}
 		}
 	}
 }

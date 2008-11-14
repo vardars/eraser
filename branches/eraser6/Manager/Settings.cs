@@ -249,6 +249,23 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// The GUIDs of unsigned plug-ins which the user has explicitly approved.
+		/// </summary>
+		public List<Guid> ApprovedPlugins
+		{
+			get
+			{
+				if (settings["ApprovedPlugins"] == null)
+					return new List<Guid>();
+				return (List<Guid>)settings["ApprovedPlugins"];
+			}
+			set
+			{
+				settings["ApprovedPlugins"] = value;
+			}
+		}
+
+		/// <summary>
 		/// The Settings object which is the data store of this object.
 		/// </summary>
 		private Settings settings;
