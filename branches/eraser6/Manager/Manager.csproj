@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C1AC3255-0939-499D-A69D-725E3DD4F574}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DirectExecutor.cs" />
+    <Compile Include="EntropySource.cs" />
     <Compile Include="Executor.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Logger.cs" />
