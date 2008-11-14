@@ -162,13 +162,71 @@ namespace Eraser
 		{
 			//Open the registry key containing the settings
 			RegistryKey pluginsKey = Application.UserAppDataRegistry.OpenSubKey(
-				"Plugins\\" + guid.ToString(), true);
+				guid.ToString(), true);
 			if (pluginsKey == null)
 				pluginsKey = Application.UserAppDataRegistry.CreateSubKey(
-					"Plugins\\" + guid.ToString());
+					guid.ToString());
 
 			//Return the Settings object.
 			return new RegistrySettings(guid, pluginsKey);
 		}
+	}
+
+	internal class EraserSettings
+	{
+		public EraserSettings()
+		{
+			settings = Manager.ManagerLibrary.Instance.SettingsManager.ModuleSettings;
+		}
+
+		/// <summary>
+		/// Gets or sets the LCID of the language which the UI should be displayed in.
+		/// </summary>
+		public string Language
+		{
+			get
+			{
+				return settings["Language"] == null ? 
+					GetCurrentCulture().Name :
+					(string)settings["Language"];
+			}
+			set
+			{
+				settings["Language"] = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value on whether the main frame should be minimised to the
+		/// system notification area.
+		/// </summary>
+		public bool HideWhenMinimised
+		{
+			get
+			{
+				return settings["HideWhenMinimised"] == null ?
+					true : (bool)settings["HideWhenMinimised"];
+			}
+			set
+			{
+				settings["HideWhenMinimised"] = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets the current UI culture, correct to the top-level culture (i.e., English
+		/// instead of English (United Kingdom))
+		/// </summary>
+		/// <returns>The CultureInfo of the current UI culture, correct to the top level.</returns>
+		private static CultureInfo GetCurrentCulture()
+		{
+			CultureInfo culture = CultureInfo.CurrentUICulture;
+			while (culture.Parent != CultureInfo.InvariantCulture)
+				culture = culture.Parent;
+
+			return culture;
+		}
+
+		private Manager.Settings settings;
 	}
 }

@@ -450,7 +450,6 @@ namespace Eraser.Manager
 			}
 		}
 
-
 		/// <summary>
 		/// Allows plug-ins to register methods with the main program. Thread-safe.
 		/// </summary>

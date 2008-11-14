@@ -115,7 +115,8 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return settings["DefaultFileErasureMethod"] == null ? Guid.Empty :
+				return settings["DefaultFileErasureMethod"] == null ? 
+					new Guid("1407FC4E-FEFF-4375-B4FB-D7EFBB7E9922") :
 					(Guid)settings["DefaultFileErasureMethod"];
 			}
 			set
@@ -133,7 +134,8 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return settings["DefaultUnusedSpaceErasureMethod"] == null ? Guid.Empty :
+				return settings["DefaultUnusedSpaceErasureMethod"] == null ? 
+					new Guid("{BF8BA267-231A-4085-9BF9-204DE65A6641}") :
 					(Guid)settings["DefaultUnusedSpaceErasureMethod"];
 			}
 			set
@@ -150,7 +152,8 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return settings["ActivePRNG"] == null ? Guid.Empty :
+				return settings["ActivePRNG"] == null ? 
+					new Guid("{6BF35B8E-F37F-476e-B6B2-9994A92C3B0C}") :
 					(Guid)settings["ActivePRNG"];
 			}
 			set

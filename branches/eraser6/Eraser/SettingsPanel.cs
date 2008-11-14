@@ -374,46 +374,5 @@ namespace Eraser
 				plausibleDeniability.Checked;
 		}
 	}
-
-	internal class EraserSettings
-	{
-		public EraserSettings()
-		{
-			settings = Manager.ManagerLibrary.Instance.SettingsManager.ModuleSettings;
-		}
-
-		/// <summary>
-		/// Gets or sets a value containing the language the UI should be displayed in.
-		/// </summary>
-		public string Language
-		{
-			get
-			{
-				return (string)settings["Language"];
-			}
-			set
-			{
-				settings["Language"] = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value on whether the main frame should be minimised to the
-		/// system notification area.
-		/// </summary>
-		public bool HideWhenMinimised
-		{
-			get
-			{
-				return (bool)settings["HideWhenMinimised"];
-			}
-			set
-			{
-				settings["HideWhenMinimised"] = value;
-			}
-		}
-
-		private Manager.Settings settings;
-	}
 }
 
