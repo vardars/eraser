@@ -36,15 +36,16 @@ namespace Eraser.Manager
 			Instance = this;
 			Settings = settings;
 
+
+			EntropySourceManager = new EntropySourceManager();
 			PRNGManager = new PRNGManager();
-			LanguageManager = new LanguageManager();
 			ErasureMethodManager = new ErasureMethodManager();
 			Host = new Plugin.DefaultHost();
 		}
 
 		public void Dispose()
 		{
-			PRNGManager.entropyThread.Abort();
+			EntropySourceManager.Poller.Abort();
 			Host.Dispose();
 			Settings.Save();
 			Instance = null;
@@ -54,6 +55,11 @@ namespace Eraser.Manager
 		/// The global library instance.
 		/// </summary>
 		public static ManagerLibrary Instance = null;
+
+		/// <summary>
+		/// The global instance of the EntropySource Manager
+		/// </summary>
+		internal EntropySourceManager EntropySourceManager;
 
 		/// <summary>
 		/// The global instance of the PRNG Manager.
