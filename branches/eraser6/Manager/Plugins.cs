@@ -135,7 +135,8 @@ namespace Eraser.Manager.Plugin
 			//Unload all the plugins. This will cause all the plugins to execute
 			//the cleanup code.
 			foreach (PluginInstance plugin in plugins)
-				plugin.Plugin.Dispose();
+				if (plugin.Plugin != null)
+					plugin.Plugin.Dispose();
 		}
 
 		/// <summary>
