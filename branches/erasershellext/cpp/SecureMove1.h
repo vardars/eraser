@@ -42,7 +42,9 @@ namespace EraserCtxMenu {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::ProgressBar^  progressBar1;
+	private: System::Windows::Forms::ProgressBar^  moveProgressBar;
+	protected: 
+
 	protected: 
 	private: System::Windows::Forms::Button^  cancel;
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
@@ -50,24 +52,11 @@ namespace EraserCtxMenu {
 	private: System::Windows::Forms::Label^  toLabel;
 	private: System::Windows::Forms::TextBox^  textBoxFrom;
 	private: System::Windows::Forms::TextBox^  textBoxTo;
-
-
 	private: System::Windows::Forms::Button^  openBrowserBtn;
 	private: System::Windows::Forms::Button^  saveBrowserBtn;
-
-
-
 	private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
 	private: System::Windows::Forms::SaveFileDialog^  saveFileDialog1;
 	private: System::Windows::Forms::Button^  start;
-
-
-
-
-
-
-
-
 
 	private:
 		/// <summary>
@@ -82,7 +71,7 @@ namespace EraserCtxMenu {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			this->progressBar1 = (gcnew System::Windows::Forms::ProgressBar());
+			this->moveProgressBar = (gcnew System::Windows::Forms::ProgressBar());
 			this->cancel = (gcnew System::Windows::Forms::Button());
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->fromLabel = (gcnew System::Windows::Forms::Label());
@@ -97,19 +86,19 @@ namespace EraserCtxMenu {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->BeginInit();
 			this->SuspendLayout();
 			// 
-			// progressBar1
+			// moveProgressBar
 			// 
-			this->progressBar1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) 
+			this->moveProgressBar->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) 
 				| System::Windows::Forms::AnchorStyles::Right));
-			this->progressBar1->Location = System::Drawing::Point(12, 153);
-			this->progressBar1->Name = L"progressBar1";
-			this->progressBar1->Size = System::Drawing::Size(286, 20);
-			this->progressBar1->TabIndex = 0;
+			this->moveProgressBar->Location = System::Drawing::Point(12, 149);
+			this->moveProgressBar->Name = L"moveProgressBar";
+			this->moveProgressBar->Size = System::Drawing::Size(278, 20);
+			this->moveProgressBar->TabIndex = 0;
 			// 
 			// cancel
 			// 
 			this->cancel->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
-			this->cancel->Location = System::Drawing::Point(385, 151);
+			this->cancel->Location = System::Drawing::Point(377, 147);
 			this->cancel->Name = L"cancel";
 			this->cancel->Size = System::Drawing::Size(75, 23);
 			this->cancel->TabIndex = 1;
@@ -123,7 +112,7 @@ namespace EraserCtxMenu {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->pictureBox1->Location = System::Drawing::Point(12, 12);
 			this->pictureBox1->Name = L"pictureBox1";
-			this->pictureBox1->Size = System::Drawing::Size(146, 133);
+			this->pictureBox1->Size = System::Drawing::Size(138, 129);
 			this->pictureBox1->TabIndex = 2;
 			this->pictureBox1->TabStop = false;
 			// 
@@ -151,7 +140,7 @@ namespace EraserCtxMenu {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->textBoxFrom->Location = System::Drawing::Point(193, 28);
 			this->textBoxFrom->Name = L"textBoxFrom";
-			this->textBoxFrom->Size = System::Drawing::Size(226, 20);
+			this->textBoxFrom->Size = System::Drawing::Size(218, 20);
 			this->textBoxFrom->TabIndex = 6;
 			// 
 			// textBoxTo
@@ -160,13 +149,13 @@ namespace EraserCtxMenu {
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->textBoxTo->Location = System::Drawing::Point(193, 77);
 			this->textBoxTo->Name = L"textBoxTo";
-			this->textBoxTo->Size = System::Drawing::Size(226, 20);
+			this->textBoxTo->Size = System::Drawing::Size(218, 20);
 			this->textBoxTo->TabIndex = 7;
 			// 
 			// openBrowserBtn
 			// 
 			this->openBrowserBtn->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
-			this->openBrowserBtn->Location = System::Drawing::Point(425, 26);
+			this->openBrowserBtn->Location = System::Drawing::Point(417, 26);
 			this->openBrowserBtn->Name = L"openBrowserBtn";
 			this->openBrowserBtn->Size = System::Drawing::Size(35, 23);
 			this->openBrowserBtn->TabIndex = 8;
@@ -177,7 +166,7 @@ namespace EraserCtxMenu {
 			// saveBrowserBtn
 			// 
 			this->saveBrowserBtn->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
-			this->saveBrowserBtn->Location = System::Drawing::Point(425, 75);
+			this->saveBrowserBtn->Location = System::Drawing::Point(417, 75);
 			this->saveBrowserBtn->Name = L"saveBrowserBtn";
 			this->saveBrowserBtn->Size = System::Drawing::Size(35, 23);
 			this->saveBrowserBtn->TabIndex = 9;
@@ -191,7 +180,7 @@ namespace EraserCtxMenu {
 			// 
 			// start
 			// 
-			this->start->Location = System::Drawing::Point(312, 155);
+			this->start->Location = System::Drawing::Point(296, 147);
 			this->start->Name = L"start";
 			this->start->Size = System::Drawing::Size(75, 23);
 			this->start->TabIndex = 10;
@@ -203,7 +192,7 @@ namespace EraserCtxMenu {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(472, 186);
+			this->ClientSize = System::Drawing::Size(464, 182);
 			this->Controls->Add(this->start);
 			this->Controls->Add(this->saveBrowserBtn);
 			this->Controls->Add(this->openBrowserBtn);
@@ -213,7 +202,7 @@ namespace EraserCtxMenu {
 			this->Controls->Add(this->fromLabel);
 			this->Controls->Add(this->pictureBox1);
 			this->Controls->Add(this->cancel);
-			this->Controls->Add(this->progressBar1);
+			this->Controls->Add(this->moveProgressBar);
 			this->Name = L"SecureMove";
 			this->Text = L"SecureMove";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->EndInit();
@@ -223,9 +212,10 @@ namespace EraserCtxMenu {
 		}
 #pragma endregion
 
-	private: String ^dst;
-	private: String ^src;
-					 void Move()
+		// This method was supposed to be threaded
+		// but threading is a nightmare on VC++ so just do a single threaded 
+		// version.
+	private: void Move(String ^dst, String ^src)
 					 {
 						 IO::FileStream ^sf, ^df;
 						 int read = 0;
@@ -252,6 +242,8 @@ namespace EraserCtxMenu {
 									 read = sf->Read(buffer, 0, buffer->Length);
 									 df->Write(buffer, 0, read);
 									 progress = (sf->Position * 100) / sf->Length;
+
+									 progressBar1->Value = progress ;
 
 								 } while((read != 0) && (sf->Position == sf->Length));
 
@@ -317,10 +309,9 @@ namespace EraserCtxMenu {
 								 // start a new thread
 								 thread = gcnew System::Threading::Thread
 									 (
-									 gcnew ThreadStart( gcnew Object( this ),
-																			gcnew IntPtr( Move ) )
+									 gcnew ThreadStart( gcnew Object( this ), gcnew IntPtr( Move ) )
 									 );
-								 								 
+
 							 }							 
 						 }
 						 updateUI();
