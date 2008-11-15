@@ -161,11 +161,14 @@ namespace Eraser
 		protected override Manager.Settings GetSettings(Guid guid)
 		{
 			//Open the registry key containing the settings
-			RegistryKey pluginsKey = Application.UserAppDataRegistry.OpenSubKey(
-				guid.ToString(), true);
+			const string eraserKeyPath = @"SOFTWARE\Eraser\Eraser 6";
+			RegistryKey eraserKey = Registry.CurrentUser.OpenSubKey(eraserKeyPath, true);
+			if (eraserKey == null)
+				eraserKey = Registry.CurrentUser.CreateSubKey(eraserKeyPath);
+
+			RegistryKey pluginsKey = eraserKey.OpenSubKey(guid.ToString(), true);
 			if (pluginsKey == null)
-				pluginsKey = Application.UserAppDataRegistry.CreateSubKey(
-					guid.ToString());
+				pluginsKey = eraserKey.CreateSubKey(guid.ToString());
 
 			//Return the Settings object.
 			return new RegistrySettings(guid, pluginsKey);
