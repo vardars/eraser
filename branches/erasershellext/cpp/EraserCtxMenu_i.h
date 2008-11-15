@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Sun Oct 12 03:28:36 2008
+/* at Sat Nov 15 13:44:02 2008
  */
 /* Compiler settings for .\EraserCtxMenu.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
