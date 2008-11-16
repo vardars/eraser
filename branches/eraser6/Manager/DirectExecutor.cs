@@ -799,7 +799,7 @@ namespace Eraser.Manager
 
 			//Get the erasure method if the user specified he wants the default.
 			ErasureMethod method = target.Method;
-
+			
 			//Calculate the total amount of data required to finish the wipe.
 			dataTotal = method.CalculateEraseDataSize(paths, dataTotal);
 
@@ -924,7 +924,7 @@ namespace Eraser.Manager
 			info.Attributes = FileAttributes.NotContentIndexed;
 
 			//Rename the file a few times to erase the record from the MFT.
-			for (int i = 0; i < FilenameErasePasses; ++i)
+			for (int i = 0, retries = 0; i < FilenameErasePasses; ++i)
 			{
 				//Rename the file.
 				string newPath = info.DirectoryName + Path.DirectorySeparatorChar +
@@ -939,7 +939,10 @@ namespace Eraser.Manager
 				catch (IOException)
 				{
 					Thread.Sleep(100);
-					--i;
+					// if we have been waiting for more than 3.2 seconds
+					// we should just ignore this, we probably could not access
+					// it in near future
+					if (retries < 32) --i;
 				}
 			}
 
