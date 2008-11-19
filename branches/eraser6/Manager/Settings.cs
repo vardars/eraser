@@ -249,15 +249,16 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// The GUIDs of unsigned plug-ins which the user has explicitly approved.
+		/// Holds user decisions on whether the plugin will be loaded at the next
+		/// start up.
 		/// </summary>
-		public List<Guid> ApprovedPlugins
+		public Dictionary<Guid, bool> PluginApprovals
 		{
 			get
 			{
 				if (settings["ApprovedPlugins"] == null)
-					return new List<Guid>();
-				return (List<Guid>)settings["ApprovedPlugins"];
+					return new Dictionary<Guid, bool>();
+				return (Dictionary<Guid, bool>)settings["ApprovedPlugins"];
 			}
 			set
 			{
