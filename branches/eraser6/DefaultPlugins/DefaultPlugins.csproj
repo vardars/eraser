@@ -47,6 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Version.cs">
+      <Link>Version.cs</Link>
+    </Compile>
     <Compile Include="CustomMethodEditorForm.cs">
       <SubType>Form</SubType>
     </Compile>
