@@ -1,8 +1,8 @@
 [FileVersion]
-Input=6.0.1.16
+Input=6.0.1.18
 Regex=6.0.1.([0-9]+)
 Output=6.0.1.(++\\1)
 [ProductVersion]
-Input=$Rev: 582 $
+Input=$Rev$
 Regex=\\$Rev: ([0-9]+) \\$
 Output=6.0.1.\\1
