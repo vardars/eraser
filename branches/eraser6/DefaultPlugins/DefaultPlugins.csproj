@@ -53,6 +53,12 @@
     <Compile Include="CustomMethodEditorForm.Designer.cs">
       <DependentUpon>CustomMethodEditorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="CustomMethodPassEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomMethodPassEditor.Designer.cs">
+      <DependentUpon>CustomMethodPassEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="EraseCustom.cs" />
     <Compile Include="EraseDoD.cs" />
     <Compile Include="EraseRandom.cs" />
@@ -92,6 +98,9 @@
     <EmbeddedResource Include="CustomMethodEditorForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CustomMethodEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomMethodPassEditor.resx">
+      <DependentUpon>CustomMethodPassEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Strings.en.resx">
       <SubType>Designer</SubType>

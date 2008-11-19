@@ -123,8 +123,14 @@
   <data name="The method needs to have at least one pass defined." xml:space="preserve">
     <value>The method needs to have at least one pass defined.</value>
   </data>
-  <data name="The pass is supposed to write a constant to the files to be erased, but no constant was defined." xml:space="preserve">
-    <value>The pass is supposed to write a constant to the files to be erased, but no constant was defined.</value>
+  <data name="The pass constant cannot be displayed as text because it contains invalid characters." xml:space="preserve">
+    <value>The pass constant cannot be displayed as text because it contains invalid characters.</value>
+  </data>
+  <data name="Eraser" xml:space="preserve">
+    <value>Eraser</value>
+  </data>
+  <data name="The input text is invalid for the current data type. Valid hexadecimal characters are the digits 0-9 and letters A-F" xml:space="preserve">
+    <value>The input text is invalid for the current data type. Valid hexadecimal characters are the digits 0-9 and letters A-F</value>
   </data>
   <data name="US DoD 5220.22-M (8-306. / E, C and E)" xml:space="preserve">
     <value>US DoD 5220.22-M (8-306. / E, C and E)</value>

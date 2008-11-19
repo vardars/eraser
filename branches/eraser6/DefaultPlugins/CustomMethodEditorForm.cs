@@ -39,12 +39,6 @@ namespace Eraser.DefaultPlugins
 		}
 
 		/// <summary>
-		/// Holds the CustomErasureMethod object which client code may set to allow
-		/// method editing.
-		/// </summary>
-		private CustomErasureMethod method;
-
-		/// <summary>
 		/// Sets or retrieves the CustomErasureMethod object with all the values
 		/// in the dialog.
 		/// </summary>
@@ -112,7 +106,7 @@ namespace Eraser.DefaultPlugins
 		private void SavePass(ListViewItem item)
 		{
 			ErasureMethod.Pass pass = (ErasureMethod.Pass)item.Tag;
-			if (passTypeRandom.Checked)
+			if (passEditor.PassType == CustomMethodPassEditor.PassTypes.RANDOM)
 			{
 				pass.Function = ErasureMethod.Pass.WriteRandom;
 				pass.OpaqueValue = null;
@@ -120,82 +114,24 @@ namespace Eraser.DefaultPlugins
 			}
 			else
 			{
-				byte[] passConstant = ParseConstantStr(passTxt.Text, passTypeHex.Checked);
 				pass.Function = ErasureMethod.Pass.WriteConstant;
-				pass.OpaqueValue = passConstant;
-				item.SubItems[1].Text = string.Format("Constant ({0} bytes)", passConstant.Length);
+				pass.OpaqueValue = passEditor.PassData;
+				item.SubItems[1].Text = string.Format("Constant ({0} bytes)", passEditor.PassData.Length);
 			}
 		}
 
 		/// <summary>
-		/// Saves the pass constant currently in the pass constant text field.
+		/// Displays the pass associated with <paramref name="item"/> in the editing controls.
 		/// </summary>
-		/// <param name="text">The text to parse.</param>
-		/// <param name="parseHex">Parse the constant in the field as a string of
-		/// hexadecimal numbers.</param>
-		/// <returns>An array containing the byte-wise representation of the input
-		/// string.</returns>
-		private static byte[] ParseConstantStr(string text, bool parseHex)
+		/// <param name="item">The <see cref="ListViewItem"/> containing the pass to edit.</param>
+		private void DisplayPass(ListViewItem item)
 		{
-			List<byte> passConstantList = new List<byte>();
-			try
-			{
-				if (parseHex)
-				{
-					string str = text.Replace(" ", "").ToUpper();
-
-					for (int i = 0, j = str.Length - 2; i < j; i += 2)
-						passConstantList.Add(Convert.ToByte(str.Substring(i, 2), 16));
-					passConstantList.Add(Convert.ToByte(str.Substring(str.Length - 2), 16));
-
-					byte[] result = new byte[passConstantList.Count];
-					passConstantList.CopyTo(result);
-					return result;
-				}
-			}
-			catch (FormatException ex)
-			{
-				MessageBox.Show(ex.Message,
-					"Invalid input string",
-					MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-				// return as much as we could comprehend
-				byte[] result = new byte[passConstantList.Count];
-				passConstantList.CopyTo(result);
-				return result;
-			}
-
-			return Encoding.UTF8.GetBytes(text);
-		}
-
-		/// <summary>
-		/// Displays the pass constant stored by the SavePassConstant function.
-		/// </summary>
-		/// <param name="array">The array containing the constant to display.</param>
-		/// <param name="asHex">Sets whether the array should be displayed as a
-		/// hexadecimal string.</param>
-		/// <returns>A string containing the user-visible representation of the
-		/// input array.</returns>
-		private static string DisplayConstantArray(byte[] array, bool asHex)
-		{
-			try
-			{
-				if (asHex)
-				{
-					StringBuilder displayText = new StringBuilder();
-					foreach (byte b in array)
-						displayText.Append(string.Format("{0,2} ", Convert.ToString(b, 16)));
-					return displayText.ToString();
-				}
-			}
-			catch (FormatException ex)
-			{
-				MessageBox.Show(ex.Message,
-					"Invalid input string",
-					MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-
-			return Encoding.UTF8.GetString(array);
+			currentPass = item;
+			ErasureMethod.Pass pass = (ErasureMethod.Pass)item.Tag;
+			passEditor.PassData = (byte[])pass.OpaqueValue;
+			passEditor.PassType = pass.Function == EraseCustom.Pass.WriteRandom ?
+				CustomMethodPassEditor.PassTypes.RANDOM :
+				CustomMethodPassEditor.PassTypes.TEXT;
 		}
 
 		/// <summary>
@@ -214,16 +150,17 @@ namespace Eraser.DefaultPlugins
 		{
 			passesRemoveBtn.Enabled = passesDuplicateBtn.Enabled = passesMoveUpBtn.Enabled =
 				passesMoveDownBtn.Enabled = passesLv.SelectedItems.Count >= 1;
-			passGrp.Enabled = passTypeText.Enabled = passTypeHex.Enabled =
-				passTypeRandom.Enabled = passTxt.Enabled =
-				passesLv.SelectedItems.Count == 1;
+			passGrp.Enabled = passEditor.Enabled = passesLv.SelectedItems.Count == 1;
 
-			ListView.SelectedIndexCollection indices = passesLv.SelectedIndices;
-			if (indices.Count > 0)
+			ListView.SelectedListViewItemCollection items = passesLv.SelectedItems;
+			if (items.Count > 0)
 			{
-				int index = indices[indices.Count - 1];
-				passesMoveUpBtn.Enabled = passesMoveUpBtn.Enabled && index > 0;
-				passesMoveDownBtn.Enabled = passesMoveDownBtn.Enabled && index < passesLv.Items.Count - 1;
+				foreach (ListViewItem item in items)
+				{
+					int index = item.Index;
+					passesMoveUpBtn.Enabled = passesMoveUpBtn.Enabled && index > 0;
+					passesMoveDownBtn.Enabled = passesMoveDownBtn.Enabled && index < passesLv.Items.Count - 1;
+				}
 			}
 		}
 
@@ -251,42 +188,55 @@ namespace Eraser.DefaultPlugins
 
 		private void passesDuplicateBtn_Click(object sender, EventArgs e)
 		{
-			foreach (ListViewItem index in passesLv.SelectedItems)
+			foreach (ListViewItem item in passesLv.SelectedItems)
 			{
-				ListViewItem item = (ListViewItem)index.Clone();
-				ErasureMethod.Pass pass = (ErasureMethod.Pass)item.Tag;
-				item.Text = (passesLv.Items.Count + 1).ToString();
-				item.Tag = new ErasureMethod.Pass(pass.Function, pass.OpaqueValue);
-				passesLv.Items.Add(item);
+				ErasureMethod.Pass oldPass = (ErasureMethod.Pass)item.Tag;
+				ErasureMethod.Pass pass = new ErasureMethod.Pass(
+					oldPass.Function, oldPass.OpaqueValue);
+				AddPass(pass);
 			}
 		}
 
 		private void passesMoveUpBtn_Click(object sender, EventArgs e)
 		{
-			//Get the selection index
-			int selectedIndex = passesLv.SelectedIndices[0];
-			if (selectedIndex == 0)
-				return;
+			//Save the current pass to prevent data loss
+			SavePass(currentPass);
 
-			//Insert the current item into the index before.
-			ListViewItem item = passesLv.Items[selectedIndex];
-			passesLv.Items.RemoveAt(selectedIndex);
-			passesLv.Items.Insert(selectedIndex - 1, item);
+			foreach (ListViewItem item in passesLv.SelectedItems)
+			{
+				//Insert the current item into the index before, only if the item has got
+				//space to move up!
+				int index = item.Index;
+				if (index >= 1)
+				{
+					passesLv.Items.RemoveAt(index);
+					passesLv.Items.Insert(index - 1, item);
+				}
+			}
+
 			RenumberPasses();
 			EnableButtons();
 		}
 
 		private void passesMoveDownBtn_Click(object sender, EventArgs e)
 		{
-			//Get the selection index
-			int selectedIndex = passesLv.SelectedIndices[0];
-			if (selectedIndex == passesLv.Items.Count - 1)
-				return;
+			//Save the current pass to prevent data loss
+			SavePass(currentPass);
 
-			//Insert the current item into the index after.
-			ListViewItem item = passesLv.Items[selectedIndex];
-			passesLv.Items.RemoveAt(selectedIndex);
-			passesLv.Items.Insert(selectedIndex + 1, item);
+			ListView.SelectedListViewItemCollection items = passesLv.SelectedItems;
+			for (int i = items.Count; i-- != 0; )
+			{
+				//Insert the current item into the index after, only if the item has got
+				//space to move down.
+				ListViewItem item = items[i];
+				int index = item.Index;
+				if (index < passesLv.Items.Count - 1)
+				{
+					passesLv.Items.RemoveAt(index);
+					passesLv.Items.Insert(index + 1, item);
+				}
+			}
+
 			RenumberPasses();
 			EnableButtons();
 		}
@@ -299,66 +249,15 @@ namespace Eraser.DefaultPlugins
 			//Determine if we should load or save the pass information
 			if (!e.Item.Selected)
 			{
-				if (passesLv.SelectedIndices.Count == 0 && passTxt.Text.Length > 0)
+				if (e.Item == currentPass)
 					SavePass(e.Item);
 			}
-			else
+			else if (passesLv.SelectedIndices.Count == 1)
 			{
-				try
-				{
-					//Disable the pass display events
-					passTypeText.CheckedChanged -= new EventHandler(passType_CheckedChanged);
-					passTypeHex.CheckedChanged -= new EventHandler(passType_CheckedChanged);
-					passTypeRandom.CheckedChanged -= new EventHandler(passType_CheckedChanged);
-
-					//Get the pass data from the method structure.
-					passTxt.Text = string.Empty;
-
-					//Set the pass type to be undefined, to be set later.
-					passTypeText.Checked = passTypeHex.Checked = passTypeRandom.Checked = false;
-				}
-				finally
-				{
-					//Reenable the pass display events
-					passTypeText.CheckedChanged += new EventHandler(passType_CheckedChanged);
-					passTypeHex.CheckedChanged += new EventHandler(passType_CheckedChanged);
-					passTypeRandom.CheckedChanged += new EventHandler(passType_CheckedChanged);
-				}
-
-				//Set the pass type
-				if (pass.Function == ErasureMethod.Pass.WriteRandom)
-					passTypeRandom.Checked = true;
-				else if (pass.Function == ErasureMethod.Pass.WriteConstant)
-				{
-					passTypeHex.Checked = true;
-					passTxt.Text = DisplayConstantArray((byte[])pass.OpaqueValue, true);
-				}
-				else
-					throw new ArgumentException("Unknown pass data.");
-			}
-
-			//Blank the pass text if it is not editable
-			if (!passTxt.Enabled)
-				passTxt.Text = string.Empty;
-		}
-
-		private void passType_CheckedChanged(object sender, EventArgs e)
-		{
-			//Enable the text field if the selected pass type is not random data
-			passTxt.Enabled = !passTypeRandom.Checked;
-
-			//Copy or load the constant into the text field
-			if (sender != passTypeRandom && !passTypeRandom.Checked)
-			{
-				byte[] constant = null;
-				if (passTxt.Text.Length != 0)
-					constant = ParseConstantStr(passTxt.Text, sender == passTypeHex);
-
-				if (constant != null && constant.Length != 0)
-					passTxt.Text = DisplayConstantArray(constant, passTypeHex.Checked);
+				DisplayPass(passesLv.SelectedItems[0]);
 			}
 		}
-
+		
 		private void okBtn_Click(object sender, EventArgs e)
 		{
 			//Clear the errorProvider status
@@ -386,25 +285,6 @@ namespace Eraser.DefaultPlugins
 				hasError = true;
 			}
 
-			foreach (ListViewItem item in passesLv.Items)
-			{
-				ErasureMethod.Pass pass = (ErasureMethod.Pass)item.Tag;
-				if (pass.Function == ErasureMethod.Pass.WriteConstant &&
-					(pass.OpaqueValue == null || ((byte[])pass.OpaqueValue).Length == 0))
-				{
-					//Select the pass causing the error.
-					passesLv.SelectedIndices.Clear();
-					passesLv.SelectedIndices.Add(passesLv.Items.IndexOf(item));
-
-					//Highlight the error
-					errorProvider.SetError(passTxt, S._("The pass is supposed to write a " +
-						"constant to the files to be erased, but no constant was defined."));
-					errorProvider.SetIconPadding(passTxt, -16);
-					hasError = true;
-					break;
-				}
-			}
-
 			//If there are errors, don't close the dialog.
 			if (!hasError)
 			{
@@ -412,5 +292,16 @@ namespace Eraser.DefaultPlugins
 				Close();
 			}
 		}
+
+		/// <summary>
+		/// Holds the CustomErasureMethod object which client code may set to allow
+		/// method editing.
+		/// </summary>
+		private CustomErasureMethod method;
+
+		/// <summary>
+		/// Holds the current Erasure pass that is being edited.
+		/// </summary>
+		private ListViewItem currentPass;
 	}
 }

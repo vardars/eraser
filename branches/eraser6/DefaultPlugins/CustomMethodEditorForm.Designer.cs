@@ -62,17 +62,12 @@ namespace Eraser.DefaultPlugins
 			this.passesMoveUpBtn = new System.Windows.Forms.Button();
 			this.passesMoveDownBtn = new System.Windows.Forms.Button();
 			this.passGrp = new System.Windows.Forms.GroupBox();
-			this.passTxt = new System.Windows.Forms.TextBox();
-			this.passTypeGrp = new System.Windows.Forms.FlowLayoutPanel();
-			this.passTypeText = new System.Windows.Forms.RadioButton();
-			this.passTypeHex = new System.Windows.Forms.RadioButton();
-			this.passTypeRandom = new System.Windows.Forms.RadioButton();
 			this.randomizeChk = new System.Windows.Forms.CheckBox();
 			this.okBtn = new System.Windows.Forms.Button();
 			this.cancelBtn = new System.Windows.Forms.Button();
 			this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+			this.passEditor = new Eraser.DefaultPlugins.CustomMethodPassEditor();
 			this.passGrp.SuspendLayout();
-			this.passTypeGrp.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -145,46 +140,9 @@ namespace Eraser.DefaultPlugins
 			// passGrp
 			// 
 			resources.ApplyResources(this.passGrp, "passGrp");
-			this.passGrp.Controls.Add(this.passTxt);
-			this.passGrp.Controls.Add(this.passTypeGrp);
+			this.passGrp.Controls.Add(this.passEditor);
 			this.passGrp.Name = "passGrp";
 			this.passGrp.TabStop = false;
-			// 
-			// passTxt
-			// 
-			resources.ApplyResources(this.passTxt, "passTxt");
-			this.passTxt.Name = "passTxt";
-			// 
-			// passTypeGrp
-			// 
-			resources.ApplyResources(this.passTypeGrp, "passTypeGrp");
-			this.passTypeGrp.Controls.Add(this.passTypeText);
-			this.passTypeGrp.Controls.Add(this.passTypeHex);
-			this.passTypeGrp.Controls.Add(this.passTypeRandom);
-			this.passTypeGrp.Name = "passTypeGrp";
-			// 
-			// passTypeText
-			// 
-			resources.ApplyResources(this.passTypeText, "passTypeText");
-			this.passTypeText.Checked = true;
-			this.passTypeText.Name = "passTypeText";
-			this.passTypeText.TabStop = true;
-			this.passTypeText.UseVisualStyleBackColor = true;
-			this.passTypeText.CheckedChanged += new System.EventHandler(this.passType_CheckedChanged);
-			// 
-			// passTypeHex
-			// 
-			resources.ApplyResources(this.passTypeHex, "passTypeHex");
-			this.passTypeHex.Name = "passTypeHex";
-			this.passTypeHex.UseVisualStyleBackColor = true;
-			this.passTypeHex.CheckedChanged += new System.EventHandler(this.passType_CheckedChanged);
-			// 
-			// passTypeRandom
-			// 
-			resources.ApplyResources(this.passTypeRandom, "passTypeRandom");
-			this.passTypeRandom.Name = "passTypeRandom";
-			this.passTypeRandom.UseVisualStyleBackColor = true;
-			this.passTypeRandom.CheckedChanged += new System.EventHandler(this.passType_CheckedChanged);
 			// 
 			// randomizeChk
 			// 
@@ -210,6 +168,13 @@ namespace Eraser.DefaultPlugins
 			// 
 			this.errorProvider.ContainerControl = this;
 			// 
+			// passEditor
+			// 
+			resources.ApplyResources(this.passEditor, "passEditor");
+			this.passEditor.Name = "passEditor";
+			this.passEditor.PassData = null;
+			this.passEditor.PassType = Eraser.DefaultPlugins.CustomMethodPassEditor.PassTypes.TEXT;
+			// 
 			// CustomMethodEditorForm
 			// 
 			this.AcceptButton = this.okBtn;
@@ -234,9 +199,6 @@ namespace Eraser.DefaultPlugins
 			this.Name = "CustomMethodEditorForm";
 			this.ShowInTaskbar = false;
 			this.passGrp.ResumeLayout(false);
-			this.passGrp.PerformLayout();
-			this.passTypeGrp.ResumeLayout(false);
-			this.passTypeGrp.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -254,16 +216,12 @@ namespace Eraser.DefaultPlugins
 		private System.Windows.Forms.Button passesMoveUpBtn;
 		private System.Windows.Forms.Button passesMoveDownBtn;
 		private System.Windows.Forms.GroupBox passGrp;
-		private System.Windows.Forms.FlowLayoutPanel passTypeGrp;
-		private System.Windows.Forms.RadioButton passTypeText;
-		private System.Windows.Forms.RadioButton passTypeHex;
-		private System.Windows.Forms.RadioButton passTypeRandom;
 		private System.Windows.Forms.CheckBox randomizeChk;
 		private System.Windows.Forms.ColumnHeader passesColNumber;
 		private System.Windows.Forms.ColumnHeader passesColType;
 		private System.Windows.Forms.Button okBtn;
 		private System.Windows.Forms.Button cancelBtn;
-		private System.Windows.Forms.TextBox passTxt;
 		private System.Windows.Forms.ErrorProvider errorProvider;
+		private CustomMethodPassEditor passEditor;
 	}
 }
