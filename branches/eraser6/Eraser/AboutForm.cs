@@ -110,7 +110,7 @@ Eraser Project Members:
 				SizeF eraserSize = g.MeasureString(S._("Eraser"), boldFont);
 				g.DrawString(S._("Eraser"), boldFont, textBrush, eraserPos);
 				g.DrawString(Assembly.GetExecutingAssembly().GetName().Version.ToString(),
-					Font, textBrush, new PointF(eraserPos.X + eraserSize.Width, eraserPos.Y));
+					Font, textBrush, new PointF(eraserPos.X + eraserSize.Width + 3, eraserPos.Y));
 
 				//Copyright and Website
 				string copyrightText = S._("copyright \u00a9 2008 The Eraser Project");
