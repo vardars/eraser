@@ -33,7 +33,7 @@
 							Name="Eraser" Icon="Eraser.exe" IconIndex="0" />
 					</File>
 					<File Id="BevelLine" Name="BevelLine.dll" Source="..\bin\Release\BevelLine.dll"
-						ProcessorArchitecture="msil"/>
+						ProcessorArchitecture="msil" />
 					<File Id="EraserManager" Name="Eraser.Manager.dll"
 						Source="..\bin\Release\Eraser.Manager.dll" ProcessorArchitecture="msil" />
 					<File Id="EraserUtil" Name="Eraser.Util.dll"

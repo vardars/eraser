@@ -21,8 +21,12 @@
 -->
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="C71D72C1-1148-4ec5-8BD5-198C85AB0DDD" Name="Eraser" Language="1033" Version="6.0.0.2"
-			Manufacturer="The Eraser Project" UpgradeCode="D07F460B-E2B0-4cc5-A109-998CA9C2D4EA">
+	<!-- Change these constants at every build. -->
+	<?define VERSIONSTRING=6.0.1.3 ?><!-- Major.Minor.Release.Build -->
+	<?define PRODUCTID=58F70C8E-1E46-4864-86FC-119693E4DFE2?>
+
+	<Product Id="$(var.PRODUCTID)" Name="Eraser" Language="1033" Version="$(var.VERSIONSTRING)"
+			Manufacturer="The Eraser Project" UpgradeCode="073882B4-E059-4FB4-9D36-11E88D14AE87">
 		<Package Id="*" InstallerVersion="200" Compressed="yes" Keywords="Eraser"
 			Description="Eraser Installer" Manufacturer="The Eraser Project" />
 		<Media Id="1" Cabinet="Installer.cab" EmbedCab="yes" />
@@ -39,8 +43,14 @@
 
 		<!-- Program upgrades-->
 		<Upgrade Id ="D07F460B-E2B0-4cc5-A109-998CA9C2D4EA">
-			<UpgradeVersion Property="ERASERUPDATE" Minimum="6.0.0.0" OnlyDetect="no" />
+			<UpgradeVersion Property="ERASERUPDATE" Minimum="6.0.0" Maximum="$(var.VERSIONSTRING)" OnlyDetect="no" />
+			<UpgradeVersion Property="ERASERDOWNDATE" Minimum="$(var.VERSIONSTRING)" OnlyDetect="yes" />
 		</Upgrade>
+		<CustomAction Id="AlreadyUpdated" Error="A newer version of Eraser is already installed. Setup will now exit." />
+		<InstallUISequence>
+			<FindRelatedProducts Before="LaunchConditions" />
+			<Custom Action="AlreadyUpdated" After="FindRelatedProducts">ERASERDOWNDATE</Custom>
+		</InstallUISequence>
 		<InstallExecuteSequence>
 			<RemoveExistingProducts After="InstallInitialize" />
 		</InstallExecuteSequence>
