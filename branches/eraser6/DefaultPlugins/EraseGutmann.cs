@@ -25,13 +25,16 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.InteropServices;
 
 using Eraser.Manager;
 using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
-	class Gutmann : PassBasedErasureMethod
+	[DefaultFileErasure(1)]
+	[Guid("1407FC4E-FEFF-4375-B4FB-D7EFBB7E9922")]
+	public class Gutmann : PassBasedErasureMethod
 	{
 		public override string Name
 		{

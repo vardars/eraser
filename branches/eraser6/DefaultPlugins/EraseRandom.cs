@@ -22,12 +22,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.InteropServices;
 
 using Eraser.Manager;
 using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
+	[DefaultUnusedSpaceErasure(1)]
+	[Guid("BF8BA267-231A-4085-9BF9-204DE65A6641")]
 	class Pseudorandom : PassBasedErasureMethod
 	{
 		public override string Name

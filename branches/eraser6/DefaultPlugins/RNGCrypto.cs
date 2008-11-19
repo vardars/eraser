@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.InteropServices;
 
 using Eraser.Manager;
 using System.Security.Cryptography;
@@ -29,6 +30,8 @@ using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
+	[DefaultPRNG(1)]
+	[Guid("6BF35B8E-F37F-476e-B6B2-9994A92C3B0C")]
 	public class RNGCrypto : PRNG
 	{
 		public override string Name

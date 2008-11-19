@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Eraser.Util;
 
 namespace Eraser.Manager
 {
@@ -91,6 +92,96 @@ namespace Eraser.Manager
 		private string uiLanguage;
 	}
 
+	#region Default attributes
+	/// <summary>
+	/// Indicates that the marked class should be used as a default when no
+	/// settings have been set by the user.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = true)]
+	public abstract class DefaultAttribute : Attribute
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="priority">The priority of the current element in terms of
+		/// it being the default.</param>
+		public DefaultAttribute(int priority)
+		{
+			Priority = priority;
+		}
+
+		/// <summary>
+		/// The priority of the default.
+		/// </summary>
+		public int Priority
+		{
+			get
+			{
+				return priority;
+			}
+			private set
+			{
+				priority = value;
+			}
+		}
+
+		private int priority;
+	}
+
+	/// <summary>
+	/// Indicates that the marked class should be used as the default file erasure
+	/// method.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
+	public sealed class DefaultFileErasureAttribute : DefaultAttribute
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="priority">The priority of the current element in terms of
+		/// it being the default.</param>
+		public DefaultFileErasureAttribute(int priority)
+			: base(priority)
+		{
+		}
+	}
+
+	/// <summary>
+	/// Indicates that the marked class should be used as the default unused space
+	/// erasure method.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
+	public sealed class DefaultUnusedSpaceErasureAttribute : DefaultAttribute
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="priority">The priority of the current element in terms of
+		/// it being the default.</param>
+		public DefaultUnusedSpaceErasureAttribute(int priority)
+			: base(priority)
+		{
+		}
+	}
+
+	/// <summary>
+	/// Indicates that the marked class should be used as the default PRNG.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
+	public sealed class DefaultPRNGAttribute : DefaultAttribute
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="priority">The priority of the current element in terms of
+		/// it being the default.</param>
+		public DefaultPRNGAttribute(int priority)
+			: base(priority)
+		{
+		}
+	}
+	#endregion
+
 	/// <summary>
 	/// Handles the settings related to the Eraser Manager.
 	/// </summary>
@@ -115,9 +206,18 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return settings["DefaultFileErasureMethod"] == null ? 
-					new Guid("1407FC4E-FEFF-4375-B4FB-D7EFBB7E9922") :
-					(Guid)settings["DefaultFileErasureMethod"];
+				//If the user did not define anything for this field, check all plugins
+				//and use the method which was declared by us to be the highest
+				//priority default
+				if (settings["DefaultFileErasureMethod"] == null)
+				{
+					Guid result = FindHighestPriorityDefault(typeof(ErasureMethod),
+						typeof(DefaultFileErasureAttribute));
+					return result == Guid.Empty ? new Guid("{1407FC4E-FEFF-4375-B4FB-D7EFBB7E9922}") :
+						result;
+				}
+				else
+					return (Guid)settings["DefaultFileErasureMethod"];
 			}
 			set
 			{
@@ -134,9 +234,15 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return settings["DefaultUnusedSpaceErasureMethod"] == null ? 
-					new Guid("{BF8BA267-231A-4085-9BF9-204DE65A6641}") :
-					(Guid)settings["DefaultUnusedSpaceErasureMethod"];
+				if (settings["DefaultUnusedSpaceErasureMethod"] == null)
+				{
+					Guid result = FindHighestPriorityDefault(typeof(UnusedSpaceErasureMethod),
+						typeof(DefaultUnusedSpaceErasureAttribute));
+					return result == Guid.Empty ? new Guid("{BF8BA267-231A-4085-9BF9-204DE65A6641}") :
+						result;
+				}
+				else
+					return (Guid)settings["DefaultUnusedSpaceErasureMethod"];
 			}
 			set
 			{
@@ -152,9 +258,15 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return settings["ActivePRNG"] == null ? 
-					new Guid("{6BF35B8E-F37F-476e-B6B2-9994A92C3B0C}") :
-					(Guid)settings["ActivePRNG"];
+				if (settings["ActivePRNG"] == null)
+				{
+					Guid result = FindHighestPriorityDefault(typeof(PRNG),
+						typeof(DefaultPRNGAttribute));
+					return result == Guid.Empty ? new Guid("{6BF35B8E-F37F-476e-B6B2-9994A92C3B0C}") :
+						result;
+				}
+				else
+					return (Guid)settings["ActivePRNG"];
 			}
 			set
 			{
@@ -247,6 +359,84 @@ namespace Eraser.Manager
 				settings["PlausibleDeniabilityFiles"] = value;
 			}
 		}
+
+		#region Default Attributes retrieval
+		private static Guid FindHighestPriorityDefault(Type superClass,
+			Type attributeType)
+		{
+			Plugin.Host pluginHost = ManagerLibrary.Instance.Host;
+			List<Plugin.PluginInstance> plugins = pluginHost.Plugins;
+			SortedList<int, Guid> priorities = new SortedList<int, Guid>();
+
+			foreach (Plugin.PluginInstance plugin in plugins)
+			{
+				Type[] types = FindTypeAttributeInAssembly(plugin.Assembly,
+					superClass, attributeType);
+
+				//Prioritize the types.
+				if (types != null)
+					foreach (Type type in types)
+					{
+						object[] guids =
+							type.GetCustomAttributes(typeof(GuidAttribute), false);
+						DefaultAttribute defaultAttr = (DefaultAttribute)
+							type.GetCustomAttributes(attributeType, false)[0];
+
+						if (guids.Length == 1)
+							priorities.Add(defaultAttr.Priority,
+								new Guid(((GuidAttribute)guids[0]).Value));
+					}
+			}
+
+			//Return the highest priority one.
+			if (priorities.Count > 0)
+				return priorities[priorities.Keys[priorities.Count - 1]];
+			return Guid.Empty;
+		}
+
+		private static Type[] FindTypeAttributeInAssembly(Assembly assembly, Type superClass,
+			Type attributeType)
+		{
+			//Check whether the plugin is signed by us.
+			byte[] pluginKey = assembly.GetName().GetPublicKey();
+			byte[] ourKey = Assembly.GetExecutingAssembly().GetName().GetPublicKey();
+
+			//Definitely not signed by us.
+			if (pluginKey.Length != ourKey.Length ||
+				!MsCorEEAPI.VerifyStrongName(assembly.Location))
+				return null;
+
+			//Not by us, either
+			bool officialPlugin = true;
+			for (int i = 0, j = ourKey.Length; i != j; ++i)
+				if (pluginKey[i] != ourKey[i])
+					officialPlugin = false;
+			if (!officialPlugin)
+				return null;
+
+			//Yes, if we got here the plugin is signed by us. Find the
+			//type which inherits from ErasureMethod.
+			Type[] types = assembly.GetExportedTypes();
+			List<Type> result = new List<Type>();
+			foreach (Type type in types)
+			{
+				if (!type.IsPublic || type.IsAbstract)
+					//Not interesting.
+					continue;
+
+				//Try to see if this class inherits from the specified super class.
+				if (!type.IsSubclassOf(superClass))
+					continue;
+
+				//See if this class has the DefaultFileErasureAttribute
+				object[] attributes = type.GetCustomAttributes(attributeType, false);
+				if (attributes.Length > 0)
+					result.Add(type);
+			}
+
+			return result.ToArray();
+		}
+		#endregion
 
 		/// <summary>
 		/// Holds user decisions on whether the plugin will be loaded at the next
