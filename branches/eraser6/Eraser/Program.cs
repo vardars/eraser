@@ -48,23 +48,20 @@ namespace Eraser
 			using (eraserClient = new DirectExecutor())
 			{
 				//Load the task list
-				RegistryKey key = Application.UserAppDataRegistry;
-				byte[] savedTaskList = (byte[])key.GetValue("TaskList", new byte[0]);
-				using (MemoryStream stream = new MemoryStream(savedTaskList))
-				{
-					try
-					{
-						if (savedTaskList.Length != 0)
+				EraserSettings settings = new EraserSettings();
+				if (settings.TaskList != null)
+					using (MemoryStream stream = new MemoryStream(settings.TaskList))
+						try
+						{
 							eraserClient.LoadTaskList(stream);
-					}
-					catch (Exception)
-					{
-						key.DeleteValue("TaskList");
-						MessageBox.Show(S._("Could not load task list. All task entries have " +
-							"been lost."), S._("Eraser"), MessageBoxButtons.OK,
-							MessageBoxIcon.Error);
-					}
-				}
+						}
+						catch (Exception)
+						{
+							settings.TaskList = null;
+							MessageBox.Show(S._("Could not load task list. All task entries have " +
+								"been lost."), S._("Eraser"), MessageBoxButtons.OK,
+								MessageBoxIcon.Error);
+						}
 
 				//Create the main form
 				MainForm form = new MainForm();
@@ -88,7 +85,7 @@ namespace Eraser
 				using (MemoryStream stream = new MemoryStream())
 				{
 					eraserClient.SaveTaskList(stream);
-					key.SetValue("TaskList", stream.ToArray(), RegistryValueKind.Binary);
+					settings.TaskList = stream.ToArray();
 				}
 			}
 		}
@@ -180,6 +177,21 @@ namespace Eraser
 		public EraserSettings()
 		{
 			settings = Manager.ManagerLibrary.Instance.SettingsManager.ModuleSettings;
+		}
+
+		/// <summary>
+		/// Gets or sets the task list, serialised in binary form by the Manager assembly.
+		/// </summary>
+		public byte[] TaskList
+		{
+			get
+			{
+				return (byte[])settings["TaskList"];
+			}
+			set
+			{
+				settings["TaskList"] = value;
+			}
 		}
 
 		/// <summary>
