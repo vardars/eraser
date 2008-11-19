@@ -32,6 +32,7 @@
   <ItemGroup>
     <Compile Include="DirectoryStructure.wxs" />
     <Compile Include="Eraser.wxs" />
+    <Compile Include="Localisations.wxs" />
     <Compile Include="UserInterface.wxs" />
   </ItemGroup>
   <ItemGroup>

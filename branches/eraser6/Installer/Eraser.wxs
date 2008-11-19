@@ -21,8 +21,8 @@
 -->
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="3CD6BF73-CEF1-4648-B0C6-5F3370F80C7D" Name="Eraser" Language="1033" Version="6.0.0.1"
-			Manufacturer="The Eraser Project" UpgradeCode="F7C915E0-B081-4a80-97E2-FDA462FEDF05">
+	<Product Id="C71D72C1-1148-4ec5-8BD5-198C85AB0DDD" Name="Eraser" Language="1033" Version="6.0.0.2"
+			Manufacturer="The Eraser Project" UpgradeCode="D07F460B-E2B0-4cc5-A109-998CA9C2D4EA">
 		<Package Id="*" InstallerVersion="200" Compressed="yes" Keywords="Eraser"
 			Description="Eraser Installer" Manufacturer="The Eraser Project" />
 		<Media Id="1" Cabinet="Installer.cab" EmbedCab="yes" />
@@ -38,6 +38,9 @@
 		</Condition>
 
 		<!-- Program upgrades-->
+		<Upgrade Id ="D07F460B-E2B0-4cc5-A109-998CA9C2D4EA">
+			<UpgradeVersion Property="ERASERUPDATE" Minimum="6.0.0.0" OnlyDetect="no" />
+		</Upgrade>
 		<InstallExecuteSequence>
 			<RemoveExistingProducts After="InstallInitialize" />
 		</InstallExecuteSequence>
@@ -65,15 +68,8 @@
 			<ComponentRef Id="EraserLangEn" />
 			<ComponentRef Id="EraserPlugins" />
 			<ComponentRef Id="EraserPluginsLangEn" />
-
-			<Feature Id="EraserLanguages" Title="Alternative Languages"
-					Description="Alternative localised version of Eraser." Level="10"
-					Display="expand">
-				<Feature Id="EraserLanguagesNl" Title="Dutch" Description="Dutch localisation" Level="10">
-					<ComponentRef Id="EraserLangNl" />
-					<ComponentRef Id="EraserPluginsLangNl" />
-				</Feature>
-			</Feature>
+			
+			<FeatureRef Id="EraserLanguages" />
 		</Feature>
 	</Product>
 </Wix>

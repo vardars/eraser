@@ -47,13 +47,6 @@
 							ProcessorArchitecture="msil" />
 					</Component>
 				</Directory>
-				<Directory Id="EraserLangNlDir" Name="nl">
-					<Component Id="EraserLangNl" Guid="A404FC89-2216-4e14-96D5-30F54D120FBB">
-						<File Id="EraserNl" Name="Eraser.resources.dll"
-							Source="..\bin\Release\nl\Eraser.resources.dll"
-							ProcessorArchitecture="msil" />
-					</Component>
-				</Directory>
 
 				<Directory Id="EraserPluginsDir" Name="Plugins">
 					<Component Id="EraserPlugins" Guid="39A307BD-4244-4972-BC12-A5F5A76E684A">
@@ -69,13 +62,6 @@
 						<Component Id="EraserPluginsLangEn" Guid="23B2B7DD-C518-4dde-A229-94CA9122B995">
 							<File Id="EraserDefaultPluginsEn" Name="Eraser.DefaultPlugins.resources.dll"
 								Source="..\bin\Release\Plugins\en\Eraser.DefaultPlugins.resources.dll"
-								ProcessorArchitecture="msil" />
-						</Component>
-					</Directory>
-					<Directory Id="EraserPluginsLangNlDir" Name="nl">
-						<Component Id="EraserPluginsLangNl" Guid="CD85AC3F-2B4E-4ac8-8FF9-6BD3BC90BD3D">
-							<File Id="EraserDefaultPluginsNl" Name="Eraser.DefaultPlugins.resources.dll"
-								Source="..\bin\Release\Plugins\nl\Eraser.DefaultPlugins.resources.dll"
 								ProcessorArchitecture="msil" />
 						</Component>
 					</Directory>
