@@ -118,7 +118,11 @@ namespace Eraser.DefaultPlugins
 		{
 			foreach (ListViewItem item in customMethod.SelectedItems)
 			{
-				removeCustomMethods.Add(((CustomErasureMethod)item.Tag).GUID);
+				CustomErasureMethod method = (CustomErasureMethod)item.Tag;
+				if (addCustomMethods.IndexOf(method) >= 0)
+					addCustomMethods.Remove(method);
+				else
+					removeCustomMethods.Add(method.GUID);
 				customMethod.Items.Remove(item);
 			}
 		}
