@@ -333,7 +333,7 @@ namespace Eraser
 			long amountToDownload = 0;
 			foreach (UpdateData upd in uiUpdates.Values)
 				amountToDownload += upd.Update.FileSize - upd.amountDownloaded;
-			downloadingOverallLbl.Text = string.Format(S._("Overall progress: {0} left"),
+			downloadingOverallLbl.Text = S._("Overall progress: {0} left",
 				Util.File.GetHumanReadableFilesize(amountToDownload));
 		}
 
@@ -366,8 +366,7 @@ namespace Eraser
 				if (update.Error == null)
 					item.SubItems[1].Text = string.Empty;
 				else
-					item.SubItems[1].Text = string.Format(S._("Error: {0}"),
-						update.Error.Message);
+					item.SubItems[1].Text = S._("Error: {0}", update.Error.Message);
 			}
 
 			installer.RunWorkerAsync(e.Result);
@@ -415,8 +414,7 @@ namespace Eraser
 			{
 				update.Error = ((UpdateManager.ProgressErrorEventArgs)e).Exception;
 				update.LVItem.ImageIndex = 3;
-				update.LVItem.SubItems[1].Text = string.Format(S._("Error: {0}"),
-					update.Error.Message);
+				update.LVItem.SubItems[1].Text = S._("Error: {0}", update.Error.Message);
 			}
 			else
 				switch (update.LVItem.ImageIndex)
@@ -662,7 +660,7 @@ namespace Eraser
 
 					float progress = responseBuffer.Count / (float)resp.ContentLength;
 					OnProgress(new ProgressEventArgs(progress, progress, null,
-						string.Format(S._("{0} of {1} downloaded"),
+						S._("{0} of {1} downloaded",
 							Util.File.GetHumanReadableFilesize(responseBuffer.Count),
 							Util.File.GetHumanReadableFilesize(resp.ContentLength))));
 				}
@@ -816,7 +814,7 @@ namespace Eraser
 								float itemProgress = tempStrm.Position / (float)resp.ContentLength;
 								float overallProgress = (currUpdate - 1 + itemProgress) / updates.Count;
 								OnProgress(new ProgressEventArgs(itemProgress, overallProgress,
-									update, string.Format(S._("Downloading: {0}"), update.Name)));
+									update, S._("Downloading: {0}", update.Name)));
 							}
 						}
 
@@ -825,14 +823,14 @@ namespace Eraser
 
 						//Let the event handler know the download is complete.
 						OnProgress(new ProgressEventArgs(1.0f, (float)currUpdate / updates.Count,
-							update, string.Format(S._("Downloaded: {0}"), update.Name)));
+							update, S._("Downloaded: {0}", update.Name)));
 					}
 				}
 				catch (Exception e)
 				{
 					OnProgress(new ProgressErrorEventArgs(new ProgressEventArgs(1.0f,
 						(float)currUpdate / updates.Count, update,
-							string.Format(S._("Error downloading {0}: {1}"), update.Name, e.Message)),
+							S._("Error downloading {0}: {1}", update.Name, e.Message)),
 						e));
 				}
 			}
@@ -853,7 +851,7 @@ namespace Eraser
 					Update item = tempFiles[path];
 					float progress = (float)currItem++ / files.Count;
 					OnProgress(new ProgressEventArgs(0.0f, progress,
-						item, string.Format(S._("Installing {0}"), item.Name)));
+						item, S._("Installing {0}", item.Name)));
 
 					System.Diagnostics.ProcessStartInfo info = new System.Diagnostics.ProcessStartInfo();
 					info.FileName = path;
@@ -863,11 +861,11 @@ namespace Eraser
 					process.WaitForExit(Int32.MaxValue);
 					if (process.ExitCode == 0)
 						OnProgress(new ProgressEventArgs(1.0f, progress,
-							item, string.Format(S._("Installed {0}"), item.Name)));
+							item, S._("Installed {0}", item.Name)));
 					else
 						OnProgress(new ProgressErrorEventArgs(new ProgressEventArgs(1.0f,
-							progress, item, string.Format(S._("Error installing {0}"), item.Name)),
-							new Exception(string.Format(S._("The installer exited with an error code {0}"),
+							progress, item, S._("Error installing {0}", item.Name)),
+							new Exception(S._("The installer exited with an error code {0}",
 								process.ExitCode))));
 				}
 			}

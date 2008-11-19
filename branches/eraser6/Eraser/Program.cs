@@ -126,8 +126,8 @@ namespace Eraser
 							catch (Exception)
 							{
 								key.DeleteValue(setting);
-								MessageBox.Show(string.Format(S._("Could not load the setting {0} for plugin {1}." +
-									"The setting has been lost."), key, pluginID.ToString()),
+								MessageBox.Show(S._("Could not load the setting {0} for plugin {1}. " +
+									"The setting has been lost.", key, pluginID.ToString()),
 									S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error);
 							}
 

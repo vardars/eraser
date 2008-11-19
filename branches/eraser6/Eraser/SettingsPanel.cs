@@ -232,9 +232,9 @@ namespace Eraser
 				string defaults = string.Empty;
 				foreach (string item in defaultsList)
 					defaults += "\t" + item + "\n";
-				MessageBox.Show(string.Format(S._("The following settings held invalid values:\n\n" +
+				MessageBox.Show(S._("The following settings held invalid values:\n\n" +
 					"{0}\nThese settings have now been set to naive defaults.\n\n" +
-					"Please check that the new settings suit your required level of security."),
+					"Please check that the new settings suit your required level of security.",
 					defaults), S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				saveSettings_Click(null, null);
 			}

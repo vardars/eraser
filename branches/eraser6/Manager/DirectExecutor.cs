@@ -621,9 +621,9 @@ namespace Eraser.Manager
 					//Skip this directory if it is a reparse point
 					if ((info.Attributes & FileAttributes.ReparsePoint) != 0)
 					{
-						task.Log.Add(new LogEntry(string.Format(S._("Files in {0} did not have " +
-							"their cluster tips erased because it is a hard link or a symbolic " +
-							"link."), info.FullName), LogLevel.INFORMATION));
+						task.Log.Add(new LogEntry(S._("Files in {0} did not have their cluster " +
+							"tips erased because it is a hard link or a symbolic link.",
+							info.FullName), LogLevel.INFORMATION));
 						return;
 					}
 
@@ -633,8 +633,8 @@ namespace Eraser.Manager
 								"cluster tips erased, because it is a system file", file.FullName),
 								LogLevel.INFORMATION));
 						else if ((file.Attributes & FileAttributes.ReparsePoint) != 0)
-							task.Log.Add(new LogEntry(string.Format(S._("{0} did not have its " +
-								"cluster tips erased because it is a hard link or a symbolic link."),
+							task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips " +
+								"erased because it is a hard link or a symbolic link.",
 								file.FullName), LogLevel.INFORMATION));
 						else
 						{
@@ -944,8 +944,8 @@ namespace Eraser.Manager
 					//If after 20 tries the file is still locked, some program is definitely
 					//using the file; throw an exception.
 					if (tries > 20)
-						throw new IOException(string.Format(S._("The file {0} is currently in use " +
-							"and cannot be removed."), info.FullName));
+						throw new IOException(S._("The file {0} is currently in use and " +
+							"cannot be removed.", info.FullName));
 				}
 			}
 

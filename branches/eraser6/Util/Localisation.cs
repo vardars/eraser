@@ -40,22 +40,40 @@ namespace Eraser.Util
 	public static class S
 	{
 		/// <summary>
-		/// Translates the localizable string to the set localized string.
+		/// Translates the localisable string to the set localised string.
 		/// </summary>
-		/// <param name="str">The string to localize.</param>
-		/// <returns>A localized string, or str if no localization exists.</returns>
+		/// <param name="str">The string to localise.</param>
+		/// <returns>A localised string, or str if no localisation exists.</returns>
 		public static string _(string str)
 		{
 			return TranslateText(str, Assembly.GetCallingAssembly());
 		}
 
 		/// <summary>
-		/// Translates the localizable string to the set localized string.
+		/// Translates the localisable string to the localised string, formatting all
+		/// placeholders using composite formatting. This is shorthand for
+		/// <code>string.Format(S._(str), args)</code>
 		/// </summary>
-		/// <param name="str">The string to localize.</param>
-		/// <param name="assembly">The assembly from which localized resource satellite
+		/// <param name="str">The string to localise.</param>
+		/// <param name="args">Arguments for the composite formatting call.</param>
+		/// <returns>The formatted and localised string.</returns>
+		/// <remarks>The localised string is retrieved before formatting.</remarks>
+		public static string _(string str, params object[] args)
+		{
+			//Get the localised version of the input string.
+			string localStr = TranslateText(str, Assembly.GetCallingAssembly());
+
+			//Format the string.
+			return string.Format(localStr, args);
+		}
+
+		/// <summary>
+		/// Translates the localisable string to the set localised string.
+		/// </summary>
+		/// <param name="str">The string to localise.</param>
+		/// <param name="assembly">The assembly from which localised resource satellite
 		/// assemblies should be loaded from.</param>
-		/// <returns>A localized string, or str if no localization exists.</returns>
+		/// <returns>A localised string, or str if no localisation exists.</returns>
 		public static string TranslateText(string str, Assembly assembly)
 		{
 			//If the string is empty, forget it!
