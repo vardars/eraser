@@ -147,7 +147,7 @@
   <data name="Could not load task list. All task entries have been lost." xml:space="preserve">
     <value>Kan geen taak lijst vinden. Alle taken zijn verdwenen.</value>
   </data>
-  <data name="Could not load the setting {0} for plugin {1}.The setting has been lost." xml:space="preserve">
+  <data name="Could not load the setting {0} for plugin {1}. The setting has been lost." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="{0} out of {1}" xml:space="preserve">
@@ -203,6 +203,9 @@
   </data>
   <data name="The following settings held invalid values:\n\n{0}\nThese settings have now been set to naive defaults.\n\nPlease check that the new settings suit your required level of security." xml:space="preserve">
     <value>De volgende instellingen had ongeldige waarden:\n\n{0}\nDeze instellingen zijn omgezet naar lege standaards.\nKijk goed na of de nieuwe instelling u bevalt met de benodigde beveiliging niveau.</value>
+  </data>
+  <data name="Plugins which have just be approved will only be loaded the next time Eraser is started." xml:space="preserve">
+    <value>(Untranslated)</value>
   </data>
   <data name="An invalid language was selected." xml:space="preserve">
     <value>Een foutieve taal was geselecteerd.</value>

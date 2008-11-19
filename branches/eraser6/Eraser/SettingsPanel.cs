@@ -71,8 +71,13 @@ namespace Eraser
 			}
 
 			item.Checked = instance.Plugin != null ||
-				Manager.ManagerLibrary.Instance.Settings.ApprovedPlugins.IndexOf(
-					instance.AssemblyInfo.GUID) != -1;
+				(Manager.ManagerLibrary.Instance.Settings.PluginApprovals.ContainsKey(
+					instance.AssemblyInfo.GUID) && Manager.ManagerLibrary.Instance.
+					Settings.PluginApprovals[instance.AssemblyInfo.GUID]
+				);
+
+			item.Group = instance.IsCore ? pluginsManager.Groups[0] :
+				pluginsManager.Groups[1];
 			item.SubItems.Add(instance.Assembly.GetName().Version.ToString());
 			item.SubItems.Add(instance.Assembly.Location);
 			item.Tag = instance;
@@ -232,7 +237,7 @@ namespace Eraser
 				string defaults = string.Empty;
 				foreach (string item in defaultsList)
 					defaults += "\t" + item + "\n";
-				MessageBox.Show(S._("The following settings held invalid values:\n\n" +
+				MessageBox.Show(this, S._("The following settings held invalid values:\n\n" +
 					"{0}\nThese settings have now been set to naive defaults.\n\n" +
 					"Please check that the new settings suit your required level of security.",
 					defaults), S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -297,6 +302,14 @@ namespace Eraser
 			}
 		}
 
+		private void pluginsManager_ItemCheck(object sender, ItemCheckEventArgs e)
+		{
+			ListViewItem item = pluginsManager.Items[e.Index];
+			PluginInstance instance = (PluginInstance)item.Tag;
+			if (instance.IsCore)
+				e.NewValue = CheckState.Checked;
+		}
+
 		private void pluginsMenu_Opening(object sender, CancelEventArgs e)
 		{
 			if (pluginsManager.SelectedItems.Count == 1)
@@ -327,19 +340,30 @@ namespace Eraser
 			managerSettings.ConfirmEraseOnRestart = lockedConfirm.Checked;
 			managerSettings.ExecuteMissedTasksImmediately = schedulerMissedImmediate.Checked;
 
-			List<Guid> approvedPlugins = managerSettings.ApprovedPlugins;
+			bool pluginApprovalsChanged = false;
+			Dictionary<Guid, bool> pluginApprovals = managerSettings.PluginApprovals;
 			foreach (ListViewItem item in pluginsManager.Items)
 			{
 				PluginInstance plugin = (PluginInstance)item.Tag;
-				if (item.Checked)
+				Guid guid = plugin.AssemblyInfo.GUID;
+				if (!pluginApprovals.ContainsKey(guid))
 				{
-					if (approvedPlugins.IndexOf(plugin.AssemblyInfo.GUID) == -1)
-						approvedPlugins.Add(plugin.AssemblyInfo.GUID);
+					pluginApprovals.Add(guid, item.Checked);
+					pluginApprovalsChanged = true;
 				}
-				else
-					approvedPlugins.Remove(plugin.AssemblyInfo.GUID);
+				else if (pluginApprovals[guid] != item.Checked)
+				{
+					pluginApprovals[guid] = item.Checked;
+					pluginApprovalsChanged = true;
+				}
 			}
-			managerSettings.ApprovedPlugins = approvedPlugins;
+			managerSettings.PluginApprovals = pluginApprovals;
+			if (pluginApprovalsChanged)
+			{
+				MessageBox.Show(this, S._("Plugins which have just be approved will only be loaded " +
+					"the next time Eraser is started."), S._("Eraser"), MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
+			}
 
 			//Error checks for the rest that do.
 			errorProvider.Clear();
@@ -377,8 +401,9 @@ namespace Eraser
 			if (((Language)uiLanguage.SelectedItem).Name != settings.Language)
 			{
 				settings.Language = ((Language)uiLanguage.SelectedItem).Name;
-				MessageBox.Show(S._("The new UI language will take only effect when Eraser is restarted."),
-					S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(this, S._("The new UI language will take only effect when " +
+					"Eraser is restarted."), S._("Eraser"), MessageBoxButtons.OK,
+					MessageBoxIcon.Information);
 			}
 			managerSettings.DefaultFileErasureMethod =
 				((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
@@ -388,7 +413,7 @@ namespace Eraser
 			PRNG newPRNG = (PRNG)erasePRNG.SelectedItem;
 			if (newPRNG.GUID != managerSettings.ActivePRNG)
 			{
-				MessageBox.Show(S._("The new randomness data source will only be used when " +
+				MessageBox.Show(this, S._("The new randomness data source will only be used when " +
 					"the next task is run.\nCurrently running tasks will use the old source."),
 					S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 				managerSettings.ActivePRNG = newPRNG.GUID;

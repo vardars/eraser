@@ -214,7 +214,7 @@
     <value>SettingsPanel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>Eraser.BasePanel, Eraser, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Eraser.BasePanel, Eraser, Version=6.0.0.1, Culture=neutral, PublicKeyToken=3ecfb0f1525474f0</value>
   </data>
   <data name="titleIcon.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
     <value>TopLeft</value>
@@ -604,7 +604,7 @@
     <value>scheduler</value>
   </data>
   <data name="&gt;&gt;scheduler.Type" xml:space="preserve">
-    <value>Eraser.LightGroup, Eraser, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Eraser.LightGroup, Eraser, Version=6.0.0.1, Culture=neutral, PublicKeyToken=3ecfb0f1525474f0</value>
   </data>
   <data name="&gt;&gt;scheduler.Parent" xml:space="preserve">
     <value>content</value>
@@ -660,6 +660,26 @@
   <data name="&gt;&gt;pluginsMenu.Type" xml:space="preserve">
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="pluginsManager.Groups" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACJTeXN0
+        ZW0uV2luZG93cy5Gb3Jtcy5MaXN0Vmlld0dyb3VwBAAAAAZIZWFkZXIPSGVhZGVyQWxpZ25tZW50A1Rh
+        ZwROYW1lAQQCAShTeXN0ZW0uV2luZG93cy5Gb3Jtcy5Ib3Jpem9udGFsQWxpZ25tZW50AgAAAAIAAAAG
+        AwAAAAxDb3JlIHBsdWdpbnMF/P///yhTeXN0ZW0uV2luZG93cy5Gb3Jtcy5Ib3Jpem9udGFsQWxpZ25t
+        ZW50AQAAAAd2YWx1ZV9fAAgCAAAAAAAAAAoGBQAAABVwbHVnaW5zTWFuYWdlckdycENvcmUL
+</value>
+  </data>
+  <data name="pluginsManager.Groups1" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACJTeXN0
+        ZW0uV2luZG93cy5Gb3Jtcy5MaXN0Vmlld0dyb3VwBAAAAAZIZWFkZXIPSGVhZGVyQWxpZ25tZW50A1Rh
+        ZwROYW1lAQQCAShTeXN0ZW0uV2luZG93cy5Gb3Jtcy5Ib3Jpem9udGFsQWxpZ25tZW50AgAAAAIAAAAG
+        AwAAAA1PdGhlciBwbHVnaW5zBfz///8oU3lzdGVtLldpbmRvd3MuRm9ybXMuSG9yaXpvbnRhbEFsaWdu
+        bWVudAEAAAAHdmFsdWVfXwAIAgAAAAAAAAAKBgUAAAAZcGx1Z2luc01hbmFnZXJHcnBFeHRlcm5hbAs=
+</value>
+  </data>
   <data name="pluginsManager.IconAlignment" type="System.Windows.Forms.ErrorIconAlignment, System.Windows.Forms">
     <value>TopLeft</value>
   </data>
@@ -712,7 +732,7 @@
     <value>plugins</value>
   </data>
   <data name="&gt;&gt;plugins.Type" xml:space="preserve">
-    <value>Eraser.LightGroup, Eraser, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Eraser.LightGroup, Eraser, Version=6.0.0.1, Culture=neutral, PublicKeyToken=3ecfb0f1525474f0</value>
   </data>
   <data name="&gt;&gt;plugins.Parent" xml:space="preserve">
     <value>content</value>
@@ -856,7 +876,7 @@
     <value>erase</value>
   </data>
   <data name="&gt;&gt;erase.Type" xml:space="preserve">
-    <value>Eraser.LightGroup, Eraser, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Eraser.LightGroup, Eraser, Version=6.0.0.1, Culture=neutral, PublicKeyToken=3ecfb0f1525474f0</value>
   </data>
   <data name="&gt;&gt;erase.Parent" xml:space="preserve">
     <value>content</value>
@@ -982,7 +1002,7 @@
     <value>ui</value>
   </data>
   <data name="&gt;&gt;ui.Type" xml:space="preserve">
-    <value>Eraser.LightGroup, Eraser, Version=6.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>Eraser.LightGroup, Eraser, Version=6.0.0.1, Culture=neutral, PublicKeyToken=3ecfb0f1525474f0</value>
   </data>
   <data name="&gt;&gt;ui.Parent" xml:space="preserve">
     <value>content</value>

@@ -26,6 +26,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using Eraser.Util;
 
 namespace Eraser.Manager.Plugin
 {
@@ -177,19 +178,49 @@ namespace Eraser.Manager.Plugin
 			lock (plugins)
 				plugins.Add(instance);
 
-			//First check the plugin for the presence of a signature.
-			if (reflectAssembly.GetName().GetPublicKey().Length == 0)
+			//The plugin was not disabled or it was loaded for the first time. Check
+			//the plugin for the presence of a valid signature.
+			Dictionary<Guid, bool> approvals = ManagerLibrary.Instance.Settings.PluginApprovals;
+			if ((reflectAssembly.GetName().GetPublicKey().Length == 0 ||
+				!MsCorEEAPI.VerifyStrongName(filePath)) &&
+				!approvals.ContainsKey(instance.AssemblyInfo.GUID))
 			{
-				//If the user did not allow the plug-in to load, don't load it.
-				if (ManagerLibrary.Instance.Settings.ApprovedPlugins.
-					IndexOf(instance.AssemblyInfo.GUID) == -1)
-				{
-					return;
-				}
+				return;
 			}
 
 			//Load the plugin
 			instance.Assembly = Assembly.LoadFrom(filePath);
+
+			//See if the plugin belongs to us (same signature) and if the assembly
+			//declares an IsCore attribute.
+			if (reflectAssembly.GetName().GetPublicKey().Length ==
+				Assembly.GetExecutingAssembly().GetName().GetPublicKey().Length)
+			{
+				bool sameKey = true;
+				byte[] reflectAssemblyKey = reflectAssembly.GetName().GetPublicKey();
+				byte[] thisAssemblyKey = Assembly.GetExecutingAssembly().GetName().GetPublicKey();
+				for (int i = 0, j = reflectAssemblyKey.Length; i != j; ++i)
+					if (reflectAssemblyKey[i] != thisAssemblyKey[i])
+					{
+						sameKey = false;
+						break;
+					}
+
+				//Check for the IsCore attribute.
+				if (sameKey)
+				{
+					object[] attr = instance.Assembly.GetCustomAttributes(typeof(CoreAttribute), true);
+					if (attr.Length != 0)
+						instance.IsCore = true;
+				}
+			}
+
+			//See if the user disabled this plugin (users cannot disable Core plugins)
+			if (approvals.ContainsKey(instance.AssemblyInfo.GUID) &&
+				!approvals[instance.AssemblyInfo.GUID] && !instance.IsCore)
+			{
+				return;
+			}
 
 			//Initialize the plugin
 			IPlugin pluginInterface = (IPlugin)Activator.CreateInstance(
@@ -201,7 +232,7 @@ namespace Eraser.Manager.Plugin
 			OnPluginLoaded(instance);
 		}
 
-		Assembly AssemblyResolve(object sender, ResolveEventArgs args)
+		private Assembly AssemblyResolve(object sender, ResolveEventArgs args)
 		{
 			lock (plugins)
 				foreach (PluginInstance instance in plugins)
@@ -210,7 +241,7 @@ namespace Eraser.Manager.Plugin
 			return null;
 		}
 
-		Assembly ResolveReflectionDependency(object sender, ResolveEventArgs args)
+		private Assembly ResolveReflectionDependency(object sender, ResolveEventArgs args)
 		{
 			return Assembly.ReflectionOnlyLoad(args.Name);
 		}
@@ -233,6 +264,7 @@ namespace Eraser.Manager.Plugin
 		{
 			Assembly = assembly;
 			Plugin = plugin;
+			isCore = false;
 		}
 
 		/// <summary>
@@ -274,6 +306,22 @@ namespace Eraser.Manager.Plugin
 		}
 
 		/// <summary>
+		/// Gets whether the plugin is required for the functioning of Eraser (and
+		/// therefore cannot be disabled.)
+		/// </summary>
+		public bool IsCore
+		{
+			get
+			{
+				return isCore;
+			}
+			internal set
+			{
+				isCore = value;
+			}
+		}
+
+		/// <summary>
 		/// Gets the IPlugin interface which the plugin exposed.
 		/// </summary>
 		public IPlugin Plugin
@@ -290,6 +338,7 @@ namespace Eraser.Manager.Plugin
 
 		private Assembly assembly;
 		private AssemblyInfo assemblyInfo;
+		private bool isCore;
 		private IPlugin plugin;
 	}
 
@@ -360,5 +409,15 @@ namespace Eraser.Manager.Plugin
 		/// <param name="parent">The parent control which the settings dialog should
 		/// be parented with.</param>
 		void DisplaySettings(Control parent);
+	}
+
+	/// <summary>
+	/// Declares that the entity referenced is a core plugin and cannot be unloaded.
+	/// Only plugins signed with the same signature as the Manager library will be
+	/// considered to be safe and therefore checked for this attribute.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = true)]
+	public sealed class CoreAttribute : Attribute
+	{
 	}
 }

@@ -147,8 +147,8 @@
   <data name="Could not load task list. All task entries have been lost." xml:space="preserve">
     <value>Could not load task list. All task entries have been lost.</value>
   </data>
-  <data name="Could not load the setting {0} for plugin {1}.The setting has been lost." xml:space="preserve">
-    <value>Could not load the setting {0} for plugin {1}.The setting has been lost.</value>
+  <data name="Could not load the setting {0} for plugin {1}. The setting has been lost." xml:space="preserve">
+    <value>Could not load the setting {0} for plugin {1}. The setting has been lost.</value>
   </data>
   <data name="{0} out of {1}" xml:space="preserve">
     <value>{0} out of {1}</value>
@@ -203,6 +203,9 @@
   </data>
   <data name="The following settings held invalid values:\n\n{0}\nThese settings have now been set to naive defaults.\n\nPlease check that the new settings suit your required level of security." xml:space="preserve">
     <value>The following settings held invalid values:\n\n{0}\nThese settings have now been set to naive defaults.\n\nPlease check that the new settings suit your required level of security.</value>
+  </data>
+  <data name="Plugins which have just be approved will only be loaded the next time Eraser is started." xml:space="preserve">
+    <value>Plugins which have just be approved will only be loaded the next time Eraser is started.</value>
   </data>
   <data name="An invalid language was selected." xml:space="preserve">
     <value>An invalid language was selected.</value>

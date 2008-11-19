@@ -212,10 +212,14 @@ namespace Eraser
             this.pluginsManagerColPath});
 			this.pluginsManager.ContextMenuStrip = this.pluginsMenu;
 			this.pluginsManager.FullRowSelect = true;
+			this.pluginsManager.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            ((System.Windows.Forms.ListViewGroup)(resources.GetObject("pluginsManager.Groups"))),
+            ((System.Windows.Forms.ListViewGroup)(resources.GetObject("pluginsManager.Groups1")))});
 			this.errorProvider.SetIconAlignment(this.pluginsManager, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("pluginsManager.IconAlignment"))));
 			this.pluginsManager.Name = "pluginsManager";
 			this.pluginsManager.UseCompatibleStateImageBehavior = false;
 			this.pluginsManager.View = System.Windows.Forms.View.Details;
+			this.pluginsManager.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.pluginsManager_ItemCheck);
 			// 
 			// pluginsManagerColName
 			// 
