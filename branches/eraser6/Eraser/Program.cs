@@ -47,8 +47,12 @@ namespace Eraser
 			using (ManagerLibrary library = new ManagerLibrary(new Settings()))
 			using (eraserClient = new DirectExecutor())
 			{
-				//Load the task list
+				//Set our UI language
 				EraserSettings settings = new EraserSettings();
+				System.Threading.Thread.CurrentThread.CurrentUICulture =
+					new CultureInfo(settings.Language);
+
+				//Load the task list
 				if (settings.TaskList != null)
 					using (MemoryStream stream = new MemoryStream(settings.TaskList))
 						try
