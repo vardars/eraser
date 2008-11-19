@@ -63,6 +63,10 @@ namespace Eraser
 					driveType != DriveType.CDRom &&
 					driveType != DriveType.Network)
 				{
+					//Skip drives which are not mounted: we cannot erase their unused space.
+					if (volume.MountPoints.Count == 0)
+						continue;
+
 					DriveItem item = new DriveItem();
 					string volumePath = volume.IsMounted ?
 						volume.MountPoints[0] : volume.VolumeID;

@@ -78,6 +78,11 @@ namespace Eraser.Util
 			{
 				if (pathNames[i] == '\0')
 				{
+					//If there are no mount points for this volume, the string will only
+					//have one NULL
+					if (i - lastIndex == 0)
+						break;
+
 					mountPoints.Add(pathNames.Substring(lastIndex, i - lastIndex));
 
 					lastIndex = i + 1;
