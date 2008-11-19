@@ -376,7 +376,6 @@ bool InstallEraser(std::wstring tempDir)
 
 	std::wstring commandLine(L"msiexec.exe /i ");
 	commandLine += L'"' + tempDir + L'"';
-	commandLine += L"REINSTALL=ALL REINSTALLMODE=omus";
 	
 	//And the return code is true if the process exited with 0.
 	return CreateProcessAndWait(commandLine) == 0;

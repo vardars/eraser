@@ -21,16 +21,23 @@
 -->
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="f4024002-a3ea-498a-993d-c0d32e205dfc" Name="Eraser" Language="1033" Version="6.0.0.0"
-			Manufacturer="The Eraser Project" UpgradeCode="073882b4-e059-4fb4-9d36-11e88d14ae87">
+	<Product Id="3CD6BF73-CEF1-4648-B0C6-5F3370F80C7D" Name="Eraser" Language="1033" Version="6.0.0.1"
+			Manufacturer="The Eraser Project" UpgradeCode="F7C915E0-B081-4a80-97E2-FDA462FEDF05">
 		<Package Id="*" InstallerVersion="200" Compressed="yes" Keywords="Eraser"
 			Description="Eraser Installer" Manufacturer="The Eraser Project" />
 		<Media Id="1" Cabinet="Installer.cab" EmbedCab="yes" />
 
-		<Condition Message='This setup requires the .NET Framework 2.0 or higher.'>
-			<![CDATA[MsiNetAssemblySupport >= "2.0.50727"]]>
+		<!-- Check for .NET 3.5 -->
+		<Property Id='FRAMEWORK35'>
+			<RegistrySearch Id='Framework35Registry' Type='raw'
+				Root='HKLM' Key='Software\Microsoft\NET Framework Setup\NDP\v3.5'
+				Name='Install' />
+		</Property>
+		<Condition Message='Eraser requires the .NET Framework 3.5 or higher to be installed.'>
+			FRAMEWORK35 = "#1"
 		</Condition>
 
+		<!-- Program directory -->
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<?if $(sys.BUILDARCH) = "x64"?>
 				<Directory Id="ProgramFiles64Folder">
@@ -78,6 +85,10 @@
 		<WixVariable Id="WixUIExclamationIco" Value="Resources\Exclamation.ico" />
 		<WixVariable Id="WixUIInfoIco" Value="Resources\Information.ico" />
 		<WixVariable Id="WixUINewIco" Value="Resources\New Folder.ico" />
+
+		<InstallExecuteSequence>
+			<RemoveExistingProducts After="InstallInitialize" />
+		</InstallExecuteSequence>
 
 		<CustomAction Id="RunEraserExe" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
 		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Run Eraser" />
