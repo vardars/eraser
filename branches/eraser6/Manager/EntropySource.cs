@@ -580,7 +580,7 @@ namespace Eraser.Manager
 						uint* pPool = (uint*)fPool;
 						uint poolLength = (uint)(pool.Length / sizeof(uint));
 						while (poolLength-- != 0)
-							*pPool = (uint)(*pPool++ ^ unchecked((uint)-1));
+							*pPool = (uint)(*pPool++ ^ uint.MaxValue);
 					}
 				}
 		}
