@@ -1,5 +1,5 @@
 [FileVersion]
-Input=6.0.1.18
+Input=6.0.1.22
 Regex=6.0.1.([0-9]+)
 Output=6.0.1.(++\\1)
 [ProductVersion]

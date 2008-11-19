@@ -21,5 +21,5 @@
 using System;
 using System.Reflection;
 
-[assembly: AssemblyFileVersion("6.0.1.582")] //*buildinc* [assembly: AssemblyFileVersion("$ProductVersion")]
-[assembly: AssemblyVersion("6.0.1.18")] //*buildinc* [assembly: AssemblyVersion("$FileVersion")]
+[assembly: AssemblyFileVersion("6.0.1.594")] //*buildinc* [assembly: AssemblyFileVersion("$ProductVersion")]
+[assembly: AssemblyVersion("6.0.1.22")] //*buildinc* [assembly: AssemblyVersion("$FileVersion")]
