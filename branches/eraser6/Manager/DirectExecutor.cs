@@ -799,7 +799,7 @@ namespace Eraser.Manager
 
 			//Get the erasure method if the user specified he wants the default.
 			ErasureMethod method = target.Method;
-			
+
 			//Calculate the total amount of data required to finish the wipe.
 			dataTotal = method.CalculateEraseDataSize(paths, dataTotal);
 
@@ -924,7 +924,7 @@ namespace Eraser.Manager
 			info.Attributes = FileAttributes.NotContentIndexed;
 
 			//Rename the file a few times to erase the record from the MFT.
-			for (int i = 0, retries = 0; i < FilenameErasePasses; ++i)
+			for (int i = 0, tries = 0; i < FilenameErasePasses; ++tries)
 			{
 				//Rename the file.
 				string newPath = info.DirectoryName + Path.DirectorySeparatorChar +
@@ -935,14 +935,17 @@ namespace Eraser.Manager
 				try
 				{
 					info.MoveTo(newPath);
+					++i;
 				}
 				catch (IOException)
 				{
 					Thread.Sleep(100);
-					// if we have been waiting for more than 3.2 seconds
-					// we should just ignore this, we probably could not access
-					// it in near future
-					if (retries < 32) --i;
+
+					//If after 20 tries the file is still locked, some program is definitely
+					//using the file; throw an exception.
+					if (tries > 20)
+						throw new IOException(string.Format(S._("The file {0} is currently in use " +
+							"and cannot be removed."), info.FullName));
 				}
 			}
 
