@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * $Id$
+ * Copyright 2008 The Eraser Project
+ * Original Author: Joel Low <lowjoel@users.sourceforge.net>
+ * Modified By:
+ *
+ * This file is part of Eraser.
+ *
+ * Eraser is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * Eraser is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * A copy of the GNU General Public License can be found at
+ * <http://www.gnu.org/licenses/>.
+-->
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment Id="EraserDirectoryFragment">
+		<DirectoryRef Id="PFFolder">
+			<Directory Id="INSTALLLOCATION" Name="Eraser">
+				<Component Id="EraserMain" Guid="D9D7F28B-1F5E-4da4-8FF2-4F8DC031E472">
+					<File Id="EraserExe" Name="Eraser.exe" Source="..\bin\Release\Eraser.exe"
+							ProcessorArchitecture="msil" KeyPath="yes">
+						<Shortcut Advertise="yes" Id="EraserExeProgramMenuShortcut" Directory="ProgramMenuFolder"
+							Name="Eraser" Icon="Eraser.exe" IconIndex="0" />
+						<Shortcut Advertise="yes" Id="EraserExeDesktopShortcut" Directory="DesktopFolder"
+							Name="Eraser" Icon="Eraser.exe" IconIndex="0" />
+					</File>
+					<File Id="BevelLine" Name="BevelLine.dll" Source="..\bin\Release\BevelLine.dll"
+						ProcessorArchitecture="msil"/>
+					<File Id="EraserManager" Name="Eraser.Manager.dll"
+						Source="..\bin\Release\Eraser.Manager.dll" ProcessorArchitecture="msil" />
+					<File Id="EraserUtil" Name="Eraser.Util.dll"
+						Source="..\bin\Release\Eraser.Util.dll" ProcessorArchitecture="msil" />
+				</Component>
+
+				<Directory Id="EraserLangEnDir" Name="en">
+					<Component Id="EraserLangEn" Guid="5BB2BEF6-1271-4786-9A40-552DD6223B1F">
+						<File Id="EraserEn" Name="Eraser.resources.dll"
+							Source="..\bin\Release\en\Eraser.resources.dll"
+							ProcessorArchitecture="msil" />
+					</Component>
+				</Directory>
+				<Directory Id="EraserLangNlDir" Name="nl">
+					<Component Id="EraserLangNl" Guid="A404FC89-2216-4e14-96D5-30F54D120FBB">
+						<File Id="EraserNl" Name="Eraser.resources.dll"
+							Source="..\bin\Release\nl\Eraser.resources.dll"
+							ProcessorArchitecture="msil" />
+					</Component>
+				</Directory>
+
+				<Directory Id="EraserPluginsDir" Name="Plugins">
+					<Component Id="EraserPlugins" Guid="39A307BD-4244-4972-BC12-A5F5A76E684A">
+						<File Id="DefaultPlugins" Name="Eraser.DefaultPlugins.dll"
+							Source="..\bin\Release\Plugins\Eraser.DefaultPlugins.dll"
+							ProcessorArchitecture="msil" />
+						<File Id="ISAAC" Name="ISAAC.dll"
+							Source="..\bin\Release\Plugins\ISAAC.dll"
+							ProcessorArchitecture="msil" />
+					</Component>
+
+					<Directory Id="EraserPluginsLangEnDir" Name="en">
+						<Component Id="EraserPluginsLangEn" Guid="23B2B7DD-C518-4dde-A229-94CA9122B995">
+							<File Id="EraserDefaultPluginsEn" Name="Eraser.DefaultPlugins.resources.dll"
+								Source="..\bin\Release\Plugins\en\Eraser.DefaultPlugins.resources.dll"
+								ProcessorArchitecture="msil" />
+						</Component>
+					</Directory>
+					<Directory Id="EraserPluginsLangNlDir" Name="nl">
+						<Component Id="EraserPluginsLangNl" Guid="CD85AC3F-2B4E-4ac8-8FF9-6BD3BC90BD3D">
+							<File Id="EraserDefaultPluginsNl" Name="Eraser.DefaultPlugins.resources.dll"
+								Source="..\bin\Release\Plugins\nl\Eraser.DefaultPlugins.resources.dll"
+								ProcessorArchitecture="msil" />
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+		</DirectoryRef>
+	</Fragment>
+</Wix>

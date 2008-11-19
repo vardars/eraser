@@ -30,7 +30,9 @@
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DirectoryStructure.wxs" />
     <Compile Include="Eraser.wxs" />
+    <Compile Include="UserInterface.wxs" />
   </ItemGroup>
   <ItemGroup>
     <WixExtension Include="WixUIExtension">
