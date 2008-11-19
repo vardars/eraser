@@ -132,10 +132,17 @@ namespace Eraser
 				}
 				set
 				{
-					using (MemoryStream stream = new MemoryStream())
+					if (value == null)
 					{
-						new BinaryFormatter().Serialize(stream, value);
-						key.SetValue(setting, stream.ToArray(), RegistryValueKind.Binary);
+						key.DeleteValue(setting);
+					}
+					else
+					{
+						using (MemoryStream stream = new MemoryStream())
+						{
+							new BinaryFormatter().Serialize(stream, value);
+							key.SetValue(setting, stream.ToArray(), RegistryValueKind.Binary);
+						}
 					}
 				}
 			}
