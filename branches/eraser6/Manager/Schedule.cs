@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using System.Runtime.Serialization;
+using Eraser.Util;
 
 namespace Eraser.Manager
 {
@@ -78,7 +79,7 @@ namespace Eraser.Manager
 
 			public override string UIText
 			{
-				get { return "Running on restart"; }
+				get { return S._("Running on restart"); }
 			}
 		}
 		#endregion
@@ -127,43 +128,44 @@ namespace Eraser.Manager
 				switch (type)
 				{
 					case ScheduleUnit.DAILY:
-						result = "Once every ";
 						if (frequency != 1)
-							result += string.Format("{0} days", frequency);
+							result = S._("Once every {0} days", frequency);
 						else
-							result += "day";
+							result = S._("Once every day");
 						break;
 					case ScheduleUnit.WEEKDAYS:
-						result = "Every weekday";
+						result = S._("Every weekday");
 						break;
 					case ScheduleUnit.WEEKLY:
-						result = "Every ";
 						if ((weeklySchedule & DaysOfWeek.MONDAY) != 0)
-							result += "Monday, ";
+							result = S._("Every Monday, {0}");
 						if ((weeklySchedule & DaysOfWeek.TUESDAY) != 0)
-							result += "Tuesday, ";
+							result += S._("Every Tuesday, {0}");
 						if ((weeklySchedule & DaysOfWeek.WEDNESDAY) != 0)
-							result += "Wednesday, ";
+							result += S._("Every Wednesday, {0}");
 						if ((weeklySchedule & DaysOfWeek.THURSDAY) != 0)
-							result += "Thursday, ";
+							result += S._("Every Thursday, {0}");
 						if ((weeklySchedule & DaysOfWeek.FRIDAY) != 0)
-							result += "Friday, ";
+							result += S._("Every Friday, {0}");
 						if ((weeklySchedule & DaysOfWeek.SATURDAY) != 0)
-							result += "Saturday, ";
+							result += S._("Every Saturday, {0}");
 						if ((weeklySchedule & DaysOfWeek.SUNDAY) != 0)
-							result += "Sunday, ";
+							result += S._("Every Sunday, {0}");
 
-						result += frequency == 1 ?
-							string.Format("once every {0} week.", frequency) :
-							string.Format("once every {0} weeks.", frequency);
+						result = string.Format(result, frequency == 1 ?
+							S._("once every {0} week.", frequency) :
+							S._("once every {0} weeks.", frequency));
 						break;
 					case ScheduleUnit.MONTHLY:
-						result = string.Format("On day {0} of every {1} month{2}",
-							monthlySchedule, frequency, frequency != 1 ? "s" : "");
+						if (frequency == 1)
+							result = S._("On day {0} of every month", monthlySchedule);
+						else
+							result = S._("On day {0} of every {1} months", monthlySchedule,
+								frequency);
 						break;
 				}
 
-				return result + string.Format(", at {0}", executionTime.TimeOfDay.ToString());
+				return result + S._(", at {0}", executionTime.TimeOfDay.ToString());
 			}
 		}
 		#endregion
@@ -260,16 +262,16 @@ namespace Eraser.Manager
 			{
 				if (Type != ScheduleUnit.DAILY && Type != ScheduleUnit.WEEKLY &&
 					Type != ScheduleUnit.MONTHLY)
-					throw new ArgumentException("The ScheduleUnit of the schedule does " +
-						"not require a frequency value, this field would contain garbage.");
+					throw new ArgumentException(S._("The ScheduleUnit of the schedule does " +
+						"not require a frequency value, this field would contain garbage."));
 
 				return frequency;
 			}
 			set
 			{
 				if (value == 0)
-					throw new ArgumentException("The frequency of the recurrance should " +
-						"be greater than one");
+					throw new ArgumentException(S._("The frequency of the recurrance should " +
+						"be greater than one"));
 
 				frequency = value;
 			}
@@ -294,16 +296,16 @@ namespace Eraser.Manager
 			get
 			{
 				if (Type != ScheduleUnit.WEEKLY)
-					throw new ArgumentException("The ScheduleUnit of the schedule does " +
-						"not require the WeeklySchedule value, this field would contain garbage");
+					throw new ArgumentException(S._("The ScheduleUnit of the schedule does " +
+						"not require the WeeklySchedule value, this field would contain garbage"));
 
 				return weeklySchedule;
 			}
 			set
 			{
 				if (value == 0)
-					throw new ArgumentException("The WeeklySchedule should have at " +
-						"least one day where the task should be run.");
+					throw new ArgumentException(S._("The WeeklySchedule should have at " +
+						"least one day where the task should be run."));
 
 				weeklySchedule = value;
 			}
@@ -318,8 +320,8 @@ namespace Eraser.Manager
 			get
 			{
 				if (Type != ScheduleUnit.MONTHLY)
-					throw new ArgumentException("The ScheduleUnit of the schedule does " +
-						"not require the MonthlySchedule value, this field would contain garbage");
+					throw new ArgumentException(S._("The ScheduleUnit of the schedule does " +
+						"not require the MonthlySchedule value, this field would contain garbage"));
 
 				return monthlySchedule;
 			}
@@ -410,9 +412,6 @@ namespace Eraser.Manager
 						break;
 				}
 
-				Debug.WriteLine(string.Format("Next scheduled run time, for object " +
-					"with last run time {0} and schedule {1}, is at {2}",
-					lastRun.ToString(), UIText, nextRun.ToString()));
 				return nextRun;
 			}
 		}
@@ -437,8 +436,8 @@ namespace Eraser.Manager
 		private bool CanRunOnDay(DateTime date)
 		{
 			if (Type != ScheduleUnit.WEEKLY)
-				throw new ArgumentException("The ScheduleUnit of the schedule does " +
-					"not use the WeeklyScheduly value, this field would contain garbage");
+				throw new ArgumentException(S._("The ScheduleUnit of the schedule does " +
+					"not use the WeeklyScheduly value, this field would contain garbage"));
 			return ((int)weeklySchedule & (1 << (int)date.DayOfWeek)) != 0;
 		}
 

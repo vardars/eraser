@@ -258,7 +258,7 @@ namespace Eraser.Manager
 
 			public override string UIText
 			{
-				get { return string.Format("Unused disk space ({0})", Drive); }
+				get { return S._("Unused disk space ({0})", Drive); }
 			}
 
 			public override long TotalData
@@ -499,7 +499,7 @@ namespace Eraser.Manager
 			{
 				get
 				{
-					return "Recycle Bin";
+					return S._("Recycle Bin");
 				}
 			}
 		}
@@ -520,8 +520,8 @@ namespace Eraser.Manager
 			else if (schedule is RecurringSchedule)
 				this.Schedule = schedule;
 			else
-				throw new InvalidDataException("An invalid type was found when loading " +
-					"the task schedule");
+				throw new InvalidDataException(S._("An invalid type was found when loading " +
+					"the task schedule"));
 		}
 
 		public void GetObjectData(SerializationInfo info, StreamingContext context)

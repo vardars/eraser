@@ -117,16 +117,175 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="The task to be cancelled must either be currently executing or queued." xml:space="preserve">
+    <value>The task to be cancelled must either be currently executing or queued.</value>
+  </data>
+  <data name="Unknown erasure target." xml:space="preserve">
+    <value>Unknown erasure target.</value>
+  </data>
+  <data name="The program does not have the required permissions to erase the unused space on disk. Run the program as an administrator and retry the operation." xml:space="preserve">
+    <value>The program does not have the required permissions to erase the unused space on disk. Run the program as an administrator and retry the operation.</value>
+  </data>
+  <data name="The program does not have the required permissions to erase the unused space on disk" xml:space="preserve">
+    <value>The program does not have the required permissions to erase the unused space on disk</value>
+  </data>
+  <data name="The drive which is having its unused space erased has disk quotas active. This will prevent the complete erasure of unused space and will pose a security concern" xml:space="preserve">
+    <value>The drive which is having its unused space erased has disk quotas active. This will prevent the complete erasure of unused space and will pose a security concern</value>
+  </data>
+  <data name="Cluster tips" xml:space="preserve">
+    <value>Cluster tips</value>
+  </data>
+  <data name="(Tips) {0}" xml:space="preserve">
+    <value>(Tips) {0}</value>
+  </data>
+  <data name="Unused space" xml:space="preserve">
+    <value>Unused space</value>
+  </data>
+  <data name="The task was cancelled." xml:space="preserve">
+    <value>The task was cancelled.</value>
+  </data>
+  <data name="Old file system records" xml:space="preserve">
+    <value>Old file system records</value>
+  </data>
+  <data name="Removing temporary files" xml:space="preserve">
+    <value>Removing temporary files</value>
+  </data>
   <data name="Files in {0} did not have their cluster tips erased because it is a hard link or a symbolic link." xml:space="preserve">
     <value>Files in {0} did not have their cluster tips erased because it is a hard link or a symbolic link.</value>
   </data>
+  <data name="{0} did not have its cluster tips erased, because it is a system file" xml:space="preserve">
+    <value>{0} did not have its cluster tips erased, because it is a system file</value>
+  </data>
   <data name="{0} did not have its cluster tips erased because it is a hard link or a symbolic link." xml:space="preserve">
     <value>{0} did not have its cluster tips erased because it is a hard link or a symbolic link.</value>
+  </data>
+  <data name="{0} did not have its cluster tips erased because of the following error: {1}" xml:space="preserve">
+    <value>{0} did not have its cluster tips erased because of the following error: {1}</value>
+  </data>
+  <data name="{0} did not have its cluster tips erased. The error returned was: {1}" xml:space="preserve">
+    <value>{0} did not have its cluster tips erased. The error returned was: {1}</value>
+  </data>
+  <data name="Could not erase old file system records: Unsupported File system" xml:space="preserve">
+    <value>Could not erase old file system records: Unsupported File system</value>
+  </data>
+  <data name="Compressed, encrypted, or sparsefiles cannot be erased with Eraser." xml:space="preserve">
+    <value>Compressed, encrypted, or sparsefiles cannot be erased with Eraser.</value>
   </data>
   <data name="The file {0} could not be erased because the file's permissions prevent access to the file." xml:space="preserve">
     <value>The file {0} could not be erased because the file's permissions prevent access to the file.</value>
   </data>
   <data name="The file {0} is currently in use and cannot be removed." xml:space="preserve">
     <value>The file {0} is currently in use and cannot be removed.</value>
+  </data>
+  <data name="Plausible deniability was selected, but no decoy files were found. The current file has been only replaced with random data." xml:space="preserve">
+    <value>Plausible deniability was selected, but no decoy files were found. The current file has been only replaced with random data.</value>
+  </data>
+  <data name="EntropySource GUID not found: {0}" xml:space="preserve">
+    <value>EntropySource GUID not found: {0}</value>
+  </data>
+  <data name="{0} (1 pass)" xml:space="preserve">
+    <value>{0} (1 pass)</value>
+  </data>
+  <data name="{0} ({1} passes)" xml:space="preserve">
+    <value>{0} ({1} passes)</value>
+  </data>
+  <data name="Random" xml:space="preserve">
+    <value>Random</value>
+  </data>
+  <data name="(default)" xml:space="preserve">
+    <value>(default)</value>
+  </data>
+  <data name="The DefaultMethod class should never be used and should instead be replaced before execution!" xml:space="preserve">
+    <value>The DefaultMethod class should never be used and should instead be replaced before execution!</value>
+  </data>
+  <data name="Erasure method not found: {0}" xml:space="preserve">
+    <value>Erasure method not found: {0}</value>
+  </data>
+  <data name="Registered erasure methods must contain a parameterless constructor that is called whenever clients request for an instance of the method. If a constructor requires parameters, specify it in the parameters parameter." xml:space="preserve">
+    <value>Registered erasure methods must contain a parameterless constructor that is called whenever clients request for an instance of the method. If a constructor requires parameters, specify it in the parameters parameter.</value>
+  </data>
+  <data name="The GUID of the erasure method to remove refers to an invalid erasure method." xml:space="preserve">
+    <value>The GUID of the erasure method to remove refers to an invalid erasure method.</value>
+  </data>
+  <data name="minValue is greater than maxValue" xml:space="preserve">
+    <value>minValue is greater than maxValue</value>
+  </data>
+  <data name="PRNG not found: {0}" xml:space="preserve">
+    <value>PRNG not found: {0}</value>
+  </data>
+  <data name="Running on restart" xml:space="preserve">
+    <value>Running on restart</value>
+  </data>
+  <data name="Once every {0} days" xml:space="preserve">
+    <value>Once every {0} days</value>
+  </data>
+  <data name="Once every day" xml:space="preserve">
+    <value>Once every day</value>
+  </data>
+  <data name="Every weekday" xml:space="preserve">
+    <value>Every weekday</value>
+  </data>
+  <data name="Every Monday, {0}" xml:space="preserve">
+    <value>Every Monday, {0}</value>
+  </data>
+  <data name="Every Tuesday, {0}" xml:space="preserve">
+    <value>Every Tuesday, {0}</value>
+  </data>
+  <data name="Every Wednesday, {0}" xml:space="preserve">
+    <value>Every Wednesday, {0}</value>
+  </data>
+  <data name="Every Thursday, {0}" xml:space="preserve">
+    <value>Every Thursday, {0}</value>
+  </data>
+  <data name="Every Friday, {0}" xml:space="preserve">
+    <value>Every Friday, {0}</value>
+  </data>
+  <data name="Every Saturday, {0}" xml:space="preserve">
+    <value>Every Saturday, {0}</value>
+  </data>
+  <data name="Every Sunday, {0}" xml:space="preserve">
+    <value>Every Sunday, {0}</value>
+  </data>
+  <data name="once every {0} week." xml:space="preserve">
+    <value>once every {0} week.</value>
+  </data>
+  <data name="once every {0} weeks." xml:space="preserve">
+    <value>once every {0} weeks.</value>
+  </data>
+  <data name="On day {0} of every month" xml:space="preserve">
+    <value>On day {0} of every month</value>
+  </data>
+  <data name="On day {0} of every {1} months" xml:space="preserve">
+    <value>On day {0} of every {1} months</value>
+  </data>
+  <data name=", at {0}" xml:space="preserve">
+    <value>, at {0}</value>
+  </data>
+  <data name="The ScheduleUnit of the schedule does not require a frequency value, this field would contain garbage." xml:space="preserve">
+    <value>The ScheduleUnit of the schedule does not require a frequency value, this field would contain garbage.</value>
+  </data>
+  <data name="The frequency of the recurrance should be greater than one" xml:space="preserve">
+    <value>The frequency of the recurrance should be greater than one</value>
+  </data>
+  <data name="The ScheduleUnit of the schedule does not require the WeeklySchedule value, this field would contain garbage" xml:space="preserve">
+    <value>The ScheduleUnit of the schedule does not require the WeeklySchedule value, this field would contain garbage</value>
+  </data>
+  <data name="The WeeklySchedule should have at least one day where the task should be run." xml:space="preserve">
+    <value>The WeeklySchedule should have at least one day where the task should be run.</value>
+  </data>
+  <data name="The ScheduleUnit of the schedule does not require the MonthlySchedule value, this field would contain garbage" xml:space="preserve">
+    <value>The ScheduleUnit of the schedule does not require the MonthlySchedule value, this field would contain garbage</value>
+  </data>
+  <data name="The ScheduleUnit of the schedule does not use the WeeklyScheduly value, this field would contain garbage" xml:space="preserve">
+    <value>The ScheduleUnit of the schedule does not use the WeeklyScheduly value, this field would contain garbage</value>
+  </data>
+  <data name="Unused disk space ({0})" xml:space="preserve">
+    <value>Unused disk space ({0})</value>
+  </data>
+  <data name="Recycle Bin" xml:space="preserve">
+    <value>Recycle Bin</value>
+  </data>
+  <data name="An invalid type was found when loading the task schedule" xml:space="preserve">
+    <value>An invalid type was found when loading the task schedule</value>
   </data>
 </root>

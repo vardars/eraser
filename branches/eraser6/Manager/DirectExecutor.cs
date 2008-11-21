@@ -196,8 +196,8 @@ namespace Eraser.Manager
 						return;
 					}
 
-			throw new ArgumentOutOfRangeException("The task to be cancelled must " +
-				"either be currently executing or queued.");
+			throw new ArgumentOutOfRangeException(S._("The task to be cancelled must " +
+				"either be currently executing or queued."));
 		}
 
 		public override Task GetTask(uint taskId)
@@ -318,7 +318,7 @@ namespace Eraser.Manager
 								else if (target is Task.FilesystemObject)
 									EraseFilesystemObject(task, (Task.FilesystemObject)target, progress);
 								else
-									throw new ArgumentException("Unknown erasure target.");
+									throw new ArgumentException(S._("Unknown erasure target."));
 							}
 							catch (FatalException)
 							{
@@ -466,21 +466,24 @@ namespace Eraser.Manager
 			//Check for sufficient privileges to run the unused space erasure.
 			if (!Permissions.IsAdministrator())
 			{
-				string exceptionString = "The program does not have the required permissions " +
-					"to erase the unused space on disk";
+				
 				if (Environment.OSVersion.Platform == PlatformID.Win32NT &&
 					Environment.OSVersion.Version >= new Version(6, 0))
 				{
-					exceptionString += ". Run the program as an administrator and retry the operation.";
+					throw new Exception(S._("The program does not have the required permissions " +
+						"to erase the unused space on disk. Run the program as an administrator " +
+						"and retry the operation."));
 				}
-				throw new Exception(exceptionString);
+				else
+					throw new Exception(S._("The program does not have the required permissions " +
+						"to erase the unused space on disk"));
 			}
 
 			//If the user is under disk quotas, log a warning message
 			if (VolumeInfo.FromMountpoint(target.Drive).HasQuota)
-				task.Log.Add(new LogEntry("The drive which is having its unused space erased has " +
-					"disk quotas active. This will prevent the complete erasure of unused space and " +
-					"will pose a security concern", LogLevel.WARNING));
+				task.Log.Add(new LogEntry(S._("The drive which is having its unused space erased " +
+					"has disk quotas active. This will prevent the complete erasure of unused " +
+					"space and will pose a security concern"), LogLevel.WARNING));
 
 			//Get the erasure method if the user specified he wants the default.
 			ErasureMethod method = target.Method;
@@ -488,7 +491,7 @@ namespace Eraser.Manager
 			//Erase the cluster tips of every file on the drive.
 			if (target.EraseClusterTips)
 			{
-				progress.Event.currentItemName = "Cluster tips";
+				progress.Event.currentItemName = S._("Cluster tips");
 				progress.Event.currentTargetTotalPasses = method.Passes;
 				progress.Event.timeLeft = progress.TimeLeft;
 				task.OnProgressChanged(progress.Event);
@@ -496,7 +499,7 @@ namespace Eraser.Manager
 				EraseClusterTips(task, target, method,
 					delegate(int currentFile, string currentFilePath, int totalFiles)
 					{
-						progress.Event.currentItemName = "(Tips) " + currentFilePath;
+						progress.Event.currentItemName = S._("(Tips) {0}", currentFilePath);
 						progress.Event.currentItemProgress = (float)currentFile / totalFiles;
 						progress.Event.CurrentTargetProgress = progress.Event.CurrentItemProgress / 10;
 						task.OnProgressChanged(progress.Event);
@@ -526,7 +529,7 @@ namespace Eraser.Manager
 				long totalSize = method.CalculateEraseDataSize(null, volInfo.TotalFreeSpace);
 
 				//Continue creating files while there is free space.
-				progress.Event.currentItemName = "Unused space";
+				progress.Event.currentItemName = S._("Unused space");
 				task.OnProgressChanged(progress.Event);
 				while (volInfo.AvailableFreeSpace > 0)
 				{
@@ -581,20 +584,20 @@ namespace Eraser.Manager
 
 								lock (currentTask)
 									if (currentTask.cancelled)
-										throw new FatalException("The task was cancelled.");
+										throw new FatalException(S._("The task was cancelled."));
 							}
 						);
 					}
 				}
 
 				//Erase old file system records
-				progress.Event.currentItemName = "Old file system records";
+				progress.Event.currentItemName = S._("Old file system records");
 				task.OnProgressChanged(progress.Event);
 				EraseFilesystemRecords(info, method);
 			}
 			finally
 			{
-				progress.Event.currentItemName = "Removing temporary files";
+				progress.Event.currentItemName = S._("Removing temporary files");
 				task.OnProgressChanged(progress.Event);
 
 				//Remove the folder holding all our temporary files.
@@ -630,8 +633,8 @@ namespace Eraser.Manager
 
 					foreach (FileInfo file in info.GetFiles())
 						if (Util.File.IsProtectedSystemFile(file.FullName))
-							task.Log.Add(new LogEntry(string.Format("{0} did not have its " +
-								"cluster tips erased, because it is a system file", file.FullName),
+							task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips " +
+								"erased, because it is a system file", file.FullName),
 								LogLevel.INFORMATION));
 						else if ((file.Attributes & FileAttributes.ReparsePoint) != 0)
 							task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips " +
@@ -650,13 +653,15 @@ namespace Eraser.Manager
 				}
 				catch (UnauthorizedAccessException e)
 				{
-					task.Log.Add(new LogEntry(string.Format("{0} did not have its cluster tips erased because of " +
-						"the following error: {1}", info.FullName, e.Message), LogLevel.ERROR));
+					task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips erased " +
+						"because of the following error: {1}", info.FullName, e.Message),
+						LogLevel.ERROR));
 				}
 				catch (IOException e)
 				{
-					task.Log.Add(new LogEntry(string.Format("{0} did not have its cluster tips erased because of " +
-						"the following error: {1}", info.FullName, e.Message), LogLevel.ERROR));
+					task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips erased " +
+						"because of the following error: {1}", info.FullName, e.Message),
+						LogLevel.ERROR));
 				}
 			};
 
@@ -671,8 +676,8 @@ namespace Eraser.Manager
 				}
 				catch (Exception e)
 				{
-					task.Log.Add(new LogEntry(string.Format("{0} did not have its cluster tips " +
-						"erased. The error returned was: {1}", files[i], e.Message), LogLevel.ERROR));
+					task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips erased. " +
+						"The error returned was: {1}", files[i], e.Message), LogLevel.ERROR));
 				}
 				callback(i, files[i], files.Count);
 			}
@@ -781,8 +786,8 @@ namespace Eraser.Manager
 				}
 			}
 			else
-				throw new NotImplementedException("Could not erase old file system " +
-					"records: Unsupported File system");
+				throw new NotImplementedException(S._("Could not erase old file system " +
+					"records: Unsupported File system"));
 		}
 
 		/// <summary>
@@ -824,8 +829,8 @@ namespace Eraser.Manager
 					(info.Attributes & FileAttributes.SparseFile) != 0)
 				{
 					//Log the error
-					throw new ArgumentException("Compressed, encrypted, or sparse" +
-						"files cannot be erased with Eraser.");
+					throw new ArgumentException(S._("Compressed, encrypted, or sparse" +
+						"files cannot be erased with Eraser."));
 				}
 
 				//Remove the read-only flag, if it is set.
@@ -866,7 +871,7 @@ namespace Eraser.Manager
 
 									lock (currentTask)
 										if (currentTask.cancelled)
-											throw new FatalException("The task was cancelled.");
+											throw new FatalException(S._("The task was cancelled."));
 								}
 							);
 						}
@@ -883,8 +888,9 @@ namespace Eraser.Manager
 				}
 				catch (UnauthorizedAccessException)
 				{
-					task.Log.Add(new LogEntry(S._("The file {0} could not be erased because the file's " +
-						"permissions prevent access to the file.", info.FullName), LogLevel.ERROR));
+					task.Log.Add(new LogEntry(S._("The file {0} could not be erased because the " +
+						"file's permissions prevent access to the file.", info.FullName),
+						LogLevel.ERROR));
 				}
 				finally
 				{
@@ -969,8 +975,9 @@ namespace Eraser.Manager
 					do
 					{
 						if (entries.Count == 0)
-							throw new FatalException("Plausible deniability was selected, but no decoy files " +
-								"were found. The current file has been only replaced with random data.");
+							throw new FatalException(S._("Plausible deniability was selected, " +
+								"but no decoy files were found. The current file has been only " +
+								"replaced with random data."));
 
 						int index = prng.Next(entries.Count - 1);
 						if ((System.IO.File.GetAttributes(entries[index]) & FileAttributes.Directory) != 0)

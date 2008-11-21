@@ -155,7 +155,8 @@ namespace Eraser.Manager
 			}
 			catch (KeyNotFoundException)
 			{
-				throw new FatalException("EntropySource GUID not found: " + guid.ToString());
+				throw new FatalException(S._("EntropySource GUID not found: {0}",
+					guid.ToString()));
 			}
 		}
 

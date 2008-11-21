@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Reflection;
+using Eraser.Util;
 
 namespace Eraser.Manager
 {
@@ -38,9 +39,8 @@ namespace Eraser.Manager
 		{
 			if (Passes == 0)
 				return Name;
-			return Passes == 1 ?
-				string.Format("{0} (1 pass)", Name) :
-				string.Format("{0} ({1} passes)", Name, Passes);
+			return Passes == 1 ? S._("{0} (1 pass)", Name) :
+				S._("{0} ({1} passes)", Name, Passes);
 		}
 
 		/// <summary>
@@ -180,7 +180,7 @@ namespace Eraser.Manager
 		{
 			public override string ToString()
 			{
-				return OpaqueValue == null ? "Random" : OpaqueValue.ToString();
+				return OpaqueValue == null ? S._("Random") : OpaqueValue.ToString();
 			}
 
 			/// <summary>
@@ -369,7 +369,7 @@ namespace Eraser.Manager
 
 			public override string Name
 			{
-				get { return "(default)"; }
+				get { return S._("(default)"); }
 			}
 
 			public override int Passes
@@ -384,15 +384,15 @@ namespace Eraser.Manager
 
 			public override long CalculateEraseDataSize(List<string> paths, long targetSize)
 			{
-				throw new NotImplementedException("The DefaultMethod class should never be " +
-					"used and should instead be replaced before execution!");
+				throw new NotImplementedException(S._("The DefaultMethod class should never " +
+					"be used and should instead be replaced before execution!"));
 			}
 
 			public override void Erase(Stream strm, long erasureLength, PRNG prng,
 				ProgressFunction callback)
 			{
-				throw new NotImplementedException("The DefaultMethod class should never be " +
-					"used and should instead be replaced before execution!");
+				throw new NotImplementedException(S._("The DefaultMethod class should never " +
+					"be used and should instead be replaced before execution!"));
 			}
 		}
 
@@ -446,7 +446,7 @@ namespace Eraser.Manager
 			}
 			catch (KeyNotFoundException)
 			{
-				throw new FatalException("Erasure method not found: " + guid.ToString());
+				throw new FatalException(S._("Erasure method not found: {0}", guid.ToString()));
 			}
 		}
 
@@ -480,10 +480,10 @@ namespace Eraser.Manager
 
 			//Check for a valid constructor.
 			if (ctor == null)
-				throw new ArgumentException("Registered erasure methods must contain " +
+				throw new ArgumentException(S._("Registered erasure methods must contain " +
 					"a parameterless constructor that is called whenever clients request " +
 					"for an instance of the method. If a constructor requires parameters, " +
-					"specify it in the parameters parameter.");
+					"specify it in the parameters parameter."));
 
 			//Insert the entry
 			lock (ManagerLibrary.Instance.ErasureMethodManager.methods)
@@ -505,8 +505,8 @@ namespace Eraser.Manager
 		public static void Unregister(Guid guid)
 		{
 			if (!ManagerLibrary.Instance.ErasureMethodManager.methods.ContainsKey(guid))
-				throw new ArgumentException("The GUID of the erasure method to remove " +
-					"refers to an invalid erasure method.");
+				throw new ArgumentException(S._("The GUID of the erasure method to remove " +
+					"refers to an invalid erasure method."));
 
 			ManagerLibrary.Instance.ErasureMethodManager.methods.Remove(guid);
 			OnMethodUnregistered(guid);

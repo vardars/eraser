@@ -102,7 +102,8 @@ namespace Eraser.Manager
 		public int Next(int minValue, int maxValue)
 		{
 			if (minValue > maxValue)
-				throw new ArgumentOutOfRangeException("minValue", minValue, "minValue is greater than maxValue");
+				throw new ArgumentOutOfRangeException("minValue", minValue,
+					S._("minValue is greater than maxValue"));
 			else if (minValue == maxValue)
 				return minValue;
 			return (Next() % (maxValue - minValue)) + minValue;
@@ -179,7 +180,7 @@ namespace Eraser.Manager
 			}
 			catch (KeyNotFoundException)
 			{
-				throw new FatalException("PRNG not found: " + guid.ToString());
+				throw new FatalException(S._("PRNG not found: {0}", guid.ToString()));
 			}
 		}
 
