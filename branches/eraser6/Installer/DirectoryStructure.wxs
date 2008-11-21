@@ -45,6 +45,9 @@
 						<File Id="EraserEn" Name="Eraser.resources.dll"
 							Source="..\bin\Release\en\Eraser.resources.dll"
 							ProcessorArchitecture="msil" />
+						<File Id="EraserManagerEn" Name="Eraser.Manager.resources.dll"
+							Source="..\bin\Release\en\Eraser.Manager.resources.dll"
+							ProcessorArchitecture="msil" />
 					</Component>
 				</Directory>
 

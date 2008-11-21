@@ -69,6 +69,11 @@
   <ItemGroup>
     <None Include="Manager.cd" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Strings.en.resx" />
+    <EmbeddedResource Include="Strings.nl.resx" />
+    <EmbeddedResource Include="Strings.resx" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -77,4 +82,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PreBuildEvent>csgettext --merge EN,NL "$(ProjectDir)\" Strings
+if ERRORLEVEL 0 exit 0</PreBuildEvent>
+  </PropertyGroup>
 </Project>

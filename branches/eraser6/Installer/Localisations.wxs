@@ -28,6 +28,9 @@
 					<File Id="EraserNl" Name="Eraser.resources.dll"
 						Source="..\bin\Release\nl\Eraser.resources.dll"
 						ProcessorArchitecture="msil" />
+					<File Id="EraserManagerNl" Name="Eraser.Manager.resources.dll"
+						Source="..\bin\Release\nl\Eraser.Manager.resources.dll"
+						ProcessorArchitecture="msil" />
 				</Component>
 			</Directory>
 		</DirectoryRef>

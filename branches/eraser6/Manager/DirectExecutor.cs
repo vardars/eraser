@@ -57,6 +57,7 @@ namespace Eraser.Manager
 
 		public override void Run()
 		{
+			thread.CurrentUICulture = Thread.CurrentThread.CurrentUICulture;
 			thread.Start();
 		}
 
@@ -879,6 +880,11 @@ namespace Eraser.Manager
 					FileInfo fileInfo = info.File;
 					if (fileInfo != null)
 						RemoveFile(fileInfo);
+				}
+				catch (UnauthorizedAccessException)
+				{
+					task.Log.Add(new LogEntry(S._("The file {0} could not be erased because the file's " +
+						"permissions prevent access to the file.", info.FullName), LogLevel.ERROR));
 				}
 				finally
 				{
