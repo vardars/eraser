@@ -436,6 +436,10 @@ namespace Eraser.Manager
 			}
 			#endregion
 
+			public RecycleBin()
+			{
+			}
+
 			internal override List<string> GetPaths(out long totalSize)
 			{
 				totalSize = 0;

@@ -116,13 +116,18 @@ namespace Eraser
 					folderTask.ExcludeMask = folderExclude.Text;
 					folderTask.DeleteIfEmpty = folderDelete.Checked;
 				}
-				else
+				else if (unused.Checked)
 				{
 					Task.UnusedSpace unusedSpaceTask = new Task.UnusedSpace();
 					result = unusedSpaceTask;
 
 					unusedSpaceTask.Drive = ((DriveItem)unusedDisk.SelectedItem).Drive;
 					unusedSpaceTask.EraseClusterTips = unusedClusterTips.Checked;
+				}
+				else
+				{
+					Task.RecycleBin recycleBinTask = new Task.RecycleBin();
+					result = recycleBinTask;
 				}
 
 				result.Method = (ErasureMethod)this.method.SelectedItem;
@@ -164,6 +169,10 @@ namespace Eraser
 						if (((DriveItem)item).Drive == ((Task.UnusedSpace)value).Drive)
 							unusedDisk.SelectedItem = item;
 					unusedClusterTips.Checked = unusedSpaceTask.EraseClusterTips;
+				}
+				else if (value is Task.RecycleBin)
+				{
+					recycleBin.Checked = true;
 				}
 				else
 					throw new Exception("Unknown erasure target.");

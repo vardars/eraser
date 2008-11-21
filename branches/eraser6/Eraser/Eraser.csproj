@@ -178,6 +178,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>SettingsPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="TaskDataSelectionForm.en.resx">
+      <DependentUpon>TaskDataSelectionForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TaskDataSelectionForm.nl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TaskDataSelectionForm.cs</DependentUpon>

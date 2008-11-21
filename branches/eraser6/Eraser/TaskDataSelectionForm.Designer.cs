@@ -72,19 +72,13 @@ namespace Eraser
 			this.folderDialog = new System.Windows.Forms.FolderBrowserDialog();
 			this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
 			this.unusedClusterTips = new System.Windows.Forms.CheckBox();
+			this.recycleBin = new System.Windows.Forms.RadioButton();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// file
 			// 
-			this.file.AccessibleDescription = null;
-			this.file.AccessibleName = null;
 			resources.ApplyResources(this.file, "file");
-			this.file.BackgroundImage = null;
-			this.errorProvider.SetError(this.file, resources.GetString("file.Error"));
-			this.file.Font = null;
-			this.errorProvider.SetIconAlignment(this.file, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("file.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.file, ((int)(resources.GetObject("file.IconPadding"))));
 			this.file.Name = "file";
 			this.file.TabStop = true;
 			this.file.UseVisualStyleBackColor = true;
@@ -92,14 +86,7 @@ namespace Eraser
 			// 
 			// folder
 			// 
-			this.folder.AccessibleDescription = null;
-			this.folder.AccessibleName = null;
 			resources.ApplyResources(this.folder, "folder");
-			this.folder.BackgroundImage = null;
-			this.errorProvider.SetError(this.folder, resources.GetString("folder.Error"));
-			this.folder.Font = null;
-			this.errorProvider.SetIconAlignment(this.folder, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("folder.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.folder, ((int)(resources.GetObject("folder.IconPadding"))));
 			this.folder.Name = "folder";
 			this.folder.TabStop = true;
 			this.folder.UseVisualStyleBackColor = true;
@@ -107,14 +94,7 @@ namespace Eraser
 			// 
 			// unused
 			// 
-			this.unused.AccessibleDescription = null;
-			this.unused.AccessibleName = null;
 			resources.ApplyResources(this.unused, "unused");
-			this.unused.BackgroundImage = null;
-			this.errorProvider.SetError(this.unused, resources.GetString("unused.Error"));
-			this.unused.Font = null;
-			this.errorProvider.SetIconAlignment(this.unused, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("unused.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.unused, ((int)(resources.GetObject("unused.IconPadding"))));
 			this.unused.Name = "unused";
 			this.unused.TabStop = true;
 			this.unused.UseVisualStyleBackColor = true;
@@ -122,184 +102,89 @@ namespace Eraser
 			// 
 			// filePath
 			// 
-			this.filePath.AccessibleDescription = null;
-			this.filePath.AccessibleName = null;
 			resources.ApplyResources(this.filePath, "filePath");
-			this.filePath.BackgroundImage = null;
-			this.errorProvider.SetError(this.filePath, resources.GetString("filePath.Error"));
-			this.filePath.Font = null;
-			this.errorProvider.SetIconAlignment(this.filePath, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("filePath.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.filePath, ((int)(resources.GetObject("filePath.IconPadding"))));
 			this.filePath.Name = "filePath";
 			// 
 			// fileBrowse
 			// 
-			this.fileBrowse.AccessibleDescription = null;
-			this.fileBrowse.AccessibleName = null;
 			resources.ApplyResources(this.fileBrowse, "fileBrowse");
-			this.fileBrowse.BackgroundImage = null;
-			this.errorProvider.SetError(this.fileBrowse, resources.GetString("fileBrowse.Error"));
-			this.fileBrowse.Font = null;
-			this.errorProvider.SetIconAlignment(this.fileBrowse, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("fileBrowse.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.fileBrowse, ((int)(resources.GetObject("fileBrowse.IconPadding"))));
 			this.fileBrowse.Name = "fileBrowse";
 			this.fileBrowse.UseVisualStyleBackColor = true;
 			this.fileBrowse.Click += new System.EventHandler(this.fileBrowse_Click);
 			// 
 			// folderPath
 			// 
-			this.folderPath.AccessibleDescription = null;
-			this.folderPath.AccessibleName = null;
 			resources.ApplyResources(this.folderPath, "folderPath");
-			this.folderPath.BackgroundImage = null;
-			this.errorProvider.SetError(this.folderPath, resources.GetString("folderPath.Error"));
-			this.folderPath.Font = null;
-			this.errorProvider.SetIconAlignment(this.folderPath, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("folderPath.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.folderPath, ((int)(resources.GetObject("folderPath.IconPadding"))));
 			this.folderPath.Name = "folderPath";
 			// 
 			// folderBrowse
 			// 
-			this.folderBrowse.AccessibleDescription = null;
-			this.folderBrowse.AccessibleName = null;
 			resources.ApplyResources(this.folderBrowse, "folderBrowse");
-			this.folderBrowse.BackgroundImage = null;
-			this.errorProvider.SetError(this.folderBrowse, resources.GetString("folderBrowse.Error"));
-			this.folderBrowse.Font = null;
-			this.errorProvider.SetIconAlignment(this.folderBrowse, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("folderBrowse.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.folderBrowse, ((int)(resources.GetObject("folderBrowse.IconPadding"))));
 			this.folderBrowse.Name = "folderBrowse";
 			this.folderBrowse.UseVisualStyleBackColor = true;
 			this.folderBrowse.Click += new System.EventHandler(this.folderBrowse_Click);
 			// 
 			// folderIncludeLbl
 			// 
-			this.folderIncludeLbl.AccessibleDescription = null;
-			this.folderIncludeLbl.AccessibleName = null;
 			resources.ApplyResources(this.folderIncludeLbl, "folderIncludeLbl");
-			this.errorProvider.SetError(this.folderIncludeLbl, resources.GetString("folderIncludeLbl.Error"));
-			this.folderIncludeLbl.Font = null;
-			this.errorProvider.SetIconAlignment(this.folderIncludeLbl, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("folderIncludeLbl.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.folderIncludeLbl, ((int)(resources.GetObject("folderIncludeLbl.IconPadding"))));
 			this.folderIncludeLbl.Name = "folderIncludeLbl";
 			// 
 			// folderInclude
 			// 
-			this.folderInclude.AccessibleDescription = null;
-			this.folderInclude.AccessibleName = null;
 			resources.ApplyResources(this.folderInclude, "folderInclude");
-			this.folderInclude.BackgroundImage = null;
-			this.errorProvider.SetError(this.folderInclude, resources.GetString("folderInclude.Error"));
-			this.folderInclude.Font = null;
-			this.errorProvider.SetIconAlignment(this.folderInclude, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("folderInclude.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.folderInclude, ((int)(resources.GetObject("folderInclude.IconPadding"))));
 			this.folderInclude.Name = "folderInclude";
 			// 
 			// folderExcludeLbl
 			// 
-			this.folderExcludeLbl.AccessibleDescription = null;
-			this.folderExcludeLbl.AccessibleName = null;
 			resources.ApplyResources(this.folderExcludeLbl, "folderExcludeLbl");
-			this.errorProvider.SetError(this.folderExcludeLbl, resources.GetString("folderExcludeLbl.Error"));
-			this.folderExcludeLbl.Font = null;
-			this.errorProvider.SetIconAlignment(this.folderExcludeLbl, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("folderExcludeLbl.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.folderExcludeLbl, ((int)(resources.GetObject("folderExcludeLbl.IconPadding"))));
 			this.folderExcludeLbl.Name = "folderExcludeLbl";
 			// 
 			// folderExclude
 			// 
-			this.folderExclude.AccessibleDescription = null;
-			this.folderExclude.AccessibleName = null;
 			resources.ApplyResources(this.folderExclude, "folderExclude");
-			this.folderExclude.BackgroundImage = null;
-			this.errorProvider.SetError(this.folderExclude, resources.GetString("folderExclude.Error"));
-			this.folderExclude.Font = null;
-			this.errorProvider.SetIconAlignment(this.folderExclude, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("folderExclude.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.folderExclude, ((int)(resources.GetObject("folderExclude.IconPadding"))));
 			this.folderExclude.Name = "folderExclude";
 			// 
 			// folderDelete
 			// 
-			this.folderDelete.AccessibleDescription = null;
-			this.folderDelete.AccessibleName = null;
 			resources.ApplyResources(this.folderDelete, "folderDelete");
-			this.folderDelete.BackgroundImage = null;
 			this.folderDelete.Checked = true;
 			this.folderDelete.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.errorProvider.SetError(this.folderDelete, resources.GetString("folderDelete.Error"));
-			this.folderDelete.Font = null;
-			this.errorProvider.SetIconAlignment(this.folderDelete, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("folderDelete.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.folderDelete, ((int)(resources.GetObject("folderDelete.IconPadding"))));
 			this.folderDelete.Name = "folderDelete";
 			this.folderDelete.UseVisualStyleBackColor = true;
 			// 
 			// unusedDisk
 			// 
-			this.unusedDisk.AccessibleDescription = null;
-			this.unusedDisk.AccessibleName = null;
 			resources.ApplyResources(this.unusedDisk, "unusedDisk");
-			this.unusedDisk.BackgroundImage = null;
 			this.unusedDisk.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
 			this.unusedDisk.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.errorProvider.SetError(this.unusedDisk, resources.GetString("unusedDisk.Error"));
-			this.unusedDisk.Font = null;
 			this.unusedDisk.FormattingEnabled = true;
-			this.errorProvider.SetIconAlignment(this.unusedDisk, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("unusedDisk.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.unusedDisk, ((int)(resources.GetObject("unusedDisk.IconPadding"))));
 			this.unusedDisk.Name = "unusedDisk";
 			this.unusedDisk.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.unusedDisk_DrawItem);
 			// 
 			// methodLbl
 			// 
-			this.methodLbl.AccessibleDescription = null;
-			this.methodLbl.AccessibleName = null;
 			resources.ApplyResources(this.methodLbl, "methodLbl");
-			this.errorProvider.SetError(this.methodLbl, resources.GetString("methodLbl.Error"));
-			this.methodLbl.Font = null;
-			this.errorProvider.SetIconAlignment(this.methodLbl, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("methodLbl.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.methodLbl, ((int)(resources.GetObject("methodLbl.IconPadding"))));
 			this.methodLbl.Name = "methodLbl";
 			// 
 			// method
 			// 
-			this.method.AccessibleDescription = null;
-			this.method.AccessibleName = null;
 			resources.ApplyResources(this.method, "method");
-			this.method.BackgroundImage = null;
 			this.method.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.errorProvider.SetError(this.method, resources.GetString("method.Error"));
-			this.method.Font = null;
 			this.method.FormattingEnabled = true;
-			this.errorProvider.SetIconAlignment(this.method, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("method.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.method, ((int)(resources.GetObject("method.IconPadding"))));
 			this.method.Name = "method";
 			this.method.SelectedIndexChanged += new System.EventHandler(this.method_SelectedIndexChanged);
 			// 
 			// ok
 			// 
-			this.ok.AccessibleDescription = null;
-			this.ok.AccessibleName = null;
 			resources.ApplyResources(this.ok, "ok");
-			this.ok.BackgroundImage = null;
-			this.errorProvider.SetError(this.ok, resources.GetString("ok.Error"));
-			this.ok.Font = null;
-			this.errorProvider.SetIconAlignment(this.ok, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("ok.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.ok, ((int)(resources.GetObject("ok.IconPadding"))));
 			this.ok.Name = "ok";
 			this.ok.UseVisualStyleBackColor = true;
 			this.ok.Click += new System.EventHandler(this.ok_Click);
 			// 
 			// cancel
 			// 
-			this.cancel.AccessibleDescription = null;
-			this.cancel.AccessibleName = null;
 			resources.ApplyResources(this.cancel, "cancel");
-			this.cancel.BackgroundImage = null;
 			this.cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.errorProvider.SetError(this.cancel, resources.GetString("cancel.Error"));
-			this.cancel.Font = null;
-			this.errorProvider.SetIconAlignment(this.cancel, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("cancel.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.cancel, ((int)(resources.GetObject("cancel.IconPadding"))));
 			this.cancel.Name = "cancel";
 			this.cancel.UseVisualStyleBackColor = true;
 			// 
@@ -315,32 +200,30 @@ namespace Eraser
 			// errorProvider
 			// 
 			this.errorProvider.ContainerControl = this;
-			resources.ApplyResources(this.errorProvider, "errorProvider");
 			// 
 			// unusedClusterTips
 			// 
-			this.unusedClusterTips.AccessibleDescription = null;
-			this.unusedClusterTips.AccessibleName = null;
 			resources.ApplyResources(this.unusedClusterTips, "unusedClusterTips");
-			this.unusedClusterTips.BackgroundImage = null;
 			this.unusedClusterTips.Checked = true;
 			this.unusedClusterTips.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.errorProvider.SetError(this.unusedClusterTips, resources.GetString("unusedClusterTips.Error"));
-			this.unusedClusterTips.Font = null;
-			this.errorProvider.SetIconAlignment(this.unusedClusterTips, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("unusedClusterTips.IconAlignment"))));
-			this.errorProvider.SetIconPadding(this.unusedClusterTips, ((int)(resources.GetObject("unusedClusterTips.IconPadding"))));
 			this.unusedClusterTips.Name = "unusedClusterTips";
 			this.unusedClusterTips.UseVisualStyleBackColor = true;
+			// 
+			// recycleBin
+			// 
+			resources.ApplyResources(this.recycleBin, "recycleBin");
+			this.recycleBin.Name = "recycleBin";
+			this.recycleBin.TabStop = true;
+			this.recycleBin.UseVisualStyleBackColor = true;
+			this.recycleBin.CheckedChanged += new System.EventHandler(this.data_CheckedChanged);
 			// 
 			// TaskDataSelectionForm
 			// 
 			this.AcceptButton = this.ok;
-			this.AccessibleDescription = null;
-			this.AccessibleName = null;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-			this.BackgroundImage = null;
 			this.CancelButton = this.cancel;
+			this.Controls.Add(this.recycleBin);
 			this.Controls.Add(this.unusedClusterTips);
 			this.Controls.Add(this.cancel);
 			this.Controls.Add(this.ok);
@@ -360,7 +243,6 @@ namespace Eraser
 			this.Controls.Add(this.folder);
 			this.Controls.Add(this.file);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.Icon = null;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "TaskDataSelectionForm";
@@ -394,5 +276,6 @@ namespace Eraser
 		private System.Windows.Forms.FolderBrowserDialog folderDialog;
 		private System.Windows.Forms.ErrorProvider errorProvider;
 		private System.Windows.Forms.CheckBox unusedClusterTips;
+		private System.Windows.Forms.RadioButton recycleBin;
 	}
 }
