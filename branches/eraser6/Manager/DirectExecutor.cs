@@ -718,16 +718,16 @@ namespace Eraser.Manager
 				{
 					//Make sure the file is restored!
 					stream.SetLength(fileLength);
-
-					//Set the file times
-					FileInfo fileInfo = streamInfo.File;
-					if (fileInfo != null)
-					{
-						fileInfo.LastAccessTime = lastAccess;
-						fileInfo.LastWriteTime = lastWrite;
-						fileInfo.CreationTime = created;
-					}
 				}
+			}
+
+			//Set the file times
+			FileInfo fileInfo = streamInfo.File;
+			if (fileInfo != null)
+			{
+				fileInfo.LastAccessTime = lastAccess;
+				fileInfo.LastWriteTime = lastWrite;
+				fileInfo.CreationTime = created;
 			}
 		}
 		
