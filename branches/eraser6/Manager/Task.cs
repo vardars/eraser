@@ -156,16 +156,24 @@ namespace Eraser.Manager
 			/// <param name="file">The file to look for ADSes</param>
 			protected void GetPathADSes(ref List<string> list, ref long totalSize, string file)
 			{
-				//Get the ADS names
-				List<string> adses = Util.File.GetADSes(new FileInfo(file));
-
-				//Then prepend the path.
-				foreach (string adsName in adses)
+				try
 				{
-					string adsPath = file + ':' + adsName;
-					list.Add(adsPath);
-					Util.StreamInfo info = new Util.StreamInfo(adsPath);
-					totalSize += info.Length;
+					//Get the ADS names
+					List<string> adses = Util.File.GetADSes(new FileInfo(file));
+
+					//Then prepend the path.
+					foreach (string adsName in adses)
+					{
+						string adsPath = file + ':' + adsName;
+						list.Add(adsPath);
+						Util.StreamInfo info = new Util.StreamInfo(adsPath);
+						totalSize += info.Length;
+					}
+				}
+				catch (UnauthorizedAccessException)
+				{
+					//The system cannot read the file, assume no ADSes for lack of
+					//more information.
 				}
 			}
 
