@@ -38,7 +38,31 @@ namespace Eraser
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main()
+		static void Main(string[] commandLine)
+		{
+			if (commandLine.Length == 0)
+				GUIMain(false);
+			else if (commandLine.Length == 1)
+			{
+				if (commandLine[0].Substring(0, 1) == "/" ||
+					commandLine[0].Substring(0, 2) == "--")
+				{
+					GUIMain(true);
+				}
+				else
+				{
+					CommandMain(commandLine);
+				}
+			}
+			else
+				CommandMain(commandLine);
+		}
+
+		private static void CommandMain(string[] commandLine)
+		{
+		}
+
+		private static void GUIMain(bool isRestart)
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
@@ -71,12 +95,7 @@ namespace Eraser
 				MainForm form = new MainForm();
 
 				//Run tasks which are meant to be run on restart
-				int restartPos = Environment.CommandLine.ToLower().IndexOf("restart");
-				if ((restartPos > 1 &&
-					Environment.CommandLine[restartPos - 1] == '/') ||
-					(restartPos > 2 &&
-					Environment.CommandLine[restartPos - 1] == '-' &&
-					Environment.CommandLine[restartPos - 2] == '-'))
+				if (isRestart)
 				{
 					eraserClient.QueueRestartTasks();
 				}
