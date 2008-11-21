@@ -31,8 +31,12 @@ namespace Eraser.Manager
 	/// to be run and will run them when they are set to be run. This class is
 	/// abstract as they each will have their own ways of dealing with tasks.
 	/// </summary>
-	public abstract class Executor
+	public abstract class Executor : IDisposable
 	{
+		#region IDisposable members
+		public abstract void Dispose();
+		#endregion
+
 		/// <summary>
 		/// Starts the execution of tasks queued.
 		/// </summary>

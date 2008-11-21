@@ -94,10 +94,13 @@ namespace Eraser
 			}
 		}
 
-		public static DirectExecutor eraserClient;
+		/// <summary>
+		/// The global Executor instance.
+		/// </summary>
+		public static Executor eraserClient;
 	}
 
-	public class Settings : Manager.SettingsManager
+	class Settings : Manager.SettingsManager
 	{
 		/// <summary>
 		/// Registry-based storage backing for the Settings class.

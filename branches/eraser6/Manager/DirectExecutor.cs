@@ -38,7 +38,7 @@ namespace Eraser.Manager
 	/// The DirectExecutor class is used by the Eraser GUI directly when the program
 	/// is run without the help of a Service.
 	/// </summary>
-	public class DirectExecutor : Executor, IDisposable
+	public class DirectExecutor : Executor
 	{
 		public DirectExecutor()
 		{
@@ -49,7 +49,7 @@ namespace Eraser.Manager
 			);
 		}
 
-		void IDisposable.Dispose()
+		public override void Dispose()
 		{
 			thread.Abort();
 			schedulerInterrupt.Set();
