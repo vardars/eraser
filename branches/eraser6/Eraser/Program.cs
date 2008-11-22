@@ -29,6 +29,7 @@ using Microsoft.Win32;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Globalization;
+using System.Reflection;
 
 namespace Eraser
 {
@@ -40,12 +41,15 @@ namespace Eraser
 		[STAThread]
 		static void Main(string[] commandLine)
 		{
+			//Trivial case: no command parameters
 			if (commandLine.Length == 0)
 				GUIMain(false);
+
+			//Determine if the sole parameter is --restart; if it is, start the GUI
+			//passing isRestart as true. Otherwise, we're a console application.
 			else if (commandLine.Length == 1)
 			{
-				if (commandLine[0].Substring(0, 1) == "/" ||
-					commandLine[0].Substring(0, 2) == "--")
+				if (commandLine[0] == "/restart" || commandLine[0] == "--restart")
 				{
 					GUIMain(true);
 				}
@@ -54,14 +58,163 @@ namespace Eraser
 					CommandMain(commandLine);
 				}
 			}
+
+			//The other trivial case: definitely a console application.
 			else
 				CommandMain(commandLine);
 		}
 
+		/// <summary>
+		/// Runs Eraser as a command-line application.
+		/// </summary>
+		/// <param name="commandLine">The command line parameters passed to Eraser.</param>
 		private static void CommandMain(string[] commandLine)
 		{
+			//Create a console for our GUI app.
+			KernelAPI.AllocConsole();
+			Console.SetOut(new StreamWriter(Console.OpenStandardOutput()));
+			Console.SetIn(new StreamReader(Console.OpenStandardInput()));
+
+			//Map commands to our functions.
+			Dictionary<string, CommandHandler> handlers =
+				new Dictionary<string, CommandHandler>();
+			handlers.Add("addtask", CommandAddTask);
+			handlers.Add("querymethods", CommandQueryMethods);
+			handlers.Add("help", delegate(Dictionary<string, string> arguments)
+				{
+					CommandHelp();
+				});
+
+			try
+			{
+				//Get the command.
+				if (commandLine.Length < 1)
+				{
+					CommandHelp();
+					return;
+				}
+				else if (!handlers.ContainsKey(commandLine[0]))
+					throw new ArgumentException("Unknown action: " + commandLine[0]);	
+
+				//Parse the command line.
+				Dictionary<string, string> cmdParams = new Dictionary<string, string>();
+				for (int i = 1; i != commandLine.Length; ++i)
+				{
+					string param = commandLine[i];
+					if (param.Length == 0)
+						continue;
+
+					if (param[0] == '/' || param[0] == '-')
+					{
+						//Ignore the second hyphen if the user specified --X
+						if (param[0] == '-' && param.Length >= 2 && param[1] == '-')
+							param = param.Substring(2);
+						else
+							param = param.Substring(1);
+
+						//Separate the key/value at the first equal sign.
+						int eqIdx = param.IndexOf('=');
+						if (eqIdx != -1)
+							cmdParams.Add(param.Substring(0, eqIdx), param.Substring(eqIdx + 1));
+						else
+							cmdParams.Add(param, null);
+					}
+					else
+					{
+						throw new ArgumentException("Invalid command line parameter: " +
+							param);
+					}
+				}
+
+				//Call the function
+				handlers[commandLine[0]](cmdParams);
+			}
+			catch (ArgumentException e)
+			{
+				Console.WriteLine(e.Message + "\n");
+				CommandUsage();
+			}
+			finally
+			{
+				//Flush the buffer since we may have got buffered output.
+				Console.Out.Flush();
+
+				Console.Write("\nPress any key to continue . . . ");
+				Console.Out.Flush();
+				Console.ReadLine();
+
+				//We are no longer using the console, release it.
+				KernelAPI.FreeConsole();
+			}
 		}
 
+		/// <summary>
+		/// Parses the command line for tasks and adds them using the
+		/// <see cref="RemoteExecutor"/> class.
+		/// </summary>
+		/// <param name="commandLine">The command line parameters passed to the program.</param>
+		private static void CommandAddTask(Dictionary<string, string> arguments)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Lists all registered erasure methods.
+		/// </summary>
+		/// <param name="commandLine">The command line parameters passed to the program.</param>
+		private static void CommandQueryMethods(Dictionary<string, string> arguments)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Prints the help text for Eraser (with copyright)
+		/// </summary>
+		private static void CommandHelp()
+		{
+			Console.WriteLine(@"Eraser {0}
+(c) 2008 The Eraser Project
+Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
+",	Assembly.GetExecutingAssembly().GetName().Version);
+
+			Console.Out.Flush();
+			CommandUsage();
+		}
+
+		/// <summary>
+		/// Prints the command line help for Eraser.
+		/// </summary>
+		private static void CommandUsage()
+		{
+			Console.WriteLine(@"usage: Eraser <action> <arguments>
+where action is
+    addtask                 Adds tasks to the current task list.
+    querymethods            Lists all registered Erasure methods.
+
+parameters for addtask:
+    eraser addtask --method <methodGUID> (--recycled | --unused=<volume> | " +
+@"--dir=<directory> | [file1 [file2 [...]]])
+
+    --method, -m            The Erasure method to use.
+    --recycled, -r          Erases files and folders in the recycle bin
+    --unused, -u            Erases unused space in the volume.
+    --dir, --directory, -d  Erases files and folders in the directory
+        optional arguments: --dir=<directory>[,e=excludeMask][,i=includeMask]
+            excludeMask     A wildcard expression for files and folders to exclude.
+            includeMask     A wildcard expression for files and folders to include.
+                            The include mask is applied before the exclude mask.
+    file1 ... fileN         The list of files to erase.
+
+parameters for querymethods:
+    eraser querymethods");
+			Console.Out.Flush();
+		}
+
+		/// <summary>
+		/// Runs Eraser as a GUI application.
+		/// </summary>
+		/// <param name="isRestart">True if the program was passed the --restart
+		/// switch.</param>
 		private static void GUIMain(bool isRestart)
 		{
 			Application.EnableVisualStyles();
@@ -117,6 +270,12 @@ namespace Eraser
 		/// The global Executor instance.
 		/// </summary>
 		public static Executor eraserClient;
+
+		/// <summary>
+		/// Handles commands passed to the program
+		/// </summary>
+		/// <param name="arguments">The arguments to the command</param>
+		private delegate void CommandHandler(Dictionary<string, string> arguments);
 	}
 
 	class Settings : Manager.SettingsManager
