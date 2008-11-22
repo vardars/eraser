@@ -42,11 +42,7 @@ namespace Eraser.Manager
 	{
 		public DirectExecutor()
 		{
-			thread = new Thread(delegate()
-				{
-					Main();
-				}
-			);
+			thread = new Thread(Main);
 		}
 
 		public override void Dispose()
