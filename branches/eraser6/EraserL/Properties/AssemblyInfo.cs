@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("EraserL")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("LParam")]
+[assembly: AssemblyCompany("Eraser")]
 [assembly: AssemblyProduct("EraserL")]
-[assembly: AssemblyCopyright("Copyright © LParam 2008")]
+[assembly: AssemblyCopyright("Copyright © Eraser Project 2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
