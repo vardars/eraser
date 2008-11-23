@@ -40,7 +40,7 @@ namespace Eraser.Manager
 		public const string ServerName = "EraserRemoteExecutorServer";
 
 		private Thread thread = null;
-		private NamedPipeServerStream server = 
+		private NamedPipeServerStream server =
 			new NamedPipeServerStream(ServerName, PipeDirection.InOut, 32,
 				PipeTransmissionMode.Message, PipeOptions.Asynchronous);
 
@@ -59,7 +59,6 @@ namespace Eraser.Manager
 			Abort();
 		}
 
-
 		public void Abort()
 		{
 			thread.Abort();
@@ -72,17 +71,17 @@ namespace Eraser.Manager
 
 			while (Thread.CurrentThread.ThreadState != ThreadState.AbortRequested)
 			{
-				if(!server.IsConnected)
-					server.WaitForConnection(); 
+				if (!server.IsConnected)
+					server.WaitForConnection();
 
 				while (server.Position < server.Length)
 					mstream.Write(buffer, 0, server.Read(buffer, 0, buffer.Length));
 
+				// the value should not stay null since we have to deserialise it 
 				object returnValue = null;
 				using (RemoteExecutorClient.RemoteHeader data = (RemoteExecutorClient.RemoteHeader)
 					new BinaryFormatter().Deserialize(mstream))
 				{
-
 					data.SerializationStream.Position = 0;
 
 					uint taskId = 0;
@@ -103,7 +102,7 @@ namespace Eraser.Manager
 						// void \+ ref task
 						case RemoteExecutorClient.Function.ADD_TASK:
 							task = (Task)new BinaryFormatter().Deserialize(data.SerializationStream);
-							returnValue = null;
+							returnValue = new object();
 							break;
 
 						// bool \+ taskid
@@ -118,7 +117,7 @@ namespace Eraser.Manager
 						// void \+ stream
 						case RemoteExecutorClient.Function.SAVE_TASK_LIST:
 							stream = (Stream)new BinaryFormatter().Deserialize(data.SerializationStream);
-							returnValue = null;
+							returnValue = new object();
 							break;
 
 						// list<task> \+ void
@@ -127,7 +126,7 @@ namespace Eraser.Manager
 						case RemoteExecutorClient.Function.QUEUE_RESTART_TASK:
 						// void \+ void
 						case RemoteExecutorClient.Function.RUN:
-							returnValue = null;
+							returnValue = new object();
 							break;
 
 						default:
@@ -220,11 +219,11 @@ namespace Eraser.Manager
 	public class RemoteExecutorClient : Executor
 	{
 		public static int Instances = 0;
-		public const string ClientName = "EraserRemoteExecutorClient";
+		public const string ClientName = "EraserRemoteExecutorClient_";
 
 		private NamedPipeClientStream client = 
 			new NamedPipeClientStream(RemoteExecutorServer.ServerName,
-				ClientName, PipeDirection.InOut);
+				ClientName + Instances.ToString(), PipeDirection.InOut);
 
 		public enum Function : uint
 		{
@@ -267,12 +266,12 @@ namespace Eraser.Manager
 		{
 			// initialise client and connect to the server
 			object results = null;
-			IAsyncResult asyncResult;
+			IAsyncResult asyncResult = null;
+			client = new NamedPipeClientStream(RemoteExecutorServer.ServerName,
+				ClientName + Instances.ToString(), PipeDirection.InOut);
 			
-			client.Connect(10000);
-
-			client.ReadMode = PipeTransmissionMode.Message;
-			client.Position = 0;			
+			// wait for a connection for at least 5s
+			client.Connect(5000);	
 
 			// serialise the data
 			using (MemoryStream ms = new MemoryStream())
@@ -286,7 +285,7 @@ namespace Eraser.Manager
 				(asyncResult = client.BeginWrite(ms.GetBuffer(), 0, ms.GetBuffer().Length,
 					delegate(IAsyncResult ar)
 					{
-						// completed
+						// completed, might throw
 						client.EndWrite(ar);
 
 						ms.Position = 0;
@@ -295,12 +294,12 @@ namespace Eraser.Manager
 						while (client.Position < client.Length)
 							ms.Write(buffer, 0, client.Read(buffer, 0, buffer.Length));
 
+						// deserialise the result 
 						results = new BinaryFormatter().Deserialize(ms);
 
 					}, this)).AsyncWaitHandle.WaitOne();
 			}
 
-			// TODO: return the proper results
 			return results;
 		}
 
