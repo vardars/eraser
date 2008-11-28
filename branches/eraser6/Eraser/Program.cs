@@ -80,6 +80,9 @@ namespace Eraser
 					CommandHelp();
 				});
 
+			//Declare a dictionary to store the command parameters
+			Dictionary<string, string> cmdParams = new Dictionary<string, string>();
+
 			try
 			{
 				//Get the command.
@@ -93,7 +96,6 @@ namespace Eraser
 					throw new ArgumentException("Unknown action: " + commandLine[0]);
 
 				//Parse the command line.
-				Dictionary<string, string> cmdParams = new Dictionary<string, string>();
 				for (int i = 1; i != commandLine.Length; ++i)
 				{
 					string param = commandLine[i];
@@ -146,9 +148,13 @@ namespace Eraser
 				//Flush the buffer since we may have got buffered output.
 				Console.Out.Flush();
 
-				Console.Write("\nPress any key to continue . . . ");
-				Console.Out.Flush();
-				Console.ReadLine();
+				//Don't ask for a key to press if the user specified Quiet
+				if (!cmdParams.ContainsKey("q") && !cmdParams.ContainsKey("quiet"))
+				{
+					Console.Write("\nPress any key to continue . . . ");
+					Console.Out.Flush();
+					Console.ReadLine();
+				}
 
 				//We are no longer using the console, release it.
 				KernelAPI.FreeConsole();
@@ -182,7 +188,18 @@ namespace Eraser
 		/// <param name="commandLine">The command line parameters passed to the program.</param>
 		private static void CommandQueryMethods(Dictionary<string, string> arguments)
 		{
-			throw new NotImplementedException();
+			//Output the header
+			const string methodFormat = "{0,-2} {1,-39} {2}";
+			Console.WriteLine(methodFormat, "", "Method", "GUID");
+			Console.WriteLine(new string('-', 79));
+
+			//Refresh the list of erasure methods
+			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.GetAll();
+			foreach (ErasureMethod method in methods.Values)
+			{
+				Console.WriteLine(methodFormat, (method is UnusedSpaceErasureMethod) ?
+					"U" : "", method.Name, method.GUID.ToString());
+			}
 		}
 
 		/// <summary>
