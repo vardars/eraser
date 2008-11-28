@@ -70,11 +70,6 @@ namespace Eraser
 		/// <param name="commandLine">The command line parameters passed to Eraser.</param>
 		private static void CommandMain(string[] commandLine)
 		{
-			//Create a console for our GUI app.
-			KernelAPI.AllocConsole();
-			Console.SetOut(new StreamWriter(Console.OpenStandardOutput()));
-			Console.SetIn(new StreamReader(Console.OpenStandardInput()));
-
 			//Map commands to our functions.
 			Dictionary<string, CommandHandler> handlers =
 				new Dictionary<string, CommandHandler>();
@@ -90,11 +85,12 @@ namespace Eraser
 				//Get the command.
 				if (commandLine.Length < 1)
 				{
+					CommandCreateConsole();
 					CommandHelp();
 					return;
 				}
 				else if (!handlers.ContainsKey(commandLine[0]))
-					throw new ArgumentException("Unknown action: " + commandLine[0]);	
+					throw new ArgumentException("Unknown action: " + commandLine[0]);
 
 				//Parse the command line.
 				Dictionary<string, string> cmdParams = new Dictionary<string, string>();
@@ -126,13 +122,24 @@ namespace Eraser
 					}
 				}
 
+				//If the user did not specify the quiet command line, then create the console.
+				if (!cmdParams.ContainsKey("q") && !cmdParams.ContainsKey("quiet"))
+					CommandCreateConsole();
+
 				//Call the function
-				handlers[commandLine[0]](cmdParams);
+				using (ManagerLibrary library = new ManagerLibrary(new Settings()))
+				using (eraserClient = new RemoteExecutorClient())
+					handlers[commandLine[0]](cmdParams);
 			}
 			catch (ArgumentException e)
 			{
+				CommandCreateConsole();
 				Console.WriteLine(e.Message + "\n");
 				CommandUsage();
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
 			}
 			finally
 			{
@@ -146,6 +153,17 @@ namespace Eraser
 				//We are no longer using the console, release it.
 				KernelAPI.FreeConsole();
 			}
+		}
+
+		/// <summary>
+		/// Creates a console for our application, setting the input/output streams to the
+		/// defaults.
+		/// </summary>
+		private static void CommandCreateConsole()
+		{
+			KernelAPI.AllocConsole();
+			Console.SetOut(new StreamWriter(Console.OpenStandardOutput()));
+			Console.SetIn(new StreamReader(Console.OpenStandardInput()));
 		}
 
 		/// <summary>
@@ -190,6 +208,9 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 where action is
     addtask                 Adds tasks to the current task list.
     querymethods            Lists all registered Erasure methods.
+
+global parameters:
+	--quiet, -q				Do not create a Console window to display progress.
 
 parameters for addtask:
     eraser addtask --method <methodGUID> (--recycled | --unused=<volume> | " +
