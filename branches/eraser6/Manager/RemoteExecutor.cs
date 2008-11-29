@@ -33,8 +33,11 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Eraser.Manager
 {
+	/// <summary>
+	/// Represents a request to the RemoteExecutorServer instance
+	/// </summary>
 	[Serializable]
-	internal class RemoteHeader
+	internal class RemoteRequest
 	{
 		/// <summary>
 		/// List of supported functions
@@ -60,27 +63,49 @@ namespace Eraser.Manager
 		/// <param name="func">The function this command is wanting to execute.</param>
 		/// <param name="data">The parameters for the command, serialised using a
 		/// BinaryFormatter</param>
-		public RemoteHeader(Function func, byte[] data)
+		public RemoteRequest(Function func, byte[] data)
 		{
 			Func = func;
 			Data = data;
 		}
 
+		/// <summary>
+		/// The function that this request is meant to call.
+		/// </summary>
 		public Function Func;
+
+		/// <summary>
+		/// The parameters associated with the function call.
+		/// </summary>
 		public byte[] Data;
 	};
 
-	// we allways pass complete tasks accross our server/clinet
-	// streams
+	/// <summary>
+	/// The RemoteExecutorServer class is the server half required for remote execution
+	/// of tasks.
+	/// </summary>
 	public class RemoteExecutorServer : DirectExecutor
 	{
-		public const string ServerName = "localhost";
+		/// <summary>
+		/// Our Remote Server name, prevent collisions!
+		/// </summary>
+		public const string ServerName = "Eraser-FB6C5A7D-E47F-475f-ABA4-58F4D24BB67E-RemoteExecutor";
 
+		/// <summary>
+		/// The thread which will answer pipe connections
+		/// </summary>
 		private Thread thread = null;
+
+		/// <summary>
+		/// Our pipe instance which handles connections.
+		/// </summary>
 		private NamedPipeServerStream server =
-			new NamedPipeServerStream(ServerName, PipeDirection.InOut, 32,
+			new NamedPipeServerStream(ServerName, PipeDirection.InOut, 4,
 				PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public RemoteExecutorServer()
 		{
 			thread = new Thread(Main);
@@ -91,15 +116,13 @@ namespace Eraser.Manager
 
 		public override void Dispose()
 		{
-			Abort();
+			thread.Abort();
 			base.Dispose();
 		}
 
-		public void Abort()
-		{
-			thread.Abort();
-		}
-
+		/// <summary>
+		/// The polling loop dealing with every server connection.
+		/// </summary>
 		private void Main()
 		{
 			while (Thread.CurrentThread.ThreadState != ThreadState.AbortRequested)
@@ -116,7 +139,7 @@ namespace Eraser.Manager
 					continue;
 
 				//Read the request into the buffer.
-				RemoteHeader request = null;
+				RemoteRequest request = null;
 				using (MemoryStream mstream = new MemoryStream())
 				{
 					byte[] buffer = new byte[65536];
@@ -131,7 +154,7 @@ namespace Eraser.Manager
 
 					//Deserialise the header of the request.
 					mstream.Position = 0;
-					request = (RemoteHeader)new BinaryFormatter().Deserialize(new MemoryStream(buffer));
+					request = (RemoteRequest)new BinaryFormatter().Deserialize(new MemoryStream(buffer));
 				}
 
 				uint taskId = 0;
@@ -143,41 +166,41 @@ namespace Eraser.Manager
 				switch (request.Func)
 				{
 					// void \+ task
-					case RemoteHeader.Function.CANCEL_TASK:
+					case RemoteRequest.Function.CANCEL_TASK:
 					// void \+ task
-					case RemoteHeader.Function.QUEUE_TASK:
+					case RemoteRequest.Function.QUEUE_TASK:
 					// void \+ task
-					case RemoteHeader.Function.REPLACE_TASK:
+					case RemoteRequest.Function.REPLACE_TASK:
 					// void \+ task
-					case RemoteHeader.Function.SCHEDULE_TASK:
+					case RemoteRequest.Function.SCHEDULE_TASK:
 					// void \+ ref task
-					case RemoteHeader.Function.ADD_TASK:
+					case RemoteRequest.Function.ADD_TASK:
 						using (MemoryStream mStream = new MemoryStream(request.Data))
 							task = (Task)new BinaryFormatter().Deserialize(mStream);
 						returnValue = new object();
 						break;
 
 					// bool \+ taskid
-					case RemoteHeader.Function.DELETE_TASK:
+					case RemoteRequest.Function.DELETE_TASK:
 					// task \+ taskid
-					case RemoteHeader.Function.GET_TASK:
+					case RemoteRequest.Function.GET_TASK:
 						using (MemoryStream mStream = new MemoryStream(request.Data))
 							taskId = (uint)new BinaryFormatter().Deserialize(mStream);
 						break;
 
 					// void \+ stream
-					case RemoteHeader.Function.LOAD_TASK_LIST:
+					case RemoteRequest.Function.LOAD_TASK_LIST:
 					// void \+ stream
-					case RemoteHeader.Function.SAVE_TASK_LIST:
+					case RemoteRequest.Function.SAVE_TASK_LIST:
 						using (MemoryStream mStream = new MemoryStream(request.Data))
 							stream = (Stream)new BinaryFormatter().Deserialize(mStream);
 						returnValue = new object();
 						break;
 
 					// list<task> \+ void
-					case RemoteHeader.Function.GET_TASKS:
+					case RemoteRequest.Function.GET_TASKS:
 					// void \+ void
-					case RemoteHeader.Function.QUEUE_RESTART_TASK:
+					case RemoteRequest.Function.QUEUE_RESTART_TASK:
 						returnValue = new object();
 						break;
 
@@ -190,57 +213,57 @@ namespace Eraser.Manager
 				switch (request.Func)
 				{
 					// void \+ task
-					case RemoteHeader.Function.CANCEL_TASK:
+					case RemoteRequest.Function.CANCEL_TASK:
 						CancelTask(task);
 						break;
 
 					// void \+ task
-					case RemoteHeader.Function.QUEUE_TASK:
+					case RemoteRequest.Function.QUEUE_TASK:
 						QueueTask(task);
 						break;
 
 					// void \+ task
-					case RemoteHeader.Function.REPLACE_TASK:
+					case RemoteRequest.Function.REPLACE_TASK:
 						ReplaceTask(task);
 						break;
 
 					// void \+ task
-					case RemoteHeader.Function.SCHEDULE_TASK:
+					case RemoteRequest.Function.SCHEDULE_TASK:
 						ScheduleTask(task);
 						break;
 
 					// void \+ ref task
-					case RemoteHeader.Function.ADD_TASK:
+					case RemoteRequest.Function.ADD_TASK:
 						AddTask(ref task);
 						break;
 
 					// bool \+ taskid
-					case RemoteHeader.Function.DELETE_TASK:
+					case RemoteRequest.Function.DELETE_TASK:
 						returnValue = DeleteTask(taskId);
 						break;
 
 					// task \+ taskid
-					case RemoteHeader.Function.GET_TASK:
+					case RemoteRequest.Function.GET_TASK:
 						returnValue = GetTask(taskId);
 						break;
 
 					// void \+ stream
-					case RemoteHeader.Function.LOAD_TASK_LIST:
+					case RemoteRequest.Function.LOAD_TASK_LIST:
 						LoadTaskList(stream);
 						break;
 
 					// void \+ stream
-					case RemoteHeader.Function.SAVE_TASK_LIST:
+					case RemoteRequest.Function.SAVE_TASK_LIST:
 						SaveTaskList(stream);
 						break;
 
 					// list<task> \+ void
-					case RemoteHeader.Function.GET_TASKS:
+					case RemoteRequest.Function.GET_TASKS:
 						returnValue = GetTasks();
 						break;
 
 					// void \+ void
-					case RemoteHeader.Function.QUEUE_RESTART_TASK:
+					case RemoteRequest.Function.QUEUE_RESTART_TASK:
 						QueueRestartTasks();
 						break;
 
@@ -281,7 +304,7 @@ namespace Eraser.Manager
 			client.Dispose();
 		}
 
-		private object SendRequest(RemoteHeader header)
+		private object SendRequest(RemoteRequest header)
 		{
 			//Connect to the server
 			object result = null;
@@ -305,7 +328,6 @@ namespace Eraser.Manager
 				int responseLength = BitConverter.ToInt32(buffer, 0);
 				while (responseLength > 0)
 					responseLength -= client.Read(buffer, 0, Math.Min(buffer.Length, responseLength));
-				
 
 				//Deserialise the response
 				mStream.Position = 0;
@@ -319,7 +341,7 @@ namespace Eraser.Manager
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, taskId);
-			return (bool)SendRequest(new RemoteHeader(RemoteHeader.Function.DELETE_TASK,
+			return (bool)SendRequest(new RemoteRequest(RemoteRequest.Function.DELETE_TASK,
 				mStream.GetBuffer()));
 		}
 
@@ -327,7 +349,7 @@ namespace Eraser.Manager
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, null);
-			return (List<Task>)SendRequest(new RemoteHeader(RemoteHeader.Function.GET_TASKS,
+			return (List<Task>)SendRequest(new RemoteRequest(RemoteRequest.Function.GET_TASKS,
 				mStream.GetBuffer()));
 		}
 
@@ -335,7 +357,7 @@ namespace Eraser.Manager
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, taskId);
-			return (Task)SendRequest(new RemoteHeader(RemoteHeader.Function.GET_TASK,
+			return (Task)SendRequest(new RemoteRequest(RemoteRequest.Function.GET_TASK,
 				mStream.GetBuffer()));
 		}
 
@@ -343,7 +365,7 @@ namespace Eraser.Manager
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, stream);
-			SendRequest(new RemoteHeader(RemoteHeader.Function.LOAD_TASK_LIST,
+			SendRequest(new RemoteRequest(RemoteRequest.Function.LOAD_TASK_LIST,
 				mStream.GetBuffer()));
 		}
 
@@ -351,7 +373,7 @@ namespace Eraser.Manager
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, task);
-			SendRequest(new RemoteHeader(RemoteHeader.Function.ADD_TASK,
+			SendRequest(new RemoteRequest(RemoteRequest.Function.ADD_TASK,
 				mStream.GetBuffer()));
 		}
 
@@ -359,7 +381,7 @@ namespace Eraser.Manager
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, task);
-			SendRequest(new RemoteHeader(RemoteHeader.Function.CANCEL_TASK,
+			SendRequest(new RemoteRequest(RemoteRequest.Function.CANCEL_TASK,
 				mStream.GetBuffer()));
 		}
 
@@ -367,7 +389,7 @@ namespace Eraser.Manager
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, null);
-			SendRequest(new RemoteHeader(RemoteHeader.Function.QUEUE_RESTART_TASK,
+			SendRequest(new RemoteRequest(RemoteRequest.Function.QUEUE_RESTART_TASK,
 				mStream.GetBuffer()));
 		}
 
@@ -375,7 +397,7 @@ namespace Eraser.Manager
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, task);
-			SendRequest(new RemoteHeader(RemoteHeader.Function.QUEUE_TASK,
+			SendRequest(new RemoteRequest(RemoteRequest.Function.QUEUE_TASK,
 				mStream.GetBuffer()));
 		}
 
@@ -383,7 +405,7 @@ namespace Eraser.Manager
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, task);
-			SendRequest(new RemoteHeader(RemoteHeader.Function.REPLACE_TASK,
+			SendRequest(new RemoteRequest(RemoteRequest.Function.REPLACE_TASK,
 				mStream.GetBuffer()));
 		}
 
@@ -395,7 +417,7 @@ namespace Eraser.Manager
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, task);
-			SendRequest(new RemoteHeader(RemoteHeader.Function.SCHEDULE_TASK,
+			SendRequest(new RemoteRequest(RemoteRequest.Function.SCHEDULE_TASK,
 				mStream.GetBuffer()));
 		}
 
@@ -403,7 +425,7 @@ namespace Eraser.Manager
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, stream);
-			SendRequest(new RemoteHeader(RemoteHeader.Function.SAVE_TASK_LIST,
+			SendRequest(new RemoteRequest(RemoteRequest.Function.SAVE_TASK_LIST,
 				mStream.GetBuffer()));
 		}
 	}
