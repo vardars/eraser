@@ -221,24 +221,24 @@ namespace Eraser.Manager
 		public static int Instances = 0;
 		public const string ClientName = "EraserRemoteExecutorClient_";
 
-		private NamedPipeClientStream client = 
+		private NamedPipeClientStream client =
 			new NamedPipeClientStream(RemoteExecutorServer.ServerName,
 				ClientName + Instances.ToString(), PipeDirection.InOut);
 
 		public enum Function : uint
 		{
-			ADD_TASK = 0,
-			CANCEL_TASK,
-			DELETE_TASK,
+			RUN = 0,
+			ADD_TASK,
 			GET_TASK,
 			GET_TASKS,
-			RUN,
-			QUEUE_RESTART_TASK,
+			CANCEL_TASK,
+			DELETE_TASK,
 			QUEUE_TASK,
 			REPLACE_TASK,
-			LOAD_TASK_LIST,
 			SCHEDULE_TASK,
 			SAVE_TASK_LIST,
+			LOAD_TASK_LIST,
+			QUEUE_RESTART_TASK,
 		}
 
 		public RemoteExecutorClient()
@@ -269,9 +269,9 @@ namespace Eraser.Manager
 			IAsyncResult asyncResult = null;
 			client = new NamedPipeClientStream(RemoteExecutorServer.ServerName,
 				ClientName + Instances.ToString(), PipeDirection.InOut);
-			
+
 			// wait for a connection for at least 5s
-			client.Connect(5000);	
+			client.Connect(5000);
 
 			// serialise the data
 			using (MemoryStream ms = new MemoryStream())
