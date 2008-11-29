@@ -34,12 +34,14 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace Eraser.Manager
 {
 	[Serializable]
-	public class RemoteHeader
+	internal class RemoteHeader
 	{
+		/// <summary>
+		/// List of supported functions
+		/// </summary>
 		public enum Function : uint
 		{
-			RUN = 0,
-			ADD_TASK,
+			ADD_TASK = 0,
 			GET_TASK,
 			GET_TASKS,
 			CANCEL_TASK,
@@ -52,8 +54,20 @@ namespace Eraser.Manager
 			QUEUE_RESTART_TASK,
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="func">The function this command is wanting to execute.</param>
+		/// <param name="data">The parameters for the command, serialised using a
+		/// BinaryFormatter</param>
+		public RemoteHeader(Function func, byte[] data)
+		{
+			Func = func;
+			Data = data;
+		}
+
 		public Function Func;
-		public Stream SerializationStream = new MemoryStream();
+		public byte[] Data;
 	};
 
 	// we allways pass complete tasks accross our server/clinet
@@ -65,7 +79,7 @@ namespace Eraser.Manager
 		private Thread thread = null;
 		private NamedPipeServerStream server =
 			new NamedPipeServerStream(ServerName, PipeDirection.InOut, 32,
-				PipeTransmissionMode.Message, PipeOptions.None);
+				PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
 
 		public RemoteExecutorServer()
 		{
@@ -77,8 +91,8 @@ namespace Eraser.Manager
 
 		public override void Dispose()
 		{
- 			base.Dispose();
 			Abort();
+			base.Dispose();
 		}
 
 		public void Abort()
@@ -88,30 +102,45 @@ namespace Eraser.Manager
 
 		private void Main()
 		{
-			byte[] buffer = new byte[32768];
-			MemoryStream mstream = new MemoryStream();
-
 			while (Thread.CurrentThread.ThreadState != ThreadState.AbortRequested)
 			{
+				IAsyncResult asyncWait = server.BeginWaitForConnection(
+					server.EndWaitForConnection, null);
+
+				while (!asyncWait.AsyncWaitHandle.WaitOne(15))
+					if (Thread.CurrentThread.ThreadState == ThreadState.AbortRequested)
+						break;
+
+				//If we still aren't connected that means the connection failed to establish.
 				if (!server.IsConnected)
-					server.WaitForConnection();
+					continue;
 
-				//Read the header into the buffer.
-				int lastRead = 0;
-				while ((lastRead = server.Read(buffer, 0, buffer.Length)) > 0)
-					mstream.Write(buffer, 0, lastRead);
+				//Read the request into the buffer.
+				RemoteHeader request = null;
+				using (MemoryStream mstream = new MemoryStream())
+				{
+					byte[] buffer = new byte[65536];
+					server.Read(buffer, 0, sizeof(int));
+					int messageSize = BitConverter.ToInt32(buffer, 0);
+					while (messageSize > 0)
+					{
+						int lastRead = server.Read(buffer, 0, Math.Min(messageSize, buffer.Length));
+						messageSize -= lastRead;
+						mstream.Write(buffer, 0, lastRead);
+					}
 
-				//Deserialise the header of the request.
-				object returnValue = null;
-				RemoteHeader data = (RemoteHeader)new BinaryFormatter().Deserialize(mstream);
-				data.SerializationStream.Position = 0;
+					//Deserialise the header of the request.
+					mstream.Position = 0;
+					request = (RemoteHeader)new BinaryFormatter().Deserialize(new MemoryStream(buffer));
+				}
 
 				uint taskId = 0;
 				Task task = null;
 				Stream stream = null;
+				object returnValue = null;
 
 				#region Deserialise
-				switch (data.Func)
+				switch (request.Func)
 				{
 					// void \+ task
 					case RemoteHeader.Function.CANCEL_TASK:
@@ -123,7 +152,8 @@ namespace Eraser.Manager
 					case RemoteHeader.Function.SCHEDULE_TASK:
 					// void \+ ref task
 					case RemoteHeader.Function.ADD_TASK:
-						task = (Task)new BinaryFormatter().Deserialize(data.SerializationStream);
+						using (MemoryStream mStream = new MemoryStream(request.Data))
+							task = (Task)new BinaryFormatter().Deserialize(mStream);
 						returnValue = new object();
 						break;
 
@@ -131,14 +161,16 @@ namespace Eraser.Manager
 					case RemoteHeader.Function.DELETE_TASK:
 					// task \+ taskid
 					case RemoteHeader.Function.GET_TASK:
-						taskId = (uint)new BinaryFormatter().Deserialize(data.SerializationStream);
+						using (MemoryStream mStream = new MemoryStream(request.Data))
+							taskId = (uint)new BinaryFormatter().Deserialize(mStream);
 						break;
 
 					// void \+ stream
 					case RemoteHeader.Function.LOAD_TASK_LIST:
 					// void \+ stream
 					case RemoteHeader.Function.SAVE_TASK_LIST:
-						stream = (Stream)new BinaryFormatter().Deserialize(data.SerializationStream);
+						using (MemoryStream mStream = new MemoryStream(request.Data))
+							stream = (Stream)new BinaryFormatter().Deserialize(mStream);
 						returnValue = new object();
 						break;
 
@@ -146,8 +178,6 @@ namespace Eraser.Manager
 					case RemoteHeader.Function.GET_TASKS:
 					// void \+ void
 					case RemoteHeader.Function.QUEUE_RESTART_TASK:
-					// void \+ void
-					case RemoteHeader.Function.RUN:
 						returnValue = new object();
 						break;
 
@@ -157,7 +187,7 @@ namespace Eraser.Manager
 				#endregion
 
 				#region Invoke
-				switch (data.Func)
+				switch (request.Func)
 				{
 					// void \+ task
 					case RemoteHeader.Function.CANCEL_TASK:
@@ -214,21 +244,19 @@ namespace Eraser.Manager
 						QueueRestartTasks();
 						break;
 
-					// void \+ void
-					case RemoteHeader.Function.RUN:
-						Run();
-						break;
-
 					default:
 						throw new FatalException("Unknown RemoteExecutorClient.Function");
-					#endregion
+				#endregion
 				}
 
 				// return the returnValue and disconnect
-				using (MemoryStream ms = new MemoryStream())
+				using (MemoryStream mStream = new MemoryStream())
 				{
-					new BinaryFormatter().Serialize(ms, returnValue);
-					server.Write(ms.GetBuffer(), 0, ms.GetBuffer().Length);
+					new BinaryFormatter().Serialize(mStream, returnValue);
+					byte[] buffer = mStream.ToArray();
+					byte[] bufferLength = BitConverter.GetBytes(buffer.Length);
+					server.Write(bufferLength, 0, sizeof(int));
+					server.Write(buffer, 0, buffer.Length);
 				}
 
 				// we are done, disconnect
@@ -253,130 +281,130 @@ namespace Eraser.Manager
 			client.Dispose();
 		}
 
-		private object Communicate(RemoteHeader header)
+		private object SendRequest(RemoteHeader header)
 		{
-			// initialise client and connect to the server
-			object results = null;
-
-			// wait for a connection for at least 5s
+			//Connect to the server
+			object result = null;
 			client.Connect(5000);
 
-			// serialise the data
-			using (MemoryStream ms = new MemoryStream())
+			using (MemoryStream mStream = new MemoryStream())
 			{
-				byte[] buffer = new byte[32768];
-				new BinaryFormatter().Serialize(ms, header);
+				//Serialise the request
+				new BinaryFormatter().Serialize(mStream, header);
 
 				//Write the request to the pipe
-				client.Write(ms.GetBuffer(), 0, ms.GetBuffer().Length);
+				byte[] buffer = mStream.ToArray();
+				byte[] bufferLength = BitConverter.GetBytes(buffer.Length);
+				client.Write(bufferLength, 0, sizeof(int));
+				client.Write(buffer, 0, buffer.Length);
 
-				//Read the response from the server
-				int lastRead = 0;
-				ms.Position = 0;
-				while ((lastRead = client.Read(buffer, 0, buffer.Length)) != 0)
-					ms.Write(buffer, 0, lastRead);
+				//Read the response from the pipe
+				mStream.Position = 0;
+				buffer = new byte[32768];
+				client.Read(buffer, 0, sizeof(int));
+				int responseLength = BitConverter.ToInt32(buffer, 0);
+				while (responseLength > 0)
+					responseLength -= client.Read(buffer, 0, Math.Min(buffer.Length, responseLength));
 				
+
 				//Deserialise the response
-				results = new BinaryFormatter().Deserialize(ms);
+				mStream.Position = 0;
+				result = new BinaryFormatter().Deserialize(mStream);
 			}
 
-			return results;
+			return result;
 		}
 
 		public override bool DeleteTask(uint taskId)
 		{
-			RemoteHeader rh = new RemoteHeader();
-			rh.Func = RemoteHeader.Function.DELETE_TASK;
-			new BinaryFormatter().Serialize(rh.SerializationStream, taskId);
-			return (bool)Communicate(rh);
+			MemoryStream mStream = new MemoryStream();
+			new BinaryFormatter().Serialize(mStream, taskId);
+			return (bool)SendRequest(new RemoteHeader(RemoteHeader.Function.DELETE_TASK,
+				mStream.GetBuffer()));
 		}
 
 		public override List<Task> GetTasks()
 		{
-			RemoteHeader rh = new RemoteHeader();
-			rh.Func = RemoteHeader.Function.GET_TASK;
-			new BinaryFormatter().Serialize(rh.SerializationStream, null);
-			return (List<Task>)Communicate(rh);
+			MemoryStream mStream = new MemoryStream();
+			new BinaryFormatter().Serialize(mStream, null);
+			return (List<Task>)SendRequest(new RemoteHeader(RemoteHeader.Function.GET_TASKS,
+				mStream.GetBuffer()));
 		}
 
 		public override Task GetTask(uint taskId)
 		{
-			RemoteHeader rh = new RemoteHeader();
-			rh.Func = RemoteHeader.Function.GET_TASK;
-			new BinaryFormatter().Serialize(rh.SerializationStream, null);
-			return (Task)Communicate(rh);
+			MemoryStream mStream = new MemoryStream();
+			new BinaryFormatter().Serialize(mStream, taskId);
+			return (Task)SendRequest(new RemoteHeader(RemoteHeader.Function.GET_TASK,
+				mStream.GetBuffer()));
 		}
 
 		public override void LoadTaskList(Stream stream)
 		{
-			RemoteHeader rh = new RemoteHeader();
-			rh.Func = RemoteHeader.Function.LOAD_TASK_LIST;
-			new BinaryFormatter().Serialize(rh.SerializationStream, stream);
-			Communicate(rh);
+			MemoryStream mStream = new MemoryStream();
+			new BinaryFormatter().Serialize(mStream, stream);
+			SendRequest(new RemoteHeader(RemoteHeader.Function.LOAD_TASK_LIST,
+				mStream.GetBuffer()));
 		}
 
 		public override void AddTask(ref Task task)
 		{
-			RemoteHeader rh = new RemoteHeader();
-			rh.Func = RemoteHeader.Function.ADD_TASK;
-			new BinaryFormatter().Serialize(rh.SerializationStream, task);
-			Communicate(rh);
+			MemoryStream mStream = new MemoryStream();
+			new BinaryFormatter().Serialize(mStream, task);
+			SendRequest(new RemoteHeader(RemoteHeader.Function.ADD_TASK,
+				mStream.GetBuffer()));
 		}
 
 		public override void CancelTask(Task task)
 		{
-			RemoteHeader rh = new RemoteHeader();
-			rh.Func = RemoteHeader.Function.CANCEL_TASK;
-			new BinaryFormatter().Serialize(rh.SerializationStream, task);
-			Communicate(rh);
+			MemoryStream mStream = new MemoryStream();
+			new BinaryFormatter().Serialize(mStream, task);
+			SendRequest(new RemoteHeader(RemoteHeader.Function.CANCEL_TASK,
+				mStream.GetBuffer()));
 		}
 
 		public override void QueueRestartTasks()
 		{
-			RemoteHeader rh = new RemoteHeader();
-			rh.Func = RemoteHeader.Function.QUEUE_RESTART_TASK;
-			new BinaryFormatter().Serialize(rh.SerializationStream, null);
-			Communicate(rh);
+			MemoryStream mStream = new MemoryStream();
+			new BinaryFormatter().Serialize(mStream, null);
+			SendRequest(new RemoteHeader(RemoteHeader.Function.QUEUE_RESTART_TASK,
+				mStream.GetBuffer()));
 		}
 
 		public override void QueueTask(Task task)
 		{
-			RemoteHeader rh = new RemoteHeader();
-			rh.Func = RemoteHeader.Function.QUEUE_TASK;
-			new BinaryFormatter().Serialize(rh.SerializationStream, null);
-			Communicate(rh);
+			MemoryStream mStream = new MemoryStream();
+			new BinaryFormatter().Serialize(mStream, task);
+			SendRequest(new RemoteHeader(RemoteHeader.Function.QUEUE_TASK,
+				mStream.GetBuffer()));
 		}
 
 		public override void ReplaceTask(Task task)
 		{
-			RemoteHeader rh = new RemoteHeader();
-			rh.Func = RemoteHeader.Function.REPLACE_TASK;
-			new BinaryFormatter().Serialize(rh.SerializationStream, null);
-			Communicate(rh);
+			MemoryStream mStream = new MemoryStream();
+			new BinaryFormatter().Serialize(mStream, task);
+			SendRequest(new RemoteHeader(RemoteHeader.Function.REPLACE_TASK,
+				mStream.GetBuffer()));
 		}
 
 		public override void Run()
 		{
-			RemoteHeader rh = new RemoteHeader();
-			rh.Func = RemoteHeader.Function.RUN;
-			new BinaryFormatter().Serialize(rh.SerializationStream, null);
-			Communicate(rh);
 		}
 
 		public override void ScheduleTask(Task task)
 		{
-			RemoteHeader rh = new RemoteHeader();
-			rh.Func = RemoteHeader.Function.SCHEDULE_TASK;
-			new BinaryFormatter().Serialize(rh.SerializationStream, null);
-			Communicate(rh);
+			MemoryStream mStream = new MemoryStream();
+			new BinaryFormatter().Serialize(mStream, task);
+			SendRequest(new RemoteHeader(RemoteHeader.Function.SCHEDULE_TASK,
+				mStream.GetBuffer()));
 		}
 
 		public override void SaveTaskList(Stream stream)
 		{
-			RemoteHeader rh = new RemoteHeader();
-			rh.Func = RemoteHeader.Function.SAVE_TASK_LIST;
-			new BinaryFormatter().Serialize(rh.SerializationStream, null);
-			Communicate(rh);
+			MemoryStream mStream = new MemoryStream();
+			new BinaryFormatter().Serialize(mStream, stream);
+			SendRequest(new RemoteHeader(RemoteHeader.Function.SAVE_TASK_LIST,
+				mStream.GetBuffer()));
 		}
 	}
 }
