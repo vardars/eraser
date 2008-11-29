@@ -77,7 +77,13 @@ namespace Eraser
 			{
 				CommandLineProgram program = new CommandLineProgram(commandLine);
 				isQuiet = program.Arguments.Quiet;
-				program.Run();
+
+				using (ManagerLibrary library = new ManagerLibrary(new Settings()))
+				using (Program.eraserClient = new RemoteExecutorClient())
+				{
+					eraserClient.Run();
+					program.Run();
+				}
 			}
 			catch (Exception e)
 			{
@@ -95,6 +101,8 @@ namespace Eraser
 					Console.Out.Flush();
 					Console.ReadLine();
 				}
+
+				KernelAPI.FreeConsole();
 			}
 		}
 
@@ -507,9 +515,7 @@ namespace Eraser
 		public void Run()
 		{
 			//Call the function handling the current command line.
-			using (ManagerLibrary library = new ManagerLibrary(new Settings()))
-			using (Program.eraserClient = new RemoteExecutorClient())
-				actionHandlers[Arguments.Action]();
+			actionHandlers[Arguments.Action]();
 		}
 
 		/// <summary>
