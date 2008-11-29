@@ -642,7 +642,7 @@ namespace Eraser
 			WebRequest.DefaultCachePolicy = new HttpRequestCachePolicy(
 				HttpRequestCacheLevel.Refresh);
 			HttpWebRequest req = (HttpWebRequest)
-				WebRequest.Create("http://eraser.sourceforge.net/updates?action=listupdates&" +
+				WebRequest.Create("http://eraser.heidi.ie/updates?action=listupdates&" +
 					"version=" + Assembly.GetExecutingAssembly().GetName().Version.ToString());
 			
 			using (WebResponse resp = req.GetResponse())
