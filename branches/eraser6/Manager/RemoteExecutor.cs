@@ -37,15 +37,14 @@ namespace Eraser.Manager
 	// streams
 	public class RemoteExecutorServer : DirectExecutor
 	{
-		public const string ServerName = "EraserRemoteExecutorServer";
+		public const string ServerName = "localhost";
 
 		private Thread thread = null;
 		private NamedPipeServerStream server =
 			new NamedPipeServerStream(ServerName, PipeDirection.InOut, 32,
-				PipeTransmissionMode.Message, PipeOptions.Asynchronous);
+				PipeTransmissionMode.Message, PipeOptions.None);
 
 		public RemoteExecutorServer()
-			: base()
 		{
 			thread = new Thread(Main);
 			thread.Start();
@@ -218,12 +217,9 @@ namespace Eraser.Manager
 
 	public class RemoteExecutorClient : Executor
 	{
-		public static int Instances = 0;
-		public const string ClientName = "EraserRemoteExecutorClient_";
-
 		private NamedPipeClientStream client =
-			new NamedPipeClientStream(RemoteExecutorServer.ServerName,
-				ClientName + Instances.ToString(), PipeDirection.InOut);
+			new NamedPipeClientStream(".", RemoteExecutorServer.ServerName,
+				PipeDirection.InOut);
 
 		public enum Function : uint
 		{
@@ -243,7 +239,6 @@ namespace Eraser.Manager
 
 		public RemoteExecutorClient()
 		{
-			Instances += 1;
 		}
 
 		public override void Dispose()
@@ -267,8 +262,6 @@ namespace Eraser.Manager
 			// initialise client and connect to the server
 			object results = null;
 			IAsyncResult asyncResult = null;
-			client = new NamedPipeClientStream(RemoteExecutorServer.ServerName,
-				ClientName + Instances.ToString(), PipeDirection.InOut);
 
 			// wait for a connection for at least 5s
 			client.Connect(5000);
