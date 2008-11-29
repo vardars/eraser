@@ -127,12 +127,15 @@ namespace Eraser.Manager
 		{
 			while (Thread.CurrentThread.ThreadState != ThreadState.AbortRequested)
 			{
-				IAsyncResult asyncWait = server.BeginWaitForConnection(
-					server.EndWaitForConnection, null);
-
-				while (!asyncWait.AsyncWaitHandle.WaitOne(15))
-					if (Thread.CurrentThread.ThreadState == ThreadState.AbortRequested)
-						break;
+				//Wait for a connection to be established
+				if (!server.IsConnected)
+				{
+					IAsyncResult asyncWait = server.BeginWaitForConnection(
+						server.EndWaitForConnection, null);
+					while (!server.IsConnected && !asyncWait.AsyncWaitHandle.WaitOne(15))
+						if (Thread.CurrentThread.ThreadState == ThreadState.AbortRequested)
+							break;
+				}
 
 				//If we still aren't connected that means the connection failed to establish.
 				if (!server.IsConnected)
@@ -157,27 +160,18 @@ namespace Eraser.Manager
 					request = (RemoteRequest)new BinaryFormatter().Deserialize(new MemoryStream(buffer));
 				}
 
-				uint taskId = 0;
-				Task task = null;
-				Stream stream = null;
-				object returnValue = null;
-
 				#region Deserialise
+				object parameter = null;
 				switch (request.Func)
 				{
 					// void \+ task
 					case RemoteRequest.Function.CANCEL_TASK:
-					// void \+ task
 					case RemoteRequest.Function.QUEUE_TASK:
-					// void \+ task
 					case RemoteRequest.Function.REPLACE_TASK:
-					// void \+ task
 					case RemoteRequest.Function.SCHEDULE_TASK:
-					// void \+ ref task
 					case RemoteRequest.Function.ADD_TASK:
 						using (MemoryStream mStream = new MemoryStream(request.Data))
-							task = (Task)new BinaryFormatter().Deserialize(mStream);
-						returnValue = new object();
+							parameter = new BinaryFormatter().Deserialize(mStream);
 						break;
 
 					// bool \+ taskid
@@ -185,23 +179,20 @@ namespace Eraser.Manager
 					// task \+ taskid
 					case RemoteRequest.Function.GET_TASK:
 						using (MemoryStream mStream = new MemoryStream(request.Data))
-							taskId = (uint)new BinaryFormatter().Deserialize(mStream);
+							parameter = new BinaryFormatter().Deserialize(mStream);
 						break;
 
 					// void \+ stream
 					case RemoteRequest.Function.LOAD_TASK_LIST:
-					// void \+ stream
 					case RemoteRequest.Function.SAVE_TASK_LIST:
 						using (MemoryStream mStream = new MemoryStream(request.Data))
-							stream = (Stream)new BinaryFormatter().Deserialize(mStream);
-						returnValue = new object();
+							parameter = new BinaryFormatter().Deserialize(mStream);
 						break;
 
 					// list<task> \+ void
 					case RemoteRequest.Function.GET_TASKS:
 					// void \+ void
 					case RemoteRequest.Function.QUEUE_RESTART_TASK:
-						returnValue = new object();
 						break;
 
 					default:
@@ -210,51 +201,55 @@ namespace Eraser.Manager
 				#endregion
 
 				#region Invoke
+				object returnValue = null;
 				switch (request.Func)
 				{
 					// void \+ task
 					case RemoteRequest.Function.CANCEL_TASK:
-						CancelTask(task);
+						CancelTask((Task)parameter);
 						break;
 
 					// void \+ task
 					case RemoteRequest.Function.QUEUE_TASK:
-						QueueTask(task);
+						QueueTask((Task)parameter);
 						break;
 
 					// void \+ task
 					case RemoteRequest.Function.REPLACE_TASK:
-						ReplaceTask(task);
+						ReplaceTask((Task)parameter);
 						break;
 
 					// void \+ task
 					case RemoteRequest.Function.SCHEDULE_TASK:
-						ScheduleTask(task);
+						ScheduleTask((Task)parameter);
 						break;
 
 					// void \+ ref task
 					case RemoteRequest.Function.ADD_TASK:
+					{
+						Task task = (Task)parameter;
 						AddTask(ref task);
 						break;
+					}
 
 					// bool \+ taskid
 					case RemoteRequest.Function.DELETE_TASK:
-						returnValue = DeleteTask(taskId);
+						returnValue = DeleteTask((uint)parameter);
 						break;
 
 					// task \+ taskid
 					case RemoteRequest.Function.GET_TASK:
-						returnValue = GetTask(taskId);
+						returnValue = GetTask((uint)parameter);
 						break;
 
 					// void \+ stream
 					case RemoteRequest.Function.LOAD_TASK_LIST:
-						LoadTaskList(stream);
+						LoadTaskList((Stream)parameter);
 						break;
 
 					// void \+ stream
 					case RemoteRequest.Function.SAVE_TASK_LIST:
-						SaveTaskList(stream);
+						SaveTaskList((Stream)parameter);
 						break;
 
 					// list<task> \+ void
@@ -272,14 +267,20 @@ namespace Eraser.Manager
 				#endregion
 				}
 
-				// return the returnValue and disconnect
-				using (MemoryStream mStream = new MemoryStream())
+				//Return the result of the invoked function, if any.
+				if (returnValue != null)
+					using (MemoryStream mStream = new MemoryStream())
+					{
+						new BinaryFormatter().Serialize(mStream, returnValue);
+						byte[] buffer = mStream.ToArray();
+						byte[] bufferLength = BitConverter.GetBytes(buffer.Length);
+						server.Write(bufferLength, 0, sizeof(int));
+						server.Write(buffer, 0, buffer.Length);
+					}
+				else
 				{
-					new BinaryFormatter().Serialize(mStream, returnValue);
-					byte[] buffer = mStream.ToArray();
-					byte[] bufferLength = BitConverter.GetBytes(buffer.Length);
-					server.Write(bufferLength, 0, sizeof(int));
-					server.Write(buffer, 0, buffer.Length);
+					byte[] buffer = BitConverter.GetBytes(0);
+					server.Write(buffer, 0, sizeof(int));
 				}
 
 				// we are done, disconnect
@@ -331,7 +332,8 @@ namespace Eraser.Manager
 
 				//Deserialise the response
 				mStream.Position = 0;
-				result = new BinaryFormatter().Deserialize(mStream);
+				if (mStream.Length > 0)
+					result = new BinaryFormatter().Deserialize(mStream);
 			}
 
 			return result;
