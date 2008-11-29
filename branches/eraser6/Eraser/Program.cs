@@ -634,9 +634,10 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			{
 				target.Method = method;
 				task.Targets.Add(target);
-				Console.WriteLine(target.UIText);
 			}
-			Console.WriteLine("Erasing using {0}", method.Name);
+
+			//Send the task out.
+			Program.eraserClient.AddTask(ref task);
 		}
 		#endregion
 
