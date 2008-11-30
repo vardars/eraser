@@ -93,7 +93,7 @@ Eraser Project Members:
 " + "\u2022" + @" Garrett Trant:		Mentor/Researcher
 " + "\u2022" + @" Joel Low:		Lead Developer
 " + "\u2022" + @" Dennis van Lith:		Designer
-" + "\u2022" + @" Kasra Nassiri:		Security Researcher");
+" + "\u2022" + @" Kasra Nassiri:		Security Researcher/Developer");
 
 			//Create the About bitmap localised for the current version (sans scrolling
 			//text) so it can be drawn quickly later.
