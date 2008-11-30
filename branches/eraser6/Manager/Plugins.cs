@@ -287,7 +287,7 @@ namespace Eraser.Manager.Plugin
 						AssemblyAuthenticode = cert;
 						break;
 					}
-				}	
+				}
 			}
 			catch (CryptographicException)
 			{

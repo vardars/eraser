@@ -23,3 +23,37 @@
 #include "resource.h"
 
 BOOTSTRAPPER_ICON       ICON         "..\..\Resources\EraserSetup.ico"
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION 6,0,1,649
+PRODUCTVERSION 6,0,1,649
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "Eraser Setup Bootstrapper"
+            VALUE "CompanyName", "The Eraser Project"
+            VALUE "FileDescription", "Eraser Setup Bootstrapper"
+            VALUE "FileVersion", "6.0.1.649"
+            VALUE "InternalName", "RemoteFile"
+            VALUE "LegalCopyright", "Copyright © 2007 Joel Low"
+            VALUE "OriginalFilename", "RemoteFile"
+            VALUE "ProductVersion", "6.0.1.649"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
