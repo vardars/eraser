@@ -11,9 +11,9 @@ echo '<?xml version="1.0"?>
 <updateList version="1.0">' . "\n";
 
 //Output the list of mirrors
-$query = mysql_query('SELECT * FROM updater_mirrors ORDER By Continent, Country, City');
+$query = mysql_query('SELECT * FROM mirrors ORDER By Continent, Country, City');
 echo '	<mirrors>
-	<mirror location="(automatically decide)">http://downloads.sourceforge.net/eraser/</mirror>' . "\n";
+		<mirror location="(automatically decide)">http://downloads.sourceforge.net/eraser/</mirror>' . "\n";
 while ($row = mysql_fetch_array($query))
 {
 	printf('		<mirror location="%s, %s">%s</mirror>' . "\n", $row['City'], $row['Country'],
@@ -22,10 +22,10 @@ while ($row = mysql_fetch_array($query))
 echo '	</mirrors>';
 
 //Prepare the list of updates
-$query = mysql_query(sprintf('SELECT updater_downloads.*, updater_publishers.Name as PublisherName
-	FROM updater_downloads
-	INNER JOIN updater_publishers ON
-		updater_downloads.PublisherID=updater_publishers.PublisherID
+$query = mysql_query(sprintf('SELECT downloads.*, publishers.Name as PublisherName
+	FROM downloads
+	INNER JOIN publishers ON
+		downloads.PublisherID=publishers.PublisherID
 	WHERE
 		(MinVersion IS NULL AND MaxVersion IS NULL) OR
 		(MinVersion IS NULL AND MaxVersion > \'%1$s\') OR
@@ -45,10 +45,12 @@ while ($row = mysql_fetch_array($query))
 	}
 
 	printf('		<item name="%s" version="%s" publisher="%s" architecture="%s" filesize="%d">%s</item>
-', htmlentities($row['Name']), $row['Version'], htmlentities($row['Publisher']), $row['Architecture'],
+', htmlentities($row['Name']), $row['Version'], htmlentities($row['PublisherName']), $row['Architecture'],
 			$row['Filesize'], htmlentities($row['Link']));
 }
 
+if (!empty($lastItemType))
+	printf('	</%s>' . "\n", $lastItemType);
 echo '</updateList>
 ';
 ?>
