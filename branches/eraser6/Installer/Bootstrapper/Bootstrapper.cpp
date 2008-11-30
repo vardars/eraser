@@ -44,127 +44,128 @@ private:
 	HANDLE thisHandle;
 };
 
+const wchar_t *ResourceName = MAKEINTRESOURCE(101);
+
 int Integrate(const std::wstring& destItem, const std::wstring& package)
 {
 	//Open a handle to ourselves
-	Handle srcFile(CreateFileW(Application::Get().GetPath().c_str(), GENERIC_READ,
-		FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL));
-	if (srcFile == INVALID_HANDLE_VALUE)
-		throw GetErrorMessage(GetLastError());
-
-	//Copy ourselves, in essence.
-	Handle destFile(CreateFileW(destItem.c_str(), GENERIC_WRITE, 0, NULL,
-		CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL));
-	if (destFile == INVALID_HANDLE_VALUE)
-		throw GetErrorMessage(GetLastError());
-
 	DWORD lastOperation = 0;
-	char buffer[262144];
-	while (ReadFile(srcFile, buffer, sizeof(buffer), &lastOperation, NULL) && lastOperation)
-		WriteFile(destFile, buffer, lastOperation, &lastOperation, NULL);
-
-	//Fill to the predetermined file position
-	int amountToWrite = DataOffset - GetFileSize(srcFile, NULL);
-	if (amountToWrite < 0)
-		throw std::wstring(L"The file size of the binary is larger than the data "
-			L"offset position; recompile the package, increasing DataOffset.");
-	ZeroMemory(buffer, sizeof(buffer));
-	while (amountToWrite > 0)
 	{
-		WriteFile(destFile, buffer, std::min<unsigned>(amountToWrite, sizeof(buffer)),
-			&lastOperation, NULL);
-		amountToWrite -= lastOperation;
+		Handle srcFile(CreateFileW(Application::Get().GetPath().c_str(), GENERIC_READ,
+			FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL));
+		if (srcFile == INVALID_HANDLE_VALUE)
+			throw GetErrorMessage(GetLastError());
+
+		//Copy ourselves
+		Handle destFile(CreateFileW(destItem.c_str(), GENERIC_WRITE, 0, NULL,
+			CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL));
+		if (destFile == INVALID_HANDLE_VALUE)
+			throw GetErrorMessage(GetLastError());
+
+		char buffer[262144];
+		while (ReadFile(srcFile, buffer, sizeof(buffer), &lastOperation, NULL) && lastOperation)
+			WriteFile(destFile, buffer, lastOperation, &lastOperation, NULL);
 	}
 
-	//Then copy the package
+	//Start updating the resource in the destination item
+	HANDLE resHandle(BeginUpdateResource(destItem.c_str(), false));
+	if (resHandle == NULL)
+		throw GetErrorMessage(GetLastError());
+
+	//Read the package into memory
 	Handle packageFile(CreateFileW(package.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
 		OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL));
 	if (packageFile == INVALID_HANDLE_VALUE)
 		throw GetErrorMessage(GetLastError());
-	int error;
-	SetLastError(0);
-	while (ReadFile(packageFile, buffer, sizeof(buffer), &lastOperation, NULL) && lastOperation)
+
+	unsigned long packageSize = GetFileSize(packageFile, NULL);
+	char* inputData = new char[packageSize];
+	if (!ReadFile(packageFile, inputData, packageSize, &lastOperation, NULL) || lastOperation != packageSize)
+		throw GetErrorMessage(GetLastError());
+
+	//Add the package to the application resource section
+	if (!UpdateResource(resHandle, RT_RCDATA, ResourceName, MAKELANGID(LANG_NEUTRAL,
+		SUBLANG_DEFAULT), inputData, packageSize))
 	{
-		WriteFile(destFile, buffer, lastOperation, &lastOperation, NULL);
-		error = GetLastError();
+		throw GetErrorMessage(GetLastError());
 	}
+
+	//Complete the update
+	if (!EndUpdateResource(resHandle, false)) 
+		throw GetErrorMessage(GetLastError());
 	return 0;
 }
 
 /// ISzInStream interface for extracting the archives.
-struct LZFileStream
+struct LZMemStream
 {
 public:
 	/// Constructor.
 	/// 
-	/// \param[in] fileHandle A HANDLE to the file stream, returned by CreateFile.
-	LZFileStream(HANDLE fileHandle)
+	/// \param[in] buffer The buffer containing the data to present as a stream.
+	/// \param[in] bufferSize The size of the buffer passed in.
+	/// \param[in] deleteOnDestroy True if the the buffer should be freed (using delete[])
+	///                            after the stream is destroyed.
+	LZMemStream(void* buffer, size_t bufferSize, bool deleteOnDestroy)
 	{
-		InStream.Read = LZFileStreamRead;
-		InStream.Seek = LzFileStreamSeek;
-		FileHandle = fileHandle;
+		InStream.Read = LZMemStreamRead;
+		InStream.Seek = LzMemStreamSeek;
 
-		FileRead = 0;
-		LARGE_INTEGER largeInt;
-		largeInt.QuadPart = 0;
-		if (!SetFilePointerEx(FileHandle, largeInt, &largeInt, FILE_CURRENT))
-			throw GetErrorMessage(GetLastError());
-		DataOffset = largeInt.QuadPart;
+		Buffer = static_cast<char*>(buffer);
+		BufferRead = 0;
+		BufferSize = bufferSize;
 
-		if (!GetFileSizeEx(fileHandle, &largeInt))
-			throw GetErrorMessage(GetLastError());
-		FileSize = largeInt.QuadPart - DataOffset;
+		DeleteOnDestroy = deleteOnDestroy;
+		CurrentOffset = 0;
 	}
 
-	~LZFileStream()
+	~LZMemStream()
 	{
-		CloseHandle(FileHandle);
+		if (DeleteOnDestroy)
+			delete[] Buffer;
 	}
 
 	ISzInStream InStream;
 
 private:
-	HANDLE FileHandle;
-	long long DataOffset;
-	long long FileRead;
-	long long FileSize;
+	bool DeleteOnDestroy;
+	char* Buffer;
+	size_t BufferRead;
+	size_t BufferSize;
+	size_t CurrentOffset;
 
-	static SZ_RESULT LZFileStreamRead(void* object, void** bufferPtr, size_t size,
+	static SZ_RESULT LZMemStreamRead(void* object, void** bufferPtr, size_t size,
 		size_t* processedSize)
 	{
-		LZFileStream* s = static_cast<LZFileStream*>(object);
+		LZMemStream* s = static_cast<LZMemStream*>(object);
 
 		//Since we can allocate as much as we want to allocate, take a decent amount
 		//of memory and stop.
 		size = std::min(1048576u * 4, size);
-		static char* buffer = NULL;
-		if (buffer)
-			delete[] buffer;
-		buffer = new char[size];
+		static char* dstBuffer = NULL;
+		if (dstBuffer)
+			delete[] dstBuffer;
+		dstBuffer = new char[size];
 
-		DWORD readSize = 0;
-		if (ReadFile(s->FileHandle, buffer, size, &readSize, NULL) && readSize != 0)
-		{
-			*bufferPtr = buffer;
-			*processedSize = readSize;
-			s->FileRead += readSize;
+		//Copy the memory to the provided buffer.
+		memcpy(dstBuffer, s->Buffer + s->CurrentOffset, size);
+		*bufferPtr = dstBuffer;
+		*processedSize = size;
+		s->BufferRead += size;
+		s->CurrentOffset += size;
 
-			MainWindow& mainWin = Application::Get().GetTopWindow();
-			mainWin.SetProgress((float)((double)s->FileRead / s->FileSize));
-		}
-
+		MainWindow& mainWin = Application::Get().GetTopWindow();
+		mainWin.SetProgress((float)((double)s->FileRead / s->FileSize));
 		return SZ_OK;
 	}
 
-	static SZ_RESULT LzFileStreamSeek(void *object, CFileSize pos)
+	static SZ_RESULT LzMemStreamSeek(void *object, CFileSize pos)
 	{
-		LZFileStream* s = static_cast<LZFileStream*>(object);
+		LZMemStream* s = static_cast<LZMemStream*>(object);
 
-		LARGE_INTEGER value;
-		value.QuadPart = pos + s->DataOffset;
-		if (!SetFilePointerEx(s->FileHandle, value, NULL, FILE_BEGIN) &&
-			GetLastError() != NO_ERROR)
+		if (pos > s->BufferSize)
 			return SZE_FAIL;
+		s->CurrentOffset = pos;
 		return SZ_OK;
 	}
 };
@@ -175,24 +176,21 @@ void ExtractTempFiles(std::wstring pathToExtract)
 		pathToExtract += L"\\";
 
 	//Open the file
-#if _DEBUG
-	HANDLE srcFile = CreateFileW((Application::Get().GetPath() + L".7z").c_str(),
-		GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (srcFile == INVALID_HANDLE_VALUE)
-		throw GetErrorMessage(GetLastError());
-#else
-	HANDLE srcFile = CreateFileW(Application::Get().GetPath().c_str(), GENERIC_READ,
-		FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (srcFile == INVALID_HANDLE_VALUE)
+	HMODULE currProcess = static_cast<HMODULE>(Application::Get().GetInstance());
+	HANDLE hResource(FindResource(currProcess, ResourceName, RT_RCDATA));
+	if (!hResource)
 		throw GetErrorMessage(GetLastError());
 
-	//Seek to the 196th kb.
-	LARGE_INTEGER fPos;
-	fPos.QuadPart = DataOffset;
-
-	if (!SetFilePointerEx(srcFile, fPos, &fPos, FILE_BEGIN))
+	HANDLE hResLoad(LoadResource(currProcess, static_cast<HRSRC>(static_cast<HANDLE>(hResource))));
+	if (!hResLoad)
 		throw GetErrorMessage(GetLastError());
-#endif
+
+	//Lock the data into global memory.
+	unsigned long resourceSize = SizeofResource(currProcess, static_cast<HRSRC>(
+		static_cast<HANDLE>(hResource)));
+	void* resourceBuffer = LockResource(hResLoad);
+	if (!resourceBuffer)
+		throw GetErrorMessage(GetLastError());
 
 	//7z archive database structure
 	CArchiveDatabaseEx db;
@@ -204,7 +202,7 @@ void ExtractTempFiles(std::wstring pathToExtract)
 	allocTempImp.Free = allocImp.Free = SzFree;
 
 	//Initialize the CRC and database structures
-	LZFileStream stream(srcFile);
+	LZMemStream stream(resourceBuffer, resourceSize, false);
 	CrcGenerateTable();
 	SzArDbExInit(&db);
 	if (SzArchiveOpen(&stream.InStream, &db, &allocImp, &allocTempImp) != SZ_OK)

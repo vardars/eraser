@@ -118,6 +118,9 @@ public:
 	/// Gets the Singleton instance of the Application object.
 	static Application& Get();
 
+	/// Gets the HINSTANCE variable for the current
+	HINSTANCE GetInstance();
+
 	/// Retrieves the path to the executable file.
 	std::wstring GetPath();
 

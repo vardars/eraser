@@ -178,6 +178,11 @@ Application& Application::Get()
 	return Instance;
 }
 
+HINSTANCE Application::GetInstance()
+{
+	return ::hInstance;
+}
+
 MainWindow& Application::GetTopWindow()
 {
 	return MainWin;
