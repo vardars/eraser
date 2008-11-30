@@ -50,6 +50,7 @@
     <Content Include="Resources\Exclamation.ico" />
     <Content Include="Resources\Information.ico" />
     <Content Include="Resources\New Folder.ico" />
+    <None Include="SignBin.bat" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -63,4 +64,7 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
+  <PropertyGroup>
+    <PreBuildEvent>"$(ProjectDir)\SignBin.bat" "$(SolutionDir)"</PreBuildEvent>
+  </PropertyGroup>
 </Project>
