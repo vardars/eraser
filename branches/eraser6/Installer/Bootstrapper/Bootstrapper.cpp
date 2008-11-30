@@ -155,7 +155,7 @@ private:
 		s->CurrentOffset += size;
 
 		MainWindow& mainWin = Application::Get().GetTopWindow();
-		mainWin.SetProgress((float)((double)s->FileRead / s->FileSize));
+		mainWin.SetProgress((float)((double)s->BufferRead / s->BufferSize));
 		return SZ_OK;
 	}
 
