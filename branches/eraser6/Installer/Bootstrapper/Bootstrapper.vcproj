@@ -161,6 +161,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Signing Bootstrapper EXE"
+				CommandLine="signtool sign /f &quot;$(SolutionDir)\Authenticode.pfx&quot; $(TargetPath)"
 			/>
 		</Configuration>
 	</Configurations>
