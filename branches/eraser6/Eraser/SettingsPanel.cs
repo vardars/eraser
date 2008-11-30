@@ -315,7 +315,7 @@ namespace Eraser
 			if (pluginsManager.SelectedItems.Count == 1)
 			{
 				PluginInstance instance = (PluginInstance)pluginsManager.SelectedItems[0].Tag;
-				e.Cancel = !instance.Plugin.Configurable;
+				e.Cancel = instance.Plugin == null || !instance.Plugin.Configurable;
 			}
 			else
 				e.Cancel = true;
