@@ -2,7 +2,7 @@
  * $Id$
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
- * Modified By:
+ * Modified By: Kasra Nassiri <cjax@users.sourceforge.net>
  * 
  * This file is part of Eraser.
  * 
