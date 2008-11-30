@@ -452,7 +452,7 @@ namespace Eraser.Util
 			/// the string includes both the desktop and window station names.
 			/// For more information, see Thread Connection to a Desktop.
 			/// </summary>
-			public string lpDesktop;
+			public IntPtr lpDesktop;
 
 			/// <summary>
 			/// For console processes, this is the title displayed in the title
