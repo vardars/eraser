@@ -1,5 +1,5 @@
 <?php
-require('./database.php');
+require('../scripts/database.php');
 
 $action = $_GET['action'];
 $version = $_GET['version'];
