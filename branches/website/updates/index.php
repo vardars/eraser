@@ -11,7 +11,7 @@ echo '<?xml version="1.0"?>
 <updateList version="1.0">' . "\n";
 
 //Output the list of mirrors
-$query = mysql_query('SELECT * FROM mirrors ORDER By Continent, Country, City');
+$query = mysql_query('SELECT * FROM updater_mirrors ORDER By Continent, Country, City');
 echo '	<mirrors>
 	<mirror location="(automatically decide)">http://downloads.sourceforge.net/eraser/</mirror>' . "\n";
 while ($row = mysql_fetch_array($query))
@@ -22,11 +22,15 @@ while ($row = mysql_fetch_array($query))
 echo '	</mirrors>';
 
 //Prepare the list of updates
-$query = mysql_query(sprintf('SELECT * FROM downloads WHERE
-	(MinVersion IS NULL AND MaxVersion IS NULL) OR
-	(MinVersion IS NULL AND MaxVersion > \'%1$s\') OR
-	(MinVersion <= \'%1$s\' AND MaxVersion IS NULL) OR
-	(MinVersion <= \'%1$s\' AND MaxVersion > \'%1$s\')
+$query = mysql_query(sprintf('SELECT updater_downloads.*, updater_publishers.Name as PublisherName
+	FROM updater_downloads
+	INNER JOIN updater_publishers ON
+		updater_downloads.PublisherID=updater_publishers.PublisherID
+	WHERE
+		(MinVersion IS NULL AND MaxVersion IS NULL) OR
+		(MinVersion IS NULL AND MaxVersion > \'%1$s\') OR
+		(MinVersion <= \'%1$s\' AND MaxVersion IS NULL) OR
+		(MinVersion <= \'%1$s\' AND MaxVersion > \'%1$s\')
 	ORDER BY `Type` ASC', $version));
 
 $lastItemType = null;
