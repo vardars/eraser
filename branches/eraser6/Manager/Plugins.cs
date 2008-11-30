@@ -269,12 +269,25 @@ namespace Eraser.Manager.Plugin
 			Plugin = plugin;
 			IsCore = false;
 
-			//Try to load the certificate to see if it exists; exceptions will be
-			//thrown if the assembly is not signed.
 			try
 			{
-				AssemblyAuthenticode = X509Certificate.CreateFromSignedFile(
-					assembly.Location);
+				//Try to load the certificate to see if it exists; exceptions will be
+				//thrown if the assembly is not signed.
+				X509Certificate2 cert = new X509Certificate2(
+					X509Certificate.CreateFromSignedFile(assembly.Location));
+
+				//Verify the validity of the certificate
+				X509Chain chain = new X509Chain();
+				chain.Build(cert);
+				foreach (X509ChainElement element in chain.ChainElements)
+				{
+					//If the certificate validates then this assembly has got a valid signature
+					if (element.Certificate.Verify())
+					{
+						AssemblyAuthenticode = cert;
+						break;
+					}
+				}	
 			}
 			catch (CryptographicException)
 			{
@@ -319,7 +332,7 @@ namespace Eraser.Manager.Plugin
 			}
 		}
 
-		public X509Certificate AssemblyAuthenticode
+		public X509Certificate2 AssemblyAuthenticode
 		{
 			get
 			{
@@ -364,7 +377,7 @@ namespace Eraser.Manager.Plugin
 
 		private Assembly assembly;
 		private AssemblyInfo assemblyInfo;
-		private X509Certificate assemblyAuthenticode;
+		private X509Certificate2 assemblyAuthenticode;
 		private bool isCore;
 		private IPlugin plugin;
 	}
