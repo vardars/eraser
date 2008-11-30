@@ -113,7 +113,7 @@ namespace Eraser
 
 			progressPb.Style = ProgressBarStyle.Continuous;
 			progressPb.Value = (int)(e.OverallProgressPercentage * 100);
-			progressLbl.Text = e.Message;
+			progressProgressLbl.Text = e.Message;
 
 			if (progressPb.Value == 100)
 				progressProgressLbl.Text = S._("Processing update list...");
@@ -151,8 +151,8 @@ namespace Eraser
 			//Get a list of translatable categories (this will change as more categories
 			//are added)
 			Dictionary<string, string> updateCategories = new Dictionary<string, string>();
-			updateCategories.Add("updates", S._("Updates"));
-			updateCategories.Add("plugins", S._("Plugins"));
+			updateCategories.Add("update", S._("Updates"));
+			updateCategories.Add("plugin", S._("Plugins"));
 
 			//Only include those whose architecture is compatible with ours.
 			List<string> compatibleArchs = new List<string>();
@@ -642,7 +642,7 @@ namespace Eraser
 			WebRequest.DefaultCachePolicy = new HttpRequestCachePolicy(
 				HttpRequestCacheLevel.Refresh);
 			HttpWebRequest req = (HttpWebRequest)
-				WebRequest.Create("http://eraser.heidi.ie/updates?action=listupdates&" +
+				WebRequest.Create("http://eraser.joelsplace.dyndns.org/updates?action=listupdates&" +
 					"version=" + Assembly.GetExecutingAssembly().GetName().Version.ToString());
 			
 			using (WebResponse resp = req.GetResponse())
