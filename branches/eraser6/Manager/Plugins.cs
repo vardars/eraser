@@ -26,6 +26,8 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using Eraser.Util;
 
 namespace Eraser.Manager.Plugin
@@ -182,7 +184,8 @@ namespace Eraser.Manager.Plugin
 			//the plugin for the presence of a valid signature.
 			Dictionary<Guid, bool> approvals = ManagerLibrary.Instance.Settings.PluginApprovals;
 			if ((reflectAssembly.GetName().GetPublicKey().Length == 0 ||
-				!MsCorEEAPI.VerifyStrongName(filePath)) &&
+				!MsCorEEAPI.VerifyStrongName(filePath) ||
+				instance.AssemblyAuthenticode == null) &&
 				!approvals.ContainsKey(instance.AssemblyInfo.GUID))
 			{
 				return;
@@ -264,7 +267,18 @@ namespace Eraser.Manager.Plugin
 		{
 			Assembly = assembly;
 			Plugin = plugin;
-			isCore = false;
+			IsCore = false;
+
+			//Try to load the certificate to see if it exists; exceptions will be
+			//thrown if the assembly is not signed.
+			try
+			{
+				AssemblyAuthenticode = X509Certificate.CreateFromSignedFile(
+					assembly.Location);
+			}
+			catch (CryptographicException)
+			{
+			}
 		}
 
 		/// <summary>
@@ -299,9 +313,21 @@ namespace Eraser.Manager.Plugin
 			{
 				return assemblyInfo;
 			}
-			internal set
+			private set
 			{
 				assemblyInfo = value;
+			}
+		}
+
+		public X509Certificate AssemblyAuthenticode
+		{
+			get
+			{
+				return assemblyAuthenticode;
+			}
+			private set
+			{
+				assemblyAuthenticode = value;
 			}
 		}
 
@@ -338,6 +364,7 @@ namespace Eraser.Manager.Plugin
 
 		private Assembly assembly;
 		private AssemblyInfo assemblyInfo;
+		private X509Certificate assemblyAuthenticode;
 		private bool isCore;
 		private IPlugin plugin;
 	}

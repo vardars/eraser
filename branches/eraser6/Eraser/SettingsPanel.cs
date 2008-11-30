@@ -70,12 +70,15 @@ namespace Eraser
 				item.SubItems.Add(instance.Plugin.Author);
 			}
 
+			//The item is checked if the plugin was given the green light to load
 			item.Checked = instance.Plugin != null ||
 				(Manager.ManagerLibrary.Instance.Settings.PluginApprovals.ContainsKey(
 					instance.AssemblyInfo.GUID) && Manager.ManagerLibrary.Instance.
 					Settings.PluginApprovals[instance.AssemblyInfo.GUID]
 				);
 
+			//Visually display the other metadata associated with the assembly
+			item.ImageIndex = instance.AssemblyAuthenticode == null ? -1 : 0;
 			item.Group = instance.IsCore ? pluginsManager.Groups[0] :
 				pluginsManager.Groups[1];
 			item.SubItems.Add(instance.Assembly.GetName().Version.ToString());

@@ -86,6 +86,7 @@ namespace Eraser
 			this.plausibleDeniabilityFilesAddFolder = new System.Windows.Forms.Button();
 			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+			this.pluginsManagerImageList = new System.Windows.Forms.ImageList(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).BeginInit();
 			this.content.SuspendLayout();
 			this.pluginsMenu.SuspendLayout();
@@ -217,6 +218,7 @@ namespace Eraser
             ((System.Windows.Forms.ListViewGroup)(resources.GetObject("pluginsManager.Groups1")))});
 			this.errorProvider.SetIconAlignment(this.pluginsManager, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("pluginsManager.IconAlignment"))));
 			this.pluginsManager.Name = "pluginsManager";
+			this.pluginsManager.SmallImageList = this.pluginsManagerImageList;
 			this.pluginsManager.UseCompatibleStateImageBehavior = false;
 			this.pluginsManager.View = System.Windows.Forms.View.Details;
 			this.pluginsManager.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.pluginsManager_ItemCheck);
@@ -367,6 +369,12 @@ namespace Eraser
 			resources.ApplyResources(this.openFileDialog, "openFileDialog");
 			this.openFileDialog.Multiselect = true;
 			// 
+			// pluginsManagerImageList
+			// 
+			this.pluginsManagerImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("pluginsManagerImageList.ImageStream")));
+			this.pluginsManagerImageList.TransparentColor = System.Drawing.Color.Transparent;
+			this.pluginsManagerImageList.Images.SetKeyName(0, "Key.png");
+			// 
 			// SettingsPanel
 			// 
 			this.Controls.Add(this.saveSettings);
@@ -423,5 +431,6 @@ namespace Eraser
 		private System.Windows.Forms.OpenFileDialog openFileDialog;
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
 		private System.Windows.Forms.Button plausibleDeniabilityFilesAddFolder;
+		private System.Windows.Forms.ImageList pluginsManagerImageList;
 	}
 }
