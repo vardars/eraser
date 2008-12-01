@@ -34,7 +34,7 @@ require('./scripts/database.php');
 				</div>
 
 				<!-- InstanceBeginEditable name="LeftContentEdit" -->
-				<p>Eraser is an advanced security tool for Windows which allows you to completely remove sensitive data from your hard drive by overwriting it several times with carefully selected patterns. Works with Windows 95, 98, ME, NT, 2000, XP, Vista, Windows 2003 Server and DOS.</p>
+				<p>Eraser is an advanced security tool for Windows which allows you to completely remove sensitive data from your hard drive by overwriting it several times with carefully selected patterns. Works with Windows  98, ME, NT, 2000, XP, Vista, Windows Server 2003 and Server 2008.</p>
 				<p>Eraser is Free software and its source code is released under <a href="http://www.fsf.org/licensing/licenses/gpl.html">GNU General Public License</a>.</p>
 				<!-- InstanceEndEditable -->
 			</div>
