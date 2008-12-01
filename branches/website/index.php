@@ -17,7 +17,7 @@ require('./scripts/database.php');
 <!-- InstanceParam name="ArticlePoster" type="boolean" value="false" -->
 </head>
 
-<body onload="MM_preloadImages('images/btn_home_hov.gif', 'images/btn_download_hov.gif', 'images/btn_forum_hov.gif', 'images/btn_forum_trac.gif')">
+<body onload="MM_preloadImages('images/btn_home_hov.gif', 'images/btn_download_hov.gif', 'images/btn_forum_hov.gif', 'images/btn_trac_hov.gif')">
 <div id="wrap">
 	<div id="banner">
 		<a href="index.php"><img src="images/banner.jpg" class="banner_img" alt="Eraser v6" /></a>
