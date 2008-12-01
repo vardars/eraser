@@ -165,7 +165,7 @@ private:
 
 		if (pos > s->BufferSize)
 			return SZE_FAIL;
-		s->CurrentOffset = pos;
+		s->CurrentOffset = static_cast<size_t>(pos);
 		return SZ_OK;
 	}
 };
