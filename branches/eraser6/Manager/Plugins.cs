@@ -277,17 +277,8 @@ namespace Eraser.Manager.Plugin
 					X509Certificate.CreateFromSignedFile(assembly.Location));
 
 				//Verify the validity of the certificate
-				X509Chain chain = new X509Chain();
-				chain.Build(cert);
-				foreach (X509ChainElement element in chain.ChainElements)
-				{
-					//If the certificate validates then this assembly has got a valid signature
-					if (element.Certificate.Verify())
-					{
-						AssemblyAuthenticode = cert;
-						break;
-					}
-				}
+				if (cert.Verify())
+					AssemblyAuthenticode = cert;
 			}
 			catch (CryptographicException)
 			{
