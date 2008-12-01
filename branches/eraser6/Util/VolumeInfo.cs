@@ -98,14 +98,24 @@ namespace Eraser.Util
 			if (!GetVolumeInformation(volumeID, volumeName, MaxPath, out serialNumber,
 				out maxComponentLength, out filesystemFlags, fileSystemName, MaxPath))
 			{
-				if (Marshal.GetLastWin32Error() != 21 /*ERROR_NOT_READY*/)
-					throw new Win32Exception(Marshal.GetLastWin32Error(), "Eraser.Util.Volume.Volume");
+				int lastError = Marshal.GetLastWin32Error();
+				switch (lastError)
+				{
+					case 0:		//ERROR_NO_ERROR
+					case 21:	//ERROR_NOT_READY
+					case 1005:	//ERROR_UNRECOGNIZED_VOLUME
+						break;
+
+					default:
+						throw new Win32Exception(Marshal.GetLastWin32Error(), "Eraser.Util.Volume.Volume");
+				}
 			}
 			else
+			{
 				isReady = true;
-
-			volumeLabel = volumeName.ToString();
-			volumeFormat = fileSystemName.ToString();
+				volumeLabel = volumeName.ToString();
+				volumeFormat = fileSystemName.ToString();
+			}
 		}
 
 		/// <summary>
@@ -129,7 +139,7 @@ namespace Eraser.Util
 			//Close the handle
 			if (Marshal.GetLastWin32Error() == 18 /*ERROR_NO_MORE_FILES*/)
 				FindVolumeClose(handle);
-			
+
 			return result;
 		}
 
