@@ -2,7 +2,7 @@
 
 LIBRARY      "EraserCtxMenu.DLL"
 
-EXPORTS
+EXPORTS 
 	DllCanUnloadNow		PRIVATE
 	DllGetClassObject	PRIVATE
 	DllRegisterServer	PRIVATE

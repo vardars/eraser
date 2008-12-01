@@ -5,7 +5,7 @@
 // produce the type library (EraserCtxMenu.tlb) and marshalling code.
 
 import "oaidl.idl";
-import "ocidl.idl";
+import "ocidl.idl"; 
 
 [
 	object,

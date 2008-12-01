@@ -8,9 +8,9 @@
 
 namespace Eraser {
 HRESULT CCtxMenu::Initialize(
-						LPCITEMIDLIST	pidlFolder,
-						LPDATAOBJECT	pDataObj,
-						HKEY			hProgID )
+															LPCITEMIDLIST	pidlFolder,
+															LPDATAOBJECT	pDataObj,
+															HKEY			hProgID )
 {
 	FORMATETC fmt = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
 	STGMEDIUM stg = { TYMED_HGLOBAL };
@@ -80,67 +80,67 @@ the syntax is simple.
 This project should be aimed at the 6.1 release.
 
 BEGIN @MENU : POSITION($INDEX)
-	[ICON="PATH"]
-	[TEXT="DISPLAY_TEXT"]
+[ICON="PATH"]
+[TEXT="DISPLAY_TEXT"]
 
-	[FLAGS=MIIM_*]			
-		//MIIM_BITMAP
-		//MIIM_CHECKMARKS
-		//MIIM_DATA
-		//MIIM_FTYPE
-		//MIIM_ID
-		//MIIM_STATE
-		//MIIM_STRING
-		//MIIM_SUBMENU
-		//MIIM_TYPE
+[FLAGS=MIIM_*]			
+//MIIM_BITMAP
+//MIIM_CHECKMARKS
+//MIIM_DATA
+//MIIM_FTYPE
+//MIIM_ID
+//MIIM_STATE
+//MIIM_STRING
+//MIIM_SUBMENU
+//MIIM_TYPE
 
-	[TYPE=MF_*]
-		//MF_APPEND,
-		//MF_BITMAP,
-		//MF_BYCOMMAND,
-		//MF_BYPOSITION
-		//MF_CHECKED
-		//MF_DEFAULT
-		//MF_DELETE
-		//MF_DISABLED
-		//MF_ENABLED
-		//MF_END
-		//MF_GRAYED
-		//MF_HELP
-		//MF_HILITE
-		//MF_INSERT
-		//MF_MENUBARBREAK
-		//MF_MENUBREAK
-		//MF_MOUSESELECT
-		//MF_OWNERDRAW
-		//MF_POPUP
-		//MF_POPUP
-		//MF_REMOVE,
-		//MF_RIGHTJUSTIFY,
-		//MF_SEPARATOR,
-		//MF_STRING,
-		//MF_SYSMENU,
-		//MF_UNCHECKED,
-		//MF_UNHILITE
-		//MF_USECHECKBITMAPS
+[TYPE=MF_*]
+//MF_APPEND,
+//MF_BITMAP,
+//MF_BYCOMMAND,
+//MF_BYPOSITION
+//MF_CHECKED
+//MF_DEFAULT
+//MF_DELETE
+//MF_DISABLED
+//MF_ENABLED
+//MF_END
+//MF_GRAYED
+//MF_HELP
+//MF_HILITE
+//MF_INSERT
+//MF_MENUBARBREAK
+//MF_MENUBREAK
+//MF_MOUSESELECT
+//MF_OWNERDRAW
+//MF_POPUP
+//MF_POPUP
+//MF_REMOVE,
+//MF_RIGHTJUSTIFY,
+//MF_SEPARATOR,
+//MF_STRING,
+//MF_SYSMENU,
+//MF_UNCHECKED,
+//MF_UNHILITE
+//MF_USECHECKBITMAPS
 END
 
 // Desirable to have bitmaps cached
 @MENU 
 {
-	BITMAP = "FILE";
-	TEXT="Eraser";
-	BITMAP CHECKED="FILE";
-	BITMAP UNCHECKED="FILE";
+BITMAP = "FILE";
+TEXT="Eraser";
+BITMAP CHECKED="FILE";
+BITMAP UNCHECKED="FILE";
 
-	// submenu creation
-	@MENU 
-	{
-		@CHECKBOX 
-		{
-		}
-		@SEPERATOR
-	}
+// submenu creation
+@MENU 
+{
+@CHECKBOX 
+{
+}
+@SEPERATOR
+}
 }
 
 UINT     cbSize;
@@ -159,7 +159,7 @@ HBITMAP  hbmpItem;      // used if MIIM_BITMAP
 */
 
 /**
- * return a seperate MENUITEMINFO structure */
+* return a seperate MENUITEMINFO structure */
 static MENUITEMINFO* GetSeperator()
 {
 	MENUITEMINFO *mii = new MENUITEMINFO();		
@@ -171,10 +171,10 @@ static MENUITEMINFO* GetSeperator()
 
 HRESULT CCtxMenu::QueryContextMenu (
 				HMENU hmenu,
-				UINT  uMenuIndex,
-				UINT  uidFirstCmd, 
-				UINT  uidLastCmd,
-				UINT  uFlags )
+																		UINT  uMenuIndex,
+																		UINT  uidFirstCmd, 
+																		UINT  uidLastCmd,
+																		UINT  uFlags )
 {
 	// If the flags include CMF_DEFAULTONLY then we shouldn't do anything.
 	if ( uFlags & CMF_DEFAULTONLY )
@@ -184,7 +184,6 @@ HRESULT CCtxMenu::QueryContextMenu (
 	UINT ctrPos = 0;
 	UINT uID = uidFirstCmd;	
 	HMENU hSubmenu = CreatePopupMenu();	
-
 
 	/* Remember this order is defined _Statically_ on the CEraserLPVERB enum */
 	/* -------------------------------- Submenu -------------------------------- */
@@ -196,7 +195,7 @@ HRESULT CCtxMenu::QueryContextMenu (
 	/* [4] */ InsertMenu     ( hSubmenu, ctrPos++, MF_BYPOSITION, uID++, _T("Secure &Move" ) );	
 	/* ------------------------------------------------------------------------- */
 	/* [5] */ InsertMenuItem ( hSubmenu, ctrPos++, TRUE, GetSeperator() );
-	/* [6] */ InsertMenu     ( hSubmenu, ctrPos++, MF_BYPOSITION, uID++, _T("&Customise") );	
+	/* [6] */ InsertMenu     ( hSubmenu, ctrPos++, MF_BYPOSITION, uID++, _T("&Console") );	
 	/* ------------------------------ Submenu end ------------------------------ */
 
 	// Insert the submenu into the ctx menu provided by Explorer.
@@ -221,11 +220,11 @@ HRESULT CCtxMenu::QueryContextMenu (
 }
 
 HRESULT CCtxMenu::GetCommandString (
-									UINT  idCmd,   
-									UINT uFlags,
-									UINT* pwReserved,
-									LPSTR pszName,
-									UINT  cchMax )
+																		UINT  idCmd,   
+																		UINT uFlags,
+																		UINT* pwReserved,
+																		LPSTR pszName,
+																		UINT  cchMax )
 {
 	USES_CONVERSION;
 
@@ -237,7 +236,7 @@ HRESULT CCtxMenu::GetCommandString (
 	// supplied buffer.
 	if (!(uFlags & GCS_HELPTEXT)) 
 		return E_INVALIDARG;
- 
+
 	static LPCTSTR szNotepadText = _T("Open the selected file in Notepad");
 	static LPCTSTR szIEText = _T("Open the selected file in Internet Explorer");
 	LPCTSTR pszText = (0 == idCmd) ? szNotepadText : szIEText;
@@ -260,55 +259,121 @@ HRESULT CCtxMenu::GetCommandString (
 3) Set default algorithm
 */
 
-#define foreach(iter, container) \
-	for(string_list::iterator iter = container.begin(); \
-	iter != container.end(); iter++)
 
+/*
+usage: Eraser <action> <arguments>
+where action is
+addtask                 Adds tasks to the current task list.
+querymethods            Lists all registered Erasure methods.
+
+global parameters:
+--quiet, -q	            Do not create a Console window to display progress.
+
+parameters for addtask:
+eraser addtask --method=<methodGUID> (--recycled | --unused=<volume> |  --dir=<directory> | [file1 [file2 [...]]])
+--method, -m            The Erasure method to use.
+--recycled, -r          Erases files and folders in the recycle bin
+--unused, -u            Erases unused space in the volume.
+optional arguments: --unused=<drive>[,clusterTips]
+clusterTips     If specified, the drive's files will have their cluster tips
+erased.
+--dir, --directory, -d  Erases files and folders in the directory
+optional arguments: --dir=<directory>[,e=excludeMask][,i=includeMask][,delete]
+excludeMask     A wildcard expression for files and folders to exclude.
+includeMask     A wildcard expression for files and folders to include.
+The include mask is applied before the exclude mask.
+delete          Deletes the folder at the end of the erasure if specified.
+file1 ... fileN         The list of files to erase.
+
+parameters for querymethods:
+eraser querymethods
+
+no parameters to set.
+
+All arguments are case sensitive.
+
+*/  
+
+// FIXME: Joel I am not sure if the command line is documented 
+// properly. I could not generate the command strings without
+// knowing exactly what command I should use.
 HRESULT CCtxMenu::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 {
 	// If lpVerb really points to a string, ignore this function call and bail out.
 	if ( HIWORD( pCmdInfo->lpVerb )  != 0)
 		return E_INVALIDARG;
 
+	HRESULT result = E_INVALIDARG;
+	// final eraser command to call
+	string command(("eraser "));
+	string files(""), directories(""), unuseds("");	
+
+	// compile the eraser command syntax
+	foreach(file, m_szSelectedFiles)							files       += S("\"") + *file + S("\" ");		
+	foreach(unused, m_szSelectedUnused)						unuseds     += S("--unused=\"*unused\"") + *unused;
+	foreach(directory, m_szSelectedDirectories)		directories += S("--dir=\"") + *directory + S("\" ");
+
 	// Get the command index.
+<<<<<<< .mine
+	switch( CERASER_ENUM(LOWORD(pCmdInfo->lpVerb + 1)) )
+=======
 	switch ((CERASER_ENUM_TYPE) LOWORD(pCmdInfo->lpVerb + 1))
+>>>>>>> .r678
 	{
+<<<<<<< .mine
+	case CERASER_ENUM(CEraserLPVERBS::CERASER_ERASE):
+		{
+			command += S("addtask ") + files + unused + directory;
+			result = system(command.c_str());
+			break;
+		}
+	case CERASER_ENUM(CEraserLPVERBS::CERASER_SECURE_MOVE):
+		{
+			result = S_OK;
+			// we need some user interaction, thus we will have a windows form
+			// has to be native, so i guess a bit of work
+			break;
+		}
+=======
 		case CERASER_ERASE:
 			EraseFiles(m_szSelectedFiles);
 			break;
 		case CERASER_SECURE_MOVE:
 			EraseFiles(m_szSelectedFiles);
 			break;
+>>>>>>> .r678
 		// NOT IMPLEMENTED METHODS
 #if 0
 		case CERASER_ERASE_ON_RESTART:
 		{
-			List<String ^> ^files = gcnew List<String ^>(m_szSelectedFiles.size());
-
-			foreach(file, m_szSelectedFiles)
-			{
-				files->Add( UnmanagedToManagedString(*file) );
-			}
-			EraseFiles(files);
+			MessageBox (pCmdInfo->hwnd, szMsg, _T("Eraser v6 - Shell Extention Query"), MB_ICONINFORMATION );
+			command += S("--restart ") + objects;
+			result = system(command.c_str());
+			break;
 		}
 		case CERASER_SCHEDULE:
 		{
-			foreach(file, m_szSelectedFiles)
-			{
-			}
+			command += S("--schedule ") + objects;
+			result = system(command.c_str());
+			break;
 		}
+<<<<<<< .mine
+	case CERASER_ENUM(CEraserLPVERBS::CERASER_CONSOLE):
+=======
 		case CERASER_CUSTOMISE:
+>>>>>>> .r678
 		{
+			// interactive eraser console
+			break;
 		}
 #endif
 	default:
 		{
 			TCHAR szMsg [MAX_PATH + 32];
-			wsprintf ( szMsg, _T("Invalid Query was submitted, unable to process!\n\nID = %d\n\n"), LOWORD(pCmdInfo->lpVerb) );
+			wsprintf ( szMsg, _T("Invalid Query was submitted, unable to process!\n\nCommand ID = %d\n\n"), LOWORD(pCmdInfo->lpVerb) );
 			MessageBox ( pCmdInfo->hwnd, szMsg, _T("Eraser v6 - Shell Extention Query"), MB_ICONINFORMATION );
-			return E_INVALIDARG;
 		}
-		break; // unreachable code
+		return result;
 	}
 }
 }

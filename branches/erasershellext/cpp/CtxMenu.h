@@ -17,19 +17,58 @@
 
 #define CERASER_ENUM_TYPE		unsigned int
 #define CERASER_ENUM(x)			((CERASER_ENUM_TYPE)x)
+#define foreach(iter, container) \
+	for(string_list::iterator iter = container.begin(); \
+	iter != container.end(); iter++)
+
+#define GCNEW(object_type,...)  \
+	*(CCtxMenu::GCNew(new object_type(__VA_ARGS__)))
+
+#define S(str)	\
+	*GCNEW(string, str)
+
+#ifdef _DEBUG
+#define DebugMessageBox(...) MessageBox(__VA_ARGS__)
+static HWND DebugHWND =
+CreateWindow(0, _T("Eraser Debug Windows", "Eraser Debug Windows"), 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL);
+#else
+#define DebugMessageBox(...) ;;;;;;;;;;;;;;;;;;;;;;;
+#endif
 
 namespace Eraser 
 {
-	typedef std::list<std::wstring> string_list;
+	typedef std::wstring							string_type;
+	typedef std::list<string_type  >	string_list;
+	typedef std::list<void*>					gc;
+
 
 	enum CEraserSecureMove
 	{
 		INV_SRC_FILE,
-		INV_DST_FILE,
+		INV_DST_FILE, 
 	};
 
 	static int SecureMove(const std::wstring& dst, const std::wstring& src)
 	{
+		//CFile file(
+		//	CreateFile(
+		//	src.c_str(), 
+		//	FILE_GENERIC_READ|FILE_GENERIC_WRITE,
+		//	FILE_SHARE_READ|FILE_SHARE_WRITE,
+		//	NULL,
+		//	OPEN_EXISTING,
+		//	0,
+		//	NULL)
+		//	);
+
+		if(!CopyFile(src.c_str(), dst.c_str(), FALSE))
+		{
+			//file.Close();
+			return GetLastError();
+		}
+
+		// successfull copy, add for erasure
+
 	}
 
 	// CCtxMenu
@@ -44,7 +83,17 @@ namespace Eraser
 		CCtxMenu()
 		{
 		}
-
+				
+	public: enum CEraserLPVERBS
+	{
+		CERASER_ERASE						= 0,
+		CERASER_SCHEDULE				= 1,
+		CERASER_ERASE_ON_RESTART= 2,			
+		CERASER_SEPERATOR_1			= 3,
+		CERASER_SECURE_MOVE			= 4,			
+		CERASER_SEPERATOR_2			= 5,
+		CERASER_CONSOLE				= 6,
+	};
 		enum CEraserLPVERBS
 		{
 			CERASER_ERASE = 0,
@@ -66,8 +115,20 @@ namespace Eraser
 		STDMETHOD(QueryContextMenu)(HMENU, UINT, UINT, UINT, UINT);
 
 	protected:
+		gc          m_GC;
 		string_list	m_szSelectedFiles;
-		HBITMAP     m_szEraserIcon;
+		string_list	m_szSelectedDirectories;
+		string_list m_szSelectedUnused;
+		HBITMAP			m_szEraserIcon;
+
+		
+		template<typename T>
+		T* GCNew(T* pointer)
+		{
+			this->m_GC.push_back(reinterpret_cast<void*>(pointer));
+			return pointer;
+		}
+
 
 	public:
 		DECLARE_REGISTRY_RESOURCEID(IDR_CTXMENU)
@@ -83,9 +144,11 @@ namespace Eraser
 
 		void FinalRelease()
 		{
+			for(gc::iterator i = 0; i != m_GC.end(); i++)			delete *i;
 		}
 	};
 
 	OBJECT_ENTRY_AUTO(__uuidof(CtxMenu), CCtxMenu)
 
 } // namespace Eraser
+

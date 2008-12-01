@@ -4,7 +4,7 @@
 // Note: COM+ 1.0 Information:
 //      Please remember to run Microsoft Transaction Explorer to install the component(s).
 //      Registration is not done by default. 
-
+ 
 #include "stdafx.h"
 #include "resource.h"
 #include "EraserCtxMenu_i.h"

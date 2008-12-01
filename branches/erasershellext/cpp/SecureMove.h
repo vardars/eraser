@@ -1,44 +1,65 @@
 #pragma once
 
-#pragma unmanaged
-#pragma managed
+#include "stdafx.h"
+#include <windows.h>
 
-using namespace System;
-using namespace System::Collections::Generic;
-using namespace System::Text;
-using namespace System::IO
+#include <cstring>
+#include <string>
 
-using namespace Eraser::Manager;
-using namespace Eraser::Util;
-
-#define ERASER_SECUREMOVE_CLUSTERS		32
-
-// open the source a file
-// create the target file
-// read from ($source) => ($target)
-
-ref class SecureMove
+using namespace std;
+namespace Eraser
 {
-private: 
-	FileStream ^m_src;
-	FileStream ^m_dst;
-public:
-	SecureMove(String ^source, String ^destination)
+	class SecureMove : public CDialog
 	{
-		m_src = gcnew FileStream(source, FileAccess::Read, true);
-		m_dst = gcnew FileStream(source, FileAccess::Write, true);
-	}
-
-	int DoJob()
-	{
-		array<Byte> ^buffer = gcnew array<char>(ERASER_SECUREMOVE_BUFFER_SIZE);
-		Long read;
-
-		do
+	private:
+		CFile m_fs, m_fd;
+		HANDLE m_progressEvent;
+		HANDLE m_completeEvent;
+		CWinThread m_thread;
+	public:
+		volatile LONG progress;
+		explicit SecureMove(string& dst, string& src) : CDialog(), progress(0),			
+			m_fs(CreateFile(src.c_str(), FILE_GENERIC_READ , 0, NULL, OPEN_EXISTING, 0, NULL),
+			m_fd(CreateFile(dst.c_str(), FILE_GENERIC_WRITE, 0, NULL, OPEN_ALWAYS  , 0, NULL),
+			m_thread(&SecureMove::RunMove, NULL)  
 		{
-			read = m_src->Read(buffer, 0, ERASER_SECUREMOVE_BUFFER_SIZE);
-			m_dst->Write(buffer, 0, read);
-		} while(read);
-	}
+			if(m_fs == CFile::hFileNull)
+				;
+			if(m_fd == CFile::hFileNull)
+				;
+			m_progressEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
+			m_completeEvent = CreateEvent(NULL, TRUE , TRUE, NULL);
+			m_thread.Run();
+		}
 
-};
+		void Run()
+		{
+			static int lprog = 0;
+			while(true)
+			{
+				WaitForSingleObject(m_progressEvent, INFINITE);
+				// update ui progress value
+				// progressBar.Value = progress
+			}			
+		}
+
+		UINT Move(void *ignored)
+		{
+			static char buffer[512*64];
+			static LONG lprog = 0;
+
+			while(m_fs.GetPosition() < m_fs.GetLength())
+			{
+				m_fd.Write(buffer, m_fs.Read(buffer, 512*64));				
+				if((lprog -= InterlockedExchange(&progress, (m_fs.GetPosition() * 100) / m_fs.GetLength()) > 0)
+					SetEvent(m_progressEvent);
+			}
+
+			return SetEvent(m_completeEven);
+		}
+
+		~SecureMove()
+		{
+		}
+	};
+}

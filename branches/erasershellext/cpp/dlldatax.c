@@ -1,4 +1,4 @@
-// wrapper for dlldata.c
+ // wrapper for dlldata.c
 
 #ifdef _MERGE_PROXYSTUB // merge proxy stub DLL
 

@@ -3,5 +3,5 @@
 #include "stdafx.h"
 #include "compreg.h"
 
-
+ 
 // CCompReg
