@@ -44,9 +44,17 @@ while ($row = mysql_fetch_array($query))
 		$lastItemType = $row['Type'];
 	}
 
+	//Get the link to the download. We got three forms, relative, absolute and query.
+	//Relative links are mirrored by SF.
+	//Absolute links... are absolute links.
+	//Query links are prefixed with ?, they are handled by download.php on the Eraser website.
+	if (substr($row['Link'], 0, 1) == '?')
+		$link = $_SERVER['SERVER_NAME'] . '/download.php?id=' . $row['DownloadID'];
+	else
+		$link = $row['Link'];
 	printf('		<item name="%s" version="%s" publisher="%s" architecture="%s" filesize="%d">%s</item>
 ', htmlentities($row['Name']), $row['Version'], htmlentities($row['PublisherName']), $row['Architecture'],
-			$row['Filesize'], htmlentities($row['Link']));
+			$row['Filesize'], htmlentities($link));
 }
 
 if (!empty($lastItemType))
