@@ -132,11 +132,11 @@
   <data name="The input text is invalid for the current data type. Valid hexadecimal characters are the digits 0-9 and letters A-F" xml:space="preserve">
     <value>The input text is invalid for the current data type. Valid hexadecimal characters are the digits 0-9 and letters A-F</value>
   </data>
-  <data name="US DoD 5220.22-M (8-306. / E, C and E)" xml:space="preserve">
-    <value>US DoD 5220.22-M (8-306. / E, C and E)</value>
+  <data name="US DoD 5220.22-M (8-306./E, C &amp; E)" xml:space="preserve">
+    <value>US DoD 5220.22-M (8-306./E, C &amp; E)</value>
   </data>
-  <data name="US DoD 5220.22-M (8-306. / E)" xml:space="preserve">
-    <value>US DoD 5220.22-M (8-306. / E)</value>
+  <data name="US DoD 5220.22-M (8-306./E)" xml:space="preserve">
+    <value>US DoD 5220.22-M (8-306./E)</value>
   </data>
   <data name="The First/last 16KB erasure method requires another erasure method to erase the file.\n\nThis must be set in the Plugin Settings dialog." xml:space="preserve">
     <value>The First/last 16KB erasure method requires another erasure method to erase the file.\n\nThis must be set in the Plugin Settings dialog.</value>

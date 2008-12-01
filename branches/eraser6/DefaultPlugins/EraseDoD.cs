@@ -31,7 +31,7 @@ namespace Eraser.DefaultPlugins
 	{
 		public override string Name
 		{
-			get { return S._("US DoD 5220.22-M (8-306. /E, C & E)"); }
+			get { return S._("US DoD 5220.22-M (8-306./E, C & E)"); }
 		}
 
 		public override Guid GUID
@@ -77,7 +77,7 @@ namespace Eraser.DefaultPlugins
 	{
 		public override string Name
 		{
-			get { return S._("US DoD 5220.22-M (8-306. /E)"); }
+			get { return S._("US DoD 5220.22-M (8-306./E)"); }
 		}
 
 		public override Guid GUID
