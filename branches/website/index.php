@@ -1,3 +1,6 @@
+<?php
+require('./scripts/database.php');
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><!-- InstanceBegin template="/Templates/Eraser.dwt" codeOutsideHTMLIsLocked="false" -->
@@ -14,10 +17,10 @@
 <!-- InstanceParam name="ArticlePoster" type="boolean" value="false" -->
 </head>
 
-<body onload="MM_preloadImages('images/btn_home_hov.gif','images/btn_eraser_hov.gif','images/btn_download_hov.gif','images/btn_methods_hov.gif','images/btn_forum_hov.gif')">
+<body onload="MM_preloadImages('images/btn_home_hov.gif', 'images/btn_download_hov.gif', 'images/btn_forum_hov.gif', 'images/btn_forum_trac.gif')">
 <div id="wrap">
 	<div id="banner">
-		<a href="index.html"><img src="images/banner.jpg" class="banner_img" alt="Eraser v6" /></a>
+		<a href="index.php"><img src="images/banner.jpg" class="banner_img" alt="Eraser v6" /></a>
 	</div>
 	<div id="content">
 		<div class="left">
@@ -79,7 +82,7 @@
 		<div class="right">
 			<div class="right_nav">
 				<div class="right_nav_bg">
-					<a href="index.html"><img src="images/btn_home.gif" id="nav1" alt="home" onmouseover="MM_swapImage('nav1','','images/btn_home_hov.gif',1)" onmouseout="MM_swapImgRestore()" /></a><img src="images/btn_eraser.gif" id="nav2" alt="eraser" onmouseover="MM_swapImage('nav2','','images/btn_eraser_hov.gif',1)" onmouseout="MM_swapImgRestore()" /><a href="index.html#download"><img src="images/btn_download.gif" id="nav3" alt="download" onmouseover="MM_swapImage('nav3','','images/btn_download_hov.gif',1)" onmouseout="MM_swapImgRestore()" /></a><img src="images/btn_methods.gif" id="nav4" alt="eraser methods" onmouseover="MM_swapImage('nav4','','images/btn_methods_hov.gif',1)" onmouseout="MM_swapImgRestore()" /><a href="http://bbs.heidi.ie/viewforum.php?f=30" target="_blank"><img src="images/btn_forum.gif" id="nav5" alt="forum" onmouseover="MM_swapImage('nav5','','images/btn_forum_hov.gif',1)" onmouseout="MM_swapImgRestore()" /></a>
+					<a href="index.php"><img src="images/btn_home.gif" id="nav1" alt="Home" onmouseover="MM_swapImage('nav1','','images/btn_home_hov.gif',1)" onmouseout="MM_swapImgRestore()" /></a><a href="index.php#download"><img src="images/btn_download.gif" id="nav2" alt="Download" onmouseover="MM_swapImage('nav2', '', 'images/btn_download_hov.gif', 1)" onmouseout="MM_swapImgRestore()" /></a><a href="http://bbs.heidi.ie/viewforum.php?f=30" target="_blank"><img src="images/btn_forum.gif" id="nav3" alt="Forum" onmouseover="MM_swapImage('nav3', '', 'images/btn_forum_hov.gif', 1)" onmouseout="MM_swapImgRestore()" /></a><a href="index.php"><img src="images/btn_trac.gif" id="nav4" alt="Trac" onmouseover="MM_swapImage('nav4', '', 'images/btn_trac_hov.gif', 1)" onmouseout="MM_swapImgRestore()" /></a>
 				</div>
 			</div>
 			
@@ -106,7 +109,11 @@
 			<div class="right_l">
 				<h3><a name="download" href="javascript: ;"></a><img src="images/ico_download.gif" alt="" />Download Eraser</h3>
 				<ul>
-					<li><a href="download.php?id=3">Eraser 6.0.1</a> (new!)</li>
+					<li><a href="download.php?id=3">Eraser 6.0.1</a> (new!)<br />
+						&nbsp; &nbsp; &raquo; downloaded <?php
+						$query = mysql_query('SELECT COUNT(DownloadID) FROM download_statistics');
+						$row = mysql_fetch_row($query);
+						echo $row ? $row[0] : 'unknown'; ?> times</li>
 					<li><a href="http://downloads.sourceforge.net/eraser/EraserSetup32.exe">Eraser 5.8.6a</a> (x86)</li>
 					<li><a href="http://downloads.sourceforge.net/eraser/EraserSetup64.exe">Eraser 5.8.6a</a> (x64)</li>
 				</ul>
