@@ -25,8 +25,8 @@
 BOOTSTRAPPER_ICON       ICON         "..\..\Resources\EraserSetup.ico"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION 6,0,1,649
-PRODUCTVERSION 6,0,1,649
+FILEVERSION 6,0,1,661
+PRODUCTVERSION 6,0,1,661
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -44,11 +44,11 @@ BEGIN
             VALUE "Comments", "Eraser Setup Bootstrapper"
             VALUE "CompanyName", "The Eraser Project"
             VALUE "FileDescription", "Eraser Setup Bootstrapper"
-            VALUE "FileVersion", "6.0.1.649"
-            VALUE "InternalName", "RemoteFile"
-            VALUE "LegalCopyright", "Copyright © 2007 Joel Low"
-            VALUE "OriginalFilename", "RemoteFile"
-            VALUE "ProductVersion", "6.0.1.649"
+            VALUE "FileVersion", "6.0.1.661"
+            VALUE "InternalName", "Eraser Setup Bootstrapper"
+            VALUE "LegalCopyright", "Copyright © 2008 The Eraser Project"
+            VALUE "OriginalFilename", "Eraser Setup Bootstrapper"
+            VALUE "ProductVersion", "6.0.1.661"
         END
     END
     BLOCK "VarFileInfo"

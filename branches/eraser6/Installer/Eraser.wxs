@@ -22,8 +22,8 @@
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<!-- Change these constants at every build. -->
-	<?define VERSIONSTRING=6.0.1.649 ?><!-- Major.Minor.Release.Build -->
-	<?define PRODUCTID=66AE6F89-85CE-45a2-A20A-90DC3FEB86E0 ?>
+	<?define VERSIONSTRING=6.0.1.661 ?><!-- Major.Minor.Release.Build -->
+	<?define PRODUCTID=ED4A0FD8-3F8C-45ce-B3BF-52861D02A134 ?>
 
 	<Product Id="$(var.PRODUCTID)" Name="Eraser" Language="1033" Version="$(var.VERSIONSTRING)"
 			Manufacturer="The Eraser Project" UpgradeCode="073882B4-E059-4FB4-9D36-11E88D14AE87">
