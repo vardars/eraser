@@ -1,15 +1,13 @@
+/////////////////////////////////////////////////////////////////////////////
 // CtxMenu.cpp : Implementation of CCtxMenu
-
+// CCtxMenu
+/////////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 #include "CtxMenu.h"
-
 #pragma comment(lib,"shlwapi")
-// CCtxMenu
 
-using namespace Eraser;
-/////////////////////////////////////////////////////////////////////////////
-
-HRESULT CCtxMenu::Initialize (
+namespace Eraser {
+HRESULT CCtxMenu::Initialize(
 						LPCITEMIDLIST	pidlFolder,
 						LPDATAOBJECT	pDataObj,
 						HKEY			hProgID )
@@ -273,30 +271,17 @@ HRESULT CCtxMenu::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 		return E_INVALIDARG;
 
 	// Get the command index.
-	switch( LOWORD(pCmdInfo->lpVerb + 1) )
+	switch ((CERASER_ENUM_TYPE) LOWORD(pCmdInfo->lpVerb + 1))
 	{
-	case CERASER_ENUM(CEraserLPVERBS::CERASER_ERASE):
-		{
-			List<String ^> ^files = gcnew List<String ^>(m_szSelectedFiles.size());
-
-			foreach(file, m_szSelectedFiles)
-			{
-				files->Add( UnmanagedToManagedString(*file) );
-			}
-			EraseFiles(files);
-		}
-	case CERASER_ENUM(CEraserLPVERBS::CERASER_SECURE_MOVE):
-		{
-			List<String ^> ^files = gcnew List<String ^>(m_szSelectedFiles.size());
-
-			foreach(file, m_szSelectedFiles)
-			{
-				files->Add( UnmanagedToManagedString(*file) );
-			}
-			EraseFiles(files);
-		}
+		case CERASER_ERASE:
+			EraseFiles(m_szSelectedFiles);
+			break;
+		case CERASER_SECURE_MOVE:
+			EraseFiles(m_szSelectedFiles);
+			break;
 		// NOT IMPLEMENTED METHODS
-	case CERASER_ENUM(CEraserLPVERBS::CERASER_ERASE_ON_RESTART):
+#if 0
+		case CERASER_ERASE_ON_RESTART:
 		{
 			List<String ^> ^files = gcnew List<String ^>(m_szSelectedFiles.size());
 
@@ -306,15 +291,16 @@ HRESULT CCtxMenu::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 			}
 			EraseFiles(files);
 		}
-	case CERASER_ENUM(CEraserLPVERBS::CERASER_SCHEDULE):
+		case CERASER_SCHEDULE:
 		{
 			foreach(file, m_szSelectedFiles)
 			{
 			}
 		}
-	case CERASER_ENUM(CEraserLPVERBS::CERASER_CUSTOMISE):
+		case CERASER_CUSTOMISE:
 		{
 		}
+#endif
 	default:
 		{
 			TCHAR szMsg [MAX_PATH + 32];
@@ -324,4 +310,5 @@ HRESULT CCtxMenu::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 		}
 		break; // unreachable code
 	}
+}
 }
