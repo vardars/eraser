@@ -25,7 +25,7 @@
 			UseOfATL="2"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
-			ManagedExtensions="1"
+			ManagedExtensions="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -311,10 +311,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SecureMove1.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -361,29 +357,8 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Eraser.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Eraser.Manager.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Eraser.Util.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource.h"
 				>
-			</File>
-			<File
-				RelativePath=".\SecureMove1.h"
-				FileType="3"
-				>
-				<File
-					RelativePath=".\SecureMove1.resx"
-					>
-				</File>
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
@@ -443,10 +418,6 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\ReadMe.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

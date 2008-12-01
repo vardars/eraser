@@ -1,4 +1,0 @@
-
-ref class EraserUtilAPI
-{
-};
