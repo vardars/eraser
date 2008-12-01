@@ -237,9 +237,9 @@ HRESULT CCtxMenu::GetCommandString (
 	if (!(uFlags & GCS_HELPTEXT)) 
 		return E_INVALIDARG;
 
-	static LPCTSTR szNotepadText = _T("Open the selected file in Notepad");
-	static LPCTSTR szIEText = _T("Open the selected file in Internet Explorer");
-	LPCTSTR pszText = (0 == idCmd) ? szNotepadText : szIEText;
+	static LPCTSTR szErase        = _T("Erases the currently selected file\r\n");
+	static LPCTSTR szEraseUnunsed = _T("Erases the currently selected drive's unused disk space\r\n");
+	LPCTSTR pszText = (0 == idCmd) ? szErase : szEraseUnunsed;
 
 	if ( uFlags & GCS_UNICODE )
 		// We need to cast pszName to a Unicode string, and then use the
@@ -251,14 +251,6 @@ HRESULT CCtxMenu::GetCommandString (
 
 	return S_OK;
 }
-
-// TODO: write procedures for Eraser C# engine
-/*
-1) call scheduler, with all of the required structs etc.
-2) Read avilable algorithms list
-3) Set default algorithm
-*/
-
 
 /*
 usage: Eraser <action> <arguments>
@@ -294,9 +286,6 @@ All arguments are case sensitive.
 
 */  
 
-// FIXME: Joel I am not sure if the command line is documented 
-// properly. I could not generate the command strings without
-// knowing exactly what command I should use.
 HRESULT CCtxMenu::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 {
 	// If lpVerb really points to a string, ignore this function call and bail out.
@@ -314,13 +303,8 @@ HRESULT CCtxMenu::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 	foreach(directory, m_szSelectedDirectories)		directories += S("--dir=\"") + *directory + S("\" ");
 
 	// Get the command index.
-<<<<<<< .mine
 	switch( CERASER_ENUM(LOWORD(pCmdInfo->lpVerb + 1)) )
-=======
-	switch ((CERASER_ENUM_TYPE) LOWORD(pCmdInfo->lpVerb + 1))
->>>>>>> .r678
 	{
-<<<<<<< .mine
 	case CERASER_ENUM(CEraserLPVERBS::CERASER_ERASE):
 		{
 			command += S("addtask ") + files + unused + directory;
@@ -334,14 +318,6 @@ HRESULT CCtxMenu::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 			// has to be native, so i guess a bit of work
 			break;
 		}
-=======
-		case CERASER_ERASE:
-			EraseFiles(m_szSelectedFiles);
-			break;
-		case CERASER_SECURE_MOVE:
-			EraseFiles(m_szSelectedFiles);
-			break;
->>>>>>> .r678
 		// NOT IMPLEMENTED METHODS
 #if 0
 		case CERASER_ERASE_ON_RESTART:
@@ -357,11 +333,7 @@ HRESULT CCtxMenu::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 			result = system(command.c_str());
 			break;
 		}
-<<<<<<< .mine
 	case CERASER_ENUM(CEraserLPVERBS::CERASER_CONSOLE):
-=======
-		case CERASER_CUSTOMISE:
->>>>>>> .r678
 		{
 			// interactive eraser console
 			break;

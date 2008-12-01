@@ -345,10 +345,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ctxMenuParser.h"
-				>
-			</File>
-			<File
 				RelativePath=".\dlldatax.h"
 				>
 			</File>
@@ -358,6 +354,10 @@
 			</File>
 			<File
 				RelativePath=".\Resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SecureMove.h"
 				>
 			</File>
 			<File
