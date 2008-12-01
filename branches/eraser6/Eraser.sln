@@ -5,6 +5,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Strong Name.snk = Strong Name.snk
 		Version.cs = Version.cs
+		Version.rc = Version.rc
+		Version.wxs = Version.wxs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eraser", "Eraser\Eraser.csproj", "{A9884ABF-46E8-42C1-A30B-9A3DD6C38004}"

@@ -21,12 +21,13 @@
 
 #include <windows.h>
 #include "resource.h"
+#include "..\..\Version.rc"
 
 BOOTSTRAPPER_ICON       ICON         "..\..\Resources\EraserSetup.ico"
 
 VS_VERSION_INFO VERSIONINFO
-FILEVERSION 6,0,1,661
-PRODUCTVERSION 6,0,1,661
+FILEVERSION ERASER_FILE_VERSION
+PRODUCTVERSION ERASER_PRODUCT_VERSION
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -44,11 +45,11 @@ BEGIN
             VALUE "Comments", "Eraser Setup Bootstrapper"
             VALUE "CompanyName", "The Eraser Project"
             VALUE "FileDescription", "Eraser Setup Bootstrapper"
-            VALUE "FileVersion", "6.0.1.661"
+            VALUE "FileVersion", ERASER_STRING_FILE_VERSION
             VALUE "InternalName", "Eraser Setup Bootstrapper"
             VALUE "LegalCopyright", "Copyright © 2008 The Eraser Project"
             VALUE "OriginalFilename", "Eraser Setup Bootstrapper"
-            VALUE "ProductVersion", "6.0.1.661"
+            VALUE "ProductVersion", ERASER_STRING_PRODUCT_VERSION
         END
     END
     BLOCK "VarFileInfo"
