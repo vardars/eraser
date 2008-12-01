@@ -260,7 +260,7 @@ h3 {
 
 			.right_links h3 {
 				height: 30px;
-				background-image:  url("images/links_h3.gif");
+				background-image:  url("images/doyouknow_h3.gif");
 				background-repeat: no-repeat;
 				background-position: top center;
 				padding: 15px 0 0 4px;
@@ -272,7 +272,7 @@ h3 {
 				height: auto !important;
 				height: 25px;
 				font-size: 95%;
-				background-image:  url("images/links_bg.gif");
+				background-image:  url("images/doyouknow_bg.gif");
 				background-repeat: no-repeat;
 				background-position: top center;
 				padding: 5px 0 0 0;
@@ -293,7 +293,7 @@ h3 {
 
 			.right_readings h3 {
 				height: 30px;
-				background-image:  url("images/news_h3.gif");
+				background-image:  url("images/readings_h3.gif");
 				background-repeat: no-repeat;
 				background-position: top center;
 				padding: 15px 0 0 4px;
@@ -304,7 +304,7 @@ h3 {
 				min-height: 25px;
 				height: auto !important;
 				height: 25px;
-				background-image:  url("images/news_bg.gif");
+				background-image:  url("images/readings_bg.gif");
 				background-repeat: no-repeat;
 				background-position: top center;
 				padding: 5px 0 0 0;
