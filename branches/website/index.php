@@ -109,7 +109,7 @@ require('./scripts/database.php');
 			<div class="right_l">
 				<h3><a name="download" href="javascript: ;"></a><img src="images/ico_download.gif" alt="" />Download Eraser</h3>
 				<ul>
-					<li><a href="download.php?id=3">Eraser 6.0.1</a> (new!)<br />
+					<li><a href="announcements/20081201.html">Eraser 6.0.1</a> (new!)<br />
 						&nbsp; &nbsp; &raquo; downloaded <?php
 						$query = mysql_query('SELECT COUNT(DownloadID) FROM download_statistics');
 						$row = mysql_fetch_row($query);
