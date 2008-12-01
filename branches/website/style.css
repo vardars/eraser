@@ -229,7 +229,7 @@ h3 {
 
 			.right_news h3 {
 				height: 30px;
-				background-image:  url("images/intro_h3.gif");
+				background-image:  url("images/news_h3.gif");
 				background-repeat: no-repeat;
 				background-position: top center;
 				padding: 15px 0 0 4px;
@@ -240,7 +240,7 @@ h3 {
 				min-height: 25px;
 				height: auto !important;
 				height: 25px;
-				background-image:  url("images/intro_bg.gif");
+				background-image:  url("images/news_bg.gif");
 				background-repeat: no-repeat;
 				background-position: top center;
 				padding: 15px 0 0 4px;
@@ -253,12 +253,12 @@ h3 {
 			}
 
 
-		.right_links {
+		.right_doyouknow {
 			padding: 0;
 			margin: 0 0 20px 0;
 		}
 
-			.right_links h3 {
+			.right_doyouknow h3 {
 				height: 30px;
 				background-image:  url("images/doyouknow_h3.gif");
 				background-repeat: no-repeat;
@@ -267,7 +267,7 @@ h3 {
 				margin: 0;
 			}
 
-			.right_links_bg {
+			.right_doyouknow_bg {
 				min-height: 25px;
 				height: auto !important;
 				height: 25px;
@@ -278,7 +278,7 @@ h3 {
 				padding: 5px 0 0 0;
 			}
 
-			.right_links p {
+			.right_doyouknow p {
 				padding: 0 4px 0 4px;
 				margin: 0;
 			}

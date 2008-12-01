@@ -97,9 +97,9 @@ require('./scripts/database.php');
 
 			<!-- InstanceBeginRepeat name="RightContent" --><!-- InstanceBeginRepeatEntry -->
 			<!-- InstanceBeginEditable name="RightContentEdit" -->
-			<div class="right_links">
+			<div class="right_doyouknow">
 				<h3>Did you Know?</h3>
-				<div class="right_links_bg">
+				<div class="right_doyouknow_bg">
 					<p>Eraser Version 6 Development started on <a href="http://eraser.heidi.ie/trac/changeset/73" target="_blank">November 1, 2007</a>?</p>
 				</div>
 			</div>
