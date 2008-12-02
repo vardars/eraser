@@ -9,17 +9,10 @@
 #include "resource.h"
 #include "EraserCtxMenu_i.h"
 #include "dllmain.h"
-#include "compreg.h"
-#include "dlldatax.h"
 
 // Used to determine whether the DLL can be unloaded by OLE
 STDAPI DllCanUnloadNow(void)
 {
-#ifdef _MERGE_PROXYSTUB
-    HRESULT hr = PrxDllCanUnloadNow();
-    if (hr != S_OK)
-        return hr;
-#endif
     AFX_MANAGE_STATE(AfxGetStaticModuleState());
     return (AfxDllCanUnloadNow()==S_OK && _AtlModule.GetLockCount()==0) ? S_OK : S_FALSE;
 }
@@ -28,10 +21,6 @@ STDAPI DllCanUnloadNow(void)
 // Returns a class factory to create an object of the requested type
 STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv)
 {
-#ifdef _MERGE_PROXYSTUB
-    if (PrxDllGetClassObject(rclsid, riid, ppv) == S_OK)
-        return S_OK;
-#endif
     return _AtlModule.DllGetClassObject(rclsid, riid, ppv);
 }
 
@@ -41,11 +30,6 @@ STDAPI DllRegisterServer(void)
 {
     // registers object, typelib and all interfaces in typelib
     HRESULT hr = _AtlModule.DllRegisterServer();
-#ifdef _MERGE_PROXYSTUB
-    if (FAILED(hr))
-        return hr;
-    hr = PrxDllRegisterServer();
-#endif
 	return hr;
 }
 
@@ -54,14 +38,6 @@ STDAPI DllRegisterServer(void)
 STDAPI DllUnregisterServer(void)
 {
 	HRESULT hr = _AtlModule.DllUnregisterServer();
-#ifdef _MERGE_PROXYSTUB
-    if (FAILED(hr))
-        return hr;
-    hr = PrxDllRegisterServer();
-    if (FAILED(hr))
-        return hr;
-    hr = PrxDllUnregisterServer();
-#endif
 	return hr;
 }
 

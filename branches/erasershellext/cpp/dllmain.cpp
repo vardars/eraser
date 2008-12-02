@@ -4,8 +4,6 @@
 #include "resource.h"
 #include "EraserCtxMenu_i.h"
 #include "dllmain.h"
-#include "compreg.h"
-#include "dlldatax.h"
 
 CEraserCtxMenuModule _AtlModule;
 
@@ -27,10 +25,6 @@ CEraserCtxMenuApp theApp;
 
 BOOL CEraserCtxMenuApp::InitInstance()
 {
-#ifdef _MERGE_PROXYSTUB
-	if (!PrxDllMain(m_hInstance, DLL_PROCESS_ATTACH, NULL))
-		return FALSE;
-#endif
 	return CWinApp::InitInstance();
 }
 
