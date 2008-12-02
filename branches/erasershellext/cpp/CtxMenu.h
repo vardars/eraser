@@ -49,7 +49,7 @@ namespace Eraser
 		public CComObjectRootEx<CComSingleThreadModel>,
 		public CComCoClass<CCtxMenu, &CLSID_CtxMenu>,
 		public IShellExtInit,
-		public IContextMenu
+		public IContextMenu3
 	{
 	public:
 		CCtxMenu()
@@ -71,16 +71,28 @@ namespace Eraser
 		// IShellExtInit
 		STDMETHOD(Initialize)(LPCITEMIDLIST, LPDATAOBJECT, HKEY);
 
-		// IContextMenu
+		// IContextMenu3
 		STDMETHOD(GetCommandString)(UINT, UINT, UINT*, LPSTR, UINT);
 		STDMETHOD(InvokeCommand)(LPCMINVOKECOMMANDINFO);
 		STDMETHOD(QueryContextMenu)(HMENU, UINT, UINT, UINT, UINT);
+		STDMETHOD(HandleMenuMsg)(UINT, WPARAM, LPARAM);
+		STDMETHOD(HandleMenuMsg2)(UINT, WPARAM, LPARAM, LRESULT*);
 
 	protected:
+		bool OnMeasureItem(UINT& itemWidth, UINT& itemHeight);
+		bool OnDrawItem(HDC hdc, RECT rect, UINT action, UINT state);
+
+		static HICON GetMenuIcon();
+		static HBITMAP GetMenuBitmap();
+		static HBITMAP CreateDIB(LONG width, LONG height);
+
+	protected:
+		UINT		m_itemID;
 		string_list	m_szSelectedFiles;
 		string_list	m_szSelectedDirectories;
 		string_list	m_szSelectedUnused;
-		HBITMAP		m_szEraserIcon;
+
+		static const wchar_t* m_szMenuTitle;
 
 	public:
 		DECLARE_REGISTRY_RESOURCEID(IDR_ERASERCTXMENU)
@@ -88,6 +100,8 @@ namespace Eraser
 		BEGIN_COM_MAP(CCtxMenu)
 			COM_INTERFACE_ENTRY(IShellExtInit)
 			COM_INTERFACE_ENTRY(IContextMenu)
+			COM_INTERFACE_ENTRY(IContextMenu2)
+			COM_INTERFACE_ENTRY(IContextMenu3)
 		END_COM_MAP()
 
 		DECLARE_PROTECT_FINAL_CONSTRUCT()

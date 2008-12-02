@@ -2,6 +2,8 @@
 //
 #include "resource.h"
 
+Eraser                                           ICON      "..\Resources\Eraser.ico"
+
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
 //
