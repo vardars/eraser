@@ -2,16 +2,32 @@ HKCR
 {
 	NoRemove *
 	{
-		'%APPID%' = s 'EraserCtxMenu'
-		'EraserCtxMenu.DLL'
+		NoRemove shellex
 		{
-			val AppID = s '%APPID%'
+			NoRemove ContextMenuHandlers
+			{
+				ForceRemove Eraser = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
+				{
+				}
+			}
 		}
+	}
+
+	EraserCtxMenu.CtxMenu.1 = s 'CtxMenu Class'
+	{
+		CLSID = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
+	}
+	EraserCtxMenu.CtxMenu = s 'CtxMenu Class'
+	{
+		CLSID = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
+		CurVer = s 'EraserCtxMenu.CtxMenu.1'
 	}
 	NoRemove CLSID
 	{
-		ForceRemove {E8801615-19E6-48FB-9BFE-149FD5E97B7F} = s 'CompReg Class'
+		ForceRemove {BC9B776A-90D7-4476-A791-79D835F30650} = s 'CtxMenu Class'
 		{
+			ProgID = s 'EraserCtxMenu.CtxMenu.1'
+			VersionIndependentProgID = s 'EraserCtxMenu.CtxMenu'
 			InprocServer32 = s '%MODULE%'
 			{
 				val ThreadingModel = s 'Apartment'

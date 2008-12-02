@@ -98,7 +98,6 @@ END
 //
 
 IDR_ERASERCTXMENU       REGISTRY                "EraserCtxMenu.rgs"
-IDR_CTXMENU             REGISTRY                "CtxMenu.rgs"
 
 /////////////////////////////////////////////////////////////////////////////
 //

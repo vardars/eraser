@@ -4,7 +4,6 @@
 //
 #define IDS_PROJNAME                    100
 #define IDR_ERASERCTXMENU               101
-#define IDR_CTXMENU                     103
 
 // Next default values for new objects
 // 
