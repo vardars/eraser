@@ -22,6 +22,7 @@
 #include "stdafx.h"
 #include "CtxMenu.h"
 #include "DllMain.h"
+#include <sstream>
 
 template<typename handleType> class Handle
 {
@@ -136,18 +137,29 @@ namespace Eraser {
 		//Create the submenu, following the order defined in the CEraserLPVERB enum, creating
 		//only items which are applicable.
 		CEraserLPVERBS applicableVerbs = GetApplicableActions();
+		VerbMenuIndices.clear();
 		if (applicableVerbs & CERASER_ERASE)
+		{
 			InsertMenu    (hSubmenu, CERASER_ERASE, MF_BYPOSITION, uID++,				_T("&Erase"));
+			VerbMenuIndices.push_back(CERASER_ERASE);
+		}
 		if (applicableVerbs & CERASER_ERASE_ON_RESTART)
+		{
 			InsertMenu    (hSubmenu, CERASER_ERASE_ON_RESTART, MF_BYPOSITION, uID++,	_T("Erase on &Restart"));
+			VerbMenuIndices.push_back(CERASER_ERASE_ON_RESTART);
+		}
 		if (applicableVerbs & CERASER_ERASE_UNUSED_SPACE)
+		{
 			InsertMenu    (hSubmenu, CERASER_ERASE_UNUSED_SPACE, MF_BYPOSITION, uID++,	_T("Erase &Unused Space"));
+			VerbMenuIndices.push_back(CERASER_ERASE_UNUSED_SPACE);
+		}
 		//-------------------------------------------------------------------------
 		if (applicableVerbs & CERASER_SECURE_MOVE)
 		{
 			if (uID - uidFirstCmd > 0)
 				InsertMenuItem(hSubmenu, CERASER_SEPERATOR_1, TRUE, GetSeparator());
 			InsertMenu    (hSubmenu, CERASER_SECURE_MOVE, MF_BYPOSITION, uID++,			_T("Secure &Move"));	
+			VerbMenuIndices.push_back(CERASER_SECURE_MOVE);
 		}
 
 		//Insert the submenu into the Context menu provided by Explorer.
@@ -355,43 +367,47 @@ namespace Eraser {
 
 	*/  
 
-	HRESULT CCtxMenu::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
+	HRESULT CCtxMenu::InvokeCommand(LPCMINVOKECOMMANDINFO pCmdInfo)
 	{
-		// If lpVerb really points to a string, ignore this function call and bail out.
-		if ( HIWORD( pCmdInfo->lpVerb )  != 0)
+		//If lpVerb really points to a string, ignore this function call and bail out.
+		if (HIWORD(pCmdInfo->lpVerb) != 0)
 			return E_INVALIDARG;
 
-		HRESULT result = E_INVALIDARG;
-		// final eraser command to call
-		string_type command(L"eraser ");
-		string_type files, directories, unuseds;
-#if 0
-		// compile the eraser command syntax
-		for (string_list::const_iterator i = m_szSelectedFiles.begin();
-			i != m_szSelectedFiles.end(); ++i)
-		{
-			files       += L"\"" + *i + L"\" ";
-		}
-		for (string_list::const_iterator i = m_szSelectedUnused.begin();
-			i != m_szSelectedUnused.end(); ++i)
-		{
-			unuseds     += L"--unused=\"" + *i + L"\" ";
-		}
-		for (string_list::const_iterator i = m_szSelectedDirectories.begin();
-			i != m_szSelectedDirectories.end(); ++i)
-		{
-			directories += L"--dir=\"" + *i + L"\" ";
-		}
+		//If the verb index refers to an item outside the bounds of our VerbMenuIndices
+		//vector, exit.
+		if (LOWORD(pCmdInfo->lpVerb) > VerbMenuIndices.size())
+			return E_INVALIDARG;
 
-		// Get the command index.
-		switch(LOWORD(pCmdInfo->lpVerb + 1))
+		//Build the command line
+		string_type commandLine;
+		HRESULT result = E_INVALIDARG;
+		switch (VerbMenuIndices[LOWORD(pCmdInfo->lpVerb)])
 		{
 		case CERASER_ERASE:
 			{
-				command += L"addtask " + files + unuseds + directories;
-				//result = system(command.c_str());
+				//Add Task command.
+				commandLine = L"addtask ";
+
+				//Add every item selected onto the command line.
+				for (string_list::const_iterator i = m_szSelectedFiles.begin();
+					i != m_szSelectedFiles.end(); ++i)
+				{
+					//Check if the current item is a file or folder.
+					std::wstring item(*i);
+					if (item.length() > 3 && item[item.length() - 1] == '\\')
+						item.erase(item.end() - 1);
+					DWORD attributes = GetFileAttributes(item.c_str());
+
+					//Add the correct command line for the file type.
+					if (attributes & FILE_ATTRIBUTE_DIRECTORY)
+						commandLine += L"\"-d=" + item + L"\" ";
+					else
+						commandLine += L"\"" + item + L"\" ";
+				}
+
 				break;
 			}
+#if 0
 		case CERASER_SECURE_MOVE:
 			{
 				result = S_OK;
@@ -418,14 +434,73 @@ namespace Eraser {
 				// interactive eraser console
 				break;
 			}
+#endif
 		default:
+			if (!(pCmdInfo->fMask & CMIC_MASK_FLAG_NO_UI))
 			{
-				TCHAR szMsg [MAX_PATH + 32];
-				wsprintf ( szMsg, _T("Invalid Query was submitted, unable to process!\n\nCommand ID = %d\n\n"), LOWORD(pCmdInfo->lpVerb) );
-				MessageBox ( pCmdInfo->hwnd, szMsg, _T("Eraser v6 - Shell Extention Query"), MB_ICONINFORMATION );
+				std::wstringstream strm;
+				strm << L"An invalid command with the ID "
+					<< VerbMenuIndices[LOWORD(pCmdInfo->lpVerb)] << L"was requested.\n\n"
+					<< L"Eraser was unable to process the request.";
+				MessageBox(pCmdInfo->hwnd, strm.str().c_str(), L"Eraser Shell Extension", MB_OK | MB_ICONERROR);
 			}
 		}
-#endif
+
+		//Execute the command.
+		if (!commandLine.empty())
+		{
+			//Get the path to this DLL so we can look for Eraser.exe
+			wchar_t fileName[MAX_PATH];
+			DWORD fileNameLength = GetModuleFileName(theApp.m_hInstance, fileName,
+				sizeof(fileName) / sizeof(fileName[0]));
+			if (!fileNameLength || fileNameLength >= sizeof(fileName) / sizeof(fileName[0]))
+				return E_UNEXPECTED;
+			
+			//Trim to the last \, then append Eraser.exe
+			std::wstring eraserPath(fileName, fileNameLength);
+			std::wstring::size_type lastBackslash = eraserPath.rfind('\\');
+			if (lastBackslash == std::wstring::npos)
+				return E_INVALIDARG;
+
+			eraserPath.erase(eraserPath.begin() + lastBackslash + 1, eraserPath.end());
+			if (eraserPath.empty())
+				return E_UNEXPECTED;
+
+			eraserPath += L"Eraser.exe";
+
+			//Create the process.
+			STARTUPINFO startupInfo;
+			ZeroMemory(&startupInfo, sizeof(startupInfo));
+			startupInfo.cb = sizeof(startupInfo);
+			startupInfo.dwFlags = STARTF_USESHOWWINDOW;
+			startupInfo.wShowWindow = static_cast<WORD>(pCmdInfo->nShow);
+			PROCESS_INFORMATION processInfo;
+			ZeroMemory(&processInfo, sizeof(processInfo));
+			
+			std::wstring finalCommandLine(L"\"" + eraserPath + L"\" " + commandLine);
+			wchar_t* buffer = new wchar_t[finalCommandLine.length() + 1];
+			wcscpy_s(buffer, finalCommandLine.length() + 1, finalCommandLine.c_str());
+
+			if (!CreateProcess(NULL, buffer, NULL, NULL, false, CREATE_NO_WINDOW,
+				NULL, NULL, &startupInfo, &processInfo))
+			{
+				if (!(pCmdInfo->fMask & CMIC_MASK_FLAG_NO_UI))
+				{
+					MessageBox(pCmdInfo->hwnd, L"The Eraser application could not be started. "
+						L"Ensure that your installation of Eraser is not corrupted: "
+						L"try running the Eraser Setup again to Repair the install.",
+						L"Eraser Shell Extension", MB_OK | MB_ICONERROR);
+				}
+
+				delete[] buffer;
+				return E_UNEXPECTED;
+			}
+
+			delete[] buffer;
+			CloseHandle(processInfo.hThread);
+			CloseHandle(processInfo.hProcess);
+		}
+
 		return result;
 	}
 
@@ -444,8 +519,6 @@ namespace Eraser {
 		{
 			//Remove trailing slashes if they are directories.
 			std::wstring item(*i);
-			//if (item.length() > 3 && item[item.length() - 1] == '\'')
-			//	item.erase(item.begin() + item.length() - 1);
 
 			//Check if the path is a path to a volume, if it is not, remove the
 			//erase unused space verb.

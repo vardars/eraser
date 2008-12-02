@@ -53,8 +53,9 @@
 #include <atlctl.h>
 using namespace ATL;
 
-#include <string>
 #include <list>
-#include <fstream>
+#include <vector>
+#include <string>
+#include <sstream>
 
 #undef max

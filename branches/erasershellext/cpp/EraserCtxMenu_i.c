@@ -6,7 +6,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Tue Dec 02 18:31:27 2008
+/* at Tue Dec 02 20:57:52 2008
  */
 /* Compiler settings for .\DllMain.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
