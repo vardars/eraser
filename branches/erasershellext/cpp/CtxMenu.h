@@ -24,13 +24,12 @@
 #define GCNEW(object_type,...)  \
 	*(CCtxMenu::GCNew(new object_type(__VA_ARGS__)))
 
-#define S(str)	\
-	*GCNEW(string, str)
+#define S(str) L ## str
 
 #ifdef _DEBUG
 #define DebugMessageBox(...) MessageBox(__VA_ARGS__)
 static HWND DebugHWND =
-CreateWindow(0, _T("Eraser Debug Windows", "Eraser Debug Windows"), 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL);
+CreateWindow(0, _T("Eraser Debug Windows"), 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL);
 #else
 #define DebugMessageBox(...) ;;;;;;;;;;;;;;;;;;;;;;;
 #endif
@@ -75,7 +74,6 @@ namespace Eraser
 	class ATL_NO_VTABLE CCtxMenu :
 		public CComObjectRootEx<CComSingleThreadModel>,
 		public CComCoClass<CCtxMenu, &CLSID_CtxMenu>,
-		public ICtxMenu,
 		public IShellExtInit,
 		public IContextMenu
 	{
@@ -83,17 +81,7 @@ namespace Eraser
 		CCtxMenu()
 		{
 		}
-				
-	public: enum CEraserLPVERBS
-	{
-		CERASER_ERASE						= 0,
-		CERASER_SCHEDULE				= 1,
-		CERASER_ERASE_ON_RESTART= 2,			
-		CERASER_SEPERATOR_1			= 3,
-		CERASER_SECURE_MOVE			= 4,			
-		CERASER_SEPERATOR_2			= 5,
-		CERASER_CONSOLE				= 6,
-	};
+
 		enum CEraserLPVERBS
 		{
 			CERASER_ERASE = 0,
@@ -134,7 +122,8 @@ namespace Eraser
 		DECLARE_REGISTRY_RESOURCEID(IDR_CTXMENU)
 		DECLARE_NOT_AGGREGATABLE(CCtxMenu)
 		BEGIN_COM_MAP(CCtxMenu)
-			COM_INTERFACE_ENTRY(ICtxMenu)
+			COM_INTERFACE_ENTRY(IShellExtInit)
+			COM_INTERFACE_ENTRY(IContextMenu)
 		END_COM_MAP()
 		DECLARE_PROTECT_FINAL_CONSTRUCT()
 		HRESULT FinalConstruct()
@@ -144,7 +133,8 @@ namespace Eraser
 
 		void FinalRelease()
 		{
-			for(gc::iterator i = 0; i != m_GC.end(); i++)			delete *i;
+			for(gc::iterator i = m_GC.begin(); i != m_GC.end(); i++)
+				delete *i;
 		}
 	};
 

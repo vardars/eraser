@@ -294,24 +294,24 @@ HRESULT CCtxMenu::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 
 	HRESULT result = E_INVALIDARG;
 	// final eraser command to call
-	string command(("eraser "));
-	string files(""), directories(""), unuseds("");	
+	string_type command(S("eraser "));
+	string_type files(S("")), directories(S("")), unuseds(S(""));
 
 	// compile the eraser command syntax
-	foreach(file, m_szSelectedFiles)							files       += S("\"") + *file + S("\" ");		
-	foreach(unused, m_szSelectedUnused)						unuseds     += S("--unused=\"*unused\"") + *unused;
+	foreach(file, m_szSelectedFiles)							files       += S("\"") + *file + S("\" ");
+	foreach(unused, m_szSelectedUnused)						unuseds     += S("--unused=\"") + *unused + S("\"");
 	foreach(directory, m_szSelectedDirectories)		directories += S("--dir=\"") + *directory + S("\" ");
 
 	// Get the command index.
-	switch( CERASER_ENUM(LOWORD(pCmdInfo->lpVerb + 1)) )
+	switch(LOWORD(pCmdInfo->lpVerb + 1))
 	{
-	case CERASER_ENUM(CEraserLPVERBS::CERASER_ERASE):
+	case CERASER_ERASE:
 		{
-			command += S("addtask ") + files + unused + directory;
-			result = system(command.c_str());
+			command += S("addtask ") + files + unuseds + directories;
+			//result = system(command.c_str());
 			break;
 		}
-	case CERASER_ENUM(CEraserLPVERBS::CERASER_SECURE_MOVE):
+	case CERASER_SECURE_MOVE:
 		{
 			result = S_OK;
 			// we need some user interaction, thus we will have a windows form

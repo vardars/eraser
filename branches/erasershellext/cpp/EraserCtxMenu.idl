@@ -8,31 +8,6 @@ import "oaidl.idl";
 import "ocidl.idl"; 
 
 [
-	object,
-	uuid(a817e7a2-43fa-11d0-9e44-00aa00b6770a),
-	dual,
-	helpstring("IComponentRegistrar Interface"),
-	pointer_default(unique)
-]
-interface IComponentRegistrar : IDispatch
-{
-	[id(1)]	HRESULT Attach([in] BSTR bstrPath);
-	[id(2)]	HRESULT RegisterAll();
-	[id(3)]	HRESULT UnregisterAll();
-	[id(4)]	HRESULT GetComponents([out] SAFEARRAY(BSTR)* pbstrCLSIDs, [out] SAFEARRAY(BSTR)* pbstrDescriptions);
-	[id(5)]	HRESULT RegisterComponent([in] BSTR bstrCLSID);
-	[id(6)] HRESULT UnregisterComponent([in] BSTR bstrCLSID);
-};
-
-[
-	object,
-	uuid(16A5F684-A71B-49EB-864A-F458F0B98D8D),
-	helpstring("ICtxMenu Interface"),
-	pointer_default(unique)
-]
-interface ICtxMenu : IUnknown{
-};
-[
 	uuid(BBAA6A86-48FB-4F7B-B06F-7FACD6AFBD25),
 	version(1.0),
 	helpstring("EraserCtxMenu 1.0 Type Library"),
@@ -43,19 +18,11 @@ library EraserCtxMenuLib
 	importlib("stdole2.tlb");
 
 	[
-		uuid(E8801615-19E6-48FB-9BFE-149FD5E97B7F),
-		helpstring("ComponentRegistrar Class")
-	]
-	coclass CompReg
-	{
-		[default] interface IComponentRegistrar;
-	};
-	[
 		uuid(BC9B776A-90D7-4476-A791-79D835F30650),
 		helpstring("CtxMenu Class")
 	]
 	coclass CtxMenu
 	{
-		[default] interface ICtxMenu;
+		[default] interface IUnknown;
 	};
 };
