@@ -6,12 +6,12 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Tue Dec 02 21:39:23 2008
+/* at Tue Dec 02 21:56:43 2008
  */
 /* Compiler settings for .\DllMain.idl:
-    Oicf, W1, Zp8, env=Win32 (32b run)
+    Oicf, W1, Zp8, env=Win64 (32b run)
     protocol : dce , ms_ext, c_ext, robust
-    error checks: stub_data 
+    error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 
          __declspec(uuid()), __declspec(selectany), __declspec(novtable)
          DECLSPEC_UUID(), MIDL_INTERFACE()
