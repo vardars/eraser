@@ -37,34 +37,6 @@ namespace Eraser
 	typedef std::wstring				string_type;
 	typedef std::list<string_type>		string_list;
 
-	enum CEraserSecureMove
-	{
-		INV_SRC_FILE,
-		INV_DST_FILE, 
-	};
-
-	static int SecureMove(const std::wstring& dst, const std::wstring& src)
-	{
-		//CFile file(
-		//	CreateFile(
-		//	src.c_str(), 
-		//	FILE_GENERIC_READ|FILE_GENERIC_WRITE,
-		//	FILE_SHARE_READ|FILE_SHARE_WRITE,
-		//	NULL,
-		//	OPEN_EXISTING,
-		//	0,
-		//	NULL)
-		//	);
-
-		if (!CopyFile(src.c_str(), dst.c_str(), FALSE))
-		{
-			//file.Close();
-			return GetLastError();
-		}
-
-		// successfull copy, add for erasure
-	}
-
 	class ATL_NO_VTABLE CCtxMenu :
 		public CComObjectRootEx<CComSingleThreadModel>,
 		public CComCoClass<CCtxMenu, &CLSID_CtxMenu>,
@@ -78,13 +50,11 @@ namespace Eraser
 
 		enum CEraserLPVERBS
 		{
-			CERASER_ERASE = 0,
-			CERASER_SCHEDULE,
-			CERASER_ERASE_ON_RESTART,
+			CERASER_ERASE				= 1 << 0,
+			CERASER_ERASE_ON_RESTART	= 1 << 1,
+			CERASER_ERASE_UNUSED_SPACE	= 1 << 2,
 			CERASER_SEPERATOR_1,
-			CERASER_SECURE_MOVE,
-			CERASER_SEPERATOR_2,
-			CERASER_CUSTOMISE
+			CERASER_SECURE_MOVE			= 1 << 3,
 		};
 
 	public:
@@ -102,6 +72,8 @@ namespace Eraser
 		bool OnMeasureItem(UINT& itemWidth, UINT& itemHeight);
 		bool OnDrawItem(HDC hdc, RECT rect, UINT action, UINT state);
 
+		CEraserLPVERBS GetApplicableActions();
+
 		static MENUITEMINFO* GetSeparator();
 		static HICON GetMenuIcon();
 		static HBITMAP GetMenuBitmap();
@@ -110,8 +82,6 @@ namespace Eraser
 	protected:
 		UINT		m_itemID;
 		string_list	m_szSelectedFiles;
-		string_list	m_szSelectedDirectories;
-		string_list	m_szSelectedUnused;
 
 		static const wchar_t* m_szMenuTitle;
 

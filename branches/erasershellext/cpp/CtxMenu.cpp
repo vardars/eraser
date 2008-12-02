@@ -46,7 +46,7 @@ private:
 };
 
 namespace Eraser {
-	const wchar_t* CCtxMenu::m_szMenuTitle = L"Eraser v6";
+	const wchar_t* CCtxMenu::m_szMenuTitle = L"Eraser";
 
 	HRESULT CCtxMenu::Initialize(LPCITEMIDLIST /*pidlFolder*/, LPDATAOBJECT pDataObj,
 	                             HKEY /*hProgID*/)
@@ -78,15 +78,17 @@ namespace Eraser {
 		}
 
 		HRESULT hr = S_OK;
-		WCHAR Buffer[MAX_PATH] = {0};	
-		for (UINT i = uNumFiles; i < uNumFiles; i++)	
+		WCHAR buffer[MAX_PATH] = {0};	
+		for (UINT i = 0; i < uNumFiles; i++)	
 		{
-			//TODO: Collect the list of files queried.
-			UINT charsWritten = DragQueryFile(hDrop, i, Buffer, sizeof(Buffer) / sizeof(Buffer[0]));
+			UINT charsWritten = DragQueryFile(hDrop, i, buffer, sizeof(buffer) / sizeof(buffer[0]));
 			if (!charsWritten)
+			{
 				hr = E_INVALIDARG;
-			else
-				PathQuoteSpaces(Buffer);
+				continue;
+			}
+
+			m_szSelectedFiles.push_back(std::wstring(buffer, charsWritten));
 		}
 
 		GlobalUnlock(stg.hGlobal);
@@ -120,16 +122,21 @@ namespace Eraser {
 		UINT uID = uidFirstCmd;	
 		HMENU hSubmenu = CreatePopupMenu();	
 
-		//Create the submenu, following the order defined in the CEraserLPVERB enum
-		InsertMenu    (hSubmenu, CERASER_ERASE, MF_BYPOSITION, uID++,				_T("&Erase"));
-		InsertMenu    (hSubmenu, CERASER_SCHEDULE, MF_BYPOSITION, uID++,			_T("&Schedule"));
-		InsertMenu    (hSubmenu, CERASER_ERASE_ON_RESTART, MF_BYPOSITION, uID++,	_T("Erase on &Restart"));
+		//Create the submenu, following the order defined in the CEraserLPVERB enum, creating
+		//only items which are applicable.
+		CEraserLPVERBS applicableVerbs = GetApplicableActions();
+		if (applicableVerbs & CERASER_ERASE)
+			InsertMenu    (hSubmenu, CERASER_ERASE, MF_BYPOSITION, uID++,				_T("&Erase"));
+		if (applicableVerbs & CERASER_ERASE_ON_RESTART)
+			InsertMenu    (hSubmenu, CERASER_ERASE_ON_RESTART, MF_BYPOSITION, uID++,	_T("Erase on &Restart"));
+		if (applicableVerbs & CERASER_ERASE_UNUSED_SPACE)
+			InsertMenu    (hSubmenu, CERASER_ERASE_UNUSED_SPACE, MF_BYPOSITION, uID++,	_T("Erase &Unused Space"));
 		//-------------------------------------------------------------------------
-		InsertMenuItem(hSubmenu, CERASER_SEPERATOR_1, TRUE, GetSeparator());
-		InsertMenu    (hSubmenu, CERASER_SECURE_MOVE, MF_BYPOSITION, uID++,			_T("Secure &Move"));	
-		//-------------------------------------------------------------------------
-		InsertMenuItem(hSubmenu, CERASER_SEPERATOR_2, TRUE, GetSeparator());
-		InsertMenu    (hSubmenu, CERASER_CUSTOMISE, MF_BYPOSITION, uID++,			_T("&Console"));	
+		if (applicableVerbs & CERASER_SECURE_MOVE)
+		{
+			InsertMenuItem(hSubmenu, CERASER_SEPERATOR_1, TRUE, GetSeparator());
+			InsertMenu    (hSubmenu, CERASER_SECURE_MOVE, MF_BYPOSITION, uID++,			_T("Secure &Move"));	
+		}
 
 		//Insert the submenu into the Context menu provided by Explorer.
 		{
@@ -346,7 +353,7 @@ namespace Eraser {
 		// final eraser command to call
 		string_type command(L"eraser ");
 		string_type files, directories, unuseds;
-
+#if 0
 		// compile the eraser command syntax
 		for (string_list::const_iterator i = m_szSelectedFiles.begin();
 			i != m_szSelectedFiles.end(); ++i)
@@ -367,7 +374,6 @@ namespace Eraser {
 		// Get the command index.
 		switch(LOWORD(pCmdInfo->lpVerb + 1))
 		{
-	#if 0
 		case CERASER_ERASE:
 			{
 				command += L"addtask " + files + unuseds + directories;
@@ -400,15 +406,40 @@ namespace Eraser {
 				// interactive eraser console
 				break;
 			}
-	#endif
 		default:
 			{
 				TCHAR szMsg [MAX_PATH + 32];
 				wsprintf ( szMsg, _T("Invalid Query was submitted, unable to process!\n\nCommand ID = %d\n\n"), LOWORD(pCmdInfo->lpVerb) );
 				MessageBox ( pCmdInfo->hwnd, szMsg, _T("Eraser v6 - Shell Extention Query"), MB_ICONINFORMATION );
 			}
-			return result;
 		}
+#endif
+		return result;
+	}
+
+	CCtxMenu::CEraserLPVERBS CCtxMenu::GetApplicableActions()
+	{
+		unsigned result = CERASER_ERASE | CERASER_ERASE_ON_RESTART | CERASER_SECURE_MOVE |
+			CERASER_ERASE_UNUSED_SPACE;
+		for (std::list<std::wstring>::const_iterator i = m_szSelectedFiles.begin();
+			i != m_szSelectedFiles.end(); ++i)
+		{
+			//Remove trailing slashes if they are directories.
+			std::wstring item(*i);
+			//if (item.length() > 3 && item[item.length() - 1] == '\'')
+			//	item.erase(item.begin() + item.length() - 1);
+
+			//Check if the path is a path to a volume, if it is not, remove the
+			//erase unused space verb.
+			wchar_t volumeName[MAX_PATH];
+			if (!GetVolumeNameForVolumeMountPoint(item.c_str(), volumeName,
+				sizeof(volumeName) / sizeof(volumeName[0])))
+			{
+				result &= ~CERASER_ERASE_UNUSED_SPACE;
+			}
+		}
+
+		return static_cast<CEraserLPVERBS>(result);
 	}
 
 	MENUITEMINFO* CCtxMenu::GetSeparator()
