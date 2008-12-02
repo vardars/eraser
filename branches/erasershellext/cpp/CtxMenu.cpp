@@ -7,10 +7,8 @@
 #pragma comment(lib,"shlwapi")
 
 namespace Eraser {
-HRESULT CCtxMenu::Initialize(
-															LPCITEMIDLIST	pidlFolder,
-															LPDATAOBJECT	pDataObj,
-															HKEY			hProgID )
+HRESULT CCtxMenu::Initialize(LPCITEMIDLIST /*pidlFolder*/, LPDATAOBJECT pDataObj,
+                             HKEY /*hProgID*/)
 {
 	FORMATETC fmt = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
 	STGMEDIUM stg = { TYMED_HGLOBAL };
@@ -294,20 +292,32 @@ HRESULT CCtxMenu::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 
 	HRESULT result = E_INVALIDARG;
 	// final eraser command to call
-	string_type command(S("eraser "));
-	string_type files(S("")), directories(S("")), unuseds(S(""));
+	string_type command(L"eraser ");
+	string_type files, directories, unuseds;
 
 	// compile the eraser command syntax
-	foreach(file, m_szSelectedFiles)							files       += S("\"") + *file + S("\" ");
-	foreach(unused, m_szSelectedUnused)						unuseds     += S("--unused=\"") + *unused + S("\"");
-	foreach(directory, m_szSelectedDirectories)		directories += S("--dir=\"") + *directory + S("\" ");
+	for (string_list::const_iterator i = m_szSelectedFiles.begin();
+		i != m_szSelectedFiles.end(); ++i)
+	{
+		files       += L"\"" + *i + L"\" ";
+	}
+	for (string_list::const_iterator i = m_szSelectedUnused.begin();
+		i != m_szSelectedUnused.end(); ++i)
+	{
+		unuseds     += L"--unused=\"" + *i + L"\" ";
+	}
+	for (string_list::const_iterator i = m_szSelectedDirectories.begin();
+		i != m_szSelectedUnused.end(); ++i)
+	{
+		directories += L"--dir=\"" + *i + L"\" ";
+	}
 
 	// Get the command index.
 	switch(LOWORD(pCmdInfo->lpVerb + 1))
 	{
 	case CERASER_ERASE:
 		{
-			command += S("addtask ") + files + unuseds + directories;
+			command += L"addtask " + files + unuseds + directories;
 			//result = system(command.c_str());
 			break;
 		}
@@ -333,7 +343,7 @@ HRESULT CCtxMenu::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 			result = system(command.c_str());
 			break;
 		}
-	case CERASER_ENUM(CEraserLPVERBS::CERASER_CONSOLE):
+	case CERASER_CONSOLE:
 		{
 			// interactive eraser console
 			break;
