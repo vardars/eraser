@@ -1,4 +1,5 @@
 // dllmain.h : Declaration of module class.
+#pragma once
 
 class CEraserCtxMenuModule : public CAtlDllModuleT< CEraserCtxMenuModule >
 {
