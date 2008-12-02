@@ -82,6 +82,7 @@ namespace Eraser
 	protected:
 		UINT		m_itemID;
 		string_list	m_szSelectedFiles;
+		string_type	m_szDestinationDirectory;
 
 		static const wchar_t* m_szMenuTitle;
 

@@ -48,7 +48,7 @@ private:
 namespace Eraser {
 	const wchar_t* CCtxMenu::m_szMenuTitle = L"Eraser";
 
-	HRESULT CCtxMenu::Initialize(LPCITEMIDLIST /*pidlFolder*/, LPDATAOBJECT pDataObj,
+	HRESULT CCtxMenu::Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJECT pDataObj,
 	                             HKEY /*hProgID*/)
 	{
 		m_itemID      = 0;
@@ -56,8 +56,19 @@ namespace Eraser {
 		STGMEDIUM stg = { TYMED_HGLOBAL };
 		HDROP     hDrop;
 
+		//Check pidlFolder for the drop path, if it exists.
+		if (pidlFolder != NULL)
+		{
+			//Translate the drop path to a location on the filesystem.
+			wchar_t dropTargetPath[MAX_PATH];
+			if (!SHGetPathFromIDList(pidlFolder, dropTargetPath))
+				return E_FAIL;
+
+			m_szDestinationDirectory = dropTargetPath;
+		}
+
 		//Look for CF_HDROP data in the data object.
-		if (FAILED(pDataObj->GetData (&fmt, &stg)))
+		if (FAILED(pDataObj->GetData(&fmt, &stg)))
 			//Nope! Return an "invalid argument" error back to Explorer.
 			return E_INVALIDARG;
 
@@ -134,7 +145,8 @@ namespace Eraser {
 		//-------------------------------------------------------------------------
 		if (applicableVerbs & CERASER_SECURE_MOVE)
 		{
-			InsertMenuItem(hSubmenu, CERASER_SEPERATOR_1, TRUE, GetSeparator());
+			if (uID - uidFirstCmd > 0)
+				InsertMenuItem(hSubmenu, CERASER_SEPERATOR_1, TRUE, GetSeparator());
 			InsertMenu    (hSubmenu, CERASER_SECURE_MOVE, MF_BYPOSITION, uID++,			_T("Secure &Move"));	
 		}
 
@@ -421,6 +433,12 @@ namespace Eraser {
 	{
 		unsigned result = CERASER_ERASE | CERASER_ERASE_ON_RESTART | CERASER_SECURE_MOVE |
 			CERASER_ERASE_UNUSED_SPACE;
+
+		//Check if this is a context menu (as in, user-invoked) or a drag-and-drop
+		//operation. The latter only allows for Secure Move.
+		if (!m_szDestinationDirectory.empty())
+			result = CERASER_SECURE_MOVE;
+
 		for (std::list<std::wstring>::const_iterator i = m_szSelectedFiles.begin();
 			i != m_szSelectedFiles.end(); ++i)
 		{

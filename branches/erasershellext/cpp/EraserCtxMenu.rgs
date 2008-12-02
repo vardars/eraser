@@ -7,8 +7,6 @@ HKCR
 			NoRemove ContextMenuHandlers
 			{
 				ForceRemove Eraser = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
-				{
-				}
 			}
 		}
 	}
@@ -19,8 +17,10 @@ HKCR
 			NoRemove ContextMenuHandlers
 			{
 				ForceRemove Eraser = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
-				{
-				}
+			}
+			NoRemove DragDropHandlers
+			{
+				ForceRemove Eraser = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
 			}
 		}
 	}
@@ -31,8 +31,10 @@ HKCR
 			NoRemove ContextMenuHandlers
 			{
 				ForceRemove Eraser = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
-				{
-				}
+			}
+			NoRemove DragDropHandlers
+			{
+				ForceRemove Eraser = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
 			}
 		}
 	}
@@ -43,8 +45,10 @@ HKCR
 			NoRemove ContextMenuHandlers
 			{
 				ForceRemove Eraser = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
-				{
-				}
+			}
+			NoRemove DragDropHandlers
+			{
+				ForceRemove Eraser = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
 			}
 		}
 	}
@@ -55,8 +59,6 @@ HKCR
 			NoRemove ContextMenuHandlers
 			{
 				ForceRemove Eraser = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
-				{
-				}
 			}
 		}
 	}
