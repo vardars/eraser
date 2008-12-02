@@ -243,7 +243,7 @@ namespace Eraser {
 		Handle<HFONT> font = CreateFontIndirect(&logFont);
 		SelectObject(screenDC, font);
 		SIZE textSize;
-		if (!GetTextExtentPoint32(screenDC, m_szMenuTitle, wcslen(m_szMenuTitle), &textSize))
+		if (!GetTextExtentPoint32(screenDC, m_szMenuTitle, static_cast<DWORD>(wcslen(m_szMenuTitle)), &textSize))
 			return false;
 
 		itemWidth = textSize.cx;
@@ -292,7 +292,7 @@ namespace Eraser {
 		/*Handle<HFONT> font = CreateFontIndirect(&logFont);
 		SelectObject(hdc, font);*/
 		SIZE textSize;
-		if (!GetTextExtentPoint32(hdc, m_szMenuTitle, wcslen(m_szMenuTitle), &textSize))
+		if (!GetTextExtentPoint32(hdc, m_szMenuTitle, static_cast<DWORD>(wcslen(m_szMenuTitle)), &textSize))
 			return false;
 
 		COLORREF oldColour = SetTextColor(hdc, (state & ODS_SELECTED) ?
@@ -306,7 +306,7 @@ namespace Eraser {
 		return true;
 	}
 
-	HRESULT CCtxMenu::GetCommandString(UINT idCmd, UINT uFlags, UINT* /*pwReserved*/,
+	HRESULT CCtxMenu::GetCommandString(UINT_PTR idCmd, UINT uFlags, UINT* /*pwReserved*/,
 	                                   LPSTR pszName, UINT cchMax)
 	{
 		USES_CONVERSION;
