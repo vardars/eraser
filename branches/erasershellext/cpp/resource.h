@@ -21,7 +21,7 @@
 
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by EraserCtxMenu.rc
+// Used by Resource.rc
 //
 #define IDS_PROJNAME                    100
 #define IDR_ERASERSHELLEXT              101

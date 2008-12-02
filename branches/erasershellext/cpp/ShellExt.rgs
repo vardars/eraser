@@ -63,21 +63,21 @@ HKCR
 		}
 	}
 
-	EraserCtxMenu.CtxMenu.1 = s 'Eraser Shell Extension'
+	EraserShellExt.ShellExt.1 = s 'Eraser Shell Extension'
 	{
 		CLSID = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
 	}
-	EraserCtxMenu.CtxMenu = s 'Eraser Shell Extension'
+	EraserShellExt.ShellExt = s 'Eraser Shell Extension'
 	{
 		CLSID = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
-		CurVer = s 'EraserCtxMenu.CtxMenu.1'
+		CurVer = s 'EraserShellExt.ShellExt.1'
 	}
 	NoRemove CLSID
 	{
 		ForceRemove {BC9B776A-90D7-4476-A791-79D835F30650} = s 'Eraser Shell Extension'
 		{
-			ProgID = s 'EraserCtxMenu.CtxMenu.1'
-			VersionIndependentProgID = s 'EraserCtxMenu.CtxMenu'
+			ProgID = s 'EraserShellExt.ShellExt.1'
+			VersionIndependentProgID = s 'EraserShellExt.ShellExt'
 			InprocServer32 = s '%MODULE%'
 			{
 				val ThreadingModel = s 'Apartment'

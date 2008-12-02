@@ -1,6 +1,6 @@
-; EraserCtxMenu.def : Declares the module parameters.
+; DllMain.def : Declares the module parameters.
 
-LIBRARY      "Eraser.Shell.DLL"
+LIBRARY      "Eraser.Shell.dll"
 
 EXPORTS 
 	DllCanUnloadNow		PRIVATE
