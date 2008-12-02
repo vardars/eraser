@@ -1,7 +1,6 @@
 // CtxMenu.h : Declaration of the CCtxMenu
 
 #pragma once
-#pragma unmanaged
 
 #include "resource.h"       // main symbols
 
