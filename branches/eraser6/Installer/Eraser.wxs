@@ -75,7 +75,11 @@
 			<ComponentRef Id="EraserLangEn" />
 			<ComponentRef Id="EraserPlugins" />
 			<ComponentRef Id="EraserPluginsLangEn" />
-			
+
+			<Feature Id="EraserMainShell" Title="Eraser Shell Extension"
+					Description="Eraser shell integration" Level="1">
+				<ComponentRef Id="EraserShell" />
+			</Feature>
 			<FeatureRef Id="EraserLanguages" />
 		</Feature>
 	</Product>

@@ -66,5 +66,6 @@
 	-->
   <PropertyGroup>
     <PreBuildEvent>"$(ProjectDir)\SignBin.bat" "$(SolutionDir)"</PreBuildEvent>
+    <PostBuildEvent>signtool sign /f $(SolutionDir)\Authenticode.pfx $(TargetPath)</PostBuildEvent>
   </PropertyGroup>
 </Project>

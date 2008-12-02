@@ -11,6 +11,8 @@ signtool sign /f "%~1\Authenticode.pfx" "%~1\bin\Release\Eraser.exe"
 signtool sign /f "%~1\Authenticode.pfx" "%~1\bin\Release\Eraser.Manager.dll"
 signtool sign /f "%~1\Authenticode.pfx" "%~1\bin\Release\Eraser.Util.dll"
 signtool sign /f "%~1\Authenticode.pfx" "%~1\bin\Release\Plugins\Eraser.DefaultPlugins.dll"
+signtool sign /f "%~1\Authenticode.pfx" "%~1\bin\Release\x64\Eraser.Shell.dll"
+signtool sign /f "%~1\Authenticode.pfx" "%~1\bin\Release\Win32\Eraser.Shell.dll"
 
 @rem Internationalisations
 signtool sign /f "%~1\Authenticode.pfx" "%~1\bin\Release\en\Eraser.Manager.resources.dll"
