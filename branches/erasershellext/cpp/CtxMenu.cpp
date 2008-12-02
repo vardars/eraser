@@ -73,9 +73,8 @@ HRESULT CCtxMenu::Initialize(LPCITEMIDLIST /*pidlFolder*/, LPDATAOBJECT pDataObj
 			PathQuoteSpaces(Buffer);
 	}
 
-	//TODO: load Eraser Icon and store HBITMAP in m_szEraserIcon
-	GlobalUnlock (stg.hGlobal);
-	ReleaseStgMedium (&stg);
+	GlobalUnlock(stg.hGlobal);
+	ReleaseStgMedium(&stg);
 	return hr;
 }
 /*
@@ -179,17 +178,6 @@ HBITMAP  hbmpItem;      // used if MIIM_BITMAP
 
 */
 
-/**
-* return a seperate MENUITEMINFO structure */
-static MENUITEMINFO* GetSeperator()
-{
-	MENUITEMINFO *mii = new MENUITEMINFO();		
-	mii->cbSize = sizeof(MENUITEMINFO);
-	mii->fMask = MIIM_TYPE;
-	mii->fType = MF_SEPARATOR;
-	return mii;
-}
-
 HRESULT CCtxMenu::QueryContextMenu(HMENU hmenu, UINT uMenuIndex, UINT uidFirstCmd,
                                    UINT /*uidLastCmd*/, UINT uFlags)
 {
@@ -206,10 +194,10 @@ HRESULT CCtxMenu::QueryContextMenu(HMENU hmenu, UINT uMenuIndex, UINT uidFirstCm
 	InsertMenu    (hSubmenu, CERASER_SCHEDULE, MF_BYPOSITION, uID++,			_T("&Schedule"));
 	InsertMenu    (hSubmenu, CERASER_ERASE_ON_RESTART, MF_BYPOSITION, uID++,	_T("Erase on &Restart"));
 	//-------------------------------------------------------------------------
-	InsertMenuItem(hSubmenu, CERASER_SEPERATOR_1, TRUE, GetSeperator());
+	InsertMenuItem(hSubmenu, CERASER_SEPERATOR_1, TRUE, GetSeparator());
 	InsertMenu    (hSubmenu, CERASER_SECURE_MOVE, MF_BYPOSITION, uID++,			_T("Secure &Move"));	
 	//-------------------------------------------------------------------------
-	InsertMenuItem(hSubmenu, CERASER_SEPERATOR_2, TRUE, GetSeperator());
+	InsertMenuItem(hSubmenu, CERASER_SEPERATOR_2, TRUE, GetSeparator());
 	InsertMenu    (hSubmenu, CERASER_CUSTOMISE, MF_BYPOSITION, uID++,			_T("&Console"));	
 
 	//Insert the submenu into the Context menu provided by Explorer.
@@ -250,7 +238,7 @@ HRESULT CCtxMenu::HandleMenuMsg(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return HandleMenuMsg2(uMsg, wParam, lParam, NULL);
 }
 
-HRESULT CCtxMenu::HandleMenuMsg2(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* result)
+HRESULT CCtxMenu::HandleMenuMsg2(UINT uMsg, WPARAM /*wParam*/, LPARAM lParam, LRESULT* result)
 {
 	//Skip if we aren't handling our own.
 	bool handleResult = false;
@@ -308,10 +296,8 @@ bool CCtxMenu::OnMeasureItem(UINT& itemWidth, UINT& itemHeight)
 	return true;
 }
 
-bool CCtxMenu::OnDrawItem(HDC hdc, RECT rect, UINT action, UINT state)
+bool CCtxMenu::OnDrawItem(HDC hdc, RECT rect, UINT /*action*/, UINT state)
 {
-    bool draw_bitmap_edge = true;
-
 	//Draw the background.
 	LOGBRUSH logBrush = { BS_SOLID,
 		(state & ODS_SELECTED) ?
@@ -493,18 +479,13 @@ HRESULT CCtxMenu::InvokeCommand ( LPCMINVOKECOMMANDINFO pCmdInfo )
 	}
 }
 
-static bool AlphaBlt(HDC hdcDest, int nXOriginDest, int nYOriginDest, int nWidthDest,
-                     int nHeightDest, HDC hdcSrc, int nXOriginSrc, int nYOriginSrc,
-                     int nWidthSrc, int nHeightSrc)
+MENUITEMINFO* CCtxMenu::GetSeparator()
 {
-    BLENDFUNCTION bf;
-    bf.BlendOp = AC_SRC_OVER;
-    bf.BlendFlags = 0;
-    bf.SourceConstantAlpha = 0xff;
-    bf.AlphaFormat = AC_SRC_ALPHA;
-
-	return AlphaBlend(hdcDest, nXOriginDest, nYOriginDest, nWidthDest, nHeightDest,
-		hdcSrc, nXOriginSrc, nYOriginSrc, nWidthSrc, nHeightSrc, bf) != FALSE;
+	MENUITEMINFO *mii = new MENUITEMINFO();		
+	mii->cbSize = sizeof(MENUITEMINFO);
+	mii->fMask = MIIM_TYPE;
+	mii->fType = MF_SEPARATOR;
+	return mii;
 }
 
 HICON CCtxMenu::GetMenuIcon()
@@ -532,29 +513,21 @@ HBITMAP CCtxMenu::GetMenuBitmap()
 		bitmap.bmBitsPixel < 32)
 		return iconInfo.hbmColor;
 
-	//If we can't create the DIB section, return the one straight from the icon.
-	HBITMAP dibBitmap(CreateDIB(bitmap.bmWidth, bitmap.bmHeight));
-	if (!dibBitmap)
-		return iconInfo.hbmColor;
-
-	//OK, we've got a DIB. We want to draw the icon onto the DIB to get an alpha
-	//channel.
-	Handle<HDC> dibDC = CreateCompatibleDC(NULL);
-	Handle<HDC> srcDC = CreateCompatibleDC(NULL);
-	SelectObject(dibDC, dibBitmap);
-	SelectObject(srcDC, iconInfo.hbmColor);
-	if (!AlphaBlt(dibDC, 0, 0, bitmap.bmWidth, bitmap.bmHeight, srcDC, 0, 0,
-		bitmap.bmWidth, bitmap.bmHeight))
+	//Try converting the DDB into a DIB.
+	DIBSECTION dibSection;
+	HBITMAP dib = CreateDIB(bitmap.bmWidth, bitmap.bmHeight, NULL);
+	if (!GetObject(dib, sizeof(dibSection), &dibSection) ||
+		!GetDIBits(CreateCompatibleDC(NULL), iconInfo.hbmColor, 0, bitmap.bmHeight,
+			dibSection.dsBm.bmBits, reinterpret_cast<BITMAPINFO*>(&dibSection.dsBmih),
+			DIB_RGB_COLORS))
 	{
-		DeleteObject(dibBitmap);
 		return iconInfo.hbmColor;
 	}
 
-	DeleteObject(iconInfo.hbmColor);
-	return dibBitmap;
+	return dib;
 }
 
-HBITMAP CCtxMenu::CreateDIB(LONG width, LONG height)
+HBITMAP CCtxMenu::CreateDIB(LONG width, LONG height, char** bitmapBits)
 {
 	BITMAPINFO info;
     ZeroMemory(&info, sizeof(info));
@@ -566,6 +539,6 @@ HBITMAP CCtxMenu::CreateDIB(LONG width, LONG height)
 	info.bmiHeader.biCompression = BI_RGB;
 	char* dibBitmapBits = NULL;
 	return ::CreateDIBSection(0, &info, DIB_RGB_COLORS,
-		reinterpret_cast<void**>(&dibBitmapBits), NULL, 0);
+		reinterpret_cast<void**>(bitmapBits ? bitmapBits : &dibBitmapBits), NULL, 0);
 }
 }

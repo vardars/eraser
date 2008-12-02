@@ -82,9 +82,10 @@ namespace Eraser
 		bool OnMeasureItem(UINT& itemWidth, UINT& itemHeight);
 		bool OnDrawItem(HDC hdc, RECT rect, UINT action, UINT state);
 
+		static MENUITEMINFO* GetSeparator();
 		static HICON GetMenuIcon();
 		static HBITMAP GetMenuBitmap();
-		static HBITMAP CreateDIB(LONG width, LONG height);
+		static HBITMAP CreateDIB(LONG width, LONG height, char** bitmapBits);
 
 	protected:
 		UINT		m_itemID;
