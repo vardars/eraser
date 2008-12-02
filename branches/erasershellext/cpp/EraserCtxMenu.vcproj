@@ -78,7 +78,7 @@
 				Name="VCLinkerTool"
 				RegisterOutput="true"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies=" comsvcs.lib"
+				AdditionalDependencies="shlwapi.lib comsvcs.lib"
 				LinkIncremental="2"
 				ModuleDefinitionFile="$(ProjectDir)DllMain.def"
 				GenerateDebugInformation="true"
@@ -169,7 +169,7 @@
 				Name="VCLinkerTool"
 				RegisterOutput="true"
 				IgnoreImportLibrary="true"
-				AdditionalDependencies=" comsvcs.lib"
+				AdditionalDependencies="shlwapi.lib comsvcs.lib"
 				LinkIncremental="1"
 				ModuleDefinitionFile="$(ProjectDir)DllMain.def"
 				GenerateDebugInformation="true"
@@ -214,7 +214,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\dllmain.cpp"
+				RelativePath=".\DllMain.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -274,7 +274,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\dllmain.h"
+				RelativePath=".\DllMain.h"
 				>
 			</File>
 			<File
@@ -287,10 +287,6 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\targetver.h"
 				>
 			</File>
 		</Filter>
