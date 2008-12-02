@@ -21,7 +21,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
-#include "EraserCtxMenu_i.h"
+#include "ShellExt_i.h"
 #include "DllMain.h"
 
 CEraserCtxMenuModule _AtlModule;

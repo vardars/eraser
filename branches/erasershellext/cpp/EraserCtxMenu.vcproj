@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="EraserCtxMenu"
+	Name="ShellExt"
 	ProjectGUID="{738F455B-2220-4F8F-B87F-DA93F0B0F1BA}"
 	RootNamespace="EraserCtxMenu"
 	Keyword="AtlProj"
@@ -44,11 +44,11 @@
 				MkTypLibCompatible="false"
 				TargetEnvironment="1"
 				GenerateStublessProxies="true"
-				TypeLibraryName="$(IntDir)/EraserCtxMenu.tlb"
-				HeaderFileName="EraserCtxMenu_i.h"
+				TypeLibraryName="$(IntDir)/ShellExt.tlb"
+				HeaderFileName="ShellExt_i.h"
 				DLLDataFileName=""
-				InterfaceIdentifierFileName="EraserCtxMenu_i.c"
-				ProxyFileName="EraserCtxMenu_p.c"
+				InterfaceIdentifierFileName="ShellExt_i.c"
+				ProxyFileName="ShellExt_p.c"
 				ValidateParameters="true"
 			/>
 			<Tool
@@ -79,6 +79,7 @@
 				RegisterOutput="true"
 				IgnoreImportLibrary="true"
 				AdditionalDependencies="shlwapi.lib comsvcs.lib"
+				OutputFile="$(OutDir)\Eraser.Shell.dll"
 				LinkIncremental="2"
 				ModuleDefinitionFile="$(ProjectDir)DllMain.def"
 				GenerateDebugInformation="true"
@@ -136,11 +137,11 @@
 				MkTypLibCompatible="false"
 				TargetEnvironment="1"
 				GenerateStublessProxies="true"
-				TypeLibraryName="$(IntDir)/EraserCtxMenu.tlb"
-				HeaderFileName="EraserCtxMenu_i.h"
+				TypeLibraryName="$(IntDir)/ShellExt.tlb"
+				HeaderFileName="ShellExt_i.h"
 				DLLDataFileName=""
-				InterfaceIdentifierFileName="EraserCtxMenu_i.c"
-				ProxyFileName="EraserCtxMenu_p.c"
+				InterfaceIdentifierFileName="ShellExt_i.c"
+				ProxyFileName="ShellExt_p.c"
 				ValidateParameters="true"
 			/>
 			<Tool
@@ -170,6 +171,7 @@
 				RegisterOutput="true"
 				IgnoreImportLibrary="true"
 				AdditionalDependencies="shlwapi.lib comsvcs.lib"
+				OutputFile="$(OutDir)\Eraser.Shell.dll"
 				LinkIncremental="1"
 				ModuleDefinitionFile="$(ProjectDir)DllMain.def"
 				GenerateDebugInformation="true"
@@ -242,6 +244,13 @@
 			<File
 				RelativePath=".\DllMain.idl"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCMIDLTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stdafx.cpp"
@@ -296,11 +305,11 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\EraserCtxMenu.rc"
+				RelativePath=".\ShellExt.rc"
 				>
 			</File>
 			<File
-				RelativePath=".\EraserCtxMenu.rgs"
+				RelativePath=".\ShellExt.rgs"
 				>
 			</File>
 		</Filter>
@@ -309,7 +318,7 @@
 			SourceControlFiles="false"
 			>
 			<File
-				RelativePath=".\EraserCtxMenu_i.c"
+				RelativePath=".\ShellExt_i.c"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -317,7 +326,6 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						CompileAsManaged="0"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -326,12 +334,11 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						CompileAsManaged="0"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\EraserCtxMenu_i.h"
+				RelativePath=".\ShellExt_i.h"
 				>
 			</File>
 		</Filter>

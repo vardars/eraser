@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Tue Dec 02 20:57:52 2008
+/* at Tue Dec 02 21:20:38 2008
  */
 /* Compiler settings for .\DllMain.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -32,8 +32,8 @@
 #endif // __RPCNDR_H_VERSION__
 
 
-#ifndef __EraserCtxMenu_i_h__
-#define __EraserCtxMenu_i_h__
+#ifndef __ShellExt_i_h__
+#define __ShellExt_i_h__
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once

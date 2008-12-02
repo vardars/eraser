@@ -116,7 +116,7 @@ END
 // REGISTRY
 //
 
-IDR_ERASERCTXMENU       REGISTRY                "EraserCtxMenu.rgs"
+IDR_ERASERCTXMENU       REGISTRY                "ShellExt.rgs"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -138,7 +138,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-1 TYPELIB "EraserCtxMenu.tlb"
+1 TYPELIB "ShellExt.tlb"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
