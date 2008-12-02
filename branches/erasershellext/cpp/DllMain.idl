@@ -20,7 +20,7 @@
  */
 
 import "oaidl.idl";
-import "ocidl.idl"; 
+import "ocidl.idl";
 
 [
 	uuid(BBAA6A86-48FB-4F7B-B06F-7FACD6AFBD25),

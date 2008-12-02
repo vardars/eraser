@@ -32,7 +32,7 @@
 #include <vector>
 #include <string>
 
-namespace Eraser 
+namespace Eraser
 {
 	typedef std::wstring				string_type;
 	typedef std::list<string_type>		string_list;

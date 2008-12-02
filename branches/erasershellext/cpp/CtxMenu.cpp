@@ -90,8 +90,8 @@ namespace Eraser {
 		}
 
 		HRESULT hr = S_OK;
-		WCHAR buffer[MAX_PATH] = {0};	
-		for (UINT i = 0; i < uNumFiles; i++)	
+		WCHAR buffer[MAX_PATH] = {0};
+		for (UINT i = 0; i < uNumFiles; i++)
 		{
 			UINT charsWritten = DragQueryFile(hDrop, i, buffer, sizeof(buffer) / sizeof(buffer[0]));
 			if (!charsWritten)
@@ -131,8 +131,8 @@ namespace Eraser {
 			return MAKE_HRESULT(SEVERITY_SUCCESS, FACILITY_NULL, 0);
 
 		//First, create and populate a submenu.
-		UINT uID = uidFirstCmd;	
-		HMENU hSubmenu = CreatePopupMenu();	
+		UINT uID = uidFirstCmd;
+		HMENU hSubmenu = CreatePopupMenu();
 
 		//Create the submenu, following the order defined in the CEraserLPVERB enum, creating
 		//only items which are applicable.
@@ -158,7 +158,7 @@ namespace Eraser {
 		{
 			if (uID - uidFirstCmd > 0)
 				InsertMenuItem(hSubmenu, CERASER_SEPERATOR_1, TRUE, GetSeparator());
-			InsertMenu    (hSubmenu, CERASER_SECURE_MOVE, MF_BYPOSITION, uID++,			_T("Secure &Move"));	
+			InsertMenu    (hSubmenu, CERASER_SECURE_MOVE, MF_BYPOSITION, uID++,			_T("Secure &Move"));
 			VerbMenuIndices.push_back(CERASER_SECURE_MOVE);
 		}
 
@@ -316,7 +316,7 @@ namespace Eraser {
 			return E_INVALIDARG;
 
 		//If Explorer is asking for a help string, copy our string into the supplied buffer.
-		if (!(uFlags & GCS_HELPTEXT)) 
+		if (!(uFlags & GCS_HELPTEXT))
 			return E_INVALIDARG;
 
 		static LPCTSTR szErase        = _T("Erases the currently selected file\r\n");
@@ -535,7 +535,7 @@ namespace Eraser {
 
 	MENUITEMINFO* CCtxMenu::GetSeparator()
 	{
-		MENUITEMINFO *mii = new MENUITEMINFO();		
+		MENUITEMINFO *mii = new MENUITEMINFO();
 		mii->cbSize = sizeof(MENUITEMINFO);
 		mii->fMask = MIIM_TYPE;
 		mii->fType = MF_SEPARATOR;
