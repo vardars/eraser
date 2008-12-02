@@ -201,6 +201,8 @@
 			/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"
@@ -341,6 +343,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\EShll.txt"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
