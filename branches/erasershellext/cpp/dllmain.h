@@ -7,4 +7,14 @@ public :
 	DECLARE_REGISTRY_APPID_RESOURCEID(IDR_ERASERCTXMENU, "{92BDCDEA-D98E-49C2-9851-A4AD15B847EA}")
 };
 
-extern class CEraserCtxMenuModule _AtlModule;
+class CEraserCtxMenuApp : public CWinApp
+{
+public:
+	virtual BOOL InitInstance();
+	virtual int ExitInstance();
+
+	DECLARE_MESSAGE_MAP()
+};
+
+extern CEraserCtxMenuModule _AtlModule;
+extern CEraserCtxMenuApp theApp;
