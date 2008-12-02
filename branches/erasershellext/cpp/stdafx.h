@@ -26,5 +26,5 @@
 #include <atlbase.h>
 #include <atlcom.h>
 #include <atlctl.h>
-
+#undef max
 using namespace ATL;
