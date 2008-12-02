@@ -12,19 +12,67 @@ HKCR
 			}
 		}
 	}
+	NoRemove Directory
+	{
+		NoRemove shellex
+		{
+			NoRemove ContextMenuHandlers
+			{
+				ForceRemove Eraser = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
+				{
+				}
+			}
+		}
+	}
+	NoRemove Drive
+	{
+		NoRemove shellex
+		{
+			NoRemove ContextMenuHandlers
+			{
+				ForceRemove Eraser = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
+				{
+				}
+			}
+		}
+	}
+	NoRemove Folder
+	{
+		NoRemove shellex
+		{
+			NoRemove ContextMenuHandlers
+			{
+				ForceRemove Eraser = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
+				{
+				}
+			}
+		}
+	}
+	NoRemove InternetShortcut
+	{
+		NoRemove shellex
+		{
+			NoRemove ContextMenuHandlers
+			{
+				ForceRemove Eraser = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
+				{
+				}
+			}
+		}
+	}
 
-	EraserCtxMenu.CtxMenu.1 = s 'CtxMenu Class'
+	EraserCtxMenu.CtxMenu.1 = s 'Eraser Shell Extension'
 	{
 		CLSID = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
 	}
-	EraserCtxMenu.CtxMenu = s 'CtxMenu Class'
+	EraserCtxMenu.CtxMenu = s 'Eraser Shell Extension'
 	{
 		CLSID = s '{BC9B776A-90D7-4476-A791-79D835F30650}'
 		CurVer = s 'EraserCtxMenu.CtxMenu.1'
 	}
 	NoRemove CLSID
 	{
-		ForceRemove {BC9B776A-90D7-4476-A791-79D835F30650} = s 'CtxMenu Class'
+		ForceRemove {BC9B776A-90D7-4476-A791-79D835F30650} = s 'Eraser Shell Extension'
 		{
 			ProgID = s 'EraserCtxMenu.CtxMenu.1'
 			VersionIndependentProgID = s 'EraserCtxMenu.CtxMenu'
