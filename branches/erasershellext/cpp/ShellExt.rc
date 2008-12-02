@@ -65,7 +65,7 @@ END
 
 3 TEXTINCLUDE 
 BEGIN
-    "1 TYPELIB ""EraserCtxMenu.tlb""\r\n"
+    "1 TYPELIB ""EraserShellExt.tlb""\r\n"
     "\0"
 END
 
@@ -116,7 +116,7 @@ END
 // REGISTRY
 //
 
-IDR_ERASERCTXMENU       REGISTRY                "ShellExt.rgs"
+IDR_ERASERSHELLEXT       REGISTRY                "ShellExt.rgs"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -125,7 +125,7 @@ IDR_ERASERCTXMENU       REGISTRY                "ShellExt.rgs"
 
 STRINGTABLE 
 BEGIN
-    IDS_PROJNAME            "EraserCtxMenu"
+    IDS_PROJNAME            "EraserShellExt"
 END
 
 #endif    // English (U.S.) resources

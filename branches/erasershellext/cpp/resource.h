@@ -24,7 +24,7 @@
 // Used by EraserCtxMenu.rc
 //
 #define IDS_PROJNAME                    100
-#define IDR_ERASERCTXMENU               101
+#define IDR_ERASERSHELLEXT              101
 
 // Next default values for new objects
 // 

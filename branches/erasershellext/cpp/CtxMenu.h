@@ -88,7 +88,7 @@ namespace Eraser
 		static const wchar_t* m_szMenuTitle;
 
 	public:
-		DECLARE_REGISTRY_RESOURCEID(IDR_ERASERCTXMENU)
+		DECLARE_REGISTRY_RESOURCEID(IDR_ERASERSHELLEXT)
 		DECLARE_NOT_AGGREGATABLE(CCtxMenu)
 		BEGIN_COM_MAP(CCtxMenu)
 			COM_INTERFACE_ENTRY(IShellExtInit)
@@ -105,5 +105,4 @@ namespace Eraser
 	};
 
 	OBJECT_ENTRY_AUTO(__uuidof(CtxMenu), CCtxMenu)
-
 }

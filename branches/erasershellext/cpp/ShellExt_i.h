@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Tue Dec 02 21:20:38 2008
+/* at Tue Dec 02 21:28:10 2008
  */
 /* Compiler settings for .\DllMain.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -63,14 +63,14 @@ extern "C"{
 
 
 
-#ifndef __EraserCtxMenuLib_LIBRARY_DEFINED__
-#define __EraserCtxMenuLib_LIBRARY_DEFINED__
+#ifndef __EraserShellExtLib_LIBRARY_DEFINED__
+#define __EraserShellExtLib_LIBRARY_DEFINED__
 
-/* library EraserCtxMenuLib */
+/* library EraserShellExtLib */
 /* [custom][helpstring][version][uuid] */ 
 
 
-EXTERN_C const IID LIBID_EraserCtxMenuLib;
+EXTERN_C const IID LIBID_EraserShellExtLib;
 
 EXTERN_C const CLSID CLSID_CtxMenu;
 
@@ -79,7 +79,7 @@ EXTERN_C const CLSID CLSID_CtxMenu;
 class DECLSPEC_UUID("BC9B776A-90D7-4476-A791-79D835F30650")
 CtxMenu;
 #endif
-#endif /* __EraserCtxMenuLib_LIBRARY_DEFINED__ */
+#endif /* __EraserShellExtLib_LIBRARY_DEFINED__ */
 
 /* Additional Prototypes for ALL interfaces */
 

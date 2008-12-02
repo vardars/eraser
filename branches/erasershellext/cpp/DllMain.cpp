@@ -24,17 +24,17 @@
 #include "ShellExt_i.h"
 #include "DllMain.h"
 
-CEraserCtxMenuModule _AtlModule;
-CEraserCtxMenuApp theApp;
-BEGIN_MESSAGE_MAP(CEraserCtxMenuApp, CWinApp)
+CEraserShellExtModule _AtlModule;
+CEraserShellExtApp theApp;
+BEGIN_MESSAGE_MAP(CEraserShellExtApp, CWinApp)
 END_MESSAGE_MAP()
 
-BOOL CEraserCtxMenuApp::InitInstance()
+BOOL CEraserShellExtApp::InitInstance()
 {
 	return CWinApp::InitInstance();
 }
 
-int CEraserCtxMenuApp::ExitInstance()
+int CEraserShellExtApp::ExitInstance()
 {
 	return CWinApp::ExitInstance();
 }

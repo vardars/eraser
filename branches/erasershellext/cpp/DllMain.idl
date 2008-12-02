@@ -25,16 +25,16 @@ import "ocidl.idl";
 [
 	uuid(BBAA6A86-48FB-4F7B-B06F-7FACD6AFBD25),
 	version(1.0),
-	helpstring("EraserCtxMenu 1.0 Type Library"),
+	helpstring("Eraser Shell Extension"),
 	custom(a817e7a1-43fa-11d0-9e44-00aa00b6770a,"{E8801615-19E6-48FB-9BFE-149FD5E97B7F}")
 ]
-library EraserCtxMenuLib
+library EraserShellExtLib
 {
 	importlib("stdole2.tlb");
 
 	[
 		uuid(BC9B776A-90D7-4476-A791-79D835F30650),
-		helpstring("CtxMenu Class")
+		helpstring("Eraser Shell Extension Context Menu")
 	]
 	coclass CtxMenu
 	{
