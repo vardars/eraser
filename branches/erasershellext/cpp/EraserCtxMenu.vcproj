@@ -80,7 +80,7 @@
 				IgnoreImportLibrary="true"
 				AdditionalDependencies=" comsvcs.lib"
 				LinkIncremental="2"
-				ModuleDefinitionFile=".\EraserCtxMenu.def"
+				ModuleDefinitionFile="$(ProjectDir)DllMain.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -171,7 +171,7 @@
 				IgnoreImportLibrary="true"
 				AdditionalDependencies=" comsvcs.lib"
 				LinkIncremental="1"
-				ModuleDefinitionFile=".\EraserCtxMenu.def"
+				ModuleDefinitionFile="$(ProjectDir)DllMain.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -236,15 +236,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\EraserCtxMenu.cpp"
+				RelativePath=".\DllMain.def"
 				>
 			</File>
 			<File
-				RelativePath=".\EraserCtxMenu.def"
-				>
-			</File>
-			<File
-				RelativePath=".\EraserCtxMenu.idl"
+				RelativePath=".\DllMain.idl"
 				>
 			</File>
 			<File
