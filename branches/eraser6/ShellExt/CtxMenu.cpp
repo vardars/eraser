@@ -24,6 +24,32 @@
 #include "DllMain.h"
 #include <sstream>
 
+extern "C"
+{
+	typedef LONG NTSTATUS;
+	enum KEY_INFORMATION_CLASS
+	{
+		KeyBasicInformation,
+		KeyNodeInformation,
+		KeyFullInformation,
+		KeyNameInformation,
+		KeyCachedInformation,
+		KeyVirtualizationInformation
+	};
+
+	struct KEY_BASIC_INFORMATION
+	{
+		LARGE_INTEGER LastWriteTime;
+		ULONG TitleIndex;
+		ULONG NameLength;
+		WCHAR Name[1];
+	};
+
+	typedef NTSTATUS (*pZwQueryKey)(HANDLE KeyHandle, KEY_INFORMATION_CLASS KeyInformationClass,
+		PVOID KeyInformation, ULONG Length, PULONG ResultLength);
+	pZwQueryKey ZwQueryKey;
+}
+
 template<typename handleType> class Handle
 {
 public:
@@ -50,16 +76,27 @@ namespace Eraser {
 	const wchar_t* CCtxMenu::m_szMenuTitle = L"Eraser";
 
 	HRESULT CCtxMenu::Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJECT pDataObj,
-	                             HKEY /*hProgID*/)
+	                             HKEY hProgID)
 	{
-		m_itemID      = 0;
-		FORMATETC fmt = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
-		STGMEDIUM stg = { TYMED_HGLOBAL };
-		HDROP     hDrop;
-
-		//Check pidlFolder for the drop path, if it exists.
-		if (pidlFolder != NULL)
+		//Initialise member variables.
+		m_itemID = 0;
+		
+		//Determine where the shell extension was invoked from.
+		if (GetHKeyPath(hProgID) == L"{645FF040-5081-101B-9F08-00AA002F954E}")
 		{
+			InvokeReason = INVOKEREASON_RECYCLEBIN;
+
+			//We can't do much other processing: the LPDATAOBJECT parameter contains
+			//data that is a private type so we don't know how to query for it.
+			return S_OK;
+		}
+
+		//Check pidlFolder for the drop path, if it exists. This is for drag-and-drop
+		//context menus.
+		else if (pidlFolder != NULL)
+		{
+			InvokeReason = INVOKEREASON_DRAGDROP;
+
 			//Translate the drop path to a location on the filesystem.
 			wchar_t dropTargetPath[MAX_PATH];
 			if (!SHGetPathFromIDList(pidlFolder, dropTargetPath))
@@ -68,15 +105,20 @@ namespace Eraser {
 			m_szDestinationDirectory = dropTargetPath;
 		}
 
+		//Okay, everything else is a simple context menu for a set of selected files/
+		//folders/drives.
+		else
+			InvokeReason = INVOKEREASON_FILEFOLDER;
+
 		//Look for CF_HDROP data in the data object.
+		FORMATETC fmt = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
+		STGMEDIUM stg = { TYMED_HGLOBAL };
 		if (FAILED(pDataObj->GetData(&fmt, &stg)))
 			//Nope! Return an "invalid argument" error back to Explorer.
-			return E_INVALIDARG;
+			return S_OK;
 
 		//Get a pointer to the actual data.
-		hDrop = static_cast<HDROP>(GlobalLock(stg.hGlobal));
-
-		//Make sure it worked.
+		HDROP hDrop = static_cast<HDROP>(GlobalLock(stg.hGlobal));
 		if (hDrop == NULL)
 			return E_INVALIDARG;
 
@@ -89,6 +131,7 @@ namespace Eraser {
 			return E_INVALIDARG;
 		}
 
+		//Collect all the files which have been selected.
 		HRESULT hr = S_OK;
 		WCHAR buffer[MAX_PATH] = {0};
 		for (UINT i = 0; i < uNumFiles; i++)
@@ -103,25 +146,11 @@ namespace Eraser {
 			m_szSelectedFiles.push_back(std::wstring(buffer, charsWritten));
 		}
 
+		//Clean up.
 		GlobalUnlock(stg.hGlobal);
 		ReleaseStgMedium(&stg);
 		return hr;
 	}
-	/*
-	+-------------------+
-	|                   |
-	|                   |
-	|                   |
-	|                   |
-	+-------------------+    +-------------------+
-	|(ICON) Eraser v6 > |    | Erase selected    | //--> erase the files immediately using defaults
-	+-------------------+    | Schedule Selected | //--> open the scheduler menu, with files/folders filled in
-	|                   |    +-------------------+
-	|                   |    | Secure move       | //--> secure move the files
-	|                   |    +-------------------+ // Eraser.Manager Algorithms popup
-	|                   |    |(*) Customise      | // set algorithm	for this query only
-	+-------------------+    +-------------------+
-	*/
 
 	HRESULT CCtxMenu::QueryContextMenu(HMENU hmenu, UINT uMenuIndex, UINT uidFirstCmd,
 	                                   UINT /*uidLastCmd*/, UINT uFlags)
@@ -531,6 +560,30 @@ namespace Eraser {
 		}
 
 		return static_cast<CEraserLPVERBS>(result);
+	}
+
+	std::wstring CCtxMenu::GetHKeyPath(HKEY handle)
+	{
+		ZwQueryKey = reinterpret_cast<pZwQueryKey>(GetProcAddress(
+			LoadLibrary(L"Ntdll.dll"), "ZwQueryKey"));
+		ULONG keyInfoSize = sizeof(KEY_BASIC_INFORMATION);
+		KEY_BASIC_INFORMATION* keyInfo = NULL;
+		NTSTATUS queryResult = ERROR_MORE_DATA;
+
+		while (queryResult == ERROR_MORE_DATA)
+		{
+			delete[] keyInfo;
+			keyInfo = reinterpret_cast<KEY_BASIC_INFORMATION*>(
+				new char[keyInfoSize += 512]);
+			::ZeroMemory(keyInfo, keyInfoSize);
+			queryResult = ZwQueryKey(handle, KeyBasicInformation, keyInfo,
+				keyInfoSize, &keyInfoSize);
+		}
+
+		std::wstring result(keyInfo->Name, keyInfoSize -
+			sizeof(KEY_BASIC_INFORMATION) + 1);
+		delete[] keyInfo;
+		return result;
 	}
 
 	MENUITEMINFO* CCtxMenu::GetSeparator()

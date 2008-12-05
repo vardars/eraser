@@ -48,6 +48,14 @@ namespace Eraser
 		{
 		}
 
+		/// The place where the context menu extension was invoked.
+		enum InvokeReasons
+		{
+			INVOKEREASON_FILEFOLDER,
+			INVOKEREASON_DRAGDROP,
+			INVOKEREASON_RECYCLEBIN
+		};
+
 		enum CEraserLPVERBS
 		{
 			CERASER_ERASE				= 1 << 0,
@@ -74,12 +82,15 @@ namespace Eraser
 
 		CEraserLPVERBS GetApplicableActions();
 
+		static std::wstring GetHKeyPath(HKEY handle);
 		static MENUITEMINFO* GetSeparator();
 		static HICON GetMenuIcon();
 		static HBITMAP GetMenuBitmap();
 		static HBITMAP CreateDIB(LONG width, LONG height, char** bitmapBits);
 
 	protected:
+		InvokeReasons InvokeReason;
+
 		UINT		m_itemID;
 		string_list	m_szSelectedFiles;
 		string_type	m_szDestinationDirectory;
