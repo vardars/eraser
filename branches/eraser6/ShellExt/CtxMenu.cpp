@@ -45,6 +45,16 @@ extern "C"
 		WCHAR Name[1];
 	};
 
+	struct KEY_NODE_INFORMATION
+	{
+		LARGE_INTEGER LastWriteTime;
+		ULONG TitleIndex;
+		ULONG ClassOffset;
+		ULONG ClassLength;
+		ULONG NameLength;
+		WCHAR Name[1];
+	};
+
 	typedef NTSTATUS (*pZwQueryKey)(HANDLE KeyHandle, KEY_INFORMATION_CLASS KeyInformationClass,
 		PVOID KeyInformation, ULONG Length, PULONG ResultLength);
 	pZwQueryKey ZwQueryKey;
@@ -115,7 +125,7 @@ namespace Eraser {
 		STGMEDIUM stg = { TYMED_HGLOBAL };
 		if (FAILED(pDataObj->GetData(&fmt, &stg)))
 			//Nope! Return an "invalid argument" error back to Explorer.
-			return S_OK;
+			return E_INVALIDARG;
 
 		//Get a pointer to the actual data.
 		HDROP hDrop = static_cast<HDROP>(GlobalLock(stg.hGlobal));
@@ -165,30 +175,30 @@ namespace Eraser {
 
 		//Create the submenu, following the order defined in the CEraserLPVERB enum, creating
 		//only items which are applicable.
-		CEraserLPVERBS applicableVerbs = GetApplicableActions();
+		Actions applicableActions = GetApplicableActions();
 		VerbMenuIndices.clear();
-		if (applicableVerbs & CERASER_ERASE)
+		if (applicableActions & ACTION_ERASE)
 		{
-			InsertMenu    (hSubmenu, CERASER_ERASE, MF_BYPOSITION, uID++,				_T("&Erase"));
-			VerbMenuIndices.push_back(CERASER_ERASE);
+			InsertMenu    (hSubmenu, ACTION_ERASE, MF_BYPOSITION, uID++,				_T("&Erase"));
+			VerbMenuIndices.push_back(ACTION_ERASE);
 		}
-		if (applicableVerbs & CERASER_ERASE_ON_RESTART)
+		if (applicableActions & ACTION_ERASE_ON_RESTART)
 		{
-			InsertMenu    (hSubmenu, CERASER_ERASE_ON_RESTART, MF_BYPOSITION, uID++,	_T("Erase on &Restart"));
-			VerbMenuIndices.push_back(CERASER_ERASE_ON_RESTART);
+			InsertMenu    (hSubmenu, ACTION_ERASE_ON_RESTART, MF_BYPOSITION, uID++,	_T("Erase on &Restart"));
+			VerbMenuIndices.push_back(ACTION_ERASE_ON_RESTART);
 		}
-		if (applicableVerbs & CERASER_ERASE_UNUSED_SPACE)
+		if (applicableActions & ACTION_ERASE_UNUSED_SPACE)
 		{
-			InsertMenu    (hSubmenu, CERASER_ERASE_UNUSED_SPACE, MF_BYPOSITION, uID++,	_T("Erase &Unused Space"));
-			VerbMenuIndices.push_back(CERASER_ERASE_UNUSED_SPACE);
+			InsertMenu    (hSubmenu, ACTION_ERASE_UNUSED_SPACE, MF_BYPOSITION, uID++,	_T("Erase &Unused Space"));
+			VerbMenuIndices.push_back(ACTION_ERASE_UNUSED_SPACE);
 		}
 		//-------------------------------------------------------------------------
-		if (applicableVerbs & CERASER_SECURE_MOVE)
+		if (applicableActions & ACTION_SECURE_MOVE)
 		{
 			if (uID - uidFirstCmd > 0)
-				InsertMenuItem(hSubmenu, CERASER_SEPERATOR_1, TRUE, GetSeparator());
-			InsertMenu    (hSubmenu, CERASER_SECURE_MOVE, MF_BYPOSITION, uID++,			_T("Secure &Move"));
-			VerbMenuIndices.push_back(CERASER_SECURE_MOVE);
+				InsertMenuItem(hSubmenu, 0, FALSE, GetSeparator());
+			InsertMenu    (hSubmenu, ACTION_SECURE_MOVE, MF_BYPOSITION, uID++,			_T("Secure &Move"));
+			VerbMenuIndices.push_back(ACTION_SECURE_MOVE);
 		}
 
 		//Insert the submenu into the Context menu provided by Explorer.
@@ -318,8 +328,6 @@ namespace Eraser {
 		if (!SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(logFont), &logFont, 0))
 			return false;
 
-		/*Handle<HFONT> font = CreateFontIndirect(&logFont);
-		SelectObject(hdc, font);*/
 		SIZE textSize;
 		if (!GetTextExtentPoint32(hdc, m_szMenuTitle, static_cast<DWORD>(wcslen(m_szMenuTitle)), &textSize))
 			return false;
@@ -341,7 +349,7 @@ namespace Eraser {
 		USES_CONVERSION;
 
 		//Check idCmd, it must be 0 or 1 since we have two menu items.
-		if ( idCmd > 2 )
+		if (idCmd > 2)
 			return E_INVALIDARG;
 
 		//If Explorer is asking for a help string, copy our string into the supplied buffer.
@@ -412,7 +420,7 @@ namespace Eraser {
 		HRESULT result = E_INVALIDARG;
 		switch (VerbMenuIndices[LOWORD(pCmdInfo->lpVerb)])
 		{
-		case CERASER_ERASE:
+		case ACTION_ERASE:
 			{
 				//Add Task command.
 				commandLine = L"addtask ";
@@ -445,7 +453,7 @@ namespace Eraser {
 				break;
 			}
 			// NOT IMPLEMENTED METHODS
-			case CERASER_ERASE_ON_RESTART:
+			case ACTION_ERASE_ON_RESTART:
 			{
 				MessageBox (pCmdInfo->hwnd, szMsg, _T("Eraser v6 - Shell Extention Query"), MB_ICONINFORMATION );
 				command += S("--restart ") + objects;
@@ -533,16 +541,24 @@ namespace Eraser {
 		return result;
 	}
 
-	CCtxMenu::CEraserLPVERBS CCtxMenu::GetApplicableActions()
+	CCtxMenu::Actions CCtxMenu::GetApplicableActions()
 	{
-		unsigned result = CERASER_ERASE | CERASER_ERASE_ON_RESTART | CERASER_SECURE_MOVE |
-			CERASER_ERASE_UNUSED_SPACE;
+		unsigned result = 0;
+		
+		//First decide the actions which are applicable to the current invocation
+		//reason.
+		switch (InvokeReason)
+		{
+		case INVOKEREASON_RECYCLEBIN:
+			result |= ACTION_ERASE | ACTION_ERASE_ON_RESTART;
+			break;
+		case INVOKEREASON_FILEFOLDER:
+			result |= ACTION_ERASE | ACTION_ERASE_ON_RESTART | ACTION_ERASE_UNUSED_SPACE;
+		case INVOKEREASON_DRAGDROP:
+			result |= ACTION_SECURE_MOVE;
+		}
 
-		//Check if this is a context menu (as in, user-invoked) or a drag-and-drop
-		//operation. The latter only allows for Secure Move.
-		if (!m_szDestinationDirectory.empty())
-			result = CERASER_SECURE_MOVE;
-
+		//Remove actions that don't apply to the current invocation reason.
 		for (std::list<std::wstring>::const_iterator i = m_szSelectedFiles.begin();
 			i != m_szSelectedFiles.end(); ++i)
 		{
@@ -555,33 +571,32 @@ namespace Eraser {
 			if (!GetVolumeNameForVolumeMountPoint(item.c_str(), volumeName,
 				sizeof(volumeName) / sizeof(volumeName[0])))
 			{
-				result &= ~CERASER_ERASE_UNUSED_SPACE;
+				result &= ~ACTION_ERASE_UNUSED_SPACE;
 			}
 		}
 
-		return static_cast<CEraserLPVERBS>(result);
+		return static_cast<Actions>(result);
 	}
 
 	std::wstring CCtxMenu::GetHKeyPath(HKEY handle)
 	{
 		ZwQueryKey = reinterpret_cast<pZwQueryKey>(GetProcAddress(
 			LoadLibrary(L"Ntdll.dll"), "ZwQueryKey"));
-		ULONG keyInfoSize = sizeof(KEY_BASIC_INFORMATION);
-		KEY_BASIC_INFORMATION* keyInfo = NULL;
+		ULONG keyInfoSize = sizeof(KEY_NODE_INFORMATION);
+		KEY_NODE_INFORMATION* keyInfo = NULL;
 		NTSTATUS queryResult = ERROR_MORE_DATA;
 
 		while (queryResult == ERROR_MORE_DATA)
 		{
 			delete[] keyInfo;
-			keyInfo = reinterpret_cast<KEY_BASIC_INFORMATION*>(
+			keyInfo = reinterpret_cast<KEY_NODE_INFORMATION*>(
 				new char[keyInfoSize += 512]);
 			::ZeroMemory(keyInfo, keyInfoSize);
-			queryResult = ZwQueryKey(handle, KeyBasicInformation, keyInfo,
+			queryResult = ZwQueryKey(handle, KeyNodeInformation, keyInfo,
 				keyInfoSize, &keyInfoSize);
 		}
 
-		std::wstring result(keyInfo->Name, keyInfoSize -
-			sizeof(KEY_BASIC_INFORMATION) + 1);
+		std::wstring result(keyInfo->Name);
 		delete[] keyInfo;
 		return result;
 	}

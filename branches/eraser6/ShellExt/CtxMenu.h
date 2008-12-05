@@ -56,13 +56,13 @@ namespace Eraser
 			INVOKEREASON_RECYCLEBIN
 		};
 
-		enum CEraserLPVERBS
+		enum Actions
 		{
-			CERASER_ERASE				= 1 << 0,
-			CERASER_ERASE_ON_RESTART	= 1 << 1,
-			CERASER_ERASE_UNUSED_SPACE	= 1 << 2,
-			CERASER_SEPERATOR_1,
-			CERASER_SECURE_MOVE			= 1 << 3,
+			ACTION_ERASE				= 1 << 0,
+			ACTION_ERASE_ON_RESTART		= 1 << 1,
+			ACTION_ERASE_UNUSED_SPACE	= 1 << 2,
+			ACTION_SEPERATOR_1,
+			ACTION_SECURE_MOVE			= 1 << 3,
 		};
 
 	public:
@@ -80,7 +80,7 @@ namespace Eraser
 		bool OnMeasureItem(UINT& itemWidth, UINT& itemHeight);
 		bool OnDrawItem(HDC hdc, RECT rect, UINT action, UINT state);
 
-		CEraserLPVERBS GetApplicableActions();
+		Actions GetApplicableActions();
 
 		static std::wstring GetHKeyPath(HKEY handle);
 		static MENUITEMINFO* GetSeparator();
@@ -94,7 +94,7 @@ namespace Eraser
 		UINT		m_itemID;
 		string_list	m_szSelectedFiles;
 		string_type	m_szDestinationDirectory;
-		std::vector<CEraserLPVERBS> VerbMenuIndices;
+		std::vector<Actions> VerbMenuIndices;
 
 		static const wchar_t* m_szMenuTitle;
 
