@@ -184,7 +184,7 @@ namespace Eraser {
 		}
 		if (applicableActions & ACTION_ERASE_ON_RESTART)
 		{
-			InsertMenu    (hSubmenu, ACTION_ERASE_ON_RESTART, MF_BYPOSITION, uID++,	_T("Erase on &Restart"));
+			InsertMenu    (hSubmenu, ACTION_ERASE_ON_RESTART, MF_BYPOSITION, uID++,		_T("Erase on &Restart"));
 			VerbMenuIndices.push_back(ACTION_ERASE_ON_RESTART);
 		}
 		if (applicableActions & ACTION_ERASE_UNUSED_SPACE)
@@ -196,7 +196,11 @@ namespace Eraser {
 		if (applicableActions & ACTION_SECURE_MOVE)
 		{
 			if (uID - uidFirstCmd > 0)
-				InsertMenuItem(hSubmenu, 0, FALSE, GetSeparator());
+			{
+				std::auto_ptr<MENUITEMINFO> separator(GetSeparator());
+				InsertMenuItem(hSubmenu, 0, FALSE, separator);
+			}
+
 			InsertMenu    (hSubmenu, ACTION_SECURE_MOVE, MF_BYPOSITION, uID++,			_T("Secure &Move"));
 			VerbMenuIndices.push_back(ACTION_SECURE_MOVE);
 		}
@@ -477,7 +481,7 @@ namespace Eraser {
 			{
 				std::wstringstream strm;
 				strm << L"An invalid command with the ID "
-					<< VerbMenuIndices[LOWORD(pCmdInfo->lpVerb)] << L"was requested.\n\n"
+					<< VerbMenuIndices[LOWORD(pCmdInfo->lpVerb)] << L" was requested.\n\n"
 					<< L"Eraser was unable to process the request.";
 				MessageBox(pCmdInfo->hwnd, strm.str().c_str(), L"Eraser Shell Extension", MB_OK | MB_ICONERROR);
 			}
@@ -603,7 +607,7 @@ namespace Eraser {
 
 	MENUITEMINFO* CCtxMenu::GetSeparator()
 	{
-		MENUITEMINFO *mii = new MENUITEMINFO();
+		MENUITEMINFO* mii = new MENUITEMINFO();
 		mii->cbSize = sizeof(MENUITEMINFO);
 		mii->fMask = MIIM_TYPE;
 		mii->fType = MF_SEPARATOR;
