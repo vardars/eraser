@@ -116,7 +116,7 @@
 							Value="Eraser Shell Extension" Type="string"/>
 						<RegistryKey Key="InprocServer32">
 							<RegistryValue Id="EraserShellHKCRClsidInprocServer32DefaultValue"
-								Value="[INSTALLLOCATION]\Eraser.Shell.dll" Type="string"/>
+								Value="[!EraserShellDll]" Type="string"/>
 							<RegistryValue Id="EraserShellHKCRClsidInprocServer32ThreadingModel"
 								Name="ThreadingModel" Value="Apartment" Type="string"/>
 						</RegistryKey>
