@@ -233,8 +233,7 @@ namespace Eraser.Util
 					out freeClusters, out totalClusters))
 					return (int)(clusterSize * sectorSize);
 
-				throw new Win32Exception(Marshal.GetLastWin32Error(),
-					"Eraser.Util.Drive.GetClusterSize");
+				throw new Win32Exception(Marshal.GetLastWin32Error());
 			}
 		}
 
@@ -310,8 +309,7 @@ namespace Eraser.Util
 				if (GetDiskFreeSpaceEx(volumeID, out result, out dummy, out dummy))
 					return (long)result;
 
-				throw new Win32Exception(Marshal.GetLastWin32Error(),
-					"Eraser.Util.Drive.AvailableFreeSpace");
+				throw new Win32Exception(Marshal.GetLastWin32Error());
 			}
 		}
 
