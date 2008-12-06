@@ -712,8 +712,8 @@ namespace Eraser.Manager
 		internal bool cancelled = false;
 		internal bool queued = false;
 
-		private string name;
-		private bool executing;
+		private string name = string.Empty;
+		private bool executing = false;
 
 		private Schedule schedule = Schedule.RunNow;
 		private List<ErasureTarget> targets = new List<ErasureTarget>();
