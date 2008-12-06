@@ -99,18 +99,10 @@ namespace Eraser.Manager
 		private Thread thread = null;
 
 		/// <summary>
-		/// Our pipe instance which handles connections.
-		/// </summary>
-		private NamedPipeServerStream server;
-
-		/// <summary>
 		/// Constructor.
 		/// </summary>
 		public RemoteExecutorServer()
 		{
-			server = new NamedPipeServerStream(ServerName, PipeDirection.InOut, 4,
-				PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
-
 			thread = new Thread(Main);
 			thread.Start();
 			Thread.Sleep(0);
@@ -130,19 +122,43 @@ namespace Eraser.Manager
 			while (Thread.CurrentThread.ThreadState != ThreadState.AbortRequested)
 			{
 				//Wait for a connection to be established
-				if (!server.IsConnected)
-				{
-					IAsyncResult asyncWait = server.BeginWaitForConnection(
-						EndWaitForConnection, null);
-					while (!server.IsConnected && !asyncWait.AsyncWaitHandle.WaitOne(15))
-						if (Thread.CurrentThread.ThreadState == ThreadState.AbortRequested)
-							break;
-				}
+				NamedPipeServerStream server = new NamedPipeServerStream(ServerName,
+					PipeDirection.InOut, 4, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+				IAsyncResult asyncWait = server.BeginWaitForConnection(
+					EndWaitForConnection, server);
 
-				//If we still aren't connected that means the connection failed to establish.
-				if (!server.IsConnected)
-					continue;
+				while (!server.IsConnected && !asyncWait.AsyncWaitHandle.WaitOne(15))
+					if (Thread.CurrentThread.ThreadState == ThreadState.AbortRequested)
+						break;
 
+				//Execute the handler if the server was connected.
+				if (server.IsConnected)
+					ThreadPool.QueueUserWorkItem(ProcessConnection, server);
+			}
+		}
+
+		/// <summary>
+		/// Waits for a connection from a client.
+		/// </summary>
+		/// <param name="result">The AsyncResult object associated with this asynchronous
+		/// operation.</param>
+		private void EndWaitForConnection(IAsyncResult result)
+		{
+			NamedPipeServerStream server = (NamedPipeServerStream)result.AsyncState;
+			server.WaitForConnection();
+			if (server.IsConnected)
+				server.EndWaitForConnection(result);
+		}
+
+		/// <summary>
+		/// Handles a new connection from the client.
+		/// </summary>
+		/// <param name="param">The connected NamedPipeServerStream instance.</param>
+		private void ProcessConnection(object param)
+		{
+			//Get the Server instance.
+			using (NamedPipeServerStream server = (NamedPipeServerStream)param)
+			{
 				//Read the request into the buffer.
 				RemoteRequest request = null;
 				using (MemoryStream mstream = new MemoryStream())
@@ -159,7 +175,7 @@ namespace Eraser.Manager
 
 					//Ignore the request if the client disconnected from us.
 					if (!server.IsConnected)
-						continue;
+						return;
 
 					//Deserialise the header of the request.
 					mstream.Position = 0;
@@ -171,7 +187,7 @@ namespace Eraser.Manager
 					catch (SerializationException)
 					{
 						//We got a unserialisation issue but we can't do anything about it.
-						continue;
+						return;
 					}
 				}
 
@@ -241,11 +257,11 @@ namespace Eraser.Manager
 
 					// void \+ ref task
 					case RemoteRequest.Function.ADD_TASK:
-					{
-						Task task = (Task)parameter;
-						AddTask(ref task);
-						break;
-					}
+						{
+							Task task = (Task)parameter;
+							AddTask(ref task);
+							break;
+						}
 
 					// bool \+ taskid
 					case RemoteRequest.Function.DELETE_TASK:
@@ -297,22 +313,7 @@ namespace Eraser.Manager
 					byte[] buffer = BitConverter.GetBytes(0);
 					server.Write(buffer, 0, sizeof(int));
 				}
-
-				//We are done, disconnect
-				server.Disconnect();
 			}
-		}
-
-		/// <summary>
-		/// Waits for a connection from a client.
-		/// </summary>
-		/// <param name="result">The AsyncResult object associated with this asynchronous
-		/// operation.</param>
-		private void EndWaitForConnection(IAsyncResult result)
-		{
-			server.WaitForConnection();
-			if (server.IsConnected)
-				server.EndWaitForConnection(result);
 		}
 	}
 
