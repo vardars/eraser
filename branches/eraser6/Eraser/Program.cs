@@ -30,6 +30,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Globalization;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace Eraser
 {
@@ -81,6 +82,15 @@ namespace Eraser
 				using (ManagerLibrary library = new ManagerLibrary(new Settings()))
 				using (Program.eraserClient = new RemoteExecutorClient())
 				{
+					if (!((RemoteExecutorClient)Program.eraserClient).Connect())
+					{
+						//The client cannot connect to the server. This probably means
+						//that the server process isn't running. Start an instance.
+						Process eraserInstance = Process.Start(
+							Assembly.GetExecutingAssembly().Location);
+						eraserInstance.WaitForInputIdle();
+					}
+
 					eraserClient.Run();
 					program.Run();
 				}
@@ -628,14 +638,13 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// <param name="commandLine">The command line parameters passed to the program.</param>
 		private void AddTask()
 		{
-			//Check that all our command line parameters are present.
 			AddTaskCommandLine arguments = (AddTaskCommandLine)Arguments;
-			if (arguments.ErasureMethod == Guid.Empty)
-				throw new ArgumentException("The --method parameter was not specified.");
-
+			
 			//Create the task, and set the method to use.
 			Task task = new Task();
-			ErasureMethod method = ErasureMethodManager.GetInstance(arguments.ErasureMethod);
+			ErasureMethod method = arguments.ErasureMethod == Guid.Empty ? 
+				ErasureMethodManager.Default :
+				ErasureMethodManager.GetInstance(arguments.ErasureMethod);
 			foreach (Task.ErasureTarget target in arguments.Targets)
 			{
 				target.Method = method;

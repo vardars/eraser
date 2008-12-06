@@ -305,6 +305,23 @@ namespace Eraser.Manager
 			client.Dispose();
 		}
 
+		/// <summary>
+		/// Connects to the remote server.
+		/// </summary>
+		/// <returns>True if the connection to the remote server was established.</returns>
+		public bool Connect()
+		{
+			try
+			{
+				client.Connect(250);
+			}
+			catch (TimeoutException)
+			{
+			}
+
+			return client.IsConnected;
+		}
+
 		private object SendRequest(RemoteRequest header)
 		{
 			//Connect to the server
