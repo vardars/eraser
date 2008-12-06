@@ -34,9 +34,6 @@
 
 namespace Eraser
 {
-	typedef std::wstring				string_type;
-	typedef std::list<string_type>		string_list;
-
 	class ATL_NO_VTABLE CCtxMenu :
 		public CComObjectRootEx<CComSingleThreadModel>,
 		public CComCoClass<CCtxMenu, &CLSID_CtxMenu>,

@@ -399,7 +399,7 @@ namespace Eraser {
 			return E_INVALIDARG;
 
 		//Build the command line
-		string_type commandLine;
+		std::wstring commandLine;
 		HRESULT result = E_INVALIDARG;
 		switch (VerbMenuIndices[LOWORD(pCmdInfo->lpVerb)])
 		{
@@ -409,7 +409,7 @@ namespace Eraser {
 				commandLine = L"addtask ";
 
 				//Add every item selected onto the command line.
-				for (string_list::const_iterator i = SelectedFiles.begin();
+				for (std::list<std::wstring>::const_iterator i = SelectedFiles.begin();
 					i != SelectedFiles.end(); ++i)
 				{
 					//Check if the current item is a file or folder.
