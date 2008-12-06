@@ -80,24 +80,7 @@ namespace Eraser
 				isQuiet = program.Arguments.Quiet;
 
 				using (ManagerLibrary library = new ManagerLibrary(new Settings()))
-				using (Program.eraserClient = new RemoteExecutorClient())
-				{
-					if (!((RemoteExecutorClient)Program.eraserClient).Connect())
-					{
-						//The client cannot connect to the server. This probably means
-						//that the server process isn't running. Start an instance.
-						Process eraserInstance = Process.Start(
-							Assembly.GetExecutingAssembly().Location);
-						eraserInstance.WaitForInputIdle();
-
-						if (!((RemoteExecutorClient)Program.eraserClient).Connect())
-							throw new Exception("Eraser cannot connect to the running " +
-								"instance for erasures.");
-					}
-
-					eraserClient.Run();
 					program.Run();
-				}
 			}
 			catch (Exception e)
 			{
@@ -552,28 +535,43 @@ namespace Eraser
 		{
 			Console.WriteLine(@"usage: Eraser <action> <arguments>
 where action is
+    help                    Show this help message.
     addtask                 Adds tasks to the current task list.
     querymethods            Lists all registered Erasure methods.
 
 global parameters:
     --quiet, -q	            Do not create a Console window to display progress.
 
+parameters for help:
+    eraser help
+
+    no parameters to set.
+
 parameters for addtask:
-    eraser addtask --method=<methodGUID> (--recycled | --unused=<volume> | " +
-@"--dir=<directory> | [file1 [file2 [...]]])
+    eraser addtask [--method=<methodGUID>] [--schedule=(now|restart)] (--recycled " +
+@"| --unused=<volume> | --dir=<directory> | [file1 [file2 [...]]])
 
     --method, -m            The Erasure method to use.
+    --schedule, -s          The schedule the task will follow. The value must
+                            be one of:
+            now             The task will be queued for immediate execution.
+            restart         The task will be queued for execution when the
+                            computer is next restarted.
     --recycled, -r          Erases files and folders in the recycle bin
     --unused, -u            Erases unused space in the volume.
         optional arguments: --unused=<drive>[,clusterTips]
-            clusterTips     If specified, the drive's files will have their cluster tips
-                            erased.
+            clusterTips     If specified, the drive's files will have their
+                            cluster tips erased.
     --dir, --directory, -d  Erases files and folders in the directory
         optional arguments: --dir=<directory>[,e=excludeMask][,i=includeMask][,delete]
-            excludeMask     A wildcard expression for files and folders to exclude.
-            includeMask     A wildcard expression for files and folders to include.
-                            The include mask is applied before the exclude mask.
-            delete          Deletes the folder at the end of the erasure if specified.
+            excludeMask     A wildcard expression for files and folders to
+                            exclude.
+            includeMask     A wildcard expression for files and folders to
+                            include.
+                            The include mask is applied before the exclude
+                            mask.
+            delete          Deletes the folder at the end of the erasure if
+                            specified.
     file1 ... fileN         The list of files to erase.
 
 parameters for querymethods:
@@ -656,7 +654,24 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			}
 
 			//Send the task out.
-			Program.eraserClient.AddTask(ref task);
+			using (Program.eraserClient = new RemoteExecutorClient())
+			{
+				if (!((RemoteExecutorClient)Program.eraserClient).Connect())
+				{
+					//The client cannot connect to the server. This probably means
+					//that the server process isn't running. Start an instance.
+					Process eraserInstance = Process.Start(
+						Assembly.GetExecutingAssembly().Location);
+					eraserInstance.WaitForInputIdle();
+
+					if (!((RemoteExecutorClient)Program.eraserClient).Connect())
+						throw new Exception("Eraser cannot connect to the running " +
+							"instance for erasures.");
+				}
+
+				Program.eraserClient.Run();
+				Program.eraserClient.AddTask(ref task);
+			}
 		}
 		#endregion
 
