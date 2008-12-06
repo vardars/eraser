@@ -127,12 +127,8 @@ namespace Eraser.Manager
 				IAsyncResult asyncWait = server.BeginWaitForConnection(
 					EndWaitForConnection, server);
 
-				while (!server.IsConnected && !asyncWait.AsyncWaitHandle.WaitOne(15))
-					if (Thread.CurrentThread.ThreadState == ThreadState.AbortRequested)
-						break;
-
 				//Execute the handler if the server was connected.
-				if (server.IsConnected)
+				if (asyncWait.AsyncWaitHandle.WaitOne())
 					ThreadPool.QueueUserWorkItem(ProcessConnection, server);
 			}
 		}
@@ -146,8 +142,7 @@ namespace Eraser.Manager
 		{
 			NamedPipeServerStream server = (NamedPipeServerStream)result.AsyncState;
 			server.WaitForConnection();
-			if (server.IsConnected)
-				server.EndWaitForConnection(result);
+			server.EndWaitForConnection(result);
 		}
 
 		/// <summary>
