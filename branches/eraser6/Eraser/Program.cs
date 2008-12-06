@@ -94,7 +94,7 @@ namespace Eraser
 				//Don't ask for a key to press if the user specified Quiet
 				if (!isQuiet)
 				{
-					Console.Write("\nPress any key to continue . . . ");
+					Console.Write("\nPress enter to continue . . . ");
 					Console.Out.Flush();
 					Console.ReadLine();
 				}
@@ -500,7 +500,7 @@ namespace Eraser
 			}
 
 			private Guid erasureMethod;
-			private Schedule schedule = null;
+			private Schedule schedule = Schedule.RunNow;
 			private List<Task.ErasureTarget> targets = new List<Task.ErasureTarget>();
 		}
 		#endregion
