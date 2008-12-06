@@ -99,6 +99,20 @@ namespace Eraser
 		}
 
 		/// <summary>
+		/// Diplays the given title, message and icon as a system notification area balloon.
+		/// </summary>
+		/// <param name="title">The title of the balloon.</param>
+		/// <param name="message">The message to display.</param>
+		/// <param name="icon">The icon to show.</param>
+		public void ShowNotificationBalloon(string title, string message, ToolTipIcon icon)
+		{
+			notificationIcon.BalloonTipTitle = title;
+			notificationIcon.BalloonTipText = message;
+			notificationIcon.BalloonTipIcon = icon;
+			notificationIcon.ShowBalloonTip(0);
+		}
+
+		/// <summary>
 		/// Changes the active page displayed in the form.
 		/// </summary>
 		/// <param name="page">The new page to change to. No action is done when the

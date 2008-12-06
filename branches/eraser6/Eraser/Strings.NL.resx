@@ -183,6 +183,12 @@
   <data name="Not queued" xml:space="preserve">
     <value>Niet in wachtrij geplaatst</value>
   </data>
+  <data name="New task added" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="A new task ({0})has just been added to the list of tasks." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Running..." xml:space="preserve">
     <value>Wordt uitgevoerd...</value>
   </data>

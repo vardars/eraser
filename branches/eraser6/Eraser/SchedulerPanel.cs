@@ -47,7 +47,7 @@ namespace Eraser
 
 			//Hook the event machinery to our class. Handle the task Added and Removed
 			//events.
-			Program.eraserClient.TaskAdded += DisplayTask;
+			Program.eraserClient.TaskAdded += TaskAdded;
 			Program.eraserClient.TaskDeleted += TaskDeleted;
 		}
 
@@ -109,12 +109,38 @@ namespace Eraser
 				item.Group = scheduler.Groups["recurring"];
 		}
 
+		private void TaskAdded(Task task)
+		{
+			if (InvokeRequired)
+			{
+				Invoke(new Executor.TaskAddedEvent(TaskAdded), new object[] { task });
+				return;
+			}
+
+			//Display a balloon notification if the parent frame has been minimised.
+			MainForm parent = (MainForm)Parent.Parent;
+			if (!parent.Focused || parent.WindowState == FormWindowState.Minimized)
+			{
+				parent.ShowNotificationBalloon(S._("New task added"), S._("A new task ({0})" +
+					"has just been added to the list of tasks.", task.UIText),
+					ToolTipIcon.Info);
+			}
+
+			DisplayTask(task);
+		}
+
 		/// <summary>
 		/// Handles the task deleted event.
 		/// </summary>
 		/// <param name="task">The task being deleted.</param>
 		private void TaskDeleted(Task task)
 		{
+			if (InvokeRequired)
+			{
+				Invoke(new Executor.TaskDeletedEvent(TaskDeleted), new object[] { task });
+				return;
+			}
+
 			foreach (ListViewItem item in scheduler.Items)
 				if (((Task)item.Tag) == task)
 				{
