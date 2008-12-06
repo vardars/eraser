@@ -157,6 +157,10 @@ namespace Eraser.Manager
 						mstream.Write(buffer, 0, lastRead);
 					}
 
+					//Ignore the request if the client disconnected from us.
+					if (!server.IsConnected)
+						continue;
+
 					//Deserialise the header of the request.
 					mstream.Position = 0;
 					request = (RemoteRequest)new BinaryFormatter().Deserialize(new MemoryStream(buffer));
