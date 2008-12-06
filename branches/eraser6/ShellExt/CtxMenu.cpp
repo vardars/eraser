@@ -83,18 +83,13 @@ private:
 };
 
 namespace Eraser {
-	wchar_t* CCtxMenu::MenuTitle = NULL;
-
 	HRESULT CCtxMenu::FinalConstruct()
 	{
 		//Initialise member variables.
 		MenuID = 0;
-		if (!MenuTitle)
-		{
-			std::wstring menuTitle(LoadString(IDS_ERASER));
-			MenuTitle = new wchar_t[menuTitle.length() + 1];
-			wcscpy_s(MenuTitle, menuTitle.length() + 1, menuTitle.c_str());
-		}
+		std::wstring menuTitle(LoadString(IDS_ERASER));
+		MenuTitle = new wchar_t[menuTitle.length() + 1];
+		wcscpy_s(MenuTitle, menuTitle.length() + 1, menuTitle.c_str());
 
 		return S_OK;
 	}

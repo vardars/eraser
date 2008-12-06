@@ -87,8 +87,7 @@ namespace Eraser
 		static HBITMAP CreateDIB(LONG width, LONG height, char** bitmapBits);
 
 	protected:
-		static wchar_t*				MenuTitle;
-
+		wchar_t*					MenuTitle;
 		InvokeReasons				InvokeReason;
 		std::wstring				DragDropDestinationDirectory;
 		std::list<std::wstring>		SelectedFiles;
