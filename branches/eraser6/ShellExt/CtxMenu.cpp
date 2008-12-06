@@ -406,6 +406,7 @@ namespace Eraser {
 			return E_INVALIDARG;
 
 		//Build the command line
+		std::wstring commandAction;
 		std::wstring commandLine;
 		HRESULT result = E_INVALIDARG;
 		switch (VerbMenuIndices[LOWORD(pCmdInfo->lpVerb)])
@@ -413,13 +414,13 @@ namespace Eraser {
 		case ACTION_ERASE:
 			{
 				//Add Task command.
-				commandLine = L"addtask ";
+				commandAction = L"addtask";
 
 				//See the invocation context: if it is executed from the recycle bin
 				//then the list of selected files will be empty.
 				if (InvokeReason == INVOKEREASON_RECYCLEBIN)
 				{
-					commandLine += L"-r";
+					commandLine = L"-r";
 				}
 				else
 				{
@@ -448,13 +449,13 @@ namespace Eraser {
 		case ACTION_ERASE_UNUSED_SPACE:
 			{
 				//We want to add a new task
-				commandLine = L"addtask ";
+				commandAction = L"addtask";
 
 				//Add every item onto the command line
 				for (std::list<std::wstring>::const_iterator i = SelectedFiles.begin();
 					i != SelectedFiles.end(); ++i)
 				{
-					commandLine += L"\"-u=" + *i + ",clusterTips\" ";
+					commandLine += L"\"-u=" + *i + L",clusterTips\" ";
 				}
 				
 				break;
@@ -502,9 +503,12 @@ namespace Eraser {
 			PROCESS_INFORMATION processInfo;
 			ZeroMemory(&processInfo, sizeof(processInfo));
 			
-			std::wstring finalCommandLine(L"\"" + eraserPath + L"\" " + commandLine);
-			wchar_t* buffer = new wchar_t[finalCommandLine.length() + 1];
-			wcscpy_s(buffer, finalCommandLine.length() + 1, finalCommandLine.c_str());
+			std::wostringstream finalCmdLine;
+			finalCmdLine << L"\"" << eraserPath << L"\" \"" << commandAction
+			             << L"\" -q " << commandLine;
+			std::wstring cmdLine(finalCmdLine.str());
+			wchar_t* buffer = new wchar_t[cmdLine.length() + 1];
+			wcscpy_s(buffer, cmdLine.length() + 1, cmdLine.c_str());
 
 			if (!CreateProcess(NULL, buffer, NULL, NULL, false, CREATE_NO_WINDOW,
 				NULL, NULL, &startupInfo, &processInfo))
