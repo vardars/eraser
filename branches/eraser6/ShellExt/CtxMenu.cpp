@@ -366,10 +366,17 @@ namespace Eraser {
 		switch (VerbMenuIndices[idCmd])
 		{
 		case ACTION_ERASE:
+			commandString = LoadString(IDS_HELPSTRING_ERASE);
+			break;
 		case ACTION_ERASE_ON_RESTART:
+			commandString = LoadString(IDS_HELPSTRING_ERASEONRESTART);
+			break;
 		case ACTION_ERASE_UNUSED_SPACE:
+			commandString = LoadString(IDS_HELPSTRING_ERASEUNUSEDSPACE);
+			break;
 		case ACTION_SECURE_MOVE:
-
+			commandString = LoadString(IDS_HELPSTRING_SECUREMOVE);
+			break;
 		default:
 			//We don't know what action this is: return E_INVALIDARG.
 			return E_INVALIDARG;

@@ -27,6 +27,9 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
 #include "afxres.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -133,8 +136,12 @@ END
 STRINGTABLE 
 BEGIN
     IDS_HELPSTRING_ERASE    "Erases the selected files or folders"
+    IDS_HELPSTRING_ERASEONRESTART 
+                            "Erases the selected files or folders when the computer is next restarted"
     IDS_HELPSTRING_ERASEUNUSEDSPACE 
                             "Erases the unused space of the selected drives"
+    IDS_HELPSTRING_SECUREMOVE 
+                            "Securely moves the selected files or folders to a new folder"
 END
 
 #endif    // English (U.S.) resources
