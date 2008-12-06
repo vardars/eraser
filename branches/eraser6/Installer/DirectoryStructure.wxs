@@ -42,11 +42,11 @@
 				<Component Id="EraserShell" Guid="4C446C7E-BCBC-4561-B8F6-D406516D356F">
 					<?if $(sys.BUILDARCH) = "x64"?>
 						<File Id="EraserShellDll" Name="Eraser.Shell.dll"
-							Source="..\Bin\Release\x64\Eraser.Shell.dll"
+							Source="..\Bin\Release\Eraser.Shell (x64).dll"
 							ProcessorArchitecture="x64" />
 					<?else?>
 						<File Id="EraserShellDll" Name="Eraser.Shell.dll"
-							Source="..\Bin\Release\Win32\Eraser.Shell.dll"
+							Source="..\Bin\Release\Win32\Eraser.Shell (Win32).dll"
 							ProcessorArchitecture="x86" />
 					<?endif?>
 
