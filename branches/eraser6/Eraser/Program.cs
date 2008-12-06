@@ -128,7 +128,7 @@ namespace Eraser
 			Application.SafeTopLevelCaptionFormat = S._("Eraser");
 
 			using (ManagerLibrary library = new ManagerLibrary(new Settings()))
-			using (eraserClient = new DirectExecutor())
+			using (eraserClient = new RemoteExecutorServer())
 			{
 				//Set our UI language
 				EraserSettings settings = new EraserSettings();
