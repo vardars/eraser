@@ -186,7 +186,7 @@
   <data name="New task added" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="A new task ({0})has just been added to the list of tasks." xml:space="preserve">
+  <data name="{0} has just been added to the list of tasks." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Running..." xml:space="preserve">

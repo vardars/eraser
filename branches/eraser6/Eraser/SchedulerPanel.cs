@@ -121,7 +121,7 @@ namespace Eraser
 			MainForm parent = (MainForm)Parent.Parent;
 			if (!parent.Focused || parent.WindowState == FormWindowState.Minimized)
 			{
-				parent.ShowNotificationBalloon(S._("New task added"), S._("A new task ({0})" +
+				parent.ShowNotificationBalloon(S._("New task added"), S._("{0} " +
 					"has just been added to the list of tasks.", task.UIText),
 					ToolTipIcon.Info);
 			}
