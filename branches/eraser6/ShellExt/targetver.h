@@ -1,8 +1,8 @@
 /* 
  * $Id$
  * Copyright 2008 The Eraser Project
- * Original Author: Kasra Nassiri <cjax@users.sourceforge.net>
- * Modified By: Joel Low <lowjoel@users.sourceforge.net>
+ * Original Author: Joel Low <lowjoel@users.sourceforge.net>
+ * Modified By: 
  * 
  * This file is part of Eraser.
  * 
@@ -21,29 +21,17 @@
 
 #pragma once
 
-#include "targetver.h"
-
-#define _ATL_APARTMENT_THREADED
-#define _ATL_NO_AUTOMATIC_NAMESPACE
-#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// some CString constructors will be explicit
-
-#include <afxwin.h>
-#ifndef _AFX_NO_OLE_SUPPORT
-	#include <afxdisp.h>        // MFC Automation classes
+//Eraser targets XP and above.
+#ifndef WINVER
+	#define WINVER 0x0501
+#endif
+#ifndef _WIN32_WINNT
+	#define _WIN32_WINNT 0x0501
+#endif
+#ifndef _WIN32_IE
+	#define _WIN32_IE 0x0700
 #endif
 
-#include <comsvcs.h>
-
-#include "resource.h"
-#include <atlbase.h>
-#include <atlcom.h>
-#include <atlctl.h>
-using namespace ATL;
-
-#include <list>
-#include <vector>
-#include <string>
-#include <sstream>
-
-#undef max
-#undef min
+#ifndef STRICT
+	#define STRICT
+#endif
