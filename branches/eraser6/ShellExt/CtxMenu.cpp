@@ -83,14 +83,31 @@ private:
 };
 
 namespace Eraser {
-	const wchar_t* CCtxMenu::MenuTitle = L"Eraser";
+	wchar_t* CCtxMenu::MenuTitle = NULL;
+
+	HRESULT CCtxMenu::FinalConstruct()
+	{
+		//Initialise member variables.
+		MenuID = 0;
+		if (!MenuTitle)
+		{
+			std::wstring menuTitle(LoadString(IDS_ERASER));
+			MenuTitle = new wchar_t[menuTitle.length() + 1];
+			wcscpy_s(MenuTitle, menuTitle.length() + 1, menuTitle.c_str());
+		}
+
+		return S_OK;
+	}
+
+	HRESULT CCtxMenu::FinalRelease()
+	{
+		delete[] MenuTitle;
+		return S_OK;
+	}
 
 	HRESULT CCtxMenu::Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJECT pDataObj,
 	                             HKEY hProgID)
 	{
-		//Initialise member variables.
-		MenuID = 0;
-		
 		//Determine where the shell extension was invoked from.
 		if (GetHKeyPath(hProgID) == L"{645FF040-5081-101B-9F08-00AA002F954E}")
 		{
@@ -464,11 +481,34 @@ namespace Eraser {
 		default:
 			if (!(pCmdInfo->fMask & CMIC_MASK_FLAG_NO_UI))
 			{
-				std::wstringstream strm;
-				strm << L"An invalid command with the ID "
-					<< VerbMenuIndices[LOWORD(pCmdInfo->lpVerb)] << L" was requested.\n\n"
-					<< L"Eraser was unable to process the request.";
-				MessageBox(pCmdInfo->hwnd, strm.str().c_str(), L"Eraser Shell Extension", MB_OK | MB_ICONERROR);
+				std::wstring formatStrSrc(LoadString(IDS_ERROR_UNKNOWNACTION));
+				size_t bufferSize = formatStrSrc.length() + 1;
+				wchar_t* formatStr = new wchar_t[bufferSize];
+				wcscpy_s(formatStr, bufferSize, formatStrSrc.c_str());
+
+				wchar_t* buffer = NULL;
+				while (buffer == NULL)
+				{
+					buffer = new wchar_t[bufferSize *= 2];
+					int result = swprintf_s(buffer, bufferSize, formatStr,
+						VerbMenuIndices[LOWORD(pCmdInfo->lpVerb)]);
+
+					if (result == -1)
+					{
+						delete[] buffer;
+						buffer = NULL;
+					}
+					else if (result > 0 && static_cast<unsigned>(result) < bufferSize)
+					{
+						break;
+					}
+				}
+				
+				if (buffer != NULL)
+				{
+					MessageBox(pCmdInfo->hwnd, buffer, L"Eraser Shell Extension", MB_OK | MB_ICONERROR);
+					delete[] buffer;
+				}
 			}
 		}
 
@@ -515,9 +555,7 @@ namespace Eraser {
 			{
 				if (!(pCmdInfo->fMask & CMIC_MASK_FLAG_NO_UI))
 				{
-					MessageBox(pCmdInfo->hwnd, L"The Eraser application could not be started. "
-						L"Ensure that your installation of Eraser is not corrupted: "
-						L"try running the Eraser Setup again to Repair the install.",
+					MessageBox(pCmdInfo->hwnd, LoadString(IDS_ERROR_CANNOTFINDERASER).c_str(),
 						L"Eraser Shell Extension", MB_OK | MB_ICONERROR);
 				}
 

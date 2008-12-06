@@ -87,13 +87,13 @@ namespace Eraser
 		static HBITMAP CreateDIB(LONG width, LONG height, char** bitmapBits);
 
 	protected:
-		static const wchar_t*		MenuTitle;
+		static wchar_t*				MenuTitle;
 
 		InvokeReasons				InvokeReason;
-		UINT						MenuID;
 		std::wstring				DragDropDestinationDirectory;
 		std::list<std::wstring>		SelectedFiles;
 		std::vector<Actions>		VerbMenuIndices;
+		UINT						MenuID;
 
 	public:
 		DECLARE_REGISTRY_RESOURCEID(IDR_ERASERSHELLEXT)
@@ -106,10 +106,8 @@ namespace Eraser
 		END_COM_MAP()
 
 		DECLARE_PROTECT_FINAL_CONSTRUCT()
-		HRESULT FinalConstruct()
-		{
-			return S_OK;
-		}
+		HRESULT FinalConstruct();
+		HRESULT FinalRelease();
 	};
 
 	OBJECT_ENTRY_AUTO(__uuidof(CtxMenu), CCtxMenu)
