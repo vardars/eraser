@@ -66,7 +66,7 @@ END
 
 3 TEXTINCLUDE 
 BEGIN
-    "1 TYPELIB ""EraserShellExt.tlb""\r\n"
+    "1 TYPELIB ""ShellExt.tlb""\r\n"
     "\0"
 END
 
@@ -127,10 +127,15 @@ IDR_ERASERSHELLEXT      REGISTRY                "ShellExt.rgs"
 STRINGTABLE 
 BEGIN
     IDS_PROJNAME            "EraserShellExt"
-    IDS_ACTION_ERASE        "&Erase"
-    IDS_ACTION_ERASERESTART "Erase on &Restart"
-    IDS_ACTION_ERASEUNUSEDSPACE "Erase &Unused Space"
-    IDS_ACTION_SECUREMOVE   "Secure &Move"
+    IDS_ERASER              "Eraser"
+    IDS_ERASERSHELLEXT      "Eraser Shell Extension"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ERROR_UNKNOWNACTION "An invalid command with the ID %d was requested.\n\nEraser is unable to process the request."
+    IDS_ERROR_CANNOTFINDERASER 
+                            "The Eraser application could not be started. Ensure that your installation of Eraser is not corrupted: try running the Eraser Setup again to Repair the install."
 END
 
 STRINGTABLE 
@@ -142,6 +147,14 @@ BEGIN
                             "Erases the unused space of the selected drives."
     IDS_HELPSTRING_SECUREMOVE 
                             "Securely moves the selected items to a new location."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ACTION_ERASE        "&Erase"
+    IDS_ACTION_ERASERESTART "Erase on &Restart"
+    IDS_ACTION_ERASEUNUSEDSPACE "Erase &Unused Space"
+    IDS_ACTION_SECUREMOVE   "Secure &Move"
 END
 
 #endif    // English (U.S.) resources
