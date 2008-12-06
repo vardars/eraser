@@ -459,6 +459,9 @@ namespace Eraser {
 		HRESULT result = E_INVALIDARG;
 		switch (VerbMenuIndices[LOWORD(pCmdInfo->lpVerb)])
 		{
+		case ACTION_ERASE_ON_RESTART:
+			commandLine += L"-s=restart ";
+
 		case ACTION_ERASE:
 			{
 				//Add Task command.
@@ -468,7 +471,7 @@ namespace Eraser {
 				//then the list of selected files will be empty.
 				if (InvokeReason == INVOKEREASON_RECYCLEBIN)
 				{
-					commandLine = L"-r";
+					commandLine += L"-r";
 				}
 				else
 				{
