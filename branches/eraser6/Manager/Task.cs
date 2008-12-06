@@ -429,9 +429,9 @@ namespace Eraser.Manager
 				set { deleteIfEmpty = value; }
 			}
 
-			private string includeMask;
-			private string excludeMask;
-			private bool deleteIfEmpty;
+			private string includeMask = string.Empty;
+			private string excludeMask = string.Empty;
+			private bool deleteIfEmpty = true;
 		}
 
 		[Serializable]
