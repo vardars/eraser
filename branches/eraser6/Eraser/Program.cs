@@ -393,7 +393,7 @@ namespace Eraser
 						GetSubParameters(param.Substring(equalPos + 1));
 					foreach (KeyValuePair<string, string> kvp in subParams)
 						if (kvp.Value == null && target.Drive == null)
-							target.Drive = kvp.Key;
+							target.Drive = Path.GetFullPath(kvp.Key);
 						else if (kvp.Key == "clusterTips")
 							target.EraseClusterTips = true;
 						else
@@ -414,7 +414,7 @@ namespace Eraser
 						GetSubParameters(param.Substring(equalPos + 1));
 					foreach (KeyValuePair<string, string> kvp in subParams)
 						if (kvp.Value == null && target.Path == null)
-							target.Path = kvp.Key;
+							target.Path = Path.GetFullPath(kvp.Key);
 						else if (kvp.Key == "excludeMask")
 						{
 							if (kvp.Value == null)
@@ -441,7 +441,7 @@ namespace Eraser
 				{
 					//It's just a file!
 					Task.File target = new Task.File();
-					target.Path = param;
+					target.Path = Path.GetFullPath(param);
 					targets.Add(target);
 				}
 
