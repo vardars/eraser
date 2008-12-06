@@ -319,7 +319,7 @@ namespace Eraser.Manager
 		{
 			try
 			{
-				client.Connect(250);
+				client.Connect(3000);
 			}
 			catch (TimeoutException)
 			{
@@ -332,7 +332,6 @@ namespace Eraser.Manager
 		{
 			//Connect to the server
 			object result = null;
-			client.Connect(5000);
 
 			using (MemoryStream mStream = new MemoryStream())
 			{
