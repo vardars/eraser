@@ -133,7 +133,7 @@ namespace Eraser.Manager
 				if (!server.IsConnected)
 				{
 					IAsyncResult asyncWait = server.BeginWaitForConnection(
-						server.EndWaitForConnection, null);
+						EndWaitForConnection, null);
 					while (!server.IsConnected && !asyncWait.AsyncWaitHandle.WaitOne(15))
 						if (Thread.CurrentThread.ThreadState == ThreadState.AbortRequested)
 							break;
@@ -163,7 +163,16 @@ namespace Eraser.Manager
 
 					//Deserialise the header of the request.
 					mstream.Position = 0;
-					request = (RemoteRequest)new BinaryFormatter().Deserialize(new MemoryStream(buffer));
+					try
+					{
+						request = (RemoteRequest)new BinaryFormatter().Deserialize(
+							new MemoryStream(buffer));
+					}
+					catch (SerializationException)
+					{
+						//We got a unserialisation issue but we can't do anything about it.
+						continue;
+					}
 				}
 
 				#region Deserialise
@@ -289,9 +298,21 @@ namespace Eraser.Manager
 					server.Write(buffer, 0, sizeof(int));
 				}
 
-				// we are done, disconnect
+				//We are done, disconnect
 				server.Disconnect();
 			}
+		}
+
+		/// <summary>
+		/// Waits for a connection from a client.
+		/// </summary>
+		/// <param name="result">The AsyncResult object associated with this asynchronous
+		/// operation.</param>
+		private void EndWaitForConnection(IAsyncResult result)
+		{
+			server.WaitForConnection();
+			if (server.IsConnected)
+				server.EndWaitForConnection(result);
 		}
 	}
 
