@@ -83,13 +83,13 @@ private:
 };
 
 namespace Eraser {
-	const wchar_t* CCtxMenu::m_szMenuTitle = L"Eraser";
+	const wchar_t* CCtxMenu::MenuTitle = L"Eraser";
 
 	HRESULT CCtxMenu::Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJECT pDataObj,
 	                             HKEY hProgID)
 	{
 		//Initialise member variables.
-		m_itemID = 0;
+		MenuID = 0;
 		
 		//Determine where the shell extension was invoked from.
 		if (GetHKeyPath(hProgID) == L"{645FF040-5081-101B-9F08-00AA002F954E}")
@@ -112,7 +112,7 @@ namespace Eraser {
 			if (!SHGetPathFromIDList(pidlFolder, dropTargetPath))
 				return E_FAIL;
 
-			m_szDestinationDirectory = dropTargetPath;
+			DragDropDestinationDirectory = dropTargetPath;
 		}
 
 		//Okay, everything else is a simple context menu for a set of selected files/
@@ -153,7 +153,7 @@ namespace Eraser {
 				continue;
 			}
 
-			m_szSelectedFiles.push_back(std::wstring(buffer, charsWritten));
+			SelectedFiles.push_back(std::wstring(buffer, charsWritten));
 		}
 
 		//Clean up.
@@ -198,7 +198,7 @@ namespace Eraser {
 			if (uID - uidFirstCmd > 0)
 			{
 				std::auto_ptr<MENUITEMINFO> separator(GetSeparator());
-				InsertMenuItem(hSubmenu, 0, FALSE, separator);
+				InsertMenuItem(hSubmenu, 0, FALSE, separator.get());
 			}
 
 			InsertMenu    (hSubmenu, ACTION_SECURE_MOVE, MF_BYPOSITION, uID++,			_T("Secure &Move"));
@@ -211,7 +211,7 @@ namespace Eraser {
 			mii.wID = uID++;
 			mii.fMask = MIIM_SUBMENU | MIIM_STRING | MIIM_ID;
 			mii.hSubMenu = hSubmenu;
-			mii.dwTypeData = const_cast<wchar_t*>(m_szMenuTitle);
+			mii.dwTypeData = const_cast<wchar_t*>(MenuTitle);
 
 			//Set the bitmap for the registered item. Vista machines will be set using a DIB,
 			//older machines will be ownerdrawn.
@@ -225,14 +225,14 @@ namespace Eraser {
 				mii.fMask |= MIIM_CHECKMARKS;
 				mii.hbmpUnchecked = GetMenuBitmap();
 			}
-			else
+			else if (InvokeReason != INVOKEREASON_DRAGDROP)
 			{
 				mii.fMask |= MIIM_FTYPE;
 				mii.fType = MFT_OWNERDRAW;
 			}
 
-			m_itemID = uMenuIndex++;
-			InsertMenuItem(hmenu, m_itemID, TRUE, &mii);
+			MenuID = uMenuIndex++;
+			InsertMenuItem(hmenu, MenuID, TRUE, &mii);
 		}
 
 		return MAKE_HRESULT(SEVERITY_SUCCESS, FACILITY_NULL, uID - uidFirstCmd);
@@ -253,7 +253,7 @@ namespace Eraser {
 		case WM_MEASUREITEM:
 			{
 				MEASUREITEMSTRUCT* mis = reinterpret_cast<MEASUREITEMSTRUCT*>(lParam);
-				if (mis->CtlID == m_itemID)
+				if (mis->CtlID == MenuID)
 					handleResult = OnMeasureItem(mis->itemWidth, mis->itemHeight);
 				else
 					handleResult = false;
@@ -263,7 +263,7 @@ namespace Eraser {
 		case WM_DRAWITEM:
 			{
 				DRAWITEMSTRUCT* dis = reinterpret_cast<DRAWITEMSTRUCT*>(lParam);
-				if (dis->CtlID == m_itemID)
+				if (dis->CtlID == MenuID)
 					handleResult = OnDrawItem(dis->hDC, dis->rcItem, dis->itemAction, dis->itemState);
 				else
 					handleResult = false;
@@ -286,7 +286,7 @@ namespace Eraser {
 		Handle<HFONT> font = CreateFontIndirect(&logFont);
 		SelectObject(screenDC, font);
 		SIZE textSize;
-		if (!GetTextExtentPoint32(screenDC, m_szMenuTitle, static_cast<DWORD>(wcslen(m_szMenuTitle)), &textSize))
+		if (!GetTextExtentPoint32(screenDC, MenuTitle, static_cast<DWORD>(wcslen(MenuTitle)), &textSize))
 			return false;
 
 		itemWidth = textSize.cx;
@@ -333,7 +333,7 @@ namespace Eraser {
 			return false;
 
 		SIZE textSize;
-		if (!GetTextExtentPoint32(hdc, m_szMenuTitle, static_cast<DWORD>(wcslen(m_szMenuTitle)), &textSize))
+		if (!GetTextExtentPoint32(hdc, MenuTitle, static_cast<DWORD>(wcslen(MenuTitle)), &textSize))
 			return false;
 
 		COLORREF oldColour = SetTextColor(hdc, (state & ODS_SELECTED) ?
@@ -341,7 +341,7 @@ namespace Eraser {
 		UINT flags = DST_PREFIXTEXT;
 		if (state & ODS_NOACCEL)
 			flags |= DSS_HIDEPREFIX;
-		::DrawState(hdc, NULL, NULL, reinterpret_cast<LPARAM>(m_szMenuTitle), wcslen(m_szMenuTitle),
+		::DrawState(hdc, NULL, NULL, reinterpret_cast<LPARAM>(MenuTitle), wcslen(MenuTitle),
 			rect.left, rect.top + (rect.bottom - rect.top - textSize.cy) / 2, textSize.cx, textSize.cy, flags);
 		SetTextColor(hdc, oldColour);
 		return true;
@@ -430,8 +430,8 @@ namespace Eraser {
 				commandLine = L"addtask ";
 
 				//Add every item selected onto the command line.
-				for (string_list::const_iterator i = m_szSelectedFiles.begin();
-					i != m_szSelectedFiles.end(); ++i)
+				for (string_list::const_iterator i = SelectedFiles.begin();
+					i != SelectedFiles.end(); ++i)
 				{
 					//Check if the current item is a file or folder.
 					std::wstring item(*i);
@@ -563,8 +563,8 @@ namespace Eraser {
 		}
 
 		//Remove actions that don't apply to the current invocation reason.
-		for (std::list<std::wstring>::const_iterator i = m_szSelectedFiles.begin();
-			i != m_szSelectedFiles.end(); ++i)
+		for (std::list<std::wstring>::const_iterator i = SelectedFiles.begin();
+			i != SelectedFiles.end(); ++i)
 		{
 			//Remove trailing slashes if they are directories.
 			std::wstring item(*i);

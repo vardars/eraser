@@ -89,14 +89,13 @@ namespace Eraser
 		static HBITMAP CreateDIB(LONG width, LONG height, char** bitmapBits);
 
 	protected:
-		InvokeReasons InvokeReason;
+		static const wchar_t*		MenuTitle;
 
-		UINT		m_itemID;
-		string_list	m_szSelectedFiles;
-		string_type	m_szDestinationDirectory;
-		std::vector<Actions> VerbMenuIndices;
-
-		static const wchar_t* m_szMenuTitle;
+		InvokeReasons				InvokeReason;
+		UINT						MenuID;
+		std::wstring				DragDropDestinationDirectory;
+		std::list<std::wstring>		SelectedFiles;
+		std::vector<Actions>		VerbMenuIndices;
 
 	public:
 		DECLARE_REGISTRY_RESOURCEID(IDR_ERASERSHELLEXT)
