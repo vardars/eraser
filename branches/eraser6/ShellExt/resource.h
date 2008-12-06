@@ -21,10 +21,16 @@
 
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by Resource.rc
+// Used by ShellExt.rc
 //
 #define IDS_PROJNAME                    100
 #define IDR_ERASERSHELLEXT              101
+#define IDS_ACTION_ERASE                101
+#define IDS_ACTION_ERASERESTART         102
+#define IDS_ACTION_ERASEUNUSEDSPACE     103
+#define IDS_ACTION_SECUREMOVE           104
+#define IDS_HELPSTRING_ERASE            201
+#define IDS_HELPSTRING_ERASEUNUSEDSPACE 203
 
 // Next default values for new objects
 // 
