@@ -415,53 +415,51 @@ namespace Eraser {
 				//Add Task command.
 				commandLine = L"addtask ";
 
-				//Add every item selected onto the command line.
-				for (std::list<std::wstring>::const_iterator i = SelectedFiles.begin();
-					i != SelectedFiles.end(); ++i)
+				//See the invocation context: if it is executed from the recycle bin
+				//then the list of selected files will be empty.
+				if (InvokeReason == INVOKEREASON_RECYCLEBIN)
 				{
-					//Check if the current item is a file or folder.
-					std::wstring item(*i);
-					if (item.length() > 3 && item[item.length() - 1] == '\\')
-						item.erase(item.end() - 1);
-					DWORD attributes = GetFileAttributes(item.c_str());
+					commandLine += L"-r";
+				}
+				else
+				{
+					//Okay, we were called from an item right-click; iterate over every
+					//selected file
+					for (std::list<std::wstring>::const_iterator i = SelectedFiles.begin();
+						i != SelectedFiles.end(); ++i)
+					{
+						//Check if the current item is a file or folder.
+						std::wstring item(*i);
+						if (item.length() > 3 && item[item.length() - 1] == '\\')
+							item.erase(item.end() - 1);
+						DWORD attributes = GetFileAttributes(item.c_str());
 
-					//Add the correct command line for the file type.
-					if (attributes & FILE_ATTRIBUTE_DIRECTORY)
-						commandLine += L"\"-d=" + item + L"\" ";
-					else
-						commandLine += L"\"" + item + L"\" ";
+						//Add the correct command line for the file type.
+						if (attributes & FILE_ATTRIBUTE_DIRECTORY)
+							commandLine += L"\"-d=" + item + L"\" ";
+						else
+							commandLine += L"\"" + item + L"\" ";
+					}
 				}
 
 				break;
 			}
-#if 0
-		case CERASER_SECURE_MOVE:
+
+		case ACTION_ERASE_UNUSED_SPACE:
 			{
-				result = S_OK;
-				// we need some user interaction, thus we will have a windows form
-				// has to be native, so i guess a bit of work
+				//We want to add a new task
+				commandLine = L"addtask ";
+
+				//Add every item onto the command line
+				for (std::list<std::wstring>::const_iterator i = SelectedFiles.begin();
+					i != SelectedFiles.end(); ++i)
+				{
+					commandLine += L"\"-u=" + *i + ",clusterTips\" ";
+				}
+				
 				break;
 			}
-			// NOT IMPLEMENTED METHODS
-			case ACTION_ERASE_ON_RESTART:
-			{
-				MessageBox (pCmdInfo->hwnd, szMsg, _T("Eraser v6 - Shell Extention Query"), MB_ICONINFORMATION );
-				command += S("--restart ") + objects;
-				result = system(command.c_str());
-				break;
-			}
-			case CERASER_SCHEDULE:
-			{
-				command += S("--schedule ") + objects;
-				result = system(command.c_str());
-				break;
-			}
-		case CERASER_CONSOLE:
-			{
-				// interactive eraser console
-				break;
-			}
-#endif
+
 		default:
 			if (!(pCmdInfo->fMask & CMIC_MASK_FLAG_NO_UI))
 			{
