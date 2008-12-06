@@ -82,6 +82,11 @@ private:
 	handleType Object;
 };
 
+Handle<HKEY>::~Handle()
+{
+	CloseHandle(Object);
+}
+
 namespace Eraser {
 	HRESULT CCtxMenu::FinalConstruct()
 	{
@@ -90,6 +95,37 @@ namespace Eraser {
 		std::wstring menuTitle(LoadString(IDS_ERASER));
 		MenuTitle = new wchar_t[menuTitle.length() + 1];
 		wcscpy_s(MenuTitle, menuTitle.length() + 1, menuTitle.c_str());
+
+		//Check if the shell extension has been disabled.
+		Handle<HKEY> eraserKey(NULL);
+		LONG openKeyResult = RegOpenKeyEx(HKEY_CURRENT_USER,
+			L"Software\\Eraser\\Eraser 6\\3460478d-ed1b-4ecc-96c9-2ca0e8500557\\", 0,
+			KEY_READ, &static_cast<HKEY&>(eraserKey));
+
+		switch (openKeyResult)
+		{
+		case ERROR_FILE_NOT_FOUND:
+			//No settings defined: we default to enabling the shell extension.
+			return S_OK;
+
+		case ERROR_SUCCESS:
+			break;
+			
+		default:
+			return E_FAIL;
+		}
+
+		//Check the value of the IntegrateWithShell value.
+		DWORD valueType;		
+		BYTE valueBuffer[512];
+		DWORD valueBufferSize = sizeof(valueBuffer);
+		DWORD error = RegQueryValueEx(eraserKey, L"IntegrateWithShell", NULL, &valueType,
+			valueBuffer, &valueBufferSize);
+		if (error == ERROR_SUCCESS)
+		{
+			if (!*reinterpret_cast<char*>(valueBuffer + 51))
+				return E_FAIL;
+		}
 
 		return S_OK;
 	}

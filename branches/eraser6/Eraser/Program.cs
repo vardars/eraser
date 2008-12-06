@@ -802,6 +802,22 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		}
 
 		/// <summary>
+		/// Gets or sets whether the Shell Extension should be loaded into Explorer.
+		/// </summary>
+		public bool IntegrateWithShell
+		{
+			get
+			{
+				return settings["IntegrateWithShell"] == null ?
+					true : (bool)settings["IntegrateWithShell"];
+			}
+			set
+			{
+				settings["IntegrateWithShell"] = value;
+			}
+		}
+
+		/// <summary>
 		/// Gets or sets a value on whether the main frame should be minimised to the
 		/// system notification area.
 		/// </summary>

@@ -179,6 +179,7 @@ namespace Eraser
 			foreach (string path in ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles)
 				plausibleDeniabilityFiles.Items.Add(path);
 
+			uiContextMenu.Checked = settings.IntegrateWithShell;
 			lockedAllow.Checked =
 				ManagerLibrary.Instance.Settings.EraseLockedFilesOnRestart;
 			lockedConfirm.Checked =
@@ -408,6 +409,8 @@ namespace Eraser
 					"Eraser is restarted."), S._("Eraser"), MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 			}
+			settings.IntegrateWithShell = uiContextMenu.Checked;
+
 			managerSettings.DefaultFileErasureMethod =
 				((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
 			managerSettings.DefaultUnusedSpaceErasureMethod =
