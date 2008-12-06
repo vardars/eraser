@@ -355,7 +355,30 @@ namespace Eraser
 					if (equalPos == -1)
 						throw new ArgumentException("--method must be specified with an Erasure " +
 							"method GUID.");
-					ErasureMethod = new Guid(param.Substring(equalPos + 1));
+
+					List<KeyValuePair<string, string>> subParams =
+						GetSubParameters(param.Substring(equalPos + 1));
+					ErasureMethod = new Guid(subParams[0].Key);
+				}
+				else if (IsParam(param, "schedule", "s"))
+				{
+					if (equalPos == -1)
+						throw new ArgumentException("--schedule must be specified with a Schedule " +
+							"type.");
+
+					List<KeyValuePair<string, string>> subParams =
+						GetSubParameters(param.Substring(equalPos + 1));
+					switch (subParams[0].Key)
+					{
+						case "now":
+							Schedule = Schedule.RunNow;
+							break;
+						case "restart":
+							schedule = Schedule.RunOnRestart;
+							break;
+						default:
+							throw new ArgumentException("Unknown schedule type: " + subParams[0].Key);
+					}
 				}
 				else if (IsParam(param, "recycled", "r"))
 				{
@@ -447,6 +470,21 @@ namespace Eraser
 			}
 
 			/// <summary>
+			/// The schedule for the current set of targets.
+			/// </summary>
+			public Schedule Schedule
+			{
+				get
+				{
+					return schedule;
+				}
+				set
+				{
+					schedule = value;
+				}
+			}
+
+			/// <summary>
 			/// The list of targets which was specified on the command line.
 			/// </summary>
 			public List<Task.ErasureTarget> Targets
@@ -462,6 +500,7 @@ namespace Eraser
 			}
 
 			private Guid erasureMethod;
+			private Schedule schedule = null;
 			private List<Task.ErasureTarget> targets = new List<Task.ErasureTarget>();
 		}
 		#endregion
@@ -652,6 +691,10 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 				target.Method = method;
 				task.Targets.Add(target);
 			}
+
+			//Check the number of tasks in the task.
+			if (task.Targets.Count == 0)
+				throw new ArgumentException("Tasks must contain at least one erasure target.");
 
 			//Send the task out.
 			using (Program.eraserClient = new RemoteExecutorClient())
