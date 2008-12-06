@@ -696,6 +696,9 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			if (task.Targets.Count == 0)
 				throw new ArgumentException("Tasks must contain at least one erasure target.");
 
+			//Set the schedule for the task.
+			task.Schedule = arguments.Schedule;
+
 			//Send the task out.
 			using (Program.eraserClient = new RemoteExecutorClient())
 			{
