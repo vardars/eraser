@@ -91,6 +91,10 @@ namespace Eraser.Manager
 					ScheduleTask(task);
 				}
 			}
+
+			//Call all the event handlers who registered to be notified of tasks
+			//being added.
+			OnTaskAdded(task);
 		}
 
 		public override bool DeleteTask(uint taskId)
@@ -100,6 +104,7 @@ namespace Eraser.Manager
 				if (!tasks.ContainsKey(taskId))
 					return false;
 
+				Task task = tasks[taskId];
 				lock (unusedIdsLock)
 					unusedIds.Add(taskId);
 				tasks.Remove(taskId);
@@ -109,6 +114,9 @@ namespace Eraser.Manager
 						scheduledTasks.RemoveAt(i);
 					else
 						++i;
+
+				//Call all event handlers registered to be notified of task deletions.
+				OnTaskDeleted(task);
 			}
 
 			return true;

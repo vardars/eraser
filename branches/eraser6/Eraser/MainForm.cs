@@ -223,7 +223,10 @@ namespace Eraser
 			using (TaskPropertiesForm form = new TaskPropertiesForm())
 			{
 				if (form.ShowDialog() == DialogResult.OK)
-					SchedulerPage.AddTask(form.Task);
+				{
+					Task task = form.Task;
+					Program.eraserClient.AddTask(ref task);
+				}
 			}
 		}
 

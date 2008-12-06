@@ -89,6 +89,10 @@ namespace Eraser
 						Process eraserInstance = Process.Start(
 							Assembly.GetExecutingAssembly().Location);
 						eraserInstance.WaitForInputIdle();
+
+						if (!((RemoteExecutorClient)Program.eraserClient).Connect())
+							throw new Exception("Eraser cannot connect to the running " +
+								"instance for erasures.");
 					}
 
 					eraserClient.Run();

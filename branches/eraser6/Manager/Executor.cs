@@ -58,7 +58,7 @@ namespace Eraser.Manager
 
 		/// <summary>
 		/// Replaces the current task in the executor with the new task, loading
-		/// new parameters. This maintains the taks ID.
+		/// new parameters. This maintains the task ID.
 		/// </summary>
 		/// <param name="task">The new task details.</param>
 		public abstract void ReplaceTask(Task task);
@@ -115,6 +115,48 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="stream">The stream to save to.</param>
 		public abstract void LoadTaskList(Stream stream);
+
+		/// <summary>
+		/// The prototype of functions handing the Task Added event.
+		/// </summary>
+		/// <param name="task">The task which has been added</param>
+		public delegate void TaskAddedEvent(Task task);
+
+		/// <summary>
+		/// The task added event object.
+		/// </summary>
+		public event TaskAddedEvent TaskAdded;
+
+		/// <summary>
+		/// Helper function for the task added event.
+		/// </summary>
+		/// <param name="task">The task that has just been added</param>
+		protected void OnTaskAdded(Task task)
+		{
+			if (TaskAdded != null)
+				TaskAdded(task);
+		}
+
+		/// <summary>
+		/// The prototype of functions handing the Task Deleted event.
+		/// </summary>
+		/// <param name="task">The task which has been deleted</param>
+		public delegate void TaskDeletedEvent(Task task);
+
+		/// <summary>
+		/// The task added event object.
+		/// </summary>
+		public event TaskDeletedEvent TaskDeleted;
+
+		/// <summary>
+		/// Helper function for the task deleted event.
+		/// </summary>
+		/// <param name="task">The task that has just been deleted</param>
+		protected void OnTaskDeleted(Task task)
+		{
+			if (TaskDeleted != null)
+				TaskDeleted(task);
+		}
 
 		/// <summary>
 		/// The delegate for handling the task processing event from the executor.

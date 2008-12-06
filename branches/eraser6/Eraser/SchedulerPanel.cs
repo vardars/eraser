@@ -44,21 +44,11 @@ namespace Eraser
 			List<Task> tasks = Program.eraserClient.GetTasks();
 			foreach (Task task in tasks)
 				DisplayTask(task);
-		}
 
-		/// <summary>
-		/// Adds a task to the list of scheduled tasks
-		/// </summary>
-		/// <param name="task">The task object. The task object will be modified
-		/// to have its progress event firing to one of the member functions of
-		/// the panel.</param>
-		public void AddTask(Task task)
-		{
-			//Display the new task
-			DisplayTask(task);
-
-			//Then add the task to the executor.
-			Program.eraserClient.AddTask(ref task);
+			//Hook the event machinery to our class. Handle the task Added and Removed
+			//events.
+			Program.eraserClient.TaskAdded += DisplayTask;
+			Program.eraserClient.TaskDeleted += TaskDeleted;
 		}
 
 		private void DisplayTask(Task task)
@@ -117,6 +107,20 @@ namespace Eraser
 				item.Group = scheduler.Groups["restart"];
 			else
 				item.Group = scheduler.Groups["recurring"];
+		}
+
+		/// <summary>
+		/// Handles the task deleted event.
+		/// </summary>
+		/// <param name="task">The task being deleted.</param>
+		private void TaskDeleted(Task task)
+		{
+			foreach (ListViewItem item in scheduler.Items)
+				if (((Task)item.Tag) == task)
+				{
+					scheduler.Items.Remove(item);
+					break;
+				}
 		}
 
 		/// <summary>
@@ -380,10 +384,7 @@ namespace Eraser
 			{
 				Task task = (Task)item.Tag;
 				if (!task.Executing)
-				{
 					Program.eraserClient.DeleteTask(task.ID);
-					scheduler.Items.RemoveAt(item.Index);
-				}
 			}
 		}
 
