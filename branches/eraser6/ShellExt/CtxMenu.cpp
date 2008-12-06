@@ -359,7 +359,7 @@ namespace Eraser {
 			return E_INVALIDARG;
 
 		//Get the command string for the given id
-		if (idCmd > VerbMenuIndices.size())
+		if (idCmd >= VerbMenuIndices.size())
 			return E_INVALIDARG;
 
 		std::wstring commandString;
@@ -395,7 +395,7 @@ namespace Eraser {
 
 		//If the verb index refers to an item outside the bounds of our VerbMenuIndices
 		//vector, exit.
-		if (LOWORD(pCmdInfo->lpVerb) > VerbMenuIndices.size())
+		if (LOWORD(pCmdInfo->lpVerb) >= VerbMenuIndices.size())
 			return E_INVALIDARG;
 
 		//Build the command line
