@@ -59,3 +59,4 @@ using namespace ATL;
 #include <sstream>
 
 #undef max
+#undef min
