@@ -179,17 +179,20 @@ namespace Eraser {
 		VerbMenuIndices.clear();
 		if (applicableActions & ACTION_ERASE)
 		{
-			InsertMenu    (hSubmenu, ACTION_ERASE, MF_BYPOSITION, uID++,				_T("&Erase"));
+			InsertMenu(hSubmenu, ACTION_ERASE, MF_BYPOSITION, uID++,
+				LoadString(IDS_ACTION_ERASE).c_str());				//Erase
 			VerbMenuIndices.push_back(ACTION_ERASE);
 		}
 		if (applicableActions & ACTION_ERASE_ON_RESTART)
 		{
-			InsertMenu    (hSubmenu, ACTION_ERASE_ON_RESTART, MF_BYPOSITION, uID++,		_T("Erase on &Restart"));
+			InsertMenu(hSubmenu, ACTION_ERASE_ON_RESTART, MF_BYPOSITION, uID++,
+				LoadString(IDS_ACTION_ERASERESTART).c_str());		//Erase on Restart
 			VerbMenuIndices.push_back(ACTION_ERASE_ON_RESTART);
 		}
 		if (applicableActions & ACTION_ERASE_UNUSED_SPACE)
 		{
-			InsertMenu    (hSubmenu, ACTION_ERASE_UNUSED_SPACE, MF_BYPOSITION, uID++,	_T("Erase &Unused Space"));
+			InsertMenu(hSubmenu, ACTION_ERASE_UNUSED_SPACE, MF_BYPOSITION, uID++,
+				LoadString(IDS_ACTION_ERASEUNUSEDSPACE).c_str());	//Erase Unused Space
 			VerbMenuIndices.push_back(ACTION_ERASE_UNUSED_SPACE);
 		}
 		//-------------------------------------------------------------------------
@@ -201,7 +204,8 @@ namespace Eraser {
 				InsertMenuItem(hSubmenu, 0, FALSE, separator.get());
 			}
 
-			InsertMenu    (hSubmenu, ACTION_SECURE_MOVE, MF_BYPOSITION, uID++,			_T("Secure &Move"));
+			InsertMenu(hSubmenu, ACTION_SECURE_MOVE, MF_BYPOSITION, uID++,
+				LoadString(IDS_ACTION_SECUREMOVE).c_str());			//Secure Move
 			VerbMenuIndices.push_back(ACTION_SECURE_MOVE);
 		}
 
@@ -350,63 +354,38 @@ namespace Eraser {
 	HRESULT CCtxMenu::GetCommandString(UINT_PTR idCmd, UINT uFlags, UINT* /*pwReserved*/,
 	                                   LPSTR pszName, UINT cchMax)
 	{
-		USES_CONVERSION;
-
-		//Check idCmd, it must be 0 or 1 since we have two menu items.
-		if (idCmd > 2)
-			return E_INVALIDARG;
-
-		//If Explorer is asking for a help string, copy our string into the supplied buffer.
+		//We only know how to handle help string requests.
 		if (!(uFlags & GCS_HELPTEXT))
 			return E_INVALIDARG;
 
-		static LPCTSTR szErase        = _T("Erases the currently selected file\r\n");
-		static LPCTSTR szEraseUnunsed = _T("Erases the currently selected drive's unused disk space\r\n");
-		LPCTSTR pszText = (0 == idCmd) ? szErase : szEraseUnunsed;
+		//Get the command string for the given id
+		if (idCmd > VerbMenuIndices.size())
+			return E_INVALIDARG;
 
+		std::wstring commandString;
+		switch (VerbMenuIndices[idCmd])
+		{
+		case ACTION_ERASE:
+		case ACTION_ERASE_ON_RESTART:
+		case ACTION_ERASE_UNUSED_SPACE:
+		case ACTION_SECURE_MOVE:
+
+		default:
+			//We don't know what action this is: return E_INVALIDARG.
+			return E_INVALIDARG;
+		}
+
+		//Return the help string to Explorer.
 		if (uFlags & GCS_UNICODE)
-			//We need to cast pszName to a Unicode string, and then use the Unicode string copy API.
-			lstrcpynW((LPWSTR)pszName, T2CW(pszText), cchMax);
+			wcscpy_s(reinterpret_cast<wchar_t*>(pszName), cchMax, commandString.c_str());
 		else
-			//Use the ANSI string copy API to return the help string.
-			lstrcpynA(pszName, T2CA(pszText), cchMax);
+		{
+			size_t convCount = 0;
+			wcstombs_s(&convCount, pszName, cchMax, commandString.c_str(), commandString.length());
+		}
 
 		return S_OK;
 	}
-
-	/*
-	usage: Eraser <action> <arguments>
-	where action is
-	addtask                 Adds tasks to the current task list.
-	querymethods            Lists all registered Erasure methods.
-
-	global parameters:
-	--quiet, -q	            Do not create a Console window to display progress.
-
-	parameters for addtask:
-	eraser addtask --method=<methodGUID> (--recycled | --unused=<volume> |  --dir=<directory> | [file1 [file2 [...]]])
-	--method, -m            The Erasure method to use.
-	--recycled, -r          Erases files and folders in the recycle bin
-	--unused, -u            Erases unused space in the volume.
-	optional arguments: --unused=<drive>[,clusterTips]
-	clusterTips     If specified, the drive's files will have their cluster tips
-	erased.
-	--dir, --directory, -d  Erases files and folders in the directory
-	optional arguments: --dir=<directory>[,e=excludeMask][,i=includeMask][,delete]
-	excludeMask     A wildcard expression for files and folders to exclude.
-	includeMask     A wildcard expression for files and folders to include.
-	The include mask is applied before the exclude mask.
-	delete          Deletes the folder at the end of the erasure if specified.
-	file1 ... fileN         The list of files to erase.
-
-	parameters for querymethods:
-	eraser querymethods
-
-	no parameters to set.
-
-	All arguments are case sensitive.
-
-	*/  
 
 	HRESULT CCtxMenu::InvokeCommand(LPCMINVOKECOMMANDINFO pCmdInfo)
 	{
@@ -580,6 +559,18 @@ namespace Eraser {
 		}
 
 		return static_cast<Actions>(result);
+	}
+
+	std::wstring CCtxMenu::LoadString(UINT stringID)
+	{
+		//Get a pointer to the buffer containing the string (we're copying it anyway)
+		wchar_t* buffer = NULL;
+		DWORD lastCount = ::LoadString(theApp.m_hInstance, stringID,
+			reinterpret_cast<wchar_t*>(&buffer), 0);
+
+		if (lastCount > 0)
+			return std::wstring(buffer, lastCount);
+		return std::wstring();
 	}
 
 	std::wstring CCtxMenu::GetHKeyPath(HKEY handle)

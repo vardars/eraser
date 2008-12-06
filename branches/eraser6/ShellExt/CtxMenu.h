@@ -82,6 +82,7 @@ namespace Eraser
 
 		Actions GetApplicableActions();
 
+		static std::wstring LoadString(UINT stringID);
 		static std::wstring GetHKeyPath(HKEY handle);
 		static MENUITEMINFO* GetSeparator();
 		static HICON GetMenuIcon();
