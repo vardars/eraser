@@ -89,7 +89,9 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Our Remote Server name, prevent collisions!
 		/// </summary>
-		public const string ServerName = "Eraser-FB6C5A7D-E47F-475f-ABA4-58F4D24BB67E-RemoteExecutor";
+		public static readonly string ServerName =
+			"Eraser-FB6C5A7D-E47F-475f-ABA4-58F4D24BB67E-RemoteExecutor-" +
+			System.Security.Principal.WindowsIdentity.GetCurrent().User.ToString();
 
 		/// <summary>
 		/// The thread which will answer pipe connections
@@ -99,18 +101,18 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Our pipe instance which handles connections.
 		/// </summary>
-		private NamedPipeServerStream server =
-			new NamedPipeServerStream(ServerName, PipeDirection.InOut, 4,
-				PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+		private NamedPipeServerStream server;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		public RemoteExecutorServer()
 		{
+			server = new NamedPipeServerStream(ServerName, PipeDirection.InOut, 4,
+				PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+
 			thread = new Thread(Main);
 			thread.Start();
-
 			Thread.Sleep(0);
 		}
 
@@ -291,12 +293,12 @@ namespace Eraser.Manager
 
 	public class RemoteExecutorClient : Executor
 	{
-		private NamedPipeClientStream client =
-			new NamedPipeClientStream(".", RemoteExecutorServer.ServerName,
-				PipeDirection.InOut);
+		private NamedPipeClientStream client;
 
 		public RemoteExecutorClient()
 		{
+			client = new NamedPipeClientStream(".", RemoteExecutorServer.ServerName,
+				PipeDirection.InOut);
 		}
 
 		public override void Dispose()
