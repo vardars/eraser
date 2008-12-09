@@ -331,7 +331,7 @@ int CreateProcessAndWait(const std::wstring& commandLine)
 	return exitCode;
 }
 
-bool InstallNetFramework(std::wstring tempDir)
+bool InstallNetFramework(std::wstring tempDir, bool quiet)
 {
 	//Update the UI
 	MainWindow& mainWin = Application::Get().GetTopWindow();
@@ -342,13 +342,17 @@ bool InstallNetFramework(std::wstring tempDir)
 	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]) == std::wstring::npos)
 		tempDir += L"\\";
 	std::wstring commandLine(L'"' + tempDir);
-	commandLine += L"dotnetfx35.exe\"";
+	commandLine += L"dotnetfx35.exe\" /norestart";
+
+	//If the user wants it quiet then pass the /q:a switch
+	if (quiet)
+		commandLine += L" /q";
 
 	//And the return code is true if the process exited with 0.
 	return CreateProcessAndWait(commandLine) == 0;
 }
 
-bool InstallEraser(std::wstring tempDir)
+bool InstallEraser(std::wstring tempDir, bool quiet)
 {
 	MainWindow& mainWin = Application::Get().GetTopWindow();
 	mainWin.SetProgressIndeterminate();
@@ -374,6 +378,11 @@ bool InstallEraser(std::wstring tempDir)
 
 	std::wstring commandLine(L"msiexec.exe /i ");
 	commandLine += L'"' + tempDir + L'"';
+
+	//Add the quiet command line parameter if a quiet command line parameter was
+	//specified
+	if (quiet)
+		commandLine += L" /quiet /norestart";
 	
 	//And the return code is true if the process exited with 0.
 	return CreateProcessAndWait(commandLine) == 0;

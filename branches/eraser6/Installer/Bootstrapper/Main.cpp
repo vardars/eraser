@@ -96,6 +96,7 @@ namespace {
 	};
 }
 
+int Install(bool quiet);
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
                        LPTSTR lpCmdLine, int /*nCmdShow*/)
 {
@@ -107,9 +108,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 		if (argv == NULL)
 			throw GetErrorMessage(GetLastError());
 
+		bool quiet = false;
 		for (int i = 0; i != argc; ++i)
 		{
-			if (wcscmp(argv[i], L"--integrate") == 0)
+			std::wstring arg(argv[i]);
+			if (arg == L"--integrate")
 			{
 				//OK, integrate ourselves.
 				std::wstring destItem, package;
@@ -118,45 +121,31 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 
 				for (++i; i < argc; ++i)
 				{
-					std::wstring arg(argv[i]);
+					arg = argv[i];
 					if (arg.substr(0, 9) == L"--out")
 					{
 						if (++i != argc)
 							destItem = argv[i];
+					}
+					else if (arg.substr(0, 2) == L"-q" || arg.substr(0, 7) == L"--quiet")
+					{
+						quiet = true;
 					}
 				}
 
 				if (!destItem.empty() && !package.empty())
 					return Integrate(destItem, package);
 			}
+			else if (arg.substr(0, 2) == L"-q" || arg.substr(0, 7) == L"--quiet")
+			{
+				quiet = true;
+			}
 		}
 
 		//Create the parent window and the child controls
 		::hInstance = hInstance;
-		Application& app = Application::Get();
-		MainWindow& mainWin = app.GetTopWindow();
+		return Install(quiet);
 
-		//OK, now we do the hard work. Create a folder to place our payload into
-		wchar_t tempPath[MAX_PATH];
-		DWORD result = GetTempPathW(sizeof(tempPath) / sizeof(tempPath[0]), tempPath);
-		if (!result)
-			throw GetErrorMessage(GetLastError());
-
-		std::wstring tempDir(tempPath, result);
-		if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]) == std::wstring::npos)
-			tempDir += L"\\";
-		tempDir += L"eraserInstallBootstrapper\\";
-		TempDir dir(tempDir);
-		ExtractTempFiles(tempDir);
-		mainWin.EnableCancellation(false);
-
-		//Install the .NET framework
-		if (!HasNetFramework())
-			InstallNetFramework(tempDir);
-
-		//Then install Eraser!
-		mainWin.Show(false);
-		InstallEraser(tempDir);
 	}
 	catch (const std::wstring& e)
 	{
@@ -164,6 +153,36 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/,
 			L"Eraser Setup", MB_OK | MB_ICONERROR);
 	}
 
+	return 0;
+}
+
+int Install(bool quiet)
+{
+	Application& app = Application::Get();
+	MainWindow& mainWin = app.GetTopWindow();
+	mainWin.Show(!quiet);
+
+	//OK, now we do the hard work. Create a folder to place our payload into
+	wchar_t tempPath[MAX_PATH];
+	DWORD result = GetTempPathW(sizeof(tempPath) / sizeof(tempPath[0]), tempPath);
+	if (!result)
+		throw GetErrorMessage(GetLastError());
+
+	std::wstring tempDir(tempPath, result);
+	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]) == std::wstring::npos)
+		tempDir += L"\\";
+	tempDir += L"eraserInstallBootstrapper\\";
+	TempDir dir(tempDir);
+	ExtractTempFiles(tempDir);
+	mainWin.EnableCancellation(false);
+
+	//Install the .NET framework
+	if (!HasNetFramework())
+		InstallNetFramework(tempDir, quiet);
+
+	//Then install Eraser!
+	mainWin.Show(false);
+	InstallEraser(tempDir, quiet);
 	return 0;
 }
 
@@ -249,7 +268,6 @@ bool MainWindow::Create()
 	SubclassWindow(*this, hWndCancelBtn, WndProc);
 	SubclassWindow(*this, hWndPanel, WndProc);
 
-	ShowWindow(hWnd, SW_SHOWDEFAULT);
 	UpdateWindow(hWnd);
 	return true;
 }
