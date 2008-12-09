@@ -1,7 +1,5 @@
 ; DllMain.def : Declares the module parameters.
 
-LIBRARY      "Eraser.Shell.dll"
-
 EXPORTS 
 	DllCanUnloadNow		PRIVATE
 	DllGetClassObject	PRIVATE
