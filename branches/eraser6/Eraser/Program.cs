@@ -31,6 +31,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Globalization;
 using System.Reflection;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace Eraser
 {
@@ -85,11 +86,17 @@ namespace Eraser
 				using (ManagerLibrary library = new ManagerLibrary(new Settings()))
 					program.Run();
 
-				return 1;
+				return 0;
+			}
+			catch (Win32Exception e)
+			{
+				Console.WriteLine(e.Message);
+				return e.ErrorCode;
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine(e.Message);
+				return 1;
 			}
 			finally
 			{
