@@ -46,7 +46,7 @@
 							ProcessorArchitecture="x64" />
 					<?else?>
 						<File Id="EraserShellDll" Name="Eraser.Shell.dll"
-							Source="..\Bin\Release\Win32\Eraser.Shell (Win32).dll"
+							Source="..\Bin\Release\Eraser.Shell (Win32).dll"
 							ProcessorArchitecture="x86" />
 					<?endif?>
 
