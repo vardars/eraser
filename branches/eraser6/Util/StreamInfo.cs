@@ -153,7 +153,7 @@ namespace Eraser.Util
 		/// </summary>
 		public override void Delete()
 		{
-			throw new NotImplementedException("Deleting streams are not implemented");
+			throw new InvalidOperationException("Deleting streams are not implemented");
 		}
 
 		/// <summary>

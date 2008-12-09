@@ -384,14 +384,14 @@ namespace Eraser.Manager
 
 			public override long CalculateEraseDataSize(List<string> paths, long targetSize)
 			{
-				throw new NotImplementedException(S._("The DefaultMethod class should never " +
+				throw new InvalidOperationException(S._("The DefaultMethod class should never " +
 					"be used and should instead be replaced before execution!"));
 			}
 
 			public override void Erase(Stream strm, long erasureLength, PRNG prng,
 				ProgressFunction callback)
 			{
-				throw new NotImplementedException(S._("The DefaultMethod class should never " +
+				throw new InvalidOperationException(S._("The DefaultMethod class should never " +
 					"be used and should instead be replaced before execution!"));
 			}
 		}
@@ -399,7 +399,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// A dummy method placeholder used for representing the default erase
 		/// method. Do not use this variable when trying to call the erase function,
-		/// this is just a placeholder and will throw a NotImplementedException.
+		/// this is just a placeholder and will throw a InvalidOperationException.
 		/// </summary>
 		public static readonly ErasureMethod Default = new DefaultMethod();
 		#endregion

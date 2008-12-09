@@ -141,7 +141,7 @@ namespace Eraser.DefaultPlugins
 					OpaqueValue = null;
 				}
 				else
-					throw new NotImplementedException("The custom erasure method can only comprise " +
+					throw new ArgumentException("The custom erasure method can only comprise " +
 						"passes containining constant or random passes");
 			}
 
