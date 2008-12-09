@@ -40,7 +40,7 @@ namespace Eraser
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main(string[] commandLine)
+		static int Main(string[] commandLine)
 		{
 			//Trivial case: no command parameters
 			if (commandLine.Length == 0)
@@ -56,20 +56,23 @@ namespace Eraser
 				}
 				else
 				{
-					CommandMain(commandLine);
+					return CommandMain(commandLine);
 				}
 			}
 
 			//The other trivial case: definitely a console application.
 			else
-				CommandMain(commandLine);
+				return CommandMain(commandLine);
+
+			//No error.
+			return 0;
 		}
 
 		/// <summary>
 		/// Runs Eraser as a command-line application.
 		/// </summary>
 		/// <param name="commandLine">The command line parameters passed to Eraser.</param>
-		private static void CommandMain(string[] commandLine)
+		private static int CommandMain(string[] commandLine)
 		{
 			//True if the user specified a quiet command.
 			bool isQuiet = false;
@@ -81,6 +84,8 @@ namespace Eraser
 
 				using (ManagerLibrary library = new ManagerLibrary(new Settings()))
 					program.Run();
+
+				return 1;
 			}
 			catch (Exception e)
 			{

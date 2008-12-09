@@ -63,6 +63,11 @@ extern "C"
 template<typename handleType> class Handle
 {
 public:
+	Handle()
+	{
+		Object = NULL;
+	}
+
 	Handle(handleType handle)
 	{
 		Object = handle;
@@ -82,6 +87,11 @@ private:
 	handleType Object;
 };
 
+Handle<HANDLE>::~Handle()
+{
+	CloseHandle(Object);
+}
+
 Handle<HKEY>::~Handle()
 {
 	CloseHandle(Object);
@@ -97,7 +107,7 @@ namespace Eraser {
 		wcscpy_s(MenuTitle, menuTitle.length() + 1, menuTitle.c_str());
 
 		//Check if the shell extension has been disabled.
-		Handle<HKEY> eraserKey(NULL);
+		Handle<HKEY> eraserKey;
 		LONG openKeyResult = RegOpenKeyEx(HKEY_CURRENT_USER,
 			L"Software\\Eraser\\Eraser 6\\3460478d-ed1b-4ecc-96c9-2ca0e8500557\\", 0,
 			KEY_READ, &static_cast<HKEY&>(eraserKey));
@@ -515,34 +525,9 @@ namespace Eraser {
 		default:
 			if (!(pCmdInfo->fMask & CMIC_MASK_FLAG_NO_UI))
 			{
-				std::wstring formatStrSrc(LoadString(IDS_ERROR_UNKNOWNACTION));
-				size_t bufferSize = formatStrSrc.length() + 1;
-				wchar_t* formatStr = new wchar_t[bufferSize];
-				wcscpy_s(formatStr, bufferSize, formatStrSrc.c_str());
-
-				wchar_t* buffer = NULL;
-				while (buffer == NULL)
-				{
-					buffer = new wchar_t[bufferSize *= 2];
-					int result = swprintf_s(buffer, bufferSize, formatStr,
-						VerbMenuIndices[LOWORD(pCmdInfo->lpVerb)]);
-
-					if (result == -1)
-					{
-						delete[] buffer;
-						buffer = NULL;
-					}
-					else if (result > 0 && static_cast<unsigned>(result) < bufferSize)
-					{
-						break;
-					}
-				}
-				
-				if (buffer != NULL)
-				{
-					MessageBox(pCmdInfo->hwnd, buffer, L"Eraser Shell Extension", MB_OK | MB_ICONERROR);
-					delete[] buffer;
-				}
+				MessageBox(pCmdInfo->hwnd, FormatString(LoadString(IDS_ERROR_UNKNOWNACTION),
+					VerbMenuIndices[LOWORD(pCmdInfo->lpVerb)]).c_str(),
+					LoadString(IDS_ERASERSHELLEXT).c_str(), MB_OK | MB_ICONERROR);
 			}
 		}
 
@@ -574,6 +559,25 @@ namespace Eraser {
 			startupInfo.cb = sizeof(startupInfo);
 			startupInfo.dwFlags = STARTF_USESHOWWINDOW;
 			startupInfo.wShowWindow = static_cast<WORD>(pCmdInfo->nShow);
+			startupInfo.hStdInput = startupInfo.hStdOutput = startupInfo.hStdError =
+				INVALID_HANDLE_VALUE;
+
+			//Create handles for output redirection
+			Handle<HANDLE> readPipe;
+			HANDLE writePipe;
+			SECURITY_ATTRIBUTES security;
+			ZeroMemory(&security, sizeof(security));
+			security.nLength = sizeof(security);
+			security.lpSecurityDescriptor = NULL;
+			security.bInheritHandle = true;
+
+			if (CreatePipe(&static_cast<HANDLE&>(readPipe), &writePipe, &security, 0))
+			{
+				startupInfo.dwFlags |= STARTF_USESTDHANDLES;
+				startupInfo.hStdOutput = startupInfo.hStdError =
+					writePipe;
+			}
+
 			PROCESS_INFORMATION processInfo;
 			ZeroMemory(&processInfo, sizeof(processInfo));
 			
@@ -581,25 +585,49 @@ namespace Eraser {
 			finalCmdLine << L"\"" << eraserPath << L"\" \"" << commandAction
 			             << L"\" -q " << commandLine;
 			std::wstring cmdLine(finalCmdLine.str());
-			wchar_t* buffer = new wchar_t[cmdLine.length() + 1];
-			wcscpy_s(buffer, cmdLine.length() + 1, cmdLine.c_str());
+			std::vector<wchar_t> buffer(cmdLine.length() + 1);
+			wcscpy_s(&buffer.front(), cmdLine.length() + 1, cmdLine.c_str());
 
-			if (!CreateProcess(NULL, buffer, NULL, NULL, false, CREATE_NO_WINDOW,
+			if (!CreateProcess(NULL, &buffer.front(), NULL, NULL, true, CREATE_NO_WINDOW,
 				NULL, NULL, &startupInfo, &processInfo))
 			{
 				if (!(pCmdInfo->fMask & CMIC_MASK_FLAG_NO_UI))
 				{
 					MessageBox(pCmdInfo->hwnd, LoadString(IDS_ERROR_CANNOTFINDERASER).c_str(),
-						L"Eraser Shell Extension", MB_OK | MB_ICONERROR);
+						LoadString(IDS_ERASERSHELLEXT).c_str(), MB_OK | MB_ICONERROR);
 				}
 
-				delete[] buffer;
 				return E_UNEXPECTED;
 			}
 
-			delete[] buffer;
-			CloseHandle(processInfo.hThread);
-			CloseHandle(processInfo.hProcess);
+			//Wait for the process to finish.
+			Handle<HANDLE> hProcess(processInfo.hProcess),
+			               hThread(processInfo.hThread);
+			CloseHandle(writePipe);
+			WaitForSingleObject(hProcess, static_cast<DWORD>(-1));
+			DWORD exitCode = 0;
+			
+			if (GetExitCodeProcess(processInfo.hProcess, &exitCode) && exitCode)
+			{
+				char buffer[8192];
+				DWORD lastRead = 0;
+				std::wstring output;
+
+				while (ReadFile(readPipe, buffer, sizeof(buffer), &lastRead, NULL) && lastRead != 0)
+				{
+					size_t lastConvert = 0;
+					wchar_t wBuffer[8192];
+					if (!mbstowcs_s(&lastConvert, wBuffer, sizeof(wBuffer) / sizeof(wBuffer[0]),
+					    buffer, lastRead))
+					{
+						output += std::wstring(wBuffer, lastConvert);
+					}
+				}
+
+				//Show the error message.
+				MessageBox(pCmdInfo->hwnd, output.c_str(), LoadString(IDS_ERASERSHELLEXT).c_str(),
+					MB_OK | MB_ICONERROR);
+			}
 		}
 
 		return result;
@@ -652,6 +680,34 @@ namespace Eraser {
 		if (lastCount > 0)
 			return std::wstring(buffer, lastCount);
 		return std::wstring();
+	}
+
+	std::wstring CCtxMenu::FormatString(std::wstring formatString, ...)
+	{
+		std::vector<wchar_t> formatStr(formatString.length() + 1);
+		wcscpy_s(&formatStr.front(), formatStr.size(), formatString.c_str());
+
+		std::vector<wchar_t> buffer(formatStr.size());
+		for ( ; ; )
+		{
+			buffer.resize(buffer.size() * 2);
+			va_list arguments;
+			va_start(arguments, formatString);
+			int result = vswprintf_s(&buffer.front(), buffer.size(), &formatStr.front(),
+				arguments);
+			va_end(arguments);
+
+			if (result > 0 && static_cast<unsigned>(result) < buffer.size())
+			{
+				break;
+			}
+		}
+
+		//Return the result as a wstring
+		std::wstring result;
+		if (buffer.size() > 0)
+			result = &buffer.front();
+		return result;
 	}
 
 	std::wstring CCtxMenu::GetHKeyPath(HKEY handle)
