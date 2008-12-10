@@ -68,7 +68,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>buildinc "$(SolutionDir)\Version.binc" "$(SolutionDir)\Version.cs"
-if ERRORLEVEL 0 exit 0</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>
