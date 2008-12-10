@@ -744,6 +744,7 @@ namespace Eraser.Manager
 		public uint ID
 		{
 			get { return id; }
+			internal set { id = value; }
 		}
 
 		/// <summary>
@@ -752,6 +753,7 @@ namespace Eraser.Manager
 		public Executor Executor
 		{
 			get { return executor; }
+			internal set { executor = value; }
 		}
 
 		/// <summary>
@@ -794,6 +796,7 @@ namespace Eraser.Manager
 		public bool Executing
 		{
 			get { return executing; }
+			internal set { executing = value; }
 		}
 
 		/// <summary>
@@ -804,6 +807,16 @@ namespace Eraser.Manager
 		public bool Queued
 		{
 			get { return queued; }
+			internal set { queued = value; }
+		}
+
+		/// <summary>
+		/// Gets whether the task has been cancelled from execution.
+		/// </summary>
+		public bool Cancelled
+		{
+			get { return cancelled; }
+			internal set { cancelled = value; }
 		}
 
 		/// <summary>
@@ -892,10 +905,10 @@ namespace Eraser.Manager
 		}
 		#endregion
 
-		internal uint id;
-		internal Executor executor;
-		internal bool cancelled = false;
-		internal bool queued = false;
+		private uint id;
+		private Executor executor;
+		private bool cancelled = false;
+		private bool queued = false;
 
 		private string name = string.Empty;
 		private bool executing = false;

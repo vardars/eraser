@@ -63,15 +63,15 @@ namespace Eraser.Manager
 			{
 				if (unusedIds.Count != 0)
 				{
-					task.id = unusedIds[0];
+					task.ID = unusedIds[0];
 					unusedIds.RemoveAt(0);
 				}
 				else
-					task.id = ++nextId;
+					task.ID = ++nextId;
 			}
 
 			//Set the executor of the task
-			task.executor = this;
+			task.Executor = this;
 
 			//Add the task to the set of tasks
 			lock (tasksLock)
@@ -110,7 +110,7 @@ namespace Eraser.Manager
 				tasks.Remove(taskId);
 
 				for (int i = 0; i != scheduledTasks.Count; )
-					if (scheduledTasks.Values[i].id == taskId)
+					if (scheduledTasks.Values[i].ID == taskId)
 						scheduledTasks.RemoveAt(i);
 					else
 						++i;
@@ -134,7 +134,7 @@ namespace Eraser.Manager
 
 				//Then replace the task if it is in the queue
 				for (int i = 0; i != scheduledTasks.Count; ++i)
-					if (scheduledTasks.Values[i].id == task.ID)
+					if (scheduledTasks.Values[i].ID == task.ID)
 					{
 						scheduledTasks.RemoveAt(i);
 						if (task.Schedule is RecurringSchedule)
@@ -151,7 +151,7 @@ namespace Eraser.Manager
 			{
 				//Set the task variable to indicate that the task is already
 				//waiting to be executed.
-				task.queued = true;
+				task.Queued = true;
 
 				//Queue the task to be run immediately.
 				scheduledTasks.Add(DateTime.Now, task);
@@ -187,7 +187,7 @@ namespace Eraser.Manager
 			{
 				if (currentTask == task)
 				{
-					currentTask.cancelled = true;
+					currentTask.Cancelled = true;
 					return;
 				}
 			}
@@ -248,7 +248,7 @@ namespace Eraser.Manager
 					foreach (uint id in tasks.Keys)
 					{
 						Task currentTask = tasks[id];
-						currentTask.executor = this;
+						currentTask.Executor = this;
 						while (id > nextId)
 							unusedIds.Add(nextId++);
 						++nextId;
@@ -301,8 +301,8 @@ namespace Eraser.Manager
 							KernelAPI.EXECUTION_STATE.ES_SYSTEM_REQUIRED);
 
 						//Broadcast the task started event.
-						task.queued = false;
-						task.cancelled = false;
+						task.Queued = false;
+						task.Cancelled = false;
 						task.OnTaskStarted(new TaskEventArgs(task));
 						OnTaskProcessing(task);
 
@@ -587,7 +587,7 @@ namespace Eraser.Manager
 								task.OnProgressChanged(progress.Event);
 
 								lock (currentTask)
-									if (currentTask.cancelled)
+									if (currentTask.Cancelled)
 										throw new FatalException(S._("The task was cancelled."));
 							}
 						);
@@ -872,7 +872,7 @@ namespace Eraser.Manager
 									task.OnProgressChanged(progress.Event);
 
 									lock (currentTask)
-										if (currentTask.cancelled)
+										if (currentTask.Cancelled)
 											throw new FatalException(S._("The task was cancelled."));
 								}
 							);
