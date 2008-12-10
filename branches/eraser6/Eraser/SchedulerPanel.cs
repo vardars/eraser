@@ -118,8 +118,8 @@ namespace Eraser
 			}
 
 			//Display a balloon notification if the parent frame has been minimised.
-			MainForm parent = (MainForm)Parent.Parent;
-			if (!parent.Focused || parent.WindowState == FormWindowState.Minimized)
+			MainForm parent = (MainForm)FindForm();
+			if (parent.WindowState == FormWindowState.Minimized || !parent.Visible)
 			{
 				parent.ShowNotificationBalloon(S._("New task added"), S._("{0} " +
 					"has just been added to the list of tasks.", task.UIText),
