@@ -727,7 +727,6 @@ namespace Eraser {
 			ZeroMemory(&buffer.front(), buffer.size());
 			queryResult = NtQueryKey(handle, KeyNodeInformation, &buffer.front(),
 				static_cast<ULONG>(buffer.size()), &keyInfoSize);
-			queryResult = STATUS_SUCCESS;
 		}
 
 		if (queryResult != STATUS_SUCCESS)
