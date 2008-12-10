@@ -91,6 +91,21 @@ namespace Eraser.Manager
 			}
 
 			/// <summary>
+			/// The task which owns this target.
+			/// </summary>
+			public Task Task
+			{
+				get
+				{
+					return task;
+				}
+				internal set
+				{
+					task = value;
+				}
+			}
+
+			/// <summary>
 			/// Retrieves the text to display representing this task.
 			/// </summary>
 			public abstract string UIText
@@ -111,6 +126,11 @@ namespace Eraser.Manager
 			/// Erasure method to use for the target.
 			/// </summary>
 			protected ErasureMethod method = null;
+
+			/// <summary>
+			/// The task object owning this target.
+			/// </summary>
+			private Task task = null;
 		}
 
 		/// <summary>
@@ -170,10 +190,11 @@ namespace Eraser.Manager
 						totalSize += info.Length;
 					}
 				}
-				catch (UnauthorizedAccessException)
+				catch (UnauthorizedAccessException e)
 				{
 					//The system cannot read the file, assume no ADSes for lack of
 					//more information.
+					Task.Log.Add(new LogEntry(e.Message, LogLevel.ERROR));
 				}
 			}
 
@@ -487,16 +508,23 @@ namespace Eraser.Manager
 			private void GetRecyclerFiles(DirectoryInfo info, ref List<string> paths,
 				ref long totalSize)
 			{
-				foreach (FileSystemInfo fsInfo in info.GetFileSystemInfos())
+				try
 				{
-					if (fsInfo is FileInfo)
+					foreach (FileSystemInfo fsInfo in info.GetFileSystemInfos())
 					{
-						paths.Add(fsInfo.FullName);
-						totalSize += ((FileInfo)fsInfo).Length;
-						GetPathADSes(ref paths, ref totalSize, fsInfo.FullName);
+						if (fsInfo is FileInfo)
+						{
+							paths.Add(fsInfo.FullName);
+							totalSize += ((FileInfo)fsInfo).Length;
+							GetPathADSes(ref paths, ref totalSize, fsInfo.FullName);
+						}
+						else
+							GetRecyclerFiles((DirectoryInfo)fsInfo, ref paths, ref totalSize);
 					}
-					else
-						GetRecyclerFiles((DirectoryInfo)fsInfo, ref paths, ref totalSize);
+				}
+				catch (UnauthorizedAccessException e)
+				{
+					Task.Log.Add(new LogEntry(e.Message, LogLevel.ERROR));
 				}
 			}
 
@@ -512,12 +540,169 @@ namespace Eraser.Manager
 			}
 		}
 
+		/// <summary>
+		/// Maintains a collection of erasure targets.
+		/// </summary>
+		[Serializable]
+		public class ErasureTargetsList : IList<ErasureTarget>, ICollection<ErasureTarget>,
+			IEnumerable<ErasureTarget>, ISerializable
+		{
+			#region Constructors
+			internal ErasureTargetsList(Task owner)
+			{
+				this.list = new List<ErasureTarget>();
+				this.owner = owner;
+			}
+
+			internal ErasureTargetsList(Task owner, int capacity)
+				: this(owner)
+			{
+				list.Capacity = capacity;
+			}
+
+			internal ErasureTargetsList(Task owner, IEnumerable<ErasureTarget> targets)
+				: this(owner)
+			{
+				list.AddRange(targets);
+			}
+			#endregion
+
+			#region Serialization Code
+			ErasureTargetsList(SerializationInfo info, StreamingContext context)
+			{
+				list = (List<ErasureTarget>)info.GetValue("list", typeof(List<ErasureTarget>));
+			}
+
+			public void GetObjectData(SerializationInfo info, StreamingContext context)
+			{
+				info.AddValue("list", list);
+			}
+			#endregion
+
+			#region IEnumerable<ErasureTarget> Members
+			public IEnumerator<ErasureTarget> GetEnumerator()
+			{
+				return list.GetEnumerator();
+			}
+			#endregion
+
+			#region IEnumerable Members
+			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+			{
+				return list.GetEnumerator();
+			}
+			#endregion
+
+			#region ICollection<ErasureTarget> Members
+			public void Add(ErasureTarget item)
+			{
+				item.Task = owner;
+				list.Add(item);
+			}
+
+			public void Clear()
+			{
+				list.Clear();
+			}
+
+			public bool Contains(ErasureTarget item)
+			{
+				return list.Contains(item);
+			}
+
+			public void CopyTo(ErasureTarget[] array, int arrayIndex)
+			{
+				list.CopyTo(array, arrayIndex);
+			}
+
+			public int Count
+			{
+				get
+				{
+					return list.Count;
+				}
+			}
+
+			public bool IsReadOnly
+			{
+				get
+				{
+					return IsReadOnly;
+				}
+			}
+
+			public bool Remove(ErasureTarget item)
+			{
+				return list.Remove(item);
+			}
+			#endregion
+
+			#region IList<ErasureTarget> Members
+			public int IndexOf(ErasureTarget item)
+			{
+				return list.IndexOf(item);
+			}
+
+			public void Insert(int index, ErasureTarget item)
+			{
+				item.Task = owner;
+				list.Insert(index, item);
+			}
+
+			public void RemoveAt(int index)
+			{
+				list.RemoveAt(index);
+			}
+
+			public ErasureTarget this[int index]
+			{
+				get
+				{
+					return list[index];
+				}
+				set
+				{
+					list[index] = value;
+				}
+			}
+			#endregion
+
+			/// <summary>
+			/// The ownere of this list of targets.
+			/// </summary>
+			public Task Owner
+			{
+				get
+				{
+					return owner;
+				}
+				internal set
+				{
+					owner = value;
+					foreach (ErasureTarget target in list)
+						target.Task = owner;
+				}
+			}
+
+			/// <summary>
+			/// The owner of this list of targets. All targets added to this list
+			/// will have the owner set to this object.
+			/// </summary>
+			private Task owner;
+
+			/// <summary>
+			/// The list bring the data store behind this object.
+			/// </summary>
+			List<ErasureTarget> list;
+		}
+
 		#region Serialization code
 		public Task(SerializationInfo info, StreamingContext context)
 		{
 			id = (uint)info.GetValue("ID", typeof(uint));
 			name = (string)info.GetValue("Name", typeof(string));
-			targets = (List<ErasureTarget>)info.GetValue("Targets", typeof(List<ErasureTarget>));
+			targets = (ErasureTargetsList)info.GetValue("Targets", typeof(ErasureTargetsList));
+			targets.Owner = this;
 			log = (Logger)info.GetValue("Log", typeof(Logger));
 
 			Schedule schedule = (Schedule)info.GetValue("Schedule", typeof(Schedule));
@@ -549,6 +734,7 @@ namespace Eraser.Manager
 		/// </summary>
 		public Task()
 		{
+			targets = new ErasureTargetsList(this);
 		}
 
 		/// <summary>
@@ -623,10 +809,9 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The set of data to erase when this task is executed.
 		/// </summary>
-		public List<ErasureTarget> Targets
+		public ErasureTargetsList Targets
 		{
 			get { return targets; }
-			set { targets = value; }
 		}
 
 		/// <summary>
@@ -716,7 +901,7 @@ namespace Eraser.Manager
 		private bool executing = false;
 
 		private Schedule schedule = Schedule.RunNow;
-		private List<ErasureTarget> targets = new List<ErasureTarget>();
+		private ErasureTargetsList targets = null;
 		private Logger log = new Logger();
 	}
 
