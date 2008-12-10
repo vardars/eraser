@@ -607,8 +607,6 @@ namespace Eraser.Manager
 				//Remove the folder holding all our temporary files.
 				RemoveFolder(info);
 			}
-
-			//new NotImplementedException(): clear directory entries: Eraser.cpp@2348
 		}
 
 		private delegate void SubFoldersHandler(DirectoryInfo info);
@@ -791,7 +789,7 @@ namespace Eraser.Manager
 			}
 			else
 				throw new NotImplementedException(S._("Could not erase old file system " +
-					"records: Unsupported File system"));
+					"records: Unsupported File system")); //Eraser.cpp@2348
 		}
 
 		/// <summary>
