@@ -29,8 +29,16 @@ CEraserShellExtApp theApp;
 BEGIN_MESSAGE_MAP(CEraserShellExtApp, CWinApp)
 END_MESSAGE_MAP()
 
+namespace {
+	void InvalidParameterHandler(const wchar_t* /*expression*/, const wchar_t* /*function*/,
+		const wchar_t* /*file*/, unsigned int /*line*/, uintptr_t /*pReserved*/)
+	{
+	}
+}
+
 BOOL CEraserShellExtApp::InitInstance()
 {
+	_set_invalid_parameter_handler(InvalidParameterHandler);
 	return CWinApp::InitInstance();
 }
 
