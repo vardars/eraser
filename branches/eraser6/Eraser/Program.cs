@@ -45,15 +45,15 @@ namespace Eraser
 		{
 			//Trivial case: no command parameters
 			if (commandLine.Length == 0)
-				GUIMain(false);
+				GUIMain(commandLine);
 
 			//Determine if the sole parameter is --restart; if it is, start the GUI
 			//passing isRestart as true. Otherwise, we're a console application.
 			else if (commandLine.Length == 1)
 			{
-				if (commandLine[0] == "/restart" || commandLine[0] == "--restart")
+				if (commandLine[0] == "--atRestart" || commandLine[0] == "--quiet")
 				{
-					GUIMain(true);
+					GUIMain(commandLine);
 				}
 				else
 				{
@@ -118,9 +118,8 @@ namespace Eraser
 		/// <summary>
 		/// Runs Eraser as a GUI application.
 		/// </summary>
-		/// <param name="isRestart">True if the program was passed the --restart
-		/// switch.</param>
-		private static void GUIMain(bool isRestart)
+		/// <param name="commandLine">The command line parameters passed to Eraser.</param>
+		private static void GUIMain(string[] commandLine)
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
@@ -152,15 +151,30 @@ namespace Eraser
 				//Create the main form
 				MainForm form = new MainForm();
 
-				//Run tasks which are meant to be run on restart
-				if (isRestart)
+				bool showMainForm = true;
+				foreach (string param in commandLine)
 				{
-					eraserClient.QueueRestartTasks();
-				}
+					//Run tasks which are meant to be run on restart
+					switch (param)
+					{
+						case "--atRestart":
+							eraserClient.QueueRestartTasks();
+							goto case "--quiet";
 
+						//Hide the main form if the user specified the quiet command
+						//line
+						case "--quiet":
+							showMainForm = false;
+							break;
+					}
+				}
+				
 				//Run the program
 				eraserClient.Run();
-				Application.Run(form);
+				if (showMainForm)
+					Application.Run(form);
+				else
+					Application.Run();
 
 				//Save the task list
 				using (MemoryStream stream = new MemoryStream())
@@ -719,7 +733,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 					//The client cannot connect to the server. This probably means
 					//that the server process isn't running. Start an instance.
 					Process eraserInstance = Process.Start(
-						Assembly.GetExecutingAssembly().Location);
+						Assembly.GetExecutingAssembly().Location, "--quiet");
 					eraserInstance.WaitForInputIdle();
 
 					if (!((RemoteExecutorClient)Program.eraserClient).Connect())

@@ -357,6 +357,7 @@ namespace Eraser
 		{
 			closedFromNotificationIcon = true;
 			Close();
+			Application.Exit();
 		}
 
 		private void hideWhenMinimiseToolStripMenuItem_Click(object sender, EventArgs e)
