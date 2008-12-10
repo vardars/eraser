@@ -202,7 +202,7 @@
     <value>About Eraser</value>
   </data>
   <data name="toolbarHelpMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>172, 70</value>
+    <value>172, 48</value>
   </data>
   <data name="&gt;&gt;toolbarHelpMenu.Name" xml:space="preserve">
     <value>toolbarHelpMenu</value>

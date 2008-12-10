@@ -49,6 +49,9 @@ namespace Eraser
 		public MainForm()
 		{
 			InitializeComponent();
+			CreateControl();
+			SettingsPage.CreateControl();
+			SchedulerPage.CreateControl();
 
 			//Connect to the executor task processing and processed events.
 			Program.eraserClient.TaskProcessing +=
