@@ -38,6 +38,11 @@
 #include <atlctl.h>
 using namespace ATL;
 
+//Other STATUS constants from ntstatus.h (not included from windows.h)
+#define STATUS_SUCCESS                   ((NTSTATUS)0x00000000L)
+#define STATUS_BUFFER_OVERFLOW           ((NTSTATUS)0x80000005L)
+#define STATUS_BUFFER_TOO_SMALL          ((NTSTATUS)0xC0000023L)
+
 #include <list>
 #include <vector>
 #include <string>

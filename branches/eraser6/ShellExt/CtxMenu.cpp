@@ -55,9 +55,9 @@ extern "C"
 		WCHAR Name[1];
 	};
 
-	typedef NTSTATUS (*pZwQueryKey)(HANDLE KeyHandle, KEY_INFORMATION_CLASS KeyInformationClass,
+	typedef NTSTATUS (__stdcall *pNtQueryKey)(HANDLE KeyHandle, KEY_INFORMATION_CLASS KeyInformationClass,
 		PVOID KeyInformation, ULONG Length, PULONG ResultLength);
-	pZwQueryKey ZwQueryKey;
+	pNtQueryKey NtQueryKey = NULL;
 }
 
 template<typename handleType> class Handle
@@ -712,25 +712,30 @@ namespace Eraser {
 
 	std::wstring CCtxMenu::GetHKeyPath(HKEY handle)
 	{
-		ZwQueryKey = reinterpret_cast<pZwQueryKey>(GetProcAddress(
-			LoadLibrary(L"Ntdll.dll"), "ZwQueryKey"));
-		ULONG keyInfoSize = sizeof(KEY_NODE_INFORMATION);
-		KEY_NODE_INFORMATION* keyInfo = NULL;
-		NTSTATUS queryResult = ERROR_MORE_DATA;
+		if (NtQueryKey == NULL)
+			NtQueryKey = reinterpret_cast<pNtQueryKey>(GetProcAddress(
+				LoadLibrary(L"Ntdll.dll"), "NtQueryKey"));
 
-		while (queryResult == ERROR_MORE_DATA)
+		//Keep querying for the key information until enough buffer space has been allocated.
+		std::vector<char> buffer(sizeof(KEY_NODE_INFORMATION));
+		NTSTATUS queryResult = STATUS_BUFFER_TOO_SMALL;
+		ULONG keyInfoSize = 0;
+
+		while (queryResult == STATUS_BUFFER_TOO_SMALL || queryResult == STATUS_BUFFER_OVERFLOW)
 		{
-			delete[] keyInfo;
-			keyInfo = reinterpret_cast<KEY_NODE_INFORMATION*>(
-				new char[keyInfoSize += 512]);
-			::ZeroMemory(keyInfo, keyInfoSize);
-			queryResult = ZwQueryKey(handle, KeyNodeInformation, keyInfo,
-				keyInfoSize, &keyInfoSize);
+			buffer.resize(buffer.size() + keyInfoSize);
+			ZeroMemory(&buffer.front(), buffer.size());
+			queryResult = NtQueryKey(handle, KeyNodeInformation, &buffer.front(),
+				buffer.size(), &keyInfoSize);
+			queryResult = STATUS_SUCCESS;
 		}
 
-		std::wstring result(keyInfo->Name);
-		delete[] keyInfo;
-		return result;
+		if (queryResult != STATUS_SUCCESS)
+			return std::wstring();
+
+		KEY_NODE_INFORMATION* keyInfo = reinterpret_cast<KEY_NODE_INFORMATION*>(
+			&buffer.front());
+		return keyInfo->Name;
 	}
 
 	MENUITEMINFO* CCtxMenu::GetSeparator()
