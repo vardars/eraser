@@ -23,15 +23,19 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-using Eraser.Manager;
-using Eraser.Util;
-using Microsoft.Win32;
 using System.IO;
+using System.IO.Pipes;
+using System.Text;
+using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Globalization;
 using System.Reflection;
 using System.Diagnostics;
 using System.ComponentModel;
+
+using Eraser.Manager;
+using Eraser.Util;
+using Microsoft.Win32;
 
 namespace Eraser
 {
@@ -121,17 +125,31 @@ namespace Eraser
 		/// <param name="commandLine">The command line parameters passed to Eraser.</param>
 		private static void GUIMain(string[] commandLine)
 		{
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			Application.SafeTopLevelCaptionFormat = S._("Eraser");
+			//Create the program instance
+			GUIProgram program = new GUIProgram(commandLine, "Eraser-BAD0DAC6-C9EE-4acc-" +
+				"8701-C9B3C64BC65E-GUI-" +
+				System.Security.Principal.WindowsIdentity.GetCurrent().User.ToString());
 
+			//Then run the program instance.
 			using (ManagerLibrary library = new ManagerLibrary(new Settings()))
+			{
+				program.InitInstance += OnGUIInitInstance;
+				program.NextInstance += OnGUINextInstance;
+				program.ExitInstance += OnGUIExitInstance;
+				program.Run();
+			}
+		}
+
+		private static bool OnGUIInitInstance(object sender)
+		{
+			GUIProgram program = (GUIProgram)sender;
 			using (eraserClient = new RemoteExecutorServer())
 			{
 				//Set our UI language
 				EraserSettings settings = new EraserSettings();
 				System.Threading.Thread.CurrentThread.CurrentUICulture =
 					new CultureInfo(settings.Language);
+				program.SafeTopLevelCaptionFormat = S._("Eraser");
 
 				//Load the task list
 				if (settings.TaskList != null)
@@ -149,10 +167,9 @@ namespace Eraser
 						}
 
 				//Create the main form
-				MainForm form = new MainForm();
-
+				program.MainForm = new MainForm();
 				bool showMainForm = true;
-				foreach (string param in commandLine)
+				foreach (string param in program.CommandLine)
 				{
 					//Run tasks which are meant to be run on restart
 					switch (param)
@@ -168,20 +185,38 @@ namespace Eraser
 							break;
 					}
 				}
-				
-				//Run the program
-				eraserClient.Run();
-				if (showMainForm)
-					Application.Run(form);
-				else
-					Application.Run();
 
-				//Save the task list
-				using (MemoryStream stream = new MemoryStream())
-				{
-					eraserClient.SaveTaskList(stream);
-					settings.TaskList = stream.ToArray();
-				}
+				//Run the eraser client.
+				eraserClient.Run();
+				return showMainForm;
+			}
+		}
+
+		private static void OnGUINextInstance(object sender)
+		{
+			//Another instance of the GUI Program has been started: show the main window
+			//now as we still do not have a facility to handle the command line arguments.
+			GUIProgram program = (GUIProgram)sender;
+
+			//Invoke the function if we aren't on the main thread
+			if (program.MainForm.InvokeRequired)
+			{
+				program.MainForm.Invoke(new GUIProgram.NextInstanceFunction(
+					OnGUINextInstance), new object[] { sender });
+				return;
+			}
+
+			program.MainForm.Visible = true;
+		}
+
+		private static void OnGUIExitInstance(object sender)
+		{
+			//Save the task list
+			EraserSettings settings = new EraserSettings();
+			using (MemoryStream stream = new MemoryStream())
+			{
+				eraserClient.SaveTaskList(stream);
+				settings.TaskList = stream.ToArray();
 			}
 		}
 
@@ -189,12 +224,324 @@ namespace Eraser
 		/// The global Executor instance.
 		/// </summary>
 		public static Executor eraserClient;
+	}
+
+	class GUIProgram
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="commandLine">The command line arguments associated with
+		/// this program launch</param>
+		/// <param name="instanceID">The instance ID of the program, used to group
+		/// instances of the program together.</param>
+		public GUIProgram(string[] commandLine, string instanceID)
+		{
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+			this.instanceID = instanceID;
+			this.commandLine = commandLine;
+
+			//Check if there already is another instance of the program.
+			globalMutex = new Mutex(true, instanceID, out isFirstInstance);
+		}
 
 		/// <summary>
-		/// Handles commands passed to the program
+		/// Runs the event loop of the GUI program, returning true if the program
+		/// was started as there were no other instances of the program, or false
+		/// if other instances were found.
 		/// </summary>
-		/// <param name="arguments">The arguments to the command</param>
-		private delegate void CommandHandler(Dictionary<string, string> arguments);
+		/// <remarks>
+		/// This function must always be called in your program, regardless
+		/// of the value of <see cref="IsAlreadyRunning"/>. If this function is not
+		/// called, the first instance will never be notified that another was started.
+		/// </remarks>
+		/// <returns>True if the application was started, or false if another instance
+		/// was detected.</returns>
+		public bool Run()
+		{
+			//If no other instances are running, set up our pipe server so clients
+			//can connect and give us subsequent command lines.
+			if (isFirstInstance)
+			{
+				try
+				{
+					//Create the pipe server which will handle connections to us
+					pipeServer = new Thread(ServerMain);
+					pipeServer.Start();
+
+					//Initialise and run the program.
+					if (OnInitInstance(this) && MainForm != null)
+						Application.Run(mainForm);
+					else
+						Application.Run();
+					return true;
+				}
+				finally
+				{
+					pipeServer.Abort();
+				}
+			}
+
+			//Another instance of the program is running. Connect to it and transfer
+			//the command line arguments
+			else
+			{
+				try
+				{
+					NamedPipeClientStream client = new NamedPipeClientStream(".", instanceID,
+						PipeDirection.Out);
+					client.Connect(500);
+
+					StringBuilder commandLineStr = new StringBuilder(commandLine.Length * 64);
+					foreach (string param in commandLine)
+						commandLineStr.Append(string.Format("{0}\0", param));
+
+					byte[] buffer = new byte[commandLineStr.Length];
+					int count = Encoding.UTF8.GetBytes(commandLineStr.ToString(),0,
+						commandLineStr.Length, buffer, 0);
+					client.Write(buffer, 0, buffer.Length);
+				}
+				catch (TimeoutException)
+				{
+					//Can't do much: half a second is a reasonably long time to wait.
+				}
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Holds information required for an asynchronous call to
+		/// NamedPipeServerStream.BeginWaitForConnection.
+		/// </summary>
+		private struct ServerAsyncInfo
+		{
+			public NamedPipeServerStream Server;
+			public AutoResetEvent WaitHandle;
+		}
+
+		/// <summary>
+		/// Runs a background thread, monitoring for new connections to the server.
+		/// </summary>
+		private void ServerMain()
+		{
+			while (pipeServer.ThreadState != System.Threading.ThreadState.AbortRequested)
+			{
+				using (NamedPipeServerStream server = new NamedPipeServerStream(instanceID,
+					PipeDirection.In, 1, PipeTransmissionMode.Message, PipeOptions.Asynchronous))
+				{
+					ServerAsyncInfo async = new ServerAsyncInfo();
+					async.Server = server;
+					async.WaitHandle = new AutoResetEvent(false);
+					IAsyncResult result = server.BeginWaitForConnection(WaitForConnection, async);
+
+					//Wait for the operation to complete.
+					if (result.AsyncWaitHandle.WaitOne())
+						//It completed. Wait for the processing to complete.
+						async.WaitHandle.WaitOne();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Waits for new connections to be made to the server.
+		/// </summary>
+		/// <param name="result"></param>
+		private void WaitForConnection(IAsyncResult result)
+		{
+			ServerAsyncInfo async = (ServerAsyncInfo)result.AsyncState;
+			
+			try
+			{
+				//We're done waiting for the connection
+				async.Server.EndWaitForConnection(result);
+
+				//Process the connection if the server was successfully connected.
+				if (async.Server.IsConnected)
+				{
+					//Read the message from the secondary instance
+					byte[] buffer = new byte[8192];
+					string message = string.Empty;
+
+					do
+					{
+						int lastRead = async.Server.Read(buffer, 0, buffer.Length);
+						message += Encoding.UTF8.GetString(buffer, 0, lastRead);
+					}
+					while (!async.Server.IsMessageComplete);
+
+					//Let the event handler process the message.
+					OnNextInstance(this, message);
+				}
+
+			}
+			finally
+			{
+				//Reset the wait event
+				async.WaitHandle.Set();
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the format string to apply to top-level window captions when
+		/// they are displayed with a warning banner.
+		/// </summary>
+		public string SafeTopLevelCaptionFormat
+		{
+			get
+			{
+				return Application.SafeTopLevelCaptionFormat;
+			}
+			set
+			{
+				Application.SafeTopLevelCaptionFormat = value;
+			}
+		}
+
+		/// <summary>
+		/// Gets the command line arguments this instance was started with.
+		/// </summary>
+		public string[] CommandLine
+		{
+			get
+			{
+				return commandLine;
+			}
+		}
+
+		/// <summary>
+		/// Gets whether another instance of the program is already running.
+		/// </summary>
+		public bool IsAlreadyRunning
+		{
+			get
+			{
+				return isFirstInstance;
+			}
+		}
+
+		/// <summary>
+		/// The main form for this program instance. This form will be shown when
+		/// run is called if it is non-null and if its Visible property is true.
+		/// </summary>
+		public Form MainForm
+		{
+			get
+			{
+				return mainForm;
+			}
+			set
+			{
+				mainForm = value;
+			}
+		}
+
+		#region Events
+		/// <summary>
+		/// The prototype of event handlers procesing the InitInstance event.
+		/// </summary>
+		/// <param name="sender">The sender of the event.</param>
+		/// <returns>True if the MainForm property holds a valid reference to
+		/// a form, and the form should be displayed to the user.</returns>
+		public delegate bool InitInstanceFunction(object sender);
+
+		/// <summary>
+		/// The event object managing listeners to the instance initialisation event.
+		/// This event is raised when the first instance of the program is started
+		/// and this is where the program initialisation code should be.
+		/// </summary>
+		public event InitInstanceFunction InitInstance;
+
+		/// <summary>
+		/// Broadcasts the InitInstance event.
+		/// </summary>
+		/// <param name="sender">The sender of the event.</param>
+		/// <returns>True if the MainForm object should be shown.</returns>
+		private bool OnInitInstance(object sender)
+		{
+			if (InitInstance != null)
+				return InitInstance(sender);
+			return true;
+		}
+
+		/// <summary>
+		/// The prototype of event handlers procesing the NextInstance event.
+		/// </summary>
+		/// <param name="sender">The sender of the event</param>
+		public delegate void NextInstanceFunction(object sender);
+
+		/// <summary>
+		/// The event object managing listeners to the next instance event. This
+		/// event is raised when a second instance of the program is started.
+		/// </summary>
+		public event NextInstanceFunction NextInstance;
+
+		/// <summary>
+		/// Broadcasts the NextInstance event.
+		/// </summary>
+		/// <param name="sender">The sender of the event.</param>
+		/// <param name="message">The message sent by the secondary instance.</param>
+		private void OnNextInstance(object sender, string message)
+		{
+			if (NextInstance != null)
+				NextInstance(sender);
+		}
+
+		/// <summary>
+		/// The prototype of event handlers procesing the ExitInstance event.
+		/// </summary>
+		/// <param name="sender">The sender of the event.</param>
+		public delegate void ExitInstanceFunction(object sender);
+
+		/// <summary>
+		/// The event object managing listeners to the exit instance event. This
+		/// event is raised when the first instance of the program is exited.
+		/// </summary>
+		public event ExitInstanceFunction ExitInstance;
+
+		/// <summary>
+		/// Broadcasts the ExitInstance event.
+		/// </summary>
+		/// <param name="sender">The sender of the event.</param>
+		private void OnExitInstance(object sender)
+		{
+			if (ExitInstance != null)
+				ExitInstance(sender);
+		}
+		#endregion
+
+		#region Instance variables
+		/// <summary>
+		/// The Instance ID of this program, used to group program instances together.
+		/// </summary>
+		private string instanceID;
+
+		/// <summary>
+		/// The named mutex ensuring that only one instance of the application runs
+		/// at a time.
+		/// </summary>
+		private Mutex globalMutex;
+
+		/// <summary>
+		/// The thread maintaining the pipe server for secondary instances to connect to.
+		/// </summary>
+		private Thread pipeServer;
+
+		/// <summary>
+		/// Holds whether this instance of the program is the first instance.
+		/// </summary>
+		private bool isFirstInstance;
+
+		/// <summary>
+		/// The command line arguments this instance was started with.
+		/// </summary>
+		private string[] commandLine;
+
+		/// <summary>
+		/// The main form for this program instance.
+		/// </summary>
+		private Form mainForm;
+		#endregion
 	}
 
 	class CommandLineProgram
