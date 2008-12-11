@@ -49,7 +49,6 @@ namespace Eraser
 		public MainForm()
 		{
 			InitializeComponent();
-			CreateControl();
 			SettingsPage.CreateControl();
 			SchedulerPage.CreateControl();
 

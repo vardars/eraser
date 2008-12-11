@@ -173,6 +173,7 @@ namespace Eraser
 
 				//Create the main form
 				program.MainForm = new MainForm();
+				program.MainForm.CreateControl();
 				bool showMainForm = true;
 				foreach (string param in program.CommandLine)
 				{
@@ -285,9 +286,15 @@ namespace Eraser
 
 					//Initialise and run the program.
 					if (OnInitInstance(this) && MainForm != null)
-						Application.Run(mainForm);
+						Application.Run(MainForm);
 					else
+					{
+						//If we aren't showing the form, force the creation of the window
+						//handle.
+						MainForm.CreateControl();
+						IntPtr handle = MainForm.Handle;
 						Application.Run();
+					}
 					return true;
 				}
 				finally
