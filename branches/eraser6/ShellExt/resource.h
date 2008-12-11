@@ -17,6 +17,7 @@
 #define IDS_HELPSTRING_SECUREMOVE       303
 #define IDS_ERROR_UNKNOWNACTION         400
 #define IDS_ERROR_CANNOTFINDERASER      401
+#define IDS_ERROR_UNKNOWN               402
 
 // Next default values for new objects
 // 

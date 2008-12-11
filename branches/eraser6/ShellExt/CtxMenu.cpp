@@ -466,6 +466,7 @@ namespace Eraser {
 		//Build the command line
 		std::wstring commandAction;
 		std::wstring commandLine;
+		bool commandElevate = false;
 		HRESULT result = E_INVALIDARG;
 		switch (VerbMenuIndices[LOWORD(pCmdInfo->lpVerb)])
 		{
@@ -512,6 +513,9 @@ namespace Eraser {
 				//We want to add a new task
 				commandAction = L"addtask";
 
+				//Erasing unused space requires elevation
+				commandElevate = true;
+
 				//Add every item onto the command line
 				for (std::list<std::wstring>::const_iterator i = SelectedFiles.begin();
 					i != SelectedFiles.end(); ++i)
@@ -531,101 +535,16 @@ namespace Eraser {
 			}
 		}
 
-		//Execute the command.
-		if (!commandLine.empty())
+		try
 		{
-			//Get the path to this DLL so we can look for Eraser.exe
-			wchar_t fileName[MAX_PATH];
-			DWORD fileNameLength = GetModuleFileName(theApp.m_hInstance, fileName,
-				sizeof(fileName) / sizeof(fileName[0]));
-			if (!fileNameLength || fileNameLength >= sizeof(fileName) / sizeof(fileName[0]))
-				return E_UNEXPECTED;
-			
-			//Trim to the last \, then append Eraser.exe
-			std::wstring eraserPath(fileName, fileNameLength);
-			std::wstring::size_type lastBackslash = eraserPath.rfind('\\');
-			if (lastBackslash == std::wstring::npos)
-				return E_INVALIDARG;
-
-			eraserPath.erase(eraserPath.begin() + lastBackslash + 1, eraserPath.end());
-			if (eraserPath.empty())
-				return E_UNEXPECTED;
-
-			eraserPath += L"Eraser.exe";
-
-			//Create the process.
-			STARTUPINFO startupInfo;
-			ZeroMemory(&startupInfo, sizeof(startupInfo));
-			startupInfo.cb = sizeof(startupInfo);
-			startupInfo.dwFlags = STARTF_USESHOWWINDOW;
-			startupInfo.wShowWindow = static_cast<WORD>(pCmdInfo->nShow);
-			startupInfo.hStdInput = startupInfo.hStdOutput = startupInfo.hStdError =
-				INVALID_HANDLE_VALUE;
-
-			//Create handles for output redirection
-			Handle<HANDLE> readPipe;
-			HANDLE writePipe;
-			SECURITY_ATTRIBUTES security;
-			ZeroMemory(&security, sizeof(security));
-			security.nLength = sizeof(security);
-			security.lpSecurityDescriptor = NULL;
-			security.bInheritHandle = true;
-
-			if (CreatePipe(&static_cast<HANDLE&>(readPipe), &writePipe, &security, 0))
+			RunEraser(commandAction, commandLine, commandElevate, pCmdInfo->hwnd,
+				pCmdInfo->nShow);
+		}
+		catch (const std::wstring& e)
+		{
+			if (!(pCmdInfo->fMask & CMIC_MASK_FLAG_NO_UI))
 			{
-				startupInfo.dwFlags |= STARTF_USESTDHANDLES;
-				startupInfo.hStdOutput = startupInfo.hStdError =
-					writePipe;
-			}
-
-			PROCESS_INFORMATION processInfo;
-			ZeroMemory(&processInfo, sizeof(processInfo));
-			
-			std::wostringstream finalCmdLine;
-			finalCmdLine << L"\"" << eraserPath << L"\" \"" << commandAction
-			             << L"\" -q " << commandLine;
-			std::wstring cmdLine(finalCmdLine.str());
-			std::vector<wchar_t> buffer(cmdLine.length() + 1);
-			wcscpy_s(&buffer.front(), cmdLine.length() + 1, cmdLine.c_str());
-
-			if (!CreateProcess(NULL, &buffer.front(), NULL, NULL, true, CREATE_NO_WINDOW,
-				NULL, NULL, &startupInfo, &processInfo))
-			{
-				if (!(pCmdInfo->fMask & CMIC_MASK_FLAG_NO_UI))
-				{
-					MessageBox(pCmdInfo->hwnd, LoadString(IDS_ERROR_CANNOTFINDERASER).c_str(),
-						LoadString(IDS_ERASERSHELLEXT).c_str(), MB_OK | MB_ICONERROR);
-				}
-
-				return E_UNEXPECTED;
-			}
-
-			//Wait for the process to finish.
-			Handle<HANDLE> hProcess(processInfo.hProcess),
-			               hThread(processInfo.hThread);
-			CloseHandle(writePipe);
-			WaitForSingleObject(hProcess, static_cast<DWORD>(-1));
-			DWORD exitCode = 0;
-			
-			if (GetExitCodeProcess(processInfo.hProcess, &exitCode) && exitCode)
-			{
-				char buffer[8192];
-				DWORD lastRead = 0;
-				std::wstring output;
-
-				while (ReadFile(readPipe, buffer, sizeof(buffer), &lastRead, NULL) && lastRead != 0)
-				{
-					size_t lastConvert = 0;
-					wchar_t wBuffer[8192];
-					if (!mbstowcs_s(&lastConvert, wBuffer, sizeof(wBuffer) / sizeof(wBuffer[0]),
-					    buffer, lastRead))
-					{
-						output += std::wstring(wBuffer, lastConvert);
-					}
-				}
-
-				//Show the error message.
-				MessageBox(pCmdInfo->hwnd, output.c_str(), LoadString(IDS_ERASERSHELLEXT).c_str(),
+				MessageBox(pCmdInfo->hwnd, e.c_str(), LoadString(IDS_ERASERSHELLEXT).c_str(),
 					MB_OK | MB_ICONERROR);
 			}
 		}
@@ -682,7 +601,7 @@ namespace Eraser {
 		return std::wstring();
 	}
 
-	std::wstring CCtxMenu::FormatString(std::wstring formatString, ...)
+	std::wstring CCtxMenu::FormatString(const std::wstring& formatString, ...)
 	{
 		std::vector<wchar_t> formatStr(formatString.length() + 1);
 		wcscpy_s(&formatStr.front(), formatStr.size(), formatString.c_str());
@@ -735,6 +654,114 @@ namespace Eraser {
 		KEY_NODE_INFORMATION* keyInfo = reinterpret_cast<KEY_NODE_INFORMATION*>(
 			&buffer.front());
 		return keyInfo->Name;
+	}
+
+	void CCtxMenu::RunEraser(const std::wstring& action, const std::wstring& parameters,
+		bool elevated, HWND parent, int show)
+	{
+		//Get the path to this DLL so we can look for Eraser.exe
+		wchar_t fileName[MAX_PATH];
+		DWORD fileNameLength = GetModuleFileName(theApp.m_hInstance, fileName,
+			sizeof(fileName) / sizeof(fileName[0]));
+		if (!fileNameLength || fileNameLength >= sizeof(fileName) / sizeof(fileName[0]))
+			throw LoadString(IDS_ERROR_CANNOTFINDERASER);
+		
+		//Trim to the last \, then append Eraser.exe
+		std::wstring eraserPath(fileName, fileNameLength);
+		std::wstring::size_type lastBackslash = eraserPath.rfind('\\');
+		if (lastBackslash == std::wstring::npos)
+			throw LoadString(IDS_ERROR_CANNOTFINDERASER);
+
+		eraserPath.erase(eraserPath.begin() + lastBackslash + 1, eraserPath.end());
+		if (eraserPath.empty())
+			throw LoadString(IDS_ERROR_CANNOTFINDERASER);
+
+		eraserPath += L"Eraser.exe";
+
+		std::wostringstream finalCmdLine;
+		finalCmdLine << L"\"" << eraserPath << L"\" \"" << action << L"\" -q "
+					 << parameters;
+		std::wstring cmdLine(finalCmdLine.str());
+		std::vector<wchar_t> buffer(cmdLine.length() + 1);
+		wcscpy_s(&buffer.front(), cmdLine.length() + 1, cmdLine.c_str());
+
+#if 0
+		//If the process must be elevated we use ShellExecute with the runas verb
+		//to elevate the new process.
+		if (elevated)
+		{
+			int result = reinterpret_cast<int>(ShellExecute(parent, L"runas",
+				eraserPath.c_str(), &buffer.front(), NULL, show));
+			if (result <= 32)
+				throw LoadString(IDS_ERROR_UNKNOWN);
+		}
+
+		//If the process isn't to be elevated, we use CreateProcess so we can get
+		//read the output from the child process
+		else
+#endif
+		{
+			//Create the process.
+			STARTUPINFO startupInfo;
+			ZeroMemory(&startupInfo, sizeof(startupInfo));
+			startupInfo.cb = sizeof(startupInfo);
+			startupInfo.dwFlags = STARTF_USESHOWWINDOW;
+			startupInfo.wShowWindow = static_cast<WORD>(show);
+			startupInfo.hStdInput = startupInfo.hStdOutput = startupInfo.hStdError =
+				INVALID_HANDLE_VALUE;
+
+			//Create handles for output redirection
+			Handle<HANDLE> readPipe;
+			HANDLE writePipe;
+			SECURITY_ATTRIBUTES security;
+			ZeroMemory(&security, sizeof(security));
+			security.nLength = sizeof(security);
+			security.lpSecurityDescriptor = NULL;
+			security.bInheritHandle = true;
+
+			if (CreatePipe(&static_cast<HANDLE&>(readPipe), &writePipe, &security, 0))
+			{
+				startupInfo.dwFlags |= STARTF_USESTDHANDLES;
+				startupInfo.hStdOutput = startupInfo.hStdError =
+					writePipe;
+			}
+
+			PROCESS_INFORMATION processInfo;
+			ZeroMemory(&processInfo, sizeof(processInfo));
+			if (!CreateProcess(NULL, &buffer.front(), NULL, NULL, true, CREATE_NO_WINDOW,
+				NULL, NULL, &startupInfo, &processInfo))
+			{
+				throw LoadString(IDS_ERROR_CANNOTFINDERASER);
+			}
+
+			//Wait for the process to finish.
+			Handle<HANDLE> hProcess(processInfo.hProcess),
+						   hThread(processInfo.hThread);
+			CloseHandle(writePipe);
+			WaitForSingleObject(hProcess, static_cast<DWORD>(-1));
+			DWORD exitCode = 0;
+			
+			if (GetExitCodeProcess(processInfo.hProcess, &exitCode) && exitCode)
+			{
+				char buffer[8192];
+				DWORD lastRead = 0;
+				std::wstring output;
+
+				while (ReadFile(readPipe, buffer, sizeof(buffer), &lastRead, NULL) && lastRead != 0)
+				{
+					size_t lastConvert = 0;
+					wchar_t wBuffer[8192];
+					if (!mbstowcs_s(&lastConvert, wBuffer, sizeof(wBuffer) / sizeof(wBuffer[0]),
+						buffer, lastRead))
+					{
+						output += std::wstring(wBuffer, lastConvert);
+					}
+				}
+
+				//Show the error message.
+				throw output;
+			}
+		}
 	}
 
 	MENUITEMINFO* CCtxMenu::GetSeparator()

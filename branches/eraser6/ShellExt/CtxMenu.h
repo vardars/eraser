@@ -80,8 +80,11 @@ namespace Eraser
 		Actions GetApplicableActions();
 
 		static std::wstring LoadString(UINT stringID);
-		static std::wstring FormatString(std::wstring formatString, ...);
+		static std::wstring FormatString(const std::wstring& formatString, ...);
 		static std::wstring GetHKeyPath(HKEY handle);
+		static void RunEraser(const std::wstring& action, const std::wstring& parameters,
+			bool elevated, HWND parent, int show);
+
 		static MENUITEMINFO* GetSeparator();
 		static HICON GetMenuIcon();
 		static HBITMAP GetMenuBitmap();
