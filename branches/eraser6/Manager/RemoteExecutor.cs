@@ -21,14 +21,13 @@
  */
 
 using System;
-using System.IO;
 using System.Text;
+using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Collections.Generic;
 
 using System.Runtime.Serialization;
-using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Eraser.Manager
@@ -127,9 +126,8 @@ namespace Eraser.Manager
 				IAsyncResult asyncWait = server.BeginWaitForConnection(
 					EndWaitForConnection, server);
 
-				//Execute the handler if the server was connected.
-				if (asyncWait.AsyncWaitHandle.WaitOne())
-					ThreadPool.QueueUserWorkItem(ProcessConnection, server);
+				//Wait for a connection before moving on to create another listening server
+				asyncWait.AsyncWaitHandle.WaitOne();
 			}
 		}
 
@@ -140,20 +138,11 @@ namespace Eraser.Manager
 		/// operation.</param>
 		private void EndWaitForConnection(IAsyncResult result)
 		{
-			NamedPipeServerStream server = (NamedPipeServerStream)result.AsyncState;
-			server.WaitForConnection();
-			server.EndWaitForConnection(result);
-		}
-
-		/// <summary>
-		/// Handles a new connection from the client.
-		/// </summary>
-		/// <param name="param">The connected NamedPipeServerStream instance.</param>
-		private void ProcessConnection(object param)
-		{
-			//Get the Server instance.
-			using (NamedPipeServerStream server = (NamedPipeServerStream)param)
+			using (NamedPipeServerStream server = (NamedPipeServerStream)result.AsyncState)
 			{
+				//We're done waiting for the connection
+				server.EndWaitForConnection(result);
+
 				//Read the request into the buffer.
 				RemoteRequest request = null;
 				using (MemoryStream mstream = new MemoryStream())
@@ -290,8 +279,8 @@ namespace Eraser.Manager
 
 					default:
 						throw new FatalException("Unknown RemoteExecutorClient.Function");
-				#endregion
 				}
+				#endregion
 
 				//Return the result of the invoked function, if any.
 				if (returnValue != null)
