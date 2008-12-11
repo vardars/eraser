@@ -192,9 +192,6 @@
   <data name="Running..." xml:space="preserve">
     <value>Running...</value>
   </data>
-  <data name="Queued for execution." xml:space="preserve">
-    <value>Queued for execution.</value>
-  </data>
   <data name="User interface language" xml:space="preserve">
     <value>User interface language</value>
   </data>

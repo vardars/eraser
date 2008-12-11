@@ -192,9 +192,6 @@
   <data name="Running..." xml:space="preserve">
     <value>Wordt uitgevoerd...</value>
   </data>
-  <data name="Queued for execution." xml:space="preserve">
-    <value>In wachtrij geplaatst voor operatie.</value>
-  </data>
   <data name="User interface language" xml:space="preserve">
     <value>Gebruikers interface taal</value>
   </data>
