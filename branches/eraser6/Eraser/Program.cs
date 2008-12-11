@@ -1134,8 +1134,8 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 					"is already running but it is running with higher privileges than " +
 					"this instance of Eraser. Tasks cannot be added in this manner.\n\n" +
 					"Close the running instance of Eraser and start it again without " +
-					"administrator privileges, or run the command again as an administrator",
-					e);
+					"administrator privileges, or run the command again as an " +
+					"administrator.", e);
 			}
 		}
 		#endregion
