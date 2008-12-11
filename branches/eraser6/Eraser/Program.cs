@@ -318,9 +318,19 @@ namespace Eraser
 						commandLineStr.Append(string.Format("{0}\0", param));
 
 					byte[] buffer = new byte[commandLineStr.Length];
-					int count = Encoding.UTF8.GetBytes(commandLineStr.ToString(),0,
+					int count = Encoding.UTF8.GetBytes(commandLineStr.ToString(), 0,
 						commandLineStr.Length, buffer, 0);
 					client.Write(buffer, 0, buffer.Length);
+				}
+				catch (UnauthorizedAccessException)
+				{
+					//We can't connect to the pipe because the other instance of Eraser
+					//is running with higher privileges than this instance. Tell the
+					//user this is the case and show him how to resolve the issue.
+					MessageBox.Show(S._("Another instance of Eraser is already running but it is " +
+						"running with higher privileges than this instance of Eraser.\n\n" +
+						"Eraser will now exit."), S._("Eraser"), MessageBoxButtons.OK,
+						MessageBoxIcon.Information);
 				}
 				catch (TimeoutException)
 				{
@@ -1095,23 +1105,37 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			task.Schedule = arguments.Schedule;
 
 			//Send the task out.
-			using (Program.eraserClient = new RemoteExecutorClient())
+			try
 			{
-				if (!((RemoteExecutorClient)Program.eraserClient).Connect())
+				using (Program.eraserClient = new RemoteExecutorClient())
 				{
-					//The client cannot connect to the server. This probably means
-					//that the server process isn't running. Start an instance.
-					Process eraserInstance = Process.Start(
-						Assembly.GetExecutingAssembly().Location, "--quiet");
-					eraserInstance.WaitForInputIdle();
-
 					if (!((RemoteExecutorClient)Program.eraserClient).Connect())
-						throw new Exception("Eraser cannot connect to the running " +
-							"instance for erasures.");
-				}
+					{
+						//The client cannot connect to the server. This probably means
+						//that the server process isn't running. Start an instance.
+						Process eraserInstance = Process.Start(
+							Assembly.GetExecutingAssembly().Location, "--quiet");
+						eraserInstance.WaitForInputIdle();
 
-				Program.eraserClient.Run();
-				Program.eraserClient.AddTask(ref task);
+						if (!((RemoteExecutorClient)Program.eraserClient).Connect())
+							throw new Exception("Eraser cannot connect to the running " +
+								"instance for erasures.");
+					}
+
+					Program.eraserClient.Run();
+					Program.eraserClient.AddTask(ref task);
+				}
+			}
+			catch (UnauthorizedAccessException e)
+			{
+				//We can't connect to the pipe because the other instance of Eraser
+				//is running with higher privileges than this instance.
+				throw new UnauthorizedAccessException("Another instance of Eraser " +
+					"is already running but it is running with higher privileges than " +
+					"this instance of Eraser. Tasks cannot be added in this manner.\n\n" +
+					"Close the running instance of Eraser and start it again without " +
+					"administrator privileges, or run the command again as an administrator",
+					e);
 			}
 		}
 		#endregion

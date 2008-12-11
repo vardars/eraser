@@ -150,6 +150,9 @@
   <data name="Could not load the setting {0} for plugin {1}. The setting has been lost." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
+  <data name="Another instance of Eraser is already running but it is running with higher privileges than this instance of Eraser.\n\nEraser will now exit." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="{0} out of {1}" xml:space="preserve">
     <value>{0} van {1}</value>
   </data>
