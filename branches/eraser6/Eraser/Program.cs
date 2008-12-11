@@ -140,6 +140,11 @@ namespace Eraser
 			}
 		}
 
+		/// <summary>
+		/// Triggered when the Program is started for the first time.
+		/// </summary>
+		/// <param name="sender">The sender of the object.</param>
+		/// <returns>True if the user did not specify --quiet, false otherwise.</returns>
 		private static bool OnGUIInitInstance(object sender)
 		{
 			GUIProgram program = (GUIProgram)sender;
@@ -192,6 +197,10 @@ namespace Eraser
 			}
 		}
 
+		/// <summary>
+		/// Triggered when a second instance of Eraser is started.
+		/// </summary>
+		/// <param name="sender">The sender of the event.</param>
 		private static void OnGUINextInstance(object sender)
 		{
 			//Another instance of the GUI Program has been started: show the main window
@@ -209,6 +218,10 @@ namespace Eraser
 			program.MainForm.Visible = true;
 		}
 
+		/// <summary>
+		/// Triggered when the first instance of Eraser is exited.
+		/// </summary>
+		/// <param name="sender">The sender of the event.</param>
 		private static void OnGUIExitInstance(object sender)
 		{
 			//Save the task list
@@ -350,7 +363,7 @@ namespace Eraser
 		private void WaitForConnection(IAsyncResult result)
 		{
 			ServerAsyncInfo async = (ServerAsyncInfo)result.AsyncState;
-			
+
 			try
 			{
 				//We're done waiting for the connection
@@ -373,7 +386,9 @@ namespace Eraser
 					//Let the event handler process the message.
 					OnNextInstance(this, message);
 				}
-
+			}
+			catch (ObjectDisposedException)
+			{
 			}
 			finally
 			{
@@ -625,7 +640,7 @@ namespace Eraser
 							return parameter.Substring(1) == expectedParameter;
 						else
 							return parameter.Substring(1) == shortParameter;
-						
+
 					case '/':
 						//The / can be used with both long and short parameters.
 						parameter = parameter.Substring(1);
@@ -1225,7 +1240,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		{
 			get
 			{
-				return settings["Language"] == null ? 
+				return settings["Language"] == null ?
 					GetCurrentCulture().Name :
 					(string)settings["Language"];
 			}
