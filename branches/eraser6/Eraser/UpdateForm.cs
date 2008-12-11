@@ -139,7 +139,7 @@ namespace Eraser
 			}
 
 			progressPanel.Visible = false;
-			updatesPanel.Show();
+			updatesPanel.Visible = true;
 
 			//First list all available mirrors
 			Dictionary<string, UpdateManager.Mirror>.Enumerator iter =
@@ -235,7 +235,7 @@ namespace Eraser
 		private void updatesBtn_Click(object sender, EventArgs e)
 		{
 			updatesPanel.Visible = false;
-			downloadingPnl.Show();
+			downloadingPnl.Visible = true;
 			List<UpdateManager.Update> updatesToInstall =
 				new List<UpdateManager.Update>();
 
@@ -355,7 +355,7 @@ namespace Eraser
 			}
 
 			downloadingPnl.Visible = false;
-			installingPnl.Show();
+			installingPnl.Visible = true;
 
 			foreach (ListViewItem item in downloadingLv.Items)
 			{

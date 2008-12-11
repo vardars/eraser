@@ -230,7 +230,7 @@ namespace Eraser
 			}
 			else if (HideWhenMinimised)
 			{
-				Hide();
+				Visible = false;
 			}
 		}
 
@@ -345,15 +345,22 @@ namespace Eraser
 				!closedFromNotificationIcon || e.CloseReason != CloseReason.UserClosing))
 			{
 				e.Cancel = true;
-				Hide();
+				Visible = false;
+			}
+		}
+
+		private void MainForm_VisibleChanged(object sender, EventArgs e)
+		{
+			if (Visible)
+			{
+				WindowState = FormWindowState.Normal;
+				Activate();
 			}
 		}
 
 		private void openToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			Visible = true;
-			WindowState = FormWindowState.Normal;
-			Activate();
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
