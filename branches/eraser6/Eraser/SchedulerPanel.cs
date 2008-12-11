@@ -324,7 +324,7 @@ namespace Eraser
 					Program.eraserClient.QueueTask(task);
 
 					//Update the UI
-					item.SubItems[1].Text = S._("Queued for execution.");
+					item.SubItems[1].Text = S._("Queued for execution");
 				}
 			}
 		}
