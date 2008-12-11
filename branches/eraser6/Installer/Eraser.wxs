@@ -37,6 +37,9 @@
 		<Condition Message='Eraser requires the .NET Framework 3.5 or higher to be installed.'>
 			FRAMEWORK35 = "#1"
 		</Condition>
+		
+		<!-- Prevent those pesky MSI shortcuts which prevent running as Administrator -->
+		<Property Id="DISABLEADVTSHORTCUTS" Value="1" />
 
 		<!-- Program upgrades-->
 		<Upgrade Id ="D07F460B-E2B0-4cc5-A109-998CA9C2D4EA">
