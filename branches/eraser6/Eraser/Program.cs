@@ -148,54 +148,53 @@ namespace Eraser
 		private static bool OnGUIInitInstance(object sender)
 		{
 			GUIProgram program = (GUIProgram)sender;
-			using (eraserClient = new RemoteExecutorServer())
-			{
-				//Set our UI language
-				EraserSettings settings = new EraserSettings();
-				System.Threading.Thread.CurrentThread.CurrentUICulture =
-					new CultureInfo(settings.Language);
-				program.SafeTopLevelCaptionFormat = S._("Eraser");
+			eraserClient = new RemoteExecutorServer();
 
-				//Load the task list
-				if (settings.TaskList != null)
-					using (MemoryStream stream = new MemoryStream(settings.TaskList))
-						try
-						{
-							eraserClient.LoadTaskList(stream);
-						}
-						catch (Exception)
-						{
-							settings.TaskList = null;
-							MessageBox.Show(S._("Could not load task list. All task entries have " +
-								"been lost."), S._("Eraser"), MessageBoxButtons.OK,
-								MessageBoxIcon.Error);
-						}
+			//Set our UI language
+			EraserSettings settings = new EraserSettings();
+			System.Threading.Thread.CurrentThread.CurrentUICulture =
+				new CultureInfo(settings.Language);
+			program.SafeTopLevelCaptionFormat = S._("Eraser");
 
-				//Create the main form
-				program.MainForm = new MainForm();
-				program.MainForm.CreateControl();
-				bool showMainForm = true;
-				foreach (string param in program.CommandLine)
-				{
-					//Run tasks which are meant to be run on restart
-					switch (param)
+			//Load the task list
+			if (settings.TaskList != null)
+				using (MemoryStream stream = new MemoryStream(settings.TaskList))
+					try
 					{
-						case "--atRestart":
-							eraserClient.QueueRestartTasks();
-							goto case "--quiet";
-
-						//Hide the main form if the user specified the quiet command
-						//line
-						case "--quiet":
-							showMainForm = false;
-							break;
+						eraserClient.LoadTaskList(stream);
 					}
-				}
+					catch (Exception)
+					{
+						settings.TaskList = null;
+						MessageBox.Show(S._("Could not load task list. All task entries have " +
+							"been lost."), S._("Eraser"), MessageBoxButtons.OK,
+							MessageBoxIcon.Error);
+					}
 
-				//Run the eraser client.
-				eraserClient.Run();
-				return showMainForm;
+			//Create the main form
+			program.MainForm = new MainForm();
+			program.MainForm.CreateControl();
+			bool showMainForm = true;
+			foreach (string param in program.CommandLine)
+			{
+				//Run tasks which are meant to be run on restart
+				switch (param)
+				{
+					case "--atRestart":
+						eraserClient.QueueRestartTasks();
+						goto case "--quiet";
+
+					//Hide the main form if the user specified the quiet command
+					//line
+					case "--quiet":
+						showMainForm = false;
+						break;
+				}
 			}
+
+			//Run the eraser client.
+			eraserClient.Run();
+			return showMainForm;
 		}
 
 		/// <summary>
@@ -232,6 +231,9 @@ namespace Eraser
 				eraserClient.SaveTaskList(stream);
 				settings.TaskList = stream.ToArray();
 			}
+
+			//Dispose the eraser executor instance
+			eraserClient.Dispose();
 		}
 
 		/// <summary>
@@ -299,6 +301,8 @@ namespace Eraser
 				}
 				finally
 				{
+					//Since the program was initialised we must let the program clean up.
+					OnExitInstance(this);
 					pipeServer.Abort();
 				}
 			}
