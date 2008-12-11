@@ -264,7 +264,7 @@ bool MainWindow::Create()
 	SetWindowFont(hWndProgressBar);
 	SetWindowFont(hWndCancelBtn);
 
-	SendMessage(hWndProgressBar, PBM_SETRANGE, 0, MAKELPARAM(0, 1000));
+	SendMessage(hWndProgressBar, PBM_SETRANGE32, 0, 1000);
 	SubclassWindow(*this, hWndCancelBtn, WndProc);
 	SubclassWindow(*this, hWndPanel, WndProc);
 
@@ -343,8 +343,9 @@ void MainWindow::EnableCancellation(bool enable)
 
 void MainWindow::SetProgress(float progress)
 {
-	SetWindowLongPtr(hWndProgressBar, GWL_STYLE,
-		GetWindowLongPtr(hWndProgressBar, GWL_STYLE) & (~PBS_MARQUEE));
+	LONG_PTR pbStyle = GetWindowLongPtr(hWndProgressBar, GWL_STYLE);
+	if (pbStyle & PBS_MARQUEE)
+		SetWindowLongPtr(hWndProgressBar, GWL_STYLE, pbStyle & (~PBS_MARQUEE));
 	SendMessage(hWndProgressBar, PBM_SETPOS, (int)(progress * 1000), 0);
 }
 

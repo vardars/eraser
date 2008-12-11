@@ -141,7 +141,7 @@ private:
 
 		//Since we can allocate as much as we want to allocate, take a decent amount
 		//of memory and stop.
-		size = std::min(1048576u * 4, size);
+		size = std::min(1048576u, size);
 		static char* dstBuffer = NULL;
 		if (dstBuffer)
 			delete[] dstBuffer;
