@@ -138,11 +138,11 @@
   <data name="(Tips) {0}" xml:space="preserve">
     <value>(Tips) {0}</value>
   </data>
-  <data name="Unused space" xml:space="preserve">
-    <value>Unused space</value>
-  </data>
   <data name="The task was cancelled." xml:space="preserve">
     <value>The task was cancelled.</value>
+  </data>
+  <data name="Unused space" xml:space="preserve">
+    <value>Unused space</value>
   </data>
   <data name="Old resident file system table files" xml:space="preserve">
     <value>Old resident file system table files</value>

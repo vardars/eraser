@@ -768,7 +768,7 @@ namespace Eraser.Manager
 			for (int i = 0, j = files.Count; i != j; ++i)
 			{
 				//Get the file attributes for restoring later
-				FileInfo info = new FileInfo(files[i]);
+				StreamInfo info = new StreamInfo(files[i]);
 				FileAttributes fileAttr = info.Attributes;
 
 				try
@@ -922,7 +922,7 @@ namespace Eraser.Manager
 					//Get the size of the MFT
 					long mftSize = NtfsAPI.GetMftValidSize(volInfo);
 					long mftRecordSegmentSize = NtfsAPI.GetMftRecordSegmentSize(volInfo);
-					int pollingInterval = (int)(mftSize / volInfo.ClusterSize / 20);
+					int pollingInterval = (int)Math.Max(1, (mftSize / volInfo.ClusterSize / 20));
 					int totalFiles = (int)Math.Max(1L, mftSize / mftRecordSegmentSize) *
 						(FilenameErasePasses + 1);
 					int filesCreated = 0;
@@ -1136,9 +1136,9 @@ namespace Eraser.Manager
 				{
 					Thread.Sleep(100);
 
-					//If after 20 tries the file is still locked, some program is definitely
-					//using the file; throw an exception.
-					if (tries > 20)
+					//If after FilenameEraseTries the file is still locked, some program is
+					//definitely using the file; throw an exception.
+					if (tries > FilenameEraseTries)
 						throw new IOException(S._("The file {0} is currently in use and " +
 							"cannot be removed.", info.FullName));
 				}
@@ -1200,7 +1200,7 @@ namespace Eraser.Manager
 			}
 
 			//Then delete the file.
-			for (int i = 0; i < 20; ++i)
+			for (int i = 0; i < FilenameEraseTries; ++i)
 				try
 				{
 					info.Delete();
@@ -1208,6 +1208,9 @@ namespace Eraser.Manager
 				}
 				catch (IOException)
 				{
+					if (i > FilenameEraseTries)
+						throw new IOException(S._("The file {0} is currently in use and " +
+							"cannot be removed.", info.FullName));
 					Thread.Sleep(100);
 				}
 		}
@@ -1218,10 +1221,10 @@ namespace Eraser.Manager
 		/// <param name="info">The folder to remove.</param>
 		private static void RemoveFolder(DirectoryInfo info)
 		{
-			foreach (FileInfo file in info.GetFiles())
-				RemoveFile(file);
 			foreach (DirectoryInfo dir in info.GetDirectories())
 				RemoveFolder(dir);
+			foreach (FileInfo file in info.GetFiles())
+				RemoveFile(file);
 
 			//Then clean up this folder.
 			for (int i = 0; i < FilenameErasePasses; ++i)

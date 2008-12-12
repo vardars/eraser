@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 
 namespace Eraser.Util
 {
-	public class StreamInfo : FileSystemInfo
+	public class StreamInfo
 	{
 		/// <summary>
 		/// Initializes a new instance of the Eraser.Util.FileInfo class, which
@@ -40,9 +40,6 @@ namespace Eraser.Util
 		/// of the new file, or the relative file name.</param>
 		public StreamInfo(string path)
 		{
-			OriginalPath = path;
-			FullPath = path;
-
 			//Separate the path into the ADS and the file.
 			if (path.IndexOf(':') != path.LastIndexOf(':'))
 			{
@@ -76,6 +73,16 @@ namespace Eraser.Util
 			}
 		}
 
+		public string FullName
+		{
+			get
+			{
+				if (streamName != null)
+					return fileName + ':' + streamName;
+				return fileName;
+			}
+		}
+
 		/// <summary>
 		/// Gets an instance of the main file. If this object refers to an ADS, the
 		/// result is null.
@@ -89,11 +96,89 @@ namespace Eraser.Util
 				return null;
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets the file attributes on this stream.
+		/// </summary>
+		public FileAttributes Attributes
+		{
+			get
+			{
+				uint attributes = GetFileAttributes(fileName);
+				FileAttributes result = new FileAttributes();
+
+				if ((attributes & FILE_ATTRIBUTE_ARCHIVE) != 0)
+					result |= FileAttributes.Archive;
+				if ((attributes & FILE_ATTRIBUTE_COMPRESSED) != 0)
+					result |= FileAttributes.Compressed;
+				if ((attributes & FILE_ATTRIBUTE_DEVICE) != 0)
+					result |= FileAttributes.Device;
+				if ((attributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
+					result |= FileAttributes.Directory;
+				if ((attributes & FILE_ATTRIBUTE_ENCRYPTED) != 0)
+					result |= FileAttributes.Encrypted;
+				if ((attributes & FILE_ATTRIBUTE_HIDDEN) != 0)
+					result |= FileAttributes.Hidden;
+				if ((attributes & FILE_ATTRIBUTE_NOT_CONTENT_INDEXED) != 0)
+					result |= FileAttributes.NotContentIndexed;
+				if ((attributes & FILE_ATTRIBUTE_OFFLINE) != 0)
+					result |= FileAttributes.Offline;
+				if ((attributes & FILE_ATTRIBUTE_READONLY) != 0)
+					result |= FileAttributes.ReadOnly;
+				if ((attributes & FILE_ATTRIBUTE_REPARSE_POINT) != 0)
+					result |= FileAttributes.ReparsePoint;
+				if ((attributes & FILE_ATTRIBUTE_SPARSE_FILE) != 0)
+					result |= FileAttributes.SparseFile;
+				if ((attributes & FILE_ATTRIBUTE_SYSTEM) != 0)
+					result |= FileAttributes.System;
+				if ((attributes & FILE_ATTRIBUTE_TEMPORARY) != 0)
+					result |= FileAttributes.Temporary;
+
+				if ((attributes & FILE_ATTRIBUTE_NORMAL) != 0)
+					result = FileAttributes.Normal;
+				return result;
+			}
+			set
+			{
+				uint result = 0;
+				if ((value & (~FileAttributes.Normal)) == 0)
+					result = FILE_ATTRIBUTE_NORMAL;
+
+				if ((value & FileAttributes.Archive) != 0)
+					result |= FILE_ATTRIBUTE_ARCHIVE;
+				if ((value & FileAttributes.Compressed) != 0)
+					result |= FILE_ATTRIBUTE_COMPRESSED;
+				if ((value & FileAttributes.Device) != 0)
+					result |= FILE_ATTRIBUTE_DEVICE;
+				if ((value & FileAttributes.Directory) != 0)
+					result |= FILE_ATTRIBUTE_DIRECTORY;
+				if ((value & FileAttributes.Encrypted) != 0)
+					result |= FILE_ATTRIBUTE_ENCRYPTED;
+				if ((value & FileAttributes.Hidden) != 0)
+					result |= FILE_ATTRIBUTE_HIDDEN;
+				if ((value & FileAttributes.NotContentIndexed) != 0)
+					result |= FILE_ATTRIBUTE_NOT_CONTENT_INDEXED;
+				if ((value & FileAttributes.Offline) != 0)
+					result |= FILE_ATTRIBUTE_OFFLINE;
+				if ((value & FileAttributes.ReadOnly) != 0)
+					result |= FILE_ATTRIBUTE_READONLY;
+				if ((value & FileAttributes.ReparsePoint) != 0)
+					result |= FILE_ATTRIBUTE_REPARSE_POINT;
+				if ((value & FileAttributes.SparseFile) != 0)
+					result |= FILE_ATTRIBUTE_SPARSE_FILE;
+				if ((value & FileAttributes.System) != 0)
+					result |= FILE_ATTRIBUTE_SYSTEM;
+				if ((value & FileAttributes.Temporary) != 0)
+					result |= FILE_ATTRIBUTE_TEMPORARY;
+
+				SetFileAttributes(fileName, result);
+			}
+		}
 		
 		/// <summary>
 		/// Gets a value indicating whether the stream exists.
 		/// </summary>
-		public override bool Exists
+		public bool Exists
 		{
 			get
 			{
@@ -143,7 +228,7 @@ namespace Eraser.Util
 		/// <summary>
 		/// Gets the name of the file.
 		/// </summary>
-		public override string Name
+		public string Name
 		{
 			get { return fileName; }
 		}
@@ -151,7 +236,7 @@ namespace Eraser.Util
 		/// <summary>
 		/// Permanently deletes a file.
 		/// </summary>
-		public override void Delete()
+		public void Delete()
 		{
 			throw new InvalidOperationException("Deleting streams are not implemented");
 		}
@@ -294,7 +379,7 @@ namespace Eraser.Util
 				iOptions |= Util.File.FILE_FLAG_SEQUENTIAL_SCAN;
 
 			//Create the handle
-			SafeFileHandle handle = Util.File.CreateFile(FullPath, iAccess, iShare,
+			SafeFileHandle handle = Util.File.CreateFile(FullName, iAccess, iShare,
 				IntPtr.Zero, iMode, iOptions, IntPtr.Zero);
 
 			//If CreateNew was used and the file exists, throw the IOException.
@@ -339,9 +424,7 @@ namespace Eraser.Util
 		/// <returns>A string representing the path.</returns>
 		public override string ToString()
 		{
-			if (streamName.Length != 0)
-				return fileName + ':' + streamName;
-			return fileName;
+			return FullName;
 		}
 
 		private SafeFileHandle fileHandle
@@ -349,11 +432,12 @@ namespace Eraser.Util
 			get
 			{
 				//Create the handle
-				return Util.File.CreateFile(FullPath, 0,
+				return Util.File.CreateFile(FullName, 0,
 					Util.File.FILE_SHARE_READ | Util.File.FILE_SHARE_WRITE | Util.File.FILE_SHARE_DELETE,
 					IntPtr.Zero, Util.File.OPEN_EXISTING, 0, IntPtr.Zero);
 			}
 		}
+
 		private string fileName;
 		private string streamName;
 
@@ -390,15 +474,9 @@ namespace Eraser.Util
 		/// 
 		/// If the function fails, the return value is zero. To get extended error
 		/// information, call Marshal.GetLastWin32Error.</returns>
-		private static bool SetFileAttributes(string lpFileName, uint dwFileAttributes)
-		{
-			return SetFileAttributesInternal(lpFileName, dwFileAttributes);
-		}
-
-		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode,
-			EntryPoint = "SetFileAttributes")]
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool SetFileAttributesInternal(string lpFileName,
+		private static extern bool SetFileAttributes(string lpFileName,
 			uint dwFileAttributes);
 
 		/// <summary>

@@ -203,5 +203,11 @@ namespace Eraser.Manager
 		/// the file system table.
 		/// </summary>
 		protected const int FilenameErasePasses = 7;
+
+		/// <summary>
+		/// The maximum number of times Eraser tries to erase a file/folder before
+		/// it gives up.
+		/// </summary>
+		protected const int FilenameEraseTries = 50;
 	}
 }
