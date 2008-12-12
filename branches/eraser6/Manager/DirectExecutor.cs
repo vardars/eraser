@@ -571,6 +571,10 @@ namespace Eraser.Manager
 						progress.Event.CurrentTargetProgress = progress.Event.CurrentItemProgress / 10;
 						progress.Event.timeLeft = tipProgress.TimeLeft;
 						task.OnProgressChanged(progress.Event);
+
+						lock (currentTask)
+							if (currentTask.Cancelled)
+								throw new FatalException(S._("The task was cancelled."));
 					}
 				);
 			}
@@ -800,7 +804,7 @@ namespace Eraser.Manager
 			         created = DateTime.MinValue;
 			//Create the stream, lengthen the file, then tell the erasure method
 			//to erase the tips.
-			using (FileStream stream = streamInfo.Open(FileMode.Open, FileAccess.Write))
+			using (FileStream stream = streamInfo.Open(FileMode.Open, FileAccess.Write, FileShare.None))
 			{
 				long fileLength = stream.Length;
 				long fileArea = GetFileArea(file);
