@@ -784,7 +784,7 @@ namespace Eraser.Manager
 							FileMode.CreateNew, FileAccess.Write))
 						{
 							//Stretch the file size to use up some of the resident space.
-							strm.SetLength(volInfo.ClusterSize);
+							strm.SetLength(1);
 
 							//Then run the erase task
 							method.Erase(strm, long.MaxValue,
@@ -834,8 +834,8 @@ namespace Eraser.Manager
 					for (int files = 0; ; ++files)
 					{
 						using (FileStream strm = new FileStream(Path.Combine(
-							info.FullName, GenerateRandomFileName(18)), FileMode.CreateNew,
-							FileAccess.Write))
+							tempDir.FullName, GenerateRandomFileName(18)),
+							FileMode.CreateNew, FileAccess.Write))
 						{
 						}
 
@@ -860,7 +860,7 @@ namespace Eraser.Manager
 				finally
 				{
 					//Clear up all the temporary files
-					RemoveFolder(tempDir);
+					tempDir.Delete(true);
 				}
 			}
 			else
