@@ -89,6 +89,13 @@ namespace Eraser
 				return;
 			}
 
+			//Update the UI. Set everything to 100%
+			timeLeft.Text = item.Text = string.Empty;
+			overallProgressLbl.Text = S._("Total: {0,2:#0.00%}", 1.0);
+			overallProgress.Value = overallProgress.Maximum;
+			itemProgressLbl.Text = "100%";
+			itemProgress.Value = itemProgress.Maximum;
+
 			//Inform the user on the status of the task.
 			LogLevel highestLevel = LogLevel.INFORMATION;
 			List<LogEntry> entries = e.Task.Log.LastSessionEntries;
