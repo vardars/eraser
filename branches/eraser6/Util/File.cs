@@ -176,10 +176,16 @@ namespace Eraser.Util
 		{
 			if (SfcIsFileProtected(IntPtr.Zero, filePath))
 				return true;
-			else if (Marshal.GetLastWin32Error() == 2) //ERROR_FILE_NOT_FOUND
-				return false;
 
-			throw new Win32Exception("Unknown SfcIsFileProtected error.");
+			switch (Marshal.GetLastWin32Error())
+			{
+				case 0: //ERROR_SUCCESS
+				case 2: //ERROR_FILE_NOT_FOUND
+					return false;
+
+				default:
+					throw new Win32Exception("Unknown SfcIsFileProtected error.");
+			}
 		}
 
 		/// <summary>
