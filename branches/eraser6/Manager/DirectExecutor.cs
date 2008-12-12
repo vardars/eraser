@@ -309,7 +309,7 @@ namespace Eraser.Manager
 						task.Log.NewSession();
 
 						//Run the task
-						ProgressManager progress = new ProgressManager(currentTask);
+						TaskProgressManager progress = new TaskProgressManager(currentTask);
 						foreach (Task.ErasureTarget target in task.Targets)
 							try
 							{
@@ -368,25 +368,62 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Provides a common interface to track the progress made by the Erase functions.
+		/// Manages the progress for any operation.
 		/// </summary>
 		private class ProgressManager
 		{
 			/// <summary>
-			/// Constructor.
+			/// Starts measuring the speed of the task.
 			/// </summary>
-			public ProgressManager(Task task)
+			public void Start()
 			{
 				startTime = DateTime.Now;
-				Event = new TaskProgressEventArgs(task);
-
-				foreach (Task.ErasureTarget target in task.Targets)
-					totalData += target.TotalData;
 			}
 
 			/// <summary>
-			/// Computes the speed of the erase, in bytes per second, based on the
-			/// information collected in the previous 10 seconds.
+			/// Tracks the amount of the operation completed.
+			/// </summary>
+			public long Completed
+			{
+				get
+				{
+					return completed;
+				}
+				set
+				{
+					completed = value;
+				}
+			}
+
+			/// <summary>
+			/// The amount to reach before the operation completes.
+			/// </summary>
+			public long Total
+			{
+				get
+				{
+					return total;
+				}
+				set
+				{
+					total = value;
+				}
+			}
+
+			/// <summary>
+			/// Gets the percentage of the operation completed.
+			/// </summary>
+			public float Progress
+			{
+				get
+				{
+					return (float)((double)Completed / Total);
+				}
+			}
+
+			/// <summary>
+			/// Computes the speed of the erase, in units of completion per second,
+			/// based on the information collected in the previous 5 seconds.
 			/// </summary>
 			public int Speed
 			{
@@ -399,7 +436,7 @@ namespace Eraser.Manager
 						return lastSpeed;
 
 					lastSpeedCalc = DateTime.Now;
-					lastSpeed = (int)(DataWritten / (DateTime.Now - startTime).TotalSeconds);
+					lastSpeed = (int)(Completed / (DateTime.Now - startTime).TotalSeconds);
 					return lastSpeed;
 				}
 			}
@@ -414,23 +451,52 @@ namespace Eraser.Manager
 				{
 					if (Speed == 0)
 						return new TimeSpan(0, 0, -1);
-					return new TimeSpan(0, 0, (int)((totalData - DataWritten) / Speed));
+					return new TimeSpan(0, 0, (int)((Total - Completed) / Speed));
 				}
 			}
 
 			/// <summary>
-			/// Tracks the amount of data written, to determine the speed of the erase.
+			/// The starting time of the operation, used to determine average speed.
 			/// </summary>
-			public long DataWritten
+			private DateTime startTime;
+
+			/// <summary>
+			/// The last time a speed calculation was computed so that speed is not
+			/// computed too often.
+			/// </summary>
+			private DateTime lastSpeedCalc;
+
+			/// <summary>
+			/// The last calculated speed of the operation.
+			/// </summary>
+			private int lastSpeed;
+
+			/// <summary>
+			/// The amount of the operation completed.
+			/// </summary>
+			private long completed;
+
+			/// <summary>
+			/// The amount to reach before the operation is completed.
+			/// </summary>
+			private long total;
+		}
+
+		/// <summary>
+		/// Provides a common interface to track the progress made by the Erase functions.
+		/// </summary>
+		private class TaskProgressManager : ProgressManager
+		{
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			public TaskProgressManager(Task task)
 			{
-				get
-				{
-					return dataWritten;
-				}
-				set
-				{
-					dataWritten = value;
-				}
+				foreach (Task.ErasureTarget target in task.Targets)
+					Total += target.TotalData;
+
+				Event = new TaskProgressEventArgs(task);
+				Start();
 			}
 
 			/// <summary>
@@ -449,11 +515,6 @@ namespace Eraser.Manager
 				}
 			}
 
-			private long totalData;
-			private DateTime startTime;
-			private DateTime lastSpeedCalc;
-			private int lastSpeed;
-			private long dataWritten;
 			private TaskProgressEventArgs evt;
 		}
 
@@ -463,12 +524,11 @@ namespace Eraser.Manager
 		/// <param name="task">The task currently being executed</param>
 		/// <param name="target">The target of the unused space erase.</param>
 		/// <param name="progress">The progress manager object managing the progress of the task</param>
-		private void EraseUnusedSpace(Task task, Task.UnusedSpace target, ProgressManager progress)
+		private void EraseUnusedSpace(Task task, Task.UnusedSpace target, TaskProgressManager progress)
 		{
 			//Check for sufficient privileges to run the unused space erasure.
 			if (!Permissions.IsAdministrator())
 			{
-				
 				if (Environment.OSVersion.Platform == PlatformID.Win32NT &&
 					Environment.OSVersion.Version >= new Version(6, 0))
 				{
@@ -497,13 +557,19 @@ namespace Eraser.Manager
 				progress.Event.currentTargetTotalPasses = method.Passes;
 				progress.Event.timeLeft = progress.TimeLeft;
 				task.OnProgressChanged(progress.Event);
-				
+
+				ProgressManager tipProgress = new ProgressManager();
+				tipProgress.Start();
 				EraseClusterTips(task, target, method,
 					delegate(int currentFile, string currentFilePath, int totalFiles)
 					{
+						tipProgress.Total = totalFiles;
+						tipProgress.Completed = currentFile;
+
 						progress.Event.currentItemName = S._("(Tips) {0}", currentFilePath);
-						progress.Event.currentItemProgress = (float)currentFile / totalFiles;
+						progress.Event.currentItemProgress = tipProgress.Progress;
 						progress.Event.CurrentTargetProgress = progress.Event.CurrentItemProgress / 10;
+						progress.Event.timeLeft = tipProgress.TimeLeft;
 						task.OnProgressChanged(progress.Event);
 					}
 				);
@@ -572,15 +638,15 @@ namespace Eraser.Manager
 							PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
 							delegate(long lastWritten, int currentPass)
 							{
-								progress.DataWritten += lastWritten;
+								progress.Completed += lastWritten;
 								progress.Event.currentItemPass = currentPass;
-								progress.Event.currentItemProgress = (float)progress.DataWritten / totalSize;
+								progress.Event.currentItemProgress = progress.Progress;
 								if (target.EraseClusterTips)
 									progress.Event.CurrentTargetProgress = (float)
-										(0.1 + progress.Event.currentItemProgress * 0.8);
+										(0.1f + progress.Event.currentItemProgress * 0.8f);
 								else
 									progress.Event.CurrentTargetProgress = (float)
-										(progress.Event.currentItemProgress * 0.9);
+										(progress.Event.currentItemProgress * 0.9f);
 								progress.Event.timeLeft = progress.TimeLeft;
 								task.OnProgressChanged(progress.Event);
 
@@ -607,23 +673,20 @@ namespace Eraser.Manager
 
 			//Then clean the old file system entries
 			progress.Event.currentItemName = S._("Old file system entries");
-			DateTime fsEntriesEraseStart = DateTime.Now;
+			ProgressManager fsEntriesProgress = new ProgressManager();
+			fsEntriesProgress.Start();
 			EraseOldFilesystemEntries(info.Parent,
 				delegate(int currentFile, int totalFiles)
 				{
-					progress.Event.currentItemProgress = (float)currentFile / totalFiles;
+					//Compute the progress
+					fsEntriesProgress.Total = totalFiles;
+					fsEntriesProgress.Completed = currentFile;
+
+					//Set the event parameters, then broadcast the progress event.
+					progress.Event.timeLeft = fsEntriesProgress.TimeLeft;
+					progress.Event.currentItemProgress = fsEntriesProgress.Progress;
 					progress.Event.CurrentTargetProgress = (float)(
 						0.9 + progress.Event.CurrentItemProgress / 10);
-
-					//Calculate how much time will be needed to complete the erase
-					TimeSpan elapsedTime = DateTime.Now - fsEntriesEraseStart;
-					if (elapsedTime > TimeSpan.Zero)
-					{
-						progress.Event.timeLeft = new TimeSpan(0, 0, (int)
-							((float)(totalFiles - currentFile) / currentFile *
-								elapsedTime.TotalSeconds));
-					}
-
 					task.OnProgressChanged(progress.Event);
 				}
 			);
@@ -662,9 +725,9 @@ namespace Eraser.Manager
 							task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips " +
 								"erased because it is a hard link or a symbolic link.",
 								file.FullName), LogLevel.INFORMATION));
-						else if ((file.Attributes & FileAttributes.Compressed) ||
-							(file.Attributes & FileAttributes.Encrypted) ||
-							(file.Attributes & FileAttributes.SparseFile))
+						else if ((file.Attributes & FileAttributes.Compressed) != 0 ||
+							(file.Attributes & FileAttributes.Encrypted) != 0 ||
+							(file.Attributes & FileAttributes.SparseFile) != 0)
 						{
 							task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips " +
 								"erased because it is compressed, encrypted or a sparse file.",
@@ -914,7 +977,7 @@ namespace Eraser.Manager
 		/// <param name="target">The target of the erasure.</param>
 		/// <param name="progress">The progress manager for the current task.</param>
 		private void EraseFilesystemObject(Task task, Task.FilesystemObject target,
-			ProgressManager progress)
+			TaskProgressManager progress)
 		{
 			//Retrieve the list of files to erase.
 			long dataTotal = 0;
@@ -976,7 +1039,7 @@ namespace Eraser.Manager
 								delegate(long lastWritten, int currentPass)
 								{
 									dataTotal -= lastWritten;
-									progress.DataWritten += lastWritten;
+									progress.Completed += lastWritten;
 									progress.Event.currentItemPass = currentPass;
 									progress.Event.currentItemProgress = (float)
 										((itemWritten += lastWritten) / (float)itemTotal);
