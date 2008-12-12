@@ -361,15 +361,46 @@ namespace Eraser.Manager
 		}
 
 		#region Default Attributes retrieval
+		/// <summary>
+		/// Finds the type for the given attribute that is the default (i.e. the
+		/// DefaultAttribute value is the highest) and that the type inherits
+		/// from the given <paramref name="superClass"/>.
+		/// </summary>
+		/// <param name="superClass">A class that the default must inherit from.</param>
+		/// <param name="attributeType">The attribute to look for.</param>
+		/// <returns>The GUID of the type that is the default.</returns>
 		private static Guid FindHighestPriorityDefault(Type superClass,
 			Type attributeType)
 		{
+			//Check if we've computed the value before. If so, we return the cached
+			//value.
+			if (DefaultForAttributes.ContainsKey(attributeType) &&
+				DefaultForAttributes[attributeType].ContainsKey(superClass))
+			{
+				return DefaultForAttributes[attributeType][superClass];
+			}
+
+			//We have not computed the value. Compute the default.
 			Plugin.Host pluginHost = ManagerLibrary.Instance.Host;
 			List<Plugin.PluginInstance> plugins = pluginHost.Plugins;
 			SortedList<int, Guid> priorities = new SortedList<int, Guid>();
 
 			foreach (Plugin.PluginInstance plugin in plugins)
 			{
+				//Check whether the plugin is signed by us.
+				byte[] pluginKey = plugin.Assembly.GetName().GetPublicKey();
+				byte[] ourKey = Assembly.GetExecutingAssembly().GetName().GetPublicKey();
+
+				if (pluginKey.Length != ourKey.Length ||
+					!MsCorEEAPI.VerifyStrongName(plugin.Assembly.Location))
+					continue;
+				bool officialPlugin = true;
+				for (int i = 0, j = ourKey.Length; i != j; ++i)
+					if (pluginKey[i] != ourKey[i])
+						officialPlugin = false;
+				if (!officialPlugin)
+					continue;
+
 				Type[] types = FindTypeAttributeInAssembly(plugin.Assembly,
 					superClass, attributeType);
 
@@ -388,32 +419,30 @@ namespace Eraser.Manager
 					}
 			}
 
-			//Return the highest priority one.
+			//If we actually have a result, cache it then return the result.
 			if (priorities.Count > 0)
-				return priorities[priorities.Keys[priorities.Count - 1]];
+			{
+				Guid result = priorities[priorities.Keys[priorities.Count - 1]];
+				if (!DefaultForAttributes.ContainsKey(attributeType))
+					DefaultForAttributes.Add(attributeType, new Dictionary<Type, Guid>());
+				DefaultForAttributes[attributeType].Add(superClass, result);
+				return result;
+			}
+
+			//If we do not have any results, don't store it.
 			return Guid.Empty;
 		}
 
+		/// <summary>
+		/// Finds a type with the given characteristics in the provided assembly.
+		/// </summary>
+		/// <param name="assembly">The assembly to look into.</param>
+		/// <param name="superClass">A class the type must inherit from.</param>
+		/// <param name="attributeType">The attribute the class must possess.</param>
+		/// <returns>An array of types with the given characteristics.</returns>
 		private static Type[] FindTypeAttributeInAssembly(Assembly assembly, Type superClass,
 			Type attributeType)
 		{
-			//Check whether the plugin is signed by us.
-			byte[] pluginKey = assembly.GetName().GetPublicKey();
-			byte[] ourKey = Assembly.GetExecutingAssembly().GetName().GetPublicKey();
-
-			//Definitely not signed by us.
-			if (pluginKey.Length != ourKey.Length ||
-				!MsCorEEAPI.VerifyStrongName(assembly.Location))
-				return null;
-
-			//Not by us, either
-			bool officialPlugin = true;
-			for (int i = 0, j = ourKey.Length; i != j; ++i)
-				if (pluginKey[i] != ourKey[i])
-					officialPlugin = false;
-			if (!officialPlugin)
-				return null;
-
 			//Yes, if we got here the plugin is signed by us. Find the
 			//type which inherits from ErasureMethod.
 			Type[] types = assembly.GetExportedTypes();
@@ -436,6 +465,14 @@ namespace Eraser.Manager
 
 			return result.ToArray();
 		}
+
+		/// <summary>
+		/// Caches the defaults as computed by FindHighestPriorityDefault. The first
+		/// key is the attribute type, the second key is the superclass, the
+		/// value is the Guid.
+		/// </summary>
+		private static Dictionary<Type, Dictionary<Type, Guid>> DefaultForAttributes =
+			new Dictionary<Type, Dictionary<Type, Guid>>();
 		#endregion
 
 		/// <summary>
