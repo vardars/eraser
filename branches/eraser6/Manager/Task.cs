@@ -480,11 +480,6 @@ namespace Eraser.Manager
 
 				foreach (DriveInfo drive in DriveInfo.GetDrives())
 				{
-					if (drive.DriveType == DriveType.CDRom ||
-						drive.DriveType == DriveType.Network ||
-						drive.DriveType == DriveType.Unknown)
-						continue;
-
 					foreach (string rootDir in rootDirectory)
 					{
 						DirectoryInfo dir = new DirectoryInfo(
