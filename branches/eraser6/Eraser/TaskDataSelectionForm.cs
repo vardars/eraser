@@ -70,7 +70,7 @@ namespace Eraser
 					DriveItem item = new DriveItem();
 					string volumePath = volume.IsMounted ?
 						volume.MountPoints[0] : volume.VolumeID;
-					item.Drive = volumePath.Substring(0, volumePath.Length - 1);
+					item.Drive = volumePath;
 					item.Label = Eraser.Util.File.GetFileDescription(volumePath);
 					item.Icon = Eraser.Util.File.GetFileIcon(volumePath);
 					unusedDisk.Items.Add(item);
@@ -164,9 +164,9 @@ namespace Eraser
 				else if (value is Task.UnusedSpace)
 				{
 					unused.Checked = true;
-					Task.UnusedSpace unusedSpaceTask = new Task.UnusedSpace();
+					Task.UnusedSpace unusedSpaceTask = (Task.UnusedSpace)value;
 					foreach (object item in unusedDisk.Items)
-						if (((DriveItem)item).Drive == ((Task.UnusedSpace)value).Drive)
+						if (((DriveItem)item).Drive == unusedSpaceTask.Drive)
 							unusedDisk.SelectedItem = item;
 					unusedClusterTips.Checked = unusedSpaceTask.EraseClusterTips;
 				}
