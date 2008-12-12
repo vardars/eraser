@@ -607,12 +607,23 @@ namespace Eraser.Manager
 
 			//Then clean the old file system entries
 			progress.Event.currentItemName = S._("Old file system entries");
+			DateTime fsEntriesEraseStart = DateTime.Now;
 			EraseOldFilesystemEntries(info.Parent,
 				delegate(int currentFile, int totalFiles)
 				{
 					progress.Event.currentItemProgress = (float)currentFile / totalFiles;
 					progress.Event.CurrentTargetProgress = (float)(
 						0.9 + progress.Event.CurrentItemProgress / 10);
+
+					//Calculate how much time will be needed to complete the erase
+					TimeSpan elapsedTime = DateTime.Now - fsEntriesEraseStart;
+					if (elapsedTime > TimeSpan.Zero)
+					{
+						progress.Event.timeLeft = new TimeSpan(0, 0, (int)
+							((float)(totalFiles - currentFile) / currentFile *
+								elapsedTime.TotalSeconds));
+					}
+
 					task.OnProgressChanged(progress.Event);
 				}
 			);
@@ -827,20 +838,23 @@ namespace Eraser.Manager
 					long mftSize = NtfsAPI.GetMftValidSize(volInfo);
 					long mftRecordSegmentSize = NtfsAPI.GetMftRecordSegmentSize(volInfo);
 					int pollingInterval = (int)(mftSize / volInfo.ClusterSize / 20);
-					int totalFiles = Math.Max(1, (int)(mftSize / mftRecordSegmentSize));
+					int totalFiles = (int)Math.Max(1L, mftSize / mftRecordSegmentSize) *
+						(FilenameErasePasses + 1);
+					int filesCreated = 0;
 
-					for (int files = 0; ; ++files)
+					while (true)
 					{
+						++filesCreated;
 						using (FileStream strm = new FileStream(Path.Combine(
 							tempDir.FullName, GenerateRandomFileName(220)),
 							FileMode.CreateNew, FileAccess.Write))
 						{
 						}
 
-						if (files % pollingInterval == 0)
+						if (filesCreated % pollingInterval == 0)
 						{
 							if (callback != null)
-								callback(files, totalFiles);
+								callback(filesCreated, totalFiles);
 
 							lock (currentTask)
 								if (currentTask.Cancelled)
@@ -858,6 +872,15 @@ namespace Eraser.Manager
 				finally
 				{
 					//Clear up all the temporary files
+					FileInfo[] files = tempDir.GetFiles("*", SearchOption.AllDirectories);
+					int totalFiles = files.Length * (FilenameErasePasses + 1);
+					for (int i = 0; i < files.Length; ++i)
+					{
+						if (callback != null && i % 50 == 0)
+							callback(files.Length + i * FilenameErasePasses, totalFiles);
+						RemoveFile(files[i]);
+					}
+					
 					RemoveFolder(tempDir);
 				}
 			}
@@ -1013,12 +1036,10 @@ namespace Eraser.Manager
 
 			//Rename the file a few times to erase the entry from the file system
 			//table.
+			string newPath = info.DirectoryName + Path.DirectorySeparatorChar +
+				GenerateRandomFileName(info.Name.Length);
 			for (int i = 0, tries = 0; i < FilenameErasePasses; ++tries)
 			{
-				//Rename the file.
-				string newPath = info.DirectoryName + Path.DirectorySeparatorChar +
-					GenerateRandomFileName(info.Name.Length);
-
 				//Try to rename the file. If it fails, it is probably due to another
 				//process locking the file. Defer, then rename again.
 				try
@@ -1094,7 +1115,16 @@ namespace Eraser.Manager
 			}
 
 			//Then delete the file.
-			info.Delete();
+			for (int i = 0; i < 20; ++i)
+				try
+				{
+					info.Delete();
+					break;
+				}
+				catch (IOException)
+				{
+					Thread.Sleep(100);
+				}
 		}
 
 		/// <summary>
@@ -1129,7 +1159,7 @@ namespace Eraser.Manager
 			}
 
 			//Remove the folder
-			info.Delete();
+			info.Delete(true);
 		}
 
 		/// <summary>
