@@ -662,6 +662,14 @@ namespace Eraser.Manager
 							task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips " +
 								"erased because it is a hard link or a symbolic link.",
 								file.FullName), LogLevel.INFORMATION));
+						else if ((file.Attributes & FileAttributes.Compressed) ||
+							(file.Attributes & FileAttributes.Encrypted) ||
+							(file.Attributes & FileAttributes.SparseFile))
+						{
+							task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips " +
+								"erased because it is compressed, encrypted or a sparse file.",
+								file.FullName), LogLevel.INFORMATION));
+						}
 						else
 						{
 							foreach (string i in Util.File.GetADSes(file))
@@ -692,14 +700,24 @@ namespace Eraser.Manager
 			//For every file, erase the cluster tips.
 			for (int i = 0, j = files.Count; i != j; ++i)
 			{
+				//Get the file attributes for restoring later
+				FileInfo info = new FileInfo(files[i]);
+				FileAttributes fileAttr = info.Attributes;
+
 				try
 				{
+					//Reset the file attributes.
+					info.Attributes = FileAttributes.Normal;
 					EraseFileClusterTips(files[i], method);
 				}
 				catch (Exception e)
 				{
 					task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips erased. " +
 						"The error returned was: {1}", files[i], e.Message), LogLevel.ERROR));
+				}
+				finally
+				{
+					info.Attributes = fileAttr;
 				}
 				callback(i, files[i], files.Count);
 			}
