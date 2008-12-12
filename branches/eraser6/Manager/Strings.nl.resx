@@ -162,6 +162,9 @@
   <data name="{0} did not have its cluster tips erased because it is a hard link or a symbolic link." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
+  <data name="{0} did not have its cluster tips erased because it is compressed, encrypted or a sparse file." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="{0} did not have its cluster tips erased because of the following error: {1}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
@@ -283,6 +286,9 @@
     <value>(Untranslated)</value>
   </data>
   <data name="Unused disk space ({0})" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Could not erase {0} because {1}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Recycle Bin" xml:space="preserve">
