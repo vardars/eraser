@@ -391,6 +391,7 @@ namespace Eraser.Manager
 				}
 				set
 				{
+					lastCompleted += value - completed;
 					completed = value;
 				}
 			}
@@ -423,7 +424,7 @@ namespace Eraser.Manager
 
 			/// <summary>
 			/// Computes the speed of the erase, in units of completion per second,
-			/// based on the information collected in the previous 5 seconds.
+			/// based on the information collected in the previous 15 seconds.
 			/// </summary>
 			public int Speed
 			{
@@ -432,11 +433,12 @@ namespace Eraser.Manager
 					if (DateTime.Now == startTime)
 						return 0;
 
-					if ((DateTime.Now - lastSpeedCalc).Seconds < 5 && lastSpeed != 0)
+					if ((DateTime.Now - lastSpeedCalc).Seconds < 15 && lastSpeed != 0)
 						return lastSpeed;
 
+					lastSpeed = (int)(lastCompleted / (DateTime.Now - lastSpeedCalc).TotalSeconds);
 					lastSpeedCalc = DateTime.Now;
-					lastSpeed = (int)(Completed / (DateTime.Now - startTime).TotalSeconds);
+					lastCompleted = 0;
 					return lastSpeed;
 				}
 			}
@@ -470,6 +472,11 @@ namespace Eraser.Manager
 			/// The last calculated speed of the operation.
 			/// </summary>
 			private int lastSpeed;
+
+			/// <summary>
+			/// The amount of the operation completed since the last speed computation.
+			/// </summary>
+			private long lastCompleted;
 
 			/// <summary>
 			/// The amount of the operation completed.
@@ -739,10 +746,19 @@ namespace Eraser.Manager
 						}
 						else
 						{
-							foreach (string i in Util.File.GetADSes(file))
-								files.Add(file.FullName + ':' + i);
+							try
+							{
+								foreach (string i in Util.File.GetADSes(file))
+									files.Add(file.FullName + ':' + i);
 
-							files.Add(file.FullName);
+								files.Add(file.FullName);
+							}
+							catch (IOException e)
+							{
+								task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips erased " +
+									"because of the following error: {1}", info.FullName, e.Message),
+									LogLevel.ERROR));
+							}
 						}
 
 					foreach (DirectoryInfo subDirInfo in info.GetDirectories())
