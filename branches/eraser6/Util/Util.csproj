@@ -49,6 +49,7 @@
     <Compile Include="CryptAPI.cs" />
     <Compile Include="Localisation.cs" />
     <Compile Include="MsCorEEAPI.cs" />
+    <Compile Include="NtfsAPI.cs" />
     <Compile Include="StreamInfo.cs" />
     <Compile Include="KernelAPI.cs" />
     <Compile Include="File.cs" />

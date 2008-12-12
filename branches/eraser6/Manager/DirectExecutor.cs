@@ -594,19 +594,30 @@ namespace Eraser.Manager
 					}
 				}
 
-				//Erase old file system records
-				progress.Event.currentItemName = S._("Old file system records");
+				//Erase old resident file system table files
+				progress.Event.currentItemName = S._("Old resident file system table files");
 				task.OnProgressChanged(progress.Event);
-				EraseFilesystemRecords(info, method);
+				EraseOldFilesystemResidentFiles(info, method, null);
 			}
 			finally
 			{
+				//Remove the folder holding all our temporary files.
 				progress.Event.currentItemName = S._("Removing temporary files");
 				task.OnProgressChanged(progress.Event);
-
-				//Remove the folder holding all our temporary files.
 				RemoveFolder(info);
 			}
+
+			//Then clean the old file system entries
+			progress.Event.currentItemName = S._("Old file system entries");
+			EraseOldFilesystemEntries(info.Parent,
+				delegate(int currentFile, int totalFiles)
+				{
+					progress.Event.currentItemProgress = (float)currentFile / totalFiles;
+					progress.Event.CurrentTargetProgress = (float)(
+						0.9 + progress.Event.CurrentItemProgress / 10);
+					task.OnProgressChanged(progress.Event);
+				}
+			);
 		}
 
 		private delegate void SubFoldersHandler(DirectoryInfo info);
@@ -738,28 +749,33 @@ namespace Eraser.Manager
 				fileInfo.CreationTime = created;
 			}
 		}
+
+		/// <summary>
+		/// The prototype of callbacks handling the file system table erase progress
+		/// </summary>
+		/// <param name="currentFile">The current file being erased.</param>
+		/// <param name="totalFiles">The estimated number of files that must be erased.</param>
+		private delegate void FilesystemEntriesEraseProgress(int currentFile, int totalFiles);
 		
 		/// <summary>
-		/// Erases the old MFT or FAT records. This creates small one-byte files
-		/// until the MFT or FAT grows, if the disk is not full. If the disk is
-		/// full, just keep forcing the MFT to store files until nothing else
-		/// fits.
+		/// Erases old file system table-resident files. This creates small one-byte
+		/// files until disk is full. This will erase unused space which was used for
+		/// files resident in the file system table.
 		/// </summary>
 		/// <param name="info">The directory information structure containing
-		/// the path to store the temporary one-byte files. The MFT of that
-		/// drive will be erased.</param>
-		/// <param name="method">The method used to erase the records.</param>
-		private void EraseFilesystemRecords(DirectoryInfo info, ErasureMethod method)
+		/// the path to store the temporary one-byte files. The file system table
+		/// of that drive will be erased.</param>
+		/// <param name="method">The method used to erase the files.</param>
+		private void EraseOldFilesystemResidentFiles(DirectoryInfo info, ErasureMethod method,
+			FilesystemEntriesEraseProgress callback)
 		{
 			VolumeInfo volInfo = VolumeInfo.FromMountpoint(info.FullName);
-			string volFormat = volInfo.VolumeFormat;
-			if (volFormat == "NTFS")
+			if (volInfo.VolumeFormat == "NTFS")
 			{
-				//If the volume is full, squeeze one-byte files.
 				try
 				{
-					StreamInfo mftInfo = new StreamInfo(Path.Combine(volInfo.VolumeID, "$MFT"));
-					long oldMFTSize = mftInfo.Length;
+					//Squeeze one-byte files until the volume or the MFT is full.
+					long oldMFTSize = NtfsAPI.GetMftValidSize(volInfo);
 					for ( ; ; )
 					{
 						//Open this stream
@@ -767,8 +783,8 @@ namespace Eraser.Manager
 							info.FullName, GenerateRandomFileName(18)),
 							FileMode.CreateNew, FileAccess.Write))
 						{
-							//Stretch the file size to the size of one MFT record
-							strm.SetLength(1);
+							//Stretch the file size to use up some of the resident space.
+							strm.SetLength(volInfo.ClusterSize);
 
 							//Then run the erase task
 							method.Erase(strm, long.MaxValue,
@@ -776,9 +792,8 @@ namespace Eraser.Manager
 								null);
 						}
 
-						//Determine if we can stop. We will stop if the disk is not
-						//full and the MFT has grown in size.
-						if (volInfo.AvailableFreeSpace != 0 && mftInfo.Length != oldMFTSize)
+						//We can stop when the MFT has grown.
+						if (NtfsAPI.GetMftValidSize(volInfo) > oldMFTSize)
 							break;
 					}
 				}
@@ -787,9 +802,70 @@ namespace Eraser.Manager
 					//OK, enough squeezing.
 				}
 			}
+		}
+
+		/// <summary>
+		/// Erases the unused space in the file system table by creating files, until
+		/// the table grows.
+		/// 
+		/// This will overwrite unused portions of the table which were previously
+		/// used to store file entries.
+		/// </summary>
+		/// <param name="info">The directory information structure containing the path
+		/// to store the temporary files.</param>
+		/// <param name="callback">The callback function to handle the progress of the
+		/// file system entry erasure.</param>
+		private void EraseOldFilesystemEntries(DirectoryInfo info, FilesystemEntriesEraseProgress callback)
+		{
+			VolumeInfo volInfo = VolumeInfo.FromMountpoint(info.FullName);
+			if (volInfo.VolumeFormat == "NTFS")
+			{
+				//Create a directory to hold all the temporary files
+				DirectoryInfo tempDir = info.CreateSubdirectory(GenerateRandomFileName(32));
+
+				try
+				{
+					//Get the size of the MFT
+					long mftSize = NtfsAPI.GetMftValidSize(volInfo);
+					long mftRecordSegmentSize = NtfsAPI.GetMftRecordSegmentSize(volInfo);
+					int pollingInterval = (int)(mftSize / volInfo.ClusterSize / 20);
+					int totalFiles = Math.Max(1, (int)(mftSize / mftRecordSegmentSize));
+
+					for (int files = 0; ; ++files)
+					{
+						using (FileStream strm = new FileStream(Path.Combine(
+							info.FullName, GenerateRandomFileName(18)), FileMode.CreateNew,
+							FileAccess.Write))
+						{
+						}
+
+						if (files % pollingInterval == 0)
+						{
+							if (callback != null)
+								callback(files, totalFiles);
+
+							lock (currentTask)
+								if (currentTask.Cancelled)
+									throw new FatalException(S._("The task was cancelled."));
+
+							//Check if the MFT has grown.
+							if (mftSize < NtfsAPI.GetMftValidSize(volInfo))
+								break;
+						}
+					}
+				}
+				catch (IOException)
+				{
+				}
+				finally
+				{
+					//Clear up all the temporary files
+					RemoveFolder(tempDir);
+				}
+			}
 			else
 				throw new NotImplementedException(S._("Could not erase old file system " +
-					"records: Unsupported File system")); //Eraser.cpp@2348
+					"entries: Unsupported File system")); //Eraser.cpp@2348
 		}
 
 		/// <summary>
@@ -937,7 +1013,8 @@ namespace Eraser.Manager
 			info.Attributes = FileAttributes.Normal;
 			info.Attributes = FileAttributes.NotContentIndexed;
 
-			//Rename the file a few times to erase the record from the MFT.
+			//Rename the file a few times to erase the entry from the file system
+			//table.
 			for (int i = 0, tries = 0; i < FilenameErasePasses; ++tries)
 			{
 				//Rename the file.

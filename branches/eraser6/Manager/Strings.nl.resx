@@ -144,10 +144,13 @@
   <data name="The task was cancelled." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="Old file system records" xml:space="preserve">
+  <data name="Old resident file system entries" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Removing temporary files" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Old file system records" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Files in {0} did not have their cluster tips erased because it is a hard link or a symbolic link." xml:space="preserve">
