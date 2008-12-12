@@ -385,7 +385,7 @@ namespace Eraser.Manager
 				//List recursively all the files which match the include pattern.
 				string includeMask = IncludeMask;
 				if (includeMask.Length == 0)
-					includeMask = "*.*";
+					includeMask = "*";
 				FileInfo[] files = GetFiles(dir, includeMask);
 
 				//Then exclude each file and finalize the list and total file size
