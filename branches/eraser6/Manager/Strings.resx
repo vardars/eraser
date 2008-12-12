@@ -144,14 +144,14 @@
   <data name="The task was cancelled." xml:space="preserve">
     <value>The task was cancelled.</value>
   </data>
-  <data name="Old resident file system entries" xml:space="preserve">
-    <value>Old resident file system entries</value>
+  <data name="Old resident file system table files" xml:space="preserve">
+    <value>Old resident file system table files</value>
   </data>
   <data name="Removing temporary files" xml:space="preserve">
     <value>Removing temporary files</value>
   </data>
-  <data name="Old file system records" xml:space="preserve">
-    <value>Old file system records</value>
+  <data name="Old file system entries" xml:space="preserve">
+    <value>Old file system entries</value>
   </data>
   <data name="Files in {0} did not have their cluster tips erased because it is a hard link or a symbolic link." xml:space="preserve">
     <value>Files in {0} did not have their cluster tips erased because it is a hard link or a symbolic link.</value>
@@ -168,8 +168,8 @@
   <data name="{0} did not have its cluster tips erased. The error returned was: {1}" xml:space="preserve">
     <value>{0} did not have its cluster tips erased. The error returned was: {1}</value>
   </data>
-  <data name="Could not erase old file system records: Unsupported File system" xml:space="preserve">
-    <value>Could not erase old file system records: Unsupported File system</value>
+  <data name="Could not erase old file system entries: Unsupported File system" xml:space="preserve">
+    <value>Could not erase old file system entries: Unsupported File system</value>
   </data>
   <data name="Compressed, encrypted, or sparsefiles cannot be erased with Eraser." xml:space="preserve">
     <value>Compressed, encrypted, or sparsefiles cannot be erased with Eraser.</value>
