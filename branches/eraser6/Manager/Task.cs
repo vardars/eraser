@@ -386,7 +386,7 @@ namespace Eraser.Manager
 				string includeMask = IncludeMask;
 				if (includeMask.Length == 0)
 					includeMask = "*.*";
-				FileInfo[] files = dir.GetFiles(includeMask, SearchOption.AllDirectories);
+				FileInfo[] files = GetFiles(dir, includeMask);
 
 				//Then exclude each file and finalize the list and total file size
 				totalSize = 0;
@@ -417,6 +417,31 @@ namespace Eraser.Manager
 
 				//Return the filtered list.
 				return result;
+			}
+
+			/// <summary>
+			/// Gets all files in the provided directory.
+			/// </summary>
+			/// <param name="info">The directory to look files in.</param>
+			/// <param name="includeMask">The include mask all files must match.</param>
+			/// <returns>A list of files found in the directory.</returns>
+			private FileInfo[] GetFiles(DirectoryInfo info, string includeMask)
+			{
+				List<FileInfo> result = new List<FileInfo>();
+				foreach (DirectoryInfo dir in info.GetDirectories())
+					try
+					{
+						result.AddRange(GetFiles(dir, includeMask));
+					}
+					catch (Exception e)
+					{
+						//Ignore, but log.
+						Task.log.Add(new LogEntry(S._("Could not erase {0} because {1}",
+							dir.FullName, e.Message), LogLevel.ERROR));
+					}
+
+				result.AddRange(info.GetFiles(includeMask, SearchOption.TopDirectoryOnly));
+				return result.ToArray();
 			}
 
 			/// <summary>
