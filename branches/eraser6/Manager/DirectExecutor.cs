@@ -75,26 +75,24 @@ namespace Eraser.Manager
 
 			//Add the task to the set of tasks
 			lock (tasksLock)
-			{
 				tasks.Add(task.ID, task);
-
-				//If the task is scheduled to run now, break the waiting thread and
-				//run it immediately
-				if (task.Schedule == Schedule.RunNow)
-				{
-					QueueTask(task);
-				}
-				//If the task is scheduled, add the next execution time to the list
-				//of schduled tasks.
-				else if (task.Schedule != Schedule.RunOnRestart)
-				{
-					ScheduleTask(task);
-				}
-			}
 
 			//Call all the event handlers who registered to be notified of tasks
 			//being added.
 			OnTaskAdded(task);
+
+			//If the task is scheduled to run now, break the waiting thread and
+			//run it immediately
+			if (task.Schedule == Schedule.RunNow)
+			{
+				QueueTask(task);
+			}
+			//If the task is scheduled, add the next execution time to the list
+			//of schduled tasks.
+			else if (task.Schedule != Schedule.RunOnRestart)
+			{
+				ScheduleTask(task);
+			}
 		}
 
 		public override bool DeleteTask(uint taskId)
@@ -834,7 +832,7 @@ namespace Eraser.Manager
 					for (int files = 0; ; ++files)
 					{
 						using (FileStream strm = new FileStream(Path.Combine(
-							tempDir.FullName, GenerateRandomFileName(18)),
+							tempDir.FullName, GenerateRandomFileName(220)),
 							FileMode.CreateNew, FileAccess.Write))
 						{
 						}
@@ -860,7 +858,7 @@ namespace Eraser.Manager
 				finally
 				{
 					//Clear up all the temporary files
-					tempDir.Delete(true);
+					RemoveFolder(tempDir);
 				}
 			}
 			else
