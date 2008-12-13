@@ -22,19 +22,20 @@
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<?include "..\Version.wxs"?>
-	<Product Id="$(var.PRODUCTID)" Name="Eraser" Language="1033" Version="$(var.VERSIONSTRING)"
-			Manufacturer="The Eraser Project" UpgradeCode="073882B4-E059-4FB4-9D36-11E88D14AE87">
+	<Product Id="*" Name="Eraser $(var.VERSIONSTRING)" Language="1033"
+			Version="$(var.INTERNALVERSIONSTRING)" Manufacturer="The Eraser Project"
+			UpgradeCode="073882B4-E059-4FB4-9D36-11E88D14AE87">
 		<Package Id="*" InstallerVersion="200" Compressed="yes" Keywords="Eraser"
 			Description="Eraser Installer" Manufacturer="The Eraser Project" />
 		<Media Id="1" Cabinet="Installer.cab" EmbedCab="yes" />
 
 		<!-- Check for .NET 3.5 -->
-		<Property Id='FRAMEWORK35'>
-			<RegistrySearch Id='Framework35Registry' Type='raw'
-				Root='HKLM' Key='Software\Microsoft\NET Framework Setup\NDP\v3.5'
-				Name='Install' />
+		<Property Id="FRAMEWORK35">
+			<RegistrySearch Id="Framework35Registry" Type="raw"
+				Root="HKLM" Key="Software\Microsoft\NET Framework Setup\NDP\v3.5"
+				Name="Install" />
 		</Property>
-		<Condition Message='Eraser requires the .NET Framework 3.5 or higher to be installed.'>
+		<Condition Message="Eraser requires the .NET Framework 3.5 or higher to be installed.">
 			FRAMEWORK35 = "#1"
 		</Condition>
 		
@@ -42,9 +43,9 @@
 		<Property Id="DISABLEADVTSHORTCUTS" Value="1" />
 
 		<!-- Program upgrades-->
-		<Upgrade Id ="D07F460B-E2B0-4cc5-A109-998CA9C2D4EA">
-			<UpgradeVersion Property="ERASERUPDATE" Minimum="6.0.0" Maximum="$(var.VERSIONSTRING)" OnlyDetect="no" />
-			<UpgradeVersion Property="ERASERDOWNDATE" Minimum="$(var.VERSIONSTRING)" OnlyDetect="yes" />
+		<Upgrade Id="073882B4-E059-4FB4-9D36-11E88D14AE87">
+			<UpgradeVersion Property="ERASERUPDATE" Minimum="6.0.0" Maximum="$(var.INTERNALVERSIONSTRING)" OnlyDetect="no" />
+			<UpgradeVersion Property="ERASERDOWNDATE" Minimum="$(var.INTERNALVERSIONSTRING)" OnlyDetect="yes" />
 		</Upgrade>
 		<CustomAction Id="AlreadyUpdated" Error="A newer version of Eraser is already installed. Setup will now exit." />
 		<InstallUISequence>
