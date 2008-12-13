@@ -89,13 +89,9 @@ require('./scripts/database.php');
 			<div class="right_news">
 				<h3>Latest News</h3>
 				<div class="right_news_bg">
-					<h2>Eraser 6 CA Certificate bug fixed</h2>
-					<div class="posted">Posted by: Joel, 6 December 2008, 7:36am, +800GMT</div>
-					<p>I've fixed the download link for the Eraser CA Certificate after an alarm being raised by greyowl on the forum; my apologies for it not working. You <strong>must</strong> install the certificate for Eraser to work correctly!</p>
-					<p>I will not link the file directly, go to <a href="/trac/wiki/InstallingBetas">Trac</a> and follow the instructions there.</p>
-					<h2>Eraser 6-rc1 released!</h2>
-					<div class="posted">Posted by: Joel, 1 December 2008, 12:00pm, +0800 GMT</div>
-					<p>The long-awaited public beta for Eraser 6 has been released! Eraser 6 sports a completely revamped user interface, and Windows XP/Vista support out of the box. <a href="announcements/20081201.html">See the full announcement.</a></p>
+					<h2>Eraser 6-rc2 released!</h2>
+					<div class="posted">Posted by: Joel, 13 December 2008, 10.30am, +800 GMT</div>
+					<p>Eraser 6 Release Candidate 2 is released, bringing with it about a dozen fixes (a few of them major!) <a href="announcements/20081213.html">See the full announcement.</a></p>
 				</div>
 			</div>
 
@@ -113,9 +109,9 @@ require('./scripts/database.php');
 			<div class="right_l">
 				<h3><a name="download" href="javascript: ;"></a><img src="images/ico_download.gif" alt="" />Download Eraser</h3>
 				<ul>
-					<li><a href="announcements/20081201.html">Eraser 6.0.1</a> (new!)<br />
+					<li><a href="announcements/20081213.html">Eraser 6.0.2</a> (rc-2, build 813)<br />
 						&nbsp; &nbsp; &raquo; downloaded <?php
-						$query = mysql_query('SELECT COUNT(DownloadID) FROM download_statistics');
+						$query = mysql_query('SELECT COUNT(DownloadID) FROM download_statistics WHERE DownloadID=5');
 						$row = mysql_fetch_row($query);
 						echo $row ? $row[0] : 'unknown'; ?> times</li>
 					<li><a href="http://downloads.sourceforge.net/eraser/EraserSetup32.exe">Eraser 5.8.6a</a> (x86)</li>
