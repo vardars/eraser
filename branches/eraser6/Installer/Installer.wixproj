@@ -45,6 +45,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="License.rtf" />
+    <Content Include="Merge Modules\Microsoft_VC90_ATL_x86.msm" />
+    <Content Include="Merge Modules\Microsoft_VC90_ATL_x86_x64.msm" />
+    <Content Include="Merge Modules\Microsoft_VC90_CRT_x86.msm" />
+    <Content Include="Merge Modules\Microsoft_VC90_CRT_x86_x64.msm" />
+    <Content Include="Merge Modules\Microsoft_VC90_MFC_x86.msm" />
+    <Content Include="Merge Modules\Microsoft_VC90_MFC_x86_x64.msm" />
     <Content Include="Resources\Banner.bmp" />
     <Content Include="Resources\Dialog.bmp" />
     <Content Include="Resources\Exclamation.ico" />
@@ -53,6 +59,7 @@
     <None Include="SignBin.bat" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Merge Modules\" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />

@@ -25,7 +25,7 @@
 	<Product Id="*" Name="Eraser $(var.VERSIONSTRING)" Language="1033"
 			Version="$(var.INTERNALVERSIONSTRING)" Manufacturer="The Eraser Project"
 			UpgradeCode="073882B4-E059-4FB4-9D36-11E88D14AE87">
-		<Package Id="*" InstallerVersion="200" Compressed="yes" Keywords="Eraser"
+		<Package Id="*" InstallerVersion="300" Compressed="yes" Keywords="Eraser"
 			Description="Eraser Installer" Manufacturer="The Eraser Project" />
 		<Media Id="1" Cabinet="Installer.cab" EmbedCab="yes" />
 
@@ -83,6 +83,9 @@
 			<Feature Id="EraserMainShell" Title="Eraser Shell Extension"
 					Description="Eraser shell integration" Level="1">
 				<ComponentRef Id="EraserShell" />
+				<MergeRef Id="VCRedist"/>
+				<MergeRef Id="VCMfcRedist"/>
+				<MergeRef Id="VCAtlRedist"/>
 			</Feature>
 			<FeatureRef Id="EraserLanguages" />
 		</Feature>
