@@ -59,7 +59,8 @@ namespace Eraser
 				new Executor.TaskProcessedEvent(OnTaskProcessed);
 
 			//Check the notification area context menu's minimise to tray item.
-			hideWhenMinimiseToolStripMenuItem.Checked = HideWhenMinimised;
+			EraserSettings settings = new EraserSettings();
+			hideWhenMinimiseToolStripMenuItem.Checked = settings.HideWhenMinimised;
 
 			//Create the toolbar control
 			ToolBar.Name = "toolBar";
@@ -68,30 +69,30 @@ namespace Eraser
 			ToolBar.TabIndex = 1;
 			Controls.Add(ToolBar);
 
-			ToolBarItem schedule = new ToolBarItem();
-			schedule.Bitmap = Properties.Resources.ToolbarSchedule;
-			schedule.Text = S._("Erase Schedule");
-			schedule.Menu = toolbarScheduleMenu;
-			schedule.ToolbarItemClicked += delegate(object sender, EventArgs args)
+			ToolBarItem tbSchedule = new ToolBarItem();
+			tbSchedule.Bitmap = Properties.Resources.ToolbarSchedule;
+			tbSchedule.Text = S._("Erase Schedule");
+			tbSchedule.Menu = toolbarScheduleMenu;
+			tbSchedule.ToolbarItemClicked += delegate(object sender, EventArgs args)
 			{
 				ChangePage(Pages.SCHEDULER);
 			};
-			ToolBar.Items.Add(schedule);
+			ToolBar.Items.Add(tbSchedule);
 
-			ToolBarItem settings = new ToolBarItem();
-			settings.Bitmap = Properties.Resources.ToolbarSettings;
-			settings.Text = S._("Settings");
-			settings.ToolbarItemClicked += delegate(object sender, EventArgs args)
+			ToolBarItem tbSettings = new ToolBarItem();
+			tbSettings.Bitmap = Properties.Resources.ToolbarSettings;
+			tbSettings.Text = S._("Settings");
+			tbSettings.ToolbarItemClicked += delegate(object sender, EventArgs args)
 			{
 				ChangePage(Pages.SETTINGS);
 			};
-			ToolBar.Items.Add(settings);
+			ToolBar.Items.Add(tbSettings);
 
-			ToolBarItem help = new ToolBarItem();
-			help.Bitmap = Properties.Resources.ToolbarHelp;
-			help.Text = S._("Help");
-			help.Menu = toolbarHelpMenu;
-			ToolBar.Items.Add(help);
+			ToolBarItem tbHelp = new ToolBarItem();
+			tbHelp.Bitmap = Properties.Resources.ToolbarHelp;
+			tbHelp.Text = S._("Help");
+			tbHelp.Menu = toolbarHelpMenu;
+			ToolBar.Items.Add(tbHelp);
 
 			//Set the docking style for each of the pages
 			SchedulerPage.Dock = DockStyle.Fill;
@@ -219,6 +220,7 @@ namespace Eraser
 
 		private void MainForm_Resize(object sender, EventArgs e)
 		{
+			EraserSettings settings = new EraserSettings();
 			if (WindowState != FormWindowState.Minimized)
 			{
 				Bitmap bmp = new Bitmap(Width, Height);
@@ -227,7 +229,7 @@ namespace Eraser
 
 				CreateGraphics().DrawImage(bmp, new Point(0, 0));
 			}
-			else if (HideWhenMinimised)
+			else if (settings.HideWhenMinimised)
 			{
 				Visible = false;
 			}
@@ -319,29 +321,10 @@ namespace Eraser
 		#endregion
 
 		#region Minimise to tray code
-		private bool HideWhenMinimised
-		{
-			get
-			{
-				Manager.Settings settings =
-					ManagerLibrary.Instance.SettingsManager.ModuleSettings;
-				return settings["HideWhenMinimised"] == null ? true :
-					(bool)settings["HideWhenMinimised"];
-			}
-
-			set
-			{
-				Manager.Settings settings =
-					ManagerLibrary.Instance.SettingsManager.ModuleSettings;
-				settings["HideWhenMinimised"] = hideWhenMinimiseToolStripMenuItem.Checked;
-			}
-		}
-
-		private bool closedFromNotificationIcon = false;
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			if (HideWhenMinimised && (
-				!closedFromNotificationIcon || e.CloseReason != CloseReason.UserClosing))
+			EraserSettings settings = new EraserSettings();
+			if (settings.HideWhenMinimised && e.CloseReason == CloseReason.UserClosing)
 			{
 				e.Cancel = true;
 				Visible = false;
@@ -364,14 +347,13 @@ namespace Eraser
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			closedFromNotificationIcon = true;
-			Close();
 			Application.Exit();
 		}
 
 		private void hideWhenMinimiseToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			HideWhenMinimised = hideWhenMinimiseToolStripMenuItem.Checked;
+			EraserSettings settings = new EraserSettings();
+			settings.HideWhenMinimised = hideWhenMinimiseToolStripMenuItem.Checked;
 		}
 		#endregion
 	}
