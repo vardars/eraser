@@ -267,8 +267,6 @@ bool MainWindow::Create()
 	SendMessage(hWndProgressBar, PBM_SETRANGE32, 0, 1000);
 	SubclassWindow(*this, hWndCancelBtn, WndProc);
 	SubclassWindow(*this, hWndPanel, WndProc);
-
-	UpdateWindow(hWnd);
 	return true;
 }
 
@@ -334,6 +332,13 @@ void MainWindow::SetWindowFont(HWND hWnd)
 void MainWindow::Show(bool show)
 {
 	ShowWindow(hWnd, show ? SW_SHOW : SW_HIDE);
+
+	if (show)
+	{
+		InvalidateRect(hWnd, NULL, true);
+		UpdateWindow(hWnd);
+		Application::Get().Yield();
+	}
 }
 
 void MainWindow::EnableCancellation(bool enable)
