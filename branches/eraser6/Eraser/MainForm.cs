@@ -59,8 +59,7 @@ namespace Eraser
 				new Executor.TaskProcessedEvent(OnTaskProcessed);
 
 			//Check the notification area context menu's minimise to tray item.
-			EraserSettings settings = new EraserSettings();
-			hideWhenMinimiseToolStripMenuItem.Checked = settings.HideWhenMinimised;
+			hideWhenMinimiseToolStripMenuItem.Checked = EraserSettings.Get().HideWhenMinimised;
 
 			//Create the toolbar control
 			ToolBar.Name = "toolBar";
@@ -220,7 +219,6 @@ namespace Eraser
 
 		private void MainForm_Resize(object sender, EventArgs e)
 		{
-			EraserSettings settings = new EraserSettings();
 			if (WindowState != FormWindowState.Minimized)
 			{
 				Bitmap bmp = new Bitmap(Width, Height);
@@ -229,7 +227,7 @@ namespace Eraser
 
 				CreateGraphics().DrawImage(bmp, new Point(0, 0));
 			}
-			else if (settings.HideWhenMinimised)
+			else if (EraserSettings.Get().HideWhenMinimised)
 			{
 				Visible = false;
 			}
@@ -323,8 +321,7 @@ namespace Eraser
 		#region Minimise to tray code
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			EraserSettings settings = new EraserSettings();
-			if (settings.HideWhenMinimised && e.CloseReason == CloseReason.UserClosing)
+			if (EraserSettings.Get().HideWhenMinimised && e.CloseReason == CloseReason.UserClosing)
 			{
 				e.Cancel = true;
 				Visible = false;
@@ -352,8 +349,8 @@ namespace Eraser
 
 		private void hideWhenMinimiseToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			EraserSettings settings = new EraserSettings();
-			settings.HideWhenMinimised = hideWhenMinimiseToolStripMenuItem.Checked;
+			EraserSettings.Get().HideWhenMinimised =
+				hideWhenMinimiseToolStripMenuItem.Checked;
 		}
 		#endregion
 	}

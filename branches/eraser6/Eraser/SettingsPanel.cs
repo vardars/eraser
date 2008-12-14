@@ -147,7 +147,7 @@ namespace Eraser
 
 		private void LoadSettings()
 		{
-			EraserSettings settings = new EraserSettings();
+			EraserSettings settings = EraserSettings.Get();
 			foreach (Object lang in uiLanguage.Items)
 				if (((Language)lang).Name == settings.Language)
 				{
@@ -336,7 +336,7 @@ namespace Eraser
 
 		private void saveSettings_Click(object sender, EventArgs e)
 		{
-			EraserSettings settings = new EraserSettings();
+			EraserSettings settings = EraserSettings.Get();
 			ManagerSettings managerSettings = ManagerLibrary.Instance.Settings;
 
 			//Save the settings that don't fail first.

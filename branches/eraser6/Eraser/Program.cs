@@ -151,7 +151,7 @@ namespace Eraser
 			eraserClient = new RemoteExecutorServer();
 
 			//Set our UI language
-			EraserSettings settings = new EraserSettings();
+			EraserSettings settings = EraserSettings.Get();
 			System.Threading.Thread.CurrentThread.CurrentUICulture =
 				new CultureInfo(settings.Language);
 			program.SafeTopLevelCaptionFormat = S._("Eraser");
@@ -225,11 +225,10 @@ namespace Eraser
 		private static void OnGUIExitInstance(object sender)
 		{
 			//Save the task list
-			EraserSettings settings = new EraserSettings();
 			using (MemoryStream stream = new MemoryStream())
 			{
 				eraserClient.SaveTaskList(stream);
-				settings.TaskList = stream.ToArray();
+				EraserSettings.Get().TaskList = stream.ToArray();
 			}
 
 			//Dispose the eraser executor instance
@@ -1248,9 +1247,23 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 
 	internal class EraserSettings
 	{
-		public EraserSettings()
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		private EraserSettings()
 		{
 			settings = Manager.ManagerLibrary.Instance.SettingsManager.ModuleSettings;
+		}
+
+		/// <summary>
+		/// Gets the singleton instance of the Eraser UI Settings.
+		/// </summary>
+		/// <returns>The global instance of the Eraser UI settings.</returns>
+		public static EraserSettings Get()
+		{
+			if (instance == null)
+				instance = new EraserSettings();
+			return instance;
 		}
 
 		/// <summary>
@@ -1332,6 +1345,14 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			return culture;
 		}
 
+		/// <summary>
+		/// The data store behind the object.
+		/// </summary>
 		private Manager.Settings settings;
+
+		/// <summary>
+		/// The global instance of the settings class.
+		/// </summary>
+		private static EraserSettings instance;
 	}
 }
