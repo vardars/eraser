@@ -203,6 +203,8 @@ namespace Eraser
 					uiUpdates.Add(update, new UpdateData(update, item));
 				}
 			}
+
+			updatesBtn.Enabled = updatesLv.Items.Count > 0;
 		}
 		#endregion
 

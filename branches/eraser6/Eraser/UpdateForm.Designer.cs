@@ -70,6 +70,7 @@ namespace Eraser
 			this.progressLbl = new System.Windows.Forms.Label();
 			this.downloader = new System.ComponentModel.BackgroundWorker();
 			this.downloadingPnl = new System.Windows.Forms.Panel();
+			this.downloadingCancelBtn = new System.Windows.Forms.Button();
 			this.downloadingOverallPb = new System.Windows.Forms.ProgressBar();
 			this.downloadingOverallLbl = new System.Windows.Forms.Label();
 			this.downloadingItemPb = new System.Windows.Forms.ProgressBar();
@@ -85,7 +86,6 @@ namespace Eraser
 			this.installingLvStatusCol = new System.Windows.Forms.ColumnHeader();
 			this.installingLbl = new System.Windows.Forms.Label();
 			this.installer = new System.ComponentModel.BackgroundWorker();
-			this.downloadingCancelBtn = new System.Windows.Forms.Button();
 			this.updatesPanel.SuspendLayout();
 			this.progressPanel.SuspendLayout();
 			this.downloadingPnl.SuspendLayout();
@@ -228,6 +228,14 @@ namespace Eraser
 			resources.ApplyResources(this.downloadingPnl, "downloadingPnl");
 			this.downloadingPnl.Name = "downloadingPnl";
 			// 
+			// downloadingCancelBtn
+			// 
+			resources.ApplyResources(this.downloadingCancelBtn, "downloadingCancelBtn");
+			this.downloadingCancelBtn.Name = "downloadingCancelBtn";
+			this.downloadingCancelBtn.UseVisualStyleBackColor = true;
+			this.downloadingCancelBtn.UseWaitCursor = true;
+			this.downloadingCancelBtn.Click += new System.EventHandler(this.cancelBtn_Click);
+			// 
 			// downloadingOverallPb
 			// 
 			resources.ApplyResources(this.downloadingOverallPb, "downloadingOverallPb");
@@ -327,22 +335,14 @@ namespace Eraser
 			this.installer.DoWork += new System.ComponentModel.DoWorkEventHandler(this.installer_DoWork);
 			this.installer.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.installer_RunWorkerCompleted);
 			// 
-			// downloadingCancelBtn
-			// 
-			resources.ApplyResources(this.downloadingCancelBtn, "downloadingCancelBtn");
-			this.downloadingCancelBtn.Name = "downloadingCancelBtn";
-			this.downloadingCancelBtn.UseVisualStyleBackColor = true;
-			this.downloadingCancelBtn.UseWaitCursor = true;
-			this.downloadingCancelBtn.Click += new System.EventHandler(this.cancelBtn_Click);
-			// 
 			// UpdateForm
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+			this.Controls.Add(this.updatesPanel);
 			this.Controls.Add(this.progressPanel);
 			this.Controls.Add(this.installingPnl);
 			this.Controls.Add(this.downloadingPnl);
-			this.Controls.Add(this.updatesPanel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
