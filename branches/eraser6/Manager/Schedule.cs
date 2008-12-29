@@ -405,10 +405,18 @@ namespace Eraser.Manager
 						break;
 					}
 					case ScheduleUnit.MONTHLY:
+						//Step the number of months since the last run
+						if (LastRun != DateTime.MinValue)
+							nextRun = nextRun.AddMonths(frequency);
+
+						//Ensure that the next run day is before the scheduled day of month
+						while (monthlySchedule < nextRun.Day)
+							nextRun = nextRun.AddDays(1);
+						
 						//Set the next run date to be the day on which the task will run.
 						nextRun = nextRun.AddDays(-((int)monthlySchedule - nextRun.Day));
 						while (nextRun < DateTime.Now)
-							nextRun = nextRun.AddMonths((int)frequency);
+							nextRun = nextRun.AddMonths(frequency);
 						break;
 				}
 
