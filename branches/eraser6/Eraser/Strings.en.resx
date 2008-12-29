@@ -210,8 +210,8 @@
   <data name="The following settings held invalid values:\n\n{0}\nThese settings have now been set to naive defaults.\n\nPlease check that the new settings suit your required level of security." xml:space="preserve">
     <value>The following settings held invalid values:\n\n{0}\nThese settings have now been set to naive defaults.\n\nPlease check that the new settings suit your required level of security.</value>
   </data>
-  <data name="Plugins which have just be approved will only be loaded the next time Eraser is started." xml:space="preserve">
-    <value>Plugins which have just be approved will only be loaded the next time Eraser is started.</value>
+  <data name="Plugins which have just been approved will only be loaded the next time Eraser is started." xml:space="preserve">
+    <value>Plugins which have just been approved will only be loaded the next time Eraser is started.</value>
   </data>
   <data name="An invalid language was selected." xml:space="preserve">
     <value>An invalid language was selected.</value>

@@ -364,7 +364,7 @@ namespace Eraser
 			managerSettings.PluginApprovals = pluginApprovals;
 			if (pluginApprovalsChanged)
 			{
-				MessageBox.Show(this, S._("Plugins which have just be approved will only be loaded " +
+				MessageBox.Show(this, S._("Plugins which have just been approved will only be loaded " +
 					"the next time Eraser is started."), S._("Eraser"), MessageBoxButtons.OK,
 					MessageBoxIcon.Information);
 			}
