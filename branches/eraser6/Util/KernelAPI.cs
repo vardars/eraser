@@ -439,7 +439,7 @@ namespace Eraser.Util
 			/// <summary>
 			/// The size of the structure, in bytes.
 			/// </summary>
-			private uint cb;
+			public uint cbSize;
 
 			/// <summary>
 			/// Reserved; must be NULL.
@@ -452,7 +452,18 @@ namespace Eraser.Util
 			/// the string includes both the desktop and window station names.
 			/// For more information, see Thread Connection to a Desktop.
 			/// </summary>
-			public IntPtr lpDesktop;
+			public string lpDesktop
+			{
+				get
+				{
+					return Marshal.PtrToStringAuto(lpDesktop2);
+				}
+				set
+				{
+					lpDesktop2 = Marshal.StringToHGlobalUni(value);
+				}
+			}
+			private IntPtr lpDesktop2;
 
 			/// <summary>
 			/// For console processes, this is the title displayed in the title
@@ -461,7 +472,18 @@ namespace Eraser.Util
 			/// must be NULL for GUI or console processes that do not create a
 			/// new console window.
 			/// </summary>
-			public string lpTitle;
+			public string lpTitle
+			{
+				get
+				{
+					return Marshal.PtrToStringAuto(lpTitle2);
+				}
+				set
+				{
+					lpTitle2 = Marshal.StringToHGlobalUni(value);
+				}
+			}
+			private IntPtr lpTitle2;
 
 			/// <summary>
 			/// If dwFlags specifies STARTF_USEPOSITION, this member is the x

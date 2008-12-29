@@ -231,6 +231,7 @@ namespace Eraser.Manager
 
 			//Process startup information
 			KernelAPI.STARTUPINFO startupInfo = new KernelAPI.STARTUPINFO();
+			startupInfo.cbSize = (uint)Marshal.SizeOf(typeof(KernelAPI.STARTUPINFO));
 			KernelAPI.GetStartupInfo(out startupInfo);
 			result.AddRange(StructToBuffer(startupInfo));
 
