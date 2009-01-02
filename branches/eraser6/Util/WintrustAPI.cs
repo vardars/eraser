@@ -39,17 +39,17 @@ namespace Eraser.Util
 			WINTRUST_FILE_INFO fileinfo = new WINTRUST_FILE_INFO();
 			fileinfo.cbStruct = (uint)Marshal.SizeOf(typeof(WINTRUST_FILE_INFO));
 			fileinfo.pcwszFilePath = pathToFile;
-			fileinfo.hFile = IntPtr.Zero;
 
 			WINTRUST_DATA data = new WINTRUST_DATA();
 			data.cbStruct = (uint)Marshal.SizeOf(typeof(WINTRUST_DATA));
 			data.dwUIChoice = WINTRUST_DATA.UIChoices.WTD_UI_NONE;
 			data.fdwRevocationChecks = WINTRUST_DATA.RevocationChecks.WTD_REVOKE_NONE;
 			data.dwUnionChoice = WINTRUST_DATA.UnionChoices.WTD_CHOICE_FILE;
-			data.pUnion = Marshal.AllocHGlobal((int)data.cbStruct);
+			data.pUnion = Marshal.AllocHGlobal((int)fileinfo.cbStruct);
 			Marshal.StructureToPtr(fileinfo, data.pUnion, false);
 
-			int result = WinVerifyTrust(IntPtr.Zero, WINTRUST_ACTION_GENERIC_VERIFY_V2, data);
+			Guid guid = WINTRUST_ACTION_GENERIC_VERIFY_V2;
+			int result = WinVerifyTrust(IntPtr.Zero, ref guid, ref data);
 			Marshal.FreeHGlobal(data.pUnion);
 			return result == 0;
 		}
@@ -123,8 +123,8 @@ namespace Eraser.Util
 		/// TRUST_E_SUBJECT_FORM_UNKNOWN	The trust provider does not support the form
 		///									specified for the subject.</returns>
 		[DllImport("Wintrust.dll", CharSet = CharSet.Unicode)]
-		private static extern int WinVerifyTrust(IntPtr hWnd, Guid pgActionID,
-			WINTRUST_DATA pWVTData);
+		private static extern int WinVerifyTrust(IntPtr hWnd, ref Guid pgActionID,
+			ref WINTRUST_DATA pWVTData);
 
 		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 		private struct WINTRUST_FILE_INFO
@@ -132,15 +132,27 @@ namespace Eraser.Util
 			public uint cbStruct;			// = sizeof(WINTRUST_FILE_INFO)
 			public string pcwszFilePath;	// required, file name to be verified
 			public IntPtr hFile;			// optional, open handle to pcwszFilePath
-			public Guid pgKnownSubject;		// optional: fill if the subject type is known.
+			public IntPtr pgKnownSubject;	// optional: fill if the subject type is known.
 		}
 
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 		private struct WINTRUST_DATA
 		{
 			public uint cbStruct;						// = sizeof(WINTRUST_DATA)
 
 			public IntPtr pPolicyCallbackData;			// optional: used to pass data between the app and policy
 			public IntPtr pSIPClientData;				// optional: used to pass data between the app and SIP.
+			public UIChoices dwUIChoice;				// required: UI choice.  One of the following.
+			public RevocationChecks fdwRevocationChecks;// required: certificate revocation check options
+			public UnionChoices dwUnionChoice;			// required: which structure is being passed in?
+
+			public IntPtr pUnion;
+
+			public StateActions dwStateAction;			// optional (Catalog File Processing)
+			public IntPtr hWVTStateData;				// optional (Catalog File Processing)
+			private string pwszURLReference;			// optional: (future) used to determine zone.
+			public ProviderFlags dwProvFlags;
+			public UIContexts dwUIContext;
 
 			public enum UIChoices : uint
 			{
@@ -149,15 +161,11 @@ namespace Eraser.Util
 				WTD_UI_NOBAD = 3,
 				WTD_UI_NOGOOD = 4,
 			}
-			public UIChoices dwUIChoice;				// required: UI choice.  One of the following.
-
 			public enum RevocationChecks : uint
 			{
 				WTD_REVOKE_NONE = 0x00000000,
 				WTD_REVOKE_WHOLECHAIN = 0x00000001
 			}
-			public RevocationChecks fdwRevocationChecks;// required: certificate revocation check options
-
 			public enum UnionChoices : uint
 			{
 				WTD_CHOICE_FILE = 1,
@@ -166,9 +174,6 @@ namespace Eraser.Util
 				WTD_CHOICE_SIGNER = 4,
 				WTD_CHOICE_CERT = 5
 			}
-			public UnionChoices dwUnionChoice;			// required: which structure is being passed in?
-
-			public IntPtr pUnion;
 
 			public enum StateActions : uint
 			{
@@ -178,10 +183,6 @@ namespace Eraser.Util
 				WTD_STATEACTION_AUTO_CACHE = 0x00000003,
 				WTD_STATEACTION_AUTO_CACHE_FLUSH = 0x00000004
 			}
-			public StateActions dwStateAction;		// optional (Catalog File Processing)
-			IntPtr hWVTStateData;					// optional (Catalog File Processing)
-			string pwszURLReference;				// optional: (future) used to determine zone.
-
 			public enum ProviderFlags : uint
 			{
 				WTD_PROV_FLAGS_MASK = 0x0000FFFF,
@@ -198,16 +199,11 @@ namespace Eraser.Util
 				WTD_LIFETIME_SIGNING_FLAG = 0x00000800,
 				WTD_CACHE_ONLY_URL_RETRIEVAL = 0x00001000
 			}
-			public ProviderFlags dwProvFlags;
-
-
-			// 17-Dec-2004 JSchwart: re-added to fix build break in other depots
 			public enum UIContexts
 			{
 				WTD_UICONTEXT_EXECUTE = 0,
 				WTD_UICONTEXT_INSTALL = 1
 			}
-			public UIContexts dwUIContext;
 		}
 
 		private static readonly Guid WINTRUST_ACTION_GENERIC_VERIFY_V2 = new Guid(0xaac56b,                                         
