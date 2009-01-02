@@ -269,19 +269,12 @@ namespace Eraser.Manager.Plugin
 			Plugin = plugin;
 			IsCore = false;
 
-			try
+			//Verify the certificate in the assembly.
+			if (WintrustAPI.VerifyAuthenticode(assembly.Location))
 			{
-				//Try to load the certificate to see if it exists; exceptions will be
-				//thrown if the assembly is not signed.
 				X509Certificate2 cert = new X509Certificate2(
 					X509Certificate.CreateFromSignedFile(assembly.Location));
-
-				//Verify the validity of the certificate
-				if (cert.Verify())
-					AssemblyAuthenticode = cert;
-			}
-			catch (CryptographicException)
-			{
+				AssemblyAuthenticode = cert;
 			}
 		}
 
