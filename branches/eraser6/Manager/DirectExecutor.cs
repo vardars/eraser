@@ -342,8 +342,7 @@ namespace Eraser.Manager
 					finally
 					{
 						//Allow the system to sleep again.
-						KernelAPI.SetThreadExecutionState(KernelAPI.EXECUTION_STATE.ES_CONTINUOUS |
-							KernelAPI.EXECUTION_STATE.ES_SYSTEM_REQUIRED);
+						KernelAPI.SetThreadExecutionState(KernelAPI.EXECUTION_STATE.ES_CONTINUOUS);
 
 						//If the task is a recurring task, reschedule it since we are done.
 						if (task.Schedule is RecurringSchedule)
