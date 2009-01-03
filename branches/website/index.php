@@ -1,5 +1,11 @@
 <?php
 require('./scripts/database.php');
+function GetDownloads($downloadID)
+{
+	$query = mysql_query('SELECT COUNT(DownloadID) FROM download_statistics WHERE DownloadID=' . $downloadID);
+	$row = mysql_fetch_row($query);
+	echo $row ? $row[0] : 'unknown';
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -12,7 +18,11 @@ require('./scripts/database.php');
 <link href="style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="scripts.js"></script>
 <!-- InstanceBeginEditable name="head" -->
-<link href="style.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+.downloads {
+	margin-left: 1.0em;
+}
+</style>
 <!-- InstanceEndEditable -->
 <!-- InstanceParam name="ArticlePoster" type="boolean" value="false" -->
 </head>
@@ -89,9 +99,12 @@ require('./scripts/database.php');
 			<div class="right_news">
 				<h3>Latest News</h3>
 				<div class="right_news_bg">
-					<h2>Eraser 6-rc2 released!</h2>
-					<div class="posted">Posted by: Joel, 13 December 2008, 10.30am, +800 GMT</div>
-					<p>Eraser 6 Release Candidate 2 is released, bringing with it about a dozen fixes (a few of them major!) <a href="announcements/20081213.html">See the full announcement.</a></p>
+					<h2>Eraser 6-rc3 released!</h2>
+					<div class="posted">Posted by: Joel, 3 January 2008, 9.00am, +800 GMT</div>
+					<p>Eraser 6 Release Candidate 3 is released, bringing with it about a dozen fixes (including a few show stopping regressions.) <a href="announcements/20090103.html">See the full announcement.</a></p>
+					<h2>Eraser 5.8.7-beta4 released!</h2>
+					<div class="posted">Posted by: Joel, 3 January 2008, 9.00am, +800 GMT</div>
+					<p>Eraser 5.8.7 isn't abandoned! The new beta release addresses feature bugs and would be a welcome addition to everyone still using v5. <a href="announcements/20090103.html#eraser5">See the full announcement.</a></p>
 				</div>
 			</div>
 
@@ -108,14 +121,19 @@ require('./scripts/database.php');
 			<!-- InstanceBeginEditable name="RightContentEdit" -->
 			<div class="right_l">
 				<h3><a name="download" href="javascript: ;"></a><img src="images/ico_download.gif" alt="" />Download Eraser</h3>
+				<h4>Stable versions</h4>
 				<ul>
-					<li><a href="announcements/20081213.html">Eraser 6.0.2</a> (rc-2, build 813)<br />
-						&nbsp; &nbsp; &raquo; downloaded <?php
-						$query = mysql_query('SELECT COUNT(DownloadID) FROM download_statistics WHERE DownloadID=5');
-						$row = mysql_fetch_row($query);
-						echo $row ? $row[0] : 'unknown'; ?> times</li>
 					<li><a href="http://downloads.sourceforge.net/eraser/EraserSetup32.exe">Eraser 5.8.6a</a> (x86)</li>
 					<li><a href="http://downloads.sourceforge.net/eraser/EraserSetup64.exe">Eraser 5.8.6a</a> (x64)</li>
+				</ul>
+				<h4>Beta versions</h4>
+				<ul>
+					<li><a href="announcements/20090103.html">Eraser 6.0.3</a> (rc-3, build 847)<br />
+						<span class="downloads">&raquo; downloaded <?php GetDownloads(6); ?> times</span></li>
+					<li><a href="announcements/20090103.html#eraser5">Eraser 5.8.7-beta4</a><br />
+						<span class="downloads">&raquo; downloaded <?php GetDownloads(7); ?> times</span></li>
+					<li><a href="announcements/20090103.html#eraser5">Eraser 5.8.7-beta4</a> (standalone)
+						<span class="downloads">&raquo; downloaded <?php GetDownloads(8); ?> times</span></li>
 				</ul>
 				<h3>Reviews &amp; Testimonials</h3>
 				<ul>
