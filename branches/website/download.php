@@ -4,7 +4,7 @@ if (empty($_GET['id']))
 	exit;
 
 //Get the download link associated with the download
-$query = mysql_query(sprintf('SELECT Link FROM downloads WHERE DownloadID=%d', intval($_GET['id'])));
+$query = mysql_query(sprintf('SELECT Link FROM downloads WHERE DownloadID=%d AND Superseded=0', intval($_GET['id'])));
 if (!$query)
 	exit;
 if (!($row = mysql_fetch_array($query)))
@@ -18,17 +18,18 @@ if (eregi('http(s{0,1})://)(.*)', $row['Link']))
 else if (substr($row['Link'], 0, 1) == '?')
 {
 	$fileName = substr($row['Link'], 1);
-	header("content-type: application/octet-stream");
+	header("Content-Type: application/octet-stream");
+	header('Content-Length: ' . filesize('./downloads/' . $fileName));
 	if (strpos($_SERVER['HTTP_USER_AGENT'], "MSIE") !== false)
 	{
 		//IE browser
-		header('Content-Disposition: inline; filename="'.$fileName.'"');
+		header('Content-Disposition: inline; filename="' . $fileName . '"');
 		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		header('Pragma: public');
 	}
 	else
 	{
-		header('Content-Disposition: attachment; filename="'.$fileName.'"');
+		header('Content-Disposition: attachment; filename="' . $fileName . '"');
 		header('Pragma: no-cache');
 	}
 

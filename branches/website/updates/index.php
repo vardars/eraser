@@ -27,10 +27,13 @@ $query = mysql_query(sprintf('SELECT downloads.*, publishers.Name as PublisherNa
 	INNER JOIN publishers ON
 		downloads.PublisherID=publishers.PublisherID
 	WHERE
-		(MinVersion IS NULL AND MaxVersion IS NULL) OR
-		(MinVersion IS NULL AND MaxVersion > \'%1$s\') OR
-		(MinVersion <= \'%1$s\' AND MaxVersion IS NULL) OR
-		(MinVersion <= \'%1$s\' AND MaxVersion > \'%1$s\')
+		(Superseded = 0) AND
+		(
+			(MinVersion IS NULL AND MaxVersion IS NULL) OR
+			(MinVersion IS NULL AND MaxVersion > \'%1$s\') OR
+			(MinVersion <= \'%1$s\' AND MaxVersion IS NULL) OR
+			(MinVersion <= \'%1$s\' AND MaxVersion > \'%1$s\')
+		)
 	ORDER BY `Type` ASC', $version));
 
 $lastItemType = null;
