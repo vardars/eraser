@@ -191,6 +191,11 @@ Eraser Project Members:
 				Close();
 		}
 
+		private void AboutForm_Paint(object sender, PaintEventArgs e)
+		{
+			DrawComposite(e.Graphics);
+		}
+
 		private void AboutForm_MouseMove(object sender, MouseEventArgs e)
 		{
 			Cursor.Current = Cursors.Default;
@@ -216,32 +221,40 @@ Eraser Project Members:
 			else
 				AboutTextScrollTop -= 1;
 
-			DrawComposite();
+			using (Graphics g = CreateGraphics())
+				DrawComposite(g);
 		}
 
-		private void DrawComposite()
+		private void DrawComposite(Graphics g)
 		{
 			if (DoubleBufferBitmap == null)
 				DoubleBufferBitmap = new Bitmap(ClientSize.Width, ClientSize.Height);
-			using (Graphics g = Graphics.FromImage(DoubleBufferBitmap))
+			using (Graphics bg = Graphics.FromImage(DoubleBufferBitmap))
 			{
 				//Draw the parent image with a fading out effect
+				if (ParentOpacity > 128)
+					bg.Clip = new Region(AboutTextRect);
+
 				Brush brush = new SolidBrush(Color.FromArgb(ParentOpacity, 0, 0, 0));
-				g.DrawImageUnscaled(ParentBitmap, 0, 0);
-				g.FillRectangle(brush, ClientRectangle);
+				bg.DrawImageUnscaled(ParentBitmap, 0, 0);
+				bg.FillRectangle(brush, ClientRectangle);
 
 				//Then draw the About bitmap (which we cached in the constructor)
-				g.DrawImageUnscaled(AboutBitmap, AboutBitmapPos);
+				bg.DrawImageUnscaled(AboutBitmap, AboutBitmapPos);
 
 				//And the scrolling text
-				g.Clip = new Region(AboutTextRect);
-				g.DrawImageUnscaled(AboutTextBitmap, AboutTextRect.Left,
+				bg.Clip = new Region(AboutTextRect);
+				bg.DrawImageUnscaled(AboutTextBitmap, AboutTextRect.Left,
 					AboutTextRect.Top + AboutTextScrollTop);
-				g.ResetClip();
+				bg.ResetClip();
 			}
 
-			using (Graphics g = CreateGraphics())
-				g.DrawImageUnscaled(DoubleBufferBitmap, 0, 0);
+			if (ParentOpacity > 128)
+				if (g.Clip != null)
+					g.Clip.Complement(new Region(AboutTextRect));
+				else
+					g.Clip = new Region(AboutTextRect);
+			g.DrawImageUnscaled(DoubleBufferBitmap, 0, 0);
 		}
 	}
 }
