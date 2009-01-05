@@ -54,9 +54,6 @@ namespace Eraser
 			this.contentPanel = new System.Windows.Forms.Panel();
 			this.toolbarScheduleMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.newTaskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.toolbarScheduleMenuQueue = new System.Windows.Forms.ToolStripMenuItem();
-			this.viewLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolbarHelpMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutEraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,10 +78,7 @@ namespace Eraser
 			// toolbarScheduleMenu
 			// 
 			this.toolbarScheduleMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newTaskToolStripMenuItem,
-            this.toolStripSeparator1,
-            this.toolbarScheduleMenuQueue,
-            this.viewLogToolStripMenuItem});
+            this.newTaskToolStripMenuItem});
 			this.toolbarScheduleMenu.Name = "toolbarScheduleMenu";
 			resources.ApplyResources(this.toolbarScheduleMenu, "toolbarScheduleMenu");
 			// 
@@ -93,21 +87,6 @@ namespace Eraser
 			this.newTaskToolStripMenuItem.Name = "newTaskToolStripMenuItem";
 			resources.ApplyResources(this.newTaskToolStripMenuItem, "newTaskToolStripMenuItem");
 			this.newTaskToolStripMenuItem.Click += new System.EventHandler(this.newTaskToolStripMenuItem_Click);
-			// 
-			// toolStripSeparator1
-			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
-			// 
-			// toolbarScheduleMenuQueue
-			// 
-			resources.ApplyResources(this.toolbarScheduleMenuQueue, "toolbarScheduleMenuQueue");
-			this.toolbarScheduleMenuQueue.Name = "toolbarScheduleMenuQueue";
-			// 
-			// viewLogToolStripMenuItem
-			// 
-			resources.ApplyResources(this.viewLogToolStripMenuItem, "viewLogToolStripMenuItem");
-			this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
 			// 
 			// toolbarHelpMenu
 			// 
@@ -196,13 +175,10 @@ namespace Eraser
 
 		private System.Windows.Forms.Panel contentPanel;
 		private System.Windows.Forms.ContextMenuStrip toolbarScheduleMenu;
-		private System.Windows.Forms.ToolStripMenuItem toolbarScheduleMenuQueue;
 		private System.Windows.Forms.ContextMenuStrip toolbarHelpMenu;
 		private System.Windows.Forms.ToolStripMenuItem checkForUpdatesToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem aboutEraserToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem viewLogToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem newTaskToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 		private System.Windows.Forms.NotifyIcon notificationIcon;
 		private System.Windows.Forms.Timer notificationIconTimer;
 		private System.Windows.Forms.ContextMenuStrip notificationMenu;

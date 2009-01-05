@@ -235,7 +235,6 @@ namespace Eraser
 
 		private void newTaskToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			ToolStripDropDownItem item = sender as ToolStripDropDownItem;
 			using (TaskPropertiesForm form = new TaskPropertiesForm())
 			{
 				if (form.ShowDialog() == DialogResult.OK)

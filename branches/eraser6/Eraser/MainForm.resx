@@ -151,34 +151,13 @@
     <value>17, 17</value>
   </metadata>
   <data name="newTaskToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>193, 22</value>
+    <value>152, 22</value>
   </data>
   <data name="newTaskToolStripMenuItem.Text" xml:space="preserve">
     <value>New Task</value>
   </data>
-  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 6</value>
-  </data>
-  <data name="toolbarScheduleMenuQueue.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="toolbarScheduleMenuQueue.Size" type="System.Drawing.Size, System.Drawing">
-    <value>193, 22</value>
-  </data>
-  <data name="toolbarScheduleMenuQueue.Text" xml:space="preserve">
-    <value>View Completed Tasks</value>
-  </data>
-  <data name="viewLogToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="viewLogToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>193, 22</value>
-  </data>
-  <data name="viewLogToolStripMenuItem.Text" xml:space="preserve">
-    <value>View Log</value>
-  </data>
   <data name="toolbarScheduleMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>194, 76</value>
+    <value>153, 48</value>
   </data>
   <data name="&gt;&gt;toolbarScheduleMenu.Name" xml:space="preserve">
     <value>toolbarScheduleMenu</value>
@@ -3397,24 +3376,6 @@
     <value>newTaskToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;newTaskToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
-    <value>toolStripSeparator1</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolbarScheduleMenuQueue.Name" xml:space="preserve">
-    <value>toolbarScheduleMenuQueue</value>
-  </data>
-  <data name="&gt;&gt;toolbarScheduleMenuQueue.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;viewLogToolStripMenuItem.Name" xml:space="preserve">
-    <value>viewLogToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;viewLogToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkForUpdatesToolStripMenuItem.Name" xml:space="preserve">

@@ -31,6 +31,7 @@ using Eraser.Manager;
 using Eraser.Util;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace Eraser
 {
@@ -119,6 +120,7 @@ namespace Eraser
 
 			//Display a balloon notification if the parent frame has been minimised.
 			MainForm parent = (MainForm)FindForm();
+			Debug.Assert(parent != null);
 			if (parent.WindowState == FormWindowState.Minimized || !parent.Visible)
 			{
 				parent.ShowNotificationBalloon(S._("New task added"), S._("{0} " +
@@ -284,9 +286,11 @@ namespace Eraser
 		/// <param name="e">Event argument.</param>
 		private void schedulerMenu_Opening(object sender, CancelEventArgs e)
 		{
-			//If nothing's selected, don't show the menu
+			//If nothing's selected, show the Scheduler menu which just allows users to
+			//create new tasks (like from the toolbar)
 			if (scheduler.SelectedItems.Count == 0)
 			{
+				schedulerDefaultMenu.Show(schedulerMenu.Left, schedulerMenu.Top);
 				e.Cancel = true;
 				return;
 			}
@@ -306,6 +310,23 @@ namespace Eraser
 			editTaskToolStripMenuItem.Enabled = scheduler.SelectedItems.Count == 1 &&
 				!((Task)scheduler.SelectedItems[0].Tag).Executing;
 			deleteTaskToolStripMenuItem.Enabled = !aTaskExecuting;
+		}
+
+		/// <summary>
+		/// Occurs when the user selects the New Task context menu item.
+		/// </summary>
+		/// <param name="sender">The menu which generated this event.</param>
+		/// <param name="e">Event argument.</param>
+		private void newTaskToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (TaskPropertiesForm form = new TaskPropertiesForm())
+			{
+				if (form.ShowDialog() == DialogResult.OK)
+				{
+					Task task = form.Task;
+					Program.eraserClient.AddTask(ref task);
+				}
+			}
 		}
 
 		/// <summary>
