@@ -1105,6 +1105,15 @@ namespace Eraser.Manager
 				if (fldr.DeleteIfEmpty)
 					RemoveFolder(new DirectoryInfo(fldr.Path));
 			}
+
+			//If the user was erasing the recycle bin, clear the bin.
+			if (target is Task.RecycleBin)
+			{
+				ShellAPI.SHEmptyRecycleBin(IntPtr.Zero, null,
+					ShellAPI.SHEmptyRecycleBinFlags.SHERB_NOCONFIRMATION |
+					ShellAPI.SHEmptyRecycleBinFlags.SHERB_NOPROGRESSUI |
+					ShellAPI.SHEmptyRecycleBinFlags.SHERB_NOSOUND);
+			}
 		}
 
 		/// <summary>

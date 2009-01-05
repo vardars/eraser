@@ -508,7 +508,10 @@ namespace Eraser.Manager
 					foreach (string rootDir in rootDirectory)
 					{
 						DirectoryInfo dir = new DirectoryInfo(
-							System.IO.Path.Combine(drive.Name, rootDir));
+							System.IO.Path.Combine(
+								System.IO.Path.Combine(drive.Name, rootDir),
+								System.Security.Principal.WindowsIdentity.GetCurrent().
+									User.ToString()));
 						if (!dir.Exists)
 							continue;
 

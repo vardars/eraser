@@ -50,6 +50,7 @@
     <Compile Include="Localisation.cs" />
     <Compile Include="MsCorEEAPI.cs" />
     <Compile Include="NtfsAPI.cs" />
+    <Compile Include="ShellAPI.cs" />
     <Compile Include="StreamInfo.cs" />
     <Compile Include="KernelAPI.cs" />
     <Compile Include="File.cs" />
