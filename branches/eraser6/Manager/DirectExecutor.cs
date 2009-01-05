@@ -1175,7 +1175,7 @@ namespace Eraser.Manager
 				//Get the template file to copy
 				FileInfo shadowFileInfo;
 				{
-					string shadowFile;
+					string shadowFile = null;
 					List<string> entries = ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles.GetRange(
 						0, ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles.Count);
 					PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
@@ -1188,18 +1188,20 @@ namespace Eraser.Manager
 
 						int index = prng.Next(entries.Count - 1);
 						if ((System.IO.File.GetAttributes(entries[index]) & FileAttributes.Directory) != 0)
-							shadowFile = GetRandomFileName(new DirectoryInfo(entries[index]));
+						{
+							DirectoryInfo dir = new DirectoryInfo(entries[index]);
+							FileInfo[] files = dir.GetFiles("*", SearchOption.AllDirectories);
+							foreach (FileInfo f in files)
+								entries.Add(f.FullName);
+						}
 						else
 							shadowFile = entries[index];
 
 						entries.RemoveAt(index);
 					}
-					while (shadowFile.Length == 0 || Path.GetDirectoryName(shadowFile) == info.DirectoryName);
+					while (shadowFile == null || shadowFile.Length == 0);
 					shadowFileInfo = new FileInfo(shadowFile);
 				}
-
-				//Rename the file to have the same name as the shadow
-				info.MoveTo(info.DirectoryName + shadowFileInfo.Name);
 
 				//Dump the copy (the first 4MB, or less, depending on the file size and available
 				//user space)
