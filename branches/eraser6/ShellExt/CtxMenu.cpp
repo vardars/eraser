@@ -565,8 +565,10 @@ namespace Eraser {
 			break;
 		case INVOKEREASON_FILEFOLDER:
 			result |= ACTION_ERASE | ACTION_ERASE_ON_RESTART | ACTION_ERASE_UNUSED_SPACE;
+#if 0
 		case INVOKEREASON_DRAGDROP:
 			result |= ACTION_SECURE_MOVE;
+#endif
 		}
 
 		//Remove actions that don't apply to the current invocation reason.
