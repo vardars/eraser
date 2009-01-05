@@ -132,7 +132,7 @@ Eraser Project Members:
 				g.DrawString(disclaimerText, Font, textBrush, disclaimerPos);
 
 				//Donation statement
-				string donationText = S._("Please help us continue develop Eraser, donate some coffee...");
+				string donationText = S._("Please help us to continue developing Eraser - donate some coffee!");
 				PointF donationPos = new PointF(disclaimerPos.X, disclaimerPos.Y + 170);
 				SizeF donationSize = g.MeasureString(donationText, Font);
 				g.DrawString(donationText, Font, textBrush, donationPos);
