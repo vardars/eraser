@@ -183,7 +183,7 @@ Eraser Project Members:
 		{
 			Point cursorPos = PointToClient(Cursor.Position);
 			if (WebsiteRect.IntersectsWith(new Rectangle(cursorPos, new Size(1, 1))))
-				Process.Start("http://heidi.ie/eraser/");
+				Process.Start("http://eraser.heidi.ie/");
 			else if (DonateRect.IntersectsWith(new Rectangle(cursorPos, new Size(1, 1))))
 				Process.Start("https://euro.swreg.org/cgi-bin/s.cgi?r=1&s=80181&db_key=1512312&x=0&lang=&lnk=");
 			else
