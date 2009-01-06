@@ -680,20 +680,19 @@ namespace Eraser {
 
 		eraserPath += L"Eraser.exe";
 
-		std::wostringstream finalCmdLine;
-		finalCmdLine << L"\"" << eraserPath << L"\" \"" << action << L"\" -q "
-					 << parameters;
-		std::wstring cmdLine(finalCmdLine.str());
-		std::vector<wchar_t> buffer(cmdLine.length() + 1);
-		wcscpy_s(&buffer.front(), cmdLine.length() + 1, cmdLine.c_str());
+		std::wstring finalParameters;
+		{
+			std::wostringstream parametersStrm;
+			parametersStrm << "\"" << action << L"\" -q " << parameters;
+			finalParameters = parametersStrm.str();
+		}
 
-#if 0
 		//If the process must be elevated we use ShellExecute with the runas verb
 		//to elevate the new process.
 		if (elevated)
 		{
 			int result = reinterpret_cast<int>(ShellExecute(parent, L"runas",
-				eraserPath.c_str(), &buffer.front(), NULL, show));
+				eraserPath.c_str(), finalParameters.c_str(), NULL, show));
 			if (result <= 32)
 				throw LoadString(IDS_ERROR_UNKNOWN);
 		}
@@ -701,7 +700,6 @@ namespace Eraser {
 		//If the process isn't to be elevated, we use CreateProcess so we can get
 		//read the output from the child process
 		else
-#endif
 		{
 			//Create the process.
 			STARTUPINFO startupInfo;
@@ -730,6 +728,9 @@ namespace Eraser {
 
 			PROCESS_INFORMATION processInfo;
 			ZeroMemory(&processInfo, sizeof(processInfo));
+			std::vector<wchar_t> buffer(eraserPath.length() + finalParameters.length() + 1);
+			wcscpy_s(&buffer.front(), buffer.size(), (eraserPath + finalParameters).c_str());
+
 			if (!CreateProcess(NULL, &buffer.front(), NULL, NULL, true, CREATE_NO_WINDOW,
 				NULL, NULL, &startupInfo, &processInfo))
 			{
