@@ -228,6 +228,9 @@
   <data name="The following settings held invalid values:\n\n{0}\nThese settings have now been set to naive defaults.\n\nPlease check that the new settings suit your required level of security." xml:space="preserve">
     <value>De volgende instellingen had ongeldige waarden:\n\n{0}\nDeze instellingen zijn omgezet naar lege standaards.\nKijk goed na of de nieuwe instelling u bevalt met de benodigde beveiliging niveau.</value>
   </data>
+  <data name="The path you selected is invalid." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Plugins which have just been approved will only be loaded the next time Eraser is started." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
@@ -279,7 +282,7 @@
   <data name="Plugins" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="There are no new updates or plugins available for Eraser" xml:space="preserve">
+  <data name="There are no new updates or plugins available for Eraser." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Install" xml:space="preserve">

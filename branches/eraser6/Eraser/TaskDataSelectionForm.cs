@@ -218,9 +218,17 @@ namespace Eraser
 
 		private void folderBrowse_Click(object sender, EventArgs e)
 		{
-			folderDialog.SelectedPath = folderPath.Text;
-			if (folderDialog.ShowDialog() == DialogResult.OK)
-				folderPath.Text = folderDialog.SelectedPath;
+			try
+			{
+				folderDialog.SelectedPath = folderPath.Text;
+				if (folderDialog.ShowDialog() == DialogResult.OK)
+					folderPath.Text = folderDialog.SelectedPath;
+			}
+			catch (NotSupportedException)
+			{
+				MessageBox.Show(this, S._("The path you selected is invalid."), S._("Eraser"),
+					MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 
 		private void unusedDisk_DrawItem(object sender, DrawItemEventArgs e)

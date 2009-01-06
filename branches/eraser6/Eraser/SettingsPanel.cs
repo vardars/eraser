@@ -284,10 +284,17 @@ namespace Eraser
 
 		private void plausibleDeniabilityFilesAddFolder_Click(object sender, EventArgs e)
 		{
-			if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
-				plausibleDeniabilityFiles.Items.Add(folderBrowserDialog.SelectedPath);
-
-			plausableDeniabilityFilesRemoveUpdate();
+			try
+			{
+				if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+					plausibleDeniabilityFiles.Items.Add(folderBrowserDialog.SelectedPath);
+				plausableDeniabilityFilesRemoveUpdate();
+			}
+			catch (NotSupportedException)
+			{
+				MessageBox.Show(this, S._("The path you selected is invalid."), S._("Eraser"),
+					MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 
 		private void plausibleDeniabilityFilesRemove_Click(object sender, EventArgs e)
