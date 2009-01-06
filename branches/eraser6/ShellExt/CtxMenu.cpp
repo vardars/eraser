@@ -769,8 +769,9 @@ namespace Eraser {
 
 			PROCESS_INFORMATION processInfo;
 			ZeroMemory(&processInfo, sizeof(processInfo));
-			std::vector<wchar_t> buffer(eraserPath.length() + finalParameters.length() + 1);
-			wcscpy_s(&buffer.front(), buffer.size(), (eraserPath + finalParameters).c_str());
+			std::vector<wchar_t> buffer(eraserPath.length() + finalParameters.length() + 4);
+			wcscpy_s(&buffer.front(), buffer.size(), (L"\"" + eraserPath + L"\" " +
+				finalParameters).c_str());
 
 			if (!CreateProcess(NULL, &buffer.front(), NULL, NULL, true, CREATE_NO_WINDOW,
 				NULL, NULL, &startupInfo, &processInfo))
