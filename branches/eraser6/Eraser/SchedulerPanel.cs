@@ -248,19 +248,19 @@ namespace Eraser
 				switch (highestLevel)
 				{
 					case LogLevel.WARNING:
-						message = S._("The task {0} completed with warnings", e.Task.UIText);
+						message = S._("The task {0} has completed with warnings", e.Task.UIText);
 						icon = ToolTipIcon.Warning;
 						break;
 					case LogLevel.ERROR:
-						message = S._("The task {0} completed with errors", e.Task.UIText);
+						message = S._("The task {0} has completed with errors", e.Task.UIText);
 						icon = ToolTipIcon.Error;
 						break;
 					case LogLevel.FATAL:
-						message = S._("The task {0} not completed", e.Task.UIText);
+						message = S._("The task {0} did not complete", e.Task.UIText);
 						icon = ToolTipIcon.Error;
 						break;
 					default:
-						message = S._("The task {0} completed", e.Task.UIText);
+						message = S._("The task {0} has completed", e.Task.UIText);
 						icon = ToolTipIcon.Info;
 						break;
 				}
@@ -270,7 +270,8 @@ namespace Eraser
 			}
 
 			//If the user requested us to remove completed one-time tasks, do so.
-			if (EraserSettings.Get().ClearCompletedTasks && !(e.Task.Schedule is RecurringSchedule))
+			if (EraserSettings.Get().ClearCompletedTasks &&
+				!(e.Task.Schedule is RecurringSchedule) && highestLevel < LogLevel.WARNING)
 			{
 				Program.eraserClient.DeleteTask(e.Task.ID);
 			}
