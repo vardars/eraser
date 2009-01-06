@@ -192,6 +192,8 @@ namespace Eraser
 			plausibleDeniability.Checked =
 				ManagerLibrary.Instance.Settings.PlausibleDeniability;
 			plausibleDeniability_CheckedChanged(plausibleDeniability, new EventArgs());
+			schedulerClearCompleted.Checked = settings.ClearCompletedTasks;
+
 			List<string> defaultsList = new List<string>();
 
 			//Select an intelligent default if the settings are invalid.
@@ -343,6 +345,7 @@ namespace Eraser
 			managerSettings.EraseLockedFilesOnRestart = lockedAllow.Checked;
 			managerSettings.ConfirmEraseOnRestart = lockedConfirm.Checked;
 			managerSettings.ExecuteMissedTasksImmediately = schedulerMissedImmediate.Checked;
+			settings.ClearCompletedTasks = schedulerClearCompleted.Checked;
 
 			bool pluginApprovalsChanged = false;
 			Dictionary<Guid, bool> pluginApprovals = managerSettings.PluginApprovals;

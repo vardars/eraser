@@ -147,10 +147,10 @@
   <data name="Could not load task list. All task entries have been lost." xml:space="preserve">
     <value>Kan geen taak lijst vinden. Alle taken zijn verdwenen.</value>
   </data>
-  <data name="Could not load the setting {0} for plugin {1}. The setting has been lost." xml:space="preserve">
+  <data name="Another instance of Eraser is already running but it is running with higher privileges than this instance of Eraser.\n\nEraser will now exit." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="Another instance of Eraser is already running but it is running with higher privileges than this instance of Eraser.\n\nEraser will now exit." xml:space="preserve">
+  <data name="Could not load the setting {0} for plugin {1}. The setting has been lost." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="{0} out of {1}" xml:space="preserve">
@@ -194,6 +194,21 @@
   </data>
   <data name="Running..." xml:space="preserve">
     <value>Wordt uitgevoerd...</value>
+  </data>
+  <data name="The task {0} completed with warnings" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="The task {0} completed with errors" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="The task {0} not completed" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="The task {0} completed" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Task executed" xml:space="preserve">
+    <value>(Untranslated)</value>
   </data>
   <data name="User interface language" xml:space="preserve">
     <value>Gebruikers interface taal</value>

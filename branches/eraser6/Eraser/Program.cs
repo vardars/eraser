@@ -1332,6 +1332,23 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		}
 
 		/// <summary>
+		/// Gets ot setts a value whether tasks which were completed successfully
+		/// should be removed by the Eraser client.
+		/// </summary>
+		public bool ClearCompletedTasks
+		{
+			get
+			{
+				return settings["ClearCompletedTasks"] == null ?
+					true : (bool)settings["ClearCompletedTasks"];
+			}
+			set
+			{
+				settings["ClearCompletedTasks"] = value;
+			}
+		}
+
+		/// <summary>
 		/// Gets the current UI culture, correct to the top-level culture (i.e., English
 		/// instead of English (United Kingdom))
 		/// </summary>

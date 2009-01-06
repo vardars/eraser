@@ -231,33 +231,74 @@ namespace Eraser
 				schedulerProgress.Visible = false;
 			}
 
-			//Inform the user on the status of the task.
+			//Get the exit status of the task.
 			LogLevel highestLevel = LogLevel.INFORMATION;
 			List<LogEntry> logs = e.Task.Log.LastSessionEntries;
 			foreach (LogEntry log in logs)
 				if (log.Level > highestLevel)
 					highestLevel = log.Level;
 
-			switch (highestLevel)
+			//Show a balloon to inform the user
+			MainForm parent = (MainForm)FindForm();
+			if (parent.WindowState == FormWindowState.Minimized || !parent.Visible)
 			{
-				case LogLevel.WARNING:
-					item.SubItems[1].Text = S._("Completed with warnings");
-					break;
-				case LogLevel.ERROR:
-					item.SubItems[1].Text = S._("Completed with errors");
-					break;
-				case LogLevel.FATAL:
-					item.SubItems[1].Text = S._("Not completed");
-					break;
-				default:
-					item.SubItems[1].Text = S._("Completed");
-					break;
+				string message = null;
+				ToolTipIcon icon = ToolTipIcon.None;
+
+				switch (highestLevel)
+				{
+					case LogLevel.WARNING:
+						message = S._("The task {0} completed with warnings", e.Task.UIText);
+						icon = ToolTipIcon.Warning;
+						break;
+					case LogLevel.ERROR:
+						message = S._("The task {0} completed with errors", e.Task.UIText);
+						icon = ToolTipIcon.Error;
+						break;
+					case LogLevel.FATAL:
+						message = S._("The task {0} not completed", e.Task.UIText);
+						icon = ToolTipIcon.Error;
+						break;
+					default:
+						message = S._("The task {0} completed", e.Task.UIText);
+						icon = ToolTipIcon.Info;
+						break;
+				}
+
+				parent.ShowNotificationBalloon(S._("Task executed"), message,
+					icon);
 			}
 
-			//Recategorize the task. Do not assume the task has maintained the
-			//category since run-on-restart tasks will be changed to immediately
-			//run tasks.
-			CategorizeTask(e.Task, item);
+			//If the user requested us to remove completed one-time tasks, do so.
+			if (EraserSettings.Get().ClearCompletedTasks && !(e.Task.Schedule is RecurringSchedule))
+			{
+				Program.eraserClient.DeleteTask(e.Task.ID);
+			}
+
+			//Otherwise update the UI
+			else
+			{
+				switch (highestLevel)
+				{
+					case LogLevel.WARNING:
+						item.SubItems[1].Text = S._("Completed with warnings");
+						break;
+					case LogLevel.ERROR:
+						item.SubItems[1].Text = S._("Completed with errors");
+						break;
+					case LogLevel.FATAL:
+						item.SubItems[1].Text = S._("Not completed");
+						break;
+					default:
+						item.SubItems[1].Text = S._("Completed");
+						break;
+				}
+
+				//Recategorize the task. Do not assume the task has maintained the
+				//category since run-on-restart tasks will be changed to immediately
+				//run tasks.
+				CategorizeTask(e.Task, item);
+			}
 		}
 
 		/// <summary>

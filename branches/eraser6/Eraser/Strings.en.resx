@@ -147,11 +147,11 @@
   <data name="Could not load task list. All task entries have been lost." xml:space="preserve">
     <value>Could not load task list. All task entries have been lost.</value>
   </data>
-  <data name="Could not load the setting {0} for plugin {1}. The setting has been lost." xml:space="preserve">
-    <value>Could not load the setting {0} for plugin {1}. The setting has been lost.</value>
-  </data>
   <data name="Another instance of Eraser is already running but it is running with higher privileges than this instance of Eraser.\n\nEraser will now exit." xml:space="preserve">
     <value>Another instance of Eraser is already running but it is running with higher privileges than this instance of Eraser.\n\nEraser will now exit.</value>
+  </data>
+  <data name="Could not load the setting {0} for plugin {1}. The setting has been lost." xml:space="preserve">
+    <value>Could not load the setting {0} for plugin {1}. The setting has been lost.</value>
   </data>
   <data name="{0} out of {1}" xml:space="preserve">
     <value>{0} out of {1}</value>
@@ -194,6 +194,21 @@
   </data>
   <data name="Running..." xml:space="preserve">
     <value>Running...</value>
+  </data>
+  <data name="The task {0} completed with warnings" xml:space="preserve">
+    <value>The task {0} completed with warnings</value>
+  </data>
+  <data name="The task {0} completed with errors" xml:space="preserve">
+    <value>The task {0} completed with errors</value>
+  </data>
+  <data name="The task {0} not completed" xml:space="preserve">
+    <value>The task {0} not completed</value>
+  </data>
+  <data name="The task {0} completed" xml:space="preserve">
+    <value>The task {0} completed</value>
+  </data>
+  <data name="Task executed" xml:space="preserve">
+    <value>Task executed</value>
   </data>
   <data name="User interface language" xml:space="preserve">
     <value>User interface language</value>

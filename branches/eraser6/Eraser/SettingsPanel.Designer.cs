@@ -69,6 +69,7 @@ namespace Eraser
 			this.pluginsManagerColPath = new System.Windows.Forms.ColumnHeader();
 			this.pluginsMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.pluginsManagerImageList = new System.Windows.Forms.ImageList(this.components);
 			this.scheduler = new Eraser.LightGroup();
 			this.schedulerMissed = new System.Windows.Forms.Label();
 			this.schedulerMissedImmediate = new System.Windows.Forms.RadioButton();
@@ -84,9 +85,9 @@ namespace Eraser
 			this.plausibleDeniabilityFilesAddFile = new System.Windows.Forms.Button();
 			this.plausibleDeniabilityFilesRemove = new System.Windows.Forms.Button();
 			this.plausibleDeniabilityFilesAddFolder = new System.Windows.Forms.Button();
+			this.schedulerClearCompleted = new System.Windows.Forms.CheckBox();
 			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-			this.pluginsManagerImageList = new System.Windows.Forms.ImageList(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).BeginInit();
 			this.content.SuspendLayout();
 			this.pluginsMenu.SuspendLayout();
@@ -105,6 +106,7 @@ namespace Eraser
 			// 
 			// content
 			// 
+			this.content.Controls.Add(this.schedulerClearCompleted);
 			this.content.Controls.Add(this.plausibleDeniabilityFilesAddFolder);
 			this.content.Controls.Add(this.plausibleDeniabilityFilesRemove);
 			this.content.Controls.Add(this.plausibleDeniabilityFilesAddFile);
@@ -254,6 +256,12 @@ namespace Eraser
 			resources.ApplyResources(this.settingsToolStripMenuItem, "settingsToolStripMenuItem");
 			this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
 			// 
+			// pluginsManagerImageList
+			// 
+			this.pluginsManagerImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("pluginsManagerImageList.ImageStream")));
+			this.pluginsManagerImageList.TransparentColor = System.Drawing.Color.Transparent;
+			this.pluginsManagerImageList.Images.SetKeyName(0, "Key.png");
+			// 
 			// scheduler
 			// 
 			resources.ApplyResources(this.scheduler, "scheduler");
@@ -364,16 +372,16 @@ namespace Eraser
 			this.plausibleDeniabilityFilesAddFolder.UseVisualStyleBackColor = true;
 			this.plausibleDeniabilityFilesAddFolder.Click += new System.EventHandler(this.plausibleDeniabilityFilesAddFolder_Click);
 			// 
+			// schedulerClearCompleted
+			// 
+			resources.ApplyResources(this.schedulerClearCompleted, "schedulerClearCompleted");
+			this.schedulerClearCompleted.Name = "schedulerClearCompleted";
+			this.schedulerClearCompleted.UseVisualStyleBackColor = true;
+			// 
 			// openFileDialog
 			// 
 			resources.ApplyResources(this.openFileDialog, "openFileDialog");
 			this.openFileDialog.Multiselect = true;
-			// 
-			// pluginsManagerImageList
-			// 
-			this.pluginsManagerImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("pluginsManagerImageList.ImageStream")));
-			this.pluginsManagerImageList.TransparentColor = System.Drawing.Color.Transparent;
-			this.pluginsManagerImageList.Images.SetKeyName(0, "Key.png");
 			// 
 			// SettingsPanel
 			// 
@@ -432,5 +440,6 @@ namespace Eraser
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
 		private System.Windows.Forms.Button plausibleDeniabilityFilesAddFolder;
 		private System.Windows.Forms.ImageList pluginsManagerImageList;
+		private System.Windows.Forms.CheckBox schedulerClearCompleted;
 	}
 }
