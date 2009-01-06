@@ -120,8 +120,7 @@ namespace Eraser
 
 			//Display a balloon notification if the parent frame has been minimised.
 			MainForm parent = (MainForm)FindForm();
-			Debug.Assert(parent != null);
-			if (parent.WindowState == FormWindowState.Minimized || !parent.Visible)
+			if (parent != null && (parent.WindowState == FormWindowState.Minimized || !parent.Visible))
 			{
 				parent.ShowNotificationBalloon(S._("New task added"), S._("{0} " +
 					"has just been added to the list of tasks.", task.UIText),
@@ -240,7 +239,7 @@ namespace Eraser
 
 			//Show a balloon to inform the user
 			MainForm parent = (MainForm)FindForm();
-			if (parent.WindowState == FormWindowState.Minimized || !parent.Visible)
+			if (parent != null && parent.WindowState == FormWindowState.Minimized || !parent.Visible)
 			{
 				string message = null;
 				ToolTipIcon icon = ToolTipIcon.None;
@@ -248,19 +247,19 @@ namespace Eraser
 				switch (highestLevel)
 				{
 					case LogLevel.WARNING:
-						message = S._("The task {0} has completed with warnings", e.Task.UIText);
+						message = S._("The task {0} has completed with warnings.", e.Task.UIText);
 						icon = ToolTipIcon.Warning;
 						break;
 					case LogLevel.ERROR:
-						message = S._("The task {0} has completed with errors", e.Task.UIText);
+						message = S._("The task {0} has completed with errors.", e.Task.UIText);
 						icon = ToolTipIcon.Error;
 						break;
 					case LogLevel.FATAL:
-						message = S._("The task {0} did not complete", e.Task.UIText);
+						message = S._("The task {0} did not complete.", e.Task.UIText);
 						icon = ToolTipIcon.Error;
 						break;
 					default:
-						message = S._("The task {0} has completed", e.Task.UIText);
+						message = S._("The task {0} has completed.", e.Task.UIText);
 						icon = ToolTipIcon.Info;
 						break;
 				}

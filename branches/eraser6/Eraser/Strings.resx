@@ -195,17 +195,17 @@
   <data name="Running..." xml:space="preserve">
     <value>Running...</value>
   </data>
-  <data name="The task {0} has completed with warnings" xml:space="preserve">
-    <value>The task {0} has completed with warnings</value>
+  <data name="The task {0} has completed with warnings." xml:space="preserve">
+    <value>The task {0} has completed with warnings.</value>
   </data>
-  <data name="The task {0} has completed with errors" xml:space="preserve">
-    <value>The task {0} has completed with errors</value>
+  <data name="The task {0} has completed with errors." xml:space="preserve">
+    <value>The task {0} has completed with errors.</value>
   </data>
-  <data name="The task {0} did not complete" xml:space="preserve">
-    <value>The task {0} did not complete</value>
+  <data name="The task {0} did not complete." xml:space="preserve">
+    <value>The task {0} did not complete.</value>
   </data>
-  <data name="The task {0} has completed" xml:space="preserve">
-    <value>The task {0} has completed</value>
+  <data name="The task {0} has completed." xml:space="preserve">
+    <value>The task {0} has completed.</value>
   </data>
   <data name="Task executed" xml:space="preserve">
     <value>Task executed</value>
