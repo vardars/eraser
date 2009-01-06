@@ -800,56 +800,13 @@ namespace Eraser {
 			bitmap.bmBitsPixel < 32)
 			return iconInfo.hbmColor;
 
-		//Try converting the DDB into a DIB.
+		//Draw the icon onto the DIB which will preseve its alpha values
 		Handle<HDC> hdcDest = CreateCompatibleDC(NULL);
 		HBITMAP dib = CreateDIB(bitmap.bmWidth, bitmap.bmHeight, NULL);
 		SelectObject(hdcDest, dib);
 
-		typedef HRESULT (__stdcall *pBufferedPaintInit)(void);
-		static HMODULE uxTheme = LoadLibrary(L"UxTheme.dll");
-		static pBufferedPaintInit BufferedPaintInit =
-			reinterpret_cast<pBufferedPaintInit>(GetProcAddress(uxTheme, "BufferedPaintInit"));
-		if (BufferedPaintInit)
-		{
-			typedef HPAINTBUFFER (_stdcall *pBeginBufferedPaint)(HDC hdcTarget, const RECT* prcTarget,
-				BP_BUFFERFORMAT dwFormat, BP_PAINTPARAMS* pPaintParams, HDC* phdc);
-			typedef HRESULT (__stdcall *pEndBufferedPaint)(HPAINTBUFFER hBufferedPaint,
-				BOOL fUpdateTarget);
-			static pBeginBufferedPaint BeginBufferedPaint =
-				reinterpret_cast<pBeginBufferedPaint>(GetProcAddress(uxTheme, "BeginBufferedPaint"));
-			static pEndBufferedPaint EndBufferedPaint =
-				reinterpret_cast<pEndBufferedPaint>(GetProcAddress(uxTheme, "EndBufferedPaint"));
-
-			BLENDFUNCTION blendFunc = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
-			BP_PAINTPARAMS paintParams;
-			paintParams.cbSize = sizeof(paintParams);
-			paintParams.dwFlags = BPPF_ERASE;
-			paintParams.prcExclude = NULL;
-			paintParams.pBlendFunction = &blendFunc;
-
-			HDC hdcBuffer;
-			RECT iconRect = { 0, 0, bitmap.bmWidth, bitmap.bmHeight };
-			HPAINTBUFFER hPaintBuffer = BeginBufferedPaint(hdcDest, &iconRect, BPBF_DIB,
-				&paintParams, &hdcBuffer);
-
-			if (hPaintBuffer)
-			{
-				DrawIconEx(hdcBuffer, 0, 0, icon, bitmap.bmWidth, bitmap.bmHeight, 0,
-					NULL, DI_NORMAL);
-				EndBufferedPaint(hPaintBuffer, TRUE);
-			}
-		}
-		else
-		{
-			DIBSECTION dibSection;
-			if (!GetObject(dib, sizeof(dibSection), &dibSection))
-				return iconInfo.hbmColor;
-			if (!GetDIBits(hdcDest, iconInfo.hbmColor, 0, bitmap.bmHeight,
-					dibSection.dsBm.bmBits, reinterpret_cast<BITMAPINFO*>(&dibSection.dsBmih),
-					DIB_RGB_COLORS))
-				return iconInfo.hbmColor;
-		}
-
+		Handle<HBITMAP> iconBitmap(iconInfo.hbmColor);
+		DrawIconEx(hdcDest, 0, 0, icon, bitmap.bmWidth, bitmap.bmHeight, 0, NULL, DI_NORMAL);
 		return dib;
 	}
 
