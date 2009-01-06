@@ -87,6 +87,11 @@ private:
 	handleType Object;
 };
 
+Handle<HICON>::~Handle()
+{
+	DestroyIcon(Object);
+}
+
 Handle<HANDLE>::~Handle()
 {
 	CloseHandle(Object);
@@ -223,6 +228,19 @@ namespace Eraser {
 	HRESULT CCtxMenu::QueryContextMenu(HMENU hmenu, UINT uMenuIndex, UINT uidFirstCmd,
 	                                   UINT /*uidLastCmd*/, UINT uFlags)
 	{
+		//First check if we're running on Vista or later
+		bool isVistaOrLater = false;
+		{
+			//Set the bitmap for the registered item. Vista machines will be set using a DIB,
+			//older machines will be ownerdrawn.
+			OSVERSIONINFO osvi;
+			ZeroMemory(&osvi, sizeof(osvi));
+			osvi.dwOSVersionInfoSize = sizeof(osvi);
+
+			isVistaOrLater = GetVersionEx(&osvi) && osvi.dwPlatformId == VER_PLATFORM_WIN32_NT &&
+				osvi.dwMajorVersion >= 6;
+		}
+
 		//If the flags include CMF_DEFAULTONLY then we shouldn't do anything.
 		if (uFlags & CMF_DEFAULTONLY)
 			return MAKE_HRESULT(SEVERITY_SUCCESS, FACILITY_NULL, 0);
@@ -249,19 +267,40 @@ namespace Eraser {
 		}
 		if (applicableActions & ACTION_ERASE_UNUSED_SPACE)
 		{
-			InsertMenu(hSubmenu, ACTION_ERASE_UNUSED_SPACE, MF_BYPOSITION, uID++,
-				LoadString(IDS_ACTION_ERASEUNUSEDSPACE).c_str());	//Erase Unused Space
+			MENUITEMINFO mii = { sizeof(MENUITEMINFO) };
+			mii.wID = uID++;
+			mii.fMask = MIIM_STRING | MIIM_ID;
+
+			std::wstring str(LoadString(IDS_ACTION_ERASEUNUSEDSPACE));
+			std::vector<wchar_t> buffer(str.length() + 1);
+			wcscpy_s(&buffer.front(), str.length() + 1, str.c_str());
+			mii.dwTypeData = &buffer.front();
+
+			if (isVistaOrLater)
+			{
+				Handle<HICON> icon(reinterpret_cast<HICON>(LoadImage(NULL,
+					MAKEINTRESOURCE(32518) /*IDI_SHIELD*/, IMAGE_ICON, 0, 0,
+					LR_SHARED | LR_DEFAULTSIZE)));
+
+				unsigned dimensions = GetSystemMetrics(SM_CXMENUCHECK);
+				HBITMAP dib(CreateDIB(dimensions, dimensions, NULL));
+				Handle<HDC> hdc(CreateCompatibleDC(NULL));
+				SelectObject(hdc, dib);
+
+				DrawIconEx(hdc, 0, 0, icon, dimensions, dimensions, 0, NULL, DI_NORMAL);
+				SelectObject(hdc, NULL);
+
+				mii.hbmpItem = dib;
+				mii.fMask |= MIIM_BITMAP;
+			}
+			
+			InsertMenuItem(hSubmenu, ACTION_ERASE_UNUSED_SPACE, MF_BYPOSITION, &mii);
 			VerbMenuIndices.push_back(ACTION_ERASE_UNUSED_SPACE);
 		}
 		//-------------------------------------------------------------------------
 		if (applicableActions & ACTION_SECURE_MOVE)
 		{
-			if (uID - uidFirstCmd > 0)
-			{
-				std::auto_ptr<MENUITEMINFO> separator(GetSeparator());
-				InsertMenuItem(hSubmenu, 0, FALSE, separator.get());
-			}
-
+			InsertSeparator(hSubmenu);
 			InsertMenu(hSubmenu, ACTION_SECURE_MOVE, MF_BYPOSITION, uID++,
 				LoadString(IDS_ACTION_SECUREMOVE).c_str());			//Secure Move
 			VerbMenuIndices.push_back(ACTION_SECURE_MOVE);
@@ -277,15 +316,11 @@ namespace Eraser {
 
 			//Set the bitmap for the registered item. Vista machines will be set using a DIB,
 			//older machines will be ownerdrawn.
-			OSVERSIONINFO osvi;
-			ZeroMemory(&osvi, sizeof(osvi));
-			osvi.dwOSVersionInfoSize = sizeof(osvi);
-
-			if (GetVersionEx(&osvi) && osvi.dwPlatformId == VER_PLATFORM_WIN32_NT &&
-				osvi.dwMajorVersion >= 6)
+			if (isVistaOrLater)
 			{
 				mii.fMask |= MIIM_BITMAP;
-				mii.hbmpItem = GetMenuBitmap();
+				Handle<HICON> icon(GetMenuIcon());
+				mii.hbmpItem = GetMenuBitmapFromIcon(icon);
 			}
 			else if (InvokeReason != INVOKEREASON_DRAGDROP)
 			{
@@ -694,7 +729,13 @@ namespace Eraser {
 			int result = reinterpret_cast<int>(ShellExecute(parent, L"runas",
 				eraserPath.c_str(), finalParameters.c_str(), NULL, show));
 			if (result <= 32)
-				throw LoadString(IDS_ERROR_UNKNOWN);
+				switch (result)
+				{
+				case SE_ERR_ACCESSDENIED:
+					throw LoadString(IDS_ERROR_ACCESSDENIED);
+				default:
+					throw LoadString(IDS_ERROR_UNKNOWN);
+				}
 		}
 
 		//If the process isn't to be elevated, we use CreateProcess so we can get
@@ -767,13 +808,13 @@ namespace Eraser {
 		}
 	}
 
-	MENUITEMINFO* CCtxMenu::GetSeparator()
+	void CCtxMenu::InsertSeparator(HMENU menu)
 	{
-		MENUITEMINFO* mii = new MENUITEMINFO();
-		mii->cbSize = sizeof(MENUITEMINFO);
-		mii->fMask = MIIM_TYPE;
-		mii->fType = MF_SEPARATOR;
-		return mii;
+		MENUITEMINFO mii;
+		mii.cbSize = sizeof(MENUITEMINFO);
+		mii.fMask = MIIM_TYPE;
+		mii.fType = MF_SEPARATOR;
+		InsertMenuItem(menu, 0, false, &mii);
 	}
 
 	HICON CCtxMenu::GetMenuIcon()
@@ -783,13 +824,12 @@ namespace Eraser {
 			IMAGE_ICON, smIconSize, smIconSize, LR_DEFAULTCOLOR));
 	}
 
-	HBITMAP CCtxMenu::GetMenuBitmap()
+	HBITMAP CCtxMenu::GetMenuBitmapFromIcon(HICON icon)
 	{
 		BITMAP bitmap;
 		ICONINFO iconInfo;
 		ZeroMemory(&bitmap, sizeof(bitmap));
 		ZeroMemory(&iconInfo, sizeof(iconInfo));
-		Handle<HICON> icon(GetMenuIcon());
 
 		//Try to get the icon's size, bitmap and bit depth. We will try to convert
 		//the bitmap into a DIB for display on Vista if it contains an alpha channel.

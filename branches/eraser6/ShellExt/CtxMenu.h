@@ -85,9 +85,9 @@ namespace Eraser
 		static void RunEraser(const std::wstring& action, const std::wstring& parameters,
 			bool elevated, HWND parent, int show);
 
-		static MENUITEMINFO* GetSeparator();
+		static void InsertSeparator(HMENU menu);
 		static HICON GetMenuIcon();
-		static HBITMAP GetMenuBitmap();
+		static HBITMAP GetMenuBitmapFromIcon(HICON icon);
 		static HBITMAP CreateDIB(LONG width, LONG height, char** bitmapBits);
 
 	protected:
