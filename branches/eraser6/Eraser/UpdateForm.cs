@@ -205,6 +205,14 @@ namespace Eraser
 			}
 
 			updatesBtn.Enabled = updatesLv.Items.Count > 0;
+
+			//Check if there are any updates at all.
+			if (updatesLv.Items.Count == 0)
+			{
+				MessageBox.Show(this, S._("There are no new updates or plugins available for " +
+					"Eraser."), S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+				Close();
+			}
 		}
 		#endregion
 

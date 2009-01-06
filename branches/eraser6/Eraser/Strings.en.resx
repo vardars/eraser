@@ -279,6 +279,9 @@
   <data name="Plugins" xml:space="preserve">
     <value>Plugins</value>
   </data>
+  <data name="There are no new updates or plugins available for Eraser." xml:space="preserve">
+    <value>There are no new updates or plugins available for Eraser.</value>
+  </data>
   <data name="Install" xml:space="preserve">
     <value>Install</value>
   </data>
