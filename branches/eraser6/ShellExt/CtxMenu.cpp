@@ -284,8 +284,8 @@ namespace Eraser {
 			if (GetVersionEx(&osvi) && osvi.dwPlatformId == VER_PLATFORM_WIN32_NT &&
 				osvi.dwMajorVersion >= 6)
 			{
-				mii.fMask |= MIIM_CHECKMARKS;
-				mii.hbmpUnchecked = GetMenuBitmap();
+				mii.fMask |= MIIM_BITMAP;
+				mii.hbmpItem = GetMenuBitmap();
 			}
 			else if (InvokeReason != INVOKEREASON_DRAGDROP)
 			{
@@ -779,7 +779,7 @@ namespace Eraser {
 	{
 		int smIconSize = GetSystemMetrics(SM_CXMENUCHECK);
 		return static_cast<HICON>(LoadImage(theApp.m_hInstance, L"Eraser",
-			IMAGE_ICON, smIconSize, smIconSize, LR_LOADTRANSPARENT));
+			IMAGE_ICON, smIconSize, smIconSize, LR_DEFAULTCOLOR));
 	}
 
 	HBITMAP CCtxMenu::GetMenuBitmap()
@@ -801,14 +801,53 @@ namespace Eraser {
 			return iconInfo.hbmColor;
 
 		//Try converting the DDB into a DIB.
-		DIBSECTION dibSection;
+		Handle<HDC> hdcDest = CreateCompatibleDC(NULL);
 		HBITMAP dib = CreateDIB(bitmap.bmWidth, bitmap.bmHeight, NULL);
-		if (!GetObject(dib, sizeof(dibSection), &dibSection) ||
-			!GetDIBits(CreateCompatibleDC(NULL), iconInfo.hbmColor, 0, bitmap.bmHeight,
-				dibSection.dsBm.bmBits, reinterpret_cast<BITMAPINFO*>(&dibSection.dsBmih),
-				DIB_RGB_COLORS))
+		SelectObject(hdcDest, dib);
+
+		typedef HRESULT (__stdcall *pBufferedPaintInit)(void);
+		static HMODULE uxTheme = LoadLibrary(L"UxTheme.dll");
+		static pBufferedPaintInit BufferedPaintInit =
+			reinterpret_cast<pBufferedPaintInit>(GetProcAddress(uxTheme, "BufferedPaintInit"));
+		if (BufferedPaintInit)
 		{
-			return iconInfo.hbmColor;
+			typedef HPAINTBUFFER (_stdcall *pBeginBufferedPaint)(HDC hdcTarget, const RECT* prcTarget,
+				BP_BUFFERFORMAT dwFormat, BP_PAINTPARAMS* pPaintParams, HDC* phdc);
+			typedef HRESULT (__stdcall *pEndBufferedPaint)(HPAINTBUFFER hBufferedPaint,
+				BOOL fUpdateTarget);
+			static pBeginBufferedPaint BeginBufferedPaint =
+				reinterpret_cast<pBeginBufferedPaint>(GetProcAddress(uxTheme, "BeginBufferedPaint"));
+			static pEndBufferedPaint EndBufferedPaint =
+				reinterpret_cast<pEndBufferedPaint>(GetProcAddress(uxTheme, "EndBufferedPaint"));
+
+			BLENDFUNCTION blendFunc = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+			BP_PAINTPARAMS paintParams;
+			paintParams.cbSize = sizeof(paintParams);
+			paintParams.dwFlags = BPPF_ERASE;
+			paintParams.prcExclude = NULL;
+			paintParams.pBlendFunction = &blendFunc;
+
+			HDC hdcBuffer;
+			RECT iconRect = { 0, 0, bitmap.bmWidth, bitmap.bmHeight };
+			HPAINTBUFFER hPaintBuffer = BeginBufferedPaint(hdcDest, &iconRect, BPBF_DIB,
+				&paintParams, &hdcBuffer);
+
+			if (hPaintBuffer)
+			{
+				DrawIconEx(hdcBuffer, 0, 0, icon, bitmap.bmWidth, bitmap.bmHeight, 0,
+					NULL, DI_NORMAL);
+				EndBufferedPaint(hPaintBuffer, TRUE);
+			}
+		}
+		else
+		{
+			DIBSECTION dibSection;
+			if (!GetObject(dib, sizeof(dibSection), &dibSection))
+				return iconInfo.hbmColor;
+			if (!GetDIBits(hdcDest, iconInfo.hbmColor, 0, bitmap.bmHeight,
+					dibSection.dsBm.bmBits, reinterpret_cast<BITMAPINFO*>(&dibSection.dsBmih),
+					DIB_RGB_COLORS))
+				return iconInfo.hbmColor;
 		}
 
 		return dib;
@@ -823,9 +862,9 @@ namespace Eraser {
 		info.bmiHeader.biHeight = height;
 		info.bmiHeader.biPlanes = 1;
 		info.bmiHeader.biBitCount = 32;
-		info.bmiHeader.biCompression = BI_RGB;
-		char* dibBitmapBits = NULL;
-		return ::CreateDIBSection(0, &info, DIB_RGB_COLORS,
-			reinterpret_cast<void**>(bitmapBits ? bitmapBits : &dibBitmapBits), NULL, 0);
+
+		Handle<HDC> screenDC(GetDC(NULL));
+		return ::CreateDIBSection(screenDC, &info, DIB_RGB_COLORS,
+			reinterpret_cast<void**>(bitmapBits), NULL, 0);
 	}
 }
