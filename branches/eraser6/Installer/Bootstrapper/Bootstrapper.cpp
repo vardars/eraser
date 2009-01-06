@@ -361,7 +361,7 @@ bool InstallEraser(std::wstring tempDir, bool quiet)
 	//Determine the system architecture.
 	SYSTEM_INFO sysInfo;
 	ZeroMemory(&sysInfo, sizeof(sysInfo));
-	GetSystemInfo(&sysInfo);
+	GetNativeSystemInfo(&sysInfo);
 
 	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]) == std::wstring::npos)
 		tempDir += L"\\";
