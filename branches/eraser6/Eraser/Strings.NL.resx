@@ -210,6 +210,9 @@
   <data name="Task executed" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
+  <data name="Are you sure you want to delete the selected tasks?" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="User interface language" xml:space="preserve">
     <value>Gebruikers interface taal</value>
   </data>

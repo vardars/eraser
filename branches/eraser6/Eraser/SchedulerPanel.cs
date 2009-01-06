@@ -469,6 +469,12 @@ namespace Eraser
 		/// <param name="e">Event argument.</param>
 		private void deleteTaskToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			if (MessageBox.Show(this, S._("Are you sure you want to delete the selected tasks?"),
+				S._("Eraser"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+			{
+				return;
+			}
+
 			foreach (ListViewItem item in scheduler.SelectedItems)
 			{
 				Task task = (Task)item.Tag;
