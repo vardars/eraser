@@ -58,8 +58,7 @@ namespace Eraser.Util
 						pathNamesBuffer = Marshal.AllocHGlobal((int)(currentBufferSize * sizeof(char)));
 					}
 					else
-						throw new Win32Exception(Marshal.GetLastWin32Error(),
-							"Eraser.Util.Volume.Volume");
+						throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
 				}
 
 				pathNames = Marshal.PtrToStringUni(pathNamesBuffer, (int)returnLength);
@@ -107,7 +106,7 @@ namespace Eraser.Util
 						break;
 
 					default:
-						throw new Win32Exception(Marshal.GetLastWin32Error(), "Eraser.Util.Volume.Volume");
+						throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
 				}
 			}
 			else
@@ -164,13 +163,13 @@ namespace Eraser.Util
 				else
 					switch (Marshal.GetLastWin32Error())
 					{
-						case 1:
-						case 4390:
+						case 1: //ERROR_INVALID_FUNCTION
+						case 2: //ERROR_FILE_NOT_FOUND
+						case 3: //ERROR_PATH_NOT_FOUND
+						case 4390: //ERROR_NOT_A_REPARSE_POINT
 							break;
-						case 2:
-							throw new FileNotFoundException();
 						default:
-							throw new Win32Exception(Marshal.GetLastWin32Error());
+							throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
 					}
 				mountpointDir = mountpointDir.Parent;
 			}
@@ -233,7 +232,7 @@ namespace Eraser.Util
 					out freeClusters, out totalClusters))
 					return (int)(clusterSize * sectorSize);
 
-				throw new Win32Exception(Marshal.GetLastWin32Error());
+				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
 			}
 		}
 
@@ -252,8 +251,7 @@ namespace Eraser.Util
 					//For the lack of more appropriate responses.
 					return false;
 
-				throw new Win32Exception(Marshal.GetLastWin32Error(),
-					"Eraser.Util.Drive.HasQuota");
+				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
 			}
 		}
 
@@ -277,8 +275,7 @@ namespace Eraser.Util
 				if (GetDiskFreeSpaceEx(volumeID, out dummy, out dummy, out result))
 					return (long)result;
 
-				throw new Win32Exception(Marshal.GetLastWin32Error(),
-					"Eraser.Util.Drive.TotalFreeSpace");
+				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
 			}
 		}
 		
@@ -293,8 +290,7 @@ namespace Eraser.Util
 				if (GetDiskFreeSpaceEx(volumeID, out dummy, out result, out dummy))
 					return (long)result;
 
-				throw new Win32Exception(Marshal.GetLastWin32Error(),
-					"Eraser.Util.Drive.TotalSize");
+				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
 			}
 		}
 
@@ -309,7 +305,7 @@ namespace Eraser.Util
 				if (GetDiskFreeSpaceEx(volumeID, out result, out dummy, out dummy))
 					return (long)result;
 
-				throw new Win32Exception(Marshal.GetLastWin32Error());
+				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
 			}
 		}
 

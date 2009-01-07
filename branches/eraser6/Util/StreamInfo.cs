@@ -221,7 +221,7 @@ namespace Eraser.Util
 						return fileSize;
 
 				throw new IOException("The size of the stream could not be retrieved",
-					new Win32Exception(Marshal.GetLastWin32Error()));
+					Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error()));
 			}
 		}
 
@@ -382,37 +382,9 @@ namespace Eraser.Util
 			SafeFileHandle handle = Util.File.CreateFile(FullName, iAccess, iShare,
 				IntPtr.Zero, iMode, iOptions, IntPtr.Zero);
 
-			//If CreateNew was used and the file exists, throw the IOException.
-			if (handle.IsInvalid && Marshal.GetLastWin32Error() == 80 /*ERROR_FILE_EXISTS*/ &&
-				mode == FileMode.CreateNew)
-			{
-				Win32Exception exception = new Win32Exception(Marshal.GetLastWin32Error());
-				throw new IOException(exception.Message, exception);
-			}
-
-			//If Open was used and the file does not exist, throw the FileNotFileException.
-			if (handle.IsInvalid && Marshal.GetLastWin32Error() == 2 /*ERROR_FILE_NOT_FOUND*/ &&
-				mode == FileMode.Open)
-			{
-				Win32Exception exception = new Win32Exception(Marshal.GetLastWin32Error());
-				throw new FileNotFoundException(exception.Message, exception);
-			}
-
-			//Other errors.
+			//Check that the handle is valid
 			if (handle.IsInvalid)
-			{
-				Win32Exception ex = new Win32Exception(Marshal.GetLastWin32Error());
-				switch (Marshal.GetLastWin32Error())
-				{
-					case 1008:													//ERROR_NO_TOKEN
-					case 5:														//ERROR_ACCESS_DENIED
-						throw new UnauthorizedAccessException(ex.Message);
-					case 32:
-						throw new IOException(ex.Message);
-					default:
-						throw ex;
-				}
-			}
+				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
 
 			//Return the FileStream
 			return new FileStream(handle, access);

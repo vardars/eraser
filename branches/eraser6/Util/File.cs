@@ -124,8 +124,8 @@ namespace Eraser.Util
 			if (shfi.hIcon != IntPtr.Zero)
 				return Icon.FromHandle(shfi.hIcon);
 			else
-				throw new Win32Exception(Marshal.GetLastWin32Error(),
-					string.Format("Could not load file icon from {0}", path));
+				throw new IOException(string.Format("Could not load file icon from {0}", path),
+					Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error()));
 		}
 
 		/// <summary>
@@ -181,7 +181,7 @@ namespace Eraser.Util
 					return false;
 
 				default:
-					throw new Win32Exception("Unknown SfcIsFileProtected error.");
+					throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
 			}
 		}
 
