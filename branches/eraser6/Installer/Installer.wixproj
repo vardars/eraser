@@ -29,6 +29,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <OutputPath>..\bin\Installer\$(Platform)\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <SuppressIces>ICE03;ICE82;ICE80</SuppressIces>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="DirectoryStructure.wxs" />
@@ -74,5 +75,6 @@
 	-->
   <PropertyGroup>
     <PreBuildEvent>"$(ProjectDir)\SignBin.bat" "$(SolutionDir)"</PreBuildEvent>
+    <PostBuildEvent>signtool sign /f $(SolutionDir)\Authenticode.pfx /t http://timestamp.verisign.com/scripts/timestamp.dll $(TargetPath)</PostBuildEvent>
   </PropertyGroup>
 </Project>
