@@ -21,6 +21,6 @@
 -->
 
 <Include>
-	<?define VERSIONSTRING=6.0.3.847 ?><!-- Major.Minor.Release.Build -->
-	<?define INTERNALVERSIONSTRING=6.0.847 ?><!-- Major.Minor.Build; used for MSI version comparisons -->
+	<?define VERSIONSTRING=6.0.4.875 ?><!-- Major.Minor.Release.Build -->
+	<?define INTERNALVERSIONSTRING=6.0.875 ?><!-- Major.Minor.Build; used for MSI version comparisons -->
 </Include>
