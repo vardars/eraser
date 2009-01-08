@@ -693,6 +693,24 @@ namespace Eraser {
 		return keyInfo->Name;
 	}
 
+	bool CCtxMenu::IsUserAdmin()
+	{
+		SID_IDENTIFIER_AUTHORITY NtAuthority = SECURITY_NT_AUTHORITY;
+		PSID AdministratorsGroup;
+		if (AllocateAndInitializeSid(&NtAuthority, 2, SECURITY_BUILTIN_DOMAIN_RID,
+			DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &AdministratorsGroup))
+		{
+			BOOL result = false;
+			if (!CheckTokenMembership(NULL, AdministratorsGroup, &result))
+				result = false;
+
+			FreeSid(AdministratorsGroup);
+			return result != FALSE;
+		}
+
+		return false;
+	}
+
 	void CCtxMenu::RunEraser(const std::wstring& action, const std::wstring& parameters,
 		bool elevated, HWND parent, int show)
 	{
@@ -724,7 +742,7 @@ namespace Eraser {
 
 		//If the process must be elevated we use ShellExecute with the runas verb
 		//to elevate the new process.
-		if (elevated)
+		if (elevated && !IsUserAdmin())
 		{
 			int result = reinterpret_cast<int>(ShellExecute(parent, L"runas",
 				eraserPath.c_str(), finalParameters.c_str(), NULL, show));

@@ -82,6 +82,8 @@ namespace Eraser
 		static std::wstring LoadString(UINT stringID);
 		static std::wstring FormatString(const std::wstring& formatString, ...);
 		static std::wstring GetHKeyPath(HKEY handle);
+
+		static bool IsUserAdmin();
 		static void RunEraser(const std::wstring& action, const std::wstring& parameters,
 			bool elevated, HWND parent, int show);
 
