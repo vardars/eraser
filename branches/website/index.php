@@ -99,9 +99,9 @@ function GetDownloads($downloadID)
 			<div class="right_news">
 				<h3>Latest News</h3>
 				<div class="right_news_bg">
-					<h2>Eraser 6-rc3 released!</h2>
-					<div class="posted">Posted by: Joel, 3 January 2008, 9.00am, +800 GMT</div>
-					<p>Eraser 6 Release Candidate 3 is released, bringing with it about a dozen fixes (including a few show stopping regressions.) <a href="announcements/20090103.html">See the full announcement.</a></p>
+					<h2>Eraser 6-rc4 released!</h2>
+					<div class="posted">Posted by: Joel, 8 January 2008, 2.45pm, +800 GMT</div>
+					<p>Hello again! I wish everyone's been enjoying the new rc3, but while you're at it, I felt it wasn't good enough. So here's <strong>rc4</strong> with more bugfixes than the previous release and with all the v6 goodness. <a href="announcements/20090108.html">See the full announcement.</a></p>
 					<h2>Eraser 5.8.7-beta4 released!</h2>
 					<div class="posted">Posted by: Joel, 3 January 2008, 9.00am, +800 GMT</div>
 					<p>Eraser 5.8.7 isn't abandoned! The new beta release addresses feature bugs and would be a welcome addition to everyone still using v5. <a href="announcements/20090103.html#eraser5">See the full announcement.</a></p>
@@ -128,8 +128,8 @@ function GetDownloads($downloadID)
 				</ul>
 				<h4>Beta versions</h4>
 				<ul>
-					<li><a href="announcements/20090103.html">Eraser 6.0.3</a> (rc-3, build 847)<br />
-						<span class="downloads">&raquo; downloaded <?php GetDownloads(6); ?> times</span></li>
+					<li><a href="announcements/20090108.html">Eraser 6.0.4</a> (rc-4, build 875)<br />
+						<span class="downloads">&raquo; downloaded <?php GetDownloads(9); ?> times</span></li>
 					<li><a href="announcements/20090103.html#eraser5">Eraser 5.8.7-beta4</a><br />
 						<span class="downloads">&raquo; downloaded <?php GetDownloads(7); ?> times</span></li>
 					<li><a href="announcements/20090103.html#eraser5">Eraser 5.8.7-beta4</a> (standalone)
@@ -143,7 +143,7 @@ function GetDownloads($downloadID)
 				</ul>
 				<h3>Donate</h3>
 				<ul>
-					<li>Please help out the Eraser team: donate some coffee!</li>
+					<li>Please help out the Eraser team by donating some coffee!</li>
 					<!--li><a href="http://www.paypal.com"><img src="images/paypal.jpg" alt="paypall" /></a></li-->
 				</ul>
 			</div>
