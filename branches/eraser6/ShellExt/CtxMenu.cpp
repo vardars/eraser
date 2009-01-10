@@ -528,7 +528,7 @@ namespace Eraser {
 					{
 						//Check if the current item is a file or folder.
 						std::wstring item(*i);
-						if (item.length() > 3 && item[item.length() - 1] == '\\')
+						if (item.length() > 2 && item[item.length() - 1] == '\\')
 							item.erase(item.end() - 1);
 						DWORD attributes = GetFileAttributes(item.c_str());
 
