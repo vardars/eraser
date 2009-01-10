@@ -1139,7 +1139,7 @@ namespace Eraser.Manager
 			//Set the date of the file to be invalid to prevent forensic
 			//detection
 			info.CreationTime = info.LastWriteTime = info.LastAccessTime =
-				new DateTime(1800, 1, 1, 0, 0, 0);
+				new DateTime(1980, 1, 1, 0, 0, 0);
 			info.Attributes = FileAttributes.Normal;
 			info.Attributes = FileAttributes.NotContentIndexed;
 
