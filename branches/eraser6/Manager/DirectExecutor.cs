@@ -715,6 +715,10 @@ namespace Eraser.Manager
 
 			subFolders = delegate(DirectoryInfo info)
 			{
+				//Check if we've been cancelled
+				if (task.Cancelled)
+					throw new FatalException(S._("The task was cancelled."));
+
 				try
 				{
 					//Skip this directory if it is a reparse point
