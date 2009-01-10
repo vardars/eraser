@@ -29,6 +29,7 @@ using System.Windows.Forms;
 
 using Eraser.Manager;
 using System.Globalization;
+using Eraser.Util;
 
 namespace Eraser
 {
@@ -47,7 +48,7 @@ namespace Eraser
 			Dictionary<DateTime, List<LogEntry>>.Enumerator iter = log.GetEnumerator();
 			foreach (DateTime sessionTime in log.Keys)
 			{
-				this.log.Groups.Add(new ListViewGroup("Session: " + sessionTime.ToString(DATEPATTERN)));
+				this.log.Groups.Add(new ListViewGroup(S._("Session: {0}", sessionTime.ToString(DATEPATTERN))));
 				foreach (LogEntry entry in log[sessionTime])
 					task_Logged(entry);
 			}
@@ -101,6 +102,25 @@ namespace Eraser
 		{
 			this.task.Log.Clear();
 			log.Items.Clear();
+		}
+
+		private void copy_Click(object sender, EventArgs e)
+		{
+			StringBuilder text = new StringBuilder();
+			Dictionary<DateTime, List<LogEntry>> log = task.Log.Entries;
+			Dictionary<DateTime, List<LogEntry>>.Enumerator iter = log.GetEnumerator();
+			foreach (DateTime sessionTime in log.Keys)
+			{
+				text.AppendLine(S._("Session: {0}", sessionTime.ToString(DATEPATTERN)));
+				foreach (LogEntry entry in log[sessionTime])
+				{
+					text.AppendFormat("{0}	{1}	{2}\n",
+						entry.Timestamp.ToString(DATEPATTERN).Replace("\"", "\"\""),
+						entry.Level.ToString(), entry.Message);
+				}
+			}
+
+			Clipboard.SetText(text.ToString(), TextDataFormat.UnicodeText);
 		}
 
 		private void close_Click(object sender, EventArgs e)

@@ -132,6 +132,9 @@
   <data name="Please help us to continue developing Eraser - donate some coffee!" xml:space="preserve">
     <value>Please help us to continue developing Eraser - donate some coffee!</value>
   </data>
+  <data name="Session: {0}" xml:space="preserve">
+    <value>Session: {0}</value>
+  </data>
   <data name="Erase Schedule" xml:space="preserve">
     <value>Erase Schedule</value>
   </data>
