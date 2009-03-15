@@ -23,6 +23,12 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	<Fragment>
 		<Icon Id="Eraser.exe" SourceFile="..\Resources\Eraser.ico" />
+		
+		<!-- Add/Remove programs information -->
+		<Property Id="ARPCOMMENTS">Secure Data Removal for Windows</Property>
+		<Property Id="ARPPRODUCTICON">Eraser.exe</Property>
+		<Property Id="ARPHELPLINK">http://bbs.heidi.ie/viewforum.php?f=30</Property>
+		<Property Id="ARPURLINFOABOUT">http://eraser.heidi.ie/</Property>
 
 		<UI>
 			<UIRef Id="WixUI_Mondo" />
