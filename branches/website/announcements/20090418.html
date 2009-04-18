@@ -3,12 +3,27 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><!-- InstanceBegin template="/Templates/Eraser.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <!-- InstanceBeginEditable name="Title" -->
-<title>Eraser :: Announcements :: December 1, 2008</title>
+<title>Eraser :: Announcemens :: April 18, 2009</title>
 <!-- InstanceEndEditable -->
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <link href="../style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="../scripts.js"></script>
-<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<style type="text/css">
+table.changelog {
+	width: 100%;
+}
+
+table.changelog td {
+	vertical-align: top;
+}
+
+td.author {
+	padding-left: 1.0em;
+	text-align: right;
+}
+</style>
+<!-- InstanceEndEditable -->
 <!-- InstanceParam name="ArticlePoster" type="boolean" value="true" -->
 </head>
 
@@ -23,40 +38,73 @@
 			<div class="article">
 				<div class="article_head">
 					<div class="title">
-						<h2><!-- InstanceBeginEditable name="LeftContentEditTitle" -->Eraser 6-rc1 released!<!-- InstanceEndEditable --></h2>
-						<div class="posted"><!-- InstanceBeginEditable name="LeftContentEditPoster" -->Posted by: Joel, 1 December 2008, 12:00pm, +0800 GMT<!-- InstanceEndEditable --></div>
+						<h2><!-- InstanceBeginEditable name="LeftContentEditTitle" --><a href="../index.php">Eraser</a> 5.8.7-beta5 released!<!-- InstanceEndEditable --></h2>
+						<div class="posted"><!-- InstanceBeginEditable name="LeftContentEditPoster" -->Posted by: Joel, 18 April 2009, 11.36am, +800 GMT <!-- InstanceEndEditable --></div>
 					</div>
 				</div>
 
-				<!-- InstanceBeginEditable name="LeftContentEdit" --> 
-				<p>The long-awaited public beta for Eraser 6 has been released! Eraser 6 sports a completely revamped user interface, and Windows XP/Vista support out of the box. We've recruited <a href="http://lemarquis.deviantart.com" target="_blank">Dennis van Lith</a> to be in charge of UX (User eXperience) and aesthetic appeal for Version 6; here are a few screenshots:</p>
-				<p><img src="../images/template_v1.png" alt="Eraser v6 About dialog" /></p>
-				<p><img src="../images/template_v2.png" alt="Eraser v6 About dialog" /></p>
+				<!-- InstanceBeginEditable name="LeftContentEdit" -->
+				<p>Hello all! I know I've been keeping silence for quite a while, but I assure you Eraser is not dead. Just that I've been too busy to do much stuff recently. Anyway, I've spent a few hours going through the buglist and solving these last few v5 bugs:</p>
+				<h2>Changelog</h2>
+				<table class="changelog">
+					<tr>
+						<th>Revision</th>
+						<th>Description</th>
+						<th>Author</th>
+					</tr>
+					<tr>
+						<td>882</td>
+						<td>Fixed the task completion action specifier for dragged-and-dropped files to the On-Demand as well as for tasks on the Scheduler</td>
+						<td class="author">Joel</td>
+					</tr>
+					<tr>
+						<td>883</td>
+						<td>Show the time the scheduled task will run even if it is running at midnight</td>
+						<td class="author">Joel</td>
+					</tr>
+					<tr>
+						<td>884</td>
+						<td><ul>
+								<li>Fixed a 64-bit problem for ISAAC buffer fills (semantic, not really serious)</li>
+								<li>Fixed a wrong use of the equality operator leading to files being detected as encrypted when they are not</li>
+							</ul>
+						</td>
+						<td class="author">Joel</td>
+					</tr>
+					<tr>
+						<td>885</td>
+						<td>Fixed the missing shell extension entries </td>
+						<td class="author">Joel</td>
+					</tr>
+					<tr>
+						<td>886</td>
+						<td>Fixed the Visual C++ Redistributable install for 64-bit builds </td>
+						<td class="author">Joel</td>
+					</tr>
+				</table>
+				<p>
+					<strong>Disclaimer: The code is still of <em>beta quality</em> and may not be as stable as the released versions of Eraser.</strong>
+					It is however good to note that there are no feature additions and are mainly feature fixes and therefore upgrading should constitute an increase in stability.
+				</p>
+				<p>
+					If you have read the disclaimer, follow the instructions about <strong><a href="../trac/wiki/InstallingBetas">installing betas</a></strong> then download the <strong><a href="../download.php?id=10">installer</a></strong> or the <strong><a href="../download.php?id=11">standalone ("portable")</a></strong> edition.
+				</p>
+				<p>File hashes:</p>
+				<ul>
+					<li>Installer</li>
+					<ul>
+						<li>SHA-1: f77fd7b3b6eddbb8204da36a4f0701531af81dee</li>
+						<li>SHA-256: 63d3bfac7f58dc9f8e963f7ac3a340669a04314d8156<br />4ffd6072d228a332bbd0</li>
+					  <li>Whirlpool: a5034512bc67c05aa2ebc992a0b4c99c2ce4b747c8<br />66f9dfee182f2cfb048b43eae5378033d237986fcf9965404e<br />b3440fe3744932618e9aca7df7fd56bc054f</li>
+					</ul>
+					<li>Standalone</li>
+					<ul>
+						<li>SHA-1: 88bc622669f110a01d487630105e1fe543ccd668</li>
+						<li>SHA-256: 288dc7f997d328ecd7255bbd674bc291e28d531d038bf<br />04b2c0312c724851a8c</li>
+						<li>Whirlpool: 0b280708012d95b827f3c8a341c01422a50bcb9c87b<br />de2876ef48346743281550e29b8e352212985e874c7ec38b<br />d7fe4d697be54355d16c9e6f90ec18b330643</li>
+					</ul>
+				</ul>
 				
-				<p>
-					I must admit: paradoxically, not all features of Version 5 has made it into this release, although new features have been added:
-					<ul>
-						<li>Added a more flexible Task Scheduler (roughly as customisable as Outlook recurring appointments!)</li>
-						<li>Unified Task List (no more separate On-Demand/Scheduled tasks: they are now all together)</li>
-						<li>Tasks can now contain multiple <em>targets</em> (running a task may have a few things erased at one go; somewhat like a grouping mechanism)</li>
-						<li>8 new erasure methods (above Version 5's five)</li>
-						<li>Customisable PRNGs (some complaints about ISAAC should be resolved with the new default of the RNGCryptoServiceProvider, which is a Windows CSPRNG); ISAAC is still selectable for those who prefer speed over security.</li>
-						<li>Plugin support (currently quite immature, but the foundations are there)</li>
-						<li>Built-in updater</li>
-						<li>EraserL has been replaced by... Eraser. The same Eraser.exe can do both GUI and command line</li>
-					</ul>
-				</p>
-				<p>
-					Features removed:
-					<ul>
-						<li>Erasures of Encrypted/Compressed/Sparse NTFS files (unlikely to be implemented, low-level undocumented APIs required)</li>
-						<li>FAT32 FAT erasures (to be done in the rc-1/final period: you'll get an error for this)</li>
-						<li>Shell Context menus (not completely implemented <em>yet</em>)</li>
-					</ul>
-				</p>
-				<p>These are certainly just the tip of the iceberg. You'll find out more when you use the program: trust me, you most definitely will enjoy the new Experience.</p>
-				<p><strong>Disclaimer: The security of the erasures has not been verified by internal or external entities. The code is still of <em>beta quality</em> and may not remove all traces of files with the confidence of Version 5. If you have security concerns, do use Version 5 while the security aspects of Version 6 are ironed out.</strong> It is however noteworthy that v6 uses only <em>documented APIs</em> for erasure and therefore the risk of corrupting your drives is lower than Version 5.</p>
-				<p>Unfazed, ye brave Software Warrior? Follow the instructions about <strong><a href="../trac/wiki/InstallingBetas">installing betas</a></strong> then <strong><a href="../download.php?id=3">Download it now.</a></strong></p>
 				<!-- InstanceEndEditable -->
 			</div>
 			<!-- InstanceEndRepeatEntry --><!-- InstanceEndRepeat -->
