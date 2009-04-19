@@ -132,7 +132,7 @@ function GetDownloads($downloadID)
 						<span class="downloads">&raquo; downloaded <?php GetDownloads(9); ?> times</span></li>
 					<li><a href="announcements/20090418.html">Eraser 5.8.7-beta5</a><br />
 						<span class="downloads">&raquo; downloaded <?php GetDownloads(10); ?> times</span></li>
-					<li><a href="announcements/20090418.html">Eraser 5.8.7-beta5</a> (standalone)
+					<li><a href="announcements/20090418.html">Eraser 5.8.7-beta5</a> (portable)
 						<span class="downloads">&raquo; downloaded <?php GetDownloads(11); ?> times</span></li>
 				</ul>
 				<h3>Reviews &amp; Testimonials</h3>
