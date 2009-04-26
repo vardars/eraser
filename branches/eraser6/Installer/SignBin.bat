@@ -7,7 +7,7 @@ GOTO :eof
 
 :Sign
 @rem Core binaries
-signtool sign /f "%~1\Authenticode.pfx"^
+signtool sign /r "The Eraser Project, http://eraser.heidi.ie"^
  /t http://timestamp.verisign.com/scripts/timestamp.dll "%~1\bin\Release\Eraser.exe"^
  "%~1\bin\Release\Eraser.Manager.dll" "%~1\bin\Release\Eraser.Util.dll"^
  "%~1\bin\Release\Plugins\Eraser.DefaultPlugins.dll" "%~1\bin\Release\Eraser.Shell (x64).dll"^
