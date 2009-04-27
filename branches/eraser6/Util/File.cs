@@ -43,7 +43,8 @@ namespace Eraser.Util
 		public static List<string> GetADSes(FileInfo info)
 		{
 			List<string> result = new List<string>();
-			using (FileStream stream = info.OpenRead())
+			using (FileStream stream = new FileStream(info.FullName, FileMode.Open,
+				FileAccess.Read, FileShare.ReadWrite))
 			{
 				SafeFileHandle streamHandle = stream.SafeFileHandle;
 
