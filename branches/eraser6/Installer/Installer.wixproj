@@ -75,6 +75,6 @@
 	-->
   <PropertyGroup>
     <PreBuildEvent>"$(ProjectDir)\SignBin.bat" "$(SolutionDir)"</PreBuildEvent>
-    <PostBuildEvent>signtool sign /f "$(SolutionDir)\Authenticode.pfx" /t http://timestamp.verisign.com/scripts/timestamp.dll "$(TargetPath)"</PostBuildEvent>
+    <PostBuildEvent>signtool sign /r "The Eraser Project, http://eraser.heidi.ie" /t http://timestamp.verisign.com/scripts/timestamp.dll "$(TargetPath)"</PostBuildEvent>
   </PropertyGroup>
 </Project>
