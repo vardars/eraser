@@ -1025,26 +1025,27 @@ namespace Eraser.Manager
 				progress.Event.currentTargetTotalPasses = method.Passes;
 				task.OnProgressChanged(progress.Event);
 
-				//Make sure the file does not have any attributes which may affect
-				//the erasure process
-				bool isReadOnly = false;
-				StreamInfo info = new StreamInfo(paths[i]);
-				if ((info.Attributes & FileAttributes.Compressed) != 0 ||
-					(info.Attributes & FileAttributes.Encrypted) != 0 ||
-					(info.Attributes & FileAttributes.SparseFile) != 0)
-				{
-					//Log the error
-					//TODO: This would leave files after the list unerased. Log this as an error instead
-					throw new ArgumentException(S._("Compressed, encrypted, or sparse" +
-						"files cannot be erased with Eraser."));
-				}
-
+				
 				//Remove the read-only flag, if it is set.
+				StreamInfo info = new StreamInfo(paths[i]);
+				bool isReadOnly = false;
 				if (isReadOnly = info.IsReadOnly)
 					info.IsReadOnly = false;
 
 				try
 				{
+					//Make sure the file does not have any attributes which may affect
+					//the erasure process
+					if ((info.Attributes & FileAttributes.Compressed) != 0 || 
+						(info.Attributes & FileAttributes.Encrypted) != 0 ||
+						(info.Attributes & FileAttributes.SparseFile) != 0)
+					{
+						//Log the error
+						task.Log.Add(new LogEntry(S._("The file {0} could not be erased " +
+							"because the file was either compressed, encrypted or a sparse file.",
+							info.FullName), LogLevel.ERROR));
+					}
+
 					//Create the file stream, and call the erasure method to write to
 					//the stream.
 					using (FileStream strm = info.Open(FileMode.Open, FileAccess.Write,
@@ -1097,6 +1098,11 @@ namespace Eraser.Manager
 					task.Log.Add(new LogEntry(S._("The file {0} could not be erased because the " +
 						"file's permissions prevent access to the file.", info.FullName),
 						LogLevel.ERROR));
+				}
+				catch (FileLoadException)
+				{
+					task.Log.Add(new LogEntry(S._("The file {0} could not be erased because the " +
+						"file is currently in use.", info.FullName), LogLevel.ERROR));
 				}
 				finally
 				{
