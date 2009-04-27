@@ -63,6 +63,7 @@ namespace Eraser
 				return;
 			}
 
+			status.Text = S._("Overwriting...");
 			item.Text = File.GetCompactPath(e.CurrentItemName, item.Width * 2, item.Font);
 			pass.Text = e.CurrentTargetTotalPasses != 0 ?
 				S._("{0} out of {1}", e.CurrentItemPass, e.CurrentTargetTotalPasses) :

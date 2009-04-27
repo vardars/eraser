@@ -156,6 +156,9 @@
   <data name="Could not load the setting {0} for plugin {1}. The setting has been lost." xml:space="preserve">
     <value>Could not load the setting {0} for plugin {1}. The setting has been lost.</value>
   </data>
+  <data name="Overwriting..." xml:space="preserve">
+    <value>Overwriting...</value>
+  </data>
   <data name="{0} out of {1}" xml:space="preserve">
     <value>{0} out of {1}</value>
   </data>

@@ -139,6 +139,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ProgressForm.en.resx">
+      <DependentUpon>ProgressForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ProgressForm.nl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ProgressForm.cs</DependentUpon>
