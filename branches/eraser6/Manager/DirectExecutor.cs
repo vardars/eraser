@@ -619,8 +619,8 @@ namespace Eraser.Manager
 					while (System.IO.File.Exists(currFile));
 
 					//Create the stream
-					using (FileStream stream = new FileStream(currFile,
-						FileMode.CreateNew, FileAccess.Write))
+					using (FileStream stream = new FileStream(currFile, FileMode.CreateNew,
+						FileAccess.Write, FileShare.None, 8, FileOptions.WriteThrough))
 					{
 						//Set the length of the file to be the amount of free space left
 						//or the maximum size of one of these dumps.
@@ -823,7 +823,8 @@ namespace Eraser.Manager
 			         created = DateTime.MinValue;
 			//Create the stream, lengthen the file, then tell the erasure method
 			//to erase the tips.
-			using (FileStream stream = streamInfo.Open(FileMode.Open, FileAccess.Write, FileShare.None))
+			using (FileStream stream = streamInfo.Open(FileMode.Open, FileAccess.Write,
+				FileShare.None, FileOptions.WriteThrough))
 			{
 				long fileLength = stream.Length;
 				long fileArea = GetFileArea(file);
@@ -894,7 +895,8 @@ namespace Eraser.Manager
 						//Open this stream
 						using (FileStream strm = new FileStream(Path.Combine(
 							info.FullName, GenerateRandomFileName(18)),
-							FileMode.CreateNew, FileAccess.Write))
+							FileMode.CreateNew, FileAccess.Write, FileShare.None, 8,
+							FileOptions.WriteThrough))
 						{
 							//Stretch the file size to use up some of the resident space.
 							strm.SetLength(1);
@@ -1032,6 +1034,7 @@ namespace Eraser.Manager
 					(info.Attributes & FileAttributes.SparseFile) != 0)
 				{
 					//Log the error
+					//TODO: This would leave files after the list unerased. Log this as an error instead
 					throw new ArgumentException(S._("Compressed, encrypted, or sparse" +
 						"files cannot be erased with Eraser."));
 				}
