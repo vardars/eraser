@@ -64,7 +64,7 @@ namespace Eraser.Util
 			string localStr = TranslateText(str, Assembly.GetCallingAssembly());
 
 			//Format the string.
-			return string.Format(localStr, args);
+			return string.Format(CultureInfo.CurrentCulture, localStr, args);
 		}
 
 		/// <summary>

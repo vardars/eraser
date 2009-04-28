@@ -29,6 +29,7 @@ using System.Windows.Forms;
 
 using Eraser.Manager;
 using Eraser.Util;
+using System.Globalization;
 
 namespace Eraser
 {
@@ -67,15 +68,16 @@ namespace Eraser
 			item.Text = File.GetCompactPath(e.CurrentItemName, item.Width * 2, item.Font);
 			pass.Text = e.CurrentTargetTotalPasses != 0 ?
 				S._("{0} out of {1}", e.CurrentItemPass, e.CurrentTargetTotalPasses) :
-				string.Format("{0}", e.CurrentItemPass);
+				e.CurrentItemPass.ToString(CultureInfo.CurrentCulture);
 
 			if (e.TimeLeft >= TimeSpan.Zero)
-				timeLeft.Text = S._("About {0:hh:mm:ss} left", e.TimeLeft);
+				timeLeft.Text = S._("About {0:T} left", e.TimeLeft);
 			else
 				timeLeft.Text = S._("Unknown");
 
 			itemProgress.Value = (int)(e.CurrentItemProgress * 1000);
-			itemProgressLbl.Text = e.CurrentItemProgress.ToString("#0%");
+			itemProgressLbl.Text = e.CurrentItemProgress.ToString("#0%",
+				CultureInfo.CurrentCulture);
 			overallProgress.Value = (int)(e.OverallProgress * 1000);
 			overallProgressLbl.Text = S._("Total: {0,2:#0.00%}", e.OverallProgress);
 		}

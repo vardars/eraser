@@ -227,7 +227,8 @@ namespace Eraser
 			catch (NotSupportedException)
 			{
 				MessageBox.Show(this, S._("The path you selected is invalid."), S._("Eraser"),
-					MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
+					RightToLeft == RightToLeft.Yes ? MessageBoxOptions.RtlReading : 0);
 			}
 		}
 

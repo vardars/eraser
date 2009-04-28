@@ -41,14 +41,14 @@ namespace Eraser
 			this.task = task;
 
 			//Update the title
-			Text = string.Format("{0} - {1}", Text, task.UIText);
+			Text = string.Format(CultureInfo.InvariantCulture, "{0} - {1}", Text, task.UIText);
 
 			//Add all the existing log messages
 			this.log.BeginUpdate();
 			Dictionary<DateTime, List<LogEntry>> log = task.Log.Entries;
 			foreach (DateTime sessionTime in log.Keys)
 			{
-				this.log.Groups.Add(new ListViewGroup(S._("Session: {0}", sessionTime.ToString(DATEPATTERN))));
+				this.log.Groups.Add(new ListViewGroup(S._("Session: {0:F}", sessionTime)));
 				foreach (LogEntry entry in log[sessionTime])
 					task_Logged(entry);
 			}
@@ -81,7 +81,7 @@ namespace Eraser
 				return;
 			}
 
-			ListViewItem item = log.Items.Add(e.Timestamp.ToString(DATEPATTERN));
+			ListViewItem item = log.Items.Add(e.Timestamp.ToString("F", CultureInfo.CurrentCulture));
 			item.SubItems.Add(e.Level.ToString());
 			item.SubItems.Add(e.Message);
 			if (log.Groups.Count != 0)
@@ -111,16 +111,16 @@ namespace Eraser
 			Dictionary<DateTime, List<LogEntry>> logEntries = task.Log.Entries;
 			foreach (DateTime sessionTime in logEntries.Keys)
 			{
-				text.AppendLine(S._("Session: {0}", sessionTime.ToString(DATEPATTERN)));
+				text.AppendLine(S._("Session: {0:F}", sessionTime));
 				foreach (LogEntry entry in logEntries[sessionTime])
 				{
 					text.AppendFormat("{0}	{1}	{2}\n",
-						entry.Timestamp.ToString(DATEPATTERN).Replace("\"", "\"\""),
+						entry.Timestamp.ToString("F", CultureInfo.CurrentCulture).Replace("\"", "\"\""),
 						entry.Level.ToString(), entry.Message);
 				}
 			}
 
-			Clipboard.SetText(text.ToString(), TextDataFormat.UnicodeText);
+			Clipboard.SetText(text.ToString(), TextDataFormat.CommaSeparatedValue);
 		}
 
 		private void close_Click(object sender, EventArgs e)
@@ -129,8 +129,5 @@ namespace Eraser
 		}
 
 		private Task task;
-		private static string DATEPATTERN =
-			DateTimeFormatInfo.CurrentInfo.ShortDatePattern + " " +
-			DateTimeFormatInfo.CurrentInfo.ShortTimePattern;
 	}
 }

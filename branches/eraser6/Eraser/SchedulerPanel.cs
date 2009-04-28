@@ -85,7 +85,7 @@ namespace Eraser
 				item.SubItems[1].Text = S._("Queued for execution");
 			else if (task.Schedule is RecurringSchedule)
 				item.SubItems[1].Text = ((task.Schedule as RecurringSchedule).NextRun.
-					ToString(DateTimeFormatInfo.CurrentInfo.FullDateTimePattern));
+					ToString("F", CultureInfo.CurrentCulture));
 			else if (task.Schedule == Schedule.RunNow)
 				item.SubItems[1].Text = S._("Not queued");
 			else
@@ -466,7 +466,9 @@ namespace Eraser
 		private void deleteTaskToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (MessageBox.Show(this, S._("Are you sure you want to delete the selected tasks?"),
-				S._("Eraser"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+				S._("Eraser"), MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+				MessageBoxDefaultButton.Button1,
+				RightToLeft == RightToLeft.Yes ? MessageBoxOptions.RtlReading : 0) != DialogResult.Yes)
 			{
 				return;
 			}

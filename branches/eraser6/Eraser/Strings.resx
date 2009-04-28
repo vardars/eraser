@@ -132,8 +132,8 @@
   <data name="Please help us to continue developing Eraser - donate some coffee!" xml:space="preserve">
     <value>Please help us to continue developing Eraser - donate some coffee!</value>
   </data>
-  <data name="Session: {0}" xml:space="preserve">
-    <value>Session: {0}</value>
+  <data name="Session: {0:F}" xml:space="preserve">
+    <value>Session: {0:F}</value>
   </data>
   <data name="Erase Schedule" xml:space="preserve">
     <value>Erase Schedule</value>
@@ -162,8 +162,8 @@
   <data name="{0} out of {1}" xml:space="preserve">
     <value>{0} out of {1}</value>
   </data>
-  <data name="About {0:hh:mm:ss} left" xml:space="preserve">
-    <value>About {0:hh:mm:ss} left</value>
+  <data name="About {0:T} left" xml:space="preserve">
+    <value>About {0:T} left</value>
   </data>
   <data name="Unknown" xml:space="preserve">
     <value>Unknown</value>
