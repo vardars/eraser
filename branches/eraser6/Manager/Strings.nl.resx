@@ -291,6 +291,9 @@
   <data name="The ScheduleUnit of the schedule does not use the WeeklyScheduly value, this field would contain garbage" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
+  <data name="An invalid type was found when loading the task schedule" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Unused disk space ({0})" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
@@ -298,9 +301,6 @@
     <value>(Untranslated)</value>
   </data>
   <data name="Recycle Bin" xml:space="preserve">
-    <value>(Untranslated)</value>
-  </data>
-  <data name="An invalid type was found when loading the task schedule" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
 </root>

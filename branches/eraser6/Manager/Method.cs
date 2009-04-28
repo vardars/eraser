@@ -102,13 +102,13 @@ namespace Eraser.Manager
 		/// This function should be implemented thread-safe as using the same
 		/// instance, this function may be called across different threads.
 		/// </summary>
-		/// <param name="strm">The stream which needs to be erased.</param>
+		/// <param name="stream">The stream which needs to be erased.</param>
 		/// <param name="erasureLength">The length of the stream to erase. If all
 		/// data in the stream should be overwritten, then pass in the maximum
 		/// value for long, the function will take the minimum.</param>
 		/// <param name="prng">The PRNG source for random data.</param>
 		/// <param name="callback">The progress callback function.</param>
-		public abstract void Erase(Stream strm, long erasureLength, Prng prng,
+		public abstract void Erase(Stream stream, long erasureLength, Prng prng,
 			ProgressFunction callback);
 
 		/// <summary>
@@ -253,9 +253,9 @@ namespace Eraser.Manager
 		/// <param name="strm">The stream which needs to be erased.</param>
 		/// <param name="prng">The PRNG source for random data.</param>
 		/// <param name="callback">The progress callback function.</param>
-		public virtual void EraseUnusedSpace(Stream strm, Prng prng, ProgressFunction callback)
+		public virtual void EraseUnusedSpace(Stream stream, Prng prng, ProgressFunction callback)
 		{
-			Erase(strm, long.MaxValue, prng, callback);
+			Erase(stream, long.MaxValue, prng, callback);
 		}
 	}
 
@@ -537,8 +537,8 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The delegate prototype of the Method Registered event.
 		/// </summary>
-		/// <param name="method">The GUID of the method being registered.</param>
-		public delegate void MethodRegisteredFunction(Guid guid);
+		/// <param name="value">The GUID of the method being registered.</param>
+		public delegate void MethodRegisteredFunction(Guid value);
 
 		/// <summary>
 		/// Called whenever an erasure method is registered.
@@ -548,8 +548,8 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The delegate prototype of the Method Unregistered event.
 		/// </summary>
-		/// <param name="method">The GUID of the method being registered.</param>
-		public delegate void MethodUnregisteredFunction(Guid guid);
+		/// <param name="value">The GUID of the method being registered.</param>
+		public delegate void MethodUnregisteredFunction(Guid value);
 
 		/// <summary>
 		/// Called whenever an erasure method is unregistered.

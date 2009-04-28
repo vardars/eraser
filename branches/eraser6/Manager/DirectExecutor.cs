@@ -65,11 +65,11 @@ namespace Eraser.Manager
 			{
 				if (unusedIds.Count != 0)
 				{
-					task.ID = unusedIds[0];
+					task.Id = unusedIds[0];
 					unusedIds.RemoveAt(0);
 				}
 				else
-					task.ID = ++nextId;
+					task.Id = ++nextId;
 			}
 
 			//Set the executor of the task
@@ -77,7 +77,7 @@ namespace Eraser.Manager
 
 			//Add the task to the set of tasks
 			lock (tasksLock)
-				tasks.Add(task.ID, task);
+				tasks.Add(task.Id, task);
 
 			//Call all the event handlers who registered to be notified of tasks
 			//being added.
@@ -110,7 +110,7 @@ namespace Eraser.Manager
 				tasks.Remove(taskId);
 
 				for (int i = 0; i != scheduledTasks.Count; )
-					if (scheduledTasks.Values[i].ID == taskId)
+					if (scheduledTasks.Values[i].Id == taskId)
 						scheduledTasks.RemoveAt(i);
 					else
 						++i;
@@ -127,14 +127,14 @@ namespace Eraser.Manager
 			lock (tasksLock)
 			{
 				//Replace the task in the global set
-				if (!tasks.ContainsKey(task.ID))
+				if (!tasks.ContainsKey(task.Id))
 					return;
 
-				tasks[task.ID] = task;
+				tasks[task.Id] = task;
 
 				//Then replace the task if it is in the queue
 				for (int i = 0; i != scheduledTasks.Count; ++i)
-					if (scheduledTasks.Values[i].ID == task.ID)
+					if (scheduledTasks.Values[i].Id == task.Id)
 					{
 						scheduledTasks.RemoveAt(i);
 						if (task.Schedule is RecurringSchedule)
@@ -312,15 +312,15 @@ namespace Eraser.Manager
 
 						//Run the task
 						TaskProgressManager progress = new TaskProgressManager(currentTask);
-						foreach (Task.ErasureTarget target in task.Targets)
+						foreach (ErasureTarget target in task.Targets)
 							try
 							{
 								progress.Event.CurrentTarget = target;
 								++progress.Event.CurrentTargetIndex;
-								if (target is Task.UnusedSpace)
-									EraseUnusedSpace(task, (Task.UnusedSpace)target, progress);
-								else if (target is Task.FilesystemObject)
-									EraseFilesystemObject(task, (Task.FilesystemObject)target, progress);
+								if (target is UnusedSpaceTarget)
+									EraseUnusedSpace(task, (UnusedSpaceTarget)target, progress);
+								else if (target is FileSystemObjectTarget)
+									EraseFilesystemObject(task, (FileSystemObjectTarget)target, progress);
 								else
 									throw new ArgumentException(S._("Unknown erasure target."));
 							}
@@ -500,7 +500,7 @@ namespace Eraser.Manager
 			/// </summary>
 			public TaskProgressManager(Task task)
 			{
-				foreach (Task.ErasureTarget target in task.Targets)
+				foreach (ErasureTarget target in task.Targets)
 					Total += target.TotalData;
 
 				Event = new TaskProgressEventArgs(task);
@@ -533,7 +533,7 @@ namespace Eraser.Manager
 		/// <param name="task">The task currently being executed</param>
 		/// <param name="target">The target of the unused space erase.</param>
 		/// <param name="progress">The progress manager object managing the progress of the task</param>
-		private void EraseUnusedSpace(Task task, Task.UnusedSpace target, TaskProgressManager progress)
+		private void EraseUnusedSpace(Task task, UnusedSpaceTarget target, TaskProgressManager progress)
 		{
 			//Check for sufficient privileges to run the unused space erasure.
 			if (!Permissions.IsAdministrator())
@@ -701,7 +701,7 @@ namespace Eraser.Manager
 		private delegate void ClusterTipsEraseProgress(int currentFile,
 			string currentFilePath, int totalFiles);
 
-		private static void EraseClusterTips(Task task, Task.UnusedSpace target,
+		private static void EraseClusterTips(Task task, UnusedSpaceTarget target,
 			ErasureMethod method, ClusterTipsEraseProgress callback)
 		{
 			//List all the files which can be erased.
@@ -867,7 +867,7 @@ namespace Eraser.Manager
 		/// <param name="task">The task currently being processed.</param>
 		/// <param name="target">The target of the erasure.</param>
 		/// <param name="progress">The progress manager for the current task.</param>
-		private void EraseFilesystemObject(Task task, Task.FilesystemObject target,
+		private void EraseFilesystemObject(Task task, FileSystemObjectTarget target,
 			TaskProgressManager progress)
 		{
 			//Retrieve the list of files to erase.
@@ -980,12 +980,12 @@ namespace Eraser.Manager
 			}
 
 			//If the user requested a folder removal, do it.
-			if (target is Task.Folder)
+			if (target is FolderTarget)
 			{
 				progress.Event.CurrentItemName = S._("Removing folders...");
 				task.OnProgressChanged(progress.Event);
 
-				Task.Folder fldr = (Task.Folder)target;
+				FolderTarget fldr = (FolderTarget)target;
 				if (fldr.DeleteIfEmpty)
 				{
 					FileSystem fsManager = FileSystem.Get(VolumeInfo.FromMountpoint(fldr.Path));
@@ -994,7 +994,7 @@ namespace Eraser.Manager
 			}
 
 			//If the user was erasing the recycle bin, clear the bin.
-			if (target is Task.RecycleBin)
+			if (target is RecycleBinTarget)
 			{
 				progress.Event.CurrentItemName = S._("Emptying recycle bin...");
 				task.OnProgressChanged(progress.Event);

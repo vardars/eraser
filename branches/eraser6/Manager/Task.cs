@@ -36,689 +36,6 @@ namespace Eraser.Manager
 	[Serializable]
 	public class Task : ISerializable
 	{
-		/// <summary>
-		/// Represents a generic target of erasure
-		/// </summary>
-		[Serializable]
-		public abstract class ErasureTarget : ISerializable
-		{
-			#region Serialization code
-			public ErasureTarget(SerializationInfo info, StreamingContext context)
-			{
-				Guid methodGuid = (Guid)info.GetValue("Method", typeof(Guid));
-				if (methodGuid == Guid.Empty)
-					method = ErasureMethodManager.Default;
-				else
-					method = ErasureMethodManager.GetInstance(methodGuid);
-			}
-
-			public virtual void GetObjectData(SerializationInfo info,
-				StreamingContext context)
-			{
-				info.AddValue("Method", method.Guid);
-			}
-			#endregion
-
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			public ErasureTarget()
-			{
-			}
-
-			/// <summary>
-			/// The method used for erasing the file. If the variable is equal to
-			/// ErasureMethodManager.Default then the default is queried for the
-			/// task type.
-			/// </summary>
-			public abstract ErasureMethod Method
-			{
-				get;
-				set;
-			}
-
-			/// <summary>
-			/// Checks whether a method has been selected for this target. This is
-			/// because the Method property will return non-default erasure methods
-			/// only.
-			/// </summary>
-			public bool MethodDefined
-			{
-				get
-				{
-					return method != ErasureMethodManager.Default;
-				}
-			}
-
-			/// <summary>
-			/// The task which owns this target.
-			/// </summary>
-			public Task Task
-			{
-				get
-				{
-					return task;
-				}
-				internal set
-				{
-					task = value;
-				}
-			}
-
-			/// <summary>
-			/// Retrieves the text to display representing this task.
-			/// </summary>
-			public abstract string UIText
-			{
-				get;
-			}
-
-			/// <summary>
-			/// Retrieves the amount of data that needs to be written in order to
-			/// complete the erasure.
-			/// </summary>
-			public abstract long TotalData
-			{
-				get;
-			}
-
-			/// <summary>
-			/// Erasure method to use for the target.
-			/// </summary>
-			protected ErasureMethod method;
-
-			/// <summary>
-			/// The task object owning this target.
-			/// </summary>
-			private Task task;
-		}
-
-		/// <summary>
-		/// Class representing a tangible object (file/folder) to be erased.
-		/// </summary>
-		[Serializable]
-		public abstract class FilesystemObject : ErasureTarget
-		{
-			#region Serialization code
-			public FilesystemObject(SerializationInfo info, StreamingContext context)
-				: base(info, context)
-			{
-				path = (string)info.GetValue("Path", typeof(string));
-			}
-
-			override public void GetObjectData(SerializationInfo info,
-				StreamingContext context)
-			{
-				base.GetObjectData(info, context);
-				info.AddValue("Path", path);
-			}
-			#endregion
-
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			public FilesystemObject()
-			{
-			}
-
-			/// <summary>
-			/// Retrieves the list of files/folders to erase as a list.
-			/// </summary>
-			/// <param name="totalSize">Returns the total size in bytes of the
-			/// items.</param>
-			/// <returns>A list containing the paths to all the files to be erased.</returns>
-			internal abstract List<string> GetPaths(out long totalSize);
-
-			/// <summary>
-			/// Adds ADSes of the given file to the list.
-			/// </summary>
-			/// <param name="list">The list to add the ADS paths to.</param>
-			/// <param name="file">The file to look for ADSes</param>
-			protected void GetPathADSes(ref List<string> list, ref long totalSize, string file)
-			{
-				try
-				{
-					//Get the ADS names
-					List<string> adses = Util.File.GetADSes(new FileInfo(file));
-
-					//Then prepend the path.
-					foreach (string adsName in adses)
-					{
-						string adsPath = file + ':' + adsName;
-						list.Add(adsPath);
-						Util.StreamInfo info = new Util.StreamInfo(adsPath);
-						totalSize += info.Length;
-					}
-				}
-				catch (UnauthorizedAccessException e)
-				{
-					//The system cannot read the file, assume no ADSes for lack of
-					//more information.
-					Task.Log.Add(new LogEntry(e.Message, LogLevel.Error));
-				}
-			}
-
-			/// <summary>
-			/// The path to the file or folder referred to by this object.
-			/// </summary>
-			public string Path
-			{
-				get { return path; }
-				set { path = value; }
-			}
-
-			public override ErasureMethod Method
-			{
-				get
-				{
-					if (method != ErasureMethodManager.Default)
-						return method;
-					return ErasureMethodManager.GetInstance(
-						ManagerLibrary.Instance.Settings.DefaultFileErasureMethod);
-				}
-				set
-				{
-					method = value;
-				}
-			}
-
-			public override string UIText
-			{
-				get { return Path; }
-			}
-
-			public override long TotalData
-			{
-				get
-				{
-					long totalSize = 0;
-					List<string> paths = GetPaths(out totalSize);
-					return Method.CalculateEraseDataSize(paths, totalSize);
-				}
-			}
-
-			private string path;
-		}
-
-		/// <summary>
-		/// Class representing a unused space erase.
-		/// </summary>
-		[Serializable]
-		public class UnusedSpace : ErasureTarget
-		{
-			#region Serialization code
-			UnusedSpace(SerializationInfo info, StreamingContext context)
-				: base(info, context)
-			{
-				Drive = (string)info.GetValue("Drive", typeof(string));
-				EraseClusterTips = (bool)info.GetValue("EraseClusterTips", typeof(bool));
-			}
-
-			public override void GetObjectData(SerializationInfo info,
-				StreamingContext context)
-			{
-				base.GetObjectData(info, context);
-				info.AddValue("Drive", Drive);
-				info.AddValue("EraseClusterTips", EraseClusterTips);
-			}
-			#endregion
-
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			public UnusedSpace()
-			{
-			}
-
-			public override ErasureMethod Method
-			{
-				get
-				{
-					if (method != ErasureMethodManager.Default)
-						return method;
-					return ErasureMethodManager.GetInstance(
-						ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod);
-				}
-				set
-				{
-					method = value;
-				}
-			}
-
-			public override string UIText
-			{
-				get { return S._("Unused disk space ({0})", Drive); }
-			}
-
-			public override long TotalData
-			{
-				get
-				{
-					VolumeInfo info = VolumeInfo.FromMountpoint(Drive);
-					return Method.CalculateEraseDataSize(null, info.AvailableFreeSpace);
-				}
-			}
-
-			/// <summary>
-			/// The drive to erase
-			/// </summary>
-			public string Drive { get; set; }
-
-			/// <summary>
-			/// Whether cluster tips should be erased.
-			/// </summary>
-			public bool EraseClusterTips { get; set; }
-		}
-
-		/// <summary>
-		/// Class representing a file to be erased.
-		/// </summary>
-		[Serializable]
-		public class File : FilesystemObject
-		{
-			#region Serialization code
-			protected File(SerializationInfo info, StreamingContext context)
-				: base(info, context)
-			{
-			}
-			#endregion
-
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			public File()
-			{
-			}
-
-			internal override List<string> GetPaths(out long totalSize)
-			{
-				List<string> result = new List<string>();
-				totalSize = 0;
-				GetPathADSes(ref result, ref totalSize, Path);
-
-				totalSize += new FileInfo(Path).Length;
-				result.Add(Path);
-				return result;
-			}
-		}
-
-		/// <summary>
-		/// Represents a folder and its files which are to be erased.
-		/// </summary>
-		[Serializable]
-		public class Folder : FilesystemObject
-		{
-			#region Serialization code
-			protected Folder(SerializationInfo info, StreamingContext context)
-				: base(info, context)
-			{
-				includeMask = (string)info.GetValue("IncludeMask", typeof(string));
-				excludeMask = (string)info.GetValue("ExcludeMask", typeof(string));
-				deleteIfEmpty = (bool)info.GetValue("DeleteIfEmpty", typeof(bool));
-			}
-
-			public override void GetObjectData(SerializationInfo info,
-				StreamingContext context)
-			{
-				base.GetObjectData(info, context);
-				info.AddValue("IncludeMask", includeMask);
-				info.AddValue("ExcludeMask", excludeMask);
-				info.AddValue("DeleteIfEmpty", deleteIfEmpty);
-			}
-			#endregion
-
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			public Folder()
-			{
-			}
-
-			internal override List<string> GetPaths(out long totalSize)
-			{
-				//Get a list to hold all the resulting paths.
-				List<string> result = new List<string>();
-
-				//Open the root of the search, including every file matching the pattern
-				DirectoryInfo dir = new DirectoryInfo(Path);
-
-				//List recursively all the files which match the include pattern.
-				string includeMask = IncludeMask;
-				if (includeMask.Length == 0)
-					includeMask = "*";
-				FileInfo[] files = GetFiles(dir, includeMask);
-
-				//Then exclude each file and finalize the list and total file size
-				totalSize = 0;
-				if (ExcludeMask.Length != 0)
-				{
-					string regex = Regex.Escape(ExcludeMask).Replace("\\*", ".*").
-						Replace("\\?", ".");
-					Regex excludePattern = new Regex(regex, RegexOptions.IgnoreCase);
-					foreach (FileInfo file in files)
-						if ((file.Attributes & FileAttributes.ReparsePoint) == 0 &&
-							excludePattern.Matches(file.FullName).Count == 0)
-						{
-							totalSize += file.Length;
-							GetPathADSes(ref result, ref totalSize, file.FullName);
-							result.Add(file.FullName);
-						}
-				}
-				else
-					foreach (FileInfo file in files)
-					{
-						if ((file.Attributes & FileAttributes.ReparsePoint) != 0)
-							continue;
-
-						totalSize += file.Length;
-						GetPathADSes(ref result, ref totalSize, file.FullName);
-						result.Add(file.FullName);
-					}
-
-				//Return the filtered list.
-				return result;
-			}
-
-			/// <summary>
-			/// Gets all files in the provided directory.
-			/// </summary>
-			/// <param name="info">The directory to look files in.</param>
-			/// <param name="includeMask">The include mask all files must match.</param>
-			/// <returns>A list of files found in the directory.</returns>
-			private FileInfo[] GetFiles(DirectoryInfo info, string includeMask)
-			{
-				List<FileInfo> result = new List<FileInfo>();
-				foreach (DirectoryInfo dir in info.GetDirectories())
-					try
-					{
-						result.AddRange(GetFiles(dir, includeMask));
-					}
-					catch (Exception e)
-					{
-						//Ignore, but log.
-						Task.log.Add(new LogEntry(S._("Could not erase {0} because {1}",
-							dir.FullName, e.Message), LogLevel.Error));
-					}
-
-				result.AddRange(info.GetFiles(includeMask, SearchOption.TopDirectoryOnly));
-				return result.ToArray();
-			}
-
-			/// <summary>
-			/// A wildcard expression stating the condition for the set of files to include.
-			/// The include mask is applied before the exclude mask is applied. If this value
-			/// is empty, all files and folders within the folder specified is included.
-			/// </summary>
-			public string IncludeMask
-			{
-				get { return includeMask; }
-				set { includeMask = value; }
-			}
-
-			/// <summary>
-			/// A wildcard expression stating the condition for removing files from the set
-			/// of included files. If this value is omitted, all files and folders extracted
-			/// by the inclusion mask is erased.
-			/// </summary>
-			public string ExcludeMask
-			{
-				get { return excludeMask; }
-				set { excludeMask = value; }
-			}
-
-			/// <summary>
-			/// Determines if Eraser should delete the folder after the erase process.
-			/// </summary>
-			public bool DeleteIfEmpty
-			{
-				get { return deleteIfEmpty; }
-				set { deleteIfEmpty = value; }
-			}
-
-			private string includeMask = string.Empty;
-			private string excludeMask = string.Empty;
-			private bool deleteIfEmpty = true;
-		}
-
-		[Serializable]
-		public class RecycleBin : FilesystemObject
-		{
-			#region Serialization code
-			protected RecycleBin(SerializationInfo info, StreamingContext context)
-				: base(info, context)
-			{
-			}
-			#endregion
-
-			public RecycleBin()
-			{
-			}
-
-			internal override List<string> GetPaths(out long totalSize)
-			{
-				totalSize = 0;
-				List<string> result = new List<string>();
-				string[] rootDirectory = new string[] {
-					"$RECYCLE.BIN",
-					"RECYCLER"
-				};
-
-				foreach (DriveInfo drive in DriveInfo.GetDrives())
-				{
-					foreach (string rootDir in rootDirectory)
-					{
-						DirectoryInfo dir = new DirectoryInfo(
-							System.IO.Path.Combine(
-								System.IO.Path.Combine(drive.Name, rootDir),
-								System.Security.Principal.WindowsIdentity.GetCurrent().
-									User.ToString()));
-						if (!dir.Exists)
-							continue;
-
-						GetRecyclerFiles(dir, ref result, ref totalSize);
-					}
-				}
-
-				return result;
-			}
-
-			/// <summary>
-			/// Retrieves all files within this folder, without exclusions.
-			/// </summary>
-			/// <param name="info">The DirectoryInfo object representing the folder to traverse.</param>
-			/// <param name="paths">The list of files to store path information in.</param>
-			/// <param name="totalSize">Receives the total size of the files.</param>
-			private void GetRecyclerFiles(DirectoryInfo info, ref List<string> paths,
-				ref long totalSize)
-			{
-				try
-				{
-					foreach (FileSystemInfo fsInfo in info.GetFileSystemInfos())
-					{
-						if (fsInfo is FileInfo)
-						{
-							paths.Add(fsInfo.FullName);
-							totalSize += ((FileInfo)fsInfo).Length;
-							GetPathADSes(ref paths, ref totalSize, fsInfo.FullName);
-						}
-						else
-							GetRecyclerFiles((DirectoryInfo)fsInfo, ref paths, ref totalSize);
-					}
-				}
-				catch (UnauthorizedAccessException e)
-				{
-					Task.Log.Add(new LogEntry(e.Message, LogLevel.Error));
-				}
-			}
-
-			/// <summary>
-			/// Retrieves the text to display representing this task.
-			/// </summary>
-			public override string UIText
-			{
-				get
-				{
-					return S._("Recycle Bin");
-				}
-			}
-		}
-
-		/// <summary>
-		/// Maintains a collection of erasure targets.
-		/// </summary>
-		[Serializable]
-		public class ErasureTargetsCollection : IList<ErasureTarget>, ICollection<ErasureTarget>,
-			IEnumerable<ErasureTarget>, ISerializable
-		{
-			#region Constructors
-			internal ErasureTargetsCollection(Task owner)
-			{
-				this.list = new List<ErasureTarget>();
-				this.owner = owner;
-			}
-
-			internal ErasureTargetsCollection(Task owner, int capacity)
-				: this(owner)
-			{
-				list.Capacity = capacity;
-			}
-
-			internal ErasureTargetsCollection(Task owner, IEnumerable<ErasureTarget> targets)
-				: this(owner)
-			{
-				list.AddRange(targets);
-			}
-			#endregion
-
-			#region Serialization Code
-			protected ErasureTargetsCollection(SerializationInfo info, StreamingContext context)
-			{
-				list = (List<ErasureTarget>)info.GetValue("list", typeof(List<ErasureTarget>));
-			}
-
-			public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
-			{
-				info.AddValue("list", list);
-			}
-			#endregion
-
-			#region IEnumerable<ErasureTarget> Members
-			public IEnumerator<ErasureTarget> GetEnumerator()
-			{
-				return list.GetEnumerator();
-			}
-			#endregion
-
-			#region IEnumerable Members
-			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-			{
-				return list.GetEnumerator();
-			}
-			#endregion
-
-			#region ICollection<ErasureTarget> Members
-			public void Add(ErasureTarget item)
-			{
-				item.Task = owner;
-				list.Add(item);
-			}
-
-			public void Clear()
-			{
-				list.Clear();
-			}
-
-			public bool Contains(ErasureTarget item)
-			{
-				return list.Contains(item);
-			}
-
-			public void CopyTo(ErasureTarget[] array, int arrayIndex)
-			{
-				list.CopyTo(array, arrayIndex);
-			}
-
-			public int Count
-			{
-				get
-				{
-					return list.Count;
-				}
-			}
-
-			public bool IsReadOnly
-			{
-				get
-				{
-					return IsReadOnly;
-				}
-			}
-
-			public bool Remove(ErasureTarget item)
-			{
-				return list.Remove(item);
-			}
-			#endregion
-
-			#region IList<ErasureTarget> Members
-			public int IndexOf(ErasureTarget item)
-			{
-				return list.IndexOf(item);
-			}
-
-			public void Insert(int index, ErasureTarget item)
-			{
-				item.Task = owner;
-				list.Insert(index, item);
-			}
-
-			public void RemoveAt(int index)
-			{
-				list.RemoveAt(index);
-			}
-
-			public ErasureTarget this[int index]
-			{
-				get
-				{
-					return list[index];
-				}
-				set
-				{
-					list[index] = value;
-				}
-			}
-			#endregion
-
-			/// <summary>
-			/// The ownere of this list of targets.
-			/// </summary>
-			public Task Owner
-			{
-				get
-				{
-					return owner;
-				}
-				internal set
-				{
-					owner = value;
-					foreach (ErasureTarget target in list)
-						target.Task = owner;
-				}
-			}
-
-			/// <summary>
-			/// The owner of this list of targets. All targets added to this list
-			/// will have the owner set to this object.
-			/// </summary>
-			private Task owner;
-
-			/// <summary>
-			/// The list bring the data store behind this object.
-			/// </summary>
-			List<ErasureTarget> list;
-		}
-
 		#region Serialization code
 		protected Task(SerializationInfo info, StreamingContext context)
 		{
@@ -740,7 +57,7 @@ namespace Eraser.Manager
 					"the task schedule"));
 		}
 
-		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue("ID", id);
 			info.AddValue("Name", name);
@@ -764,7 +81,7 @@ namespace Eraser.Manager
 		/// The unique identifier for this task. This ID will be persistent across
 		/// executions.
 		/// </summary>
-		public uint ID
+		public uint Id
 		{
 			get { return id; }
 			internal set { id = value; }
@@ -803,7 +120,7 @@ namespace Eraser.Manager
 				string result = string.Empty;
 				if (Targets.Count < 3)
 					//Simpler case, small set of data.
-					foreach (Task.ErasureTarget tgt in Targets)
+					foreach (ErasureTarget tgt in Targets)
 						result += tgt.UIText + ", ";
 				else
 					//Ok, we've quite a few entries, get the first, the mid and the end.
@@ -942,6 +259,689 @@ namespace Eraser.Manager
 	}
 
 	/// <summary>
+	/// Represents a generic target of erasure
+	/// </summary>
+	[Serializable]
+	public abstract class ErasureTarget : ISerializable
+	{
+		#region Serialization code
+		protected ErasureTarget(SerializationInfo info, StreamingContext context)
+		{
+			Guid methodGuid = (Guid)info.GetValue("Method", typeof(Guid));
+			if (methodGuid == Guid.Empty)
+				method = ErasureMethodManager.Default;
+			else
+				method = ErasureMethodManager.GetInstance(methodGuid);
+		}
+
+		public virtual void GetObjectData(SerializationInfo info,
+			StreamingContext context)
+		{
+			info.AddValue("Method", method.Guid);
+		}
+		#endregion
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		protected ErasureTarget()
+		{
+		}
+
+		/// <summary>
+		/// The method used for erasing the file. If the variable is equal to
+		/// ErasureMethodManager.Default then the default is queried for the
+		/// task type.
+		/// </summary>
+		public abstract ErasureMethod Method
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Checks whether a method has been selected for this target. This is
+		/// because the Method property will return non-default erasure methods
+		/// only.
+		/// </summary>
+		public bool MethodDefined
+		{
+			get
+			{
+				return method != ErasureMethodManager.Default;
+			}
+		}
+
+		/// <summary>
+		/// The task which owns this target.
+		/// </summary>
+		public Task Task
+		{
+			get
+			{
+				return task;
+			}
+			internal set
+			{
+				task = value;
+			}
+		}
+
+		/// <summary>
+		/// Retrieves the text to display representing this task.
+		/// </summary>
+		public abstract string UIText
+		{
+			get;
+		}
+
+		/// <summary>
+		/// Retrieves the amount of data that needs to be written in order to
+		/// complete the erasure.
+		/// </summary>
+		public abstract long TotalData
+		{
+			get;
+		}
+
+		/// <summary>
+		/// Erasure method to use for the target.
+		/// </summary>
+		protected ErasureMethod method { get; set; }
+
+		/// <summary>
+		/// The task object owning this target.
+		/// </summary>
+		private Task task;
+	}
+
+	/// <summary>
+	/// Class representing a tangible object (file/folder) to be erased.
+	/// </summary>
+	[Serializable]
+	public abstract class FileSystemObjectTarget : ErasureTarget
+	{
+		#region Serialization code
+		protected FileSystemObjectTarget(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+			path = (string)info.GetValue("Path", typeof(string));
+		}
+
+		override public void GetObjectData(SerializationInfo info,
+			StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+			info.AddValue("Path", path);
+		}
+		#endregion
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		protected FileSystemObjectTarget()
+		{
+		}
+
+		/// <summary>
+		/// Retrieves the list of files/folders to erase as a list.
+		/// </summary>
+		/// <param name="totalSize">Returns the total size in bytes of the
+		/// items.</param>
+		/// <returns>A list containing the paths to all the files to be erased.</returns>
+		internal abstract List<string> GetPaths(out long totalSize);
+
+		/// <summary>
+		/// Adds ADSes of the given file to the list.
+		/// </summary>
+		/// <param name="list">The list to add the ADS paths to.</param>
+		/// <param name="file">The file to look for ADSes</param>
+		protected void GetPathADSes(ref List<string> list, ref long totalSize, string file)
+		{
+			try
+			{
+				//Get the ADS names
+				List<string> adses = Util.File.GetADSes(new FileInfo(file));
+
+				//Then prepend the path.
+				foreach (string adsName in adses)
+				{
+					string adsPath = file + ':' + adsName;
+					list.Add(adsPath);
+					Util.StreamInfo info = new Util.StreamInfo(adsPath);
+					totalSize += info.Length;
+				}
+			}
+			catch (UnauthorizedAccessException e)
+			{
+				//The system cannot read the file, assume no ADSes for lack of
+				//more information.
+				Task.Log.Add(new LogEntry(e.Message, LogLevel.Error));
+			}
+		}
+
+		/// <summary>
+		/// The path to the file or folder referred to by this object.
+		/// </summary>
+		public string Path
+		{
+			get { return path; }
+			set { path = value; }
+		}
+
+		public override ErasureMethod Method
+		{
+			get
+			{
+				if (method != ErasureMethodManager.Default)
+					return method;
+				return ErasureMethodManager.GetInstance(
+					ManagerLibrary.Instance.Settings.DefaultFileErasureMethod);
+			}
+			set
+			{
+				method = value;
+			}
+		}
+
+		public override string UIText
+		{
+			get { return Path; }
+		}
+
+		public override long TotalData
+		{
+			get
+			{
+				long totalSize = 0;
+				List<string> paths = GetPaths(out totalSize);
+				return Method.CalculateEraseDataSize(paths, totalSize);
+			}
+		}
+
+		private string path;
+	}
+
+	/// <summary>
+	/// Class representing a unused space erase.
+	/// </summary>
+	[Serializable]
+	public class UnusedSpaceTarget : ErasureTarget
+	{
+		#region Serialization code
+		protected UnusedSpaceTarget(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+			Drive = (string)info.GetValue("Drive", typeof(string));
+			EraseClusterTips = (bool)info.GetValue("EraseClusterTips", typeof(bool));
+		}
+
+		public override void GetObjectData(SerializationInfo info,
+			StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+			info.AddValue("Drive", Drive);
+			info.AddValue("EraseClusterTips", EraseClusterTips);
+		}
+		#endregion
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public UnusedSpaceTarget()
+		{
+		}
+
+		public override ErasureMethod Method
+		{
+			get
+			{
+				if (method != ErasureMethodManager.Default)
+					return method;
+				return ErasureMethodManager.GetInstance(
+					ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod);
+			}
+			set
+			{
+				method = value;
+			}
+		}
+
+		public override string UIText
+		{
+			get { return S._("Unused disk space ({0})", Drive); }
+		}
+
+		public override long TotalData
+		{
+			get
+			{
+				VolumeInfo info = VolumeInfo.FromMountpoint(Drive);
+				return Method.CalculateEraseDataSize(null, info.AvailableFreeSpace);
+			}
+		}
+
+		/// <summary>
+		/// The drive to erase
+		/// </summary>
+		public string Drive { get; set; }
+
+		/// <summary>
+		/// Whether cluster tips should be erased.
+		/// </summary>
+		public bool EraseClusterTips { get; set; }
+	}
+
+	/// <summary>
+	/// Class representing a file to be erased.
+	/// </summary>
+	[Serializable]
+	public class FileTarget : FileSystemObjectTarget
+	{
+		#region Serialization code
+		protected FileTarget(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+		}
+		#endregion
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public FileTarget()
+		{
+		}
+
+		internal override List<string> GetPaths(out long totalSize)
+		{
+			List<string> result = new List<string>();
+			totalSize = 0;
+			GetPathADSes(ref result, ref totalSize, Path);
+
+			totalSize += new FileInfo(Path).Length;
+			result.Add(Path);
+			return result;
+		}
+	}
+
+	/// <summary>
+	/// Represents a folder and its files which are to be erased.
+	/// </summary>
+	[Serializable]
+	public class FolderTarget : FileSystemObjectTarget
+	{
+		#region Serialization code
+		protected FolderTarget(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+			includeMask = (string)info.GetValue("IncludeMask", typeof(string));
+			excludeMask = (string)info.GetValue("ExcludeMask", typeof(string));
+			deleteIfEmpty = (bool)info.GetValue("DeleteIfEmpty", typeof(bool));
+		}
+
+		public override void GetObjectData(SerializationInfo info,
+			StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+			info.AddValue("IncludeMask", includeMask);
+			info.AddValue("ExcludeMask", excludeMask);
+			info.AddValue("DeleteIfEmpty", deleteIfEmpty);
+		}
+		#endregion
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public FolderTarget()
+		{
+		}
+
+		internal override List<string> GetPaths(out long totalSize)
+		{
+			//Get a list to hold all the resulting paths.
+			List<string> result = new List<string>();
+
+			//Open the root of the search, including every file matching the pattern
+			DirectoryInfo dir = new DirectoryInfo(Path);
+
+			//List recursively all the files which match the include pattern.
+			string includeMask = IncludeMask;
+			if (includeMask.Length == 0)
+				includeMask = "*";
+			FileInfo[] files = GetFiles(dir, includeMask);
+
+			//Then exclude each file and finalize the list and total file size
+			totalSize = 0;
+			if (ExcludeMask.Length != 0)
+			{
+				string regex = Regex.Escape(ExcludeMask).Replace("\\*", ".*").
+					Replace("\\?", ".");
+				Regex excludePattern = new Regex(regex, RegexOptions.IgnoreCase);
+				foreach (FileInfo file in files)
+					if ((file.Attributes & FileAttributes.ReparsePoint) == 0 &&
+						excludePattern.Matches(file.FullName).Count == 0)
+					{
+						totalSize += file.Length;
+						GetPathADSes(ref result, ref totalSize, file.FullName);
+						result.Add(file.FullName);
+					}
+			}
+			else
+				foreach (FileInfo file in files)
+				{
+					if ((file.Attributes & FileAttributes.ReparsePoint) != 0)
+						continue;
+
+					totalSize += file.Length;
+					GetPathADSes(ref result, ref totalSize, file.FullName);
+					result.Add(file.FullName);
+				}
+
+			//Return the filtered list.
+			return result;
+		}
+
+		/// <summary>
+		/// Gets all files in the provided directory.
+		/// </summary>
+		/// <param name="info">The directory to look files in.</param>
+		/// <param name="includeMask">The include mask all files must match.</param>
+		/// <returns>A list of files found in the directory.</returns>
+		private FileInfo[] GetFiles(DirectoryInfo info, string includeMask)
+		{
+			List<FileInfo> result = new List<FileInfo>();
+			foreach (DirectoryInfo dir in info.GetDirectories())
+				try
+				{
+					result.AddRange(GetFiles(dir, includeMask));
+				}
+				catch (Exception e)
+				{
+					//Ignore, but log.
+					Task.Log.Add(new LogEntry(S._("Could not erase {0} because {1}",
+						dir.FullName, e.Message), LogLevel.Error));
+				}
+
+			result.AddRange(info.GetFiles(includeMask, SearchOption.TopDirectoryOnly));
+			return result.ToArray();
+		}
+
+		/// <summary>
+		/// A wildcard expression stating the condition for the set of files to include.
+		/// The include mask is applied before the exclude mask is applied. If this value
+		/// is empty, all files and folders within the folder specified is included.
+		/// </summary>
+		public string IncludeMask
+		{
+			get { return includeMask; }
+			set { includeMask = value; }
+		}
+
+		/// <summary>
+		/// A wildcard expression stating the condition for removing files from the set
+		/// of included files. If this value is omitted, all files and folders extracted
+		/// by the inclusion mask is erased.
+		/// </summary>
+		public string ExcludeMask
+		{
+			get { return excludeMask; }
+			set { excludeMask = value; }
+		}
+
+		/// <summary>
+		/// Determines if Eraser should delete the folder after the erase process.
+		/// </summary>
+		public bool DeleteIfEmpty
+		{
+			get { return deleteIfEmpty; }
+			set { deleteIfEmpty = value; }
+		}
+
+		private string includeMask = string.Empty;
+		private string excludeMask = string.Empty;
+		private bool deleteIfEmpty = true;
+	}
+
+	[Serializable]
+	public class RecycleBinTarget : FileSystemObjectTarget
+	{
+		#region Serialization code
+		protected RecycleBinTarget(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+		}
+		#endregion
+
+		public RecycleBinTarget()
+		{
+		}
+
+		internal override List<string> GetPaths(out long totalSize)
+		{
+			totalSize = 0;
+			List<string> result = new List<string>();
+			string[] rootDirectory = new string[] {
+					"$RECYCLE.BIN",
+					"RECYCLER"
+				};
+
+			foreach (DriveInfo drive in DriveInfo.GetDrives())
+			{
+				foreach (string rootDir in rootDirectory)
+				{
+					DirectoryInfo dir = new DirectoryInfo(
+						System.IO.Path.Combine(
+							System.IO.Path.Combine(drive.Name, rootDir),
+							System.Security.Principal.WindowsIdentity.GetCurrent().
+								User.ToString()));
+					if (!dir.Exists)
+						continue;
+
+					GetRecyclerFiles(dir, ref result, ref totalSize);
+				}
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Retrieves all files within this folder, without exclusions.
+		/// </summary>
+		/// <param name="info">The DirectoryInfo object representing the folder to traverse.</param>
+		/// <param name="paths">The list of files to store path information in.</param>
+		/// <param name="totalSize">Receives the total size of the files.</param>
+		private void GetRecyclerFiles(DirectoryInfo info, ref List<string> paths,
+			ref long totalSize)
+		{
+			try
+			{
+				foreach (FileSystemInfo fsInfo in info.GetFileSystemInfos())
+				{
+					if (fsInfo is FileInfo)
+					{
+						paths.Add(fsInfo.FullName);
+						totalSize += ((FileInfo)fsInfo).Length;
+						GetPathADSes(ref paths, ref totalSize, fsInfo.FullName);
+					}
+					else
+						GetRecyclerFiles((DirectoryInfo)fsInfo, ref paths, ref totalSize);
+				}
+			}
+			catch (UnauthorizedAccessException e)
+			{
+				Task.Log.Add(new LogEntry(e.Message, LogLevel.Error));
+			}
+		}
+
+		/// <summary>
+		/// Retrieves the text to display representing this task.
+		/// </summary>
+		public override string UIText
+		{
+			get
+			{
+				return S._("Recycle Bin");
+			}
+		}
+	}
+
+	/// <summary>
+	/// Maintains a collection of erasure targets.
+	/// </summary>
+	[Serializable]
+	public class ErasureTargetsCollection : IList<ErasureTarget>, ICollection<ErasureTarget>,
+		IEnumerable<ErasureTarget>, ISerializable
+	{
+		#region Constructors
+		internal ErasureTargetsCollection(Task owner)
+		{
+			this.list = new List<ErasureTarget>();
+			this.owner = owner;
+		}
+
+		internal ErasureTargetsCollection(Task owner, int capacity)
+			: this(owner)
+		{
+			list.Capacity = capacity;
+		}
+
+		internal ErasureTargetsCollection(Task owner, IEnumerable<ErasureTarget> targets)
+			: this(owner)
+		{
+			list.AddRange(targets);
+		}
+		#endregion
+
+		#region Serialization Code
+		protected ErasureTargetsCollection(SerializationInfo info, StreamingContext context)
+		{
+			list = (List<ErasureTarget>)info.GetValue("list", typeof(List<ErasureTarget>));
+		}
+
+		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue("list", list);
+		}
+		#endregion
+
+		#region IEnumerable<ErasureTarget> Members
+		public IEnumerator<ErasureTarget> GetEnumerator()
+		{
+			return list.GetEnumerator();
+		}
+		#endregion
+
+		#region IEnumerable Members
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return list.GetEnumerator();
+		}
+		#endregion
+
+		#region ICollection<ErasureTarget> Members
+		public void Add(ErasureTarget item)
+		{
+			item.Task = owner;
+			list.Add(item);
+		}
+
+		public void Clear()
+		{
+			list.Clear();
+		}
+
+		public bool Contains(ErasureTarget item)
+		{
+			return list.Contains(item);
+		}
+
+		public void CopyTo(ErasureTarget[] array, int arrayIndex)
+		{
+			list.CopyTo(array, arrayIndex);
+		}
+
+		public int Count
+		{
+			get
+			{
+				return list.Count;
+			}
+		}
+
+		public bool IsReadOnly
+		{
+			get
+			{
+				return IsReadOnly;
+			}
+		}
+
+		public bool Remove(ErasureTarget item)
+		{
+			return list.Remove(item);
+		}
+		#endregion
+
+		#region IList<ErasureTarget> Members
+		public int IndexOf(ErasureTarget item)
+		{
+			return list.IndexOf(item);
+		}
+
+		public void Insert(int index, ErasureTarget item)
+		{
+			item.Task = owner;
+			list.Insert(index, item);
+		}
+
+		public void RemoveAt(int index)
+		{
+			list.RemoveAt(index);
+		}
+
+		public ErasureTarget this[int index]
+		{
+			get
+			{
+				return list[index];
+			}
+			set
+			{
+				list[index] = value;
+			}
+		}
+		#endregion
+
+		/// <summary>
+		/// The ownere of this list of targets.
+		/// </summary>
+		public Task Owner
+		{
+			get
+			{
+				return owner;
+			}
+			internal set
+			{
+				owner = value;
+				foreach (ErasureTarget target in list)
+					target.Task = owner;
+			}
+		}
+
+		/// <summary>
+		/// The owner of this list of targets. All targets added to this list
+		/// will have the owner set to this object.
+		/// </summary>
+		private Task owner;
+
+		/// <summary>
+		/// The list bring the data store behind this object.
+		/// </summary>
+		List<ErasureTarget> list;
+	}
+
+	/// <summary>
 	/// A base event class for all event arguments involving a task.
 	/// </summary>
 	public class TaskEventArgs : EventArgs
@@ -1000,7 +1000,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The current erasure target - the current item being erased.
 		/// </summary>
-		public Task.ErasureTarget CurrentTarget
+		public ErasureTarget CurrentTarget
 		{
 			get { return currentTarget; }
 			internal set { currentTarget = value; }
@@ -1068,7 +1068,7 @@ namespace Eraser.Manager
 		private float overallProgress;
 		private TimeSpan timeLeft = new TimeSpan(0, 0, -1);
 
-		private Task.ErasureTarget currentTarget;
+		private ErasureTarget currentTarget;
 		private int currentTargetIndex;
 		private int currentTargetTotalPasses;
 

@@ -73,8 +73,8 @@ namespace Eraser
 			//The item is checked if the plugin was given the green light to load
 			item.Checked = instance.Plugin != null ||
 				(Manager.ManagerLibrary.Instance.Settings.PluginApprovals.ContainsKey(
-					instance.AssemblyInfo.GUID) && Manager.ManagerLibrary.Instance.
-					Settings.PluginApprovals[instance.AssemblyInfo.GUID]
+					instance.AssemblyInfo.Guid) && Manager.ManagerLibrary.Instance.
+					Settings.PluginApprovals[instance.AssemblyInfo.Guid]
 				);
 
 			//Visually display the other metadata associated with the assembly
@@ -362,7 +362,7 @@ namespace Eraser
 			foreach (ListViewItem item in pluginsManager.Items)
 			{
 				PluginInstance plugin = (PluginInstance)item.Tag;
-				Guid guid = plugin.AssemblyInfo.GUID;
+				Guid guid = plugin.AssemblyInfo.Guid;
 				if (!pluginApprovals.ContainsKey(guid))
 				{
 					pluginApprovals.Add(guid, item.Checked);

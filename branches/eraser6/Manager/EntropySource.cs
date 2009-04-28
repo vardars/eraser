@@ -144,19 +144,19 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Retrieves the instance of the EntropySource with the given GUID.
 		/// </summary>
-		/// <param name="guid">The GUID of the EntropySource.</param>
+		/// <param name="value">The GUID of the EntropySource.</param>
 		/// <returns>The EntropySource instance.</returns>
-		public static EntropySource GetInstance(Guid guid)
+		public static EntropySource GetInstance(Guid value)
 		{
 			try
 			{
 				lock (ManagerLibrary.Instance.EntropySourceManager.sources)
-					return ManagerLibrary.Instance.EntropySourceManager.sources[guid];
+					return ManagerLibrary.Instance.EntropySourceManager.sources[value];
 			}
 			catch (KeyNotFoundException)
 			{
 				throw new FatalException(S._("EntropySource GUID not found: {0}",
-					guid.ToString()));
+					value.ToString()));
 			}
 		}
 
@@ -196,8 +196,8 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The delegate prototype of Entropy Source Registered event 
 		/// </summary>
-		/// <param name="guid"></param>
-		public delegate void OnEntropySourceActivatedEventHandler(Guid guid);
+		/// <param name="value"></param>
+		public delegate void OnEntropySourceActivatedEventHandler(Guid value);
 
 		/// <summary>
 		/// Global static instance of the EntropySourceRegisteredFunction,

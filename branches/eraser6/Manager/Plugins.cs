@@ -194,7 +194,7 @@ namespace Eraser.Manager.Plugin
 			if ((reflectAssembly.GetName().GetPublicKey().Length == 0 ||
 				!MsCorEEAPI.VerifyStrongName(filePath) ||
 				instance.AssemblyAuthenticode == null) &&
-				!approvals.ContainsKey(instance.AssemblyInfo.GUID))
+				!approvals.ContainsKey(instance.AssemblyInfo.Guid))
 			{
 				return;
 			}
@@ -227,8 +227,8 @@ namespace Eraser.Manager.Plugin
 			}
 
 			//See if the user disabled this plugin (users cannot disable Core plugins)
-			if (approvals.ContainsKey(instance.AssemblyInfo.GUID) &&
-				!approvals[instance.AssemblyInfo.GUID] && !instance.IsCore)
+			if (approvals.ContainsKey(instance.AssemblyInfo.Guid) &&
+				!approvals[instance.AssemblyInfo.Guid] && !instance.IsCore)
 			{
 				return;
 			}
@@ -303,7 +303,7 @@ namespace Eraser.Manager.Plugin
 				IList<CustomAttributeData> attributes = CustomAttributeData.GetCustomAttributes(assembly);
 				foreach (CustomAttributeData attr in attributes)
 					if (attr.Constructor.DeclaringType == typeof(GuidAttribute))
-						assemblyInfo.GUID = new Guid((string)attr.ConstructorArguments[0].Value);
+						assemblyInfo.Guid = new Guid((string)attr.ConstructorArguments[0].Value);
 					else if (attr.Constructor.DeclaringType == typeof(AssemblyCompanyAttribute))
 						assemblyInfo.Author = (string)attr.ConstructorArguments[0].Value;
 			}
@@ -382,7 +382,7 @@ namespace Eraser.Manager.Plugin
 		/// <summary>
 		/// The GUID of the assembly.
 		/// </summary>
-		public Guid GUID { get; set; }
+		public Guid Guid { get; set; }
 
 		/// <summary>
 		/// The publisher of the assembly.

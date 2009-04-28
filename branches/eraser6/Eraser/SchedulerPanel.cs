@@ -269,7 +269,7 @@ namespace Eraser
 			if (EraserSettings.Get().ClearCompletedTasks &&
 				!(e.Task.Schedule is RecurringSchedule) && highestLevel < LogLevel.Warning)
 			{
-				Program.eraserClient.DeleteTask(e.Task.ID);
+				Program.eraserClient.DeleteTask(e.Task.Id);
 			}
 
 			//Otherwise update the UI
@@ -477,7 +477,7 @@ namespace Eraser
 			{
 				Task task = (Task)item.Tag;
 				if (!task.Executing)
-					Program.eraserClient.DeleteTask(task.ID);
+					Program.eraserClient.DeleteTask(task.Id);
 			}
 		}
 

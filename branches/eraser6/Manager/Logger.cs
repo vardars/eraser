@@ -94,7 +94,7 @@ namespace Eraser.Manager
 		/// The prototype of a registrant of the Log event.
 		/// </summary>
 		/// <param name="e"></param>
-		public delegate void LogEventFunction(LogEntry e);
+		public delegate void LogEventFunction(LogEntry entry);
 
 		/// <summary>
 		/// All the registered event handlers for the log event of this task.

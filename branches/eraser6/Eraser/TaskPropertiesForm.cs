@@ -131,7 +131,7 @@ namespace Eraser
 			name.Text = task.Name;
 
 			//The data
-			foreach (Task.ErasureTarget target in task.Targets)
+			foreach (ErasureTarget target in task.Targets)
 			{
 				ListViewItem item = data.Items.Add(target.UIText);
 				item.SubItems.Add(target.MethodDefined ? target.Method.Name : S._("(default)"));
@@ -202,7 +202,7 @@ namespace Eraser
 			{
 				if (form.ShowDialog() == DialogResult.OK)
 				{
-					Task.ErasureTarget target = form.Target;
+					ErasureTarget target = form.Target;
 					ListViewItem item = data.Items.Add(target.UIText);
 					item.SubItems.Add(target.MethodDefined ? target.Method.Name : S._("(default)"));
 					item.Tag = target;
@@ -227,7 +227,7 @@ namespace Eraser
 
 				if (form.ShowDialog() == DialogResult.OK)
 				{
-					Task.ErasureTarget target = form.Target;
+					ErasureTarget target = form.Target;
 					task.Targets[item.Index] = target;
 					item.Text = target.UIText;
 					item.SubItems[1].Text = target.MethodDefined ? target.Method.Name : S._("(default)");
@@ -262,7 +262,7 @@ namespace Eraser
 
 			foreach (ListViewItem obj in data.SelectedItems)
 			{
-				task.Targets.Remove((Task.ErasureTarget)obj.Tag);
+				task.Targets.Remove((ErasureTarget)obj.Tag);
 				data.Items.Remove(obj);
 			}
 		}

@@ -793,7 +793,7 @@ namespace Eraser
 				}
 				else if (IsParam(param, "recycled", "r"))
 				{
-					targets.Add(new Task.RecycleBin());
+					targets.Add(new RecycleBinTarget());
 				}
 				else if (IsParam(param, "unused", "u"))
 				{
@@ -802,7 +802,7 @@ namespace Eraser
 							"to erase.");
 
 					//Create the UnusedSpace target for inclusion into the task.
-					Task.UnusedSpace target = new Task.UnusedSpace();
+					UnusedSpaceTarget target = new UnusedSpaceTarget();
 
 					//Determine if cluster tips should be erased.
 					target.EraseClusterTips = false;
@@ -824,7 +824,7 @@ namespace Eraser
 							"directory to erase.");
 
 					//Create the base target
-					Task.Folder target = new Task.Folder();
+					FolderTarget target = new FolderTarget();
 
 					//Parse the subparameters.
 					List<KeyValuePair<string, string>> subParams =
@@ -857,7 +857,7 @@ namespace Eraser
 				else
 				{
 					//It's just a file!
-					Task.File target = new Task.File();
+					FileTarget target = new FileTarget();
 					target.Path = Path.GetFullPath(param);
 					targets.Add(target);
 				}
@@ -890,17 +890,17 @@ namespace Eraser
 			/// <summary>
 			/// The list of targets which was specified on the command line.
 			/// </summary>
-			public List<Task.ErasureTarget> Targets
+			public List<ErasureTarget> Targets
 			{
 				get
 				{
-					return new List<Task.ErasureTarget>(targets.ToArray());
+					return new List<ErasureTarget>(targets.ToArray());
 				}
 			}
 
 			private Guid erasureMethod;
 			private Schedule schedule = Schedule.RunNow;
-			private List<Task.ErasureTarget> targets = new List<Task.ErasureTarget>();
+			private List<ErasureTarget> targets = new List<ErasureTarget>();
 		}
 		#endregion
 
@@ -1085,7 +1085,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			ErasureMethod method = taskArgs.ErasureMethod == Guid.Empty ? 
 				ErasureMethodManager.Default :
 				ErasureMethodManager.GetInstance(taskArgs.ErasureMethod);
-			foreach (Task.ErasureTarget target in taskArgs.Targets)
+			foreach (ErasureTarget target in taskArgs.Targets)
 			{
 				target.Method = method;
 				task.Targets.Add(target);

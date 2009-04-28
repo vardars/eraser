@@ -92,7 +92,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Global instance of the Settings manager.
 		/// </summary>
-		public SettingsManager SettingsManager;
+		public SettingsManager SettingsManager { get; set; }
 
 		/// <summary>
 		/// Gets the settings object representing the settings for the Eraser

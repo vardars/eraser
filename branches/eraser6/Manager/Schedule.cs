@@ -171,7 +171,7 @@ namespace Eraser.Manager
 		#endregion
 
 		#region Object serialization
-		public RecurringSchedule(SerializationInfo info, StreamingContext context)
+		protected RecurringSchedule(SerializationInfo info, StreamingContext context)
 		{
 			type = (ScheduleUnit)info.GetValue("Type", typeof(ScheduleUnit));
 			frequency = (int)info.GetValue("Frequency", typeof(int));
