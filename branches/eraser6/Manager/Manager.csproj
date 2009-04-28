@@ -50,6 +50,7 @@
     <Compile Include="DirectExecutor.cs" />
     <Compile Include="EntropySource.cs" />
     <Compile Include="Executor.cs" />
+    <Compile Include="FileSystem.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Manager.cs" />

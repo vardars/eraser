@@ -588,13 +588,9 @@ namespace Eraser.Manager
 
 			//Make a folder to dump our temporary files in
 			DirectoryInfo info = new DirectoryInfo(target.Drive);
-			{
-				string directoryName;
-				do
-					directoryName = GenerateRandomFileName(18);
-				while (Directory.Exists(info.FullName + Path.DirectorySeparatorChar + directoryName));
-				info = info.CreateSubdirectory(directoryName);
-			}
+			VolumeInfo volInfo = VolumeInfo.FromMountpoint(target.Drive);
+			FileSystem fsManager = FileSystem.Get(volInfo);
+			info = info.CreateSubdirectory(FileSystem.GenerateRandomFileName(info, 18));
 
 			try
 			{
@@ -604,7 +600,6 @@ namespace Eraser.Manager
 					Eraser.Util.File.SetCompression(info.FullName, false);
 
 				//Determine the total amount of data that needs to be written.
-				VolumeInfo volInfo = VolumeInfo.FromMountpoint(target.Drive);
 				long totalSize = method.CalculateEraseDataSize(null, volInfo.TotalFreeSpace);
 
 				//Continue creating files while there is free space.
@@ -613,11 +608,7 @@ namespace Eraser.Manager
 				while (volInfo.AvailableFreeSpace > 0)
 				{
 					//Generate a non-existant file name
-					string currFile;
-					do
-						currFile = info.FullName + Path.DirectorySeparatorChar +
-							GenerateRandomFileName(18);
-					while (System.IO.File.Exists(currFile));
+					string currFile = FileSystem.GenerateRandomFileName(info, 18);
 
 					//Create the stream
 					using (FileStream stream = new FileStream(currFile, FileMode.CreateNew,
@@ -672,23 +663,27 @@ namespace Eraser.Manager
 				//Erase old resident file system table files
 				progress.Event.CurrentItemName = S._("Old resident file system table files");
 				task.OnProgressChanged(progress.Event);
-				EraseOldFilesystemResidentFiles(info, method, null);
+				fsManager.EraseOldFilesystemResidentFiles(volInfo, method, null);
 			}
 			finally
 			{
 				//Remove the folder holding all our temporary files.
 				progress.Event.CurrentItemName = S._("Removing temporary files");
 				task.OnProgressChanged(progress.Event);
-				RemoveFolder(info);
+				fsManager.DeleteFolder(info);
 			}
 
 			//Then clean the old file system entries
 			progress.Event.CurrentItemName = S._("Old file system entries");
 			ProgressManager fsEntriesProgress = new ProgressManager();
 			fsEntriesProgress.Start();
-			EraseOldFilesystemEntries(info.Parent,
+			fsManager.EraseDirectoryStructures(volInfo,
 				delegate(int currentFile, int totalFiles)
 				{
+					lock (currentTask)
+						if (currentTask.Cancelled)
+							throw new FatalException(S._("The task was cancelled."));
+
 					//Compute the progress
 					fsEntriesProgress.Total = totalFiles;
 					fsEntriesProgress.Completed = currentFile;
@@ -868,137 +863,6 @@ namespace Eraser.Manager
 
 		#region Filesystem Object erasure functions
 		/// <summary>
-		/// The prototype of callbacks handling the file system table erase progress
-		/// </summary>
-		/// <param name="currentFile">The current file being erased.</param>
-		/// <param name="totalFiles">The estimated number of files that must be erased.</param>
-		private delegate void FilesystemEntriesEraseProgress(int currentFile, int totalFiles);
-		
-		/// <summary>
-		/// Erases old file system table-resident files. This creates small one-byte
-		/// files until disk is full. This will erase unused space which was used for
-		/// files resident in the file system table.
-		/// </summary>
-		/// <param name="info">The directory information structure containing
-		/// the path to store the temporary one-byte files. The file system table
-		/// of that drive will be erased.</param>
-		/// <param name="method">The method used to erase the files.</param>
-		private void EraseOldFilesystemResidentFiles(DirectoryInfo info, ErasureMethod method,
-			FilesystemEntriesEraseProgress callback)
-		{
-			VolumeInfo volInfo = VolumeInfo.FromMountpoint(info.FullName);
-			if (volInfo.VolumeFormat == "NTFS")
-			{
-				try
-				{
-					//Squeeze one-byte files until the volume or the MFT is full.
-					long oldMFTSize = NtfsAPI.GetMftValidSize(volInfo);
-					for ( ; ; )
-					{
-						//Open this stream
-						using (FileStream strm = new FileStream(Path.Combine(
-							info.FullName, GenerateRandomFileName(18)),
-							FileMode.CreateNew, FileAccess.Write, FileShare.None, 8,
-							FileOptions.WriteThrough))
-						{
-							//Stretch the file size to use up some of the resident space.
-							strm.SetLength(1);
-
-							//Then run the erase task
-							method.Erase(strm, long.MaxValue,
-								PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
-								null);
-						}
-
-						//We can stop when the MFT has grown.
-						if (NtfsAPI.GetMftValidSize(volInfo) > oldMFTSize)
-							break;
-					}
-				}
-				catch (IOException)
-				{
-					//OK, enough squeezing.
-				}
-			}
-		}
-
-		/// <summary>
-		/// Erases the unused space in the file system table by creating files, until
-		/// the table grows.
-		/// 
-		/// This will overwrite unused portions of the table which were previously
-		/// used to store file entries.
-		/// </summary>
-		/// <param name="info">The directory information structure containing the path
-		/// to store the temporary files.</param>
-		/// <param name="callback">The callback function to handle the progress of the
-		/// file system entry erasure.</param>
-		private void EraseOldFilesystemEntries(DirectoryInfo info, FilesystemEntriesEraseProgress callback)
-		{
-			VolumeInfo volInfo = VolumeInfo.FromMountpoint(info.FullName);
-			if (volInfo.VolumeFormat == "NTFS")
-			{
-				//Create a directory to hold all the temporary files
-				DirectoryInfo tempDir = info.CreateSubdirectory(GenerateRandomFileName(32));
-
-				try
-				{
-					//Get the size of the MFT
-					long mftSize = NtfsAPI.GetMftValidSize(volInfo);
-					long mftRecordSegmentSize = NtfsAPI.GetMftRecordSegmentSize(volInfo);
-					int pollingInterval = (int)Math.Max(1, (mftSize / volInfo.ClusterSize / 20));
-					int totalFiles = (int)Math.Max(1L, mftSize / mftRecordSegmentSize) *
-						(FilenameErasePasses + 1);
-					int filesCreated = 0;
-
-					while (true)
-					{
-						++filesCreated;
-						using (FileStream strm = new FileStream(Path.Combine(
-							tempDir.FullName, GenerateRandomFileName(220)),
-							FileMode.CreateNew, FileAccess.Write))
-						{
-						}
-
-						if (filesCreated % pollingInterval == 0)
-						{
-							if (callback != null)
-								callback(filesCreated, totalFiles);
-
-							lock (currentTask)
-								if (currentTask.Cancelled)
-									throw new FatalException(S._("The task was cancelled."));
-
-							//Check if the MFT has grown.
-							if (mftSize < NtfsAPI.GetMftValidSize(volInfo))
-								break;
-						}
-					}
-				}
-				catch (IOException)
-				{
-				}
-				finally
-				{
-					//Clear up all the temporary files
-					FileInfo[] files = tempDir.GetFiles("*", SearchOption.AllDirectories);
-					int totalFiles = files.Length * (FilenameErasePasses + 1);
-					for (int i = 0; i < files.Length; ++i)
-					{
-						if (callback != null && i % 50 == 0)
-							callback(files.Length + i * FilenameErasePasses, totalFiles);
-						RemoveFile(files[i]);
-					}
-					
-					RemoveFolder(tempDir);
-				}
-			}
-			else
-				throw new NotImplementedException(S._("Could not erase old file system " +
-					"entries: Unsupported File system")); //Eraser.cpp@2348
-		}
-
-		/// <summary>
 		/// Erases a file or folder on the volume.
 		/// </summary>
 		/// <param name="task">The task currently being processed.</param>
@@ -1027,8 +891,10 @@ namespace Eraser.Manager
 				progress.Event.CurrentItemProgress = 0;
 				progress.Event.CurrentTargetTotalPasses = method.Passes;
 				task.OnProgressChanged(progress.Event);
-
 				
+				//Get the filesystem provider to handle the secure file erasures
+				FileSystem fsManager = FileSystem.Get(VolumeInfo.FromMountpoint(paths[i]));
+
 				//Remove the read-only flag, if it is set.
 				StreamInfo info = new StreamInfo(paths[i]);
 				bool isReadOnly = false;
@@ -1094,7 +960,7 @@ namespace Eraser.Manager
 					//Remove the file.
 					FileInfo fileInfo = info.File;
 					if (fileInfo != null)
-						RemoveFile(fileInfo);
+						fsManager.DeleteFile(fileInfo);
 				}
 				catch (UnauthorizedAccessException)
 				{
@@ -1117,14 +983,23 @@ namespace Eraser.Manager
 			//If the user requested a folder removal, do it.
 			if (target is Task.Folder)
 			{
+				progress.Event.CurrentItemName = S._("Removing folders...");
+				task.OnProgressChanged(progress.Event);
+
 				Task.Folder fldr = (Task.Folder)target;
 				if (fldr.DeleteIfEmpty)
-					RemoveFolder(new DirectoryInfo(fldr.Path));
+				{
+					FileSystem fsManager = FileSystem.Get(VolumeInfo.FromMountpoint(fldr.Path));
+					fsManager.DeleteFolder(new DirectoryInfo(fldr.Path));
+				}
 			}
 
 			//If the user was erasing the recycle bin, clear the bin.
 			if (target is Task.RecycleBin)
 			{
+				progress.Event.CurrentItemName = S._("Emptying recycle bin...");
+				task.OnProgressChanged(progress.Event);
+
 				ShellAPI.SHEmptyRecycleBin(IntPtr.Zero, null,
 					ShellAPI.SHEmptyRecycleBinFlags.SHERB_NOCONFIRMATION |
 					ShellAPI.SHEmptyRecycleBinFlags.SHERB_NOPROGRESSUI |
@@ -1146,209 +1021,6 @@ namespace Eraser.Manager
 			return (info.Length + (clusterSize - 1)) & ~(clusterSize - 1);
 		}
 		#endregion
-
-		/// <summary>
-		/// Securely removes files.
-		/// </summary>
-		/// <param name="info">The FileInfo object representing the file.</param>
-		private static void RemoveFile(FileInfo info)
-		{
-			//Set the date of the file to be invalid to prevent forensic
-			//detection
-			info.CreationTime = info.LastWriteTime = info.LastAccessTime =
-				new DateTime(1980, 1, 1, 0, 0, 0);
-			info.Attributes = FileAttributes.Normal;
-			info.Attributes = FileAttributes.NotContentIndexed;
-
-			//Rename the file a few times to erase the entry from the file system
-			//table.
-			string newPath = info.DirectoryName + Path.DirectorySeparatorChar +
-				GenerateRandomFileName(info.Name.Length);
-			for (int i = 0, tries = 0; i < FilenameErasePasses; ++tries)
-			{
-				//Try to rename the file. If it fails, it is probably due to another
-				//process locking the file. Defer, then rename again.
-				try
-				{
-					info.MoveTo(newPath);
-					++i;
-				}
-				catch (IOException)
-				{
-					Thread.Sleep(100);
-
-					//If after FilenameEraseTries the file is still locked, some program is
-					//definitely using the file; throw an exception.
-					if (tries > FilenameEraseTries)
-						throw new IOException(S._("The file {0} is currently in use and " +
-							"cannot be removed.", info.FullName));
-				}
-			}
-
-			//If the user wants plausible deniability, find a random file on the same
-			//volume and write it over.
-			if (Manager.ManagerLibrary.Instance.Settings.PlausibleDeniability)
-			{
-				//Get the template file to copy
-				FileInfo shadowFileInfo;
-				{
-					string shadowFile = null;
-					List<string> entries = ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles.GetRange(
-						0, ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles.Count);
-					PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
-					do
-					{
-						if (entries.Count == 0)
-							throw new FatalException(S._("Plausible deniability was selected, " +
-								"but no decoy files were found. The current file has been only " +
-								"replaced with random data."));
-
-						int index = prng.Next(entries.Count - 1);
-						if ((System.IO.File.GetAttributes(entries[index]) & FileAttributes.Directory) != 0)
-						{
-							DirectoryInfo dir = new DirectoryInfo(entries[index]);
-							FileInfo[] files = dir.GetFiles("*", SearchOption.AllDirectories);
-							foreach (FileInfo f in files)
-								entries.Add(f.FullName);
-						}
-						else
-							shadowFile = entries[index];
-
-						entries.RemoveAt(index);
-					}
-					while (shadowFile == null || shadowFile.Length == 0);
-					shadowFileInfo = new FileInfo(shadowFile);
-				}
-
-				//Dump the copy (the first 4MB, or less, depending on the file size and available
-				//user space)
-				long amountToCopy = Math.Min(4 * 1024 * 1024, shadowFileInfo.Length);
-				using (FileStream shadowFileStream = shadowFileInfo.OpenRead())
-				using (FileStream destFileStream = info.OpenWrite())
-				{
-					while (destFileStream.Position < amountToCopy)
-					{
-						byte[] buf = new byte[524288];
-						int bytesRead = shadowFileStream.Read(buf, 0, buf.Length);
-
-						//Stop bothering if the input stream is at the end
-						if (bytesRead == 0)
-							break;
-
-						//Dump the read contents onto the file to be deleted
-						destFileStream.Write(buf, 0,
-							(int)Math.Min(bytesRead, amountToCopy - destFileStream.Position));
-					}
-				}
-			}
-
-			//Then delete the file.
-			for (int i = 0; i < FilenameEraseTries; ++i)
-				try
-				{
-					info.Delete();
-					break;
-				}
-				catch (IOException)
-				{
-					if (i > FilenameEraseTries)
-						throw new IOException(S._("The file {0} is currently in use and " +
-							"cannot be removed.", info.FullName));
-					Thread.Sleep(100);
-				}
-		}
-
-		/// <summary>
-		/// Removes the folder and all its contents.
-		/// </summary>
-		/// <param name="info">The folder to remove.</param>
-		private static void RemoveFolder(DirectoryInfo info)
-		{
-			foreach (DirectoryInfo dir in info.GetDirectories())
-				RemoveFolder(dir);
-			foreach (FileInfo file in info.GetFiles())
-				RemoveFile(file);
-
-			//Then clean up this folder.
-			for (int i = 0; i < FilenameErasePasses; ++i)
-			{
-				//Rename the folder.
-				string newPath = info.Parent.FullName + Path.DirectorySeparatorChar +
-					GenerateRandomFileName(info.Name.Length);
-
-				//Try to rename the file. If it fails, it is probably due to another
-				//process locking the file. Defer, then rename again.
-				try
-				{
-					info.MoveTo(newPath);
-				}
-				catch (IOException)
-				{
-					Thread.Sleep(100);
-					--i;
-				}
-			}
-
-			//Remove the folder
-			info.Delete(true);
-		}
-
-		/// <summary>
-		/// Generates a random file name with the given length.
-		/// </summary>
-		/// <param name="length">The length of the file name to generate.</param>
-		/// <returns>A random file name.</returns>
-		private static string GenerateRandomFileName(int length)
-		{
-			//Get a random file name
-			PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
-			byte[] newFileNameAry = new byte[length];
-			prng.NextBytes(newFileNameAry);
-
-			//Validate the name
-			string validFileNameChars = "0123456789abcdefghijklmnopqrstuvwxyz" +
-				"ABCDEFGHIJKLMNOPQRSTUVWXYZ _+=-()[]{}',`~!";
-			for (int j = 0, k = newFileNameAry.Length; j < k; ++j)
-				newFileNameAry[j] = (byte)validFileNameChars[
-					(int)newFileNameAry[j] % validFileNameChars.Length];
-
-			return new System.Text.UTF8Encoding().GetString(newFileNameAry);
-		}
-
-		/// <summary>
-		/// Gets a random file from within the provided directory.
-		/// </summary>
-		/// <param name="info">The directory to get a random file name from.</param>
-		/// <returns>A string containing the full path to the file.</returns>
-		private static string GetRandomFileName(DirectoryInfo info)
-		{
-			//First retrieve the list of files and folders in the provided directory.
-			FileSystemInfo[] entries = null;
-			try
-			{
-				entries = info.GetFileSystemInfos();
-			}
-			catch (Exception)
-			{
-				return string.Empty;
-			}
-			if (entries.Length == 0)
-				return string.Empty;
-
-			//Find a random entry.
-			PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
-			string result = string.Empty;
-			while (result.Length == 0)
-			{
-				int index = prng.Next(entries.Length - 1);
-				if (entries[index] is DirectoryInfo)
-					result = GetRandomFileName((DirectoryInfo)entries[index]);
-				else
-					result = ((FileInfo)entries[index]).FullName;
-			}
-
-			return result;
-		}
 
 		/// <summary>
 		/// The thread object.

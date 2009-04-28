@@ -197,17 +197,5 @@ namespace Eraser.Manager
 			if (TaskProcessed != null)
 				TaskProcessed(task);
 		}
-
-		/// <summary>
-		/// The number of times file names are renamed to erase the file name from
-		/// the file system table.
-		/// </summary>
-		protected const int FilenameErasePasses = 7;
-
-		/// <summary>
-		/// The maximum number of times Eraser tries to erase a file/folder before
-		/// it gives up.
-		/// </summary>
-		protected const int FilenameEraseTries = 50;
 	}
 }
