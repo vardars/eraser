@@ -892,10 +892,10 @@ namespace Eraser.Manager
 				task.OnProgressChanged(progress.Event);
 				
 				//Get the filesystem provider to handle the secure file erasures
-				FileSystem fsManager = FileSystem.Get(VolumeInfo.FromMountpoint(paths[i]));
+				StreamInfo info = new StreamInfo(paths[i]);
+				FileSystem fsManager = FileSystem.Get(VolumeInfo.FromMountpoint(info.DirectoryName));
 
 				//Remove the read-only flag, if it is set.
-				StreamInfo info = new StreamInfo(paths[i]);
 				bool isReadOnly = false;
 				if (isReadOnly = info.IsReadOnly)
 					info.IsReadOnly = false;
