@@ -44,8 +44,8 @@ namespace Eraser
 			Text = string.Format("{0} - {1}", Text, task.UIText);
 
 			//Add all the existing log messages
+			this.log.BeginUpdate();
 			Dictionary<DateTime, List<LogEntry>> log = task.Log.Entries;
-			Dictionary<DateTime, List<LogEntry>>.Enumerator iter = log.GetEnumerator();
 			foreach (DateTime sessionTime in log.Keys)
 			{
 				this.log.Groups.Add(new ListViewGroup(S._("Session: {0}", sessionTime.ToString(DATEPATTERN))));
@@ -55,6 +55,7 @@ namespace Eraser
 
 			//Register our event handler to get live log messages
 			task.Log.OnLogged += new Logger.LogEventFunction(task_Logged);
+			this.log.EndUpdate();
 		}
 
 		private void LogForm_FormClosed(object sender, FormClosedEventArgs e)
