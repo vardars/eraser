@@ -147,8 +147,8 @@
   <data name="Processing:" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="Could not load task list. All task entries have been lost." xml:space="preserve">
-    <value>Kan geen taak lijst vinden. Alle taken zijn verdwenen.</value>
+  <data name="Could not load task list. All task entries have been lost. The error returned was: {0}" xml:space="preserve">
+    <value>(Untranslated)</value>
   </data>
   <data name="Another instance of Eraser is already running but it is running with higher privileges than this instance of Eraser.\n\nEraser will now exit." xml:space="preserve">
     <value>(Untranslated)</value>
@@ -328,6 +328,9 @@
     <value>(Untranslated)</value>
   </data>
   <data name="The installer exited with an error code {0}" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Unknown mirror selected." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
 </root>
