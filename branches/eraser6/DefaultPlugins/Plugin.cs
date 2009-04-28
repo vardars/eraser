@@ -30,7 +30,7 @@ using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
-	public class DefaultPlugin : IPlugin
+	public sealed class DefaultPlugin : IPlugin
 	{
 		public void Initialize(Host host)
 		{
@@ -53,7 +53,7 @@ namespace Eraser.DefaultPlugins
 			EraseCustom.RegisterAll();
 
 			PrngManager.Register(new ISAAC());
-			PrngManager.Register(new RNGCrypto());
+			PrngManager.Register(new RngCrypto());
 
 			//Done last
 			try
@@ -67,6 +67,7 @@ namespace Eraser.DefaultPlugins
 
 		public void Dispose()
 		{
+			GC.SuppressFinalize(this);
 		}
 
 		public string Name
@@ -93,7 +94,7 @@ namespace Eraser.DefaultPlugins
 		/// <summary>
 		/// The dictionary holding settings for this plugin.
 		/// </summary>
-		internal static DefaultPluginSettings Settings = null;
+		internal static DefaultPluginSettings Settings;
 	}
 
 	/// <summary>

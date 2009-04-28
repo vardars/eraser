@@ -86,9 +86,9 @@ namespace Eraser.DefaultPlugins
 			{
 				//Remove the old definition of the erasure method
 				CustomErasureMethod method = editorForm.Method;
-				removeCustomMethods.Add(method.GUID);
+				removeCustomMethods.Add(method.Guid);
 				customMethod.Items.Remove(item);
-				customMethods.Remove(method.GUID);
+				customMethods.Remove(method.Guid);
 
 				//Add the new definition
 				method = editorForm.Method;
@@ -103,7 +103,7 @@ namespace Eraser.DefaultPlugins
 			if (form.ShowDialog() == DialogResult.OK)
 			{
 				CustomErasureMethod method = form.Method;
-				customMethods.Add(method.GUID, method);
+				customMethods.Add(method.Guid, method);
 				addCustomMethods.Add(method);
 				AddMethod(method);
 			}
@@ -122,7 +122,7 @@ namespace Eraser.DefaultPlugins
 				if (addCustomMethods.IndexOf(method) >= 0)
 					addCustomMethods.Remove(method);
 				else
-					removeCustomMethods.Add(method.GUID);
+					removeCustomMethods.Add(method.Guid);
 				customMethod.Items.Remove(item);
 			}
 		}

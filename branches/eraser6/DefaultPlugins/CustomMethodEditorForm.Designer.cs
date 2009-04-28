@@ -173,7 +173,7 @@ namespace Eraser.DefaultPlugins
 			resources.ApplyResources(this.passEditor, "passEditor");
 			this.passEditor.Name = "passEditor";
 			this.passEditor.PassData = null;
-			this.passEditor.PassType = Eraser.DefaultPlugins.CustomMethodPassEditor.PassTypes.TEXT;
+			this.passEditor.PassType = Eraser.DefaultPlugins.CustomMethodPassEditorPassType.Text;
 			// 
 			// CustomMethodEditorForm
 			// 

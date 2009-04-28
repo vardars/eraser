@@ -18,36 +18,26 @@ namespace Eraser.DefaultPlugins
 		}
 
 		/// <summary>
-		/// The different pass types which this editor can edit.
-		/// </summary>
-		public enum PassTypes
-		{
-			TEXT,
-			HEX,
-			RANDOM
-		}
-
-		/// <summary>
 		/// Gets or sets the type of this pass.
 		/// </summary>
 		[Description("The type of pass being edited")]
 		[Category("Behavior")]
-		public PassTypes PassType
+		public CustomMethodPassEditorPassType PassType
 		{
 			get
 			{
 				if (passTypeText.Checked)
-					return PassTypes.TEXT;
+					return CustomMethodPassEditorPassType.Text;
 				else if (passTypeHex.Checked)
-					return PassTypes.HEX;
-				return PassTypes.RANDOM;
+					return CustomMethodPassEditorPassType.Hex;
+				return CustomMethodPassEditorPassType.Random;
 			}
 			set
 			{
 				switch (value)
 				{
-					case PassTypes.TEXT:
-					case PassTypes.HEX:
+					case CustomMethodPassEditorPassType.Text:
+					case CustomMethodPassEditorPassType.Hex:
 						UpdateEditorSuitably();
 						break;
 					default:
@@ -66,7 +56,7 @@ namespace Eraser.DefaultPlugins
 				//Return the cached string if the pass is a constant-writing pass.
 				switch (PassType)
 				{
-					case PassTypes.RANDOM:
+					case CustomMethodPassEditorPassType.Random:
 						return null;
 					default:
 						return passData;
@@ -177,7 +167,7 @@ namespace Eraser.DefaultPlugins
 					passTxt.Text = GetConstantStr(passData, passTypeHex.Checked);
 				else
 					passTxt.Text = string.Empty;
-				passTxt.Enabled = PassType != PassTypes.RANDOM;
+				passTxt.Enabled = PassType != CustomMethodPassEditorPassType.Random;
 			}
 			catch (DecoderFallbackException)
 			{
@@ -219,5 +209,15 @@ namespace Eraser.DefaultPlugins
 		/// The last-saved pass data.
 		/// </summary>
 		private byte[] passData;
+	}
+
+	/// <summary>
+	/// The different pass types which this editor can edit.
+	/// </summary>
+	public enum CustomMethodPassEditorPassType
+	{
+		Text,
+		Hex,
+		Random
 	}
 }

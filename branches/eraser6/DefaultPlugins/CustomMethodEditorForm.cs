@@ -49,7 +49,7 @@ namespace Eraser.DefaultPlugins
 				if (method == null)
 				{
 					method = new CustomErasureMethod();
-					method.GUID = Guid.NewGuid();
+					method.Guid = Guid.NewGuid();
 				}
 
 				//The method name.
@@ -106,7 +106,7 @@ namespace Eraser.DefaultPlugins
 		private void SavePass(ListViewItem item)
 		{
 			ErasureMethod.Pass pass = (ErasureMethod.Pass)item.Tag;
-			if (passEditor.PassType == CustomMethodPassEditor.PassTypes.RANDOM)
+			if (passEditor.PassType == CustomMethodPassEditorPassType.Random)
 			{
 				pass.Function = ErasureMethod.Pass.WriteRandom;
 				pass.OpaqueValue = null;
@@ -130,8 +130,8 @@ namespace Eraser.DefaultPlugins
 			ErasureMethod.Pass pass = (ErasureMethod.Pass)item.Tag;
 			passEditor.PassData = (byte[])pass.OpaqueValue;
 			passEditor.PassType = pass.Function == EraseCustom.Pass.WriteRandom ?
-				CustomMethodPassEditor.PassTypes.RANDOM :
-				CustomMethodPassEditor.PassTypes.TEXT;
+				CustomMethodPassEditorPassType.Random :
+				CustomMethodPassEditorPassType.Text;
 		}
 
 		/// <summary>
@@ -243,7 +243,6 @@ namespace Eraser.DefaultPlugins
 
 		private void passesLv_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
 		{
-			ErasureMethod.Pass pass = (ErasureMethod.Pass)e.Item.Tag;
 			EnableButtons();
 
 			//Determine if we should load or save the pass information

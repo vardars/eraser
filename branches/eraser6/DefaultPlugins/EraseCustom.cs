@@ -64,7 +64,7 @@ namespace Eraser.DefaultPlugins
 
 		public override Guid Guid
 		{
-			get { return method.GUID; }
+			get { return method.Guid; }
 		}
 
 		protected override bool RandomizePasses
@@ -89,15 +89,14 @@ namespace Eraser.DefaultPlugins
 		public CustomErasureMethod()
 		{
 			Name = string.Empty;
-			GUID = Guid.Empty;
+			Guid = Guid.Empty;
 			RandomizePasses = true;
-			Passes = null;
 		}
 
-		public CustomErasureMethod(SerializationInfo info, StreamingContext context)
+		protected CustomErasureMethod(SerializationInfo info, StreamingContext context)
 		{
 			Name = info.GetString("Name");
-			GUID = (Guid)info.GetValue("GUID", GUID.GetType());
+			Guid = (Guid)info.GetValue("GUID", Guid.GetType());
 			RandomizePasses = info.GetBoolean("RandomizePasses");
 			List<PassData> passes = (List<PassData>)
 				info.GetValue("Passes", typeof(List<PassData>));
@@ -107,16 +106,16 @@ namespace Eraser.DefaultPlugins
 				Passes[i] = passes[i];
 		}
 
-		public string Name;
-		public Guid GUID;
-		public bool RandomizePasses;
-		public ErasureMethod.Pass[] Passes;
+		public string Name { get; set; }
+		public Guid Guid { get; set; }
+		public bool RandomizePasses { get; set; }
+		public ErasureMethod.Pass[] Passes { get; set; }
 
 		#region ISerializable Members
-		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue("Name", Name);
-			info.AddValue("GUID", GUID);
+			info.AddValue("GUID", Guid);
 			info.AddValue("RandomizePasses", RandomizePasses);
 
 			List<PassData> passes = new List<PassData>(Passes.Length);
@@ -138,7 +137,6 @@ namespace Eraser.DefaultPlugins
 				else if (pass.Function == ErasureMethod.Pass.WriteRandom)
 				{
 					Random = true;
-					OpaqueValue = null;
 				}
 				else
 					throw new ArgumentException("The custom erasure method can only comprise " +
