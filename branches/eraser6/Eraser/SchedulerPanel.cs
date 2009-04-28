@@ -42,7 +42,7 @@ namespace Eraser
 			InitializeComponent();
 
 			//Populate the scheduler list-view with the current task list
-			List<Task> tasks = Program.eraserClient.GetTasks();
+			ICollection<Task> tasks = Program.eraserClient.GetTasks();
 			foreach (Task task in tasks)
 				DisplayTask(task);
 
@@ -193,9 +193,6 @@ namespace Eraser
 				return;
 			}
 
-			//Find the list view item
-			ListViewItem item = GetTaskItem(e.Task);
-
 			//Update the progress bar
 			schedulerProgress.Value = (int)(e.OverallProgress * 1000.0);
 		}
@@ -231,7 +228,7 @@ namespace Eraser
 			}
 
 			//Get the exit status of the task.
-			LogLevel highestLevel = LogLevel.INFORMATION;
+			LogLevel highestLevel = LogLevel.Information;
 			List<LogEntry> logs = e.Task.Log.LastSessionEntries;
 			foreach (LogEntry log in logs)
 				if (log.Level > highestLevel)
@@ -246,15 +243,15 @@ namespace Eraser
 
 				switch (highestLevel)
 				{
-					case LogLevel.WARNING:
+					case LogLevel.Warning:
 						message = S._("The task {0} has completed with warnings.", e.Task.UIText);
 						icon = ToolTipIcon.Warning;
 						break;
-					case LogLevel.ERROR:
+					case LogLevel.Error:
 						message = S._("The task {0} has completed with errors.", e.Task.UIText);
 						icon = ToolTipIcon.Error;
 						break;
-					case LogLevel.FATAL:
+					case LogLevel.Fatal:
 						message = S._("The task {0} did not complete.", e.Task.UIText);
 						icon = ToolTipIcon.Error;
 						break;
@@ -270,7 +267,7 @@ namespace Eraser
 
 			//If the user requested us to remove completed one-time tasks, do so.
 			if (EraserSettings.Get().ClearCompletedTasks &&
-				!(e.Task.Schedule is RecurringSchedule) && highestLevel < LogLevel.WARNING)
+				!(e.Task.Schedule is RecurringSchedule) && highestLevel < LogLevel.Warning)
 			{
 				Program.eraserClient.DeleteTask(e.Task.ID);
 			}
@@ -280,13 +277,13 @@ namespace Eraser
 			{
 				switch (highestLevel)
 				{
-					case LogLevel.WARNING:
+					case LogLevel.Warning:
 						item.SubItems[1].Text = S._("Completed with warnings");
 						break;
-					case LogLevel.ERROR:
+					case LogLevel.Error:
 						item.SubItems[1].Text = S._("Completed with errors");
 						break;
-					case LogLevel.FATAL:
+					case LogLevel.Fatal:
 						item.SubItems[1].Text = S._("Not completed");
 						break;
 					default:
@@ -365,7 +362,7 @@ namespace Eraser
 				if (form.ShowDialog() == DialogResult.OK)
 				{
 					Task task = form.Task;
-					Program.eraserClient.AddTask(ref task);
+					Program.eraserClient.AddTask(task);
 				}
 			}
 		}
@@ -504,12 +501,9 @@ namespace Eraser
 		{
 			if (schedulerProgress.Tag == null)
 				return;
-
-			Rectangle rect = GetSubItemRect((int)schedulerProgress.Tag, 2);
-			schedulerProgress.Top = rect.Top;
-			schedulerProgress.Left = rect.Left;
-			schedulerProgress.Width = rect.Width;
-			schedulerProgress.Height = rect.Height;
+			Rectangle rect = scheduler.Items[(int)schedulerProgress.Tag].SubItems[2].Bounds;
+			schedulerProgress.Location = rect.Location;
+			schedulerProgress.Size = rect.Size;
 		}
 
 		private void scheduler_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
@@ -522,31 +516,6 @@ namespace Eraser
 		private void scheduler_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
 		{
 			e.DrawDefault = true;
-		}
-		#endregion
-
-		#region GetSubItemRect
-		[DllImport("User32.dll")]
-		private static extern UIntPtr SendMessage(IntPtr HWND, uint Message,
-			UIntPtr wParam, out Rect lParam);
-
-		private struct Rect
-		{
-			public int left;
-			public int top;
-			public int right;
-			public int bottom;
-		};
-
-		private Rectangle GetSubItemRect(int index, int subItemIndex)
-		{
-			Rect pRect = new Rect();
-			pRect.top = subItemIndex;
-			pRect.left = 0; //LVIR_BOUNDS
-			SendMessage(scheduler.Handle, 0x1000 + 56, (UIntPtr)index, out pRect);
-
-			return new Rectangle(pRect.left, pRect.top, pRect.right - pRect.left,
-				pRect.bottom - pRect.top);
 		}
 		#endregion
 	}
