@@ -29,6 +29,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
 using Microsoft.Win32.SafeHandles;
+using System.Globalization;
 
 namespace Eraser.Util
 {
@@ -561,7 +562,8 @@ namespace Eraser.Util
 					if (i <= 1)
 						return string.Format("{0} {1}", (int)dBytes, units[i]);
 					else
-						return string.Format("{0:0.00} {1}", dBytes, units[i]);
+						return string.Format(CultureInfo.CurrentCulture, "{0:0.00} {1}",
+							dBytes, units[i]);
 				dBytes /= 1024.0;
 			}
 
