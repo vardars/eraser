@@ -96,8 +96,8 @@ namespace Eraser
 			// 
 			// titleLbl
 			// 
-			this.errorProvider.SetIconAlignment(this.titleLbl, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("titleLbl.IconAlignment"))));
-			resources.ApplyResources(this.titleLbl, "titleLbl");
+			this.errorProvider.SetIconAlignment(this.titleLabel, ((System.Windows.Forms.ErrorIconAlignment)(resources.GetObject("titleLbl.IconAlignment"))));
+			resources.ApplyResources(this.titleLabel, "titleLbl");
 			// 
 			// titleIcon
 			// 
@@ -390,7 +390,7 @@ namespace Eraser
 			this.Name = "SettingsPanel";
 			resources.ApplyResources(this, "$this");
 			this.Controls.SetChildIndex(this.saveSettings, 0);
-			this.Controls.SetChildIndex(this.titleLbl, 0);
+			this.Controls.SetChildIndex(this.titleLabel, 0);
 			this.Controls.SetChildIndex(this.titleIcon, 0);
 			this.Controls.SetChildIndex(this.content, 0);
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).EndInit();

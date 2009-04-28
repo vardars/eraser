@@ -35,14 +35,8 @@ namespace Eraser
 {
 	public partial class MainForm : Form
 	{
-		public enum Pages
-		{
-			SCHEDULER = 0,
-			SETTINGS
-		}
-
 		private ToolBar ToolBar = new ToolBar();
-		private BasePanel CurrPage = null;
+		private BasePanel CurrPage;
 		private SchedulerPanel SchedulerPage = new SchedulerPanel();
 		private SettingsPanel SettingsPage = new SettingsPanel();
 
@@ -59,7 +53,7 @@ namespace Eraser
 				new Executor.TaskProcessedEvent(OnTaskProcessed);
 
 			//Check the notification area context menu's minimise to tray item.
-			hideWhenMinimiseToolStripMenuItem.Checked = EraserSettings.Get().HideWhenMinimised;
+			hideWhenMinimisedToolStripMenuItem.Checked = EraserSettings.Get().HideWhenMinimised;
 
 			//Create the toolbar control
 			ToolBar.Name = "toolBar";
@@ -74,7 +68,7 @@ namespace Eraser
 			tbSchedule.Menu = toolbarScheduleMenu;
 			tbSchedule.ToolbarItemClicked += delegate(object sender, EventArgs args)
 			{
-				ChangePage(Pages.SCHEDULER);
+				ChangePage(MainFormPage.Scheduler);
 			};
 			ToolBar.Items.Add(tbSchedule);
 
@@ -83,7 +77,7 @@ namespace Eraser
 			tbSettings.Text = S._("Settings");
 			tbSettings.ToolbarItemClicked += delegate(object sender, EventArgs args)
 			{
-				ChangePage(Pages.SETTINGS);
+				ChangePage(MainFormPage.Settings);
 			};
 			ToolBar.Items.Add(tbSettings);
 
@@ -97,7 +91,7 @@ namespace Eraser
 			SchedulerPage.Dock = DockStyle.Fill;
 
 			//Show the default page.
-			ChangePage(Pages.SCHEDULER);
+			ChangePage(MainFormPage.Scheduler);
 		}
 
 		/// <summary>
@@ -119,15 +113,15 @@ namespace Eraser
 		/// </summary>
 		/// <param name="page">The new page to change to. No action is done when the
 		/// current page is the same as the new page requested</param>
-		public void ChangePage(Pages page)
+		public void ChangePage(MainFormPage page)
 		{
 			BasePanel oldPage = CurrPage;
 			switch (page)
 			{
-				case Pages.SCHEDULER:
+				case MainFormPage.Scheduler:
 					CurrPage = SchedulerPage;
 					break;
-				case Pages.SETTINGS:
+				case MainFormPage.Settings:
 					CurrPage = SettingsPage;
 					break;
 			}
@@ -303,7 +297,7 @@ namespace Eraser
 				ProcessingAnimationFrame = 0;
 		}
 
-		private int ProcessingAnimationFrame = 0;
+		private int ProcessingAnimationFrame;
 		private Icon[] ProcessingAnimationFrames = new Icon[] {
 			Resources.NotifyBusy1,
 			Resources.NotifyBusy2,
@@ -349,8 +343,14 @@ namespace Eraser
 		private void hideWhenMinimiseToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			EraserSettings.Get().HideWhenMinimised =
-				hideWhenMinimiseToolStripMenuItem.Checked;
+				hideWhenMinimisedToolStripMenuItem.Checked;
 		}
 		#endregion
+	}
+
+	public enum MainFormPage
+	{
+		Scheduler = 0,
+		Settings
 	}
 }

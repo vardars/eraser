@@ -50,16 +50,16 @@ namespace Eraser
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BasePanel));
-			this.titleLbl = new System.Windows.Forms.Label();
+			this.titleLabel = new System.Windows.Forms.Label();
 			this.content = new System.Windows.Forms.Panel();
 			this.titleIcon = new System.Windows.Forms.PictureBox();
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// titleLbl
+			// titleLabel
 			// 
-			resources.ApplyResources(this.titleLbl, "titleLbl");
-			this.titleLbl.Name = "titleLbl";
+			resources.ApplyResources(this.titleLabel, "titleLabel");
+			this.titleLabel.Name = "titleLabel";
 			// 
 			// content
 			// 
@@ -77,7 +77,7 @@ namespace Eraser
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
 			this.Controls.Add(this.content);
 			this.Controls.Add(this.titleIcon);
-			this.Controls.Add(this.titleLbl);
+			this.Controls.Add(this.titleLabel);
 			this.Name = "BasePanel";
 			resources.ApplyResources(this, "$this");
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).EndInit();
@@ -88,7 +88,7 @@ namespace Eraser
 
 		#endregion
 
-		protected System.Windows.Forms.Label titleLbl;
+		protected System.Windows.Forms.Label titleLabel;
 		protected System.Windows.Forms.PictureBox titleIcon;
 		protected System.Windows.Forms.Panel content;
 	}

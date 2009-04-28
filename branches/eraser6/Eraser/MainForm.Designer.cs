@@ -61,7 +61,7 @@ namespace Eraser
 			this.notificationMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.openEraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-			this.hideWhenMinimiseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.hideWhenMinimisedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.notificationIconTimer = new System.Windows.Forms.Timer(this.components);
 			this.toolbarScheduleMenu.SuspendLayout();
@@ -119,7 +119,7 @@ namespace Eraser
 			this.notificationMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openEraserToolStripMenuItem,
             this.toolStripMenuItem1,
-            this.hideWhenMinimiseToolStripMenuItem,
+            this.hideWhenMinimisedToolStripMenuItem,
             this.exitToolStripMenuItem});
 			this.notificationMenu.Name = "notificationMenu";
 			resources.ApplyResources(this.notificationMenu, "notificationMenu");
@@ -135,12 +135,12 @@ namespace Eraser
 			this.toolStripMenuItem1.Name = "toolStripMenuItem1";
 			resources.ApplyResources(this.toolStripMenuItem1, "toolStripMenuItem1");
 			// 
-			// hideWhenMinimiseToolStripMenuItem
+			// hideWhenMinimisedToolStripMenuItem
 			// 
-			this.hideWhenMinimiseToolStripMenuItem.CheckOnClick = true;
-			this.hideWhenMinimiseToolStripMenuItem.Name = "hideWhenMinimiseToolStripMenuItem";
-			resources.ApplyResources(this.hideWhenMinimiseToolStripMenuItem, "hideWhenMinimiseToolStripMenuItem");
-			this.hideWhenMinimiseToolStripMenuItem.Click += new System.EventHandler(this.hideWhenMinimiseToolStripMenuItem_Click);
+			this.hideWhenMinimisedToolStripMenuItem.CheckOnClick = true;
+			this.hideWhenMinimisedToolStripMenuItem.Name = "hideWhenMinimisedToolStripMenuItem";
+			resources.ApplyResources(this.hideWhenMinimisedToolStripMenuItem, "hideWhenMinimisedToolStripMenuItem");
+			this.hideWhenMinimisedToolStripMenuItem.Click += new System.EventHandler(this.hideWhenMinimiseToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
@@ -185,7 +185,7 @@ namespace Eraser
 		private System.Windows.Forms.ToolStripMenuItem openEraserToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
 		private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem hideWhenMinimiseToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem hideWhenMinimisedToolStripMenuItem;
 
 	}
 }

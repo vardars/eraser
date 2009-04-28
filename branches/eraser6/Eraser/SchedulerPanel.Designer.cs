@@ -74,7 +74,7 @@ namespace Eraser
 			// 
 			// titleLbl
 			// 
-			resources.ApplyResources(this.titleLbl, "titleLbl");
+			resources.ApplyResources(this.titleLabel, "titleLbl");
 			// 
 			// titleIcon
 			// 
@@ -196,7 +196,7 @@ namespace Eraser
 			// 
 			this.DoubleBuffered = true;
 			this.Name = "SchedulerPanel";
-			this.Controls.SetChildIndex(this.titleLbl, 0);
+			this.Controls.SetChildIndex(this.titleLabel, 0);
 			this.Controls.SetChildIndex(this.titleIcon, 0);
 			this.Controls.SetChildIndex(this.content, 0);
 			((System.ComponentModel.ISupportInitialize)(this.titleIcon)).EndInit();
