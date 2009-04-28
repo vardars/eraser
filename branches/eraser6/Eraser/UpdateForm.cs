@@ -86,7 +86,7 @@ namespace Eraser
 			try
 			{
 				updates.OnProgressEvent += updateListDownloader_ProgressChanged;
-				updates.GetUpdates();
+				updates.DownloadUpdateList();
 			}
 			finally
 			{
@@ -106,8 +106,8 @@ namespace Eraser
 				if (updateListDownloader.CancellationPending)
 					throw new OperationCanceledException();
 
-				Invoke(new UpdateManager.ProgressEventFunction(updateListDownloader_ProgressChanged),
-					sender, e);
+				Invoke(new EventHandler<UpdateManager.ProgressEventArgs>(
+					updateListDownloader_ProgressChanged), sender, e);
 				return;
 			}
 
@@ -305,13 +305,12 @@ namespace Eraser
 				if (updateListDownloader.CancellationPending)
 					throw new OperationCanceledException();
 
-				Invoke(new UpdateManager.ProgressEventFunction(downloader_ProgressChanged),
+				Invoke(new EventHandler<UpdateManager.ProgressEventArgs>(downloader_ProgressChanged),
 					sender, e);
 				return;
 			}
 
 			UpdateData update = uiUpdates[(UpdateManager.Update)e.UserState];
-			long amountLeft = (long)((1 - e.ProgressPercentage) * update.Update.FileSize);
 
 			if (e is UpdateManager.ProgressErrorEventArgs)
 			{
@@ -414,7 +413,7 @@ namespace Eraser
 				if (updateListDownloader.CancellationPending)
 					throw new OperationCanceledException();
 
-				Invoke(new UpdateManager.ProgressEventFunction(installer_ProgressChanged),
+				Invoke(new EventHandler<UpdateManager.ProgressEventArgs>(installer_ProgressChanged),
 					sender, e);
 				return;
 			}
@@ -479,8 +478,6 @@ namespace Eraser
 			{
 				Update = update;
 				LVItem = item;
-				amountDownloaded = 0;
-				Error = null;
 			}
 
 			/// <summary>
@@ -526,6 +523,7 @@ namespace Eraser
 		public struct Mirror
 		{
 			public Mirror(string location, string link)
+				: this()
 			{
 				Location = location;
 				Link = link;
@@ -534,12 +532,20 @@ namespace Eraser
 			/// <summary>
 			/// The location where the mirror is at.
 			/// </summary>
-			public string Location;
+			public string Location
+			{
+				get;
+				set;
+			}
 
 			/// <summary>
 			/// The URL prefix to utilise the mirror.
 			/// </summary>
-			public string Link;
+			public string Link
+			{
+				get;
+				set;
+			}
 
 			public override string ToString()
 			{
@@ -647,13 +653,13 @@ namespace Eraser
 		/// <summary>
 		/// Retrieves the update list from the server.
 		/// </summary>
-		public void GetUpdates()
+		public void DownloadUpdateList()
 		{
 			WebRequest.DefaultCachePolicy = new HttpRequestCachePolicy(
 				HttpRequestCacheLevel.Refresh);
 			HttpWebRequest req = (HttpWebRequest)
-				WebRequest.Create("http://eraser.heidi.ie/updates?action=listupdates&" +
-					"version=" + Assembly.GetExecutingAssembly().GetName().Version.ToString());
+				WebRequest.Create(new Uri("http://eraser.heidi.ie/updates?action=listupdates&" +
+					"version=" + Assembly.GetExecutingAssembly().GetName().Version.ToString()));
 			
 			using (WebResponse resp = req.GetResponse())
 			using (Stream strm = resp.GetResponseStream())
@@ -780,7 +786,7 @@ namespace Eraser
 		/// </summary>
 		/// <param name="updates">The updates to retrieve and install.</param>
 		/// <returns>An opaque object for use with InstallUpdates.</returns>
-		public object DownloadUpdates(List<Update> updates)
+		public object DownloadUpdates(ICollection<Update> downloadQueue)
 		{
 			//Create a folder to hold all our updates.
 			DirectoryInfo tempDir = new DirectoryInfo(Path.GetTempPath());
@@ -788,7 +794,7 @@ namespace Eraser
 
 			int currUpdate = 0;
 			Dictionary<string, Update> tempFilesMap = new Dictionary<string, Update>();
-			foreach (Update update in updates)
+			foreach (Update update in downloadQueue)
 			{
 				try
 				{
@@ -799,7 +805,7 @@ namespace Eraser
 					if (Uri.IsWellFormedUriString(update.Link, UriKind.Absolute))
 						reqUri = new Uri(update.Link);
 					else
-						reqUri = new Uri(new Uri(SelectedMirror.Link), update.Link);
+						reqUri = new Uri(new Uri(SelectedMirror.Link), new Uri(update.Link));
 					
 					//Then grab the download.
 					HttpWebRequest req = (HttpWebRequest)WebRequest.Create(reqUri);
@@ -822,7 +828,7 @@ namespace Eraser
 
 								//Compute progress
 								float itemProgress = tempStrm.Position / (float)resp.ContentLength;
-								float overallProgress = (currUpdate - 1 + itemProgress) / updates.Count;
+								float overallProgress = (currUpdate - 1 + itemProgress) / downloadQueue.Count;
 								OnProgress(new ProgressEventArgs(itemProgress, overallProgress,
 									update, S._("Downloading: {0}", update.Name)));
 							}
@@ -832,14 +838,14 @@ namespace Eraser
 						tempFilesMap.Add(tempFilePath, update);
 
 						//Let the event handler know the download is complete.
-						OnProgress(new ProgressEventArgs(1.0f, (float)currUpdate / updates.Count,
+						OnProgress(new ProgressEventArgs(1.0f, (float)currUpdate / downloadQueue.Count,
 							update, S._("Downloaded: {0}", update.Name)));
 					}
 				}
 				catch (Exception e)
 				{
 					OnProgress(new ProgressErrorEventArgs(new ProgressEventArgs(1.0f,
-						(float)currUpdate / updates.Count, update,
+						(float)currUpdate / downloadQueue.Count, update,
 							S._("Error downloading {0}: {1}", update.Name, e.Message)),
 						e));
 				}
@@ -848,9 +854,9 @@ namespace Eraser
 			return tempFilesMap;
 		}
 
-		public void InstallUpdates(object downloadObject)
+		public void InstallUpdates(object value)
 		{
-			Dictionary<string, Update> tempFiles = (Dictionary<string, Update>)downloadObject;
+			Dictionary<string, Update> tempFiles = (Dictionary<string, Update>)value;
 			Dictionary<string, Update>.KeyCollection files = tempFiles.Keys;
 			int currItem = 0;
 
@@ -875,7 +881,7 @@ namespace Eraser
 					else
 						OnProgress(new ProgressErrorEventArgs(new ProgressEventArgs(1.0f,
 							progress, item, S._("Error installing {0}", item.Name)),
-							new Exception(S._("The installer exited with an error code {0}",
+							new ApplicationException(S._("The installer exited with an error code {0}",
 								process.ExitCode))));
 				}
 			}
@@ -897,17 +903,14 @@ namespace Eraser
 		}
 
 		/// <summary>
-		/// Prototype of the callback functions from this object.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="arg">The ProgressEventArgs object holding information
-		/// about the progress of the current operation.</param>
-		public delegate void ProgressEventFunction(object sender, ProgressEventArgs arg);
-
-		/// <summary>
 		/// Called when the progress of the operation changes.
 		/// </summary>
-		public ProgressEventFunction OnProgressEvent;
+		public EventHandler<ProgressEventArgs> OnProgressEvent
+		{
+			get { return onProgressEvent; }
+			set { onProgressEvent = value; }
+		}
+		private EventHandler<ProgressEventArgs> onProgressEvent;
 
 		/// <summary>
 		/// Helper function: invokes the OnProgressEvent delegate.
@@ -955,7 +958,7 @@ namespace Eraser
 						return;
 					}
 
-				throw new IndexOutOfRangeException();
+				throw new ArgumentException(S._("Unknown mirror selected."));
 			}
 		}
 
@@ -986,7 +989,7 @@ namespace Eraser
 		/// </summary>
 		/// <param name="key">The category to retrieve.</param>
 		/// <returns>All updates in the given category.</returns>
-		public List<Update> this[string key]
+		public ICollection<Update> this[string key]
 		{
 			get
 			{

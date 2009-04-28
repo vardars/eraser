@@ -38,6 +38,11 @@ namespace Eraser
 			{
 				components.Dispose();
 			}
+
+			ParentBitmap.Dispose();
+			AboutBitmap.Dispose();
+			AboutTextBitmap.Dispose();
+			DoubleBufferBitmap.Dispose();
 			base.Dispose(disposing);
 		}
 

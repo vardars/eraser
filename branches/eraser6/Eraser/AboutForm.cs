@@ -128,7 +128,6 @@ Eraser Project Members:
 				//Open source disclaimer.
 				string disclaimerText = S._("Eraser is free open-source software!");
 				PointF disclaimerPos = new PointF(websitePos.X, websitePos.Y + websiteSize.Height * 1.5f);
-				SizeF disclaimerSize = g.MeasureString(disclaimerText, Font);
 				g.DrawString(disclaimerText, Font, textBrush, disclaimerPos);
 
 				//Donation statement
@@ -174,7 +173,6 @@ Eraser Project Members:
 				dest.CopyFromScreen(parentPos, new Point(0, 0), parent.ClientSize);
 			}
 
-			ParentOpacity = 0;
 			AboutTextScrollTop = AboutTextRect.Height / 2;
 			animationTimer_Tick(null, null);
 		}
@@ -214,10 +212,7 @@ Eraser Project Members:
 			if (ParentOpacity <= 128)
 				ParentOpacity += 8;
 			if (AboutTextBitmap.Height < -AboutTextScrollTop)
-			{
 				AboutTextScrollTop = AboutTextRect.Height;
-				GC.Collect();
-			}
 			else
 				AboutTextScrollTop -= 1;
 

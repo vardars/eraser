@@ -27,6 +27,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Collections.ObjectModel;
 
 namespace Eraser
 {
@@ -80,7 +81,7 @@ namespace Eraser
 		/// Draws the Tool Bar on the given graphics object.
 		/// </summary>
 		/// <param name="dc">Graphics object to draw on.</param>
-		public void Draw(Graphics sdc)
+		public void Draw(Graphics rawDC)
 		{
 			//Create a backing bitmap buffer to prevent flicker
 			Bitmap back_bmp = new Bitmap(Width, Height);
@@ -144,7 +145,7 @@ namespace Eraser
 				x += 16;
 			}
 
-			sdc.DrawImage(back_bmp, new Point(0, 0));
+			rawDC.DrawImage(back_bmp, new Point(0, 0));
 		}
 
 		/// <summary>
@@ -159,12 +160,12 @@ namespace Eraser
 		/// Paints the control.
 		/// </summary>
 		/// <param name="pe">Paint event object.</param>
-		protected override void OnPaint(PaintEventArgs pe)
+		protected override void OnPaint(PaintEventArgs e)
 		{
-			Draw(pe.Graphics);
+			Draw(e.Graphics);
 
 			// Calling the base class OnPaint
-			base.OnPaint(pe);
+			base.OnPaint(e);
 		}
 
 		/// <summary>
@@ -175,26 +176,25 @@ namespace Eraser
 		/// <summary>
 		/// Accesses or modifies the items in the tool bar.
 		/// </summary>
-		/// <param name="i">Index of item.</param>
+		/// <param name="index">Index of item.</param>
 		/// <returns>ToolBarItem describing the item at index i.</returns>
-		public ToolBarItem this[int i]
+		public ToolBarItem this[int index]
 		{
 			get
 			{
-				return items[i];
+				return items[index];
 			}
 
 			set
 			{
-				items[i] = value;
+				items[index] = value;
 				Redraw();
 			}
 		}
 
-		public List<ToolBarItem> Items
+		public ICollection<ToolBarItem> Items
 		{
 			get { return items; }
-			set { items = value; }
 		}
 	}
 
@@ -232,8 +232,12 @@ namespace Eraser
 		/// <summary>
 		/// Item click event handler
 		/// </summary>
-		public event ToolbarItemClickedEventFunction ToolbarItemClicked;
-		public delegate void ToolbarItemClickedEventFunction(object sender, EventArgs e);
+		public EventHandler<EventArgs> ToolbarItemClicked
+		{
+			get;
+			set;
+		}
+
 		internal void OnToolbarItemClicked(object sender)
 		{
 			if (ToolbarItemClicked != null)

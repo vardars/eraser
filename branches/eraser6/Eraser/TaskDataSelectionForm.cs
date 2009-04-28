@@ -175,7 +175,7 @@ namespace Eraser
 					recycleBin.Checked = true;
 				}
 				else
-					throw new Exception("Unknown erasure target.");
+					throw new ArgumentException("Unknown erasure target.");
 			}
 		}
 

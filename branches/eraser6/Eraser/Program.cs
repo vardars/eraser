@@ -36,6 +36,7 @@ using System.ComponentModel;
 using Eraser.Manager;
 using Eraser.Util;
 using Microsoft.Win32;
+using System.Runtime.Serialization;
 
 namespace Eraser
 {
@@ -126,9 +127,9 @@ namespace Eraser
 		private static void GUIMain(string[] commandLine)
 		{
 			//Create the program instance
-			GUIProgram program = new GUIProgram(commandLine, "Eraser-BAD0DAC6-C9EE-4acc-" +
+			using (GUIProgram program = new GUIProgram(commandLine, "Eraser-BAD0DAC6-C9EE-4acc-" +
 				"8701-C9B3C64BC65E-GUI-" +
-				System.Security.Principal.WindowsIdentity.GetCurrent().User.ToString());
+				System.Security.Principal.WindowsIdentity.GetCurrent().User.ToString()))
 
 			//Then run the program instance.
 			using (ManagerLibrary library = new ManagerLibrary(new Settings()))
@@ -154,7 +155,7 @@ namespace Eraser
 			EraserSettings settings = EraserSettings.Get();
 			System.Threading.Thread.CurrentThread.CurrentUICulture =
 				new CultureInfo(settings.Language);
-			program.SafeTopLevelCaptionFormat = S._("Eraser");
+			GUIProgram.SafeTopLevelCaptionFormat = S._("Eraser");
 
 			//Load the task list
 			if (settings.TaskList != null)
@@ -163,12 +164,12 @@ namespace Eraser
 					{
 						eraserClient.LoadTaskList(stream);
 					}
-					catch (Exception)
+					catch (SerializationException e)
 					{
 						settings.TaskList = null;
 						MessageBox.Show(S._("Could not load task list. All task entries have " +
-							"been lost."), S._("Eraser"), MessageBoxButtons.OK,
-							MessageBoxIcon.Error);
+							"been lost. The error returned was: {0}", e.Message), S._("Eraser"),
+							MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
 
 			//Create the main form
@@ -241,7 +242,7 @@ namespace Eraser
 		public static Executor eraserClient;
 	}
 
-	class GUIProgram
+	class GUIProgram : IDisposable
 	{
 		/// <summary>
 		/// Constructor.
@@ -261,6 +262,12 @@ namespace Eraser
 			globalMutex = new Mutex(true, instanceID, out isFirstInstance);
 		}
 
+		public void Dispose()
+		{
+			globalMutex.Close();
+			GC.SuppressFinalize(this);
+		}
+
 		/// <summary>
 		/// Runs the event loop of the GUI program, returning true if the program
 		/// was started as there were no other instances of the program, or false
@@ -277,7 +284,7 @@ namespace Eraser
 		{
 			//If no other instances are running, set up our pipe server so clients
 			//can connect and give us subsequent command lines.
-			if (isFirstInstance)
+			if (IsAlreadyRunning)
 			{
 				try
 				{
@@ -323,7 +330,7 @@ namespace Eraser
 					byte[] buffer = new byte[commandLineStr.Length];
 					int count = Encoding.UTF8.GetBytes(commandLineStr.ToString(), 0,
 						commandLineStr.Length, buffer, 0);
-					client.Write(buffer, 0, buffer.Length);
+					client.Write(buffer, 0, count);
 				}
 				catch (UnauthorizedAccessException)
 				{
@@ -421,7 +428,7 @@ namespace Eraser
 		/// Gets or sets the format string to apply to top-level window captions when
 		/// they are displayed with a warning banner.
 		/// </summary>
-		public string SafeTopLevelCaptionFormat
+		public static string SafeTopLevelCaptionFormat
 		{
 			get
 			{
@@ -656,7 +663,7 @@ namespace Eraser
 
 						if (parameter[1] == '-')
 							return parameter.Substring(2) == expectedParameter;
-						else if (shortParameter == null || shortParameter == string.Empty)
+						else if (string.IsNullOrEmpty(shortParameter))
 							return parameter.Substring(1) == expectedParameter;
 						else
 							return parameter.Substring(1) == shortParameter;
@@ -665,8 +672,7 @@ namespace Eraser
 						//The / can be used with both long and short parameters.
 						parameter = parameter.Substring(1);
 						return parameter == expectedParameter || (
-							shortParameter != null && shortParameter != string.Empty &&
-							parameter == shortParameter
+							!string.IsNullOrEmpty(shortParameter) && parameter == shortParameter
 						);
 
 					default:
@@ -766,7 +772,7 @@ namespace Eraser
 
 					List<KeyValuePair<string, string>> subParams =
 						GetSubParameters(param.Substring(equalPos + 1));
-					ErasureMethod = new Guid(subParams[0].Key);
+					erasureMethod = new Guid(subParams[0].Key);
 				}
 				else if (IsParam(param, "schedule", "s"))
 				{
@@ -779,7 +785,7 @@ namespace Eraser
 					switch (subParams[0].Key)
 					{
 						case "now":
-							Schedule = Schedule.RunNow;
+							schedule = Schedule.RunNow;
 							break;
 						case "restart":
 							schedule = Schedule.RunOnRestart;
@@ -871,10 +877,6 @@ namespace Eraser
 				{
 					return erasureMethod;
 				}
-				private set
-				{
-					erasureMethod = value;
-				}
 			}
 
 			/// <summary>
@@ -886,10 +888,6 @@ namespace Eraser
 				{
 					return schedule;
 				}
-				set
-				{
-					schedule = value;
-				}
 			}
 
 			/// <summary>
@@ -900,10 +898,6 @@ namespace Eraser
 				get
 				{
 					return new List<Task.ErasureTarget>(targets.ToArray());
-				}
-				set
-				{
-					targets = value;
 				}
 			}
 
@@ -966,7 +960,7 @@ namespace Eraser
 		/// Creates a console for our application, setting the input/output streams to the
 		/// defaults.
 		/// </summary>
-		private void CreateConsole()
+		private static void CreateConsole()
 		{
 			if (KernelAPI.AllocConsole())
 			{
@@ -1087,14 +1081,14 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// <param name="commandLine">The command line parameters passed to the program.</param>
 		private void AddTask()
 		{
-			AddTaskCommandLine arguments = (AddTaskCommandLine)Arguments;
+			AddTaskCommandLine taskArgs = (AddTaskCommandLine)Arguments;
 			
 			//Create the task, and set the method to use.
 			Task task = new Task();
-			ErasureMethod method = arguments.ErasureMethod == Guid.Empty ? 
+			ErasureMethod method = taskArgs.ErasureMethod == Guid.Empty ? 
 				ErasureMethodManager.Default :
-				ErasureMethodManager.GetInstance(arguments.ErasureMethod);
-			foreach (Task.ErasureTarget target in arguments.Targets)
+				ErasureMethodManager.GetInstance(taskArgs.ErasureMethod);
+			foreach (Task.ErasureTarget target in taskArgs.Targets)
 			{
 				target.Method = method;
 				task.Targets.Add(target);
@@ -1105,7 +1099,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 				throw new ArgumentException("Tasks must contain at least one erasure target.");
 
 			//Set the schedule for the task.
-			task.Schedule = arguments.Schedule;
+			task.Schedule = taskArgs.Schedule;
 
 			//Send the task out.
 			try
@@ -1121,7 +1115,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 						eraserInstance.WaitForInputIdle();
 
 						if (!((RemoteExecutorClient)Program.eraserClient).Connect())
-							throw new Exception("Eraser cannot connect to the running " +
+							throw new IOException("Eraser cannot connect to the running " +
 								"instance for erasures.");
 					}
 
@@ -1170,7 +1164,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			/// Constructor.
 			/// </summary>
 			/// <param name="key">The registry key to look for the settings in.</param>
-			public RegistrySettings(Guid pluginID, RegistryKey key)
+			public RegistrySettings(Guid guid, RegistryKey key)
 			{
 				this.key = key;
 			}
@@ -1186,7 +1180,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 							{
 								return new BinaryFormatter().Deserialize(stream);
 							}
-							catch (Exception)
+							catch (SerializationException)
 							{
 								key.DeleteValue(setting);
 								MessageBox.Show(S._("Could not load the setting {0} for plugin {1}. " +

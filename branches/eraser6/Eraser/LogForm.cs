@@ -108,12 +108,11 @@ namespace Eraser
 		private void copy_Click(object sender, EventArgs e)
 		{
 			StringBuilder text = new StringBuilder();
-			Dictionary<DateTime, List<LogEntry>> log = task.Log.Entries;
-			Dictionary<DateTime, List<LogEntry>>.Enumerator iter = log.GetEnumerator();
-			foreach (DateTime sessionTime in log.Keys)
+			Dictionary<DateTime, List<LogEntry>> logEntries = task.Log.Entries;
+			foreach (DateTime sessionTime in logEntries.Keys)
 			{
 				text.AppendLine(S._("Session: {0}", sessionTime.ToString(DATEPATTERN)));
-				foreach (LogEntry entry in log[sessionTime])
+				foreach (LogEntry entry in logEntries[sessionTime])
 				{
 					text.AppendFormat("{0}	{1}	{2}\n",
 						entry.Timestamp.ToString(DATEPATTERN).Replace("\"", "\"\""),
