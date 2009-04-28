@@ -994,6 +994,7 @@ namespace Eraser.Manager
 		public TimeSpan TimeLeft
 		{
 			get { return timeLeft; }
+			internal set { timeLeft = value; }
 		}
 
 		/// <summary>
@@ -1002,6 +1003,7 @@ namespace Eraser.Manager
 		public Task.ErasureTarget CurrentTarget
 		{
 			get { return currentTarget; }
+			internal set { currentTarget = value; }
 		}
 
 		/// <summary>
@@ -1010,6 +1012,7 @@ namespace Eraser.Manager
 		public int CurrentTargetIndex
 		{
 			get { return currentTargetIndex; }
+			internal set { currentTargetIndex = value; }
 		}
 
 		/// <summary>
@@ -1019,6 +1022,7 @@ namespace Eraser.Manager
 		public int CurrentTargetTotalPasses
 		{
 			get { return currentTargetTotalPasses; }
+			internal set { currentTargetTotalPasses = value; }
 		}
 
 		/// <summary>
@@ -1027,6 +1031,7 @@ namespace Eraser.Manager
 		public float CurrentItemProgress
 		{
 			get { return currentItemProgress; }
+			internal set { currentItemProgress = value; }
 		}
 
 		/// <summary>
@@ -1035,6 +1040,7 @@ namespace Eraser.Manager
 		public string CurrentItemName
 		{
 			get { return currentItemName; }
+			internal set { currentItemName = value; }
 		}
 
 		/// <summary>
@@ -1043,8 +1049,12 @@ namespace Eraser.Manager
 		public int CurrentItemPass
 		{
 			get { return currentItemPass; }
+			internal set { currentItemPass = value; }
 		}
 
+		/// <summary>
+		/// The progress made by the current target.
+		/// </summary>
 		internal float CurrentTargetProgress
 		{
 			set
@@ -1056,14 +1066,14 @@ namespace Eraser.Manager
 		}
 
 		private float overallProgress = 0.0f;
-		internal TimeSpan timeLeft = new TimeSpan(0, 0, -1);
+		private TimeSpan timeLeft = new TimeSpan(0, 0, -1);
 
-		internal Task.ErasureTarget currentTarget;
-		internal int currentTargetIndex = 0;
-		internal int currentTargetTotalPasses;
+		private Task.ErasureTarget currentTarget;
+		private int currentTargetIndex = 0;
+		private int currentTargetTotalPasses;
 
-		internal float currentItemProgress = 0.0f;
-		internal string currentItemName;
-		internal int currentItemPass = 1;
+		private float currentItemProgress = 0.0f;
+		private string currentItemName;
+		private int currentItemPass = 1;
 	}
 }

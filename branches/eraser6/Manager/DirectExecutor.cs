@@ -313,8 +313,8 @@ namespace Eraser.Manager
 						foreach (Task.ErasureTarget target in task.Targets)
 							try
 							{
-								progress.Event.currentTarget = target;
-								++progress.Event.currentTargetIndex;
+								progress.Event.CurrentTarget = target;
+								++progress.Event.CurrentTargetIndex;
 								if (target is Task.UnusedSpace)
 									EraseUnusedSpace(task, (Task.UnusedSpace)target, progress);
 								else if (target is Task.FilesystemObject)
@@ -524,6 +524,7 @@ namespace Eraser.Manager
 			private TaskProgressEventArgs evt;
 		}
 
+		#region Unused Space erasure functions
 		/// <summary>
 		/// Executes a unused space erase.
 		/// </summary>
@@ -559,9 +560,9 @@ namespace Eraser.Manager
 			//Erase the cluster tips of every file on the drive.
 			if (target.EraseClusterTips)
 			{
-				progress.Event.currentItemName = S._("Cluster tips");
-				progress.Event.currentTargetTotalPasses = method.Passes;
-				progress.Event.timeLeft = progress.TimeLeft;
+				progress.Event.CurrentItemName = S._("Cluster tips");
+				progress.Event.CurrentTargetTotalPasses = method.Passes;
+				progress.Event.TimeLeft = progress.TimeLeft;
 				task.OnProgressChanged(progress.Event);
 
 				ProgressManager tipProgress = new ProgressManager();
@@ -572,10 +573,10 @@ namespace Eraser.Manager
 						tipProgress.Total = totalFiles;
 						tipProgress.Completed = currentFile;
 
-						progress.Event.currentItemName = S._("(Tips) {0}", currentFilePath);
-						progress.Event.currentItemProgress = tipProgress.Progress;
+						progress.Event.CurrentItemName = S._("(Tips) {0}", currentFilePath);
+						progress.Event.CurrentItemProgress = tipProgress.Progress;
 						progress.Event.CurrentTargetProgress = progress.Event.CurrentItemProgress / 10;
-						progress.Event.timeLeft = tipProgress.TimeLeft;
+						progress.Event.TimeLeft = tipProgress.TimeLeft;
 						task.OnProgressChanged(progress.Event);
 
 						lock (currentTask)
@@ -607,7 +608,7 @@ namespace Eraser.Manager
 				long totalSize = method.CalculateEraseDataSize(null, volInfo.TotalFreeSpace);
 
 				//Continue creating files while there is free space.
-				progress.Event.currentItemName = S._("Unused space");
+				progress.Event.CurrentItemName = S._("Unused space");
 				task.OnProgressChanged(progress.Event);
 				while (volInfo.AvailableFreeSpace > 0)
 				{
@@ -649,15 +650,15 @@ namespace Eraser.Manager
 							delegate(long lastWritten, int currentPass)
 							{
 								progress.Completed += lastWritten;
-								progress.Event.currentItemPass = currentPass;
-								progress.Event.currentItemProgress = progress.Progress;
+								progress.Event.CurrentItemPass = currentPass;
+								progress.Event.CurrentItemProgress = progress.Progress;
 								if (target.EraseClusterTips)
 									progress.Event.CurrentTargetProgress = (float)
-										(0.1f + progress.Event.currentItemProgress * 0.8f);
+										(0.1f + progress.Event.CurrentItemProgress * 0.8f);
 								else
 									progress.Event.CurrentTargetProgress = (float)
-										(progress.Event.currentItemProgress * 0.9f);
-								progress.Event.timeLeft = progress.TimeLeft;
+										(progress.Event.CurrentItemProgress * 0.9f);
+								progress.Event.TimeLeft = progress.TimeLeft;
 								task.OnProgressChanged(progress.Event);
 
 								lock (currentTask)
@@ -669,20 +670,20 @@ namespace Eraser.Manager
 				}
 
 				//Erase old resident file system table files
-				progress.Event.currentItemName = S._("Old resident file system table files");
+				progress.Event.CurrentItemName = S._("Old resident file system table files");
 				task.OnProgressChanged(progress.Event);
 				EraseOldFilesystemResidentFiles(info, method, null);
 			}
 			finally
 			{
 				//Remove the folder holding all our temporary files.
-				progress.Event.currentItemName = S._("Removing temporary files");
+				progress.Event.CurrentItemName = S._("Removing temporary files");
 				task.OnProgressChanged(progress.Event);
 				RemoveFolder(info);
 			}
 
 			//Then clean the old file system entries
-			progress.Event.currentItemName = S._("Old file system entries");
+			progress.Event.CurrentItemName = S._("Old file system entries");
 			ProgressManager fsEntriesProgress = new ProgressManager();
 			fsEntriesProgress.Start();
 			EraseOldFilesystemEntries(info.Parent,
@@ -693,8 +694,8 @@ namespace Eraser.Manager
 					fsEntriesProgress.Completed = currentFile;
 
 					//Set the event parameters, then broadcast the progress event.
-					progress.Event.timeLeft = fsEntriesProgress.TimeLeft;
-					progress.Event.currentItemProgress = fsEntriesProgress.Progress;
+					progress.Event.TimeLeft = fsEntriesProgress.TimeLeft;
+					progress.Event.CurrentItemProgress = fsEntriesProgress.Progress;
 					progress.Event.CurrentTargetProgress = (float)(
 						0.9 + progress.Event.CurrentItemProgress / 10);
 					task.OnProgressChanged(progress.Event);
@@ -863,7 +864,9 @@ namespace Eraser.Manager
 				fileInfo.CreationTime = created;
 			}
 		}
+		#endregion
 
+		#region Filesystem Object erasure functions
 		/// <summary>
 		/// The prototype of callbacks handling the file system table erase progress
 		/// </summary>
@@ -1019,10 +1022,10 @@ namespace Eraser.Manager
 			{
 				//Update the task progress
 				progress.Event.CurrentTargetProgress = i / (float)paths.Count;
-				progress.Event.currentTarget = target;
-				progress.Event.currentItemName = paths[i];
-				progress.Event.currentItemProgress = 0;
-				progress.Event.currentTargetTotalPasses = method.Passes;
+				progress.Event.CurrentTarget = target;
+				progress.Event.CurrentItemName = paths[i];
+				progress.Event.CurrentItemProgress = 0;
+				progress.Event.CurrentTargetTotalPasses = method.Passes;
 				task.OnProgressChanged(progress.Event);
 
 				
@@ -1067,13 +1070,13 @@ namespace Eraser.Manager
 								{
 									dataTotal -= lastWritten;
 									progress.Completed += lastWritten;
-									progress.Event.currentItemPass = currentPass;
-									progress.Event.currentItemProgress = (float)
+									progress.Event.CurrentItemPass = currentPass;
+									progress.Event.CurrentItemProgress = (float)
 										((itemWritten += lastWritten) / (float)itemTotal);
 									progress.Event.CurrentTargetProgress =
-										(i + progress.Event.currentItemProgress) /
+										(i + progress.Event.CurrentItemProgress) /
 										(float)paths.Count;
-									progress.Event.timeLeft = progress.TimeLeft;
+									progress.Event.TimeLeft = progress.TimeLeft;
 									task.OnProgressChanged(progress.Event);
 
 									lock (currentTask)
@@ -1142,6 +1145,7 @@ namespace Eraser.Manager
 			long clusterSize = volume.ClusterSize;
 			return (info.Length + (clusterSize - 1)) & ~(clusterSize - 1);
 		}
+		#endregion
 
 		/// <summary>
 		/// Securely removes files.
