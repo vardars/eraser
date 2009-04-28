@@ -60,15 +60,16 @@ namespace Eraser.Manager
 		/// Generates a random file name with the given length.
 		/// </summary>
 		/// <remarks>The generated file name is guaranteed not to exist.</remarks>
-		/// <param name="info">The directory to generate the file name in. This parameter
-		/// can be null to indicate merely a random file name</param>
+		/// <param name="info">The directory to generate the file name in. This
+		/// parameter can be null to indicate merely a random file name</param>
 		/// <param name="length">The length of the file name to generate.</param>
 		/// <returns>A full path to a file containing random file name.</returns>
 		public static string GenerateRandomFileName(DirectoryInfo info, int length)
 		{
 			//Get a random file name
 			PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
-			string resultPrefix = info == null ? string.Empty : info.FullName + Path.DirectorySeparatorChar;
+			string resultPrefix = info == null ? string.Empty : info.FullName +
+				Path.DirectorySeparatorChar;
 			byte[] resultAry = new byte[length];
 			string result = string.Empty;
 
@@ -126,25 +127,27 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Securely deletes the file reference from the directory structures as well as
-		/// resetting the Date Created, Date Accessed and Date Modified records.
+		/// Securely deletes the file reference from the directory structures
+		/// as well as resetting the Date Created, Date Accessed and Date Modified
+		/// records.
 		/// </summary>
 		/// <param name="info">The file to delete.</param>
 		public abstract void DeleteFile(FileInfo info);
 
 		/// <summary>
-		/// Securely deletes the folder reference from the directory structures as well as
-		/// all subfolders and files, resetting the Date Created, Date Accessed and Date
-		/// Modified records.
+		/// Securely deletes the folder reference from the directory structures
+		/// as well as all subfolders and files, resetting the Date Created, Date
+		/// Accessed and Date Modified records.
 		/// </summary>
 		/// <param name="info">The folder to delete</param>
 		public abstract void DeleteFolder(DirectoryInfo info);
 
 		/// <summary>
-		/// The prototype of callbacks handling the file system table erase progress
+		/// The prototype of callbacks handling the file system table erase progress.
 		/// </summary>
 		/// <param name="currentFile">The current file being erased.</param>
-		/// <param name="totalFiles">The estimated number of files that must be erased.</param>
+		/// <param name="totalFiles">The estimated number of files that must be
+		/// erased.</param>
 		public delegate void FilesystemEntriesEraseProgress(int currentFile, int totalFiles);
 
 		/// <summary>
@@ -160,16 +163,16 @@ namespace Eraser.Manager
 			ErasureMethod method, FilesystemEntriesEraseProgress callback);
 
 		/// <summary>
-		/// Erases the unused space in the main filesystem structures by creating files,
-		/// until the table grows.
+		/// Erases the unused space in the main filesystem structures by creating,
+		/// files until the table grows.
 		/// 
 		/// This will overwrite unused portions of the table which were previously
 		/// used to store file entries.
 		/// </summary>
-		/// <param name="info">The directory information structure containing the path
-		/// to store the temporary files.</param>
-		/// <param name="callback">The callback function to handle the progress of the
-		/// file system entry erasure.</param>
+		/// <param name="info">The directory information structure containing
+		/// the path to store the temporary files.</param>
+		/// <param name="callback">The callback function to handle the progress
+		/// of the file system entry erasure.</param>
 		public abstract void EraseDirectoryStructures(VolumeInfo info,
 			FilesystemEntriesEraseProgress callback);
 
