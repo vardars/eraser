@@ -139,7 +139,7 @@ namespace Eraser
 				if (value.MethodDefined)
 				{
 					foreach (object item in method.Items)
-						if (((ErasureMethod)item).GUID == value.Method.GUID)
+						if (((ErasureMethod)item).Guid == value.Method.Guid)
 							method.SelectedItem = item;
 				}
 				else

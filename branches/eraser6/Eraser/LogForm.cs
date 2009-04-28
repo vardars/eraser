@@ -89,11 +89,11 @@ namespace Eraser
 
 			switch (e.Level)
 			{
-				case LogLevel.FATAL:
-				case LogLevel.ERROR:
+				case LogLevel.Fatal:
+				case LogLevel.Error:
 					item.ForeColor = Color.Red;
 					break;
-				case LogLevel.WARNING:
+				case LogLevel.Warning:
 					item.ForeColor = Color.OrangeRed;
 					break;
 			}

@@ -39,7 +39,7 @@ namespace Eraser.Manager
 	/// An interface class for all pseudorandom number generators used for the
 	/// random data erase passes.
 	/// </summary>
-	public abstract class PRNG
+	public abstract class Prng
 	{
 		public override string ToString()
 		{
@@ -57,7 +57,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The GUID for this PRNG.
 		/// </summary>
-		public abstract Guid GUID
+		public abstract Guid Guid
 		{
 			get;
 		}
@@ -147,12 +147,12 @@ namespace Eraser.Manager
 	/// <summary>
 	/// Class managing all the PRNG algorithms.
 	/// </summary>
-	public class PRNGManager
+	public class PrngManager
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PRNGManager()
+		public PrngManager()
 		{
 		}
 
@@ -160,7 +160,7 @@ namespace Eraser.Manager
 		/// Retrieves all currently registered erasure methods.
 		/// </summary>
 		/// <returns>A mutable list, with an instance of each PRNG.</returns>
-		public static Dictionary<Guid, PRNG> GetAll()
+		public static Dictionary<Guid, Prng> GetAll()
 		{
 			lock (ManagerLibrary.Instance.PRNGManager.prngs)
 				return ManagerLibrary.Instance.PRNGManager.prngs;
@@ -171,7 +171,7 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="guid">The GUID of the PRNG.</param>
 		/// <returns>The PRNG instance.</returns>
-		public static PRNG GetInstance(Guid guid)
+		public static Prng GetInstance(Guid guid)
 		{
 			try
 			{
@@ -188,10 +188,10 @@ namespace Eraser.Manager
 		/// Allows plug-ins to register PRNGs with the main program. Thread-safe.
 		/// </summary>
 		/// <param name="method"></param>
-		public static void Register(PRNG prng)
+		public static void Register(Prng prng)
 		{
 			lock (ManagerLibrary.Instance.PRNGManager.prngs)
-				ManagerLibrary.Instance.PRNGManager.prngs.Add(prng.GUID, prng);
+				ManagerLibrary.Instance.PRNGManager.prngs.Add(prng.Guid, prng);
 		}
 
 		/// <summary>
@@ -201,7 +201,7 @@ namespace Eraser.Manager
 		internal void AddEntropy(byte[] entropy)
 		{
 			lock (ManagerLibrary.Instance.PRNGManager.prngs)
-				foreach (PRNG prng in prngs.Values)
+				foreach (Prng prng in prngs.Values)
 					prng.Reseed(entropy);
 		}
 
@@ -217,6 +217,6 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The list of currently registered erasure methods.
 		/// </summary>
-		private Dictionary<Guid, PRNG> prngs = new Dictionary<Guid, PRNG>();
+		private Dictionary<Guid, Prng> prngs = new Dictionary<Guid, Prng>();
 	}
 }

@@ -38,7 +38,7 @@ namespace Eraser.DefaultPlugins
 			get { return S._("Pseudorandom Data"); }
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get { return new Guid("{BF8BA267-231A-4085-9BF9-204DE65A6641}"); }
 		}

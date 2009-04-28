@@ -37,7 +37,7 @@ namespace Eraser.DefaultPlugins
 			get { return S._("RCMP TSSIT OPS-II"); }
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get { return new Guid("{F335CC40-5DE5-4733-90B1-6957B4A45688}"); }
 		}
@@ -51,7 +51,7 @@ namespace Eraser.DefaultPlugins
 		{
 			get
 			{
-				PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
+				Prng prng = PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng);
 				int rand = prng.Next();
 
 				return new Pass[]

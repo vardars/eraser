@@ -62,7 +62,7 @@ namespace Eraser.DefaultPlugins
 			get { return method.Name; }
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get { return method.GUID; }
 		}

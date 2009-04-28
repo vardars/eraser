@@ -34,7 +34,20 @@ namespace Eraser.Manager
 	public abstract class Executor : IDisposable
 	{
 		#region IDisposable members
-		public abstract void Dispose();
+		~Executor()
+		{
+			Dispose(false);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
 		#endregion
 
 		/// <summary>
@@ -47,7 +60,7 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="task">The Task object describing the details of the task.
 		/// The task object's ID member will be updated to allow unique identification.</param>
-		public abstract void AddTask(ref Task task);
+		public abstract void AddTask(Task task);
 
 		/// <summary>
 		/// Deletes a task currently pending execution.
@@ -102,7 +115,7 @@ namespace Eraser.Manager
 		/// Retrieves the current task list for the executor.
 		/// </summary>
 		/// <returns>A list of tasks which the executor has registered.</returns>
-		public abstract List<Task> GetTasks();
+		public abstract ICollection<Task> GetTasks();
 
 		/// <summary>
 		/// Saves the task list to the given stream.

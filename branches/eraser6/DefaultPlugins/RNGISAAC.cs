@@ -31,11 +31,11 @@ namespace Eraser.DefaultPlugins
 	/// <summary>
 	/// ISAAC CSPRNG.
 	/// </summary>
-	public class ISAAC : PRNG
+	public class ISAAC : Prng
 	{
 		public ISAAC()
 		{
-			isaac = new Rand.ISAAC(ConvertSeedArray(PRNGManager.GetEntropy()));
+			isaac = new Rand.ISAAC(ConvertSeedArray(PrngManager.GetEntropy()));
 		}
 
 		public override string Name
@@ -43,7 +43,7 @@ namespace Eraser.DefaultPlugins
 			get { return S._("ISAAC CSPRNG"); }
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get { return new Guid("{CB7DE02E-8067-4270-B115-70AB49F23BB7}"); }
 		}

@@ -52,8 +52,8 @@ namespace Eraser.DefaultPlugins
 			ErasureMethodManager.Register(new Pseudorandom());			//1 pass
 			EraseCustom.RegisterAll();
 
-			PRNGManager.Register(new ISAAC());
-			PRNGManager.Register(new RNGCrypto());
+			PrngManager.Register(new ISAAC());
+			PrngManager.Register(new RNGCrypto());
 
 			//Done last
 			try

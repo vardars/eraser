@@ -34,27 +34,27 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Informative messages.
 		/// </summary>
-		INFORMATION,
+		Information,
 
 		/// <summary>
 		/// Notice messages.
 		/// </summary>
-		NOTICE,
+		Notice,
 
 		/// <summary>
 		/// Warning messages.
 		/// </summary>
-		WARNING,
+		Warning,
 
 		/// <summary>
 		/// Error messages.
 		/// </summary>
-		ERROR,
+		Error,
 
 		/// <summary>
 		/// Fatal errors.
 		/// </summary>
-		FATAL
+		Fatal
 	}
 
 	/// <summary>
@@ -68,7 +68,7 @@ namespace Eraser.Manager
 	public class Logger : ISerializable
 	{
 		#region Serialization code
-		public Logger(SerializationInfo info, StreamingContext context)
+		protected Logger(SerializationInfo info, StreamingContext context)
 		{
 			entries = (Dictionary<DateTime, List<LogEntry>>)
 				info.GetValue("Entries", typeof(Dictionary<DateTime, List<LogEntry>>));
@@ -76,7 +76,7 @@ namespace Eraser.Manager
 				lastSession = key;
 		}
 
-		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue("Entries", entries);
 		}
@@ -193,7 +193,8 @@ namespace Eraser.Manager
 	public struct LogEntry : ISerializable
 	{
 		#region Serialization code
-		public LogEntry(SerializationInfo info, StreamingContext context)
+		private LogEntry(SerializationInfo info, StreamingContext context)
+			: this()
 		{
 			Level = (LogLevel)info.GetValue("Level", typeof(LogLevel));
 			Timestamp = (DateTime)info.GetValue("Timestamp", typeof(DateTime));
@@ -214,6 +215,7 @@ namespace Eraser.Manager
 		/// <param name="message">The log message.</param>
 		/// <param name="level">The type of log entry.</param>
 		public LogEntry(string message, LogLevel level)
+			: this()
 		{
 			Message = message;
 			Level = level;
@@ -223,16 +225,16 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The type of log entry.
 		/// </summary>
-		public readonly LogLevel Level;
+		public LogLevel Level { get; private set; }
 
 		/// <summary>
 		/// The time which the message was logged.
 		/// </summary>
-		public readonly DateTime Timestamp;
+		public DateTime Timestamp { get; private set; }
 
 		/// <summary>
 		/// The log message.
 		/// </summary>
-		public readonly string Message;
+		public string Message { get; private set; }
 	}
 }

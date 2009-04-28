@@ -34,7 +34,7 @@ namespace Eraser.DefaultPlugins
 			get { return S._("Schneier 7 pass"); }
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get { return new Guid("{B1BFAB4A-31D3-43a5-914C-E9892C78AFD8}"); }
 		}

@@ -37,7 +37,7 @@ namespace Eraser.DefaultPlugins
 			get { return S._("German VSITR"); }
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get { return new Guid("{607632B2-651B-4935-883A-BDAA74FEBB54}"); }
 		}

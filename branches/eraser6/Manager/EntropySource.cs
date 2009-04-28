@@ -43,7 +43,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public EntropySource()
+		protected EntropySource()
 		{
 		}
 
@@ -58,7 +58,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The guid representing this entropy source
 		/// </summary>
-		public abstract Guid GUID
+		public abstract Guid Guid
 		{
 			get;
 		}
@@ -168,7 +168,7 @@ namespace Eraser.Manager
 		{
 			EntropySourceManager manager = ManagerLibrary.Instance.EntropySourceManager;
 			lock (ManagerLibrary.Instance.EntropySourceManager.sources)
-				manager.sources.Add(source.GUID, source);
+				manager.sources.Add(source.Guid, source);
 			manager.entropyThread.AddEntropySource(source);
 		}
 
@@ -197,13 +197,13 @@ namespace Eraser.Manager
 		/// The delegate prototype of Entropy Source Registered event 
 		/// </summary>
 		/// <param name="guid"></param>
-		public delegate void OnEntropySourceActivatedFunction(Guid guid);
+		public delegate void OnEntropySourceActivatedEventHandler(Guid guid);
 
 		/// <summary>
 		/// Global static instance of the EntropySourceRegisteredFunction,
 		/// called whenever the EntropySourceManager.Register is invoked.
 		/// </summary>
-		public static event OnEntropySourceActivatedFunction EntropySourceActivated;
+		public static event OnEntropySourceActivatedEventHandler EntropySourceActivated;
 		
 		/// <summary>
 		/// The list of currently registered Entropy Sources.
@@ -245,7 +245,7 @@ namespace Eraser.Manager
 			return result.ToArray();
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get
 			{
@@ -732,7 +732,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The next position where entropy will be added to the pool.
 		/// </summary>
-		private int poolPosition = 0;
+		private int poolPosition;
 
 		/// <summary>
 		/// The lock guarding the pool array and the current entropy addition index.

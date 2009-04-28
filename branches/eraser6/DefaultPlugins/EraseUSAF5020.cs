@@ -37,7 +37,7 @@ namespace Eraser.DefaultPlugins
 			get { return S._("US Air Force 5020"); }
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get { return new Guid("{7BF5B185-8EA5-4e12-83F1-F6C2EFB3D2C2}"); }
 		}
@@ -51,7 +51,7 @@ namespace Eraser.DefaultPlugins
 		{
 			get
 			{
-				PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
+				Prng prng = PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng);
 				int rand = prng.Next();
 
 				return new Pass[]

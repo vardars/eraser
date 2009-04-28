@@ -62,7 +62,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The GUID for this erasure method.
 		/// </summary>
-		public abstract Guid GUID
+		public abstract Guid Guid
 		{
 			get;
 		}
@@ -82,7 +82,7 @@ namespace Eraser.Manager
 		/// total size of the files (the ones that take most computation time)
 		/// are already provided. However some exceptional cases may take a
 		/// long time if the data set is large.</remarks>
-		public abstract long CalculateEraseDataSize(List<string> paths, long targetSize);
+		public abstract long CalculateEraseDataSize(ICollection<string> paths, long targetSize);
 
 		/// <summary>
 		/// A simple callback for clients to retrieve progress information from
@@ -108,7 +108,7 @@ namespace Eraser.Manager
 		/// value for long, the function will take the minimum.</param>
 		/// <param name="prng">The PRNG source for random data.</param>
 		/// <param name="callback">The progress callback function.</param>
-		public abstract void Erase(Stream strm, long erasureLength, PRNG prng,
+		public abstract void Erase(Stream strm, long erasureLength, Prng prng,
 			ProgressFunction callback);
 
 		/// <summary>
@@ -136,7 +136,7 @@ namespace Eraser.Manager
 			passes.CopyTo(result, 0);
 
 			//Randomize.
-			PRNG rand = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
+			Prng rand = PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng);
 			for (int i = 0; i < result.Length; ++i)
 			{
 				int val = rand.Next(result.Length - 1);
@@ -154,9 +154,9 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="strm">The buffer to populate with data to write to disk.</param>
 		/// <param name="prng">The PRNG used.</param>
-		protected static void WriteRandom(ref byte[] buffer, object value)
+		protected static void WriteRandom(byte[] buffer, object value)
 		{
-			((PRNG)value).NextBytes(buffer);
+			((Prng)value).NextBytes(buffer);
 		}
 
 		/// <summary>
@@ -165,7 +165,7 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="strm">The buffer to populate with data to write to disk.</param>
 		/// <param name="value">The byte[] to write.</param>
-		protected static void WriteConstant(ref byte[] buffer, object value)
+		protected static void WriteConstant(byte[] buffer, object value)
 		{
 			byte[] constant = (byte[])value;
 			for (int i = 0; i < buffer.Length; ++i)
@@ -199,9 +199,9 @@ namespace Eraser.Manager
 			/// </summary>
 			/// <param name="buffer">The buffer to populate with the data to write.</param>
 			/// <param name="prng">The PRNG used for random passes.</param>
-			public void Execute(ref byte[] buffer, PRNG prng)
+			public void Execute(byte[] buffer, Prng prng)
 			{
-				Function(ref buffer, OpaqueValue == null ? prng : OpaqueValue);
+				Function(buffer, OpaqueValue == null ? prng : OpaqueValue);
 			}
 
 			/// <summary>
@@ -209,7 +209,7 @@ namespace Eraser.Manager
 			/// </summary>
 			/// <param name="strm">The buffer to populate with data to write to disk.</param>
 			/// <param name="opaque">An opaque value, depending on the type of callback.</param>
-			public delegate void PassFunction(ref byte[] buffer, object opaque);
+			public delegate void PassFunction(byte[] buffer, object opaque);
 
 			/// <summary>
 			/// The default pass function which writes random information to the stream
@@ -225,12 +225,12 @@ namespace Eraser.Manager
 			/// <summary>
 			/// The function to execute for this pass.
 			/// </summary>
-			public PassFunction Function;
+			public PassFunction Function { get; set; }
 
 			/// <summary>
 			/// The value to be passed to the executing function.
 			/// </summary>
-			public object OpaqueValue;
+			public object OpaqueValue { get; set; }
 		}
 	}
 
@@ -253,7 +253,7 @@ namespace Eraser.Manager
 		/// <param name="strm">The stream which needs to be erased.</param>
 		/// <param name="prng">The PRNG source for random data.</param>
 		/// <param name="callback">The progress callback function.</param>
-		public virtual void EraseUnusedSpace(Stream strm, PRNG prng, ProgressFunction callback)
+		public virtual void EraseUnusedSpace(Stream strm, Prng prng, ProgressFunction callback)
 		{
 			Erase(strm, long.MaxValue, prng, callback);
 		}
@@ -292,13 +292,13 @@ namespace Eraser.Manager
 			get;
 		}
 
-		public override long CalculateEraseDataSize(List<string> paths, long targetSize)
+		public override long CalculateEraseDataSize(ICollection<string> paths, long targetSize)
 		{
 			//Simple. Amount of data multiplied by passes.
 			return targetSize * Passes;
 		}
 
-		public override void Erase(Stream strm, long erasureLength, PRNG prng,
+		public override void Erase(Stream strm, long erasureLength, Prng prng,
 			ProgressFunction callback)
 		{
 			//Randomize the order of the passes
@@ -334,7 +334,7 @@ namespace Eraser.Manager
 					//If we have no data left, get more!
 					if (amount == 0)
 					{
-						randomizedPasses[pass].Execute(ref buffer, prng);
+						randomizedPasses[pass].Execute(buffer, prng);
 						dataStopped = 0;
 						continue;
 					}
@@ -377,18 +377,18 @@ namespace Eraser.Manager
 				get { return 0; }
 			}
 
-			public override Guid GUID
+			public override Guid Guid
 			{
 				get { return Guid.Empty; }
 			}
 
-			public override long CalculateEraseDataSize(List<string> paths, long targetSize)
+			public override long CalculateEraseDataSize(ICollection<string> paths, long targetSize)
 			{
 				throw new InvalidOperationException(S._("The DefaultMethod class should never " +
 					"be used and should instead be replaced before execution!"));
 			}
 
-			public override void Erase(Stream strm, long erasureLength, PRNG prng,
+			public override void Erase(Stream strm, long erasureLength, Prng prng,
 				ProgressFunction callback)
 			{
 				throw new InvalidOperationException(S._("The DefaultMethod class should never " +
@@ -432,21 +432,21 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Retrieves the instance of the erasure method with the given GUID.
 		/// </summary>
-		/// <param name="guid">The GUID of the erasure method.</param>
+		/// <param name="value">The GUID of the erasure method.</param>
 		/// <returns>The erasure method instance.</returns>
-		public static ErasureMethod GetInstance(Guid guid)
+		public static ErasureMethod GetInstance(Guid value)
 		{
 			try
 			{
 				lock (ManagerLibrary.Instance.ErasureMethodManager.methods)
 				{
-					MethodConstructorInfo info = ManagerLibrary.Instance.ErasureMethodManager.methods[guid];
+					MethodConstructorInfo info = ManagerLibrary.Instance.ErasureMethodManager.methods[value];
 					return (ErasureMethod)info.Constructor.Invoke(info.Parameters);
 				}
 			}
 			catch (KeyNotFoundException)
 			{
-				throw new FatalException(S._("Erasure method not found: {0}", guid.ToString()));
+				throw new FatalException(S._("Erasure method not found: {0}", value.ToString()));
 			}
 		}
 
@@ -491,25 +491,25 @@ namespace Eraser.Manager
 				MethodConstructorInfo info = new MethodConstructorInfo();
 				info.Constructor = ctor;
 				info.Parameters = parameters == null || parameters.Length == 0 ? null : parameters;
-				ManagerLibrary.Instance.ErasureMethodManager.methods.Add(method.GUID, info);
+				ManagerLibrary.Instance.ErasureMethodManager.methods.Add(method.Guid, info);
 			}
 
 			//Broadcast the event
-			OnMethodRegistered(method.GUID);
+			OnMethodRegistered(method.Guid);
 		}
 
 		/// <summary>
 		/// Unregisters an erasure method from the registrar.
 		/// </summary>
-		/// <param name="guid">The erasure method to unregister.</param>
-		public static void Unregister(Guid guid)
+		/// <param name="value">The erasure method to unregister.</param>
+		public static void Unregister(Guid value)
 		{
-			if (!ManagerLibrary.Instance.ErasureMethodManager.methods.ContainsKey(guid))
+			if (!ManagerLibrary.Instance.ErasureMethodManager.methods.ContainsKey(value))
 				throw new ArgumentException(S._("The GUID of the erasure method to remove " +
 					"refers to an invalid erasure method."));
 
-			ManagerLibrary.Instance.ErasureMethodManager.methods.Remove(guid);
-			OnMethodUnregistered(guid);
+			ManagerLibrary.Instance.ErasureMethodManager.methods.Remove(value);
+			OnMethodUnregistered(value);
 		}
 
 		/// <summary>

@@ -50,9 +50,9 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Gets the settings from the data source.
 		/// </summary>
-		/// <param name="guid">The GUID of the calling plugin</param>
+		/// <param name="value">The GUID of the calling plugin</param>
 		/// <returns>The Settings object which will act as the data store.</returns>
-		protected abstract Settings GetSettings(Guid guid);
+		protected abstract Settings GetSettings(Guid value);
 	}
 
 	/// <summary>
@@ -105,7 +105,7 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="priority">The priority of the current element in terms of
 		/// it being the default.</param>
-		public DefaultAttribute(int priority)
+		protected DefaultAttribute(int priority)
 		{
 			Priority = priority;
 		}
@@ -168,14 +168,14 @@ namespace Eraser.Manager
 	/// Indicates that the marked class should be used as the default PRNG.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = false)]
-	public sealed class DefaultPRNGAttribute : DefaultAttribute
+	public sealed class DefaultPrngAttribute : DefaultAttribute
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="priority">The priority of the current element in terms of
 		/// it being the default.</param>
-		public DefaultPRNGAttribute(int priority)
+		public DefaultPrngAttribute(int priority)
 			: base(priority)
 		{
 		}
@@ -254,14 +254,14 @@ namespace Eraser.Manager
 		/// The PRNG used. This is a GUID since PRNGs are implemented through
 		/// plugins and plugins may not be loaded and missing references may follow.
 		/// </summary>
-		public Guid ActivePRNG
+		public Guid ActivePrng
 		{
 			get
 			{
 				if (settings["ActivePRNG"] == null)
 				{
-					Guid result = FindHighestPriorityDefault(typeof(PRNG),
-						typeof(DefaultPRNGAttribute));
+					Guid result = FindHighestPriorityDefault(typeof(Prng),
+						typeof(DefaultPrngAttribute));
 					return result == Guid.Empty ? new Guid("{6BF35B8E-F37F-476e-B6B2-9994A92C3B0C}") :
 						result;
 				}

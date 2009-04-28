@@ -82,38 +82,38 @@ namespace Eraser
 				{
 					if (scheduleDailyByDay.Checked)
 					{
-						schedule.Type = RecurringSchedule.ScheduleUnit.DAILY;
+						schedule.ScheduleType = RecurringSchedule.ScheduleUnit.Daily;
 						schedule.Frequency = (int)scheduleDailyByDayFreq.Value;
 					}
 					else
 					{
-						schedule.Type = RecurringSchedule.ScheduleUnit.WEEKDAYS;
+						schedule.ScheduleType = RecurringSchedule.ScheduleUnit.Weekdays;
 					}
 				}
 				else if (scheduleWeekly.Checked)
 				{
-					schedule.Type = RecurringSchedule.ScheduleUnit.WEEKLY;
+					schedule.ScheduleType = RecurringSchedule.ScheduleUnit.Weekly;
 					schedule.Frequency = (int)scheduleWeeklyFreq.Value;
 					RecurringSchedule.DaysOfWeek weeklySchedule = 0;
 					if (scheduleWeeklyMonday.Checked)
-						weeklySchedule |= RecurringSchedule.DaysOfWeek.MONDAY;
+						weeklySchedule |= RecurringSchedule.DaysOfWeek.Monday;
 					if (scheduleWeeklyTuesday.Checked)
-						weeklySchedule |= RecurringSchedule.DaysOfWeek.TUESDAY;
+						weeklySchedule |= RecurringSchedule.DaysOfWeek.Tuesday;
 					if (scheduleWeeklyWednesday.Checked)
-						weeklySchedule |= RecurringSchedule.DaysOfWeek.WEDNESDAY;
+						weeklySchedule |= RecurringSchedule.DaysOfWeek.Wednesday;
 					if (scheduleWeeklyThursday.Checked)
-						weeklySchedule |= RecurringSchedule.DaysOfWeek.THURSDAY;
+						weeklySchedule |= RecurringSchedule.DaysOfWeek.Thursday;
 					if (scheduleWeeklyFriday.Checked)
-						weeklySchedule |= RecurringSchedule.DaysOfWeek.FRIDAY;
+						weeklySchedule |= RecurringSchedule.DaysOfWeek.Friday;
 					if (scheduleWeeklySaturday.Checked)
-						weeklySchedule |= RecurringSchedule.DaysOfWeek.SATURDAY;
+						weeklySchedule |= RecurringSchedule.DaysOfWeek.Saturday;
 					if (scheduleWeeklySunday.Checked)
-						weeklySchedule |= RecurringSchedule.DaysOfWeek.SUNDAY;
+						weeklySchedule |= RecurringSchedule.DaysOfWeek.Sunday;
 					schedule.WeeklySchedule = weeklySchedule;
 				}
 				else if (scheduleMonthly.Checked)
 				{
-					schedule.Type = RecurringSchedule.ScheduleUnit.MONTHLY;
+					schedule.ScheduleType = RecurringSchedule.ScheduleUnit.Monthly;
 					schedule.Frequency = (int)scheduleMonthlyFreq.Value;
 					schedule.MonthlySchedule = (int)scheduleMonthlyDayNumber.Value;
 				}
@@ -153,34 +153,34 @@ namespace Eraser
 				RecurringSchedule schedule = (RecurringSchedule)task.Schedule;
 				scheduleTime.Value = scheduleTime.MinDate.Add(schedule.ExecutionTime.TimeOfDay);
 
-				switch (schedule.Type)
+				switch (schedule.ScheduleType)
 				{
-					case RecurringSchedule.ScheduleUnit.DAILY:
+					case RecurringSchedule.ScheduleUnit.Daily:
 						scheduleDailyByDay.Checked = true;
 						scheduleDailyByDayFreq.Value = schedule.Frequency;
 						break;
-					case RecurringSchedule.ScheduleUnit.WEEKDAYS:
+					case RecurringSchedule.ScheduleUnit.Weekdays:
 						scheduleDailyByWeekday.Checked = true;
 						break;
-					case RecurringSchedule.ScheduleUnit.WEEKLY:
+					case RecurringSchedule.ScheduleUnit.Weekly:
 						scheduleWeeklyFreq.Value = schedule.Frequency;
 						scheduleWeekly.Checked = true;
 						scheduleWeeklyMonday.Checked =
-							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.MONDAY) != 0;
+							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.Monday) != 0;
 						scheduleWeeklyTuesday.Checked =
-							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.TUESDAY) != 0;
+							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.Tuesday) != 0;
 						scheduleWeeklyWednesday.Checked =
-							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.WEDNESDAY) != 0;
+							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.Wednesday) != 0;
 						scheduleWeeklyThursday.Checked =
-							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.THURSDAY) != 0;
+							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.Thursday) != 0;
 						scheduleWeeklyFriday.Checked =
-							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.FRIDAY) != 0;
+							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.Friday) != 0;
 						scheduleWeeklySaturday.Checked =
-							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.SATURDAY) != 0;
+							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.Saturday) != 0;
 						scheduleWeeklySunday.Checked =
-							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.SUNDAY) != 0;
+							(schedule.WeeklySchedule & RecurringSchedule.DaysOfWeek.Sunday) != 0;
 						break;
-					case RecurringSchedule.ScheduleUnit.MONTHLY:
+					case RecurringSchedule.ScheduleUnit.Monthly:
 						scheduleMonthly.Checked = true;
 						scheduleMonthlyFreq.Value = schedule.Frequency;
 						scheduleMonthlyDayNumber.Value = schedule.MonthlySchedule;

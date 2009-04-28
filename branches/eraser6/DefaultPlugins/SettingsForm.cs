@@ -38,14 +38,14 @@ namespace Eraser.DefaultPlugins
 
 			//Populate the list of erasure passes, except the FL16KB.
 			foreach (ErasureMethod method in ErasureMethodManager.GetAll().Values)
-				if (method.GUID != new Guid("{0C2E07BF-0207-49a3-ADE8-46F9E1499C01}"))
+				if (method.Guid != new Guid("{0C2E07BF-0207-49a3-ADE8-46F9E1499C01}"))
 					fl16MethodCmb.Items.Add(method);
 
 			//Load the settings.
 			DefaultPluginSettings settings = DefaultPlugin.Settings;
 			if (settings.FL16Method != Guid.Empty)
 				foreach (object item in fl16MethodCmb.Items)
-					if (((ErasureMethod)item).GUID == settings.FL16Method)
+					if (((ErasureMethod)item).Guid == settings.FL16Method)
 					{
 						fl16MethodCmb.SelectedItem = item;
 						break;
@@ -56,7 +56,7 @@ namespace Eraser.DefaultPlugins
 				Guid defaultMethodGuid =
 					ManagerLibrary.Instance.Settings.DefaultFileErasureMethod;
 				foreach (object item in fl16MethodCmb.Items)
-					if (((ErasureMethod)item).GUID == defaultMethodGuid)
+					if (((ErasureMethod)item).Guid == defaultMethodGuid)
 					{
 						fl16MethodCmb.SelectedItem = item;
 						break;
@@ -136,7 +136,7 @@ namespace Eraser.DefaultPlugins
 				return;
 			}
 
-			DefaultPlugin.Settings.FL16Method = ((ErasureMethod)fl16MethodCmb.SelectedItem).GUID;
+			DefaultPlugin.Settings.FL16Method = ((ErasureMethod)fl16MethodCmb.SelectedItem).Guid;
 
 			//Save the list of custom erasure methods
 			DefaultPlugin.Settings.EraseCustom = customMethods;

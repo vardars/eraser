@@ -30,16 +30,16 @@ using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
-	[DefaultPRNG(1)]
+	[DefaultPrng(1)]
 	[Guid("6BF35B8E-F37F-476e-B6B2-9994A92C3B0C")]
-	public class RNGCrypto : PRNG
+	public class RNGCrypto : Prng
 	{
 		public override string Name
 		{
 			get { return S._("RNGCryptoServiceProvider"); }
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get { return new Guid("{6BF35B8E-F37F-476e-B6B2-9994A92C3B0C}"); }
 		}

@@ -95,7 +95,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The thread which will answer pipe connections
 		/// </summary>
-		private Thread thread = null;
+		private Thread thread;
 
 		/// <summary>
 		/// Constructor.
@@ -107,10 +107,10 @@ namespace Eraser.Manager
 			Thread.Sleep(0);
 		}
 
-		public override void Dispose()
+		protected override void Dispose(bool disposing)
 		{
 			thread.Abort();
-			base.Dispose();
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -243,7 +243,7 @@ namespace Eraser.Manager
 					case RemoteRequest.Function.ADD_TASK:
 						{
 							Task task = (Task)parameter;
-							AddTask(ref task);
+							AddTask(task);
 							break;
 						}
 
@@ -311,10 +311,11 @@ namespace Eraser.Manager
 				PipeDirection.InOut);
 		}
 
-		public override void Dispose()
+		protected override void Dispose(bool disposing)
 		{
 			client.Close();
 			client.Dispose();
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -375,7 +376,7 @@ namespace Eraser.Manager
 				mStream.GetBuffer()));
 		}
 
-		public override List<Task> GetTasks()
+		public override ICollection<Task> GetTasks()
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, null);
@@ -399,7 +400,7 @@ namespace Eraser.Manager
 				mStream.GetBuffer()));
 		}
 
-		public override void AddTask(ref Task task)
+		public override void AddTask(Task task)
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, task);

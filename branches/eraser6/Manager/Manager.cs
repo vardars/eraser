@@ -38,24 +38,36 @@ namespace Eraser.Manager
 
 			EntropySourceManager = new EntropySourceManager();
 			LanguageManager = new LanguageManager(); 
-			PRNGManager = new PRNGManager();
+			PRNGManager = new PrngManager();
 			ErasureMethodManager = new ErasureMethodManager();
 			Host = new Plugin.DefaultHost();
 			Host.Load();
 		}
 
-		public void Dispose()
+		~ManagerLibrary()
+		{
+			Dispose(false);
+		}
+
+		protected virtual void Dispose(bool disposing)
 		{
 			EntropySourceManager.Poller.Abort();
-			Host.Dispose();
+			if (disposing)
+				Host.Dispose();
 			SettingsManager.Save();
 			Instance = null;
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		/// <summary>
 		/// The global library instance.
 		/// </summary>
-		public static ManagerLibrary Instance = null;
+		public static ManagerLibrary Instance;
 
 		/// <summary>
 		/// The global instance of the EntropySource Manager
@@ -65,7 +77,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The global instance of the PRNG Manager.
 		/// </summary>
-		internal PRNGManager PRNGManager;
+		internal PrngManager PRNGManager;
 
 		/// <summary>
 		/// Global instance of the Language Manager.
@@ -103,7 +115,8 @@ namespace Eraser.Manager
 	/// <summary>
 	/// Fatal exception class.
 	/// </summary>
-	internal class FatalException : Exception
+	[Serializable]
+	public class FatalException : Exception
 	{
 		public FatalException(string message)
 			: base(message)

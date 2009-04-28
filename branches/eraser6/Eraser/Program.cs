@@ -262,9 +262,20 @@ namespace Eraser
 			globalMutex = new Mutex(true, instanceID, out isFirstInstance);
 		}
 
+		~GUIProgram()
+		{
+			Dispose(false);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+				globalMutex.Close();
+		}
+
 		public void Dispose()
 		{
-			globalMutex.Close();
+			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
@@ -1070,7 +1081,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			foreach (ErasureMethod method in methods.Values)
 			{
 				Console.WriteLine(methodFormat, (method is UnusedSpaceErasureMethod) ?
-					"U" : "", method.Name, method.GUID.ToString());
+					"U" : "", method.Name, method.Guid.ToString());
 			}
 		}
 
@@ -1120,7 +1131,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 					}
 
 					Program.eraserClient.Run();
-					Program.eraserClient.AddTask(ref task);
+					Program.eraserClient.AddTask(task);
 				}
 			}
 			catch (UnauthorizedAccessException e)

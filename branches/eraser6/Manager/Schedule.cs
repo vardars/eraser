@@ -127,36 +127,36 @@ namespace Eraser.Manager
 				string result = string.Empty;
 				switch (type)
 				{
-					case ScheduleUnit.DAILY:
+					case ScheduleUnit.Daily:
 						if (frequency != 1)
 							result = S._("Once every {0} days", frequency);
 						else
 							result = S._("Once every day");
 						break;
-					case ScheduleUnit.WEEKDAYS:
+					case ScheduleUnit.Weekdays:
 						result = S._("Every weekday");
 						break;
-					case ScheduleUnit.WEEKLY:
-						if ((weeklySchedule & DaysOfWeek.MONDAY) != 0)
+					case ScheduleUnit.Weekly:
+						if ((weeklySchedule & DaysOfWeek.Monday) != 0)
 							result = S._("Every Monday, {0}");
-						if ((weeklySchedule & DaysOfWeek.TUESDAY) != 0)
+						if ((weeklySchedule & DaysOfWeek.Tuesday) != 0)
 							result += S._("Every Tuesday, {0}");
-						if ((weeklySchedule & DaysOfWeek.WEDNESDAY) != 0)
+						if ((weeklySchedule & DaysOfWeek.Wednesday) != 0)
 							result += S._("Every Wednesday, {0}");
-						if ((weeklySchedule & DaysOfWeek.THURSDAY) != 0)
+						if ((weeklySchedule & DaysOfWeek.Thursday) != 0)
 							result += S._("Every Thursday, {0}");
-						if ((weeklySchedule & DaysOfWeek.FRIDAY) != 0)
+						if ((weeklySchedule & DaysOfWeek.Friday) != 0)
 							result += S._("Every Friday, {0}");
-						if ((weeklySchedule & DaysOfWeek.SATURDAY) != 0)
+						if ((weeklySchedule & DaysOfWeek.Saturday) != 0)
 							result += S._("Every Saturday, {0}");
-						if ((weeklySchedule & DaysOfWeek.SUNDAY) != 0)
+						if ((weeklySchedule & DaysOfWeek.Sunday) != 0)
 							result += S._("Every Sunday, {0}");
 
 						result = string.Format(result, frequency == 1 ?
 							S._("once every {0} week.", frequency) :
 							S._("once every {0} weeks.", frequency));
 						break;
-					case ScheduleUnit.MONTHLY:
+					case ScheduleUnit.Monthly:
 						if (frequency == 1)
 							result = S._("On day {0} of every month", monthlySchedule);
 						else
@@ -211,42 +211,44 @@ namespace Eraser.Manager
 			/// <summary>
 			/// Daily schedule type
 			/// </summary>
-			DAILY,
+			Daily,
 
 			/// <summary>
 			/// Weekdays-only schedule type
 			/// </summary>
-			WEEKDAYS,
+			Weekdays,
 
 			/// <summary>
 			/// Weekly schedule type
 			/// </summary>
-			WEEKLY,
+			Weekly,
 
 			/// <summary>
 			/// Monthly schedule type
 			/// </summary>
-			MONTHLY
+			Monthly
 		}
 
 		/// <summary>
 		/// The days of the week, with values usable in a bitfield.
 		/// </summary>
+		[Flags]
 		public enum DaysOfWeek
 		{
-			SUNDAY = 1 << DayOfWeek.Sunday,
-			MONDAY = 1 << DayOfWeek.Monday,
-			TUESDAY = 1 << DayOfWeek.Tuesday,
-			WEDNESDAY = 1 << DayOfWeek.Wednesday,
-			THURSDAY = 1 << DayOfWeek.Thursday,
-			FRIDAY = 1 << DayOfWeek.Friday,
-			SATURDAY = 1 << DayOfWeek.Saturday
+			None = 0,
+			Sunday = 1 << DayOfWeek.Sunday,
+			Monday = 1 << DayOfWeek.Monday,
+			Tuesday = 1 << DayOfWeek.Tuesday,
+			Wednesday = 1 << DayOfWeek.Wednesday,
+			Thursday = 1 << DayOfWeek.Thursday,
+			Friday = 1 << DayOfWeek.Friday,
+			Saturday = 1 << DayOfWeek.Saturday
 		}
 
 		/// <summary>
 		/// The type of schedule.
 		/// </summary>
-		public ScheduleUnit Type
+		public ScheduleUnit ScheduleType
 		{
 			get { return type; }
 			set { type = value; }
@@ -260,8 +262,8 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				if (Type != ScheduleUnit.DAILY && Type != ScheduleUnit.WEEKLY &&
-					Type != ScheduleUnit.MONTHLY)
+				if (ScheduleType != ScheduleUnit.Daily && ScheduleType != ScheduleUnit.Weekly &&
+					ScheduleType != ScheduleUnit.Monthly)
 					throw new ArgumentException(S._("The ScheduleUnit of the schedule does " +
 						"not require a frequency value, this field would contain garbage."));
 
@@ -295,7 +297,7 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				if (Type != ScheduleUnit.WEEKLY)
+				if (ScheduleType != ScheduleUnit.Weekly)
 					throw new ArgumentException(S._("The ScheduleUnit of the schedule does " +
 						"not require the WeeklySchedule value, this field would contain garbage"));
 
@@ -319,7 +321,7 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				if (Type != ScheduleUnit.MONTHLY)
+				if (ScheduleType != ScheduleUnit.Monthly)
 					throw new ArgumentException(S._("The ScheduleUnit of the schedule does " +
 						"not require the MonthlySchedule value, this field would contain garbage"));
 
@@ -355,9 +357,9 @@ namespace Eraser.Manager
 				nextRun = nextRun.AddMinutes(executionTime.Minute - nextRun.Minute);
 				nextRun = nextRun.AddSeconds(executionTime.Second - nextRun.Second);
 
-				switch (Type)
+				switch (ScheduleType)
 				{
-					case ScheduleUnit.DAILY:
+					case ScheduleUnit.Daily:
 					{
 						//First assume that it is today that we are running the schedule
 						long daysToAdd = (DateTime.Now - nextRun).Days;
@@ -369,7 +371,7 @@ namespace Eraser.Manager
 							nextRun = nextRun.AddDays(frequency);
 						break;
 					}
-					case ScheduleUnit.WEEKDAYS:
+					case ScheduleUnit.Weekdays:
 					{
 						while (nextRun < DateTime.Now ||
 							lastRun.DayOfWeek == DayOfWeek.Saturday ||
@@ -377,7 +379,7 @@ namespace Eraser.Manager
 							nextRun = nextRun.AddDays(1);
 						break;
 					}
-					case ScheduleUnit.WEEKLY:
+					case ScheduleUnit.Weekly:
 					{
 						if (weeklySchedule == 0)
 							break;
@@ -404,7 +406,7 @@ namespace Eraser.Manager
 
 						break;
 					}
-					case ScheduleUnit.MONTHLY:
+					case ScheduleUnit.Monthly:
 						//Step the number of months since the last run
 						if (LastRun != DateTime.MinValue)
 							nextRun = nextRun.AddMonths(frequency);
@@ -443,7 +445,7 @@ namespace Eraser.Manager
 		/// <returns>True if the task will be run on the date.</returns>
 		private bool CanRunOnDay(DateTime date)
 		{
-			if (Type != ScheduleUnit.WEEKLY)
+			if (ScheduleType != ScheduleUnit.Weekly)
 				throw new ArgumentException(S._("The ScheduleUnit of the schedule does " +
 					"not use the WeeklyScheduly value, this field would contain garbage"));
 			return ((int)weeklySchedule & (1 << (int)date.DayOfWeek)) != 0;

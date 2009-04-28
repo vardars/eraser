@@ -67,7 +67,7 @@ namespace Eraser.Manager
 		public static string GenerateRandomFileName(DirectoryInfo info, int length)
 		{
 			//Get a random file name
-			PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
+			Prng prng = PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng);
 			string resultPrefix = info == null ? string.Empty : info.FullName +
 				Path.DirectorySeparatorChar;
 			byte[] resultAry = new byte[length];
@@ -112,7 +112,7 @@ namespace Eraser.Manager
 				return string.Empty;
 
 			//Find a random entry.
-			PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
+			Prng prng = PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng);
 			string result = string.Empty;
 			while (result.Length == 0)
 			{
@@ -148,7 +148,7 @@ namespace Eraser.Manager
 		/// <param name="currentFile">The current file being erased.</param>
 		/// <param name="totalFiles">The estimated number of files that must be
 		/// erased.</param>
-		public delegate void FilesystemEntriesEraseProgress(int currentFile, int totalFiles);
+		public delegate void FileSystemEntriesEraseProgress(int currentFile, int totalFiles);
 
 		/// <summary>
 		/// Erases old file system table-resident files. This creates small one-byte
@@ -159,8 +159,8 @@ namespace Eraser.Manager
 		/// the path to store the temporary one-byte files. The file system table
 		/// of that drive will be erased.</param>
 		/// <param name="method">The method used to erase the files.</param>
-		public abstract void EraseOldFilesystemResidentFiles(VolumeInfo info,
-			ErasureMethod method, FilesystemEntriesEraseProgress callback);
+		public abstract void EraseOldFileSystemResidentFiles(VolumeInfo info,
+			ErasureMethod method, FileSystemEntriesEraseProgress callback);
 
 		/// <summary>
 		/// Erases the unused space in the main filesystem structures by creating,
@@ -174,19 +174,19 @@ namespace Eraser.Manager
 		/// <param name="callback">The callback function to handle the progress
 		/// of the file system entry erasure.</param>
 		public abstract void EraseDirectoryStructures(VolumeInfo info,
-			FilesystemEntriesEraseProgress callback);
+			FileSystemEntriesEraseProgress callback);
 
 		/// <summary>
 		/// The number of times file names are renamed to erase the file name from
 		/// the file system table.
 		/// </summary>
-		public const int FilenameErasePasses = 7;
+		public const int FileNameErasePasses = 7;
 
 		/// <summary>
 		/// The maximum number of times Eraser tries to erase a file/folder before
 		/// it gives up.
 		/// </summary>
-		public const int FilenameEraseTries = 50;
+		public const int FileNameEraseTries = 50;
 	}
 
 	/// <summary>
@@ -206,7 +206,7 @@ namespace Eraser.Manager
 			//Rename the file a few times to erase the entry from the file system
 			//table.
 			string newPath = GenerateRandomFileName(info.Directory, info.Name.Length);
-			for (int i = 0, tries = 0; i < FilenameErasePasses; ++tries)
+			for (int i = 0, tries = 0; i < FileNameErasePasses; ++tries)
 			{
 				//Try to rename the file. If it fails, it is probably due to another
 				//process locking the file. Defer, then rename again.
@@ -221,7 +221,7 @@ namespace Eraser.Manager
 
 					//If after FilenameEraseTries the file is still locked, some program is
 					//definitely using the file; throw an exception.
-					if (tries > FilenameEraseTries)
+					if (tries > FileNameEraseTries)
 						throw new IOException(S._("The file {0} is currently in use and " +
 							"cannot be removed.", info.FullName));
 				}
@@ -237,7 +237,7 @@ namespace Eraser.Manager
 					string shadowFile = null;
 					List<string> entries = ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles.GetRange(
 						0, ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles.Count);
-					PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
+					Prng prng = PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng);
 					do
 					{
 						if (entries.Count == 0)
@@ -285,7 +285,7 @@ namespace Eraser.Manager
 			}
 
 			//Then delete the file.
-			for (int i = 0; i < FilenameEraseTries; ++i)
+			for (int i = 0; i < FileNameEraseTries; ++i)
 				try
 				{
 					info.Delete();
@@ -293,7 +293,7 @@ namespace Eraser.Manager
 				}
 				catch (IOException)
 				{
-					if (i > FilenameEraseTries)
+					if (i > FileNameEraseTries)
 						throw new IOException(S._("The file {0} is currently in use and " +
 							"cannot be removed.", info.FullName));
 					Thread.Sleep(100);
@@ -309,7 +309,7 @@ namespace Eraser.Manager
 				DeleteFile(file);
 
 			//Then clean up this folder.
-			for (int i = 0; i < FilenameErasePasses; ++i)
+			for (int i = 0; i < FileNameErasePasses; ++i)
 			{
 				//Rename the folder.
 				string newPath = GenerateRandomFileName(info.Parent, info.Name.Length);
@@ -331,8 +331,8 @@ namespace Eraser.Manager
 			info.Delete(true);
 		}
 
-		public override void EraseOldFilesystemResidentFiles(VolumeInfo info,
-			ErasureMethod method, FilesystemEntriesEraseProgress callback)
+		public override void EraseOldFileSystemResidentFiles(VolumeInfo info,
+			ErasureMethod method, FileSystemEntriesEraseProgress callback)
 		{
 			try
 			{
@@ -352,7 +352,7 @@ namespace Eraser.Manager
 
 						//Then run the erase task
 						method.Erase(strm, long.MaxValue,
-							PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
+							PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng),
 							null);
 					}
 
@@ -368,7 +368,7 @@ namespace Eraser.Manager
 		}
 
 		public override void EraseDirectoryStructures(VolumeInfo info,
-			FilesystemEntriesEraseProgress callback)
+			FileSystemEntriesEraseProgress callback)
 		{
 			//Create a directory to hold all the temporary files
 			DirectoryInfo tempDir = new DirectoryInfo(info.MountPoints[0]);
@@ -382,7 +382,7 @@ namespace Eraser.Manager
 				long mftRecordSegmentSize = NtfsAPI.GetMftRecordSegmentSize(info);
 				int pollingInterval = (int)Math.Max(1, (mftSize / info.ClusterSize / 20));
 				int totalFiles = (int)Math.Max(1L, mftSize / mftRecordSegmentSize) *
-					(FilenameErasePasses + 1);
+					(FileNameErasePasses + 1);
 				int filesCreated = 0;
 
 				while (true)
@@ -411,11 +411,11 @@ namespace Eraser.Manager
 			{
 				//Clear up all the temporary files
 				FileInfo[] files = tempDir.GetFiles("*", SearchOption.AllDirectories);
-				int totalFiles = files.Length * (FilenameErasePasses + 1);
+				int totalFiles = files.Length * (FileNameErasePasses + 1);
 				for (int i = 0; i < files.Length; ++i)
 				{
 					if (callback != null && i % 50 == 0)
-						callback(files.Length + i * FilenameErasePasses, totalFiles);
+						callback(files.Length + i * FileNameErasePasses, totalFiles);
 					DeleteFile(files[i]);
 				}
 
@@ -439,12 +439,12 @@ namespace Eraser.Manager
 			throw new NotImplementedException();
 		}
 
-		public override void EraseOldFilesystemResidentFiles(VolumeInfo info, ErasureMethod method, FilesystemEntriesEraseProgress callback)
+		public override void EraseOldFileSystemResidentFiles(VolumeInfo info, ErasureMethod method, FileSystemEntriesEraseProgress callback)
 		{
 			throw new NotImplementedException();
 		}
 
-		public override void EraseDirectoryStructures(VolumeInfo info, FilesystemEntriesEraseProgress callback)
+		public override void EraseDirectoryStructures(VolumeInfo info, FileSystemEntriesEraseProgress callback)
 		{
 			throw new NotImplementedException();
 		}

@@ -37,7 +37,7 @@ namespace Eraser.DefaultPlugins
 			get { return S._("Russian GOST P50739-95"); }
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get { return new Guid("{92681583-F484-415f-A66C-CC210222EDC5}"); }
 		}

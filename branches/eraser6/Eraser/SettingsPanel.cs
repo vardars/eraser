@@ -98,14 +98,14 @@ namespace Eraser
 		private void OnMethodUnregistered(Guid guid)
 		{
 			foreach (object obj in eraseFilesMethod.Items)
-				if (((ErasureMethod)obj).GUID == guid)
+				if (((ErasureMethod)obj).Guid == guid)
 				{
 					eraseFilesMethod.Items.Remove(obj);
 					break;
 				}
 
 			foreach (object obj in eraseUnusedMethod.Items)
-				if (((ErasureMethod)obj).GUID == guid)
+				if (((ErasureMethod)obj).Guid == guid)
 				{
 					eraseUnusedMethod.Items.Remove(obj);
 					break;
@@ -140,8 +140,8 @@ namespace Eraser
 			}
 
 			//Refresh the list of PRNGs
-			Dictionary<Guid, PRNG> prngs = PRNGManager.GetAll();
-			foreach (PRNG prng in prngs.Values)
+			Dictionary<Guid, Prng> prngs = PrngManager.GetAll();
+			foreach (Prng prng in prngs.Values)
 				erasePRNG.Items.Add(prng);
 		}
 
@@ -156,21 +156,21 @@ namespace Eraser
 				}
 
 			foreach (Object method in eraseFilesMethod.Items)
-				if (((ErasureMethod)method).GUID == ManagerLibrary.Instance.Settings.DefaultFileErasureMethod)
+				if (((ErasureMethod)method).Guid == ManagerLibrary.Instance.Settings.DefaultFileErasureMethod)
 				{
 					eraseFilesMethod.SelectedItem = method;
 					break;
 				}
 
 			foreach (Object method in eraseUnusedMethod.Items)
-				if (((ErasureMethod)method).GUID == ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod)
+				if (((ErasureMethod)method).Guid == ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod)
 				{
 					eraseUnusedMethod.SelectedItem = method;
 					break;
 				}
 
 			foreach (Object prng in erasePRNG.Items)
-				if (((PRNG)prng).GUID == ManagerLibrary.Instance.Settings.ActivePRNG)
+				if (((Prng)prng).Guid == ManagerLibrary.Instance.Settings.ActivePrng)
 				{
 					erasePRNG.SelectedItem = prng;
 					break;
@@ -212,7 +212,7 @@ namespace Eraser
 				{
 					eraseFilesMethod.SelectedIndex = 0;
 					ManagerLibrary.Instance.Settings.DefaultFileErasureMethod =
-						((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
+						((ErasureMethod)eraseFilesMethod.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Default file erasure method"));
 			}
@@ -222,7 +222,7 @@ namespace Eraser
 				{
 					eraseUnusedMethod.SelectedIndex = 0;
 					ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod =
-						((ErasureMethod)eraseUnusedMethod.SelectedItem).GUID;
+						((ErasureMethod)eraseUnusedMethod.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Default unused space erasure method"));
 			}
@@ -231,8 +231,8 @@ namespace Eraser
 				if (erasePRNG.Items.Count > 0)
 				{
 					erasePRNG.SelectedIndex = 0;
-					ManagerLibrary.Instance.Settings.ActivePRNG =
-						((PRNG)erasePRNG.SelectedItem).GUID;
+					ManagerLibrary.Instance.Settings.ActivePrng =
+						((Prng)erasePRNG.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Randomness data source"));
 			}
@@ -422,17 +422,17 @@ namespace Eraser
 			settings.IntegrateWithShell = uiContextMenu.Checked;
 
 			managerSettings.DefaultFileErasureMethod =
-				((ErasureMethod)eraseFilesMethod.SelectedItem).GUID;
+				((ErasureMethod)eraseFilesMethod.SelectedItem).Guid;
 			managerSettings.DefaultUnusedSpaceErasureMethod =
-				((ErasureMethod)eraseUnusedMethod.SelectedItem).GUID;
+				((ErasureMethod)eraseUnusedMethod.SelectedItem).Guid;
 
-			PRNG newPRNG = (PRNG)erasePRNG.SelectedItem;
-			if (newPRNG.GUID != managerSettings.ActivePRNG)
+			Prng newPRNG = (Prng)erasePRNG.SelectedItem;
+			if (newPRNG.Guid != managerSettings.ActivePrng)
 			{
 				MessageBox.Show(this, S._("The new randomness data source will only be used when " +
 					"the next task is run.\nCurrently running tasks will use the old source."),
 					S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information);
-				managerSettings.ActivePRNG = newPRNG.GUID;
+				managerSettings.ActivePrng = newPRNG.Guid;
 			}
 			
 			managerSettings.PlausibleDeniability = plausibleDeniability.Checked;

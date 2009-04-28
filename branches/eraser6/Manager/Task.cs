@@ -55,7 +55,7 @@ namespace Eraser.Manager
 			public virtual void GetObjectData(SerializationInfo info,
 				StreamingContext context)
 			{
-				info.AddValue("Method", method.GUID);
+				info.AddValue("Method", method.Guid);
 			}
 			#endregion
 
@@ -125,12 +125,12 @@ namespace Eraser.Manager
 			/// <summary>
 			/// Erasure method to use for the target.
 			/// </summary>
-			protected ErasureMethod method = null;
+			protected ErasureMethod method;
 
 			/// <summary>
 			/// The task object owning this target.
 			/// </summary>
-			private Task task = null;
+			private Task task;
 		}
 
 		/// <summary>
@@ -194,7 +194,7 @@ namespace Eraser.Manager
 				{
 					//The system cannot read the file, assume no ADSes for lack of
 					//more information.
-					Task.Log.Add(new LogEntry(e.Message, LogLevel.ERROR));
+					Task.Log.Add(new LogEntry(e.Message, LogLevel.Error));
 				}
 			}
 
@@ -302,12 +302,12 @@ namespace Eraser.Manager
 			/// <summary>
 			/// The drive to erase
 			/// </summary>
-			public string Drive;
+			public string Drive { get; set; }
 
 			/// <summary>
 			/// Whether cluster tips should be erased.
 			/// </summary>
-			public bool EraseClusterTips;
+			public bool EraseClusterTips { get; set; }
 		}
 
 		/// <summary>
@@ -317,7 +317,7 @@ namespace Eraser.Manager
 		public class File : FilesystemObject
 		{
 			#region Serialization code
-			public File(SerializationInfo info, StreamingContext context)
+			protected File(SerializationInfo info, StreamingContext context)
 				: base(info, context)
 			{
 			}
@@ -349,7 +349,7 @@ namespace Eraser.Manager
 		public class Folder : FilesystemObject
 		{
 			#region Serialization code
-			public Folder(SerializationInfo info, StreamingContext context)
+			protected Folder(SerializationInfo info, StreamingContext context)
 				: base(info, context)
 			{
 				includeMask = (string)info.GetValue("IncludeMask", typeof(string));
@@ -437,7 +437,7 @@ namespace Eraser.Manager
 					{
 						//Ignore, but log.
 						Task.log.Add(new LogEntry(S._("Could not erase {0} because {1}",
-							dir.FullName, e.Message), LogLevel.ERROR));
+							dir.FullName, e.Message), LogLevel.Error));
 					}
 
 				result.AddRange(info.GetFiles(includeMask, SearchOption.TopDirectoryOnly));
@@ -484,7 +484,7 @@ namespace Eraser.Manager
 		public class RecycleBin : FilesystemObject
 		{
 			#region Serialization code
-			public RecycleBin(SerializationInfo info, StreamingContext context)
+			protected RecycleBin(SerializationInfo info, StreamingContext context)
 				: base(info, context)
 			{
 			}
@@ -547,7 +547,7 @@ namespace Eraser.Manager
 				}
 				catch (UnauthorizedAccessException e)
 				{
-					Task.Log.Add(new LogEntry(e.Message, LogLevel.ERROR));
+					Task.Log.Add(new LogEntry(e.Message, LogLevel.Error));
 				}
 			}
 
@@ -567,23 +567,23 @@ namespace Eraser.Manager
 		/// Maintains a collection of erasure targets.
 		/// </summary>
 		[Serializable]
-		public class ErasureTargetsList : IList<ErasureTarget>, ICollection<ErasureTarget>,
+		public class ErasureTargetsCollection : IList<ErasureTarget>, ICollection<ErasureTarget>,
 			IEnumerable<ErasureTarget>, ISerializable
 		{
 			#region Constructors
-			internal ErasureTargetsList(Task owner)
+			internal ErasureTargetsCollection(Task owner)
 			{
 				this.list = new List<ErasureTarget>();
 				this.owner = owner;
 			}
 
-			internal ErasureTargetsList(Task owner, int capacity)
+			internal ErasureTargetsCollection(Task owner, int capacity)
 				: this(owner)
 			{
 				list.Capacity = capacity;
 			}
 
-			internal ErasureTargetsList(Task owner, IEnumerable<ErasureTarget> targets)
+			internal ErasureTargetsCollection(Task owner, IEnumerable<ErasureTarget> targets)
 				: this(owner)
 			{
 				list.AddRange(targets);
@@ -591,12 +591,12 @@ namespace Eraser.Manager
 			#endregion
 
 			#region Serialization Code
-			ErasureTargetsList(SerializationInfo info, StreamingContext context)
+			protected ErasureTargetsCollection(SerializationInfo info, StreamingContext context)
 			{
 				list = (List<ErasureTarget>)info.GetValue("list", typeof(List<ErasureTarget>));
 			}
 
-			public void GetObjectData(SerializationInfo info, StreamingContext context)
+			public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 			{
 				info.AddValue("list", list);
 			}
@@ -720,11 +720,11 @@ namespace Eraser.Manager
 		}
 
 		#region Serialization code
-		public Task(SerializationInfo info, StreamingContext context)
+		protected Task(SerializationInfo info, StreamingContext context)
 		{
 			id = (uint)info.GetValue("ID", typeof(uint));
 			name = (string)info.GetValue("Name", typeof(string));
-			targets = (ErasureTargetsList)info.GetValue("Targets", typeof(ErasureTargetsList));
+			targets = (ErasureTargetsCollection)info.GetValue("Targets", typeof(ErasureTargetsCollection));
 			targets.Owner = this;
 			log = (Logger)info.GetValue("Log", typeof(Logger));
 
@@ -757,7 +757,7 @@ namespace Eraser.Manager
 		/// </summary>
 		public Task()
 		{
-			targets = new ErasureTargetsList(this);
+			targets = new ErasureTargetsCollection(this);
 		}
 
 		/// <summary>
@@ -836,16 +836,16 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Gets whether the task has been cancelled from execution.
 		/// </summary>
-		public bool Cancelled
+		public bool Canceled
 		{
-			get { return cancelled; }
-			internal set { cancelled = value; }
+			get { return canceled; }
+			internal set { canceled = value; }
 		}
 
 		/// <summary>
 		/// The set of data to erase when this task is executed.
 		/// </summary>
-		public ErasureTargetsList Targets
+		public ErasureTargetsCollection Targets
 		{
 			get { return targets; }
 		}
@@ -930,14 +930,14 @@ namespace Eraser.Manager
 
 		private uint id;
 		private Executor executor;
-		private bool cancelled = false;
-		private bool queued = false;
+		private bool canceled;
+		private bool queued;
 
 		private string name = string.Empty;
-		private bool executing = false;
+		private bool executing;
 
 		private Schedule schedule = Schedule.RunNow;
-		private ErasureTargetsList targets = null;
+		private ErasureTargetsCollection targets;
 		private Logger log = new Logger();
 	}
 
@@ -1065,14 +1065,14 @@ namespace Eraser.Manager
 			}
 		}
 
-		private float overallProgress = 0.0f;
+		private float overallProgress;
 		private TimeSpan timeLeft = new TimeSpan(0, 0, -1);
 
 		private Task.ErasureTarget currentTarget;
-		private int currentTargetIndex = 0;
+		private int currentTargetIndex;
 		private int currentTargetTotalPasses;
 
-		private float currentItemProgress = 0.0f;
+		private float currentItemProgress;
 		private string currentItemName;
 		private int currentItemPass = 1;
 	}

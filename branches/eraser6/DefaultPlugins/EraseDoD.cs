@@ -34,7 +34,7 @@ namespace Eraser.DefaultPlugins
 			get { return S._("US DoD 5220.22-M (8-306./E, C & E)"); }
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get { return new Guid("{D1583631-702E-4dbf-A0E9-C35DBA481702}"); }
 		}
@@ -49,7 +49,7 @@ namespace Eraser.DefaultPlugins
 			get
 			{
 				//Set passes 1, 4 and 5 to be a random value
-				PRNG prng = PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG);
+				Prng prng = PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng);
 				int rand = prng.Next();
 
 				Pass[] result = new Pass[]
@@ -80,7 +80,7 @@ namespace Eraser.DefaultPlugins
 			get { return S._("US DoD 5220.22-M (8-306./E)"); }
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get { return new Guid("{ECBF4998-0B4F-445c-9A06-23627659E419}"); }
 		}

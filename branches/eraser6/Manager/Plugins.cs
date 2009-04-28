@@ -61,10 +61,18 @@ namespace Eraser.Manager.Plugin
 		/// </summary>
 		public abstract void Load();
 
+		protected virtual void Dispose(bool disposing)
+		{
+		}
+
 		/// <summary>
 		/// Cleans up resources used by the host. Also unloads all loaded plugins.
 		/// </summary>
-		public abstract void Dispose();
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
 
 		/// <summary>
 		/// The plugin load event delegate.
@@ -133,7 +141,7 @@ namespace Eraser.Manager.Plugin
 			}
 		}
 
-		public override void Dispose()
+		protected override void Dispose(bool disposing)
 		{
 			//Unload all the plugins. This will cause all the plugins to execute
 			//the cleanup code.
@@ -374,17 +382,17 @@ namespace Eraser.Manager.Plugin
 		/// <summary>
 		/// The GUID of the assembly.
 		/// </summary>
-		public Guid GUID;
+		public Guid GUID { get; set; }
 
 		/// <summary>
 		/// The publisher of the assembly.
 		/// </summary>
-		public string Author;
+		public string Author { get; set; }
 
 		/// <summary>
 		/// The version of the assembly.
 		/// </summary>
-		public Version Version;
+		public Version Version { get; set; }
 	}
 
 	/// <summary>

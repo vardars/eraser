@@ -50,7 +50,7 @@ namespace Eraser.DefaultPlugins
 				}
 
 			//If we have no default or we are the default then throw an exception
-			if (method == null || method.GUID == GUID)
+			if (method == null || method.Guid == Guid)
 				throw new InvalidOperationException(S._("The First/last 16KB erasure method " +
 					"requires another erasure method to erase the file.\n\nThis must " +
 					"be set in the Plugin Settings dialog."));
@@ -66,12 +66,12 @@ namespace Eraser.DefaultPlugins
 			get { return 0; } //Variable number, depending on defaults.
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get { return new Guid("{0C2E07BF-0207-49a3-ADE8-46F9E1499C01}"); }
 		}
 
-		public override long CalculateEraseDataSize(List<string> paths, long targetSize)
+		public override long CalculateEraseDataSize(ICollection<string> paths, long targetSize)
 		{
 			//Amount of data required to be written.
 			long amountToWrite = 0;
@@ -89,7 +89,7 @@ namespace Eraser.DefaultPlugins
 			return amountToWrite * method.Passes;
 		}
 
-		public override void Erase(Stream strm, long erasureLength, PRNG prng,
+		public override void Erase(Stream strm, long erasureLength, Prng prng,
 			ProgressFunction callback)
 		{
 			//Make sure that the erasureLength passed in here is the maximum value

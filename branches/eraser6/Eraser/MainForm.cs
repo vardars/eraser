@@ -234,7 +234,7 @@ namespace Eraser
 				if (form.ShowDialog() == DialogResult.OK)
 				{
 					Task task = form.Task;
-					Program.eraserClient.AddTask(ref task);
+					Program.eraserClient.AddTask(task);
 				}
 			}
 		}

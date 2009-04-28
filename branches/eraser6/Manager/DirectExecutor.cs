@@ -45,10 +45,12 @@ namespace Eraser.Manager
 			thread = new Thread(Main);
 		}
 
-		public override void Dispose()
+		protected override void Dispose(bool disposing)
 		{
 			thread.Abort();
 			schedulerInterrupt.Set();
+			schedulerInterrupt.Close();
+			base.Dispose(disposing);
 		}
 
 		public override void Run()
@@ -57,7 +59,7 @@ namespace Eraser.Manager
 			thread.Start();
 		}
 
-		public override void AddTask(ref Task task)
+		public override void AddTask(Task task)
 		{
 			lock (unusedIdsLock)
 			{
@@ -185,7 +187,7 @@ namespace Eraser.Manager
 			{
 				if (currentTask == task)
 				{
-					currentTask.Cancelled = true;
+					currentTask.Canceled = true;
 					return;
 				}
 			}
@@ -212,7 +214,7 @@ namespace Eraser.Manager
 			}
 		}
 
-		public override List<Task> GetTasks()
+		public override ICollection<Task> GetTasks()
 		{
 			lock (tasksLock)
 			{
@@ -245,15 +247,15 @@ namespace Eraser.Manager
 					nextId = 1;
 					foreach (uint id in tasks.Keys)
 					{
-						Task currentTask = tasks[id];
-						currentTask.Executor = this;
+						Task task = tasks[id];
+						task.Executor = this;
 						while (id > nextId)
 							unusedIds.Add(nextId++);
 						++nextId;
 
 						//Check if the task is recurring. If it is, check if we missed it.
-						if (currentTask.Schedule is RecurringSchedule)
-							ScheduleTask(currentTask);
+						if (task.Schedule is RecurringSchedule)
+							ScheduleTask(task);
 					}
 
 					//Decrement the ID, since the next ID will be preincremented
@@ -300,7 +302,7 @@ namespace Eraser.Manager
 
 						//Broadcast the task started event.
 						task.Queued = false;
-						task.Cancelled = false;
+						task.Canceled = false;
 						task.OnTaskStarted(new TaskEventArgs(task));
 						OnTaskProcessing(task);
 
@@ -328,16 +330,16 @@ namespace Eraser.Manager
 							}
 							catch (Exception e)
 							{
-								task.Log.Add(new LogEntry(e.Message, LogLevel.ERROR));
+								task.Log.Add(new LogEntry(e.Message, LogLevel.Error));
 							}
 					}
 					catch (FatalException e)
 					{
-						task.Log.Add(new LogEntry(e.Message, LogLevel.FATAL));
+						task.Log.Add(new LogEntry(e.Message, LogLevel.Fatal));
 					}
 					catch (Exception e)
 					{
-						task.Log.Add(new LogEntry(e.Message, LogLevel.ERROR));
+						task.Log.Add(new LogEntry(e.Message, LogLevel.Error));
 					}
 					finally
 					{
@@ -539,12 +541,12 @@ namespace Eraser.Manager
 				if (Environment.OSVersion.Platform == PlatformID.Win32NT &&
 					Environment.OSVersion.Version >= new Version(6, 0))
 				{
-					throw new Exception(S._("The program does not have the required permissions " +
-						"to erase the unused space on disk. Run the program as an administrator " +
+					throw new UnauthorizedAccessException(S._("The program does not have the required " +
+						"permissions to erase the unused space on disk. Run the program as an administrator " +
 						"and retry the operation."));
 				}
 				else
-					throw new Exception(S._("The program does not have the required permissions " +
+					throw new UnauthorizedAccessException(S._("The program does not have the required permissions " +
 						"to erase the unused space on disk"));
 			}
 
@@ -552,7 +554,7 @@ namespace Eraser.Manager
 			if (VolumeInfo.FromMountpoint(target.Drive).HasQuota)
 				task.Log.Add(new LogEntry(S._("The drive which is having its unused space erased " +
 					"has disk quotas active. This will prevent the complete erasure of unused " +
-					"space and will pose a security concern"), LogLevel.WARNING));
+					"space and will pose a security concern"), LogLevel.Warning));
 
 			//Get the erasure method if the user specified he wants the default.
 			ErasureMethod method = target.Method;
@@ -580,7 +582,7 @@ namespace Eraser.Manager
 						task.OnProgressChanged(progress.Event);
 
 						lock (currentTask)
-							if (currentTask.Cancelled)
+							if (currentTask.Canceled)
 								throw new FatalException(S._("The task was cancelled."));
 					}
 				);
@@ -598,9 +600,6 @@ namespace Eraser.Manager
 				//space as possible
 				if (Eraser.Util.File.IsCompressed(info.FullName))
 					Eraser.Util.File.SetCompression(info.FullName, false);
-
-				//Determine the total amount of data that needs to be written.
-				long totalSize = method.CalculateEraseDataSize(null, volInfo.TotalFreeSpace);
 
 				//Continue creating files while there is free space.
 				progress.Event.CurrentItemName = S._("Unused space");
@@ -637,7 +636,7 @@ namespace Eraser.Manager
 
 						//Then run the erase task
 						method.Erase(stream, long.MaxValue,
-							PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
+							PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng),
 							delegate(long lastWritten, int currentPass)
 							{
 								progress.Completed += lastWritten;
@@ -653,7 +652,7 @@ namespace Eraser.Manager
 								task.OnProgressChanged(progress.Event);
 
 								lock (currentTask)
-									if (currentTask.Cancelled)
+									if (currentTask.Canceled)
 										throw new FatalException(S._("The task was cancelled."));
 							}
 						);
@@ -663,7 +662,7 @@ namespace Eraser.Manager
 				//Erase old resident file system table files
 				progress.Event.CurrentItemName = S._("Old resident file system table files");
 				task.OnProgressChanged(progress.Event);
-				fsManager.EraseOldFilesystemResidentFiles(volInfo, method, null);
+				fsManager.EraseOldFileSystemResidentFiles(volInfo, method, null);
 			}
 			finally
 			{
@@ -681,7 +680,7 @@ namespace Eraser.Manager
 				delegate(int currentFile, int totalFiles)
 				{
 					lock (currentTask)
-						if (currentTask.Cancelled)
+						if (currentTask.Canceled)
 							throw new FatalException(S._("The task was cancelled."));
 
 					//Compute the progress
@@ -712,7 +711,7 @@ namespace Eraser.Manager
 			subFolders = delegate(DirectoryInfo info)
 			{
 				//Check if we've been cancelled
-				if (task.Cancelled)
+				if (task.Canceled)
 					throw new FatalException(S._("The task was cancelled."));
 
 				try
@@ -722,7 +721,7 @@ namespace Eraser.Manager
 					{
 						task.Log.Add(new LogEntry(S._("Files in {0} did not have their cluster " +
 							"tips erased because it is a hard link or a symbolic link.",
-							info.FullName), LogLevel.INFORMATION));
+							info.FullName), LogLevel.Information));
 						return;
 					}
 
@@ -730,18 +729,18 @@ namespace Eraser.Manager
 						if (Util.File.IsProtectedSystemFile(file.FullName))
 							task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips " +
 								"erased, because it is a system file", file.FullName),
-								LogLevel.INFORMATION));
+								LogLevel.Information));
 						else if ((file.Attributes & FileAttributes.ReparsePoint) != 0)
 							task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips " +
 								"erased because it is a hard link or a symbolic link.",
-								file.FullName), LogLevel.INFORMATION));
+								file.FullName), LogLevel.Information));
 						else if ((file.Attributes & FileAttributes.Compressed) != 0 ||
 							(file.Attributes & FileAttributes.Encrypted) != 0 ||
 							(file.Attributes & FileAttributes.SparseFile) != 0)
 						{
 							task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips " +
 								"erased because it is compressed, encrypted or a sparse file.",
-								file.FullName), LogLevel.INFORMATION));
+								file.FullName), LogLevel.Information));
 						}
 						else
 						{
@@ -756,7 +755,7 @@ namespace Eraser.Manager
 							{
 								task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips erased " +
 									"because of the following error: {1}", info.FullName, e.Message),
-									LogLevel.ERROR));
+									LogLevel.Error));
 							}
 						}
 
@@ -767,13 +766,13 @@ namespace Eraser.Manager
 				{
 					task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips erased " +
 						"because of the following error: {1}", info.FullName, e.Message),
-						LogLevel.ERROR));
+						LogLevel.Error));
 				}
 				catch (IOException e)
 				{
 					task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips erased " +
 						"because of the following error: {1}", info.FullName, e.Message),
-						LogLevel.ERROR));
+						LogLevel.Error));
 				}
 			};
 
@@ -795,7 +794,7 @@ namespace Eraser.Manager
 				catch (Exception e)
 				{
 					task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips erased. " +
-						"The error returned was: {1}", files[i], e.Message), LogLevel.ERROR));
+						"The error returned was: {1}", files[i], e.Message), LogLevel.Error));
 				}
 				finally
 				{
@@ -840,8 +839,8 @@ namespace Eraser.Manager
 					stream.Seek(fileLength, SeekOrigin.Begin);
 
 					//Erase the file
-					method.Erase(stream, long.MaxValue, PRNGManager.GetInstance(
-						ManagerLibrary.Instance.Settings.ActivePRNG), null);
+					method.Erase(stream, long.MaxValue, PrngManager.GetInstance(
+						ManagerLibrary.Instance.Settings.ActivePrng), null);
 				}
 				finally
 				{
@@ -912,7 +911,7 @@ namespace Eraser.Manager
 						//Log the error
 						task.Log.Add(new LogEntry(S._("The file {0} could not be erased " +
 							"because the file was either compressed, encrypted or a sparse file.",
-							info.FullName), LogLevel.ERROR));
+							info.FullName), LogLevel.Error));
 					}
 
 					//Create the file stream, and call the erasure method to write to
@@ -931,7 +930,7 @@ namespace Eraser.Manager
 							long itemWritten = 0,
 								 itemTotal = method.CalculateEraseDataSize(null, strm.Length);
 							method.Erase(strm, long.MaxValue,
-								PRNGManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePRNG),
+								PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng),
 								delegate(long lastWritten, int currentPass)
 								{
 									dataTotal -= lastWritten;
@@ -946,7 +945,7 @@ namespace Eraser.Manager
 									task.OnProgressChanged(progress.Event);
 
 									lock (currentTask)
-										if (currentTask.Cancelled)
+										if (currentTask.Canceled)
 											throw new FatalException(S._("The task was cancelled."));
 								}
 							);
@@ -966,12 +965,12 @@ namespace Eraser.Manager
 				{
 					task.Log.Add(new LogEntry(S._("The file {0} could not be erased because the " +
 						"file's permissions prevent access to the file.", info.FullName),
-						LogLevel.ERROR));
+						LogLevel.Error));
 				}
 				catch (FileLoadException)
 				{
 					task.Log.Add(new LogEntry(S._("The file {0} could not be erased because the " +
-						"file is currently in use.", info.FullName), LogLevel.ERROR));
+						"file is currently in use.", info.FullName), LogLevel.Error));
 				}
 				finally
 				{
@@ -1065,7 +1064,7 @@ namespace Eraser.Manager
 		/// Incrementing ID. This value is incremented by one every time an ID
 		/// is required by no unused IDs remain.
 		/// </summary>
-		private uint nextId = 0;
+		private uint nextId;
 
 		/// <summary>
 		/// An automatically reset event allowing the addition of new tasks to

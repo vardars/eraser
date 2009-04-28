@@ -98,7 +98,7 @@ namespace Eraser
 			itemProgress.Value = itemProgress.Maximum;
 
 			//Inform the user on the status of the task.
-			LogLevel highestLevel = LogLevel.INFORMATION;
+			LogLevel highestLevel = LogLevel.Information;
 			List<LogEntry> entries = e.Task.Log.LastSessionEntries;
 			foreach (LogEntry log in entries)
 				if (log.Level > highestLevel)
@@ -106,13 +106,13 @@ namespace Eraser
 
 			switch (highestLevel)
 			{
-				case LogLevel.WARNING:
+				case LogLevel.Warning:
 					status.Text = S._("Completed with warnings");
 					break;
-				case LogLevel.ERROR:
+				case LogLevel.Error:
 					status.Text = S._("Completed with errors");
 					break;
-				case LogLevel.FATAL:
+				case LogLevel.Fatal:
 					status.Text = S._("Not completed");
 					break;
 				default:

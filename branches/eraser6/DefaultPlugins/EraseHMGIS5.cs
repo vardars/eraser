@@ -37,7 +37,7 @@ namespace Eraser.DefaultPlugins
 			get { return S._("British HMG IS5 (Baseline)"); }
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get { return new Guid("{9ACDBD78-0406-4116-87E5-263E5E3B2E0D}"); }
 		}
@@ -66,7 +66,7 @@ namespace Eraser.DefaultPlugins
 			get { return S._("British HMG IS5 (Enhanced)"); }
 		}
 
-		public override Guid GUID
+		public override Guid Guid
 		{
 			get { return new Guid("{45671DA4-9401-46e4-9C0D-89B94E89C8B5}"); }
 		}
