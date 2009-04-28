@@ -155,7 +155,7 @@ namespace Eraser
 			EraserSettings settings = EraserSettings.Get();
 			System.Threading.Thread.CurrentThread.CurrentUICulture =
 				new CultureInfo(settings.Language);
-			GUIProgram.SafeTopLevelCaptionFormat = S._("Eraser");
+			Application.SafeTopLevelCaptionFormat = S._("Eraser");
 
 			//Load the task list
 			if (settings.TaskList != null)
@@ -202,7 +202,8 @@ namespace Eraser
 		/// Triggered when a second instance of Eraser is started.
 		/// </summary>
 		/// <param name="sender">The sender of the event.</param>
-		private static void OnGUINextInstance(object sender)
+		/// <param name="message">The message from the source application.</param>
+		private static void OnGUINextInstance(object sender, string message)
 		{
 			//Another instance of the GUI Program has been started: show the main window
 			//now as we still do not have a facility to handle the command line arguments.
@@ -212,7 +213,7 @@ namespace Eraser
 			if (program.MainForm.InvokeRequired)
 			{
 				program.MainForm.Invoke(new GUIProgram.NextInstanceFunction(
-					OnGUINextInstance), new object[] { sender });
+					OnGUINextInstance), new object[] { sender, message });
 				return;
 			}
 
@@ -336,7 +337,8 @@ namespace Eraser
 
 					StringBuilder commandLineStr = new StringBuilder(commandLine.Length * 64);
 					foreach (string param in commandLine)
-						commandLineStr.Append(string.Format("{0}\0", param));
+						commandLineStr.Append(string.Format(
+							CultureInfo.InvariantCulture, "{0}\0", param));
 
 					byte[] buffer = new byte[commandLineStr.Length];
 					int count = Encoding.UTF8.GetBytes(commandLineStr.ToString(), 0,
@@ -436,22 +438,6 @@ namespace Eraser
 		}
 
 		/// <summary>
-		/// Gets or sets the format string to apply to top-level window captions when
-		/// they are displayed with a warning banner.
-		/// </summary>
-		public static string SafeTopLevelCaptionFormat
-		{
-			get
-			{
-				return Application.SafeTopLevelCaptionFormat;
-			}
-			set
-			{
-				Application.SafeTopLevelCaptionFormat = value;
-			}
-		}
-
-		/// <summary>
 		/// Gets the command line arguments this instance was started with.
 		/// </summary>
 		public string[] CommandLine
@@ -521,7 +507,7 @@ namespace Eraser
 		/// The prototype of event handlers procesing the NextInstance event.
 		/// </summary>
 		/// <param name="sender">The sender of the event</param>
-		public delegate void NextInstanceFunction(object sender);
+		public delegate void NextInstanceFunction(object sender, string message);
 
 		/// <summary>
 		/// The event object managing listeners to the next instance event. This
@@ -537,7 +523,7 @@ namespace Eraser
 		private void OnNextInstance(object sender, string message)
 		{
 			if (NextInstance != null)
-				NextInstance(sender);
+				NextInstance(sender, message);
 		}
 
 		/// <summary>
@@ -1175,7 +1161,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			/// Constructor.
 			/// </summary>
 			/// <param name="key">The registry key to look for the settings in.</param>
-			public RegistrySettings(Guid guid, RegistryKey key)
+			public RegistrySettings(RegistryKey key)
 			{
 				this.key = key;
 			}
@@ -1246,7 +1232,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 				pluginsKey = eraserKey.CreateSubKey(guid.ToString());
 
 			//Return the Settings object.
-			return new RegistrySettings(guid, pluginsKey);
+			return new RegistrySettings(pluginsKey);
 		}
 	}
 
