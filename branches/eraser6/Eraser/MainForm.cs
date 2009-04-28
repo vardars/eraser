@@ -66,7 +66,7 @@ namespace Eraser
 			tbSchedule.Bitmap = Properties.Resources.ToolbarSchedule;
 			tbSchedule.Text = S._("Erase Schedule");
 			tbSchedule.Menu = toolbarScheduleMenu;
-			tbSchedule.ToolbarItemClicked += delegate(object sender, EventArgs args)
+			tbSchedule.ToolBarItemClicked += delegate(object sender, EventArgs args)
 			{
 				ChangePage(MainFormPage.Scheduler);
 			};
@@ -75,7 +75,7 @@ namespace Eraser
 			ToolBarItem tbSettings = new ToolBarItem();
 			tbSettings.Bitmap = Properties.Resources.ToolbarSettings;
 			tbSettings.Text = S._("Settings");
-			tbSettings.ToolbarItemClicked += delegate(object sender, EventArgs args)
+			tbSettings.ToolBarItemClicked += delegate(object sender, EventArgs args)
 			{
 				ChangePage(MainFormPage.Settings);
 			};

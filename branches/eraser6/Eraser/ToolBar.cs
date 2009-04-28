@@ -232,7 +232,7 @@ namespace Eraser
 		/// <summary>
 		/// Item click event handler
 		/// </summary>
-		public EventHandler<EventArgs> ToolbarItemClicked
+		public EventHandler<EventArgs> ToolBarItemClicked
 		{
 			get;
 			set;
@@ -240,8 +240,8 @@ namespace Eraser
 
 		internal void OnToolbarItemClicked(object sender)
 		{
-			if (ToolbarItemClicked != null)
-				ToolbarItemClicked(sender, new EventArgs());
+			if (ToolBarItemClicked != null)
+				ToolBarItemClicked(sender, new EventArgs());
 		}
 
 		private string text;
