@@ -32,6 +32,7 @@ using System.IO;
 using System.Xml;
 using Eraser.Util;
 using System.Net.Cache;
+using System.Globalization;
 
 namespace Eraser
 {
@@ -99,14 +100,14 @@ namespace Eraser
 		/// </summary>
 		/// <param name="sender">The object triggering this event/</param>
 		/// <param name="e">Event argument.</param>
-		private void updateListDownloader_ProgressChanged(object sender, UpdateManager.ProgressEventArgs e)
+		private void updateListDownloader_ProgressChanged(object sender, ProgressEventArgs e)
 		{
 			if (InvokeRequired)
 			{
 				if (updateListDownloader.CancellationPending)
 					throw new OperationCanceledException();
 
-				Invoke(new EventHandler<UpdateManager.ProgressEventArgs>(
+				Invoke(new EventHandler<ProgressEventArgs>(
 					updateListDownloader_ProgressChanged), sender, e);
 				return;
 			}
@@ -131,8 +132,9 @@ namespace Eraser
 			if (e.Error != null)
 			{
 				if (!(e.Error is OperationCanceledException))
-					MessageBox.Show(this, e.Error.Message, S._("Eraser"),
-						MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show(this, e.Error.Message, S._("Eraser"), MessageBoxButtons.OK,
+						MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
+						RightToLeft == RightToLeft.Yes ? MessageBoxOptions.RtlReading :  0);
 
 				Close();
 				return;
@@ -142,8 +144,7 @@ namespace Eraser
 			updatesPanel.Visible = true;
 
 			//First list all available mirrors
-			Dictionary<string, UpdateManager.Mirror>.Enumerator iter =
-				updates.Mirrors.GetEnumerator();
+			Dictionary<string, Mirror>.Enumerator iter = updates.Mirrors.GetEnumerator();
 			while (iter.MoveNext())
 				updatesMirrorCmb.Items.Add(iter.Current.Value);
 			updatesMirrorCmb.SelectedIndex = 0;
@@ -184,7 +185,7 @@ namespace Eraser
 					updateCategories[key] : key);
 				updatesLv.Groups.Add(group);
 
-				foreach (UpdateManager.Update update in updates[key])
+				foreach (UpdateInfo update in updates[key])
 				{
 					//Skip if this update won't work on our current architecture.
 					if (compatibleArchs.IndexOf(update.Architecture) == -1)
@@ -210,7 +211,9 @@ namespace Eraser
 			if (updatesLv.Items.Count == 0)
 			{
 				MessageBox.Show(this, S._("There are no new updates or plugins available for " +
-					"Eraser."), S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+					"Eraser."), S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information,
+					MessageBoxDefaultButton.Button1,
+					RightToLeft == RightToLeft.Yes ? MessageBoxOptions.RtlReading : 0);
 				Close();
 			}
 		}
@@ -246,12 +249,10 @@ namespace Eraser
 		{
 			updatesPanel.Visible = false;
 			downloadingPnl.Visible = true;
-			List<UpdateManager.Update> updatesToInstall =
-				new List<UpdateManager.Update>();
+			List<UpdateInfo> updatesToInstall = new List<UpdateInfo>();
 
 			//Set the mirror
-			updates.SelectedMirror = (UpdateManager.Mirror)
-				updatesMirrorCmb.SelectedItem;
+			updates.SelectedMirror = (Mirror)updatesMirrorCmb.SelectedItem;
 
 			//Collect the items that need to be installed
 			foreach (ListViewItem item in updatesLv.Items)
@@ -262,10 +263,10 @@ namespace Eraser
 					item.SubItems.RemoveAt(1);
 					downloadingLv.Items.Add(item);
 
-					updatesToInstall.Add((UpdateManager.Update)item.Tag);
+					updatesToInstall.Add((UpdateInfo)item.Tag);
 				}
 				else
-					uiUpdates.Remove((UpdateManager.Update)item.Tag);
+					uiUpdates.Remove((UpdateInfo)item.Tag);
 
 			//Then run the thread if there are updates.
 			if (updatesToInstall.Count > 0)
@@ -284,7 +285,7 @@ namespace Eraser
 			try
 			{
 				updates.OnProgressEvent += downloader_ProgressChanged;
-				object downloadedUpdates = updates.DownloadUpdates((List<UpdateManager.Update>)e.Argument);
+				object downloadedUpdates = updates.DownloadUpdates((List<UpdateInfo>)e.Argument);
 				e.Result = downloadedUpdates;
 			}
 			finally
@@ -298,23 +299,23 @@ namespace Eraser
 		/// </summary>
 		/// <param name="sender">The object triggering this event/</param>
 		/// <param name="e">Event argument.</param>
-		private void downloader_ProgressChanged(object sender, UpdateManager.ProgressEventArgs e)
+		private void downloader_ProgressChanged(object sender, ProgressEventArgs e)
 		{
 			if (InvokeRequired)
 			{
 				if (updateListDownloader.CancellationPending)
 					throw new OperationCanceledException();
 
-				Invoke(new EventHandler<UpdateManager.ProgressEventArgs>(downloader_ProgressChanged),
+				Invoke(new EventHandler<ProgressEventArgs>(downloader_ProgressChanged),
 					sender, e);
 				return;
 			}
 
-			UpdateData update = uiUpdates[(UpdateManager.Update)e.UserState];
+			UpdateData update = uiUpdates[(UpdateInfo)e.UserState];
 
-			if (e is UpdateManager.ProgressErrorEventArgs)
+			if (e is ProgressErrorEventArgs)
 			{
-				update.Error = ((UpdateManager.ProgressErrorEventArgs)e).Exception;
+				update.Error = ((ProgressErrorEventArgs)e).Exception;
 				update.LVItem.ImageIndex = 3;
 				update.LVItem.SubItems[1].Text = S._("Error");
 				update.LVItem.ToolTipText = update.Error.Message;
@@ -357,7 +358,9 @@ namespace Eraser
 			{
 				if (!(e.Error is OperationCanceledException))
 					MessageBox.Show(this, e.Error.Message, S._("Eraser"),
-						MessageBoxButtons.OK, MessageBoxIcon.Error);
+						MessageBoxButtons.OK, MessageBoxIcon.Error,
+						MessageBoxDefaultButton.Button1,
+						RightToLeft == RightToLeft.Yes ? MessageBoxOptions.RtlReading : 0);
 
 				Close();
 				return;
@@ -371,7 +374,7 @@ namespace Eraser
 				item.Remove();
 				installingLv.Items.Add(item);
 
-				UpdateData update = uiUpdates[(UpdateManager.Update)item.Tag];
+				UpdateData update = uiUpdates[(UpdateInfo)item.Tag];
 				if (update.Error == null)
 					item.SubItems[1].Text = string.Empty;
 				else
@@ -413,15 +416,15 @@ namespace Eraser
 				if (updateListDownloader.CancellationPending)
 					throw new OperationCanceledException();
 
-				Invoke(new EventHandler<UpdateManager.ProgressEventArgs>(installer_ProgressChanged),
+				Invoke(new EventHandler<ProgressEventArgs>(installer_ProgressChanged),
 					sender, e);
 				return;
 			}
 
-			UpdateData update = uiUpdates[(UpdateManager.Update)e.UserState];
-			if (e is UpdateManager.ProgressErrorEventArgs)
+			UpdateData update = uiUpdates[(UpdateInfo)e.UserState];
+			if (e is ProgressErrorEventArgs)
 			{
-				update.Error = ((UpdateManager.ProgressErrorEventArgs)e).Exception;
+				update.Error = ((ProgressErrorEventArgs)e).Exception;
 				update.LVItem.ImageIndex = 3;
 				update.LVItem.SubItems[1].Text = S._("Error: {0}", update.Error.Message);
 			}
@@ -459,8 +462,7 @@ namespace Eraser
 		/// <summary>
 		/// Maps listview items to the UpdateManager.Update object.
 		/// </summary>
-		Dictionary<UpdateManager.Update, UpdateData> uiUpdates =
-			new Dictionary<UpdateManager.Update, UpdateData>();
+		Dictionary<UpdateInfo, UpdateData> uiUpdates = new Dictionary<UpdateInfo, UpdateData>();
 
 		/// <summary>
 		/// Manages information associated with the update.
@@ -474,7 +476,7 @@ namespace Eraser
 			/// internal representation of the update.</param>
 			/// <param name="item">The ListViewItem used for the display of the
 			/// update.</param>
-			public UpdateData(UpdateManager.Update update, ListViewItem item)
+			public UpdateData(UpdateInfo update, ListViewItem item)
 			{
 				Update = update;
 				LVItem = item;
@@ -484,7 +486,7 @@ namespace Eraser
 			/// The UpdateManager.Update object containing the internal representation
 			/// of the update.
 			/// </summary>
-			public UpdateManager.Update Update;
+			public UpdateInfo Update;
 
 			/// <summary>
 			/// The ListViewItem used for the display of the update.
@@ -517,139 +519,6 @@ namespace Eraser
 
 	public class UpdateManager
 	{
-		/// <summary>
-		/// Represents a download mirror.
-		/// </summary>
-		public struct Mirror
-		{
-			public Mirror(string location, string link)
-				: this()
-			{
-				Location = location;
-				Link = link;
-			}
-
-			/// <summary>
-			/// The location where the mirror is at.
-			/// </summary>
-			public string Location
-			{
-				get;
-				set;
-			}
-
-			/// <summary>
-			/// The URL prefix to utilise the mirror.
-			/// </summary>
-			public string Link
-			{
-				get;
-				set;
-			}
-
-			public override string ToString()
-			{
-				return Location;
-			}
-		}
-
-		/// <summary>
-		/// Represents an update available on the server.
-		/// </summary>
-		public struct Update
-		{
-			public string Name;
-			public Version Version;
-			public string Publisher;
-			public string Architecture;
-			public long FileSize;
-			public string Link;
-		}
-
-		/// <summary>
-		/// Specialised progress event argument, containing message describing
-		/// current action, and overall progress percentage.
-		/// </summary>
-		public class ProgressEventArgs : ProgressChangedEventArgs
-		{
-			public ProgressEventArgs(float progressPercentage, float overallPercentage,
-				object userState, string message)
-				: base((int)(progressPercentage * 100), userState)
-			{
-				this.progressPercentage = progressPercentage;
-				this.overallProgressPercentage = overallPercentage;
-				this.message = message;
-			}
-
-			/// <summary>
-			/// Gets the asynchronous task progress percentage.
-			/// </summary>
-			public new float ProgressPercentage
-			{
-				get
-				{
-					return progressPercentage;
-				}
-			}
-
-			/// <summary>
-			/// Gets the asynchronous task overall progress percentage.
-			/// </summary>
-			public float OverallProgressPercentage
-			{
-				get
-				{
-					return overallProgressPercentage;
-				}
-			}
-
-			/// <summary>
-			/// Gets the message associated with the current task.
-			/// </summary>
-			public string Message
-			{
-				get
-				{
-					return message;
-				}
-			}
-
-			float progressPercentage;
-			float overallProgressPercentage;
-			string message;
-		}
-
-		/// <summary>
-		/// Extends the ProgressEventArgs further by allowing for the inclusion of
-		/// an exception.
-		/// </summary>
-		public class ProgressErrorEventArgs : ProgressEventArgs
-		{
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			/// <param name="e">The base ProgressEventArgs object.</param>
-			/// <param name="ex">The exception</param>
-			public ProgressErrorEventArgs(ProgressEventArgs e, Exception ex)
-				: base(e.ProgressPercentage, e.OverallProgressPercentage, e.UserState, e.Message)
-			{
-				this.exception = ex;
-			}
-
-			/// <summary>
-			/// The exception associated with the progress event.
-			/// </summary>
-			public Exception Exception
-			{
-				get
-				{
-					return exception;
-				}
-			}
-
-			private Exception exception;
-		}
-
 		/// <summary>
 		/// Retrieves the update list from the server.
 		/// </summary>
@@ -754,9 +623,9 @@ namespace Eraser
 		/// </summary>
 		/// <param name="rdr">The XML reader object representing the element and its children.</param>
 		/// <returns>A list of updates in the category.</returns>
-		private static List<Update> ParseUpdateCategory(XmlReader rdr)
+		private static List<UpdateInfo> ParseUpdateCategory(XmlReader rdr)
 		{
-			List<Update> result = new List<Update>();
+			List<UpdateInfo> result = new List<UpdateInfo>();
 			if (!rdr.ReadToDescendant("item"))
 				return result;
 
@@ -766,12 +635,13 @@ namespace Eraser
 				if (rdr.Name != "item")
 					continue;
 
-				Update update = new Update();
+				UpdateInfo update = new UpdateInfo();
 				update.Name = rdr.GetAttribute("name");
 				update.Version = new Version(rdr.GetAttribute("version"));
 				update.Publisher = rdr.GetAttribute("publisher");
 				update.Architecture = rdr.GetAttribute("architecture");
-				update.FileSize = Convert.ToInt64(rdr.GetAttribute("filesize"));
+				update.FileSize = Convert.ToInt64(rdr.GetAttribute("filesize"),
+					CultureInfo.InvariantCulture);
 				update.Link = rdr.ReadElementContentAsString();
 
 				result.Add(update);
@@ -786,15 +656,16 @@ namespace Eraser
 		/// </summary>
 		/// <param name="updates">The updates to retrieve and install.</param>
 		/// <returns>An opaque object for use with InstallUpdates.</returns>
-		public object DownloadUpdates(ICollection<Update> downloadQueue)
+		public object DownloadUpdates(ICollection<UpdateInfo> downloadQueue)
 		{
 			//Create a folder to hold all our updates.
 			DirectoryInfo tempDir = new DirectoryInfo(Path.GetTempPath());
-			tempDir = tempDir.CreateSubdirectory("eraser" + Environment.TickCount.ToString());
+			tempDir = tempDir.CreateSubdirectory("eraser" + Environment.TickCount.ToString(
+				CultureInfo.InvariantCulture));
 
 			int currUpdate = 0;
-			Dictionary<string, Update> tempFilesMap = new Dictionary<string, Update>();
-			foreach (Update update in downloadQueue)
+			Dictionary<string, UpdateInfo> tempFilesMap = new Dictionary<string, UpdateInfo>();
+			foreach (UpdateInfo update in downloadQueue)
 			{
 				try
 				{
@@ -813,8 +684,9 @@ namespace Eraser
 					{
 						byte[] tempBuffer = new byte[16384];
 						string tempFilePath = Path.Combine(
-							tempDir.FullName, string.Format("{0}-{1}", ++currUpdate,
-							Path.GetFileName(reqUri.GetComponents(UriComponents.Path, UriFormat.Unescaped))));
+							tempDir.FullName, string.Format(CultureInfo.InvariantCulture, "{0}-{1}",
+							++currUpdate, Path.GetFileName(reqUri.GetComponents(UriComponents.Path,
+								UriFormat.Unescaped))));
 
 						using (Stream strm = resp.GetResponseStream())
 						using (FileStream tempStrm = new FileStream(tempFilePath, FileMode.CreateNew))
@@ -856,15 +728,15 @@ namespace Eraser
 
 		public void InstallUpdates(object value)
 		{
-			Dictionary<string, Update> tempFiles = (Dictionary<string, Update>)value;
-			Dictionary<string, Update>.KeyCollection files = tempFiles.Keys;
+			Dictionary<string, UpdateInfo> tempFiles = (Dictionary<string, UpdateInfo>)value;
+			Dictionary<string, UpdateInfo>.KeyCollection files = tempFiles.Keys;
 			int currItem = 0;
 
 			try
 			{
 				foreach (string path in files)
 				{
-					Update item = tempFiles[path];
+					UpdateInfo item = tempFiles[path];
 					float progress = (float)currItem++ / files.Count;
 					OnProgress(new ProgressEventArgs(0.0f, progress,
 						item, S._("Installing {0}", item.Name)));
@@ -965,7 +837,7 @@ namespace Eraser
 		/// <summary>
 		/// Retrieves the categories available.
 		/// </summary>
-		public Dictionary<string, List<Update>>.KeyCollection Categories
+		public Dictionary<string, List<UpdateInfo>>.KeyCollection Categories
 		{
 			get
 			{
@@ -976,7 +848,7 @@ namespace Eraser
 		/// <summary>
 		/// Retrieves all updates available.
 		/// </summary>
-		public Dictionary<string, List<Update>> Updates
+		public Dictionary<string, List<UpdateInfo>> Updates
 		{
 			get
 			{
@@ -989,7 +861,7 @@ namespace Eraser
 		/// </summary>
 		/// <param name="key">The category to retrieve.</param>
 		/// <returns>All updates in the given category.</returns>
-		public ICollection<Update> this[string key]
+		public ICollection<UpdateInfo> this[string key]
 		{
 			get
 			{
@@ -1011,7 +883,140 @@ namespace Eraser
 		/// <summary>
 		/// The list of updates downloaded.
 		/// </summary>
-		private Dictionary<string, List<Update>> updates =
-			new Dictionary<string, List<Update>>();
+		private Dictionary<string, List<UpdateInfo>> updates =
+			new Dictionary<string, List<UpdateInfo>>();
+	}
+
+	/// <summary>
+	/// Represents a download mirror.
+	/// </summary>
+	public struct Mirror
+	{
+		public Mirror(string location, string link)
+			: this()
+		{
+			Location = location;
+			Link = link;
+		}
+
+		/// <summary>
+		/// The location where the mirror is at.
+		/// </summary>
+		public string Location
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// The URL prefix to utilise the mirror.
+		/// </summary>
+		public string Link
+		{
+			get;
+			set;
+		}
+
+		public override string ToString()
+		{
+			return Location;
+		}
+	}
+
+	/// <summary>
+	/// Represents an update available on the server.
+	/// </summary>
+	public struct UpdateInfo
+	{
+		public string Name { get; set; }
+		public Version Version { get; set; }
+		public string Publisher { get; set; }
+		public string Architecture { get; set; }
+		public long FileSize { get; set; }
+		public string Link { get; set; }
+	}
+
+	/// <summary>
+	/// Specialised progress event argument, containing message describing
+	/// current action, and overall progress percentage.
+	/// </summary>
+	public class ProgressEventArgs : ProgressChangedEventArgs
+	{
+		public ProgressEventArgs(float progressPercentage, float overallPercentage,
+			object userState, string message)
+			: base((int)(progressPercentage * 100), userState)
+		{
+			this.progressPercentage = progressPercentage;
+			this.overallProgressPercentage = overallPercentage;
+			this.message = message;
+		}
+
+		/// <summary>
+		/// Gets the asynchronous task progress percentage.
+		/// </summary>
+		public new float ProgressPercentage
+		{
+			get
+			{
+				return progressPercentage;
+			}
+		}
+
+		/// <summary>
+		/// Gets the asynchronous task overall progress percentage.
+		/// </summary>
+		public float OverallProgressPercentage
+		{
+			get
+			{
+				return overallProgressPercentage;
+			}
+		}
+
+		/// <summary>
+		/// Gets the message associated with the current task.
+		/// </summary>
+		public string Message
+		{
+			get
+			{
+				return message;
+			}
+		}
+
+		float progressPercentage;
+		float overallProgressPercentage;
+		string message;
+	}
+
+	/// <summary>
+	/// Extends the ProgressEventArgs further by allowing for the inclusion of
+	/// an exception.
+	/// </summary>
+	public class ProgressErrorEventArgs : ProgressEventArgs
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="e">The base ProgressEventArgs object.</param>
+		/// <param name="ex">The exception</param>
+		public ProgressErrorEventArgs(ProgressEventArgs e, Exception ex)
+			: base(e.ProgressPercentage, e.OverallProgressPercentage, e.UserState, e.Message)
+		{
+			this.exception = ex;
+		}
+
+		/// <summary>
+		/// The exception associated with the progress event.
+		/// </summary>
+		public Exception Exception
+		{
+			get
+			{
+				return exception;
+			}
+		}
+
+		private Exception exception;
 	}
 }
