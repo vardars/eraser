@@ -27,6 +27,7 @@ using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using System.ComponentModel;
 using Eraser.Util;
+using System.Security.Permissions;
 
 namespace Eraser.Manager
 {
@@ -57,6 +58,7 @@ namespace Eraser.Manager
 					"the task schedule"));
 		}
 
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
 		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue("ID", id);
@@ -75,6 +77,16 @@ namespace Eraser.Manager
 		public Task()
 		{
 			targets = new ErasureTargetsCollection(this);
+		}
+
+		/// <summary>
+		/// Cancels the task from running, or, if the task is queued for running,
+		/// removes the task from the queue.
+		/// </summary>
+		public void Cancel()
+		{
+			Executor.UnqueueTask(this);
+			Canceled = true;
 		}
 
 		/// <summary>
@@ -274,8 +286,8 @@ namespace Eraser.Manager
 				method = ErasureMethodManager.GetInstance(methodGuid);
 		}
 
-		public virtual void GetObjectData(SerializationInfo info,
-			StreamingContext context)
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue("Method", method.Guid);
 		}
@@ -368,8 +380,8 @@ namespace Eraser.Manager
 			path = (string)info.GetValue("Path", typeof(string));
 		}
 
-		override public void GetObjectData(SerializationInfo info,
-			StreamingContext context)
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData(info, context);
 			info.AddValue("Path", path);
@@ -476,8 +488,8 @@ namespace Eraser.Manager
 			EraseClusterTips = (bool)info.GetValue("EraseClusterTips", typeof(bool));
 		}
 
-		public override void GetObjectData(SerializationInfo info,
-			StreamingContext context)
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData(info, context);
 			info.AddValue("Drive", Drive);
@@ -579,8 +591,8 @@ namespace Eraser.Manager
 			deleteIfEmpty = (bool)info.GetValue("DeleteIfEmpty", typeof(bool));
 		}
 
-		public override void GetObjectData(SerializationInfo info,
-			StreamingContext context)
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData(info, context);
 			info.AddValue("IncludeMask", includeMask);
@@ -818,6 +830,7 @@ namespace Eraser.Manager
 			list = (List<ErasureTarget>)info.GetValue("list", typeof(List<ErasureTarget>));
 		}
 
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
 		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue("list", list);
@@ -913,7 +926,7 @@ namespace Eraser.Manager
 		#endregion
 
 		/// <summary>
-		/// The ownere of this list of targets.
+		/// The owner of this list of targets.
 		/// </summary>
 		public Task Owner
 		{

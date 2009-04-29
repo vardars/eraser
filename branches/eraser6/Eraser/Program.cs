@@ -162,7 +162,7 @@ namespace Eraser
 				using (MemoryStream stream = new MemoryStream(settings.TaskList))
 					try
 					{
-						eraserClient.LoadTaskList(stream);
+						eraserClient.Tasks.LoadFromStream(stream);
 					}
 					catch (SerializationException e)
 					{
@@ -229,7 +229,7 @@ namespace Eraser
 			//Save the task list
 			using (MemoryStream stream = new MemoryStream())
 			{
-				eraserClient.SaveTaskList(stream);
+				eraserClient.Tasks.SaveToStream(stream);
 				EraserSettings.Get().TaskList = stream.ToArray();
 			}
 
@@ -1117,7 +1117,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 					}
 
 					Program.eraserClient.Run();
-					Program.eraserClient.AddTask(task);
+					Program.eraserClient.Tasks.Add(task);
 				}
 			}
 			catch (UnauthorizedAccessException e)

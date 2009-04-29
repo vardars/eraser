@@ -42,7 +42,7 @@ namespace Eraser
 			InitializeComponent();
 
 			//Populate the scheduler list-view with the current task list
-			ICollection<Task> tasks = Program.eraserClient.GetTasks();
+			ExecutorTasksCollection tasks = Program.eraserClient.Tasks;
 			foreach (Task task in tasks)
 				DisplayTask(task);
 
@@ -269,7 +269,7 @@ namespace Eraser
 			if (EraserSettings.Get().ClearCompletedTasks &&
 				!(e.Task.Schedule is RecurringSchedule) && highestLevel < LogLevel.Warning)
 			{
-				Program.eraserClient.DeleteTask(e.Task.Id);
+				Program.eraserClient.Tasks.Remove(e.Task);
 			}
 
 			//Otherwise update the UI
@@ -362,7 +362,7 @@ namespace Eraser
 				if (form.ShowDialog() == DialogResult.OK)
 				{
 					Task task = form.Task;
-					Program.eraserClient.AddTask(task);
+					Program.eraserClient.Tasks.Add(task);
 				}
 			}
 		}
@@ -401,7 +401,7 @@ namespace Eraser
 				Task task = (Task)item.Tag;
 				if (task.Executing || task.Queued)
 				{
-					Program.eraserClient.CancelTask(task);
+					Program.eraserClient.UnqueueTask(task);
 
 					//Update the UI
 					item.SubItems[1].Text = string.Empty;
@@ -449,8 +449,6 @@ namespace Eraser
 				if (form.ShowDialog() == DialogResult.OK)
 				{
 					task = form.Task;
-					scheduler.SelectedItems[0].Tag = task;
-					Program.eraserClient.ReplaceTask(task);
 
 					//Update the list view
 					UpdateTask(item);
@@ -477,7 +475,7 @@ namespace Eraser
 			{
 				Task task = (Task)item.Tag;
 				if (!task.Executing)
-					Program.eraserClient.DeleteTask(task.Id);
+					Program.eraserClient.Tasks.Remove(task);
 			}
 		}
 

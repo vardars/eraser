@@ -56,27 +56,6 @@ namespace Eraser.Manager
 		public abstract void Run();
 
 		/// <summary>
-		/// Adds a new task to be executed in the future.
-		/// </summary>
-		/// <param name="task">The Task object describing the details of the task.
-		/// The task object's ID member will be updated to allow unique identification.</param>
-		public abstract void AddTask(Task task);
-
-		/// <summary>
-		/// Deletes a task currently pending execution.
-		/// </summary>
-		/// <param name="taskId">The unique task ID returned when AddTask was called.</param>
-		/// <returns>True if the task was found and deleted.</returns>
-		public abstract bool DeleteTask(uint taskId);
-
-		/// <summary>
-		/// Replaces the current task in the executor with the new task, loading
-		/// new parameters. This maintains the task ID.
-		/// </summary>
-		/// <param name="task">The new task details.</param>
-		public abstract void ReplaceTask(Task task);
-		
-		/// <summary>
 		/// Queues the task for execution.
 		/// </summary>
 		/// <param name="task">The task to queue.</param>
@@ -89,6 +68,12 @@ namespace Eraser.Manager
 		public abstract void ScheduleTask(Task task);
 
 		/// <summary>
+		/// Removes the given task from the execution queue.
+		/// </summary>
+		/// <param name="task">The task to cancel.</param>
+		public abstract void UnqueueTask(Task task);
+
+		/// <summary>
 		/// Queues all tasks in the task list which are meant for restart execution.
 		/// This is a separate function rather than just running them by default on
 		/// task load because creating a new instance and loading the task list
@@ -98,36 +83,10 @@ namespace Eraser.Manager
 		public abstract void QueueRestartTasks();
 
 		/// <summary>
-		/// Cancels the given task, if it is being executed or queued for execution.
-		/// </summary>
-		/// <param name="task">The task to cancel.</param>
-		public abstract void CancelTask(Task task);
-
-		/// <summary>
-		/// Retrieves the task object represented by the task ID given.
-		/// </summary>
-		/// <param name="taskId">The Task ID of the task in question.</param>
-		/// <returns>The task object represented by the ID, or null if no object
-		/// is found.</returns>
-		public abstract Task GetTask(uint taskId);
-
-		/// <summary>
 		/// Retrieves the current task list for the executor.
 		/// </summary>
 		/// <returns>A list of tasks which the executor has registered.</returns>
-		public abstract ICollection<Task> GetTasks();
-
-		/// <summary>
-		/// Saves the task list to the given stream.
-		/// </summary>
-		/// <param name="stream">The stream to save to.</param>
-		public abstract void SaveTaskList(Stream stream);
-
-		/// <summary>
-		/// Loads the task list from the given stream.
-		/// </summary>
-		/// <param name="stream">The stream to save to.</param>
-		public abstract void LoadTaskList(Stream stream);
+		public abstract ExecutorTasksCollection Tasks { get; protected set; }
 
 		/// <summary>
 		/// The prototype of functions handing the Task Added event.
@@ -144,7 +103,7 @@ namespace Eraser.Manager
 		/// Helper function for the task added event.
 		/// </summary>
 		/// <param name="task">The task that has just been added</param>
-		protected void OnTaskAdded(Task task)
+		internal void OnTaskAdded(Task task)
 		{
 			if (TaskAdded != null)
 				TaskAdded(task);
@@ -165,7 +124,7 @@ namespace Eraser.Manager
 		/// Helper function for the task deleted event.
 		/// </summary>
 		/// <param name="task">The task that has just been deleted</param>
-		protected void OnTaskDeleted(Task task)
+		internal void OnTaskDeleted(Task task)
 		{
 			if (TaskDeleted != null)
 				TaskDeleted(task);
@@ -210,5 +169,61 @@ namespace Eraser.Manager
 			if (TaskProcessed != null)
 				TaskProcessed(task);
 		}
+	}
+
+	public abstract class ExecutorTasksCollection : IList<Task>, ICollection<Task>,
+		IEnumerable<Task>
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="executor">The <seealso cref="Executor"/> object owning
+		/// this task list.</param>
+		protected ExecutorTasksCollection(Executor executor)
+		{
+			owner = executor;
+		}
+
+		#region IList<Task> Members
+		public abstract int IndexOf(Task item);
+		public abstract void Insert(int index, Task item);
+		public abstract void RemoveAt(int index);
+		public abstract Task this[int index] { get; set; }
+		#endregion
+
+		#region ICollection<Task> Members
+		public abstract void Add(Task item);
+		public abstract void Clear();
+		public abstract bool Contains(Task item);
+		public abstract void CopyTo(Task[] array, int arrayIndex);
+		public abstract int Count { get; }
+		public bool IsReadOnly { get { return false; } }
+		public abstract bool Remove(Task item);
+		#endregion
+
+		#region IEnumerable<Task> Members
+		public abstract IEnumerator<Task> GetEnumerator();
+		#endregion
+
+		#region IEnumerable Members
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+		#endregion
+
+		/// <param name="stream">The stream to save to.</param>
+		public abstract void SaveToStream(Stream stream);
+
+		/// <summary>
+		/// Loads the task list from the given stream.
+		/// </summary>
+		/// <param name="stream">The stream to save to.</param>
+		public abstract void LoadFromStream(Stream stream);
+
+		/// <summary>
+		/// The owner of this task list.
+		/// </summary>
+		protected Executor owner;
 	}
 }

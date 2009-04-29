@@ -31,6 +31,7 @@ using Eraser.Util;
 using System.Security.Principal;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Permissions;
 
 namespace Eraser.Manager
 {
@@ -42,6 +43,7 @@ namespace Eraser.Manager
 	{
 		public DirectExecutor()
 		{
+			Tasks = new DirectExecutorTasksCollection(this);
 			thread = new Thread(Main);
 		}
 
@@ -57,92 +59,6 @@ namespace Eraser.Manager
 		{
 			thread.CurrentUICulture = Thread.CurrentThread.CurrentUICulture;
 			thread.Start();
-		}
-
-		public override void AddTask(Task task)
-		{
-			lock (unusedIdsLock)
-			{
-				if (unusedIds.Count != 0)
-				{
-					task.Id = unusedIds[0];
-					unusedIds.RemoveAt(0);
-				}
-				else
-					task.Id = ++nextId;
-			}
-
-			//Set the executor of the task
-			task.Executor = this;
-
-			//Add the task to the set of tasks
-			lock (tasksLock)
-				tasks.Add(task.Id, task);
-
-			//Call all the event handlers who registered to be notified of tasks
-			//being added.
-			OnTaskAdded(task);
-
-			//If the task is scheduled to run now, break the waiting thread and
-			//run it immediately
-			if (task.Schedule == Schedule.RunNow)
-			{
-				QueueTask(task);
-			}
-			//If the task is scheduled, add the next execution time to the list
-			//of schduled tasks.
-			else if (task.Schedule != Schedule.RunOnRestart)
-			{
-				ScheduleTask(task);
-			}
-		}
-
-		public override bool DeleteTask(uint taskId)
-		{
-			lock (tasksLock)
-			{
-				if (!tasks.ContainsKey(taskId))
-					return false;
-
-				Task task = tasks[taskId];
-				lock (unusedIdsLock)
-					unusedIds.Add(taskId);
-				tasks.Remove(taskId);
-
-				for (int i = 0; i != scheduledTasks.Count; )
-					if (scheduledTasks.Values[i].Id == taskId)
-						scheduledTasks.RemoveAt(i);
-					else
-						++i;
-
-				//Call all event handlers registered to be notified of task deletions.
-				OnTaskDeleted(task);
-			}
-
-			return true;
-		}
-
-		public override void ReplaceTask(Task task)
-		{
-			lock (tasksLock)
-			{
-				//Replace the task in the global set
-				if (!tasks.ContainsKey(task.Id))
-					return;
-
-				tasks[task.Id] = task;
-
-				//Then replace the task if it is in the queue
-				for (int i = 0; i != scheduledTasks.Count; ++i)
-					if (scheduledTasks.Values[i].Id == task.Id)
-					{
-						scheduledTasks.RemoveAt(i);
-						if (task.Schedule is RecurringSchedule)
-							ScheduleTask(task);
-						else if (task.Schedule == Schedule.RunNow)
-							QueueTask(task);
-					}
-			}
 		}
 
 		public override void QueueTask(Task task)
@@ -181,89 +97,18 @@ namespace Eraser.Manager
 			}
 		}
 
-		public override void CancelTask(Task task)
+		public override void UnqueueTask(Task task)
 		{
-			lock (currentTask)
-			{
-				if (currentTask == task)
-				{
-					currentTask.Canceled = true;
-					return;
-				}
-			}
-
 			lock (tasksLock)
 				for (int i = 0; i != scheduledTasks.Count; ++i)
 					if (scheduledTasks.Values[i] == task)
 					{
 						scheduledTasks.RemoveAt(i);
-						return;
+						break;
 					}
-
-			throw new ArgumentOutOfRangeException(S._("The task to be cancelled must " +
-				"either be currently executing or queued."));
 		}
 
-		public override Task GetTask(uint taskId)
-		{
-			lock (tasksLock)
-			{
-				if (!tasks.ContainsKey(taskId))
-					return null;
-				return tasks[taskId];
-			}
-		}
-
-		public override ICollection<Task> GetTasks()
-		{
-			lock (tasksLock)
-			{
-				Task[] result = new Task[tasks.Count];
-				tasks.Values.CopyTo(result, 0);
-				return new List<Task>(result);
-			}
-		}
-
-		public override void SaveTaskList(Stream stream)
-		{
-			lock (tasksLock)
-				new BinaryFormatter().Serialize(stream, tasks);
-		}
-
-		public override void LoadTaskList(Stream stream)
-		{
-			lock (tasksLock)
-			{
-				//Load the list into the dictionary
-				tasks = (Dictionary<uint, Task>)new BinaryFormatter().Deserialize(stream);
-
-				//Ignore the next portion if there are no tasks
-				if (tasks.Count == 0)
-					return;
-
-				lock (unusedIdsLock)
-				{
-					//Find gaps in the numbering
-					nextId = 1;
-					foreach (uint id in tasks.Keys)
-					{
-						Task task = tasks[id];
-						task.Executor = this;
-						while (id > nextId)
-							unusedIds.Add(nextId++);
-						++nextId;
-
-						//Check if the task is recurring. If it is, check if we missed it.
-						if (task.Schedule is RecurringSchedule)
-							ScheduleTask(task);
-					}
-
-					//Decrement the ID, since the next ID will be preincremented
-					//before use.
-					--nextId;
-				}
-			}
-		}
+		public override ExecutorTasksCollection Tasks { get; protected set; }
 
 		/// <summary>
 		/// The thread entry point for this object. This object operates on a queue
@@ -1051,26 +896,146 @@ namespace Eraser.Manager
 		Task currentTask;
 
 		/// <summary>
-		/// The list of task IDs for recycling.
-		/// </summary>
-		private List<uint> unusedIds = new List<uint>();
-
-		/// <summary>
-		/// Lock preventing concurrent access for the IDs.
-		/// </summary>
-		private object unusedIdsLock = new object();
-
-		/// <summary>
-		/// Incrementing ID. This value is incremented by one every time an ID
-		/// is required by no unused IDs remain.
-		/// </summary>
-		private uint nextId;
-
-		/// <summary>
 		/// An automatically reset event allowing the addition of new tasks to
 		/// interrupt the thread's sleeping state waiting for the next recurring
 		/// task to be due.
 		/// </summary>
 		AutoResetEvent schedulerInterrupt = new AutoResetEvent(true);
+	}
+
+	public class DirectExecutorTasksCollection : ExecutorTasksCollection
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="executor">The <see cref="DirectExecutor"/> object owning
+		/// this list.</param>
+		public DirectExecutorTasksCollection(DirectExecutor executor)
+			: base(executor)
+		{
+		}
+
+		#region IList<Task> Members
+		public override int IndexOf(Task item)
+		{
+			return list.IndexOf(item);
+		}
+
+		public override void Insert(int index, Task item)
+		{
+			item.Executor = owner;
+			lock (list)
+				list.Insert(index, item);
+
+			//Call all the event handlers who registered to be notified of tasks
+			//being added.
+			owner.OnTaskAdded(item);
+
+			//If the task is scheduled to run now, break the waiting thread and
+			//run it immediately
+			if (item.Schedule == Schedule.RunNow)
+			{
+				owner.QueueTask(item);
+			}
+			//If the task is scheduled, add the next execution time to the list
+			//of schduled tasks.
+			else if (item.Schedule != Schedule.RunOnRestart)
+			{
+				owner.ScheduleTask(item);
+			}
+		}
+
+		public override void RemoveAt(int index)
+		{
+			lock (list)
+			{
+				Task task = list[index];
+				task.Cancel();
+				task.Executor = null;
+				list.RemoveAt(index);
+
+				//Call all event handlers registered to be notified of task deletions.
+				owner.OnTaskDeleted(task);
+			}
+		}
+
+		public override Task this[int index]
+		{
+			get
+			{
+				return list[index];
+			}
+			set
+			{
+				list[index] = value;
+			}
+		}
+		#endregion
+
+		#region ICollection<Task> Members
+		public override void Add(Task item)
+		{
+			Insert(Count, item);
+		}
+
+		public override void Clear()
+		{
+			foreach (Task task in list)
+				Remove(task);
+		}
+
+		public override bool Contains(Task item)
+		{
+			return list.Contains(item);
+		}
+
+		public override void CopyTo(Task[] array, int arrayIndex)
+		{
+			list.CopyTo(array, arrayIndex);
+		}
+
+		public override int Count
+		{
+			get { return list.Count; }
+		}
+
+		public override bool Remove(Task item)
+		{
+			lock (list)
+			{
+				int index = list.IndexOf(item);
+				if (index < 0)
+					return false;
+
+				RemoveAt(index);
+			}
+
+			return true;
+		}
+		#endregion
+
+		#region IEnumerable<Task> Members
+		public override IEnumerator<Task> GetEnumerator()
+		{
+			return list.GetEnumerator();
+		}
+		#endregion
+
+		public override void SaveToStream(Stream stream)
+		{
+			lock (list)
+				new BinaryFormatter().Serialize(stream, list);
+		}
+
+		public override void LoadFromStream(Stream stream)
+		{
+			//Load the list into the dictionary
+			list = (List<Task>)new BinaryFormatter().Deserialize(stream);
+		}
+
+		/// <summary>
+		/// The data store for this object.
+		/// </summary>
+		private List<Task> list = new List<Task>();
 	}
 }
