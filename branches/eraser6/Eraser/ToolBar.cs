@@ -39,7 +39,7 @@ namespace Eraser
 			InitializeComponent();
 
 			//Initialize the toolbar item list
-			Items = new ToolbarItemCollection(this);
+			Items = new ToolBarItemCollection(this);
 
 			//Hook mouse move events to show the currently selected item
 			MouseMove += new MouseEventHandler(ToolBar_MouseMove);
@@ -171,7 +171,7 @@ namespace Eraser
 		/// <summary>
 		/// Stores the items in the Tool Bar.
 		/// </summary>
-		public ToolbarItemCollection Items
+		public ToolBarItemCollection Items
 		{
 			get;
 			set;
@@ -269,14 +269,14 @@ namespace Eraser
 		internal Rectangle MenuRect;
 	}
 
-	public class ToolbarItemCollection : ICollection<ToolBarItem>, IList<ToolBarItem>,
+	public class ToolBarItemCollection : ICollection<ToolBarItem>, IList<ToolBarItem>,
 		IEnumerable<ToolBarItem>
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="win">The owning toolbar window.</param>
-		internal ToolbarItemCollection(ToolBar win)
+		internal ToolBarItemCollection(ToolBar win)
 		{
 			window = win;
 		}
