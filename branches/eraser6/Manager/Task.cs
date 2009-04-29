@@ -327,17 +327,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The task which owns this target.
 		/// </summary>
-		public Task Task
-		{
-			get
-			{
-				return task;
-			}
-			internal set
-			{
-				task = value;
-			}
-		}
+		public Task Task { get; internal set; }
 
 		/// <summary>
 		/// Retrieves the text to display representing this task.
@@ -408,8 +398,10 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="list">The list to add the ADS paths to.</param>
 		/// <param name="file">The file to look for ADSes</param>
-		protected void GetPathADSes(ref List<string> list, ref long totalSize, string file)
+		protected void GetPathADSes(List<string> list, out long totalSize, string file)
 		{
+			totalSize = 0;
+
 			try
 			{
 				//Get the ADS names
@@ -568,7 +560,7 @@ namespace Eraser.Manager
 		{
 			List<string> result = new List<string>();
 			totalSize = 0;
-			GetPathADSes(ref result, ref totalSize, Path);
+			GetPathADSes(result, out totalSize, Path);
 
 			totalSize += new FileInfo(Path).Length;
 			result.Add(Path);
@@ -634,7 +626,7 @@ namespace Eraser.Manager
 						excludePattern.Matches(file.FullName).Count == 0)
 					{
 						totalSize += file.Length;
-						GetPathADSes(ref result, ref totalSize, file.FullName);
+						GetPathADSes(result, out totalSize, file.FullName);
 						result.Add(file.FullName);
 					}
 			}
@@ -645,7 +637,7 @@ namespace Eraser.Manager
 						continue;
 
 					totalSize += file.Length;
-					GetPathADSes(ref result, ref totalSize, file.FullName);
+					GetPathADSes(result, out totalSize, file.FullName);
 					result.Add(file.FullName);
 				}
 
@@ -773,7 +765,7 @@ namespace Eraser.Manager
 					{
 						paths.Add(fsInfo.FullName);
 						totalSize += ((FileInfo)fsInfo).Length;
-						GetPathADSes(ref paths, ref totalSize, fsInfo.FullName);
+						GetPathADSes(paths, out totalSize, fsInfo.FullName);
 					}
 					else
 						GetRecyclerFiles((DirectoryInfo)fsInfo, ref paths, ref totalSize);
@@ -847,7 +839,7 @@ namespace Eraser.Manager
 		#region IEnumerable Members
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
-			return list.GetEnumerator();
+			return GetEnumerator();
 		}
 		#endregion
 
@@ -860,7 +852,8 @@ namespace Eraser.Manager
 
 		public void Clear()
 		{
-			list.Clear();
+			foreach (ErasureTarget item in list)
+				Remove(item);
 		}
 
 		public bool Contains(ErasureTarget item)
@@ -885,13 +878,18 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return IsReadOnly;
+				return false;
 			}
 		}
 
 		public bool Remove(ErasureTarget item)
 		{
-			return list.Remove(item);
+			int index = list.IndexOf(item);
+			if (index < 0)
+				return false;
+
+			RemoveAt(index);
+			return true;
 		}
 		#endregion
 
@@ -951,7 +949,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The list bring the data store behind this object.
 		/// </summary>
-		List<ErasureTarget> list;
+		private List<ErasureTarget> list;
 	}
 
 	/// <summary>
