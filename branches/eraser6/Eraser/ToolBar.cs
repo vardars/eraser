@@ -39,7 +39,7 @@ namespace Eraser
 			InitializeComponent();
 
 			//Initialize the toolbar item list
-			items = new List<ToolBarItem>();
+			Items = new ToolbarItemCollection(this);
 
 			//Hook mouse move events to show the currently selected item
 			MouseMove += new MouseEventHandler(ToolBar_MouseMove);
@@ -61,7 +61,7 @@ namespace Eraser
 		{
 			//See if the click was on any item's arrow.
 			Rectangle mouse_rect = new Rectangle(e.Location, new Size(1, 1));
-			foreach (ToolBarItem i in items)
+			foreach (ToolBarItem i in Items)
 			{
 				if (i.Menu != null && mouse_rect.IntersectsWith(i.MenuRect))
 				{
@@ -94,7 +94,7 @@ namespace Eraser
 			Point mouse_pos = PointToClient(MousePosition);
 			int x = 0;
 
-			foreach (ToolBarItem i in items)
+			foreach (ToolBarItem i in Items)
 			{
 				{
 					Point pos = i.Rectangle.Location;
@@ -171,30 +171,10 @@ namespace Eraser
 		/// <summary>
 		/// Stores the items in the Tool Bar.
 		/// </summary>
-		private List<ToolBarItem> items;
-
-		/// <summary>
-		/// Accesses or modifies the items in the tool bar.
-		/// </summary>
-		/// <param name="index">Index of item.</param>
-		/// <returns>ToolBarItem describing the item at index i.</returns>
-		public ToolBarItem this[int index]
+		public ToolbarItemCollection Items
 		{
-			get
-			{
-				return items[index];
-			}
-
-			set
-			{
-				items[index] = value;
-				Redraw();
-			}
-		}
-
-		public ICollection<ToolBarItem> Items
-		{
-			get { return items; }
+			get;
+			set;
 		}
 	}
 
@@ -203,11 +183,16 @@ namespace Eraser
 		/// <summary>
 		/// Tool bar item text.
 		/// </summary>
-		[Description("Tool bar item text")]
+		[Description("Toolbar item text")]
 		public string Text
 		{
 			get { return text; }
-			set { text = value; }
+			set
+			{
+				text = value;
+				if (Window != null)
+					Window.Redraw();
+			}
 		}
 
 		/// <summary>
@@ -217,7 +202,12 @@ namespace Eraser
 		public Bitmap Bitmap
 		{
 			get { return bitmap; }
-			set { bitmap = value; }
+			set
+			{
+				bitmap = value;
+				if (Window != null)
+					Window.Redraw();
+			}
 		}
 
 		/// <summary>
@@ -226,7 +216,12 @@ namespace Eraser
 		public ContextMenuStrip Menu
 		{
 			get { return menu; }
-			set { menu = value; }
+			set
+			{
+				menu = value;
+				if (Window != null)
+					Window.Redraw();
+			}
 		}
 
 		/// <summary>
@@ -249,9 +244,14 @@ namespace Eraser
 		private ContextMenuStrip menu;
 
 		/// <summary>
+		/// The owning window of this item.
+		/// </summary>
+		internal ToolBar Window;
+
+		/// <summary>
 		/// Stores the rectangle of this item.
 		/// </summary>
-		internal Rectangle Rectangle = new Rectangle();
+		internal Rectangle Rectangle;
 
 		/// <summary>
 		/// Stores the rectangle of the bitmap.
@@ -267,5 +267,121 @@ namespace Eraser
 		/// Stores the rectangle of the drop-down arrow.
 		/// </summary>
 		internal Rectangle MenuRect;
+	}
+
+	public class ToolbarItemCollection : ICollection<ToolBarItem>, IList<ToolBarItem>,
+		IEnumerable<ToolBarItem>
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="win">The owning toolbar window.</param>
+		internal ToolbarItemCollection(ToolBar win)
+		{
+			window = win;
+		}
+
+		#region ICollection<ToolBarItem> Members
+		public void Add(ToolBarItem item)
+		{
+			if (item.Window != null)
+				throw new ArgumentException("The item being added already is owned by " +
+					"another ToolBar control. Remove the item from the other control " +
+					"before inserting it into this one.");
+
+			item.Window = window;
+			list.Add(item);
+			window.Redraw();
+		}
+
+		public void Clear()
+		{
+			foreach (ToolBarItem item in list)
+				item.Window = null;
+			list.Clear();
+			window.Redraw();
+		}
+
+		public bool Contains(ToolBarItem item)
+		{
+			return list.Contains(item);
+		}
+
+		public void CopyTo(ToolBarItem[] array, int arrayIndex)
+		{
+			list.CopyTo(array, arrayIndex);
+		}
+
+		public int Count
+		{
+			get { return list.Count; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return false; }
+		}
+
+		public bool Remove(ToolBarItem item)
+		{
+			item.Window = null;
+			bool result = list.Remove(item);
+			window.Redraw();
+			return result;
+		}
+		#endregion
+
+		#region IEnumerable<ToolBarItem> Members
+		public IEnumerator<ToolBarItem> GetEnumerator()
+		{
+			return list.GetEnumerator();
+		}
+		#endregion
+
+		#region IEnumerable Members
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return list.GetEnumerator();
+		}
+		#endregion
+
+		#region IList<ToolBarItem> Members
+		public int IndexOf(ToolBarItem item)
+		{
+			return list.IndexOf(item);
+		}
+
+		public void Insert(int index, ToolBarItem item)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void RemoveAt(int index)
+		{
+			throw new NotImplementedException();
+		}
+
+		public ToolBarItem this[int index]
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+		#endregion
+
+		/// <summary>
+		/// The window owning the items in this list.
+		/// </summary>
+		private ToolBar window;
+
+		/// <summary>
+		/// The list storing the toolbar items.
+		/// </summary>
+		private List<ToolBarItem> list = new List<ToolBarItem>();
 	}
 }

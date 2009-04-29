@@ -44,8 +44,6 @@ namespace Eraser
 		public UpdateForm()
 		{
 			InitializeComponent();
-
-			updates = new UpdateManager();
 			updateListDownloader.RunWorkerAsync();
 		}
 
@@ -185,7 +183,7 @@ namespace Eraser
 					updateCategories[key] : key);
 				updatesLv.Groups.Add(group);
 
-				foreach (UpdateInfo update in updates[key])
+				foreach (UpdateInfo update in updates.Updates[key])
 				{
 					//Skip if this update won't work on our current architecture.
 					if (compatibleArchs.IndexOf(update.Architecture) == -1)
@@ -457,7 +455,7 @@ namespace Eraser
 		/// <summary>
 		/// The Update manager instance used by this form.
 		/// </summary>
-		UpdateManager updates;
+		UpdateManager updates = new UpdateManager();
 
 		/// <summary>
 		/// Maps listview items to the UpdateManager.Update object.
@@ -520,6 +518,14 @@ namespace Eraser
 	public class UpdateManager
 	{
 		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public UpdateManager()
+		{
+			Updates = new UpdateCategoriesDictionary();
+		}
+
+		/// <summary>
 		/// Retrieves the update list from the server.
 		/// </summary>
 		public void DownloadUpdateList()
@@ -563,7 +569,7 @@ namespace Eraser
 		private void ParseUpdateList(Stream strm)
 		{
 			//Move the XmlReader to the root node
-			updates.Clear();
+			Updates.Clear();
 			mirrors.Clear();
 			XmlReader rdr = XmlReader.Create(strm);
 			rdr.ReadToFollowing("updateList");
@@ -586,7 +592,7 @@ namespace Eraser
 								new Mirror(e.Current.Value, e.Current.Key));
 					}
 					else
-						updates.Add(categories.Name, ParseUpdateCategory(categories.ReadSubtree()));
+						Updates.Add(categories.Name, ParseUpdateCategory(categories.ReadSubtree()));
 				}
 
 				cont = categories.Read();
@@ -623,9 +629,9 @@ namespace Eraser
 		/// </summary>
 		/// <param name="rdr">The XML reader object representing the element and its children.</param>
 		/// <returns>A list of updates in the category.</returns>
-		private static List<UpdateInfo> ParseUpdateCategory(XmlReader rdr)
+		private static UpdateList ParseUpdateCategory(XmlReader rdr)
 		{
-			List<UpdateInfo> result = new List<UpdateInfo>();
+			UpdateList result = new UpdateList();
 			if (!rdr.ReadToDescendant("item"))
 				return result;
 
@@ -726,6 +732,11 @@ namespace Eraser
 			return tempFilesMap;
 		}
 
+		/// <summary>
+		/// Installs all updates downloaded.
+		/// </summary>
+		/// <param name="value">The value returned from a call to
+		/// <see cref="DownloadUpdates"/>.</param>
 		public void InstallUpdates(object value)
 		{
 			Dictionary<string, UpdateInfo> tempFiles = (Dictionary<string, UpdateInfo>)value;
@@ -777,12 +788,7 @@ namespace Eraser
 		/// <summary>
 		/// Called when the progress of the operation changes.
 		/// </summary>
-		public EventHandler<ProgressEventArgs> OnProgressEvent
-		{
-			get { return onProgressEvent; }
-			set { onProgressEvent = value; }
-		}
-		private EventHandler<ProgressEventArgs> onProgressEvent;
+		public EventHandler<ProgressEventArgs> OnProgressEvent { get; set; }
 
 		/// <summary>
 		/// Helper function: invokes the OnProgressEvent delegate.
@@ -837,37 +843,18 @@ namespace Eraser
 		/// <summary>
 		/// Retrieves the categories available.
 		/// </summary>
-		public Dictionary<string, List<UpdateInfo>>.KeyCollection Categories
+		public ICollection<string> Categories
 		{
 			get
 			{
-				return updates.Keys;
+				return Updates.Keys;
 			}
 		}
 
 		/// <summary>
 		/// Retrieves all updates available.
 		/// </summary>
-		public Dictionary<string, List<UpdateInfo>> Updates
-		{
-			get
-			{
-				return updates;
-			}
-		}
-
-		/// <summary>
-		/// Retrieves the updates in the given category.
-		/// </summary>
-		/// <param name="key">The category to retrieve.</param>
-		/// <returns>All updates in the given category.</returns>
-		public ICollection<UpdateInfo> this[string key]
-		{
-			get
-			{
-				return updates[key];
-			}
-		}
+		public UpdateCategoriesDictionary Updates { get; set; }
 
 		/// <summary>
 		/// The list of mirrors to download updates from.
@@ -879,12 +866,207 @@ namespace Eraser
 		/// The currently selected mirror.
 		/// </summary>
 		private Mirror selectedMirror;
+	}
+
+	/// <summary>
+	/// Manages a list of categories, mapping categories to a list of updates.
+	/// </summary>
+	public class UpdateCategoriesDictionary : IDictionary<string, UpdateList>,
+		ICollection<KeyValuePair<string, UpdateList>>,
+		IEnumerable<KeyValuePair<string, UpdateList>>
+	{
+		#region IDictionary<string,UpdateList> Members
+		public void Add(string key, UpdateList value)
+		{
+			dictionary.Add(key, value);
+		}
+
+		public bool ContainsKey(string key)
+		{
+			return dictionary.ContainsKey(key);
+		}
+
+		public ICollection<string> Keys
+		{
+			get { return dictionary.Keys; }
+		}
+
+		public bool Remove(string key)
+		{
+			return dictionary.Remove(key);
+		}
+
+		public bool TryGetValue(string key, out UpdateList value)
+		{
+			return dictionary.TryGetValue(key, out value);
+		}
+
+		public ICollection<UpdateList> Values
+		{
+			get { return dictionary.Values; }
+		}
+
+		public UpdateList this[string key]
+		{
+			get
+			{
+				return dictionary[key];
+			}
+			set
+			{
+				dictionary[key] = value;
+			}
+		}
+		#endregion
+
+		#region ICollection<KeyValuePair<string,UpdateList>> Members
+		public void Add(KeyValuePair<string, UpdateList> item)
+		{
+			dictionary.Add(item.Key, item.Value);
+		}
+
+		public void Clear()
+		{
+			dictionary.Clear();
+		}
+
+		public bool Contains(KeyValuePair<string, UpdateList> item)
+		{
+			return dictionary.ContainsKey(item.Key) && dictionary[item.Key] == item.Value;
+		}
+
+		public void CopyTo(KeyValuePair<string, UpdateList>[] array, int arrayIndex)
+		{
+			throw new NotImplementedException();
+		}
+
+		public int Count
+		{
+			get { return dictionary.Count; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return true; }
+		}
+
+		public bool Remove(KeyValuePair<string, UpdateList> item)
+		{
+			return dictionary.Remove(item.Key);
+		}
+		#endregion
+
+		#region IEnumerable<KeyValuePair<string,UpdateList>> Members
+		public IEnumerator<KeyValuePair<string, UpdateList>> GetEnumerator()
+		{
+			throw new NotImplementedException();
+		}
+		#endregion
+
+		#region IEnumerable Members
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			throw new NotImplementedException();
+		}
+		#endregion
 
 		/// <summary>
-		/// The list of updates downloaded.
+		/// The store for the current object.
 		/// </summary>
-		private Dictionary<string, List<UpdateInfo>> updates =
-			new Dictionary<string, List<UpdateInfo>>();
+		private Dictionary<string, UpdateList> dictionary =
+			new Dictionary<string, UpdateList>();
+	}
+
+	/// <summary>
+	/// Manages a category, containing a list of updates.
+	/// </summary>
+	public class UpdateList : IList<UpdateInfo>, ICollection<UpdateInfo>,
+		IEnumerable<UpdateInfo>
+	{
+		#region IList<UpdateInfo> Members
+		public int IndexOf(UpdateInfo item)
+		{
+			return list.IndexOf(item);
+		}
+
+		public void Insert(int index, UpdateInfo item)
+		{
+			list.Insert(index, item);
+		}
+
+		public void RemoveAt(int index)
+		{
+			list.RemoveAt(index);
+		}
+
+		public UpdateInfo this[int index]
+		{
+			get
+			{
+				return list[index];
+			}
+			set
+			{
+				list[index] = value;
+			}
+		}
+		#endregion
+
+		#region ICollection<UpdateInfo> Members
+		public void Add(UpdateInfo item)
+		{
+			list.Add(item);
+		}
+
+		public void Clear()
+		{
+			list.Clear();
+		}
+
+		public bool Contains(UpdateInfo item)
+		{
+			return list.Contains(item);
+		}
+
+		public void CopyTo(UpdateInfo[] array, int arrayIndex)
+		{
+			list.CopyTo(array, arrayIndex);
+		}
+
+		public int Count
+		{
+			get { return list.Count; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return true; }
+		}
+
+		public bool Remove(UpdateInfo item)
+		{
+			return list.Remove(item);
+		}
+		#endregion
+
+		#region IEnumerable<UpdateInfo> Members
+		public IEnumerator<UpdateInfo> GetEnumerator()
+		{
+			return list.GetEnumerator();
+		}
+		#endregion
+
+		#region IEnumerable Members
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return list.GetEnumerator();
+		}
+		#endregion
+
+		/// <summary>
+		/// The store for this object.
+		/// </summary>
+		private List<UpdateInfo> list = new List<UpdateInfo>();
 	}
 
 	/// <summary>
@@ -902,20 +1084,12 @@ namespace Eraser
 		/// <summary>
 		/// The location where the mirror is at.
 		/// </summary>
-		public string Location
-		{
-			get;
-			set;
-		}
+		public string Location { get; set; }
 
 		/// <summary>
 		/// The URL prefix to utilise the mirror.
 		/// </summary>
-		public string Link
-		{
-			get;
-			set;
-		}
+		public string Link { get; set; }
 
 		public override string ToString()
 		{
