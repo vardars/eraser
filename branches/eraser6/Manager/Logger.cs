@@ -71,16 +71,15 @@ namespace Eraser.Manager
 		#region Serialization code
 		protected Logger(SerializationInfo info, StreamingContext context)
 		{
-			entries = (Dictionary<DateTime, List<LogEntry>>)
-				info.GetValue("Entries", typeof(Dictionary<DateTime, List<LogEntry>>));
-			foreach (DateTime key in entries.Keys)
+			Entries = (LogSessionCollection)info.GetValue("Entries", typeof(LogSessionCollection));
+			foreach (DateTime key in Entries.Keys)
 				lastSession = key;
 		}
 
 		[SecurityPermission(SecurityAction.Demand, SerializationFormatter=true)]
 		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue("Entries", entries);
+			info.AddValue("Entries", Entries);
 		}
 		#endregion
 
@@ -89,80 +88,47 @@ namespace Eraser.Manager
 		/// </summary>
 		public Logger()
 		{
-			entries = new Dictionary<DateTime, List<LogEntry>>();
+			Entries = new LogSessionCollection(this);
 		}
-
-		/// <summary>
-		/// The prototype of a registrant of the Log event.
-		/// </summary>
-		/// <param name="e"></param>
-		public delegate void LogEventFunction(LogEntry entry);
 
 		/// <summary>
 		/// All the registered event handlers for the log event of this task.
 		/// </summary>
-		public event LogEventFunction OnLogged;
+		public EventHandler<LogEventArgs> Logged { get; set; }
+
+		internal void OnLogged(object sender, LogEventArgs e)
+		{
+			if (Logged != null)
+				Logged(sender, e);
+		}
 
 		/// <summary>
 		/// All the registered event handlers for handling when a new session has been
 		/// started.
 		/// </summary>
-		public event EventHandler OnNewSession;
+		public EventHandler<EventArgs> NewSession { get; set; }
+
+		internal void OnNewSession(object sender, LogEventArgs e)
+		{
+			if (Logged != null)
+				Logged(sender, e);
+		}
 
 		/// <summary>
 		/// Retrieves the log for this task.
 		/// </summary>
-		public Dictionary<DateTime, List<LogEntry>> Entries
-		{
-			get
-			{
-				return entries;
-			}
-		}
+		public LogSessionCollection Entries { get; private set; }
 
 		/// <summary>
 		/// Retrieves the log entries from the previous session.
 		/// </summary>
-		public List<LogEntry> LastSessionEntries
+		public LogEntryCollection LastSessionEntries
 		{
 			get
 			{
-				lock (entries)
-					return entries[lastSession];
+				lock (Entries)
+					return Entries[lastSession];
 			}
-		}
-
-		/// <summary>
-		/// Adds a new session to the log.
-		/// </summary>
-		internal void NewSession()
-		{
-			lock (entries)
-			{
-				lastSession = DateTime.Now;
-				entries.Add(lastSession, new List<LogEntry>());
-			}
-
-			if (OnNewSession != null)
-				OnNewSession(this, new EventArgs());
-		}
-
-		/// <summary>
-		/// Logs the message and its associated information into the current session.
-		/// </summary>
-		/// <param name="entry">The log entry structure representing the log
-		/// message.</param>
-		internal void Add(LogEntry entry)
-		{
-			lock (entries)
-			{
-				if (entries.Count == 0)
-					NewSession();
-				entries[lastSession].Add(entry);
-			}
-
-			if (OnLogged != null)
-				OnLogged(entry);
 		}
 
 		/// <summary>
@@ -170,22 +136,260 @@ namespace Eraser.Manager
 		/// </summary>
 		public void Clear()
 		{
-			lock (entries)
+			lock (Entries)
 			{
-				entries.Clear();
+				Entries.Clear();
 				lastSession = DateTime.MinValue;
 			}
 		}
 
 		/// <summary>
-		/// The log entries.
-		/// </summary>
-		private Dictionary<DateTime, List<LogEntry>> entries;
-
-		/// <summary>
 		/// The last session
 		/// </summary>
 		private DateTime lastSession;
+	}
+
+	public class LogEventArgs : EventArgs
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="entry">The log entry that was just logged.</param>
+		public LogEventArgs(LogEntry entry)
+		{
+			LogEntry = entry;
+		}
+
+		/// <summary>
+		/// The log entry that was just logged.
+		/// </summary>
+		public LogEntry LogEntry { get; private set; }
+	}
+
+	public class LogSessionCollection : IDictionary<DateTime, LogEntryCollection>
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="logger">The logger object managing the logging.</param>
+		public LogSessionCollection(Logger logger)
+		{
+			owner = logger;
+		}
+
+		public void NewSession()
+		{
+			Add(DateTime.Now, new LogEntryCollection(owner));
+		}
+
+		#region IDictionary<DateTime,LogSessionEntryCollection> Members
+		public void Add(DateTime key, LogEntryCollection value)
+		{
+			dictionary.Add(key, value);
+		}
+
+		public bool ContainsKey(DateTime key)
+		{
+			return dictionary.ContainsKey(key);
+		}
+
+		public ICollection<DateTime> Keys
+		{
+			get { return dictionary.Keys; }
+		}
+
+		public bool Remove(DateTime key)
+		{
+			return dictionary.Remove(key);
+		}
+
+		public bool TryGetValue(DateTime key, out LogEntryCollection value)
+		{
+			return dictionary.TryGetValue(key, out value);
+		}
+
+		public ICollection<LogEntryCollection> Values
+		{
+			get { return dictionary.Values; }
+		}
+
+		public LogEntryCollection this[DateTime key]
+		{
+			get
+			{
+				return dictionary[key];
+			}
+			set
+			{
+				dictionary[key] = value;
+			}
+		}
+		#endregion
+
+		#region ICollection<KeyValuePair<DateTime,LogSessionEntryCollection>> Members
+		public void Add(KeyValuePair<DateTime, LogEntryCollection> item)
+		{
+			Add(item.Key, item.Value);
+		}
+
+		public void Clear()
+		{
+			dictionary.Clear();
+		}
+
+		public bool Contains(KeyValuePair<DateTime, LogEntryCollection> item)
+		{
+			return dictionary.ContainsKey(item.Key) && dictionary[item.Key] == item.Value;
+		}
+
+		public void CopyTo(KeyValuePair<DateTime, LogEntryCollection>[] array, int arrayIndex)
+		{
+			throw new NotImplementedException();
+		}
+
+		public int Count
+		{
+			get { return dictionary.Count; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return false; }
+		}
+
+		public bool Remove(KeyValuePair<DateTime, LogEntryCollection> item)
+		{
+			return dictionary.Remove(item.Key);
+		}
+		#endregion
+
+		#region IEnumerable<KeyValuePair<DateTime,LogSessionEntryCollection>> Members
+		public IEnumerator<KeyValuePair<DateTime, LogEntryCollection>> GetEnumerator()
+		{
+			return dictionary.GetEnumerator();
+		}
+		#endregion
+
+		#region IEnumerable Members
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+		#endregion
+
+		/// <summary>
+		/// The log manager.
+		/// </summary>
+		private Logger owner;
+
+		/// <summary>
+		/// The store for this object.
+		/// </summary>
+		private Dictionary<DateTime, LogEntryCollection> dictionary =
+			new Dictionary<DateTime, LogEntryCollection>();
+	}
+
+	public class LogEntryCollection : IList<LogEntry>
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="logger">The <see cref="Logger"/> object handling logging.</param>
+		internal LogEntryCollection(Logger logger)
+		{
+			owner = logger;
+		}
+
+		#region IList<LogEntry> Members
+		public int IndexOf(LogEntry item)
+		{
+			return list.IndexOf(item);
+		}
+
+		public void Insert(int index, LogEntry item)
+		{
+			list.Insert(index, item);
+			owner.OnLogged(owner, new LogEventArgs(item));
+		}
+
+		public void RemoveAt(int index)
+		{
+			throw new InvalidOperationException();
+		}
+
+		public LogEntry this[int index]
+		{
+			get
+			{
+				return list[index];
+			}
+			set
+			{
+				throw new InvalidOperationException();
+			}
+		}
+		#endregion
+
+		#region ICollection<LogEntry> Members
+		public void Add(LogEntry item)
+		{
+			Insert(Count, item);
+		}
+
+		public void Clear()
+		{
+			throw new InvalidOperationException();
+		}
+
+		public bool Contains(LogEntry item)
+		{
+			return list.Contains(item);
+		}
+
+		public void CopyTo(LogEntry[] array, int arrayIndex)
+		{
+			list.CopyTo(array, arrayIndex);
+		}
+
+		public int Count
+		{
+			get { return list.Count; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return false; }
+		}
+
+		public bool Remove(LogEntry item)
+		{
+			return list.Remove(item);
+		}
+		#endregion
+
+		#region IEnumerable<LogEntry> Members
+		public IEnumerator<LogEntry> GetEnumerator()
+		{
+			return list.GetEnumerator();
+		}
+		#endregion
+
+		#region IEnumerable Members
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+		#endregion
+
+		/// <summary>
+		/// The Logger object managing logging.
+		/// </summary>
+		private Logger owner;
+
+		/// <summary>
+		/// The store for this object.
+		/// </summary>
+		private List<LogEntry> list = new List<LogEntry>();
 	}
 
 	/// <summary>

@@ -428,7 +428,7 @@ namespace Eraser.Manager
 			{
 				//The system cannot read the file, assume no ADSes for lack of
 				//more information.
-				Task.Log.Add(new LogEntry(e.Message, LogLevel.Error));
+				Task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Error));
 			}
 		}
 
@@ -670,7 +670,7 @@ namespace Eraser.Manager
 				catch (Exception e)
 				{
 					//Ignore, but log.
-					Task.Log.Add(new LogEntry(S._("Could not erase {0} because {1}",
+					Task.Log.LastSessionEntries.Add(new LogEntry(S._("Could not erase {0} because {1}",
 						dir.FullName, e.Message), LogLevel.Error));
 				}
 
@@ -781,7 +781,7 @@ namespace Eraser.Manager
 			}
 			catch (UnauthorizedAccessException e)
 			{
-				Task.Log.Add(new LogEntry(e.Message, LogLevel.Error));
+				Task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Error));
 			}
 		}
 

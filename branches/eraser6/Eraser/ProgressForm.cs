@@ -101,7 +101,7 @@ namespace Eraser
 
 			//Inform the user on the status of the task.
 			LogLevel highestLevel = LogLevel.Information;
-			List<LogEntry> entries = e.Task.Log.LastSessionEntries;
+			LogEntryCollection entries = e.Task.Log.LastSessionEntries;
 			foreach (LogEntry log in entries)
 				if (log.Level > highestLevel)
 					highestLevel = log.Level;

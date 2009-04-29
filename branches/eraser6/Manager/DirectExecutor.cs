@@ -153,7 +153,7 @@ namespace Eraser.Manager
 
 						//Start a new log session to separate this session's events
 						//from previous ones.
-						task.Log.NewSession();
+						task.Log.Entries.NewSession();
 
 						//Run the task
 						TaskProgressManager progress = new TaskProgressManager(currentTask);
@@ -175,16 +175,16 @@ namespace Eraser.Manager
 							}
 							catch (Exception e)
 							{
-								task.Log.Add(new LogEntry(e.Message, LogLevel.Error));
+								task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Error));
 							}
 					}
 					catch (FatalException e)
 					{
-						task.Log.Add(new LogEntry(e.Message, LogLevel.Fatal));
+						task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Fatal));
 					}
 					catch (Exception e)
 					{
-						task.Log.Add(new LogEntry(e.Message, LogLevel.Error));
+						task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Error));
 					}
 					finally
 					{
@@ -386,20 +386,20 @@ namespace Eraser.Manager
 				if (Environment.OSVersion.Platform == PlatformID.Win32NT &&
 					Environment.OSVersion.Version >= new Version(6, 0))
 				{
-					throw new UnauthorizedAccessException(S._("The program does not have the required " +
-						"permissions to erase the unused space on disk. Run the program as an administrator " +
-						"and retry the operation."));
+					throw new UnauthorizedAccessException(S._("The program does not have the " +
+						"required permissions to erase the unused space on disk. Run the program " +
+						"as an administrator and retry the operation."));
 				}
 				else
-					throw new UnauthorizedAccessException(S._("The program does not have the required permissions " +
-						"to erase the unused space on disk"));
+					throw new UnauthorizedAccessException(S._("The program does not have the " +
+						"required permissions to erase the unused space on disk"));
 			}
 
 			//If the user is under disk quotas, log a warning message
 			if (VolumeInfo.FromMountpoint(target.Drive).HasQuota)
-				task.Log.Add(new LogEntry(S._("The drive which is having its unused space erased " +
-					"has disk quotas active. This will prevent the complete erasure of unused " +
-					"space and will pose a security concern"), LogLevel.Warning));
+				task.Log.LastSessionEntries.Add(new LogEntry(S._("The drive which is having its " +
+					"unused space erased has disk quotas active. This will prevent the complete " +
+					"erasure of unused space and will pose a security concern"), LogLevel.Warning));
 
 			//Get the erasure method if the user specified he wants the default.
 			ErasureMethod method = target.Method;
@@ -564,28 +564,28 @@ namespace Eraser.Manager
 					//Skip this directory if it is a reparse point
 					if ((info.Attributes & FileAttributes.ReparsePoint) != 0)
 					{
-						task.Log.Add(new LogEntry(S._("Files in {0} did not have their cluster " +
-							"tips erased because it is a hard link or a symbolic link.",
-							info.FullName), LogLevel.Information));
+						task.Log.LastSessionEntries.Add(new LogEntry(S._("Files in {0} did " +
+							"not have their cluster tips erased because it is a hard link or " +
+							"a symbolic link.", info.FullName), LogLevel.Information));
 						return;
 					}
 
 					foreach (FileInfo file in info.GetFiles())
 						if (Util.File.IsProtectedSystemFile(file.FullName))
-							task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips " +
-								"erased, because it is a system file", file.FullName),
-								LogLevel.Information));
-						else if ((file.Attributes & FileAttributes.ReparsePoint) != 0)
-							task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips " +
-								"erased because it is a hard link or a symbolic link.",
+							task.Log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have " +
+								"its cluster tips erased, because it is a system file",
 								file.FullName), LogLevel.Information));
+						else if ((file.Attributes & FileAttributes.ReparsePoint) != 0)
+							task.Log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have " +
+								"its cluster tips erased because it is a hard link or a " +
+								"symbolic link.", file.FullName), LogLevel.Information));
 						else if ((file.Attributes & FileAttributes.Compressed) != 0 ||
 							(file.Attributes & FileAttributes.Encrypted) != 0 ||
 							(file.Attributes & FileAttributes.SparseFile) != 0)
 						{
-							task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips " +
-								"erased because it is compressed, encrypted or a sparse file.",
-								file.FullName), LogLevel.Information));
+							task.Log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have " +
+								"its cluster tips erased because it is compressed, encrypted " +
+								"or a sparse file.", file.FullName), LogLevel.Information));
 						}
 						else
 						{
@@ -598,9 +598,9 @@ namespace Eraser.Manager
 							}
 							catch (IOException e)
 							{
-								task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips erased " +
-									"because of the following error: {1}", info.FullName, e.Message),
-									LogLevel.Error));
+								task.Log.LastSessionEntries.Add(new LogEntry(S._("{0} did not " +
+									"have its cluster tips erased because of the following " +
+									"error: {1}", info.FullName, e.Message), LogLevel.Error));
 							}
 						}
 
@@ -609,15 +609,15 @@ namespace Eraser.Manager
 				}
 				catch (UnauthorizedAccessException e)
 				{
-					task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips erased " +
-						"because of the following error: {1}", info.FullName, e.Message),
-						LogLevel.Error));
+					task.Log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have its " +
+						"cluster tips erased because of the following error: {1}",
+						info.FullName, e.Message), LogLevel.Error));
 				}
 				catch (IOException e)
 				{
-					task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips erased " +
-						"because of the following error: {1}", info.FullName, e.Message),
-						LogLevel.Error));
+					task.Log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have its " +
+						"cluster tips erased because of the following error: {1}",
+						info.FullName, e.Message), LogLevel.Error));
 				}
 			};
 
@@ -638,8 +638,9 @@ namespace Eraser.Manager
 				}
 				catch (Exception e)
 				{
-					task.Log.Add(new LogEntry(S._("{0} did not have its cluster tips erased. " +
-						"The error returned was: {1}", files[i], e.Message), LogLevel.Error));
+					task.Log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have its " +
+						"cluster tips erased. The error returned was: {1}", files[i],
+						e.Message), LogLevel.Error));
 				}
 				finally
 				{
@@ -754,9 +755,9 @@ namespace Eraser.Manager
 						(info.Attributes & FileAttributes.SparseFile) != 0)
 					{
 						//Log the error
-						task.Log.Add(new LogEntry(S._("The file {0} could not be erased " +
-							"because the file was either compressed, encrypted or a sparse file.",
-							info.FullName), LogLevel.Error));
+						task.Log.LastSessionEntries.Add(new LogEntry(S._("The file {0} could " +
+							"not be erased because the file was either compressed, encrypted or " +
+							"a sparse file.", info.FullName), LogLevel.Error));
 					}
 
 					//Create the file stream, and call the erasure method to write to
@@ -808,14 +809,15 @@ namespace Eraser.Manager
 				}
 				catch (UnauthorizedAccessException)
 				{
-					task.Log.Add(new LogEntry(S._("The file {0} could not be erased because the " +
-						"file's permissions prevent access to the file.", info.FullName),
-						LogLevel.Error));
+					task.Log.LastSessionEntries.Add(new LogEntry(S._("The file {0} could not " +
+						"be erased because the file's permissions prevent access to the file.",
+						info.FullName), LogLevel.Error));
 				}
 				catch (FileLoadException)
 				{
-					task.Log.Add(new LogEntry(S._("The file {0} could not be erased because the " +
-						"file is currently in use.", info.FullName), LogLevel.Error));
+					task.Log.LastSessionEntries.Add(new LogEntry(S._("The file {0} could not be " +
+						"erased because the file is currently in use.", info.FullName),
+						LogLevel.Error));
 				}
 				finally
 				{

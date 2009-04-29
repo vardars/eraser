@@ -45,32 +45,32 @@ namespace Eraser
 
 			//Add all the existing log messages
 			this.log.BeginUpdate();
-			Dictionary<DateTime, List<LogEntry>> log = task.Log.Entries;
+			LogSessionCollection log = task.Log.Entries;
 			foreach (DateTime sessionTime in log.Keys)
 			{
 				this.log.Groups.Add(new ListViewGroup(S._("Session: {0:F}", sessionTime)));
 				foreach (LogEntry entry in log[sessionTime])
-					task_Logged(entry);
+					task_Logged(this, new LogEventArgs(entry));
 			}
 
 			//Register our event handler to get live log messages
-			task.Log.OnLogged += new Logger.LogEventFunction(task_Logged);
+			task.Log.Logged += new EventHandler<LogEventArgs>(task_Logged);
 			this.log.EndUpdate();
 		}
 
 		private void LogForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			task.Log.OnLogged -= new Logger.LogEventFunction(task_Logged);
+			task.Log.Logged -= new EventHandler<LogEventArgs>(task_Logged);
 		}
 
-		private void task_Logged(LogEntry e)
+		private void task_Logged(object sender, LogEventArgs e)
 		{
 			if (InvokeRequired)
 			{
 				//Todo: I get crashes here... but alas, I can't fix it!
 				try
 				{
-					Invoke(new Logger.LogEventFunction(task_Logged), new object[] { e });
+					Invoke(new EventHandler<LogEventArgs>(task_Logged), new object[] { e });
 				}
 				catch (ObjectDisposedException)
 				{
@@ -81,13 +81,13 @@ namespace Eraser
 				return;
 			}
 
-			ListViewItem item = log.Items.Add(e.Timestamp.ToString("F", CultureInfo.CurrentCulture));
-			item.SubItems.Add(e.Level.ToString());
-			item.SubItems.Add(e.Message);
+			ListViewItem item = log.Items.Add(e.LogEntry.Timestamp.ToString("F", CultureInfo.CurrentCulture));
+			item.SubItems.Add(e.LogEntry.Level.ToString());
+			item.SubItems.Add(e.LogEntry.Message);
 			if (log.Groups.Count != 0)
 				item.Group = log.Groups[log.Groups.Count - 1];
 
-			switch (e.Level)
+			switch (e.LogEntry.Level)
 			{
 				case LogLevel.Fatal:
 				case LogLevel.Error:
@@ -108,7 +108,7 @@ namespace Eraser
 		private void copy_Click(object sender, EventArgs e)
 		{
 			StringBuilder text = new StringBuilder();
-			Dictionary<DateTime, List<LogEntry>> logEntries = task.Log.Entries;
+			LogSessionCollection logEntries = task.Log.Entries;
 			foreach (DateTime sessionTime in logEntries.Keys)
 			{
 				text.AppendLine(S._("Session: {0:F}", sessionTime));
