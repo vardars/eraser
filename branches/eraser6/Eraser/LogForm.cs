@@ -45,7 +45,7 @@ namespace Eraser
 
 			//Add all the existing log messages
 			this.log.BeginUpdate();
-			LogSessionCollection log = task.Log.Entries;
+			LogSessionDictionary log = task.Log.Entries;
 			foreach (DateTime sessionTime in log.Keys)
 			{
 				this.log.Groups.Add(new ListViewGroup(S._("Session: {0:F}", sessionTime)));
@@ -108,7 +108,7 @@ namespace Eraser
 		private void copy_Click(object sender, EventArgs e)
 		{
 			StringBuilder text = new StringBuilder();
-			LogSessionCollection logEntries = task.Log.Entries;
+			LogSessionDictionary logEntries = task.Log.Entries;
 			foreach (DateTime sessionTime in logEntries.Keys)
 			{
 				text.AppendLine(S._("Session: {0:F}", sessionTime));

@@ -46,7 +46,6 @@ namespace Eraser.DefaultPlugins
 				}
 				catch (Exception)
 				{
-					method = null;
 				}
 
 			//If we have no default or we are the default then throw an exception
