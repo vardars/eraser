@@ -221,7 +221,7 @@ namespace Eraser.Manager
 				{
 					// void \+ task
 					case RemoteRequest.Function.CANCEL_TASK:
-						UnqueueTask((Task)parameter);
+						CancelTask((Task)parameter);
 						break;
 
 					// void \+ task
@@ -229,7 +229,7 @@ namespace Eraser.Manager
 						QueueTask((Task)parameter);
 						break;
 
-					/*// void \+ task
+					// void \+ task
 					case RemoteRequest.Function.REPLACE_TASK:
 						ReplaceTask((Task)parameter);
 						break;
@@ -270,7 +270,7 @@ namespace Eraser.Manager
 					// list<task> \+ void
 					case RemoteRequest.Function.GET_TASKS:
 						returnValue = GetTasks();
-						break;*/
+						break;
 
 					// void \+ void
 					case RemoteRequest.Function.QUEUE_RESTART_TASK:
@@ -368,11 +368,19 @@ namespace Eraser.Manager
 			return result;
 		}
 
-		/*public override bool DeleteTask(uint taskId)
+		public override bool DeleteTask(uint taskId)
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, taskId);
 			return (bool)SendRequest(new RemoteRequest(RemoteRequest.Function.DELETE_TASK,
+				mStream.GetBuffer()));
+		}
+
+		public override ICollection<Task> GetTasks()
+		{
+			MemoryStream mStream = new MemoryStream();
+			new BinaryFormatter().Serialize(mStream, null);
+			return (List<Task>)SendRequest(new RemoteRequest(RemoteRequest.Function.GET_TASKS,
 				mStream.GetBuffer()));
 		}
 
@@ -398,9 +406,9 @@ namespace Eraser.Manager
 			new BinaryFormatter().Serialize(mStream, task);
 			SendRequest(new RemoteRequest(RemoteRequest.Function.ADD_TASK,
 				mStream.GetBuffer()));
-		}*/
+		}
 
-		public override void UnqueueTask(Task task)
+		public override void CancelTask(Task task)
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, task);
@@ -424,13 +432,13 @@ namespace Eraser.Manager
 				mStream.GetBuffer()));
 		}
 
-		/*public override void ReplaceTask(Task task)
+		public override void ReplaceTask(Task task)
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, task);
 			SendRequest(new RemoteRequest(RemoteRequest.Function.REPLACE_TASK,
 				mStream.GetBuffer()));
-		}*/
+		}
 
 		public override void Run()
 		{
@@ -444,28 +452,12 @@ namespace Eraser.Manager
 				mStream.GetBuffer()));
 		}
 
-		/*public override void SaveTaskList(Stream stream)
+		public override void SaveTaskList(Stream stream)
 		{
 			MemoryStream mStream = new MemoryStream();
 			new BinaryFormatter().Serialize(mStream, stream);
 			SendRequest(new RemoteRequest(RemoteRequest.Function.SAVE_TASK_LIST,
 				mStream.GetBuffer()));
-		}*/
-
-		public override ExecutorTasksCollection Tasks
-		{
-			get
-			{
-				throw new NotImplementedException();
-				/*MemoryStream mStream = new MemoryStream();
-				new BinaryFormatter().Serialize(mStream, null);
-				return (List<Task>)SendRequest(new RemoteRequest(RemoteRequest.Function.GET_TASKS,
-					mStream.GetBuffer()));*/
-			}
-			protected set
-			{
-				throw new NotImplementedException();
-			}
 		}
 	}
 }

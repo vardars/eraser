@@ -959,14 +959,14 @@ namespace Eraser
 		#region IEnumerable<KeyValuePair<string,UpdateList>> Members
 		public IEnumerator<KeyValuePair<string, UpdateList>> GetEnumerator()
 		{
-			return dictionary.GetEnumerator();
+			throw new NotImplementedException();
 		}
 		#endregion
 
 		#region IEnumerable Members
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
-			return GetEnumerator();
+			throw new NotImplementedException();
 		}
 		#endregion
 
