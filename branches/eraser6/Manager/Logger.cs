@@ -71,7 +71,7 @@ namespace Eraser.Manager
 		#region Serialization code
 		protected Logger(SerializationInfo info, StreamingContext context)
 		{
-			Entries = (LogSessionCollection)info.GetValue("Entries", typeof(LogSessionCollection));
+			Entries = (LogSessionDictionary)info.GetValue("Entries", typeof(LogSessionDictionary));
 			foreach (DateTime key in Entries.Keys)
 				lastSession = key;
 		}
@@ -88,7 +88,7 @@ namespace Eraser.Manager
 		/// </summary>
 		public Logger()
 		{
-			Entries = new LogSessionCollection(this);
+			Entries = new LogSessionDictionary(this);
 		}
 
 		/// <summary>
@@ -117,7 +117,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Retrieves the log for this task.
 		/// </summary>
-		public LogSessionCollection Entries { get; private set; }
+		public LogSessionDictionary Entries { get; private set; }
 
 		/// <summary>
 		/// Retrieves the log entries from the previous session.
@@ -166,13 +166,13 @@ namespace Eraser.Manager
 		public LogEntry LogEntry { get; private set; }
 	}
 
-	public class LogSessionCollection : IDictionary<DateTime, LogEntryCollection>
+	public class LogSessionDictionary : IDictionary<DateTime, LogEntryCollection>
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="logger">The logger object managing the logging.</param>
-		public LogSessionCollection(Logger logger)
+		public LogSessionDictionary(Logger logger)
 		{
 			owner = logger;
 		}
