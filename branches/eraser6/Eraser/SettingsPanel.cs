@@ -45,7 +45,7 @@ namespace Eraser
 			Dock = DockStyle.None;
 
 			//For new plugins, register the callback.
-			Host.Instance.PluginLoaded += new Host.PluginLoadedFunction(OnNewPluginLoaded);
+			Host.Instance.PluginLoaded += new EventHandler<PluginLoadedEventArgs>(OnNewPluginLoaded);
 			ErasureMethodManager.MethodRegistered +=
 				new ErasureMethodManager.MethodRegisteredFunction(OnMethodRegistered);
 			ErasureMethodManager.MethodUnregistered +=
@@ -56,34 +56,34 @@ namespace Eraser
 			LoadSettings();
 		}
 
-		private void OnNewPluginLoaded(PluginInstance instance)
+		private void OnNewPluginLoaded(object sender, PluginLoadedEventArgs e)
 		{
 			ListViewItem item = new ListViewItem();
-			if (instance.Plugin == null)
+			if (e.Instance.Plugin == null)
 			{
-				item.Text = System.IO.Path.GetFileNameWithoutExtension(instance.Assembly.Location);
-				item.SubItems.Add(instance.AssemblyInfo.Author);
+				item.Text = System.IO.Path.GetFileNameWithoutExtension(e.Instance.Assembly.Location);
+				item.SubItems.Add(e.Instance.AssemblyInfo.Author);
 			}
 			else
 			{
-				item.Text = instance.Plugin.Name;
-				item.SubItems.Add(instance.Plugin.Author);
+				item.Text = e.Instance.Plugin.Name;
+				item.SubItems.Add(e.Instance.Plugin.Author);
 			}
 
 			//The item is checked if the plugin was given the green light to load
-			item.Checked = instance.Plugin != null ||
+			item.Checked = e.Instance.Plugin != null ||
 				(Manager.ManagerLibrary.Instance.Settings.PluginApprovals.ContainsKey(
-					instance.AssemblyInfo.Guid) && Manager.ManagerLibrary.Instance.
-					Settings.PluginApprovals[instance.AssemblyInfo.Guid]
+					e.Instance.AssemblyInfo.Guid) && Manager.ManagerLibrary.Instance.
+					Settings.PluginApprovals[e.Instance.AssemblyInfo.Guid]
 				);
 
 			//Visually display the other metadata associated with the assembly
-			item.ImageIndex = instance.AssemblyAuthenticode == null ? -1 : 0;
-			item.Group = instance.IsCore ? pluginsManager.Groups[0] :
+			item.ImageIndex = e.Instance.AssemblyAuthenticode == null ? -1 : 0;
+			item.Group = e.Instance.IsCore ? pluginsManager.Groups[0] :
 				pluginsManager.Groups[1];
-			item.SubItems.Add(instance.Assembly.GetName().Version.ToString());
-			item.SubItems.Add(instance.Assembly.Location);
-			item.Tag = instance;
+			item.SubItems.Add(e.Instance.Assembly.GetName().Version.ToString());
+			item.SubItems.Add(e.Instance.Assembly.Location);
+			item.Tag = e;
 			pluginsManager.Items.Add(item);
 		}
 
@@ -121,9 +121,9 @@ namespace Eraser
 		{
 			//Load the list of plugins
 			Host instance = Host.Instance;
-			List<PluginInstance>.Enumerator i = instance.Plugins.GetEnumerator();
+			IEnumerator<PluginInstance> i = instance.Plugins.GetEnumerator();
 			while (i.MoveNext())
-				OnNewPluginLoaded(i.Current);
+				OnNewPluginLoaded(this, new PluginLoadedEventArgs(i.Current));
 
 			//Refresh the list of languages
 			List<Language> languages = LanguageManager.GetAll();

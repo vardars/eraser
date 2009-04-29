@@ -40,27 +40,7 @@ namespace Eraser.Manager.Plugin
 	/// they will never be loaded.</remarks>
 	public abstract class Host : IDisposable
 	{
-		/// <summary>
-		/// Getter that retrieves the global plugin host instance.
-		/// </summary>
-		public static Host Instance
-		{
-			get { return ManagerLibrary.Instance.Host; }
-		}
-
-		/// <summary>
-		/// Retrieves the list of currently loaded plugins.
-		/// </summary>
-		public abstract List<PluginInstance> Plugins
-		{
-			get;
-		}
-
-		/// <summary>
-		/// Loads all plugins into memory.
-		/// </summary>
-		public abstract void Load();
-
+		#region IDisposable members
 		protected virtual void Dispose(bool disposing)
 		{
 		}
@@ -73,26 +53,42 @@ namespace Eraser.Manager.Plugin
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
+		#endregion
 
 		/// <summary>
-		/// The plugin load event delegate.
+		/// Getter that retrieves the global plugin host instance.
 		/// </summary>
-		/// <param name="instance">The instance of the plugin loaded.</param>
-		public delegate void PluginLoadedFunction(PluginInstance instance);
+		public static Host Instance
+		{
+			get { return ManagerLibrary.Instance.Host; }
+		}
+
+		/// <summary>
+		/// Retrieves the list of currently loaded plugins.
+		/// </summary>
+		/// <remarks>The returned list is read-only</remarks>
+		public abstract ICollection<PluginInstance> Plugins
+		{
+			get;
+		}
+
+		/// <summary>
+		/// Loads all plugins into memory.
+		/// </summary>
+		public abstract void Load();
 
 		/// <summary>
 		/// The plugin loaded event.
 		/// </summary>
-		public event PluginLoadedFunction PluginLoaded;
+		public EventHandler<PluginLoadedEventArgs> PluginLoaded { get; set; }
 
 		/// <summary>
 		/// Event callback executor for the OnPluginLoad Event
 		/// </summary>
-		/// <param name="instance"></param>
-		protected void OnPluginLoaded(PluginInstance instance)
+		protected void OnPluginLoaded(object sender, PluginLoadedEventArgs e)
 		{
 			if (PluginLoaded != null)
-				PluginLoaded(instance);
+				PluginLoaded(sender, e);
 		}
 
 		/// <summary>
@@ -101,6 +97,26 @@ namespace Eraser.Manager.Plugin
 		/// <param name="filePath">The absolute or relative file path to the
 		/// DLL.</param>
 		public abstract void LoadPlugin(string filePath);
+	}
+
+	/// <summary>
+	/// Event argument for the plugin loaded event.
+	/// </summary>
+	public class PluginLoadedEventArgs : EventArgs
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="instance">The plugin instance of the recently loaded plugin.</param>
+		public PluginLoadedEventArgs(PluginInstance instance)
+		{
+			Instance = instance;
+		}
+
+		/// <summary>
+		/// The <see cref="PluginInstance"/> object representing the newly loaded plugin.
+		/// </summary>
+		public PluginInstance Instance { get; private set; }
 	}
 
 	/// <summary>
@@ -155,9 +171,9 @@ namespace Eraser.Manager.Plugin
 		/// </summary>
 		public const string PLUGINSFOLDER = "Plugins";
 
-		public override List<PluginInstance> Plugins
+		public override ICollection<PluginInstance> Plugins
 		{
-			get { return plugins; }
+			get { return plugins.AsReadOnly(); }
 		}
 
 		public override void LoadPlugin(string filePath)
@@ -240,7 +256,7 @@ namespace Eraser.Manager.Plugin
 			instance.Plugin = pluginInterface;
 
 			//And broadcast the plugin load event
-			OnPluginLoaded(instance);
+			OnPluginLoaded(this, new PluginLoadedEventArgs(instance));
 		}
 
 		private Assembly AssemblyResolve(object sender, ResolveEventArgs args)
