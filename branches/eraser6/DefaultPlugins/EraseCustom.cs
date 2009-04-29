@@ -25,6 +25,7 @@ using System.Text;
 using System.Runtime.Serialization;
 
 using Eraser.Manager;
+using System.Security.Permissions;
 
 namespace Eraser.DefaultPlugins
 {
@@ -112,6 +113,7 @@ namespace Eraser.DefaultPlugins
 		public ErasureMethod.Pass[] Passes { get; set; }
 
 		#region ISerializable Members
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
 		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue("Name", Name);

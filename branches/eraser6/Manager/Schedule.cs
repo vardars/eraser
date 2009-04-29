@@ -25,6 +25,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using Eraser.Util;
+using System.Security.Permissions;
 
 namespace Eraser.Manager
 {
@@ -43,8 +44,8 @@ namespace Eraser.Manager
 			{
 			}
 
-			public override void GetObjectData(SerializationInfo info,
-				StreamingContext context)
+			[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+			public override void GetObjectData(SerializationInfo info, StreamingContext context)
 			{
 			}
 			#endregion
@@ -67,8 +68,8 @@ namespace Eraser.Manager
 			{
 			}
 
-			public override void GetObjectData(SerializationInfo info,
-				StreamingContext context)
+			[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+			public override void GetObjectData(SerializationInfo info, StreamingContext context)
 			{
 			}
 			#endregion
@@ -99,6 +100,7 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="info">The SerializationInfo to populate with data.</param>
 		/// <param name="context">The destination for this serialization.</param>
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
 		public abstract void GetObjectData(SerializationInfo info, StreamingContext context);
 
 		/// <summary>
@@ -183,8 +185,8 @@ namespace Eraser.Manager
 			nextRun = (DateTime)info.GetDateTime("NextRun");
 		}
 
-		public override void GetObjectData(SerializationInfo info,
-			StreamingContext context)
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue("Type", type);
 			info.AddValue("Frequency", frequency);

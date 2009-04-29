@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace Eraser.Manager
 {
@@ -76,6 +77,7 @@ namespace Eraser.Manager
 				lastSession = key;
 		}
 
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter=true)]
 		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue("Entries", entries);
@@ -201,6 +203,7 @@ namespace Eraser.Manager
 			Message = (string)info.GetValue("Message", typeof(string));
 		}
 
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
 		public void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue("Level", Level);
