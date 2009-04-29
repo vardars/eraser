@@ -181,7 +181,7 @@ namespace Eraser.Manager
 		/// this task list.</param>
 		protected ExecutorTasksCollection(Executor executor)
 		{
-			owner = executor;
+			Owner = executor;
 		}
 
 		#region IList<Task> Members
@@ -224,6 +224,6 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The owner of this task list.
 		/// </summary>
-		protected Executor owner;
+		protected Executor Owner { get; private set; }
 	}
 }

@@ -925,25 +925,25 @@ namespace Eraser.Manager
 
 		public override void Insert(int index, Task item)
 		{
-			item.Executor = owner;
+			item.Executor = Owner;
 			lock (list)
 				list.Insert(index, item);
 
 			//Call all the event handlers who registered to be notified of tasks
 			//being added.
-			owner.OnTaskAdded(item);
+			Owner.OnTaskAdded(item);
 
 			//If the task is scheduled to run now, break the waiting thread and
 			//run it immediately
 			if (item.Schedule == Schedule.RunNow)
 			{
-				owner.QueueTask(item);
+				Owner.QueueTask(item);
 			}
 			//If the task is scheduled, add the next execution time to the list
 			//of schduled tasks.
 			else if (item.Schedule != Schedule.RunOnRestart)
 			{
-				owner.ScheduleTask(item);
+				Owner.ScheduleTask(item);
 			}
 		}
 
@@ -957,7 +957,7 @@ namespace Eraser.Manager
 				list.RemoveAt(index);
 
 				//Call all event handlers registered to be notified of task deletions.
-				owner.OnTaskDeleted(task);
+				Owner.OnTaskDeleted(task);
 			}
 		}
 
