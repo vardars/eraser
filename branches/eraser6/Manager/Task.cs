@@ -350,11 +350,6 @@ namespace Eraser.Manager
 		/// Erasure method to use for the target.
 		/// </summary>
 		protected ErasureMethod method { get; set; }
-
-		/// <summary>
-		/// The task object owning this target.
-		/// </summary>
-		private Task task;
 	}
 
 	/// <summary>
