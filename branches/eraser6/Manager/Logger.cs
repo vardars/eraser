@@ -188,13 +188,14 @@ namespace Eraser.Manager
 		}
 
 		#region ISerializable Members
-		public LogSessionDictionary(SerializationInfo info, StreamingContext context)
+		protected LogSessionDictionary(SerializationInfo info, StreamingContext context)
 		{
 			dictionary = (Dictionary<DateTime, LogEntryCollection>)info.GetValue("Dictionary",
 				dictionary.GetType());
 		}
 
-		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
+		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue("Dictionary", dictionary);
 		}

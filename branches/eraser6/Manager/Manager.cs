@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace Eraser.Manager
 {
@@ -118,8 +119,17 @@ namespace Eraser.Manager
 	[Serializable]
 	public class FatalException : Exception
 	{
+		public FatalException()
+		{
+		}
+
 		public FatalException(string message)
 			: base(message)
+		{
+		}
+
+		public FatalException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
 		{
 		}
 
