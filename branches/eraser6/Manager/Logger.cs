@@ -72,6 +72,7 @@ namespace Eraser.Manager
 		protected Logger(SerializationInfo info, StreamingContext context)
 		{
 			Entries = (LogSessionDictionary)info.GetValue("Entries", typeof(LogSessionDictionary));
+			Entries.Owner = this;
 			foreach (DateTime key in Entries.Keys)
 				lastSession = key;
 		}
@@ -146,7 +147,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The last session
 		/// </summary>
-		private DateTime lastSession;
+		internal DateTime lastSession;
 	}
 
 	public class LogEventArgs : EventArgs
@@ -166,7 +167,9 @@ namespace Eraser.Manager
 		public LogEntry LogEntry { get; private set; }
 	}
 
-	public class LogSessionDictionary : IDictionary<DateTime, LogEntryCollection>
+	[Serializable]
+	public class LogSessionDictionary : IDictionary<DateTime, LogEntryCollection>,
+		ISerializable
 	{
 		/// <summary>
 		/// Constructor.
@@ -174,13 +177,28 @@ namespace Eraser.Manager
 		/// <param name="logger">The logger object managing the logging.</param>
 		public LogSessionDictionary(Logger logger)
 		{
-			owner = logger;
+			Owner = logger;
 		}
 
 		public void NewSession()
 		{
-			Add(DateTime.Now, new LogEntryCollection(owner));
+			DateTime sessionTime = DateTime.Now;
+			Add(sessionTime, new LogEntryCollection(Owner));
+			Owner.lastSession = sessionTime;
 		}
+
+		#region ISerializable Members
+		public LogSessionDictionary(SerializationInfo info, StreamingContext context)
+		{
+			dictionary = (Dictionary<DateTime, LogEntryCollection>)info.GetValue("Dictionary",
+				dictionary.GetType());
+		}
+
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue("Dictionary", dictionary);
+		}
+		#endregion
 
 		#region IDictionary<DateTime,LogSessionEntryCollection> Members
 		public void Add(DateTime key, LogEntryCollection value)
@@ -280,6 +298,23 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The log manager.
 		/// </summary>
+		internal Logger Owner
+		{
+			get
+			{
+				return owner;
+			}
+			set
+			{
+				foreach (LogEntryCollection entries in dictionary.Values)
+					entries.owner = value;
+				owner = value;
+			}
+		}
+
+		/// <summary>
+		/// The log manager.
+		/// </summary>
 		private Logger owner;
 
 		/// <summary>
@@ -289,6 +324,7 @@ namespace Eraser.Manager
 			new Dictionary<DateTime, LogEntryCollection>();
 	}
 
+	[Serializable]
 	public class LogEntryCollection : IList<LogEntry>
 	{
 		/// <summary>
@@ -384,7 +420,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The Logger object managing logging.
 		/// </summary>
-		private Logger owner;
+		internal Logger owner;
 
 		/// <summary>
 		/// The store for this object.
