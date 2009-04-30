@@ -40,7 +40,6 @@ namespace Eraser.Manager
 		#region Serialization code
 		protected Task(SerializationInfo info, StreamingContext context)
 		{
-			id = (uint)info.GetValue("ID", typeof(uint));
 			name = (string)info.GetValue("Name", typeof(string));
 			targets = (ErasureTargetsCollection)info.GetValue("Targets", typeof(ErasureTargetsCollection));
 			targets.Owner = this;
@@ -61,7 +60,6 @@ namespace Eraser.Manager
 		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
 		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue("ID", id);
 			info.AddValue("Name", name);
 			info.AddValue("Schedule", schedule);
 			info.AddValue("Targets", targets);
@@ -87,16 +85,6 @@ namespace Eraser.Manager
 		{
 			Executor.UnqueueTask(this);
 			Canceled = true;
-		}
-
-		/// <summary>
-		/// The unique identifier for this task. This ID will be persistent across
-		/// executions.
-		/// </summary>
-		public uint Id
-		{
-			get { return id; }
-			internal set { id = value; }
 		}
 
 		/// <summary>
@@ -257,7 +245,6 @@ namespace Eraser.Manager
 		}
 		#endregion
 
-		private uint id;
 		private Executor executor;
 		private bool canceled;
 		private bool queued;
@@ -604,10 +591,7 @@ namespace Eraser.Manager
 			DirectoryInfo dir = new DirectoryInfo(Path);
 
 			//List recursively all the files which match the include pattern.
-			string includeMask = IncludeMask;
-			if (includeMask.Length == 0)
-				includeMask = "*";
-			FileInfo[] files = GetFiles(dir, includeMask);
+			FileInfo[] files = GetFiles(dir);
 
 			//Then exclude each file and finalize the list and total file size
 			totalSize = 0;
@@ -644,15 +628,15 @@ namespace Eraser.Manager
 		/// Gets all files in the provided directory.
 		/// </summary>
 		/// <param name="info">The directory to look files in.</param>
-		/// <param name="includeMask">The include mask all files must match.</param>
-		/// <returns>A list of files found in the directory.</returns>
-		private FileInfo[] GetFiles(DirectoryInfo info, string includeMask)
+		/// <returns>A list of files found in the directory matching the IncludeMask
+		/// property.</returns>
+		private FileInfo[] GetFiles(DirectoryInfo info)
 		{
 			List<FileInfo> result = new List<FileInfo>();
 			foreach (DirectoryInfo dir in info.GetDirectories())
 				try
 				{
-					result.AddRange(GetFiles(dir, includeMask));
+					result.AddRange(GetFiles(dir));
 				}
 				catch (Exception e)
 				{
@@ -661,7 +645,10 @@ namespace Eraser.Manager
 						dir.FullName, e.Message), LogLevel.Error));
 				}
 
-			result.AddRange(info.GetFiles(includeMask, SearchOption.TopDirectoryOnly));
+			if (includeMask.Length == 0)
+				result.AddRange(info.GetFiles());
+			else
+				result.AddRange(info.GetFiles(includeMask, SearchOption.TopDirectoryOnly));
 			return result.ToArray();
 		}
 
