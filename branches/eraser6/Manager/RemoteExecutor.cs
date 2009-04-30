@@ -36,33 +36,15 @@ namespace Eraser.Manager
 	/// Represents a request to the RemoteExecutorServer instance
 	/// </summary>
 	[Serializable]
-	internal class RemoteRequest
+	internal class RemoteExecutorRequest
 	{
-		/// <summary>
-		/// List of supported functions
-		/// </summary>
-		public enum Function : uint
-		{
-			ADD_TASK = 0,
-			GET_TASK,
-			GET_TASKS,
-			CANCEL_TASK,
-			DELETE_TASK,
-			QUEUE_TASK,
-			REPLACE_TASK,
-			SCHEDULE_TASK,
-			SAVE_TASK_LIST,
-			LOAD_TASK_LIST,
-			QUEUE_RESTART_TASK,
-		}
-
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="func">The function this command is wanting to execute.</param>
 		/// <param name="data">The parameters for the command, serialised using a
 		/// BinaryFormatter</param>
-		public RemoteRequest(Function func, byte[] data)
+		public RemoteExecutorRequest(RemoteExecutorFunction func, params object[] data)
 		{
 			Func = func;
 			Data = data;
@@ -71,13 +53,29 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The function that this request is meant to call.
 		/// </summary>
-		public Function Func;
+		public RemoteExecutorFunction Func { get; set; }
 
 		/// <summary>
 		/// The parameters associated with the function call.
 		/// </summary>
-		public byte[] Data;
+		public object[] Data { get; private set; }
 	};
+
+	/// <summary>
+	/// List of supported functions
+	/// </summary>
+	public enum RemoteExecutorFunction : uint
+	{
+		QueueTask,
+		ScheduleTask,
+		UnqueueTask,
+
+		AddTask,
+		DeleteTask,
+		//UpdateTask,
+		GetTaskCount,
+		GetTask
+	}
 
 	/// <summary>
 	/// The RemoteExecutorServer class is the server half required for remote execution
@@ -93,16 +91,13 @@ namespace Eraser.Manager
 			System.Security.Principal.WindowsIdentity.GetCurrent().User.ToString();
 
 		/// <summary>
-		/// The thread which will answer pipe connections
-		/// </summary>
-		private Thread thread;
-
-		/// <summary>
 		/// Constructor.
 		/// </summary>
 		public RemoteExecutorServer()
 		{
 			thread = new Thread(Main);
+			serverLock = new Semaphore(maxServerInstances, maxServerInstances);
+
 			thread.Start();
 			Thread.Sleep(0);
 		}
@@ -120,16 +115,24 @@ namespace Eraser.Manager
 		{
 			while (Thread.CurrentThread.ThreadState != ThreadState.AbortRequested)
 			{
-				//Wait for a connection to be established
-				NamedPipeServerStream server = new NamedPipeServerStream(ServerName,
-					PipeDirection.InOut, 4, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
-				IAsyncResult asyncWait = server.BeginWaitForConnection(
-					EndWaitForConnection, server);
+				//Wait for a new server instance to be available.
+				if (!serverLock.WaitOne())
+					continue;
 
-				//Wait for a connection before moving on to create another listening server
-				asyncWait.AsyncWaitHandle.WaitOne();
+				//Otherwise, a new instance can be created. Create it and wait for connections.
+				NamedPipeServerStream server = new NamedPipeServerStream(ServerName,
+					PipeDirection.InOut, maxServerInstances, PipeTransmissionMode.Message,
+					PipeOptions.Asynchronous);
+				server.BeginWaitForConnection(EndWaitForConnection, server);
 			}
 		}
+
+		/// <summary>
+		/// Handles the arguments passed to the server and calls the real function.
+		/// </summary>
+		/// <param name="arguments">The arguments to the function.</param>
+		/// <returns>Te result of the function call.</returns>
+		private delegate object RequestHandler(object[] arguments);
 
 		/// <summary>
 		/// Waits for a connection from a client.
@@ -138,177 +141,132 @@ namespace Eraser.Manager
 		/// operation.</param>
 		private void EndWaitForConnection(IAsyncResult result)
 		{
-			using (NamedPipeServerStream server = (NamedPipeServerStream)result.AsyncState)
+			NamedPipeServerStream server = (NamedPipeServerStream)result.AsyncState;
+
+			try
 			{
 				//We're done waiting for the connection
 				server.EndWaitForConnection(result);
 
-				//Read the request into the buffer.
-				RemoteRequest request = null;
-				using (MemoryStream mstream = new MemoryStream())
+				while (server.IsConnected)
 				{
-					byte[] buffer = new byte[65536];
-					server.Read(buffer, 0, sizeof(int));
-					int messageSize = BitConverter.ToInt32(buffer, 0);
-					while (messageSize > 0)
+					//Read the request into the buffer.
+					RemoteExecutorRequest request = null;
+					using (MemoryStream mstream = new MemoryStream())
 					{
-						int lastRead = server.Read(buffer, 0, Math.Min(messageSize, buffer.Length));
-						messageSize -= lastRead;
-						mstream.Write(buffer, 0, lastRead);
-					}
+						byte[] buffer = new byte[65536];
 
-					//Ignore the request if the client disconnected from us.
-					if (!server.IsConnected)
-						return;
-
-					//Deserialise the header of the request.
-					mstream.Position = 0;
-					try
-					{
-						request = (RemoteRequest)new BinaryFormatter().Deserialize(
-							new MemoryStream(buffer));
-					}
-					catch (SerializationException)
-					{
-						//We got a unserialisation issue but we can't do anything about it.
-						return;
-					}
-				}
-
-				#region Deserialise
-				object parameter = null;
-				switch (request.Func)
-				{
-					// void \+ task
-					case RemoteRequest.Function.CANCEL_TASK:
-					case RemoteRequest.Function.QUEUE_TASK:
-					case RemoteRequest.Function.REPLACE_TASK:
-					case RemoteRequest.Function.SCHEDULE_TASK:
-					case RemoteRequest.Function.ADD_TASK:
-						using (MemoryStream mStream = new MemoryStream(request.Data))
-							parameter = new BinaryFormatter().Deserialize(mStream);
-						break;
-
-					// bool \+ taskid
-					case RemoteRequest.Function.DELETE_TASK:
-					// task \+ taskid
-					case RemoteRequest.Function.GET_TASK:
-						using (MemoryStream mStream = new MemoryStream(request.Data))
-							parameter = new BinaryFormatter().Deserialize(mStream);
-						break;
-
-					// void \+ stream
-					case RemoteRequest.Function.LOAD_TASK_LIST:
-					case RemoteRequest.Function.SAVE_TASK_LIST:
-						using (MemoryStream mStream = new MemoryStream(request.Data))
-							parameter = new BinaryFormatter().Deserialize(mStream);
-						break;
-
-					// list<task> \+ void
-					case RemoteRequest.Function.GET_TASKS:
-					// void \+ void
-					case RemoteRequest.Function.QUEUE_RESTART_TASK:
-						break;
-
-					default:
-						throw new FatalException("Unknown RemoteExecutorClient.Function");
-				}
-				#endregion
-
-				#region Invoke
-				object returnValue = null;
-				switch (request.Func)
-				{
-					// void \+ task
-					case RemoteRequest.Function.CANCEL_TASK:
-						CancelTask((Task)parameter);
-						break;
-
-					// void \+ task
-					case RemoteRequest.Function.QUEUE_TASK:
-						QueueTask((Task)parameter);
-						break;
-
-					// void \+ task
-					case RemoteRequest.Function.REPLACE_TASK:
-						ReplaceTask((Task)parameter);
-						break;
-
-					// void \+ task
-					case RemoteRequest.Function.SCHEDULE_TASK:
-						ScheduleTask((Task)parameter);
-						break;
-
-					// void \+ ref task
-					case RemoteRequest.Function.ADD_TASK:
+						do
 						{
-							Task task = (Task)parameter;
-							AddTask(task);
-							break;
+							int lastRead = server.Read(buffer, 0, buffer.Length);
+							mstream.Write(buffer, 0, lastRead);
 						}
+						while (!server.IsMessageComplete);
 
-					// bool \+ taskid
-					case RemoteRequest.Function.DELETE_TASK:
-						returnValue = DeleteTask((uint)parameter);
-						break;
+						//Ignore the request if the client disconnected from us.
+						if (!server.IsConnected)
+							return;
 
-					// task \+ taskid
-					case RemoteRequest.Function.GET_TASK:
-						returnValue = GetTask((uint)parameter);
-						break;
+						//Deserialise the header of the request.
+						mstream.Position = 0;
+						try
+						{
+							request = (RemoteExecutorRequest)new BinaryFormatter().Deserialize(
+								new MemoryStream(buffer));
+						}
+						catch (SerializationException)
+						{
+							//We got a unserialisation issue but we can't do anything about it.
+							return;
+						}
+					}
 
-					// void \+ stream
-					case RemoteRequest.Function.LOAD_TASK_LIST:
-						LoadTaskList((Stream)parameter);
-						break;
+					//Map the deserialisation function to a real function
+					Dictionary<RemoteExecutorFunction, RequestHandler> functionMap =
+						new Dictionary<RemoteExecutorFunction, RequestHandler>();
+					functionMap.Add(RemoteExecutorFunction.QueueTask,
+						delegate(object[] args) { QueueTask((Task)args[0]); return null; });
+					functionMap.Add(RemoteExecutorFunction.ScheduleTask,
+						delegate(object[] args) { ScheduleTask((Task)args[0]); return null; });
+					functionMap.Add(RemoteExecutorFunction.UnqueueTask,
+						delegate(object[] args) { UnqueueTask((Task)args[0]); return null; });
 
-					// void \+ stream
-					case RemoteRequest.Function.SAVE_TASK_LIST:
-						SaveTaskList((Stream)parameter);
-						break;
+					functionMap.Add(RemoteExecutorFunction.AddTask,
+						delegate(object[] args)
+						{
+							Tasks.Add((Task)args[0]);
+							return null;
+						});
+					functionMap.Add(RemoteExecutorFunction.DeleteTask,
+						delegate(object[] args)
+						{
+							Tasks.Remove((Task)args[0]);
+							return null;
+						});
+					functionMap.Add(RemoteExecutorFunction.GetTaskCount,
+						delegate(object[] args) { return Tasks.Count; });
+					functionMap.Add(RemoteExecutorFunction.GetTask,
+						delegate(object[] args) { return Tasks[(int)args[0]]; });
 
-					// list<task> \+ void
-					case RemoteRequest.Function.GET_TASKS:
-						returnValue = GetTasks();
-						break;
+					//Execute the function
+					object returnValue = functionMap[request.Func](request.Data);
 
-					// void \+ void
-					case RemoteRequest.Function.QUEUE_RESTART_TASK:
-						QueueRestartTasks();
-						break;
-
-					default:
-						throw new FatalException("Unknown RemoteExecutorClient.Function");
-				}
-				#endregion
-
-				//Return the result of the invoked function, if any.
-				if (returnValue != null)
+					//Return the result of the invoked function.
 					using (MemoryStream mStream = new MemoryStream())
 					{
-						new BinaryFormatter().Serialize(mStream, returnValue);
-						byte[] buffer = mStream.ToArray();
-						byte[] bufferLength = BitConverter.GetBytes(buffer.Length);
-						server.Write(bufferLength, 0, sizeof(int));
-						server.Write(buffer, 0, buffer.Length);
+						if (returnValue != null)
+						{
+							byte[] header = BitConverter.GetBytes((Int32)1);
+							byte[] buffer = null;
+							new BinaryFormatter().Serialize(mStream, returnValue);
+
+							server.Write(header, 0, header.Length);
+							server.Write(buffer, 0, buffer.Length);
+						}
+						else
+						{
+							byte[] header = BitConverter.GetBytes((Int32)0);
+							server.Write(header, 0, header.Length);
+						}
 					}
-				else
-				{
-					byte[] buffer = BitConverter.GetBytes(0);
-					server.Write(buffer, 0, sizeof(int));
+
+					server.WaitForPipeDrain();
 				}
 			}
+			finally
+			{
+				server.Close();
+				serverLock.Release();
+			}
 		}
+
+		/// <summary>
+		/// The thread which will answer pipe connections
+		/// </summary>
+		private Thread thread;
+
+		/// <summary>
+		/// Counts the number of available server instances.
+		/// </summary>
+		private Semaphore serverLock;
+
+		/// <summary>
+		/// The maximum number of server instances existing concurrently.
+		/// </summary>
+		private const int maxServerInstances = 4;
 	}
 
+	/// <summary>
+	/// The RemoteExecutorServer class is the client half required for remote execution
+	/// of tasks, sending requests to the server running on the local computer.
+	/// </summary>
 	public class RemoteExecutorClient : Executor
 	{
-		private NamedPipeClientStream client;
-
 		public RemoteExecutorClient()
 		{
 			client = new NamedPipeClientStream(".", RemoteExecutorServer.ServerName,
 				PipeDirection.InOut);
+			Tasks = new RemoteExecutorClientTasksCollection(this);
 		}
 
 		protected override void Dispose(bool disposing)
@@ -335,7 +293,18 @@ namespace Eraser.Manager
 			return client.IsConnected;
 		}
 
-		private object SendRequest(RemoteRequest header)
+		public override void Run()
+		{
+		}
+
+		/// <summary>
+		/// Sends a request to the executor server.
+		/// </summary>
+		/// <typeparam name="ReturnType">The expected return type of the request.</typeparam>
+		/// <param name="function">The requested operation.</param>
+		/// <param name="args">The arguments for the operation.</param>
+		/// <returns>The return result from the object as if it were executed locally.</returns>
+		internal ReturnType SendRequest<ReturnType>(RemoteExecutorFunction function, params object[] args)
 		{
 			//Connect to the server
 			object result = null;
@@ -343,121 +312,184 @@ namespace Eraser.Manager
 			using (MemoryStream mStream = new MemoryStream())
 			{
 				//Serialise the request
-				new BinaryFormatter().Serialize(mStream, header);
+				new BinaryFormatter().Serialize(mStream, new RemoteExecutorRequest(function, args));
 
 				//Write the request to the pipe
 				byte[] buffer = mStream.ToArray();
-				byte[] bufferLength = BitConverter.GetBytes(buffer.Length);
-				client.Write(bufferLength, 0, sizeof(int));
 				client.Write(buffer, 0, buffer.Length);
 
 				//Read the response from the pipe
 				mStream.Position = 0;
-				buffer = new byte[32768];
-				client.Read(buffer, 0, sizeof(int));
-				int responseLength = BitConverter.ToInt32(buffer, 0);
-				while (responseLength > 0)
-					responseLength -= client.Read(buffer, 0, Math.Min(buffer.Length, responseLength));
+				buffer = new byte[65536];
+				client.ReadMode = PipeTransmissionMode.Message;
+				do
+				{
+					int lastRead = client.Read(buffer, 0, buffer.Length);
+					mStream.Write(buffer, 0, lastRead);
+				}
+				while (!client.IsMessageComplete);
 
-				//Deserialise the response
-				mStream.Position = 0;
-				if (mStream.Length > 0)
-					result = new BinaryFormatter().Deserialize(mStream);
+				//Check if the server says there is a response. If so, read it.
+				if (BitConverter.ToInt32(mStream.ToArray(), 0) == 1)
+				{
+					mStream.Position = 0;
+					do
+					{
+						int lastRead = client.Read(buffer, 0, buffer.Length);
+						mStream.Write(buffer, 0, lastRead);
+					}
+					while (!client.IsMessageComplete);
+
+					//Deserialise the response
+					mStream.Position = 0;
+					if (mStream.Length > 0)
+						result = new BinaryFormatter().Deserialize(mStream);
+				}
 			}
 
-			return result;
-		}
-
-		public override bool DeleteTask(uint taskId)
-		{
-			MemoryStream mStream = new MemoryStream();
-			new BinaryFormatter().Serialize(mStream, taskId);
-			return (bool)SendRequest(new RemoteRequest(RemoteRequest.Function.DELETE_TASK,
-				mStream.GetBuffer()));
-		}
-
-		public override ICollection<Task> GetTasks()
-		{
-			MemoryStream mStream = new MemoryStream();
-			new BinaryFormatter().Serialize(mStream, null);
-			return (List<Task>)SendRequest(new RemoteRequest(RemoteRequest.Function.GET_TASKS,
-				mStream.GetBuffer()));
-		}
-
-		public override Task GetTask(uint taskId)
-		{
-			MemoryStream mStream = new MemoryStream();
-			new BinaryFormatter().Serialize(mStream, taskId);
-			return (Task)SendRequest(new RemoteRequest(RemoteRequest.Function.GET_TASK,
-				mStream.GetBuffer()));
-		}
-
-		public override void LoadTaskList(Stream stream)
-		{
-			MemoryStream mStream = new MemoryStream();
-			new BinaryFormatter().Serialize(mStream, stream);
-			SendRequest(new RemoteRequest(RemoteRequest.Function.LOAD_TASK_LIST,
-				mStream.GetBuffer()));
-		}
-
-		public override void AddTask(Task task)
-		{
-			MemoryStream mStream = new MemoryStream();
-			new BinaryFormatter().Serialize(mStream, task);
-			SendRequest(new RemoteRequest(RemoteRequest.Function.ADD_TASK,
-				mStream.GetBuffer()));
-		}
-
-		public override void CancelTask(Task task)
-		{
-			MemoryStream mStream = new MemoryStream();
-			new BinaryFormatter().Serialize(mStream, task);
-			SendRequest(new RemoteRequest(RemoteRequest.Function.CANCEL_TASK,
-				mStream.GetBuffer()));
-		}
-
-		public override void QueueRestartTasks()
-		{
-			MemoryStream mStream = new MemoryStream();
-			new BinaryFormatter().Serialize(mStream, null);
-			SendRequest(new RemoteRequest(RemoteRequest.Function.QUEUE_RESTART_TASK,
-				mStream.GetBuffer()));
+			return (ReturnType)result;
 		}
 
 		public override void QueueTask(Task task)
 		{
-			MemoryStream mStream = new MemoryStream();
-			new BinaryFormatter().Serialize(mStream, task);
-			SendRequest(new RemoteRequest(RemoteRequest.Function.QUEUE_TASK,
-				mStream.GetBuffer()));
-		}
-
-		public override void ReplaceTask(Task task)
-		{
-			MemoryStream mStream = new MemoryStream();
-			new BinaryFormatter().Serialize(mStream, task);
-			SendRequest(new RemoteRequest(RemoteRequest.Function.REPLACE_TASK,
-				mStream.GetBuffer()));
-		}
-
-		public override void Run()
-		{
+			SendRequest<object>(RemoteExecutorFunction.QueueTask, task);
 		}
 
 		public override void ScheduleTask(Task task)
 		{
-			MemoryStream mStream = new MemoryStream();
-			new BinaryFormatter().Serialize(mStream, task);
-			SendRequest(new RemoteRequest(RemoteRequest.Function.SCHEDULE_TASK,
-				mStream.GetBuffer()));
+			SendRequest<object>(RemoteExecutorFunction.ScheduleTask, task);
 		}
 
-		public override void SaveTaskList(Stream stream)
+		public override void UnqueueTask(Task task)
 		{
-			MemoryStream mStream = new MemoryStream();
-			new BinaryFormatter().Serialize(mStream, stream);
-			SendRequest(new RemoteRequest(RemoteRequest.Function.SAVE_TASK_LIST,
-				mStream.GetBuffer()));
+			SendRequest<object>(RemoteExecutorFunction.UnqueueTask, task);
+		}
+
+		public override void QueueRestartTasks()
+		{
+			throw new NotImplementedException();
+		}
+
+		public override ExecutorTasksCollection Tasks { get; protected set; }
+
+		/// <summary>
+		/// The named pipe used to connect to another running instance of Eraser.
+		/// </summary>
+		private NamedPipeClientStream client;
+	}
+
+	public class RemoteExecutorClientTasksCollection : ExecutorTasksCollection
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="executor">The <see cref="RemoteExecutor"/> object owning
+		/// this list.</param>
+		public RemoteExecutorClientTasksCollection(RemoteExecutorClient executor)
+			: base(executor)
+		{
+		}
+
+		/// <summary>
+		/// Sends a request to the executor server.
+		/// </summary>
+		/// <typeparam name="ReturnType">The expected return type of the request.</typeparam>
+		/// <param name="function">The requested operation.</param>
+		/// <param name="args">The arguments for the operation.</param>
+		/// <returns>The return result from the object as if it were executed locally.</returns>
+		private ReturnType SendRequest<ReturnType>(RemoteExecutorFunction function, params object[] args)
+		{
+			RemoteExecutorClient client = (RemoteExecutorClient)Owner;
+			return client.SendRequest<ReturnType>(function, args);
+		}
+
+		#region IList<Task> Members
+		public override int IndexOf(Task item)
+		{
+			throw new NotSupportedException();
+		}
+
+		public override void Insert(int index, Task item)
+		{
+			throw new NotSupportedException();
+		}
+
+		public override void RemoveAt(int index)
+		{
+			throw new NotSupportedException();
+		}
+
+		public override Task this[int index]
+		{
+			get
+			{
+				return SendRequest<Task>(RemoteExecutorFunction.GetTask, index);
+			}
+			set
+			{
+				throw new NotSupportedException();
+			}
+		}
+		#endregion
+
+		#region ICollection<Task> Members
+		public override void Add(Task item)
+		{
+			item.Executor = Owner;
+			SendRequest<object>(RemoteExecutorFunction.AddTask, item);
+
+			//Call all the event handlers who registered to be notified of tasks
+			//being added.
+			Owner.OnTaskAdded(item);
+		}
+
+		public override void Clear()
+		{
+			throw new NotSupportedException();
+		}
+
+		public override bool Contains(Task item)
+		{
+			throw new NotSupportedException();
+		}
+
+		public override void CopyTo(Task[] array, int arrayIndex)
+		{
+			throw new NotSupportedException();
+		}
+
+		public override int Count
+		{
+			get { return SendRequest<int>(RemoteExecutorFunction.GetTaskCount); }
+		}
+
+		public override bool Remove(Task item)
+		{
+			item.Cancel();
+			item.Executor = null;
+			SendRequest<object>(RemoteExecutorFunction.DeleteTask, item);
+
+			//Call all event handlers registered to be notified of task deletions.
+			Owner.OnTaskDeleted(item);
+			return true;
+		}
+		#endregion
+
+		#region IEnumerable<Task> Members
+		public override IEnumerator<Task> GetEnumerator()
+		{
+			throw new NotSupportedException();
+		}
+		#endregion
+
+		public override void SaveToStream(Stream stream)
+		{
+			throw new NotSupportedException();
+		}
+
+		public override void LoadFromStream(Stream stream)
+		{
+			throw new NotSupportedException();
 		}
 	}
 }
