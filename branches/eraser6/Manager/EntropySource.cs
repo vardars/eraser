@@ -560,7 +560,7 @@ namespace Eraser.Manager
 			InvertPool();
 
 			//Return a safe copy
-			lock (pool)
+			lock (poolLock)
 			{
 				byte[] result = new byte[pool.Length];
 				pool.CopyTo(result, 0);
