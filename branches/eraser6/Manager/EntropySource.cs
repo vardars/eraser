@@ -135,10 +135,13 @@ namespace Eraser.Manager
 		/// Retrieves all currently registered erasure methods.
 		/// </summary>
 		/// <returns>A mutable list, with an instance of each EntropySource.</returns>
-		public static Dictionary<Guid, EntropySource> GetAll()
+		public static Dictionary<Guid, EntropySource> Items
 		{
-			lock (ManagerLibrary.Instance.EntropySourceManager.sources)
-				return ManagerLibrary.Instance.EntropySourceManager.sources;
+			get
+			{
+				lock (ManagerLibrary.Instance.EntropySourceManager.sources)
+					return ManagerLibrary.Instance.EntropySourceManager.sources;
+			}
 		}
 
 		/// <summary>
@@ -479,12 +482,12 @@ namespace Eraser.Manager
 		/// </summary>
 		private enum PRFAlgorithms
 		{
-			MD5,
-			SHA1,
-			RIPEMD160,
-			SHA256,
-			SHA384,
-			SHA512,
+			Md5,
+			Sha1,
+			Ripemd160,
+			Sha256,
+			Sha384,
+			Sha512,
 		};
 
 		/// <summary>
@@ -496,11 +499,7 @@ namespace Eraser.Manager
 			pool = new byte[sizeof(uint) << 7];
 
 			//Then start the thread which maintains the pool.
-			Thread = new Thread(delegate()
-				{
-					this.Main();
-				}
-			);
+			Thread = new Thread(Main);
 			Thread.Start();
 		}
 
@@ -558,9 +557,9 @@ namespace Eraser.Manager
 			MixPool();
 
 			//Apply whitening effect
-			PRFAlgorithm = PRFAlgorithms.RIPEMD160;
+			PRFAlgorithm = PRFAlgorithms.Ripemd160;
 			MixPool();
-			PRFAlgorithm = PRFAlgorithms.SHA512;
+			PRFAlgorithm = PRFAlgorithms.Sha512;
 		}
 
 		/// <summary>
@@ -701,19 +700,19 @@ namespace Eraser.Manager
 				Type type = null;
 				switch (PRFAlgorithm)
 				{
-					case PRFAlgorithms.MD5:
+					case PRFAlgorithms.Md5:
 						type = typeof(MD5CryptoServiceProvider);
 						break;
-					case PRFAlgorithms.SHA1:
+					case PRFAlgorithms.Sha1:
 						type = typeof(SHA1Managed);
 						break;
-					case PRFAlgorithms.RIPEMD160:
+					case PRFAlgorithms.Ripemd160:
 						type = typeof(RIPEMD160Managed);
 						break;
-					case PRFAlgorithms.SHA256:
+					case PRFAlgorithms.Sha256:
 						type = typeof(SHA256Managed);
 						break;
-					case PRFAlgorithms.SHA384:
+					case PRFAlgorithms.Sha384:
 						type = typeof(SHA384Managed);
 						break;
 					default:
@@ -736,7 +735,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// PRF algorithm identifier
 		/// </summary>
-		private PRFAlgorithms PRFAlgorithm = PRFAlgorithms.SHA512;
+		private PRFAlgorithms PRFAlgorithm = PRFAlgorithms.Sha512;
 
 		/// <summary>
 		/// The pool of data which we currently maintain.
