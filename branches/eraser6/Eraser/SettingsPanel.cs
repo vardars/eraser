@@ -72,7 +72,7 @@ namespace Eraser
 
 			//The item is checked if the plugin was given the green light to load
 			item.Checked = e.Instance.Plugin != null ||
-				(Manager.ManagerLibrary.Instance.Settings.PluginApprovals.ContainsKey(
+				(Manager.ManagerLibrary.Settings.PluginApprovals.ContainsKey(
 					e.Instance.AssemblyInfo.Guid) && Manager.ManagerLibrary.Instance.
 					Settings.PluginApprovals[e.Instance.AssemblyInfo.Guid]
 				);
@@ -156,41 +156,41 @@ namespace Eraser
 				}
 
 			foreach (Object method in eraseFilesMethod.Items)
-				if (((ErasureMethod)method).Guid == ManagerLibrary.Instance.Settings.DefaultFileErasureMethod)
+				if (((ErasureMethod)method).Guid == ManagerLibrary.Settings.DefaultFileErasureMethod)
 				{
 					eraseFilesMethod.SelectedItem = method;
 					break;
 				}
 
 			foreach (Object method in eraseUnusedMethod.Items)
-				if (((ErasureMethod)method).Guid == ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod)
+				if (((ErasureMethod)method).Guid == ManagerLibrary.Settings.DefaultUnusedSpaceErasureMethod)
 				{
 					eraseUnusedMethod.SelectedItem = method;
 					break;
 				}
 
 			foreach (Object prng in erasePRNG.Items)
-				if (((Prng)prng).Guid == ManagerLibrary.Instance.Settings.ActivePrng)
+				if (((Prng)prng).Guid == ManagerLibrary.Settings.ActivePrng)
 				{
 					erasePRNG.SelectedItem = prng;
 					break;
 				}
 
-			foreach (string path in ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles)
+			foreach (string path in ManagerLibrary.Settings.PlausibleDeniabilityFiles)
 				plausibleDeniabilityFiles.Items.Add(path);
 
 			uiContextMenu.Checked = settings.IntegrateWithShell;
 			lockedAllow.Checked =
-				ManagerLibrary.Instance.Settings.EraseLockedFilesOnRestart;
+				ManagerLibrary.Settings.EraseLockedFilesOnRestart;
 			lockedConfirm.Checked =
-				ManagerLibrary.Instance.Settings.ConfirmEraseOnRestart;
+				ManagerLibrary.Settings.ConfirmEraseOnRestart;
 			lockedAllow_CheckedChanged(lockedAllow, new EventArgs());
 			schedulerMissedImmediate.Checked =
-				ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately;
+				ManagerLibrary.Settings.ExecuteMissedTasksImmediately;
 			schedulerMissedIgnore.Checked =
-				!ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately;
+				!ManagerLibrary.Settings.ExecuteMissedTasksImmediately;
 			plausibleDeniability.Checked =
-				ManagerLibrary.Instance.Settings.PlausibleDeniability;
+				ManagerLibrary.Settings.PlausibleDeniability;
 			plausibleDeniability_CheckedChanged(plausibleDeniability, new EventArgs());
 			schedulerClearCompleted.Checked = settings.ClearCompletedTasks;
 
@@ -211,7 +211,7 @@ namespace Eraser
 				if (eraseFilesMethod.Items.Count > 0)
 				{
 					eraseFilesMethod.SelectedIndex = 0;
-					ManagerLibrary.Instance.Settings.DefaultFileErasureMethod =
+					ManagerLibrary.Settings.DefaultFileErasureMethod =
 						((ErasureMethod)eraseFilesMethod.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Default file erasure method"));
@@ -221,7 +221,7 @@ namespace Eraser
 				if (eraseUnusedMethod.Items.Count > 0)
 				{
 					eraseUnusedMethod.SelectedIndex = 0;
-					ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod =
+					ManagerLibrary.Settings.DefaultUnusedSpaceErasureMethod =
 						((ErasureMethod)eraseUnusedMethod.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Default unused space erasure method"));
@@ -231,7 +231,7 @@ namespace Eraser
 				if (erasePRNG.Items.Count > 0)
 				{
 					erasePRNG.SelectedIndex = 0;
-					ManagerLibrary.Instance.Settings.ActivePrng =
+					ManagerLibrary.Settings.ActivePrng =
 						((Prng)erasePRNG.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Randomness data source"));
@@ -349,7 +349,7 @@ namespace Eraser
 		private void saveSettings_Click(object sender, EventArgs e)
 		{
 			EraserSettings settings = EraserSettings.Get();
-			ManagerSettings managerSettings = ManagerLibrary.Instance.Settings;
+			ManagerSettings managerSettings = ManagerLibrary.Settings;
 
 			//Save the settings that don't fail first.
 			managerSettings.EraseLockedFilesOnRestart = lockedAllow.Checked;

@@ -54,7 +54,7 @@ namespace Eraser.DefaultPlugins
 			if (fl16MethodCmb.SelectedIndex == -1)
 			{
 				Guid defaultMethodGuid =
-					ManagerLibrary.Instance.Settings.DefaultFileErasureMethod;
+					ManagerLibrary.Settings.DefaultFileErasureMethod;
 				foreach (object item in fl16MethodCmb.Items)
 					if (((ErasureMethod)item).Guid == defaultMethodGuid)
 					{

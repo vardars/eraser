@@ -51,7 +51,7 @@ namespace Eraser.DefaultPlugins
 		{
 			get
 			{
-				Prng prng = PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng);
+				Prng prng = PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng);
 				int rand = prng.Next();
 
 				return new Pass[]

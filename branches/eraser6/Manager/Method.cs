@@ -136,7 +136,7 @@ namespace Eraser.Manager
 			passes.CopyTo(result, 0);
 
 			//Randomize.
-			Prng rand = PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng);
+			Prng rand = PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng);
 			for (int i = 0; i < result.Length; ++i)
 			{
 				int val = rand.Next(result.Length - 1);

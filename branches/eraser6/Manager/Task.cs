@@ -384,7 +384,7 @@ namespace Eraser.Manager
 				if (method != ErasureMethodManager.Default)
 					return method;
 				return ErasureMethodManager.GetInstance(
-					ManagerLibrary.Instance.Settings.DefaultFileErasureMethod);
+					ManagerLibrary.Settings.DefaultFileErasureMethod);
 			}
 			set
 			{
@@ -447,7 +447,7 @@ namespace Eraser.Manager
 				if (method != ErasureMethodManager.Default)
 					return method;
 				return ErasureMethodManager.GetInstance(
-					ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod);
+					ManagerLibrary.Settings.DefaultUnusedSpaceErasureMethod);
 			}
 			set
 			{

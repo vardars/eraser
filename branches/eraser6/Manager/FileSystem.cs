@@ -67,7 +67,7 @@ namespace Eraser.Manager
 		public static string GenerateRandomFileName(DirectoryInfo info, int length)
 		{
 			//Get a random file name
-			Prng prng = PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng);
+			Prng prng = PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng);
 			string resultPrefix = info == null ? string.Empty : info.FullName +
 				Path.DirectorySeparatorChar;
 			byte[] resultAry = new byte[length];
@@ -112,7 +112,7 @@ namespace Eraser.Manager
 				return string.Empty;
 
 			//Find a random entry.
-			Prng prng = PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng);
+			Prng prng = PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng);
 			string result = string.Empty;
 			while (result.Length == 0)
 			{
@@ -229,15 +229,15 @@ namespace Eraser.Manager
 
 			//If the user wants plausible deniability, find a random file on the same
 			//volume and write it over.
-			if (Manager.ManagerLibrary.Instance.Settings.PlausibleDeniability)
+			if (Manager.ManagerLibrary.Settings.PlausibleDeniability)
 			{
 				//Get the template file to copy
 				FileInfo shadowFileInfo;
 				{
 					string shadowFile = null;
-					List<string> entries = ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles.GetRange(
-						0, ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles.Count);
-					Prng prng = PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng);
+					List<string> entries = ManagerLibrary.Settings.PlausibleDeniabilityFiles.GetRange(
+						0, ManagerLibrary.Settings.PlausibleDeniabilityFiles.Count);
+					Prng prng = PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng);
 					do
 					{
 						if (entries.Count == 0)
@@ -352,7 +352,7 @@ namespace Eraser.Manager
 
 						//Then run the erase task
 						method.Erase(strm, long.MaxValue,
-							PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng),
+							PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng),
 							null);
 					}
 

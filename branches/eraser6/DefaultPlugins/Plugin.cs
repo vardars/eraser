@@ -104,7 +104,7 @@ namespace Eraser.DefaultPlugins
 	{
 		public DefaultPluginSettings()
 		{
-			settings = Manager.ManagerLibrary.Instance.SettingsManager.ModuleSettings;
+			settings = Manager.ManagerLibrary.SettingsManager.ModuleSettings;
 		}
 
 		/// <summary>

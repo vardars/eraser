@@ -79,7 +79,7 @@ namespace Eraser.Manager
 		{
 			RecurringSchedule schedule = (RecurringSchedule)task.Schedule;
 			if (schedule.MissedPreviousSchedule &&
-				ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately)
+				ManagerLibrary.Settings.ExecuteMissedTasksImmediately)
 				//OK, we've missed the schedule and the user wants the thing
 				//to follow up immediately.
 				scheduledTasks.Add(DateTime.Now, task);
@@ -481,7 +481,7 @@ namespace Eraser.Manager
 
 						//Then run the erase task
 						method.Erase(stream, long.MaxValue,
-							PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng),
+							PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng),
 							delegate(long lastWritten, int currentPass)
 							{
 								progress.Completed += lastWritten;
@@ -686,7 +686,7 @@ namespace Eraser.Manager
 
 					//Erase the file
 					method.Erase(stream, long.MaxValue, PrngManager.GetInstance(
-						ManagerLibrary.Instance.Settings.ActivePrng), null);
+						ManagerLibrary.Settings.ActivePrng), null);
 				}
 				finally
 				{
@@ -776,7 +776,7 @@ namespace Eraser.Manager
 							long itemWritten = 0,
 								 itemTotal = method.CalculateEraseDataSize(null, strm.Length);
 							method.Erase(strm, long.MaxValue,
-								PrngManager.GetInstance(ManagerLibrary.Instance.Settings.ActivePrng),
+								PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng),
 								delegate(long lastWritten, int currentPass)
 								{
 									dataTotal -= lastWritten;
