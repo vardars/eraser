@@ -54,13 +54,13 @@ namespace Eraser
 			}
 
 			//Register our event handler to get live log messages
-			task.Log.Logged += new EventHandler<LogEventArgs>(task_Logged);
+			task.Log.Logged += task_Logged;
 			this.log.EndUpdate();
 		}
 
 		private void LogForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			task.Log.Logged -= new EventHandler<LogEventArgs>(task_Logged);
+			task.Log.Logged -= task_Logged;
 		}
 
 		private void task_Logged(object sender, LogEventArgs e)
@@ -70,7 +70,7 @@ namespace Eraser
 				//Todo: I get crashes here... but alas, I can't fix it!
 				try
 				{
-					Invoke(new EventHandler<LogEventArgs>(task_Logged), new object[] { e });
+					Invoke(new EventHandler<LogEventArgs>(task_Logged), sender, e);
 				}
 				catch (ObjectDisposedException)
 				{
