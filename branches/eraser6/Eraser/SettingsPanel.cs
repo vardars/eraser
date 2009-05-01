@@ -81,7 +81,7 @@ namespace Eraser
 				pluginsManager.Groups[1];
 			item.SubItems.Add(e.Instance.Assembly.GetName().Version.ToString());
 			item.SubItems.Add(e.Instance.Assembly.Location);
-			item.Tag = e;
+			item.Tag = e.Instance;
 			pluginsManager.Items.Add(item);
 		}
 
