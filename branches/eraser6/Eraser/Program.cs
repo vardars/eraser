@@ -27,6 +27,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Text;
 using System.Threading;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Globalization;
 using System.Reflection;
@@ -36,7 +37,6 @@ using System.ComponentModel;
 using Eraser.Manager;
 using Eraser.Util;
 using Microsoft.Win32;
-using System.Runtime.Serialization;
 
 namespace Eraser
 {
@@ -169,7 +169,9 @@ namespace Eraser
 						settings.TaskList = null;
 						MessageBox.Show(S._("Could not load task list. All task entries have " +
 							"been lost. The error returned was: {0}", e.Message), S._("Eraser"),
-							MessageBoxButtons.OK, MessageBoxIcon.Error);
+							MessageBoxButtons.OK, MessageBoxIcon.Error,
+							MessageBoxDefaultButton.Button1,
+							S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
 					}
 
 			//Create the main form
@@ -353,7 +355,8 @@ namespace Eraser
 					MessageBox.Show(S._("Another instance of Eraser is already running but it is " +
 						"running with higher privileges than this instance of Eraser.\n\n" +
 						"Eraser will now exit."), S._("Eraser"), MessageBoxButtons.OK,
-						MessageBoxIcon.Information);
+						MessageBoxIcon.Information, MessageBoxDefaultButton.Button1,
+						S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
 				}
 				catch (TimeoutException)
 				{
@@ -1182,7 +1185,9 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 								key.DeleteValue(setting);
 								MessageBox.Show(S._("Could not load the setting {0} for plugin {1}. " +
 									"The setting has been lost.", key, pluginID.ToString()),
-									S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+									S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error,
+									MessageBoxDefaultButton.Button1,
+									S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
 							}
 
 					return null;

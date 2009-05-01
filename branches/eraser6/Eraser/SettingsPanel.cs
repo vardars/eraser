@@ -246,7 +246,7 @@ namespace Eraser
 					"Please check that the new settings suit your required level of security.",
 					defaults), S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Warning,
 					MessageBoxDefaultButton.Button1,
-					RightToLeft == RightToLeft.Yes ? MessageBoxOptions.RtlReading : 0);
+					S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
 				saveSettings_Click(null, null);
 			}
 		}
@@ -294,7 +294,7 @@ namespace Eraser
 			{
 				MessageBox.Show(this, S._("The path you selected is invalid."), S._("Eraser"),
 					MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
-					RightToLeft == RightToLeft.Yes ? MessageBoxOptions.RtlReading : 0);
+					S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
 			}
 		}
 
@@ -378,7 +378,7 @@ namespace Eraser
 				MessageBox.Show(this, S._("Plugins which have just been approved will only be loaded " +
 					"the next time Eraser is started."), S._("Eraser"), MessageBoxButtons.OK,
 					MessageBoxIcon.Information, MessageBoxDefaultButton.Button1,
-					RightToLeft == RightToLeft.Yes ? MessageBoxOptions.RtlReading : 0);
+					S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
 			}
 
 			//Error checks for the rest that do.
@@ -420,7 +420,7 @@ namespace Eraser
 				MessageBox.Show(this, S._("The new UI language will take only effect when " +
 					"Eraser is restarted."), S._("Eraser"), MessageBoxButtons.OK,
 					MessageBoxIcon.Information, MessageBoxDefaultButton.Button1,
-					RightToLeft == RightToLeft.Yes ? MessageBoxOptions.RtlReading : 0);
+					S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
 			}
 			settings.IntegrateWithShell = uiContextMenu.Checked;
 
@@ -436,7 +436,7 @@ namespace Eraser
 					"the next task is run.\nCurrently running tasks will use the old source."),
 					S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information,
 					MessageBoxDefaultButton.Button1,
-					RightToLeft == RightToLeft.Yes ? MessageBoxOptions.RtlReading : 0);
+					S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
 				managerSettings.ActivePrng = newPRNG.Guid;
 			}
 			

@@ -68,6 +68,27 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
+		/// Returns true if the given control is right-to-left reading.
+		/// </summary>
+		/// <param name="control">The control to query.</param>
+		/// <returns>True if the control is right-to-left reading.</returns>
+		public static bool IsRightToLeft(Control control)
+		{
+			if (control == null)
+				return CultureInfo.CurrentCulture.TextInfo.IsRightToLeft;
+
+			switch (control.RightToLeft)
+			{
+				case RightToLeft.No:
+					return false;
+				case RightToLeft.Yes:
+					return true;
+				default:
+					return IsRightToLeft(control.Parent);
+			}
+		}
+
+		/// <summary>
 		/// Translates the localisable string to the set localised string.
 		/// </summary>
 		/// <param name="str">The string to localise.</param>

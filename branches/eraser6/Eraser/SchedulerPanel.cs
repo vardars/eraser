@@ -460,7 +460,7 @@ namespace Eraser
 			if (MessageBox.Show(this, S._("Are you sure you want to delete the selected tasks?"),
 				S._("Eraser"), MessageBoxButtons.YesNo, MessageBoxIcon.Question,
 				MessageBoxDefaultButton.Button1,
-				RightToLeft == RightToLeft.Yes ? MessageBoxOptions.RtlReading : 0) != DialogResult.Yes)
+				S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0) != DialogResult.Yes)
 			{
 				return;
 			}

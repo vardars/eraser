@@ -132,7 +132,7 @@ namespace Eraser
 				if (!(e.Error is OperationCanceledException))
 					MessageBox.Show(this, e.Error.Message, S._("Eraser"), MessageBoxButtons.OK,
 						MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
-						RightToLeft == RightToLeft.Yes ? MessageBoxOptions.RtlReading :  0);
+						S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
 
 				Close();
 				return;
@@ -211,7 +211,7 @@ namespace Eraser
 				MessageBox.Show(this, S._("There are no new updates or plugins available for " +
 					"Eraser."), S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information,
 					MessageBoxDefaultButton.Button1,
-					RightToLeft == RightToLeft.Yes ? MessageBoxOptions.RtlReading : 0);
+					S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
 				Close();
 			}
 		}
@@ -358,7 +358,7 @@ namespace Eraser
 					MessageBox.Show(this, e.Error.Message, S._("Eraser"),
 						MessageBoxButtons.OK, MessageBoxIcon.Error,
 						MessageBoxDefaultButton.Button1,
-						RightToLeft == RightToLeft.Yes ? MessageBoxOptions.RtlReading : 0);
+						S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
 
 				Close();
 				return;
