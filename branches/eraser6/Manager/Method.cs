@@ -300,7 +300,7 @@ namespace Eraser.Manager
 			return targetSize * Passes;
 		}
 
-		public override void Erase(Stream strm, long erasureLength, Prng prng,
+		public override void Erase(Stream stream, long erasureLength, Prng prng,
 			ProgressFunction callback)
 		{
 			//Randomize the order of the passes
@@ -309,8 +309,8 @@ namespace Eraser.Manager
 				randomizedPasses = ShufflePasses(randomizedPasses);
 
 			//Remember the starting position of the stream.
-			long strmStart = strm.Position;
-			long strmLength = Math.Min(strm.Length - strmStart, erasureLength);
+			long strmStart = stream.Position;
+			long strmLength = Math.Min(stream.Length - strmStart, erasureLength);
 
 			//Allocate memory for a buffer holding data for the pass.
 			byte[] buffer = new byte[Math.Min(DiskOperationUnit, strmLength)];
@@ -323,7 +323,7 @@ namespace Eraser.Manager
 					callback(0, pass + 1);
 
 				//Start from the beginning again
-				strm.Seek(strmStart, SeekOrigin.Begin);
+				stream.Seek(strmStart, SeekOrigin.Begin);
 
 				//Write the buffer to disk.
 				long toWrite = strmLength;
@@ -342,8 +342,8 @@ namespace Eraser.Manager
 					}
 
 					//Write the data.
-					strm.Write(buffer, dataStopped, amount);
-					strm.Flush();
+					stream.Write(buffer, dataStopped, amount);
+					stream.Flush();
 					toWrite -= amount;
 
 					//Do a progress callback.
@@ -498,7 +498,7 @@ namespace Eraser.Manager
 			}
 
 			//Broadcast the event
-			OnMethodRegistered(method.Guid);
+			OnMethodRegistered(new ErasureMethodRegistrationEventArgs(method.Guid));
 		}
 
 		/// <summary>
@@ -512,7 +512,7 @@ namespace Eraser.Manager
 					"refers to an invalid erasure method."));
 
 			ManagerLibrary.Instance.ErasureMethodManager.methods.Remove(value);
-			OnMethodUnregistered(value);
+			OnMethodUnregistered(new ErasureMethodRegistrationEventArgs(value));
 		}
 
 		/// <summary>
@@ -538,46 +538,54 @@ namespace Eraser.Manager
 			new Dictionary<Guid, MethodConstructorInfo>();
 
 		/// <summary>
-		/// The delegate prototype of the Method Registered event.
-		/// </summary>
-		/// <param name="value">The GUID of the method being registered.</param>
-		public delegate void MethodRegisteredFunction(Guid value);
-
-		/// <summary>
 		/// Called whenever an erasure method is registered.
 		/// </summary>
-		public static event MethodRegisteredFunction MethodRegistered;
+		public static EventHandler<ErasureMethodRegistrationEventArgs>
+			MethodRegistered { get; set; }
 		
-		/// <summary>
-		/// The delegate prototype of the Method Unregistered event.
-		/// </summary>
-		/// <param name="value">The GUID of the method being registered.</param>
-		public delegate void MethodUnregisteredFunction(Guid value);
-
 		/// <summary>
 		/// Called whenever an erasure method is unregistered.
 		/// </summary>
-		public static event MethodUnregisteredFunction MethodUnregistered;
+		public static EventHandler<ErasureMethodRegistrationEventArgs>
+			MethodUnregistered { get; set; }
 
 		/// <summary>
 		/// Executes the MethodRegistered event handlers.
 		/// </summary>
 		/// <param name="guid">The GUID of the newly registered erasure method.</param>
-		private static void OnMethodRegistered(Guid guid)
+		private static void OnMethodRegistered(ErasureMethodRegistrationEventArgs e)
 		{
 			if (MethodRegistered != null)
-				MethodRegistered(guid);
+				MethodRegistered(ManagerLibrary.Instance.ErasureMethodManager, e);
 		}
 
 		/// <summary>
 		/// Performs the MethodUnregistered event handlers.
 		/// </summary>
 		/// <param name="guid">The GUID of the unregistered erasure method.</param>
-		private static void OnMethodUnregistered(Guid guid)
+		private static void OnMethodUnregistered(ErasureMethodRegistrationEventArgs e)
 		{
 			if (MethodUnregistered != null)
-				MethodUnregistered(guid);
+				MethodUnregistered(ManagerLibrary.Instance.ErasureMethodManager, e);
 		}
 		#endregion
+	}
+
+	public class ErasureMethodRegistrationEventArgs : EventArgs
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="value">The GUID of the newly registered/unregistered
+		/// erasure method.</param>
+		public ErasureMethodRegistrationEventArgs(Guid value)
+		{
+			Guid = value;
+		}
+
+		/// <summary>
+		/// The GUID of the newly registsered/unregistered erasure method.
+		/// </summary>
+		public Guid Guid { get; private set; }
 	}
 }

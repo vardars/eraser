@@ -47,10 +47,8 @@ namespace Eraser
 			SchedulerPage.CreateControl();
 
 			//Connect to the executor task processing and processed events.
-			Program.eraserClient.TaskProcessing +=
-				new Executor.TaskProcessingEvent(OnTaskProcessing);
-			Program.eraserClient.TaskProcessed +=
-				new Executor.TaskProcessedEvent(OnTaskProcessed);
+			Program.eraserClient.TaskProcessing += OnTaskProcessing;
+			Program.eraserClient.TaskProcessed += OnTaskProcessed;
 
 			//Check the notification area context menu's minimise to tray item.
 			hideWhenMinimisedToolStripMenuItem.Checked = EraserSettings.Get().HideWhenMinimised;
@@ -256,15 +254,15 @@ namespace Eraser
 		}
 
 		#region Task processing code (for notification area animation)
-		void OnTaskProcessing(Eraser.Manager.Task task)
+		void OnTaskProcessing(object sender, TaskEventArgs e)
 		{
 			if (InvokeRequired)
 			{
-				Invoke(new Executor.TaskProcessingEvent(OnTaskProcessing), task);
+				Invoke(new EventHandler<TaskEventArgs>(OnTaskProcessing), sender, e);
 				return;
 			}
 
-			string iconText = S._("Eraser") + " - " + S._("Processing:") + ' ' + task.UIText;
+			string iconText = S._("Eraser") + " - " + S._("Processing:") + ' ' + e.Task.UIText;
 			if (iconText.Length >= 64)
 				iconText = iconText.Remove(60) + "...";
 
@@ -273,11 +271,11 @@ namespace Eraser
 			notificationIconTimer.Enabled = true;
 		}
 
-		void OnTaskProcessed(Eraser.Manager.Task task)
+		void OnTaskProcessed(object sender, TaskEventArgs e)
 		{
 			if (InvokeRequired)
 			{
-				Invoke(new Executor.TaskProcessedEvent(OnTaskProcessed), task);
+				Invoke(new EventHandler<TaskEventArgs>(OnTaskProcessed), sender, e);
 				return;
 			}
 

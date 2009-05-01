@@ -153,14 +153,14 @@ namespace Eraser.Manager
 						task.Queued = false;
 						task.Canceled = false;
 						task.OnTaskStarted(new TaskEventArgs(task));
-						OnTaskProcessing(task);
+						OnTaskProcessing(new TaskEventArgs(task));
 
 						//Start a new log session to separate this session's events
 						//from previous ones.
 						task.Log.Entries.NewSession();
 
 						//Run the task
-						TaskProgressManager progress = new TaskProgressManager(currentTask);
+						TaskProgressManager progress = new TaskProgressManager(task);
 						foreach (ErasureTarget target in task.Targets)
 							try
 							{
@@ -206,7 +206,7 @@ namespace Eraser.Manager
 
 						//And the task finished event.
 						task.OnTaskFinished(new TaskEventArgs(task));
-						OnTaskProcessed(currentTask);
+						OnTaskProcessed(new TaskEventArgs(task));
 					}
 
 					currentTask = null;
@@ -935,7 +935,7 @@ namespace Eraser.Manager
 
 			//Call all the event handlers who registered to be notified of tasks
 			//being added.
-			Owner.OnTaskAdded(item);
+			Owner.OnTaskAdded(new TaskEventArgs(item));
 
 			//If the task is scheduled to run now, break the waiting thread and
 			//run it immediately
@@ -961,7 +961,7 @@ namespace Eraser.Manager
 				list.RemoveAt(index);
 
 				//Call all event handlers registered to be notified of task deletions.
-				Owner.OnTaskDeleted(task);
+				Owner.OnTaskDeleted(new TaskEventArgs(task));
 			}
 		}
 

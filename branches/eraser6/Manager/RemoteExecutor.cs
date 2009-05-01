@@ -64,7 +64,7 @@ namespace Eraser.Manager
 	/// <summary>
 	/// List of supported functions
 	/// </summary>
-	public enum RemoteExecutorFunction : uint
+	public enum RemoteExecutorFunction
 	{
 		QueueTask,
 		ScheduleTask,
@@ -455,7 +455,7 @@ namespace Eraser.Manager
 
 			//Call all the event handlers who registered to be notified of tasks
 			//being added.
-			Owner.OnTaskAdded(item);
+			Owner.OnTaskAdded(new TaskEventArgs(item));
 		}
 
 		public override void Clear()
@@ -485,7 +485,7 @@ namespace Eraser.Manager
 			SendRequest<object>(RemoteExecutorFunction.DeleteTask, item);
 
 			//Call all event handlers registered to be notified of task deletions.
-			Owner.OnTaskDeleted(item);
+			Owner.OnTaskDeleted(new TaskEventArgs(item));
 			return true;
 		}
 		#endregion

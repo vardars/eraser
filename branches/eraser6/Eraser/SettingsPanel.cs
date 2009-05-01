@@ -45,11 +45,9 @@ namespace Eraser
 			Dock = DockStyle.None;
 
 			//For new plugins, register the callback.
-			Host.Instance.PluginLoaded += new EventHandler<PluginLoadedEventArgs>(OnNewPluginLoaded);
-			ErasureMethodManager.MethodRegistered +=
-				new ErasureMethodManager.MethodRegisteredFunction(OnMethodRegistered);
-			ErasureMethodManager.MethodUnregistered +=
-				new ErasureMethodManager.MethodUnregisteredFunction(OnMethodUnregistered);
+			Host.Instance.PluginLoaded += OnNewPluginLoaded;
+			ErasureMethodManager.MethodRegistered += OnMethodRegistered;
+			ErasureMethodManager.MethodUnregistered += OnMethodUnregistered;
 
 			//Load the values
 			LoadPluginDependantValues();
@@ -87,25 +85,25 @@ namespace Eraser
 			pluginsManager.Items.Add(item);
 		}
 
-		private void OnMethodRegistered(Guid guid)
+		private void OnMethodRegistered(object sender, ErasureMethodRegistrationEventArgs e)
 		{
-			ErasureMethod method = ErasureMethodManager.GetInstance(guid);
+			ErasureMethod method = ErasureMethodManager.GetInstance(e.Guid);
 			eraseFilesMethod.Items.Add(method);
 			if (method is UnusedSpaceErasureMethod)
 				eraseUnusedMethod.Items.Add(method);
 		}
 
-		private void OnMethodUnregistered(Guid guid)
+		private void OnMethodUnregistered(object sender, ErasureMethodRegistrationEventArgs e)
 		{
 			foreach (object obj in eraseFilesMethod.Items)
-				if (((ErasureMethod)obj).Guid == guid)
+				if (((ErasureMethod)obj).Guid == e.Guid)
 				{
 					eraseFilesMethod.Items.Remove(obj);
 					break;
 				}
 
 			foreach (object obj in eraseUnusedMethod.Items)
-				if (((ErasureMethod)obj).Guid == guid)
+				if (((ErasureMethod)obj).Guid == e.Guid)
 				{
 					eraseUnusedMethod.Items.Remove(obj);
 					break;

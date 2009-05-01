@@ -159,31 +159,19 @@ namespace Eraser.Manager
 
 		#region Events
 		/// <summary>
-		/// The prototype for events handling just a task object as the event argument.
-		/// </summary>
-		/// <param name="e">The task object.</param>
-		public delegate void TaskEventFunction(TaskEventArgs e);
-
-		/// <summary>
-		/// The prototype for events handling the progress changed event.
-		/// </summary>
-		/// <param name="e">The new progress value.</param>
-		public delegate void ProgressEventFunction(TaskProgressEventArgs e);
-
-		/// <summary>
 		/// The start of the execution of a task.
 		/// </summary>
-		public event TaskEventFunction TaskStarted;
+		public EventHandler<TaskEventArgs> TaskStarted { get; set; }
 
 		/// <summary>
 		/// The event object holding all event handlers.
 		/// </summary>
-		public event ProgressEventFunction ProgressChanged;
+		public EventHandler<TaskProgressEventArgs> ProgressChanged { get; set; }
 
 		/// <summary>
 		/// The completion of the execution of a task.
 		/// </summary>
-		public event TaskEventFunction TaskFinished;
+		public EventHandler<TaskEventArgs> TaskFinished { get; set; }
 
 		/// <summary>
 		/// Broadcasts the task execution start event.
@@ -192,7 +180,7 @@ namespace Eraser.Manager
 		internal void OnTaskStarted(TaskEventArgs e)
 		{
 			if (TaskStarted != null)
-				TaskStarted(e);
+				TaskStarted(this, e);
 			Executing = true;
 		}
 
@@ -203,7 +191,7 @@ namespace Eraser.Manager
 		internal void OnProgressChanged(TaskProgressEventArgs e)
 		{
 			if (ProgressChanged != null)
-				ProgressChanged(e);
+				ProgressChanged(this, e);
 		}
 
 		/// <summary>
@@ -213,7 +201,7 @@ namespace Eraser.Manager
 		internal void OnTaskFinished(TaskEventArgs e)
 		{
 			if (TaskFinished != null)
-				TaskFinished(e);
+				TaskFinished(this, e);
 			Executing = false;
 		}
 		#endregion
@@ -904,21 +892,16 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="task">The task being run.</param>
+		/// <param name="task">The task being referred to by this event.</param>
 		public TaskEventArgs(Task task)
 		{
-			this.task = task;
+			Task = task;
 		}
 
 		/// <summary>
 		/// The executing task.
 		/// </summary>
-		public Task Task
-		{
-			get { return task; }
-		}
-
-		private Task task;
+		public Task Task { get; private set; }
 	}
 
 	/// <summary>

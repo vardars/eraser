@@ -44,23 +44,21 @@ namespace Eraser
 
 			//Register the event handlers
 			jobTitle.Text = task.UIText;
-			task.ProgressChanged += new Task.ProgressEventFunction(task_ProgressChanged);
-			task.TaskFinished += new Task.TaskEventFunction(task_TaskFinished);
+			task.ProgressChanged += task_ProgressChanged;
+			task.TaskFinished += task_TaskFinished;
 		}
 
 		private void ProgressForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			task.ProgressChanged -= new Task.ProgressEventFunction(task_ProgressChanged);
-			task.TaskFinished -= new Task.TaskEventFunction(task_TaskFinished);
+			task.ProgressChanged -= task_ProgressChanged;
+			task.TaskFinished -= task_TaskFinished;
 		}
 
-		void task_ProgressChanged(TaskProgressEventArgs e)
+		void task_ProgressChanged(object sender, TaskProgressEventArgs e)
 		{
 			if (InvokeRequired)
 			{
-				Task.ProgressEventFunction func =
-					new Task.ProgressEventFunction(task_ProgressChanged);
-				Invoke(func, new object[] {e});
+				Invoke(new EventHandler<TaskProgressEventArgs>(task_ProgressChanged), sender, e);
 				return;
 			}
 
@@ -82,13 +80,11 @@ namespace Eraser
 			overallProgressLbl.Text = S._("Total: {0,2:#0.00%}", e.OverallProgress);
 		}
 
-		void task_TaskFinished(TaskEventArgs e)
+		void task_TaskFinished(object sender, TaskEventArgs e)
 		{
 			if (InvokeRequired)
 			{
-				Task.TaskEventFunction func =
-					new Task.TaskEventFunction(task_TaskFinished);
-				Invoke(func, new object[] { e });
+				Invoke(new EventHandler<TaskEventArgs>(task_TaskFinished), sender, e);
 				return;
 			}
 

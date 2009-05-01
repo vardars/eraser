@@ -163,23 +163,24 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Allows plugins to register EntropySources with the main program. Thread-safe.
 		/// </summary>
-		/// <param name="method"></param>
+		/// <param name="source">The source of entropy to add.</param>
 		public static void Register(EntropySource source)
 		{
 			EntropySourceManager manager = ManagerLibrary.Instance.EntropySourceManager;
 			lock (ManagerLibrary.Instance.EntropySourceManager.sources)
 				manager.sources.Add(source.Guid, source);
 			manager.entropyThread.AddEntropySource(source);
+
+			OnEntropySourceRegistered(new EntropySourceRegistrationEventArgs(source.Guid));
 		}
 
 		/// <summary>
-		/// Performs the MethodUnregistered event handlers.
+		/// Calls the EntropySourceRegistered event handlers.
 		/// </summary>
-		/// <param name="guid">The GUID of the unregistered erasure method.</param>
-		private static void OnEntropySourceActivated(Guid guid)
+		private static void OnEntropySourceRegistered(EntropySourceRegistrationEventArgs e)
 		{
-			if (EntropySourceActivated != null)
-				EntropySourceActivated(guid);
+			if (EntropySourceRegistered != null)
+				EntropySourceRegistered(ManagerLibrary.Instance.EntropySourceManager, e);
 		}
 
 		/// <summary>
@@ -194,16 +195,11 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// The delegate prototype of Entropy Source Registered event 
-		/// </summary>
-		/// <param name="value"></param>
-		public delegate void OnEntropySourceActivatedEventHandler(Guid value);
-
-		/// <summary>
 		/// Global static instance of the EntropySourceRegisteredFunction,
 		/// called whenever the EntropySourceManager.Register is invoked.
 		/// </summary>
-		public static event OnEntropySourceActivatedEventHandler EntropySourceActivated;
+		public static EventHandler<EntropySourceRegistrationEventArgs>
+			EntropySourceRegistered { get; set; }
 		
 		/// <summary>
 		/// The list of currently registered Entropy Sources.
@@ -215,6 +211,24 @@ namespace Eraser.Manager
 		/// </summary>
 		private EntropyPoller entropyThread = new EntropyPoller();
 	};
+
+	public class EntropySourceRegistrationEventArgs : EventArgs
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="value">The GUID of the newly registered/unregistered entropy
+		/// source.</param>
+		public EntropySourceRegistrationEventArgs(Guid value)
+		{
+			Guid = value;
+		}
+
+		/// <summary>
+		/// The GUID of the newly registered/unregistered entropy source.
+		/// </summary>
+		public Guid Guid { get; private set; }
+	}
 		
 	/// <summary>
 	/// Provides means of generating random entropy from the system or user space

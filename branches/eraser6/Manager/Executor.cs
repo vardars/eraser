@@ -89,85 +89,59 @@ namespace Eraser.Manager
 		public abstract ExecutorTasksCollection Tasks { get; protected set; }
 
 		/// <summary>
-		/// The prototype of functions handing the Task Added event.
-		/// </summary>
-		/// <param name="task">The task which has been added</param>
-		public delegate void TaskAddedEvent(Task task);
-
-		/// <summary>
 		/// The task added event object.
 		/// </summary>
-		public event TaskAddedEvent TaskAdded;
+		public EventHandler<TaskEventArgs> TaskAdded { get; set; }
 
 		/// <summary>
 		/// Helper function for the task added event.
 		/// </summary>
-		/// <param name="task">The task that has just been added</param>
-		internal void OnTaskAdded(Task task)
+		internal void OnTaskAdded(TaskEventArgs e)
 		{
 			if (TaskAdded != null)
-				TaskAdded(task);
+				TaskAdded(this, e);
 		}
-
-		/// <summary>
-		/// The prototype of functions handing the Task Deleted event.
-		/// </summary>
-		/// <param name="task">The task which has been deleted</param>
-		public delegate void TaskDeletedEvent(Task task);
 
 		/// <summary>
 		/// The task added event object.
 		/// </summary>
-		public event TaskDeletedEvent TaskDeleted;
+		public EventHandler<TaskEventArgs> TaskDeleted { get; set; }
 
 		/// <summary>
 		/// Helper function for the task deleted event.
 		/// </summary>
-		/// <param name="task">The task that has just been deleted</param>
-		internal void OnTaskDeleted(Task task)
+		internal void OnTaskDeleted(TaskEventArgs e)
 		{
 			if (TaskDeleted != null)
-				TaskDeleted(task);
+				TaskDeleted(this, e);
 		}
-
-		/// <summary>
-		/// The delegate for handling the task processing event from the executor.
-		/// </summary>
-		/// <param name="task">The currently processing task.</param>
-		public delegate void TaskProcessingEvent(Task task);
 
 		/// <summary>
 		/// The task processing event object.
 		/// </summary>
-		public event TaskProcessingEvent TaskProcessing;
+		public EventHandler<TaskEventArgs> TaskProcessing { get; set; }
 
 		/// <summary>
 		/// Helper function for the Task processing event.
 		/// </summary>
-		protected void OnTaskProcessing(Task task)
+		protected void OnTaskProcessing(TaskEventArgs e)
 		{
 			if (TaskProcessing != null)
-				TaskProcessing(task);
+				TaskProcessing(this, e);
 		}
-
-		/// <summary>
-		/// The delegate for handling the task processed event from the executor.
-		/// </summary>
-		/// <param name="task">The processed task.</param>
-		public delegate void TaskProcessedEvent(Task task);
 
 		/// <summary>
 		/// The task processed event object.
 		/// </summary>
-		public event TaskProcessedEvent TaskProcessed;
+		public EventHandler<TaskEventArgs> TaskProcessed { get; set; }
 
 		/// <summary>
 		/// Helper function for the Task processed event.
 		/// </summary>
-		protected void OnTaskProcessed(Task task)
+		protected void OnTaskProcessed(TaskEventArgs e)
 		{
 			if (TaskProcessed != null)
-				TaskProcessed(task);
+				TaskProcessed(this, e);
 		}
 	}
 

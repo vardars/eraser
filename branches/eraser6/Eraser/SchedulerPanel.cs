@@ -64,9 +64,9 @@ namespace Eraser
 			item.Tag = task;
 
 			//Add our event handlers to the task
-			task.TaskStarted += new Task.TaskEventFunction(task_TaskStarted);
-			task.ProgressChanged += new Task.ProgressEventFunction(task_ProgressChanged);
-			task.TaskFinished += new Task.TaskEventFunction(task_TaskFinished);
+			task.TaskStarted += task_TaskStarted;
+			task.ProgressChanged += task_ProgressChanged;
+			task.TaskFinished += task_TaskFinished;
 
 			//Show the fields on the list view
 			UpdateTask(item);
@@ -110,11 +110,14 @@ namespace Eraser
 				item.Group = scheduler.Groups["recurring"];
 		}
 
-		private void TaskAdded(Task task)
+		/// <summary>
+		/// Handles the Task Added event.
+		/// </summary>
+		private void TaskAdded(object sender, TaskEventArgs e)
 		{
 			if (InvokeRequired)
 			{
-				Invoke(new Executor.TaskAddedEvent(TaskAdded), new object[] { task });
+				Invoke(new EventHandler<TaskEventArgs>(TaskAdded), sender, e);
 				return;
 			}
 
@@ -123,27 +126,26 @@ namespace Eraser
 			if (parent != null && (parent.WindowState == FormWindowState.Minimized || !parent.Visible))
 			{
 				parent.ShowNotificationBalloon(S._("New task added"), S._("{0} " +
-					"has just been added to the list of tasks.", task.UIText),
+					"has just been added to the list of tasks.", e.Task.UIText),
 					ToolTipIcon.Info);
 			}
 
-			DisplayTask(task);
+			DisplayTask(e.Task);
 		}
 
 		/// <summary>
 		/// Handles the task deleted event.
 		/// </summary>
-		/// <param name="task">The task being deleted.</param>
-		private void TaskDeleted(Task task)
+		private void TaskDeleted(object sender, TaskEventArgs e)
 		{
 			if (InvokeRequired)
 			{
-				Invoke(new Executor.TaskDeletedEvent(TaskDeleted), new object[] { task });
+				Invoke(new EventHandler<TaskEventArgs>(TaskDeleted), sender, e);
 				return;
 			}
 
 			foreach (ListViewItem item in scheduler.Items)
-				if (((Task)item.Tag) == task)
+				if (((Task)item.Tag) == e.Task)
 				{
 					scheduler.Items.Remove(item);
 					break;
@@ -154,13 +156,11 @@ namespace Eraser
 		/// Handles the task start event.
 		/// </summary>
 		/// <param name="e">The task event object.</param>
-		void task_TaskStarted(TaskEventArgs e)
+		void task_TaskStarted(object sender, TaskEventArgs e)
 		{
 			if (scheduler.InvokeRequired)
 			{
-				Task.TaskEventFunction func =
-					new Task.TaskEventFunction(task_TaskStarted);
-				Invoke(func, new object[] { e });
+				Invoke(new EventHandler<TaskEventArgs>(task_TaskStarted), sender, e);
 				return;
 			}
 
@@ -180,16 +180,13 @@ namespace Eraser
 		/// <summary>
 		/// Handles the progress event by the task.
 		/// </summary>
-		/// <param name="e">Event Argument.</param>
-		void task_ProgressChanged(TaskProgressEventArgs e)
+		void task_ProgressChanged(object sender, TaskProgressEventArgs e)
 		{
 			//Make sure we handle the event in the main thread as this requires
 			//GUI calls.
 			if (scheduler.InvokeRequired)
 			{
-				Task.ProgressEventFunction func =
-					new Task.ProgressEventFunction(task_ProgressChanged);
-				Invoke(func, new object[] { e });
+				Invoke(new EventHandler<TaskProgressEventArgs>(task_ProgressChanged), sender, e);
 				return;
 			}
 
@@ -200,14 +197,11 @@ namespace Eraser
 		/// <summary>
 		/// Handles the task completion event.
 		/// </summary>
-		/// <param name="e">The task event object.</param>
-		void task_TaskFinished(TaskEventArgs e)
+		void task_TaskFinished(object sender, TaskEventArgs e)
 		{
 			if (InvokeRequired)
 			{
-				Task.TaskEventFunction func =
-					new Task.TaskEventFunction(task_TaskFinished);
-				Invoke(func, new object[] { e });
+				Invoke(new EventHandler<TaskEventArgs>(task_TaskFinished), sender, e);
 				return;
 			}
 
