@@ -48,13 +48,13 @@ namespace Eraser.DefaultPlugins
 			get { return false; }
 		}
 
-		protected override Pass[] PassesSet
+		protected override ErasureMethodPass[] PassesSet
 		{
 			get
 			{
-				return new Pass[]
+				return new ErasureMethodPass[]
 				{
-					new Pass(WriteRandom, null)
+					new ErasureMethodPass(WriteRandom, null)
 				};
 			}
 		}

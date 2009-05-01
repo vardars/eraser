@@ -73,7 +73,7 @@ namespace Eraser.DefaultPlugins
 			get { return method.RandomizePasses; }
 		}
 
-		protected override Pass[] PassesSet
+		protected override ErasureMethodPass[] PassesSet
 		{
 			get { return method.Passes; }
 		}
@@ -102,7 +102,7 @@ namespace Eraser.DefaultPlugins
 			List<PassData> passes = (List<PassData>)
 				info.GetValue("Passes", typeof(List<PassData>));
 
-			Passes = new ErasureMethod.Pass[passes.Count];
+			Passes = new ErasureMethodPass[passes.Count];
 			for (int i = 0; i != passes.Count; ++i)
 				Passes[i] = passes[i];
 		}
@@ -110,7 +110,7 @@ namespace Eraser.DefaultPlugins
 		public string Name { get; set; }
 		public Guid Guid { get; set; }
 		public bool RandomizePasses { get; set; }
-		public ErasureMethod.Pass[] Passes { get; set; }
+		public ErasureMethodPass[] Passes { get; set; }
 
 		#region ISerializable Members
 		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
@@ -121,7 +121,7 @@ namespace Eraser.DefaultPlugins
 			info.AddValue("RandomizePasses", RandomizePasses);
 
 			List<PassData> passes = new List<PassData>(Passes.Length);
-			foreach (ErasureMethod.Pass pass in Passes)
+			foreach (ErasureMethodPass pass in Passes)
 				passes.Add(new PassData(pass));
 			info.AddValue("Passes", passes);
 		}
@@ -129,14 +129,14 @@ namespace Eraser.DefaultPlugins
 		[Serializable]
 		private class PassData
 		{
-			public PassData(ErasureMethod.Pass pass)
+			public PassData(ErasureMethodPass pass)
 			{
-				if (pass.Function == ErasureMethod.Pass.WriteConstant)
+				if (pass.Function == ErasureMethod.WriteConstant)
 				{
 					Random = false;
 					OpaqueValue = pass.OpaqueValue;
 				}
-				else if (pass.Function == ErasureMethod.Pass.WriteRandom)
+				else if (pass.Function == ErasureMethod.WriteRandom)
 				{
 					Random = true;
 				}
@@ -145,12 +145,12 @@ namespace Eraser.DefaultPlugins
 						"passes containining constant or random passes");
 			}
 
-			public static implicit operator ErasureMethod.Pass(PassData pass)
+			public static implicit operator ErasureMethodPass(PassData pass)
 			{
-				ErasureMethod.Pass result = new ErasureMethod.Pass(pass.Random ?
-					ErasureMethod.Pass.WriteRandom :
-					ErasureMethod.Pass.WriteConstant, pass.OpaqueValue);
-				return result;
+				return new ErasureMethodPass(pass.Random ?
+					new ErasureMethodPassFunction(ErasureMethod.WriteRandom) :
+						new ErasureMethodPassFunction(ErasureMethod.WriteConstant),
+					pass.OpaqueValue);
 			}
 
 			object OpaqueValue;

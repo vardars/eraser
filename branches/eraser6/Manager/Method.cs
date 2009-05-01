@@ -85,16 +85,6 @@ namespace Eraser.Manager
 		public abstract long CalculateEraseDataSize(ICollection<string> paths, long targetSize);
 
 		/// <summary>
-		/// A simple callback for clients to retrieve progress information from
-		/// the erase method.
-		/// </summary>
-		/// <param name="lastWritten">The amount of data written to the stream since
-		/// the last call to the delegate.</param>
-		/// <param name="currentPass">The current pass number. The total number
-		/// of passes can be found from the Passes property.</param>
-		public delegate void ProgressFunction(long lastWritten, int currentPass);
-
-		/// <summary>
 		/// The main bit of the class! This function is called whenever data has
 		/// to be erased. Erase the stream passed in, using the given PRNG for
 		/// randomness where necessary.
@@ -109,7 +99,7 @@ namespace Eraser.Manager
 		/// <param name="prng">The PRNG source for random data.</param>
 		/// <param name="callback">The progress callback function.</param>
 		public abstract void Erase(Stream stream, long erasureLength, Prng prng,
-			ProgressFunction callback);
+			EraserMethodProgressFunction callback);
 
 		/// <summary>
 		/// Disk operation write unit. Chosen such that this value mod 3, 4, 512,
@@ -129,10 +119,10 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="passes">The input set of passes.</param>
 		/// <returns>The shuffled set of passes.</returns>
-		protected static Pass[] ShufflePasses(Pass[] passes)
+		protected static ErasureMethodPass[] ShufflePasses(ErasureMethodPass[] passes)
 		{
 			//Make a copy.
-			Pass[] result = new Pass[passes.Length];
+			ErasureMethodPass[] result = new ErasureMethodPass[passes.Length];
 			passes.CopyTo(result, 0);
 
 			//Randomize.
@@ -140,7 +130,7 @@ namespace Eraser.Manager
 			for (int i = 0; i < result.Length; ++i)
 			{
 				int val = rand.Next(result.Length - 1);
-				Pass tmpPass = result[val];
+				ErasureMethodPass tmpPass = result[val];
 				result[val] = result[i];
 				result[i] = tmpPass;
 			}
@@ -154,7 +144,7 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="strm">The buffer to populate with data to write to disk.</param>
 		/// <param name="prng">The PRNG used.</param>
-		protected static void WriteRandom(byte[] buffer, object value)
+		public static void WriteRandom(byte[] buffer, object value)
 		{
 			((Prng)value).NextBytes(buffer);
 		}
@@ -165,76 +155,73 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="strm">The buffer to populate with data to write to disk.</param>
 		/// <param name="value">The byte[] to write.</param>
-		protected static void WriteConstant(byte[] buffer, object value)
+		public static void WriteConstant(byte[] buffer, object value)
 		{
 			byte[] constant = (byte[])value;
 			for (int i = 0; i < buffer.Length; ++i)
 				buffer[i] = constant[i % constant.Length];
 		}
+	}
+
+	/// <summary>
+	/// A simple callback for clients to retrieve progress information from
+	/// the erase method.
+	/// </summary>
+	/// <param name="lastWritten">The amount of data written to the stream since
+	/// the last call to the delegate.</param>
+	/// <param name="currentPass">The current pass number. The total number
+	/// of passes can be found from the Passes property.</param>
+	public delegate void EraserMethodProgressFunction(long lastWritten, int currentPass);
+
+	/// <summary>
+	/// A pass object. This object holds both the pass function, as well as the
+	/// data used for the pass (random, byte, or triplet)
+	/// </summary>
+	public class ErasureMethodPass
+	{
+		public override string ToString()
+		{
+			return OpaqueValue == null ? S._("Random") : OpaqueValue.ToString();
+		}
 
 		/// <summary>
-		/// A pass object. This object holds both the pass function, as well as the
-		/// data used for the pass (random, byte, or triplet)
+		/// Constructor.
 		/// </summary>
-		public class Pass
+		/// <param name="function">The delegate to the function.</param>
+		/// <param name="opaqueValue">The opaque value passed to the function.</param>
+		public ErasureMethodPass(ErasureMethodPassFunction function, object opaqueValue)
 		{
-			public override string ToString()
-			{
-				return OpaqueValue == null ? S._("Random") : OpaqueValue.ToString();
-			}
-
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			/// <param name="function">The delegate to the function.</param>
-			/// <param name="opaqueValue">The opaque value passed to the function.</param>
-			public Pass(PassFunction function, object opaqueValue)
-			{
-				Function = function;
-				OpaqueValue = opaqueValue;
-			}
-
-			/// <summary>
-			/// Executes the pass.
-			/// </summary>
-			/// <param name="buffer">The buffer to populate with the data to write.</param>
-			/// <param name="prng">The PRNG used for random passes.</param>
-			public void Execute(byte[] buffer, Prng prng)
-			{
-				Function(buffer, OpaqueValue == null ? prng : OpaqueValue);
-			}
-
-			/// <summary>
-			/// The prototype of a pass.
-			/// </summary>
-			/// <param name="strm">The buffer to populate with data to write to disk.</param>
-			/// <param name="opaque">An opaque value, depending on the type of callback.</param>
-			public delegate void PassFunction(byte[] buffer, object opaque);
-
-			/// <summary>
-			/// The default pass function which writes random information to the stream
-			/// </summary>
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
-			public static readonly PassFunction WriteRandom = ErasureMethod.WriteRandom;
-
-			/// <summary>
-			/// The default pass function which writes a constant repeatedly to the
-			/// stream. The Pass' OpaqueValue must be set.
-			/// </summary>
-			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
-			public static readonly PassFunction WriteConstant = ErasureMethod.WriteConstant;
-
-			/// <summary>
-			/// The function to execute for this pass.
-			/// </summary>
-			public PassFunction Function { get; set; }
-
-			/// <summary>
-			/// The value to be passed to the executing function.
-			/// </summary>
-			public object OpaqueValue { get; set; }
+			Function = function;
+			OpaqueValue = opaqueValue;
 		}
+
+		/// <summary>
+		/// Executes the pass.
+		/// </summary>
+		/// <param name="buffer">The buffer to populate with the data to write.</param>
+		/// <param name="prng">The PRNG used for random passes.</param>
+		public void Execute(byte[] buffer, Prng prng)
+		{
+			Function(buffer, OpaqueValue == null ? prng : OpaqueValue);
+		}
+
+		/// <summary>
+		/// The function to execute for this pass.
+		/// </summary>
+		public ErasureMethodPassFunction Function { get; set; }
+
+		/// <summary>
+		/// The value to be passed to the executing function.
+		/// </summary>
+		public object OpaqueValue { get; set; }
 	}
+
+	/// <summary>
+	/// The prototype of a pass.
+	/// </summary>
+	/// <param name="strm">The buffer to populate with data to write to disk.</param>
+	/// <param name="opaque">An opaque value, depending on the type of callback.</param>
+	public delegate void ErasureMethodPassFunction(byte[] buffer, object opaque);
 
 	/// <summary>
 	/// This class adds functionality to the ErasureMethod class to erase
@@ -255,7 +242,7 @@ namespace Eraser.Manager
 		/// <param name="strm">The stream which needs to be erased.</param>
 		/// <param name="prng">The PRNG source for random data.</param>
 		/// <param name="callback">The progress callback function.</param>
-		public virtual void EraseUnusedSpace(Stream stream, Prng prng, ProgressFunction callback)
+		public virtual void EraseUnusedSpace(Stream stream, Prng prng, EraserMethodProgressFunction callback)
 		{
 			Erase(stream, long.MaxValue, prng, callback);
 		}
@@ -289,7 +276,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The set of Pass objects describing the passes in this erasure method.
 		/// </summary>
-		protected abstract Pass[] PassesSet
+		protected abstract ErasureMethodPass[] PassesSet
 		{
 			get;
 		}
@@ -301,10 +288,10 @@ namespace Eraser.Manager
 		}
 
 		public override void Erase(Stream stream, long erasureLength, Prng prng,
-			ProgressFunction callback)
+			EraserMethodProgressFunction callback)
 		{
 			//Randomize the order of the passes
-			Pass[] randomizedPasses = PassesSet;
+			ErasureMethodPass[] randomizedPasses = PassesSet;
 			if (RandomizePasses)
 				randomizedPasses = ShufflePasses(randomizedPasses);
 
@@ -391,7 +378,7 @@ namespace Eraser.Manager
 			}
 
 			public override void Erase(Stream strm, long erasureLength, Prng prng,
-				ProgressFunction callback)
+				EraserMethodProgressFunction callback)
 			{
 				throw new InvalidOperationException(S._("The DefaultMethod class should never " +
 					"be used and should instead be replaced before execution!"));

@@ -44,19 +44,19 @@ namespace Eraser.DefaultPlugins
 			get { return false; }
 		}
 
-		protected override Pass[] PassesSet
+		protected override ErasureMethodPass[] PassesSet
 		{
 			get
 			{
-				return new Pass[]
+				return new ErasureMethodPass[]
 				{
-					new Pass(WriteConstant, new byte[] { 1 }),
-					new Pass(WriteConstant, new byte[] { 0 }),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null)
+					new ErasureMethodPass(WriteConstant, new byte[] { 1 }),
+					new ErasureMethodPass(WriteConstant, new byte[] { 0 }),
+					new ErasureMethodPass(WriteRandom, null),
+					new ErasureMethodPass(WriteRandom, null),
+					new ErasureMethodPass(WriteRandom, null),
+					new ErasureMethodPass(WriteRandom, null),
+					new ErasureMethodPass(WriteRandom, null)
 				};
 			}
 		}

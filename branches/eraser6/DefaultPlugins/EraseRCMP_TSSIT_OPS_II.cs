@@ -47,22 +47,22 @@ namespace Eraser.DefaultPlugins
 			get { return false; }
 		}
 
-		protected override Pass[] PassesSet
+		protected override ErasureMethodPass[] PassesSet
 		{
 			get
 			{
 				Prng prng = PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng);
 				int rand = prng.Next();
 
-				return new Pass[]
+				return new ErasureMethodPass[]
 				{
-					new Pass(WriteConstant, new byte[] { (byte)0}),
-					new Pass(WriteConstant, new byte[] { (byte)0x01 }),
-					new Pass(WriteConstant, new byte[] { (byte)0 }),
-					new Pass(WriteConstant, new byte[] { (byte)0x01 }),
-					new Pass(WriteConstant, new byte[] { (byte)0 }),
-					new Pass(WriteConstant, new byte[] { (byte)0x01 }),
-					new Pass(WriteConstant, new byte[] { (byte)(rand & 0xFF) }),
+					new ErasureMethodPass(WriteConstant, new byte[] { (byte)0}),
+					new ErasureMethodPass(WriteConstant, new byte[] { (byte)0x01 }),
+					new ErasureMethodPass(WriteConstant, new byte[] { (byte)0 }),
+					new ErasureMethodPass(WriteConstant, new byte[] { (byte)0x01 }),
+					new ErasureMethodPass(WriteConstant, new byte[] { (byte)0 }),
+					new ErasureMethodPass(WriteConstant, new byte[] { (byte)0x01 }),
+					new ErasureMethodPass(WriteConstant, new byte[] { (byte)(rand & 0xFF) }),
 				};
 			}
 		}

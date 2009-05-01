@@ -51,47 +51,47 @@ namespace Eraser.DefaultPlugins
 			get { return true; }
 		}
 
-		protected override Pass[] PassesSet
+		protected override ErasureMethodPass[] PassesSet
 		{
 			get
 			{
-				return new Pass[]
+				return new ErasureMethodPass[]
 				{
-					new Pass(WriteRandom, null),                                   // 1
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteConstant, new byte[] {0x55}),                    // 5
-					new Pass(WriteConstant, new byte[] {0xAA}),
-					new Pass(WriteConstant, new byte[] {0x92, 0x49, 0x24}),
-					new Pass(WriteConstant, new byte[] {0x49, 0x24, 0x92}),
-					new Pass(WriteConstant, new byte[] {0x24, 0x92, 0x49}),
-					new Pass(WriteConstant, new byte[] {0x00}),                    // 10
-					new Pass(WriteConstant, new byte[] {0x11}),
-					new Pass(WriteConstant, new byte[] {0x22}),
-					new Pass(WriteConstant, new byte[] {0x33}),
-					new Pass(WriteConstant, new byte[] {0x44}),
-					new Pass(WriteConstant, new byte[] {0x55}),                    // 15
-					new Pass(WriteConstant, new byte[] {0x66}),
-					new Pass(WriteConstant, new byte[] {0x77}),
-					new Pass(WriteConstant, new byte[] {0x88}),
-					new Pass(WriteConstant, new byte[] {0x99}),
-					new Pass(WriteConstant, new byte[] {0xAA}),                    // 20
-					new Pass(WriteConstant, new byte[] {0xBB}),
-					new Pass(WriteConstant, new byte[] {0xCC}),
-					new Pass(WriteConstant, new byte[] {0xDD}),
-					new Pass(WriteConstant, new byte[] {0xEE}),
-					new Pass(WriteConstant, new byte[] {0xFF}),                    // 25
-					new Pass(WriteConstant, new byte[] {0x92, 0x49, 0x24}),
-					new Pass(WriteConstant, new byte[] {0x49, 0x24, 0x92}),
-					new Pass(WriteConstant, new byte[] {0x24, 0x92, 0x49}),
-					new Pass(WriteConstant, new byte[] {0x6D, 0xB6, 0xDB}),
-					new Pass(WriteConstant, new byte[] {0xB6, 0xDB, 0x6D}),        // 30
-					new Pass(WriteConstant, new byte[] {0xDB, 0x6D, 0xB6}),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null),
-					new Pass(WriteRandom, null)                                    // 35
+					new ErasureMethodPass(WriteRandom, null),                                   // 1
+					new ErasureMethodPass(WriteRandom, null),
+					new ErasureMethodPass(WriteRandom, null),
+					new ErasureMethodPass(WriteRandom, null),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x55}),                    // 5
+					new ErasureMethodPass(WriteConstant, new byte[] {0xAA}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x92, 0x49, 0x24}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x49, 0x24, 0x92}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x24, 0x92, 0x49}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x00}),                    // 10
+					new ErasureMethodPass(WriteConstant, new byte[] {0x11}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x22}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x33}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x44}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x55}),                    // 15
+					new ErasureMethodPass(WriteConstant, new byte[] {0x66}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x77}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x88}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x99}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0xAA}),                    // 20
+					new ErasureMethodPass(WriteConstant, new byte[] {0xBB}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0xCC}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0xDD}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0xEE}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0xFF}),                    // 25
+					new ErasureMethodPass(WriteConstant, new byte[] {0x92, 0x49, 0x24}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x49, 0x24, 0x92}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x24, 0x92, 0x49}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x6D, 0xB6, 0xDB}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0xB6, 0xDB, 0x6D}),        // 30
+					new ErasureMethodPass(WriteConstant, new byte[] {0xDB, 0x6D, 0xB6}),
+					new ErasureMethodPass(WriteRandom, null),
+					new ErasureMethodPass(WriteRandom, null),
+					new ErasureMethodPass(WriteRandom, null),
+					new ErasureMethodPass(WriteRandom, null)                                    // 35
 				};
 			}
 		}
@@ -114,22 +114,22 @@ namespace Eraser.DefaultPlugins
 			get { return false; }
 		}
 
-		protected override Pass[] PassesSet
+		protected override ErasureMethodPass[] PassesSet
 		{
 			get
 			{
-				return new Pass[]
+				return new ErasureMethodPass[]
 				{
-					new Pass(WriteRandom, null),								//Original pass 1
-					new Pass(WriteConstant, new byte[] {0x55}),					//Original pass 5
-					new Pass(WriteConstant, new byte[] {0xAA}),					//Original pass 6
-					new Pass(WriteConstant, new byte[] {0x92, 0x49, 0x24}),		//Original pass 7
-					new Pass(WriteConstant, new byte[] {0x49, 0x24, 0x92}),		//Original pass 8
-					new Pass(WriteConstant, new byte[] {0x24, 0x92, 0x49}),		//Original pass 9
-					new Pass(WriteConstant, new byte[] {0x4B}),
-					new Pass(WriteConstant, new byte[] {0xB4}),
-					new Pass(WriteConstant, new byte[] {0x00}),
-					new Pass(WriteConstant, new byte[] {0x11}),
+					new ErasureMethodPass(WriteRandom, null),								//Original pass 1
+					new ErasureMethodPass(WriteConstant, new byte[] {0x55}),					//Original pass 5
+					new ErasureMethodPass(WriteConstant, new byte[] {0xAA}),					//Original pass 6
+					new ErasureMethodPass(WriteConstant, new byte[] {0x92, 0x49, 0x24}),		//Original pass 7
+					new ErasureMethodPass(WriteConstant, new byte[] {0x49, 0x24, 0x92}),		//Original pass 8
+					new ErasureMethodPass(WriteConstant, new byte[] {0x24, 0x92, 0x49}),		//Original pass 9
+					new ErasureMethodPass(WriteConstant, new byte[] {0x4B}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0xB4}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x00}),
+					new ErasureMethodPass(WriteConstant, new byte[] {0x11}),
 				};
 			}
 		}

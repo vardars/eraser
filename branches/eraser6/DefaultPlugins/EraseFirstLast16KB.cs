@@ -89,7 +89,7 @@ namespace Eraser.DefaultPlugins
 		}
 
 		public override void Erase(Stream strm, long erasureLength, Prng prng,
-			ProgressFunction callback)
+			EraserMethodProgressFunction callback)
 		{
 			//Make sure that the erasureLength passed in here is the maximum value
 			//for the size of long, since we don't want to write extra or write
