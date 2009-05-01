@@ -34,6 +34,10 @@ namespace Eraser.Manager
 	{
 		public ManagerLibrary(SettingsManager settings)
 		{
+			if (Instance != null)
+				throw new InvalidOperationException("Only one ManagerLibrary instance can " +
+					"exist at any one time");
+
 			Instance = this;
 			SettingsManager = settings;
 
@@ -58,6 +62,7 @@ namespace Eraser.Manager
 				SettingsManager.Save();
 			}
 
+			SettingsManager = null;
 			Instance = null;
 		}
 
@@ -70,7 +75,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The global library instance.
 		/// </summary>
-		public static ManagerLibrary Instance;
+		public static ManagerLibrary Instance { get; private set; }
 
 		/// <summary>
 		/// The global instance of the EntropySource Manager
