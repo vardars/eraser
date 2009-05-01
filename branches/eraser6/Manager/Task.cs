@@ -933,6 +933,7 @@ namespace Eraser.Manager
 		public TaskProgressEventArgs(Task task)
 			: base(task)
 		{
+			CurrentItemPass = 1;
 		}
 
 		/// <summary>
@@ -946,66 +947,38 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The amount of time left for the operation to complete, in seconds.
 		/// </summary>
-		public TimeSpan TimeLeft
-		{
-			get { return timeLeft; }
-			internal set { timeLeft = value; }
-		}
+		public TimeSpan TimeLeft { get; internal set; }
 
 		/// <summary>
 		/// The current erasure target - the current item being erased.
 		/// </summary>
-		public ErasureTarget CurrentTarget
-		{
-			get { return currentTarget; }
-			internal set { currentTarget = value; }
-		}
+		public ErasureTarget CurrentTarget { get; internal set; }
 
 		/// <summary>
 		/// The current index of the target.
 		/// </summary>
-		public int CurrentTargetIndex
-		{
-			get { return currentTargetIndex; }
-			internal set { currentTargetIndex = value; }
-		}
+		public int CurrentTargetIndex { get; internal set; }
 
 		/// <summary>
 		/// The total number of passes to complete before this erasure method is
 		/// completed.
 		/// </summary>
-		public int CurrentTargetTotalPasses
-		{
-			get { return currentTargetTotalPasses; }
-			internal set { currentTargetTotalPasses = value; }
-		}
+		public int CurrentTargetTotalPasses { get; internal set; }
 
 		/// <summary>
 		/// A number from 0 to 1 detailing the overall progress of the item.
 		/// </summary>
-		public float CurrentItemProgress
-		{
-			get { return currentItemProgress; }
-			internal set { currentItemProgress = value; }
-		}
+		public float CurrentItemProgress { get; internal set; }
 
 		/// <summary>
 		/// The file name of the item being erased.
 		/// </summary>
-		public string CurrentItemName
-		{
-			get { return currentItemName; }
-			internal set { currentItemName = value; }
-		}
+		public string CurrentItemName { get; internal set; }
 
 		/// <summary>
 		/// The pass number of a multi-pass erasure method.
 		/// </summary>
-		public int CurrentItemPass
-		{
-			get { return currentItemPass; }
-			internal set { currentItemPass = value; }
-		}
+		public int CurrentItemPass { get; internal set; }
 
 		/// <summary>
 		/// The progress made by the current target.
@@ -1021,14 +994,5 @@ namespace Eraser.Manager
 		}
 
 		private float overallProgress;
-		private TimeSpan timeLeft = new TimeSpan(0, 0, -1);
-
-		private ErasureTarget currentTarget;
-		private int currentTargetIndex;
-		private int currentTargetTotalPasses;
-
-		private float currentItemProgress;
-		private string currentItemName;
-		private int currentItemPass = 1;
 	}
 }
