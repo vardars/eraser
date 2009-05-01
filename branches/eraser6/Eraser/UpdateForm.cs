@@ -1120,47 +1120,25 @@ namespace Eraser
 			object userState, string message)
 			: base((int)(progressPercentage * 100), userState)
 		{
-			this.progressPercentage = progressPercentage;
-			this.overallProgressPercentage = overallPercentage;
-			this.message = message;
+			ProgressPercentage = progressPercentage;
+			OverallProgressPercentage = overallPercentage;
+			Message = message;
 		}
 
 		/// <summary>
 		/// Gets the asynchronous task progress percentage.
 		/// </summary>
-		public new float ProgressPercentage
-		{
-			get
-			{
-				return progressPercentage;
-			}
-		}
+		public new float ProgressPercentage { get; private set; }
 
 		/// <summary>
 		/// Gets the asynchronous task overall progress percentage.
 		/// </summary>
-		public float OverallProgressPercentage
-		{
-			get
-			{
-				return overallProgressPercentage;
-			}
-		}
+		public float OverallProgressPercentage { get; private set; }
 
 		/// <summary>
 		/// Gets the message associated with the current task.
 		/// </summary>
-		public string Message
-		{
-			get
-			{
-				return message;
-			}
-		}
-
-		float progressPercentage;
-		float overallProgressPercentage;
-		string message;
+		public string Message { get; private set; }
 	}
 
 	/// <summary>
@@ -1177,20 +1155,12 @@ namespace Eraser
 		public ProgressErrorEventArgs(ProgressEventArgs e, Exception ex)
 			: base(e.ProgressPercentage, e.OverallProgressPercentage, e.UserState, e.Message)
 		{
-			this.exception = ex;
+			Exception = ex;
 		}
 
 		/// <summary>
 		/// The exception associated with the progress event.
 		/// </summary>
-		public Exception Exception
-		{
-			get
-			{
-				return exception;
-			}
-		}
-
-		private Exception exception;
+		public Exception Exception { get; private set; }
 	}
 }
