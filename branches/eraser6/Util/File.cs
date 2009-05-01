@@ -41,7 +41,7 @@ namespace Eraser.Util
 		/// <param name="info">The FileInfo object with the file path etc.</param>
 		/// <returns>A list containing the names of the ADSes of each file. The
 		/// list will be empty if no ADSes exist.</returns>
-		public static List<string> GetADSes(FileInfo info)
+		public static ICollection<string> GetADSes(FileInfo info)
 		{
 			List<string> result = new List<string>();
 			using (FileStream stream = new FileStream(info.FullName, FileMode.Open,

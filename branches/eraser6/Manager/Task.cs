@@ -330,14 +330,14 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="list">The list to add the ADS paths to.</param>
 		/// <param name="file">The file to look for ADSes</param>
-		protected void GetPathADSes(List<string> list, out long totalSize, string file)
+		protected void GetPathADSes(ICollection<string> list, out long totalSize, string file)
 		{
 			totalSize = 0;
 
 			try
 			{
 				//Get the ADS names
-				List<string> adses = Util.File.GetADSes(new FileInfo(file));
+				ICollection<string> adses = Util.File.GetADSes(new FileInfo(file));
 
 				//Then prepend the path.
 				foreach (string adsName in adses)
