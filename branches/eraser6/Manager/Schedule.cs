@@ -132,16 +132,16 @@ namespace Eraser.Manager
 				string result = string.Empty;
 				switch (type)
 				{
-					case ScheduleUnit.Daily:
+					case RecurringScheduleUnit.Daily:
 						if (frequency != 1)
 							result = S._("Once every {0} days", frequency);
 						else
 							result = S._("Once every day");
 						break;
-					case ScheduleUnit.Weekdays:
+					case RecurringScheduleUnit.Weekdays:
 						result = S._("Every weekday");
 						break;
-					case ScheduleUnit.Weekly:
+					case RecurringScheduleUnit.Weekly:
 						if ((weeklySchedule & DaysOfWeek.Monday) != 0)
 							result = S._("Every Monday, {0}");
 						if ((weeklySchedule & DaysOfWeek.Tuesday) != 0)
@@ -162,7 +162,7 @@ namespace Eraser.Manager
 								S._("once every {0} week.", frequency) :
 								S._("once every {0} weeks.", frequency));
 						break;
-					case ScheduleUnit.Monthly:
+					case RecurringScheduleUnit.Monthly:
 						if (frequency == 1)
 							result = S._("On day {0} of every month", monthlySchedule);
 						else
@@ -179,7 +179,7 @@ namespace Eraser.Manager
 		#region Object serialization
 		protected RecurringSchedule(SerializationInfo info, StreamingContext context)
 		{
-			type = (ScheduleUnit)info.GetValue("Type", typeof(ScheduleUnit));
+			type = (RecurringScheduleUnit)info.GetValue("Type", typeof(RecurringScheduleUnit));
 			frequency = (int)info.GetValue("Frequency", typeof(int));
 			executionTime = (DateTime)info.GetValue("ExecutionTime", typeof(DateTime));
 			weeklySchedule = (DaysOfWeek)info.GetValue("WeeklySchedule", typeof(DaysOfWeek));
@@ -210,52 +210,9 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// The types of schedule
-		/// </summary>
-		public enum ScheduleUnit
-		{
-			/// <summary>
-			/// Daily schedule type
-			/// </summary>
-			Daily,
-
-			/// <summary>
-			/// Weekdays-only schedule type
-			/// </summary>
-			Weekdays,
-
-			/// <summary>
-			/// Weekly schedule type
-			/// </summary>
-			Weekly,
-
-			/// <summary>
-			/// Monthly schedule type
-			/// </summary>
-			Monthly
-		}
-
-		/// <summary>
-		/// The days of the week, with values usable in a bitfield.
-		/// </summary>
-		[Flags]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1714:FlagsEnumsShouldHavePluralNames")]
-		public enum DaysOfWeek
-		{
-			None = 0,
-			Sunday = 1 << DayOfWeek.Sunday,
-			Monday = 1 << DayOfWeek.Monday,
-			Tuesday = 1 << DayOfWeek.Tuesday,
-			Wednesday = 1 << DayOfWeek.Wednesday,
-			Thursday = 1 << DayOfWeek.Thursday,
-			Friday = 1 << DayOfWeek.Friday,
-			Saturday = 1 << DayOfWeek.Saturday
-		}
-
-		/// <summary>
 		/// The type of schedule.
 		/// </summary>
-		public ScheduleUnit ScheduleType
+		public RecurringScheduleUnit ScheduleType
 		{
 			get { return type; }
 			set { type = value; }
@@ -269,8 +226,8 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				if (ScheduleType != ScheduleUnit.Daily && ScheduleType != ScheduleUnit.Weekly &&
-					ScheduleType != ScheduleUnit.Monthly)
+				if (ScheduleType != RecurringScheduleUnit.Daily && ScheduleType != RecurringScheduleUnit.Weekly &&
+					ScheduleType != RecurringScheduleUnit.Monthly)
 					throw new InvalidOperationException(S._("The ScheduleUnit of the schedule " +
 						"does not require a frequency value, this field would contain garbage."));
 
@@ -304,7 +261,7 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				if (ScheduleType != ScheduleUnit.Weekly)
+				if (ScheduleType != RecurringScheduleUnit.Weekly)
 					throw new InvalidOperationException(S._("The ScheduleUnit of the schedule " +
 						"does not require the WeeklySchedule value, this field would contain garbage"));
 
@@ -328,7 +285,7 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				if (ScheduleType != ScheduleUnit.Monthly)
+				if (ScheduleType != RecurringScheduleUnit.Monthly)
 					throw new InvalidOperationException(S._("The ScheduleUnit of the schedule does " +
 						"not require the MonthlySchedule value, this field would contain garbage"));
 
@@ -366,7 +323,7 @@ namespace Eraser.Manager
 
 				switch (ScheduleType)
 				{
-					case ScheduleUnit.Daily:
+					case RecurringScheduleUnit.Daily:
 					{
 						//First assume that it is today that we are running the schedule
 						long daysToAdd = (DateTime.Now - nextRun).Days;
@@ -378,7 +335,7 @@ namespace Eraser.Manager
 							nextRun = nextRun.AddDays(frequency);
 						break;
 					}
-					case ScheduleUnit.Weekdays:
+					case RecurringScheduleUnit.Weekdays:
 					{
 						while (nextRun < DateTime.Now ||
 							lastRun.DayOfWeek == DayOfWeek.Saturday ||
@@ -386,7 +343,7 @@ namespace Eraser.Manager
 							nextRun = nextRun.AddDays(1);
 						break;
 					}
-					case ScheduleUnit.Weekly:
+					case RecurringScheduleUnit.Weekly:
 					{
 						if (weeklySchedule == 0)
 							break;
@@ -413,7 +370,7 @@ namespace Eraser.Manager
 
 						break;
 					}
-					case ScheduleUnit.Monthly:
+					case RecurringScheduleUnit.Monthly:
 						//Step the number of months since the last run
 						if (LastRun != DateTime.MinValue)
 							nextRun = nextRun.AddMonths(frequency);
@@ -452,7 +409,7 @@ namespace Eraser.Manager
 		/// <returns>True if the task will be run on the date.</returns>
 		private bool CanRunOnDay(DateTime date)
 		{
-			if (ScheduleType != ScheduleUnit.Weekly)
+			if (ScheduleType != RecurringScheduleUnit.Weekly)
 				throw new ArgumentException(S._("The ScheduleUnit of the schedule does " +
 					"not use the WeeklySchedule value, this field would contain garbage"));
 			return ((int)weeklySchedule & (1 << (int)date.DayOfWeek)) != 0;
@@ -468,7 +425,7 @@ namespace Eraser.Manager
 			nextRun = NextRun;
 		}
 
-		private ScheduleUnit type;
+		private RecurringScheduleUnit type;
 		private int frequency;
 		private DateTime executionTime;
 		private DaysOfWeek weeklySchedule;
@@ -476,5 +433,48 @@ namespace Eraser.Manager
 
 		private DateTime lastRun;
 		private DateTime nextRun;
+	}
+
+	/// <summary>
+	/// The types of schedule
+	/// </summary>
+	public enum RecurringScheduleUnit
+	{
+		/// <summary>
+		/// Daily schedule type
+		/// </summary>
+		Daily,
+
+		/// <summary>
+		/// Weekdays-only schedule type
+		/// </summary>
+		Weekdays,
+
+		/// <summary>
+		/// Weekly schedule type
+		/// </summary>
+		Weekly,
+
+		/// <summary>
+		/// Monthly schedule type
+		/// </summary>
+		Monthly
+	}
+
+	/// <summary>
+	/// The days of the week, with values usable in a bitfield.
+	/// </summary>
+	[Flags]
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1714:FlagsEnumsShouldHavePluralNames")]
+	public enum DaysOfWeek
+	{
+		None = 0,
+		Sunday = 1 << DayOfWeek.Sunday,
+		Monday = 1 << DayOfWeek.Monday,
+		Tuesday = 1 << DayOfWeek.Tuesday,
+		Wednesday = 1 << DayOfWeek.Wednesday,
+		Thursday = 1 << DayOfWeek.Thursday,
+		Friday = 1 << DayOfWeek.Friday,
+		Saturday = 1 << DayOfWeek.Saturday
 	}
 }

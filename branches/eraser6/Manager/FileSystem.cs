@@ -48,9 +48,9 @@ namespace Eraser.Manager
 			switch (volume.VolumeFormat)
 			{
 				case "FAT":
-					return new FatFilesystem();
+					return new FatFileSystem();
 				case "NTFS":
-					return new NtfsFilesystem();
+					return new NtfsFileSystem();
 			}
 
 			throw new NotSupportedException();
@@ -143,14 +143,6 @@ namespace Eraser.Manager
 		public abstract void DeleteFolder(DirectoryInfo info);
 
 		/// <summary>
-		/// The prototype of callbacks handling the file system table erase progress.
-		/// </summary>
-		/// <param name="currentFile">The current file being erased.</param>
-		/// <param name="totalFiles">The estimated number of files that must be
-		/// erased.</param>
-		public delegate void FileSystemEntriesEraseProgress(int currentFile, int totalFiles);
-
-		/// <summary>
 		/// Erases old file system table-resident files. This creates small one-byte
 		/// files until disk is full. This will erase unused space which was used for
 		/// files resident in the file system table.
@@ -190,9 +182,17 @@ namespace Eraser.Manager
 	}
 
 	/// <summary>
+	/// The prototype of callbacks handling the file system table erase progress.
+	/// </summary>
+	/// <param name="currentFile">The current file being erased.</param>
+	/// <param name="totalFiles">The estimated number of files that must be
+	/// erased.</param>
+	public delegate void FileSystemEntriesEraseProgress(int currentFile, int totalFiles);
+
+	/// <summary>
 	/// Provides functions to handle erasures specific to NTFS volumes.
 	/// </summary>
-	class NtfsFilesystem : FileSystem
+	class NtfsFileSystem : FileSystem
 	{
 		public override void DeleteFile(FileInfo info)
 		{
@@ -427,7 +427,7 @@ namespace Eraser.Manager
 	/// <summary>
 	/// Provides functions to handle erasures specific to FAT volumes.
 	/// </summary>
-	class FatFilesystem : FileSystem
+	class FatFileSystem : FileSystem
 	{
 		public override void DeleteFile(FileInfo info)
 		{
