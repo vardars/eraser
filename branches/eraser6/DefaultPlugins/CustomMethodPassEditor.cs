@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Globalization;
 using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
@@ -88,7 +89,7 @@ namespace Eraser.DefaultPlugins
 		{
 			if (parseHex)
 			{
-				string str = text.Replace(" ", "").ToUpper();
+				string str = text.Replace(" ", "").ToUpper(CultureInfo.CurrentCulture);
 				List<byte> passConstantList = new List<byte>();
 
 				if (str.Length >= 2)
@@ -126,7 +127,8 @@ namespace Eraser.DefaultPlugins
 			{
 				StringBuilder displayText = new StringBuilder();
 				foreach (byte b in array)
-					displayText.Append(string.Format("{0,2} ", Convert.ToString(b, 16)));
+					displayText.Append(string.Format(CultureInfo.CurrentCulture,
+						"{0,2} ", Convert.ToString(b, 16)));
 				return displayText.ToString();
 			}
 
@@ -173,7 +175,9 @@ namespace Eraser.DefaultPlugins
 			{
 				MessageBox.Show(this, S._("The pass constant cannot be displayed as " +
 					"text because it contains invalid characters."), S._("Eraser"),
-					 MessageBoxButtons.OK, MessageBoxIcon.Information);
+					 MessageBoxButtons.OK, MessageBoxIcon.Information,
+					 MessageBoxDefaultButton.Button1,
+					 S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
 				passTypeHex.Checked = true;
 			}
 		}

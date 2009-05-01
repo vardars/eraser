@@ -26,6 +26,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Globalization;
 using Eraser.Manager;
 using Eraser.Util;
 
@@ -89,12 +90,13 @@ namespace Eraser.DefaultPlugins
 		/// <returns>The item added to the list view.</returns>
 		private ListViewItem AddPass(ErasureMethod.Pass pass)
 		{
-			ListViewItem item = new ListViewItem((passesLv.Items.Count + 1).ToString());
+			ListViewItem item = new ListViewItem((passesLv.Items.Count + 1).ToString(
+				CultureInfo.CurrentCulture));
 			item.Tag = pass;
 			if (pass.Function == ErasureMethod.Pass.WriteRandom)
-				item.SubItems.Add("Random Data");
+				item.SubItems.Add(S._("Random Data"));
 			else
-				item.SubItems.Add(string.Format("Constant ({0} bytes)", ((byte[])pass.OpaqueValue).Length));
+				item.SubItems.Add(S._("Constant ({0} bytes)", ((byte[])pass.OpaqueValue).Length));
 
 			passesLv.Items.Add(item);
 			return item;
@@ -110,13 +112,13 @@ namespace Eraser.DefaultPlugins
 			{
 				pass.Function = ErasureMethod.Pass.WriteRandom;
 				pass.OpaqueValue = null;
-				item.SubItems[1].Text = "Random Data";
+				item.SubItems[1].Text = S._("Random Data");
 			}
 			else
 			{
 				pass.Function = ErasureMethod.Pass.WriteConstant;
 				pass.OpaqueValue = passEditor.PassData;
-				item.SubItems[1].Text = string.Format("Constant ({0} bytes)", passEditor.PassData.Length);
+				item.SubItems[1].Text = S._("Constant ({0} bytes)", passEditor.PassData.Length);
 			}
 		}
 
@@ -140,7 +142,7 @@ namespace Eraser.DefaultPlugins
 		private void RenumberPasses()
 		{
 			foreach (ListViewItem item in passesLv.Items)
-				item.Text = (item.Index + 1).ToString();
+				item.Text = (item.Index + 1).ToString(CultureInfo.CurrentCulture);
 		}
 
 		/// <summary>

@@ -26,7 +26,10 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Globalization;
+
 using Eraser.Manager;
+using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
@@ -132,7 +135,7 @@ namespace Eraser.DefaultPlugins
 			//Save the settings to the settings dictionary
 			if (fl16MethodCmb.SelectedIndex == -1)
 			{
-				errorProvider.SetError(fl16MethodCmb, "An invalid erasure method was selected.");
+				errorProvider.SetError(fl16MethodCmb, S._("An invalid erasure method was selected."));
 				return;
 			}
 
@@ -161,7 +164,7 @@ namespace Eraser.DefaultPlugins
 		private void AddMethod(CustomErasureMethod method)
 		{
 			ListViewItem item = customMethod.Items.Add(method.Name);
-			item.SubItems.Add(method.Passes.Length.ToString());
+			item.SubItems.Add(method.Passes.Length.ToString(CultureInfo.CurrentCulture));
 			item.Tag = method;
 		}
 
