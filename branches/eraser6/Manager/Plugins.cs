@@ -315,79 +315,41 @@ namespace Eraser.Manager.Plugin
 			{
 				assembly = value;
 
-				assemblyInfo.Version = assembly.GetName().Version;
+				AssemblyInfo info = new AssemblyInfo();
+				info.Version = assembly.GetName().Version;
 				IList<CustomAttributeData> attributes = CustomAttributeData.GetCustomAttributes(assembly);
 				foreach (CustomAttributeData attr in attributes)
 					if (attr.Constructor.DeclaringType == typeof(GuidAttribute))
-						assemblyInfo.Guid = new Guid((string)attr.ConstructorArguments[0].Value);
+						info.Guid = new Guid((string)attr.ConstructorArguments[0].Value);
 					else if (attr.Constructor.DeclaringType == typeof(AssemblyCompanyAttribute))
-						assemblyInfo.Author = (string)attr.ConstructorArguments[0].Value;
+						info.Author = (string)attr.ConstructorArguments[0].Value;
+
+				this.AssemblyInfo = info;
 			}
 		}
 
 		/// <summary>
 		/// Gets the attributes of the assembly, loading from reflection-only sources.
 		/// </summary>
-		public AssemblyInfo AssemblyInfo
-		{
-			get
-			{
-				return assemblyInfo;
-			}
-			private set
-			{
-				assemblyInfo = value;
-			}
-		}
+		public AssemblyInfo AssemblyInfo { get; private set; }
 
-		public X509Certificate2 AssemblyAuthenticode
-		{
-			get
-			{
-				return assemblyAuthenticode;
-			}
-			private set
-			{
-				assemblyAuthenticode = value;
-			}
-		}
+		/// <summary>
+		/// The Authenticode signature used for signing the assembly.
+		/// </summary>
+		public X509Certificate2 AssemblyAuthenticode { get; private set; }
 
 		/// <summary>
 		/// Gets whether the plugin is required for the functioning of Eraser (and
 		/// therefore cannot be disabled.)
 		/// </summary>
-		public bool IsCore
-		{
-			get
-			{
-				return isCore;
-			}
-			internal set
-			{
-				isCore = value;
-			}
-		}
+		public bool IsCore { get; internal set; }
 
 		/// <summary>
 		/// Gets the IPlugin interface which the plugin exposed.
 		/// </summary>
-		public IPlugin Plugin
-		{
-			get
-			{
-				return plugin;
-			}
-			internal set
-			{
-				plugin = value;
-			}
-		}
+		public IPlugin Plugin { get; internal set; }
 
 		private Assembly assembly;
-		private AssemblyInfo assemblyInfo;
-		private X509Certificate2 assemblyAuthenticode;
-		private bool isCore;
-		private IPlugin plugin;
 	}
 
 	/// <summary>

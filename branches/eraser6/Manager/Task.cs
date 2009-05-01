@@ -40,18 +40,18 @@ namespace Eraser.Manager
 		#region Serialization code
 		protected Task(SerializationInfo info, StreamingContext context)
 		{
-			name = (string)info.GetValue("Name", typeof(string));
-			targets = (ErasureTargetsCollection)info.GetValue("Targets", typeof(ErasureTargetsCollection));
-			targets.Owner = this;
-			log = (Logger)info.GetValue("Log", typeof(Logger));
+			Name = (string)info.GetValue("Name", typeof(string));
+			Targets = (ErasureTargetsCollection)info.GetValue("Targets", typeof(ErasureTargetsCollection));
+			Targets.Owner = this;
+			Log = (Logger)info.GetValue("Log", typeof(Logger));
 
 			Schedule schedule = (Schedule)info.GetValue("Schedule", typeof(Schedule));
 			if (schedule.GetType() == Schedule.RunNow.GetType())
-				this.schedule = Schedule.RunNow;
+				Schedule = Schedule.RunNow;
 			else if (schedule.GetType() == Schedule.RunOnRestart.GetType())
-				this.schedule = Schedule.RunOnRestart;
+				Schedule = Schedule.RunOnRestart;
 			else if (schedule is RecurringSchedule)
-				this.Schedule = schedule;
+				Schedule = schedule;
 			else
 				throw new InvalidDataException(S._("An invalid type was found when loading " +
 					"the task schedule"));
@@ -60,12 +60,12 @@ namespace Eraser.Manager
 		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
 		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue("Name", name);
-			info.AddValue("Schedule", schedule);
-			info.AddValue("Targets", targets);
+			info.AddValue("Name", Name);
+			info.AddValue("Schedule", Schedule);
+			info.AddValue("Targets", Targets);
 
-			lock (log)
-				info.AddValue("Log", log);
+			lock (Log)
+				info.AddValue("Log", Log);
 		}
 		#endregion
 
@@ -74,7 +74,10 @@ namespace Eraser.Manager
 		/// </summary>
 		public Task()
 		{
-			targets = new ErasureTargetsCollection(this);
+			Name = string.Empty;
+			Targets = new ErasureTargetsCollection(this);
+			Schedule = Schedule.RunNow;
+			Log = new Logger();
 		}
 
 		/// <summary>
@@ -90,21 +93,13 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The Executor object which is managing this task.
 		/// </summary>
-		public Executor Executor
-		{
-			get { return executor; }
-			internal set { executor = value; }
-		}
+		public Executor Executor { get; internal set; }
 
 		/// <summary>
 		/// The name for this task. This is just an opaque value for the user to
 		/// recognize the task.
 		/// </summary>
-		public string Name
-		{
-			get { return name; }
-			set { name = value; }
-		}
+		public string Name { get; set; }
 
 		/// <summary>
 		/// The name of the task, used for display in UI elements.
@@ -133,56 +128,34 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Gets the status of the task - whether it is being executed.
 		/// </summary>
-		public bool Executing
-		{
-			get { return executing; }
-			internal set { executing = value; }
-		}
+		public bool Executing { get; private set; }
 
 		/// <summary>
 		/// Gets whether this task is currently queued to run. This is true only
 		/// if the queue it is in is an explicit request, i.e will run when the
 		/// executor is idle.
 		/// </summary>
-		public bool Queued
-		{
-			get { return queued; }
-			internal set { queued = value; }
-		}
+		public bool Queued { get; internal set; }
 
 		/// <summary>
 		/// Gets whether the task has been cancelled from execution.
 		/// </summary>
-		public bool Canceled
-		{
-			get { return canceled; }
-			internal set { canceled = value; }
-		}
+		public bool Canceled { get; internal set; }
 
 		/// <summary>
 		/// The set of data to erase when this task is executed.
 		/// </summary>
-		public ErasureTargetsCollection Targets
-		{
-			get { return targets; }
-		}
+		public ErasureTargetsCollection Targets { get; private set; }
 
 		/// <summary>
 		/// The schedule for running the task.
 		/// </summary>
-		public Schedule Schedule
-		{
-			get { return schedule; }
-			set { schedule = value; }
-		}
+		public Schedule Schedule { get; set; }
 
 		/// <summary>
 		/// The log entries which this task has accumulated.
 		/// </summary>
-		public Logger Log
-		{
-			get { return log; }
-		}
+		public Logger Log { get; private set; }
 
 		#region Events
 		/// <summary>
@@ -220,7 +193,7 @@ namespace Eraser.Manager
 		{
 			if (TaskStarted != null)
 				TaskStarted(e);
-			executing = true;
+			Executing = true;
 		}
 
 		/// <summary>
@@ -241,20 +214,9 @@ namespace Eraser.Manager
 		{
 			if (TaskFinished != null)
 				TaskFinished(e);
-			executing = false;
+			Executing = false;
 		}
 		#endregion
-
-		private Executor executor;
-		private bool canceled;
-		private bool queued;
-
-		private string name = string.Empty;
-		private bool executing;
-
-		private Schedule schedule = Schedule.RunNow;
-		private ErasureTargetsCollection targets;
-		private Logger log = new Logger();
 	}
 
 	/// <summary>
