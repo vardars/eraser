@@ -159,11 +159,14 @@ namespace Eraser.Manager.Plugin
 
 		protected override void Dispose(bool disposing)
 		{
-			//Unload all the plugins. This will cause all the plugins to execute
-			//the cleanup code.
-			foreach (PluginInstance plugin in plugins)
-				if (plugin.Plugin != null)
-					plugin.Plugin.Dispose();
+			if (disposing)
+			{
+				//Unload all the plugins. This will cause all the plugins to execute
+				//the cleanup code.
+				foreach (PluginInstance plugin in plugins)
+					if (plugin.Plugin != null)
+						plugin.Plugin.Dispose();
+			}
 		}
 
 		/// <summary>

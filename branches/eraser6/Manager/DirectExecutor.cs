@@ -49,9 +49,13 @@ namespace Eraser.Manager
 
 		protected override void Dispose(bool disposing)
 		{
-			thread.Abort();
-			schedulerInterrupt.Set();
-			schedulerInterrupt.Close();
+			if (disposing)
+			{
+				thread.Abort();
+				schedulerInterrupt.Set();
+				schedulerInterrupt.Close();
+			}
+
 			base.Dispose(disposing);
 		}
 

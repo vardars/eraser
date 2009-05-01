@@ -51,10 +51,13 @@ namespace Eraser.Manager
 
 		protected virtual void Dispose(bool disposing)
 		{
-			EntropySourceManager.Poller.Abort();
 			if (disposing)
+			{
+				EntropySourceManager.Poller.Abort();
 				Host.Dispose();
-			SettingsManager.Save();
+				SettingsManager.Save();
+			}
+
 			Instance = null;
 		}
 

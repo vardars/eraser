@@ -104,16 +104,19 @@ namespace Eraser.Manager
 
 		protected override void Dispose(bool disposing)
 		{
-			//Close the polling thread that creates new server instances
-			thread.Abort();
+			if (disposing)
+			{
+				//Close the polling thread that creates new server instances
+				thread.Abort();
 
-			//Acquire all available locks to ensure no more server instances exist,
-			//then destroy the semaphore
-			for (int i = 0; i < maxServerInstances; ++i)
-				serverLock.WaitOne();
-			serverLock.Close();
+				//Acquire all available locks to ensure no more server instances exist,
+				//then destroy the semaphore
+				for (int i = 0; i < maxServerInstances; ++i)
+					serverLock.WaitOne();
+				serverLock.Close();
 
-			base.Dispose(disposing);
+				base.Dispose(disposing);
+			}
 		}
 
 		/// <summary>
@@ -279,8 +282,12 @@ namespace Eraser.Manager
 
 		protected override void Dispose(bool disposing)
 		{
-			client.Close();
-			client.Dispose();
+			if (disposing)
+			{
+				client.Close();
+				client.Dispose();
+			}
+
 			base.Dispose(disposing);
 		}
 
