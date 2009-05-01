@@ -40,7 +40,7 @@ namespace Eraser.DefaultPlugins
 			InitializeComponent();
 
 			//Populate the list of erasure passes, except the FL16KB.
-			foreach (ErasureMethod method in ErasureMethodManager.GetAll().Values)
+			foreach (ErasureMethod method in ErasureMethodManager.Items.Values)
 				if (method.Guid != new Guid("{0C2E07BF-0207-49a3-ADE8-46F9E1499C01}"))
 					fl16MethodCmb.Items.Add(method);
 

@@ -109,22 +109,25 @@ namespace Eraser.Manager
 		/// Retrieves all present language plugins
 		/// </summary>
 		/// <returns>A list, with an instance of each Language class</returns>
-		public static List<Language> GetAll()
+		public static IList<Language> Items
 		{
-			List<Language> result = new List<Language>();
-			foreach (CultureInfo info in CultureInfo.GetCultures(CultureTypes.AllCultures))
+			get
 			{
-				if (string.IsNullOrEmpty(info.Name))
-					continue;
-				else if (new DirectoryInfo(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) +
-					Path.DirectorySeparatorChar + info.Name).Exists)
-					result.Add(new Language(info));
-			}
+				List<Language> result = new List<Language>();
+				foreach (CultureInfo info in CultureInfo.GetCultures(CultureTypes.AllCultures))
+				{
+					if (string.IsNullOrEmpty(info.Name))
+						continue;
+					else if (new DirectoryInfo(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) +
+						Path.DirectorySeparatorChar + info.Name).Exists)
+						result.Add(new Language(info));
+				}
 
-			//Last resort
-			if (result.Count == 0)
-				result.Add(new Language(CultureInfo.GetCultureInfo("EN")));
-			return result;
+				//Last resort
+				if (result.Count == 0)
+					result.Add(new Language(CultureInfo.GetCultureInfo("EN")));
+				return result;
+			}
 		}
 	}
 }

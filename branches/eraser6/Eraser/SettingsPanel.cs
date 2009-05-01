@@ -124,12 +124,12 @@ namespace Eraser
 				OnNewPluginLoaded(this, new PluginLoadedEventArgs(i.Current));
 
 			//Refresh the list of languages
-			List<Language> languages = LanguageManager.GetAll();
+			IList<Language> languages = LanguageManager.Items;
 			foreach (Language culture in languages)
 				uiLanguage.Items.Add(culture);
 
 			//Refresh the list of erasure methods
-			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.GetAll();
+			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.Items;
 			foreach (ErasureMethod method in methods.Values)
 			{
 				eraseFilesMethod.Items.Add(method);
@@ -138,7 +138,7 @@ namespace Eraser
 			}
 
 			//Refresh the list of PRNGs
-			Dictionary<Guid, Prng> prngs = PrngManager.GetAll();
+			Dictionary<Guid, Prng> prngs = PrngManager.Items;
 			foreach (Prng prng in prngs.Values)
 				erasePRNG.Items.Add(prng);
 		}

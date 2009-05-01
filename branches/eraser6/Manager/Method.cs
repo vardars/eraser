@@ -412,24 +412,27 @@ namespace Eraser.Manager
 		/// Retrieves all currently registered erasure methods.
 		/// </summary>
 		/// <returns>A mutable list, with an instance of each method.</returns>
-		public static Dictionary<Guid, ErasureMethod> GetAll()
+		public static Dictionary<Guid, ErasureMethod> Items
 		{
-			Dictionary<Guid, ErasureMethod> result = new Dictionary<Guid, ErasureMethod>();
-
-			lock (ManagerLibrary.Instance.ErasureMethodManager.methods)
+			get
 			{
-				//Iterate over every item registered.
-				Dictionary<Guid, MethodConstructorInfo>.Enumerator iter =
-					ManagerLibrary.Instance.ErasureMethodManager.methods.GetEnumerator();
-				while (iter.MoveNext())
-				{
-					MethodConstructorInfo info = iter.Current.Value;
-					result.Add(iter.Current.Key,
-						(ErasureMethod)info.Constructor.Invoke(info.Parameters));
-				}
-			}
+				Dictionary<Guid, ErasureMethod> result = new Dictionary<Guid, ErasureMethod>();
 
-			return result;
+				lock (ManagerLibrary.Instance.ErasureMethodManager.methods)
+				{
+					//Iterate over every item registered.
+					Dictionary<Guid, MethodConstructorInfo>.Enumerator iter =
+						ManagerLibrary.Instance.ErasureMethodManager.methods.GetEnumerator();
+					while (iter.MoveNext())
+					{
+						MethodConstructorInfo info = iter.Current.Value;
+						result.Add(iter.Current.Key,
+							(ErasureMethod)info.Constructor.Invoke(info.Parameters));
+					}
+				}
+
+				return result;
+			}
 		}
 
 		/// <summary>

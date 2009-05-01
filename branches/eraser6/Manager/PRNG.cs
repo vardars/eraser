@@ -160,10 +160,13 @@ namespace Eraser.Manager
 		/// Retrieves all currently registered erasure methods.
 		/// </summary>
 		/// <returns>A mutable list, with an instance of each PRNG.</returns>
-		public static Dictionary<Guid, Prng> GetAll()
+		public static Dictionary<Guid, Prng> Items
 		{
-			lock (ManagerLibrary.Instance.PRNGManager.prngs)
-				return ManagerLibrary.Instance.PRNGManager.prngs;
+			get
+			{
+				lock (ManagerLibrary.Instance.PRNGManager.prngs)
+					return ManagerLibrary.Instance.PRNGManager.prngs;
+			}
 		}
 
 		/// <summary>
