@@ -194,7 +194,7 @@ namespace Eraser.Manager
 		/// this object.</param>
 		public ManagerSettings()
 		{
-			settings = ManagerLibrary.SettingsManager.ModuleSettings;
+			settings = ManagerLibrary.Instance.SettingsManager.ModuleSettings;
 		}
 
 		/// <summary>

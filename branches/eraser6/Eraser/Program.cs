@@ -1243,7 +1243,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// </summary>
 		private EraserSettings()
 		{
-			settings = Manager.ManagerLibrary.SettingsManager.ModuleSettings;
+			settings = Manager.ManagerLibrary.Instance.SettingsManager.ModuleSettings;
 		}
 
 		/// <summary>

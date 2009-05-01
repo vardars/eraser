@@ -73,7 +73,7 @@ namespace Eraser
 			//The item is checked if the plugin was given the green light to load
 			item.Checked = e.Instance.Plugin != null ||
 				(Manager.ManagerLibrary.Settings.PluginApprovals.ContainsKey(
-					e.Instance.AssemblyInfo.Guid) && Manager.ManagerLibrary.Instance.
+					e.Instance.AssemblyInfo.Guid) && Manager.ManagerLibrary.
 					Settings.PluginApprovals[e.Instance.AssemblyInfo.Guid]
 				);
 
