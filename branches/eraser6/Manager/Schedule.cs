@@ -279,7 +279,7 @@ namespace Eraser.Manager
 			set
 			{
 				if (value == 0)
-					throw new ArgumentException(S._("The frequency of the recurrance should " +
+					throw new ArgumentException(S._("The frequency of the recurrence should " +
 						"be greater than one"));
 
 				frequency = value;
@@ -454,7 +454,7 @@ namespace Eraser.Manager
 		{
 			if (ScheduleType != ScheduleUnit.Weekly)
 				throw new ArgumentException(S._("The ScheduleUnit of the schedule does " +
-					"not use the WeeklyScheduly value, this field would contain garbage"));
+					"not use the WeeklySchedule value, this field would contain garbage"));
 			return ((int)weeklySchedule & (1 << (int)date.DayOfWeek)) != 0;
 		}
 

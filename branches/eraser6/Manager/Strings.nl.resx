@@ -273,7 +273,7 @@
   <data name="The ScheduleUnit of the schedule does not require a frequency value, this field would contain garbage." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="The frequency of the recurrance should be greater than one" xml:space="preserve">
+  <data name="The frequency of the recurrence should be greater than one" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="The ScheduleUnit of the schedule does not require the WeeklySchedule value, this field would contain garbage" xml:space="preserve">
@@ -285,7 +285,7 @@
   <data name="The ScheduleUnit of the schedule does not require the MonthlySchedule value, this field would contain garbage" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="The ScheduleUnit of the schedule does not use the WeeklyScheduly value, this field would contain garbage" xml:space="preserve">
+  <data name="The ScheduleUnit of the schedule does not use the WeeklySchedule value, this field would contain garbage" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="An invalid type was found when loading the task schedule" xml:space="preserve">

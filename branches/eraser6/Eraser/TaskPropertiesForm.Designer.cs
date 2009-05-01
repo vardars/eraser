@@ -60,6 +60,8 @@ namespace Eraser
 			this.data = new System.Windows.Forms.ListView();
 			this.dataColData = new System.Windows.Forms.ColumnHeader();
 			this.dataColMethod = new System.Windows.Forms.ColumnHeader();
+			this.dataContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.deleteDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.dataAdd = new System.Windows.Forms.Button();
 			this.ok = new System.Windows.Forms.Button();
 			this.cancel = new System.Windows.Forms.Button();
@@ -100,8 +102,7 @@ namespace Eraser
 			this.scheduleTime = new System.Windows.Forms.DateTimePicker();
 			this.scheduleTimeLbl = new System.Windows.Forms.Label();
 			this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-			this.dataContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.deleteDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.dataContextMenuStrip.SuspendLayout();
 			this.container.SuspendLayout();
 			this.containerTask.SuspendLayout();
 			this.containerSchedule.SuspendLayout();
@@ -117,7 +118,6 @@ namespace Eraser
 			((System.ComponentModel.ISupportInitialize)(this.nonRecurringBitmap)).BeginInit();
 			this.scheduleTimePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
-			this.dataContextMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// nameLbl
@@ -175,6 +175,20 @@ namespace Eraser
 			// dataColMethod
 			// 
 			resources.ApplyResources(this.dataColMethod, "dataColMethod");
+			// 
+			// dataContextMenuStrip
+			// 
+			this.dataContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deleteDataToolStripMenuItem});
+			this.dataContextMenuStrip.Name = "dataContextMenuStrip";
+			resources.ApplyResources(this.dataContextMenuStrip, "dataContextMenuStrip");
+			this.dataContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.dataContextMenuStrip_Opening);
+			// 
+			// deleteDataToolStripMenuItem
+			// 
+			this.deleteDataToolStripMenuItem.Name = "deleteDataToolStripMenuItem";
+			resources.ApplyResources(this.deleteDataToolStripMenuItem, "deleteDataToolStripMenuItem");
+			this.deleteDataToolStripMenuItem.Click += new System.EventHandler(this.deleteDataToolStripMenuItem_Click);
 			// 
 			// dataAdd
 			// 
@@ -514,20 +528,6 @@ namespace Eraser
 			// 
 			this.errorProvider.ContainerControl = this;
 			// 
-			// dataContextMenuStrip
-			// 
-			this.dataContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.deleteDataToolStripMenuItem});
-			this.dataContextMenuStrip.Name = "dataContextMenuStrip";
-			resources.ApplyResources(this.dataContextMenuStrip, "dataContextMenuStrip");
-			this.dataContextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.dataContextMenuStrip_Opening);
-			// 
-			// deleteDataToolStripMenuItem
-			// 
-			this.deleteDataToolStripMenuItem.Name = "deleteDataToolStripMenuItem";
-			resources.ApplyResources(this.deleteDataToolStripMenuItem, "deleteDataToolStripMenuItem");
-			this.deleteDataToolStripMenuItem.Click += new System.EventHandler(this.deleteDataToolStripMenuItem_Click);
-			// 
 			// TaskPropertiesForm
 			// 
 			this.AcceptButton = this.ok;
@@ -542,6 +542,7 @@ namespace Eraser
 			this.MinimizeBox = false;
 			this.Name = "TaskPropertiesForm";
 			this.ShowInTaskbar = false;
+			this.dataContextMenuStrip.ResumeLayout(false);
 			this.container.ResumeLayout(false);
 			this.containerTask.ResumeLayout(false);
 			this.containerTask.PerformLayout();
@@ -563,7 +564,6 @@ namespace Eraser
 			this.scheduleTimePanel.ResumeLayout(false);
 			this.scheduleTimePanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
-			this.dataContextMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}

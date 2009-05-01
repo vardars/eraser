@@ -8,9 +8,21 @@
 			<Word>Poller</Word>
 			<Word>Plugins</Word>
 			<Word>Unqueue</Word>
+			<Word>PRNGs</Word>
+			
+			<!-- Proper nouns -->
 			<Word>Gutmann</Word>
-			<Word>rng</Word>
-			<Word>prng</Word>
+			<Word>Lith</Word>
+			<Word>Schneier</Word>
+			<Word>Schneier's</Word>
+			<Word>Kasra</Word>
+			<Word>Nassiri</Word>
+			<Word>Verschlusssachen</Word>
+			<Word>IT-Richtlinien</Word>
+			<Word>Lite</Word>
+			<Word>Trant</Word>
+			<Word>Tolvanen</Word>
+			<Word>SourceForge</Word>
 		</Recognized>
 		<Deprecated>
 			<Term PreferredAlternate=""></Term>
@@ -19,6 +31,8 @@
 	<Acronyms>
 		<CasingExceptions>
 			<Acronym>PRNG</Acronym>
+			<Acronym>PRNGs</Acronym>
+			<Acronym>RNG</Acronym>
 		</CasingExceptions>
 	</Acronyms>
 </Dictionary>
