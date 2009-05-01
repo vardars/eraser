@@ -42,9 +42,9 @@ namespace Eraser
 			Items = new ToolBarItemCollection(this);
 
 			//Hook mouse move events to show the currently selected item
-			MouseMove += new MouseEventHandler(ToolBar_MouseMove);
-			MouseLeave += new EventHandler(ToolBar_MouseLeave);
-			MouseClick += new MouseEventHandler(ToolBar_MouseClick);
+			MouseMove += ToolBar_MouseMove;
+			MouseLeave += ToolBar_MouseLeave;
+			MouseClick += ToolBar_MouseClick;
 		}
 
 		void ToolBar_MouseMove(object sender, MouseEventArgs e)
@@ -174,7 +174,7 @@ namespace Eraser
 		public ToolBarItemCollection Items
 		{
 			get;
-			set;
+			private set;
 		}
 	}
 
@@ -284,14 +284,7 @@ namespace Eraser
 		#region ICollection<ToolBarItem> Members
 		public void Add(ToolBarItem item)
 		{
-			if (item.Window != null)
-				throw new ArgumentException("The item being added already is owned by " +
-					"another ToolBar control. Remove the item from the other control " +
-					"before inserting it into this one.");
-
-			item.Window = window;
-			list.Add(item);
-			window.Redraw();
+			Insert(Count, item);
 		}
 
 		public void Clear()
@@ -324,10 +317,12 @@ namespace Eraser
 
 		public bool Remove(ToolBarItem item)
 		{
-			item.Window = null;
-			bool result = list.Remove(item);
-			window.Redraw();
-			return result;
+			int index = IndexOf(item);
+			if (index < 0)
+				return false;
+
+			RemoveAt(index);
+			return true;
 		}
 		#endregion
 
@@ -353,23 +348,35 @@ namespace Eraser
 
 		public void Insert(int index, ToolBarItem item)
 		{
-			throw new NotImplementedException();
+			if (item.Window != null)
+				throw new ArgumentException("The item being added already is owned by " +
+					"another ToolBar control. Remove the item from the other control " +
+					"before inserting it into this one.");
+
+			item.Window = window;
+			list.Insert(index, item);
+			window.Redraw();
 		}
 
 		public void RemoveAt(int index)
 		{
-			throw new NotImplementedException();
+			ToolBarItem item = list[index];
+			item.Window = null;
+			list.RemoveAt(index);
+			window.Redraw();
 		}
 
 		public ToolBarItem this[int index]
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return list[index];
 			}
 			set
 			{
-				throw new NotImplementedException();
+				list[index] = value;
+				if (window != null)
+					window.Redraw();
 			}
 		}
 		#endregion
