@@ -629,9 +629,9 @@ namespace Eraser
 		/// </summary>
 		/// <param name="rdr">The XML reader object representing the element and its children.</param>
 		/// <returns>A list of updates in the category.</returns>
-		private static UpdateList ParseUpdateCategory(XmlReader rdr)
+		private static UpdateCollection ParseUpdateCategory(XmlReader rdr)
 		{
-			UpdateList result = new UpdateList();
+			UpdateCollection result = new UpdateCollection();
 			if (!rdr.ReadToDescendant("item"))
 				return result;
 
@@ -854,7 +854,7 @@ namespace Eraser
 		/// <summary>
 		/// Retrieves all updates available.
 		/// </summary>
-		public UpdateCategoriesDictionary Updates { get; set; }
+		public UpdateCategoriesDictionary Updates { get; private set; }
 
 		/// <summary>
 		/// The list of mirrors to download updates from.
@@ -871,12 +871,12 @@ namespace Eraser
 	/// <summary>
 	/// Manages a list of categories, mapping categories to a list of updates.
 	/// </summary>
-	public class UpdateCategoriesDictionary : IDictionary<string, UpdateList>,
-		ICollection<KeyValuePair<string, UpdateList>>,
-		IEnumerable<KeyValuePair<string, UpdateList>>
+	public class UpdateCategoriesDictionary : IDictionary<string, UpdateCollection>,
+		ICollection<KeyValuePair<string, UpdateCollection>>,
+		IEnumerable<KeyValuePair<string, UpdateCollection>>
 	{
 		#region IDictionary<string,UpdateList> Members
-		public void Add(string key, UpdateList value)
+		public void Add(string key, UpdateCollection value)
 		{
 			dictionary.Add(key, value);
 		}
@@ -896,17 +896,17 @@ namespace Eraser
 			return dictionary.Remove(key);
 		}
 
-		public bool TryGetValue(string key, out UpdateList value)
+		public bool TryGetValue(string key, out UpdateCollection value)
 		{
 			return dictionary.TryGetValue(key, out value);
 		}
 
-		public ICollection<UpdateList> Values
+		public ICollection<UpdateCollection> Values
 		{
 			get { return dictionary.Values; }
 		}
 
-		public UpdateList this[string key]
+		public UpdateCollection this[string key]
 		{
 			get
 			{
@@ -920,7 +920,7 @@ namespace Eraser
 		#endregion
 
 		#region ICollection<KeyValuePair<string,UpdateList>> Members
-		public void Add(KeyValuePair<string, UpdateList> item)
+		public void Add(KeyValuePair<string, UpdateCollection> item)
 		{
 			dictionary.Add(item.Key, item.Value);
 		}
@@ -930,12 +930,12 @@ namespace Eraser
 			dictionary.Clear();
 		}
 
-		public bool Contains(KeyValuePair<string, UpdateList> item)
+		public bool Contains(KeyValuePair<string, UpdateCollection> item)
 		{
 			return dictionary.ContainsKey(item.Key) && dictionary[item.Key] == item.Value;
 		}
 
-		public void CopyTo(KeyValuePair<string, UpdateList>[] array, int arrayIndex)
+		public void CopyTo(KeyValuePair<string, UpdateCollection>[] array, int arrayIndex)
 		{
 			throw new NotImplementedException();
 		}
@@ -950,14 +950,14 @@ namespace Eraser
 			get { return true; }
 		}
 
-		public bool Remove(KeyValuePair<string, UpdateList> item)
+		public bool Remove(KeyValuePair<string, UpdateCollection> item)
 		{
 			return dictionary.Remove(item.Key);
 		}
 		#endregion
 
 		#region IEnumerable<KeyValuePair<string,UpdateList>> Members
-		public IEnumerator<KeyValuePair<string, UpdateList>> GetEnumerator()
+		public IEnumerator<KeyValuePair<string, UpdateCollection>> GetEnumerator()
 		{
 			throw new NotImplementedException();
 		}
@@ -973,14 +973,14 @@ namespace Eraser
 		/// <summary>
 		/// The store for the current object.
 		/// </summary>
-		private Dictionary<string, UpdateList> dictionary =
-			new Dictionary<string, UpdateList>();
+		private Dictionary<string, UpdateCollection> dictionary =
+			new Dictionary<string, UpdateCollection>();
 	}
 
 	/// <summary>
 	/// Manages a category, containing a list of updates.
 	/// </summary>
-	public class UpdateList : IList<UpdateInfo>, ICollection<UpdateInfo>,
+	public class UpdateCollection : IList<UpdateInfo>, ICollection<UpdateInfo>,
 		IEnumerable<UpdateInfo>
 	{
 		#region IList<UpdateInfo> Members

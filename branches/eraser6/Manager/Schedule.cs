@@ -239,6 +239,7 @@ namespace Eraser.Manager
 		/// The days of the week, with values usable in a bitfield.
 		/// </summary>
 		[Flags]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1714:FlagsEnumsShouldHavePluralNames")]
 		public enum DaysOfWeek
 		{
 			None = 0,

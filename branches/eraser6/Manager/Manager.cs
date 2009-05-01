@@ -132,7 +132,7 @@ namespace Eraser.Manager
 		{
 		}
 
-		public FatalException(SerializationInfo info, StreamingContext context)
+		protected FatalException(SerializationInfo info, StreamingContext context)
 			: base(info, context)
 		{
 		}
