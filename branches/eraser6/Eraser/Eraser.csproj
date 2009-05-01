@@ -263,6 +263,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutDialog.png" />
+    <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
+      <Link>CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
     <Content Include="Resources\BackgroundGradient.bmp" />
     <None Include="Resources\ToolbarArrow.png" />
     <None Include="Resources\ToolbarHelp.png" />
