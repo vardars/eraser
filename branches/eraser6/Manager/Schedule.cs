@@ -24,8 +24,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using System.Runtime.Serialization;
-using Eraser.Util;
 using System.Security.Permissions;
+using System.Globalization;
+using Eraser.Util;
 
 namespace Eraser.Manager
 {
@@ -106,12 +107,14 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The global value for tasks which should be run immediately.
 		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly Schedule RunNow = new RunNowSchedule();
 
 		/// <summary>
 		/// The global value for tasks which should be run when the computer is
 		/// restarted
 		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly Schedule RunOnRestart = new RunOnRestartSchedule();
 	}
 
@@ -154,9 +157,10 @@ namespace Eraser.Manager
 						if ((weeklySchedule & DaysOfWeek.Sunday) != 0)
 							result += S._("Every Sunday, {0}");
 
-						result = string.Format(result, frequency == 1 ?
-							S._("once every {0} week.", frequency) :
-							S._("once every {0} weeks.", frequency));
+						result = string.Format(CultureInfo.CurrentCulture, result,
+							frequency == 1 ?
+								S._("once every {0} week.", frequency) :
+								S._("once every {0} weeks.", frequency));
 						break;
 					case ScheduleUnit.Monthly:
 						if (frequency == 1)
@@ -266,8 +270,8 @@ namespace Eraser.Manager
 			{
 				if (ScheduleType != ScheduleUnit.Daily && ScheduleType != ScheduleUnit.Weekly &&
 					ScheduleType != ScheduleUnit.Monthly)
-					throw new ArgumentException(S._("The ScheduleUnit of the schedule does " +
-						"not require a frequency value, this field would contain garbage."));
+					throw new InvalidOperationException(S._("The ScheduleUnit of the schedule " +
+						"does not require a frequency value, this field would contain garbage."));
 
 				return frequency;
 			}
@@ -300,8 +304,8 @@ namespace Eraser.Manager
 			get
 			{
 				if (ScheduleType != ScheduleUnit.Weekly)
-					throw new ArgumentException(S._("The ScheduleUnit of the schedule does " +
-						"not require the WeeklySchedule value, this field would contain garbage"));
+					throw new InvalidOperationException(S._("The ScheduleUnit of the schedule " +
+						"does not require the WeeklySchedule value, this field would contain garbage"));
 
 				return weeklySchedule;
 			}
@@ -324,7 +328,7 @@ namespace Eraser.Manager
 			get
 			{
 				if (ScheduleType != ScheduleUnit.Monthly)
-					throw new ArgumentException(S._("The ScheduleUnit of the schedule does " +
+					throw new InvalidOperationException(S._("The ScheduleUnit of the schedule does " +
 						"not require the MonthlySchedule value, this field would contain garbage"));
 
 				return monthlySchedule;

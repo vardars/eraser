@@ -214,12 +214,14 @@ namespace Eraser.Manager
 			/// <summary>
 			/// The default pass function which writes random information to the stream
 			/// </summary>
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 			public static readonly PassFunction WriteRandom = ErasureMethod.WriteRandom;
 
 			/// <summary>
 			/// The default pass function which writes a constant repeatedly to the
 			/// stream. The Pass' OpaqueValue must be set.
 			/// </summary>
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 			public static readonly PassFunction WriteConstant = ErasureMethod.WriteConstant;
 
 			/// <summary>
@@ -401,6 +403,7 @@ namespace Eraser.Manager
 		/// method. Do not use this variable when trying to call the erase function,
 		/// this is just a placeholder and will throw a InvalidOperationException.
 		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly ErasureMethod Default = new DefaultMethod();
 		#endregion
 
