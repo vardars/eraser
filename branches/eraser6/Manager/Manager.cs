@@ -38,7 +38,6 @@ namespace Eraser.Manager
 			SettingsManager = settings;
 
 			EntropySourceManager = new EntropySourceManager();
-			LanguageManager = new LanguageManager(); 
 			PRNGManager = new PrngManager();
 			ErasureMethodManager = new ErasureMethodManager();
 			Host = new Plugin.DefaultHost();
@@ -81,11 +80,6 @@ namespace Eraser.Manager
 		internal PrngManager PRNGManager;
 
 		/// <summary>
-		/// Global instance of the Language Manager.
-		/// </summary>
-		internal LanguageManager LanguageManager;
-
-		/// <summary>
 		/// The global instance of the Erasure method manager.
 		/// </summary>
 		internal ErasureMethodManager ErasureMethodManager;
@@ -99,13 +93,20 @@ namespace Eraser.Manager
 		/// Gets the settings object representing the settings for the Eraser
 		/// Manager. This is just shorthand for the local classes.
 		/// </summary>
-		public ManagerSettings Settings
+		public static ManagerSettings Settings
 		{
 			get
 			{
-				return new ManagerSettings();
+				if (settingsInstance == null)
+					settingsInstance = new ManagerSettings();
+				return settingsInstance;
 			}
 		}
+
+		/// <summary>
+		/// The singleton instance for <see cref="Settings"/>.
+		/// </summary>
+		private static ManagerSettings settingsInstance;
 
 		/// <summary>
 		/// The global instance of the Plugin host.
