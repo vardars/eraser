@@ -244,6 +244,9 @@ namespace Eraser.Manager
 					server.WaitForPipeDrain();
 				}
 			}
+			catch (OperationCanceledException)
+			{
+			}
 			finally
 			{
 				server.Close();
