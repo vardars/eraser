@@ -40,6 +40,7 @@ namespace Eraser
 			InitializeComponent();
 			UxThemeAPI.UpdateControlTheme(this);
 			this.task = task;
+			Rectangle r;
 
 			//Update the title
 			Text = string.Format(CultureInfo.InvariantCulture, "{0} - {1}", Text, task.UIText);
@@ -54,6 +55,7 @@ namespace Eraser
 					task_Logged(this, new LogEventArgs(entry));
 			}
 
+			clear.Enabled = copy.Enabled  = log.Count > 0;
 			//Register our event handler to get live log messages
 			task.Log.Logged += task_Logged;
 			this.log.EndUpdate();
@@ -91,11 +93,13 @@ namespace Eraser
 			switch (e.LogEntry.Level)
 			{
 				case LogLevel.Fatal:
-				case LogLevel.Error:
 					item.ForeColor = Color.Red;
 					break;
-				case LogLevel.Warning:
+				case LogLevel.Error:
 					item.ForeColor = Color.OrangeRed;
+					break;
+				case LogLevel.Warning:
+					item.ForeColor = Color.Orange;
 					break;
 			}
 		}
@@ -104,6 +108,7 @@ namespace Eraser
 		{
 			this.task.Log.Clear();
 			log.Items.Clear();
+			copy.Enabled = clear.Enabled = log.Items.Count > 0;
 		}
 
 		private void copy_Click(object sender, EventArgs e)

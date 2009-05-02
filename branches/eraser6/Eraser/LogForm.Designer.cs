@@ -57,6 +57,7 @@ namespace Eraser
 			this.clear = new System.Windows.Forms.Button();
 			this.close = new System.Windows.Forms.Button();
 			this.copy = new System.Windows.Forms.Button();
+			this.separator = new Trustbridge.Windows.Controls.BevelLine();
 			this.SuspendLayout();
 			// 
 			// log
@@ -106,10 +107,17 @@ namespace Eraser
 			this.copy.UseVisualStyleBackColor = true;
 			this.copy.Click += new System.EventHandler(this.copy_Click);
 			// 
+			// separator
+			// 
+			resources.ApplyResources(this.separator, "separator");
+			this.separator.Angle = 90;
+			this.separator.Name = "separator";
+			// 
 			// LogForm
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+			this.Controls.Add(this.separator);
 			this.Controls.Add(this.copy);
 			this.Controls.Add(this.close);
 			this.Controls.Add(this.clear);
@@ -133,5 +141,6 @@ namespace Eraser
 		private System.Windows.Forms.ColumnHeader severity;
 		private System.Windows.Forms.ColumnHeader message;
 		private System.Windows.Forms.Button copy;
+		private Trustbridge.Windows.Controls.BevelLine separator;
 	}
 }
