@@ -40,12 +40,12 @@ namespace Eraser.Util
 				UpdateControlTheme((ListView)control);
 			else if (control is ContextMenuStrip)
 				UpdateControlTheme((ContextMenuStrip)control);
-			/*else if (control is MenuStrip)
+			else if (control is MenuStrip)
 				UpdateControlTheme((MenuStrip)control);
 
 			if (control.ContextMenuStrip != null)
 				UpdateControlTheme(control.ContextMenuStrip);
-			*/
+			
 			foreach (Control child in control.Controls)
 				UpdateControlTheme(child);
 		}
