@@ -247,7 +247,26 @@ namespace Eraser.Util
 
 		protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
 		{
-			base.OnRenderArrow(e);
+			int itemState = (int)(e.Item.Enabled ? POPUPSUBMENUSTATES.MSM_NORMAL :
+				POPUPSUBMENUSTATES.MSM_DISABLED);
+
+			//Strangely, UxTheme won't draw any arrow once the starting coordinate
+			//is beyond 5px. So draw the arrow on a backing image then blit
+			//to the actual one.
+			using (Bitmap backBmp = new Bitmap(e.ArrowRectangle.Width, e.ArrowRectangle.Height))
+			{
+				using (Graphics backGfx = Graphics.FromImage(backBmp))
+				{
+					IntPtr hDC = backGfx.GetHdc();
+
+					Rectangle backRect = new Rectangle(new Point(0, 0), backBmp.Size);
+					DrawThemeBackground(hTheme, hDC, (int)MENUPARTS.MENU_POPUPSUBMENU, itemState,
+						ref backRect, ref backRect);
+					backGfx.ReleaseHdc();
+				}
+
+				e.Graphics.DrawImageUnscaled(backBmp, e.ArrowRectangle);
+			}
 		}
 
 		private int GutterWidth
@@ -334,6 +353,12 @@ namespace Eraser.Util
 			MPI_HOT = 2,
 			MPI_DISABLED = 3,
 			MPI_DISABLEDHOT = 4,
+		}
+
+		private enum POPUPSUBMENUSTATES
+		{
+			MSM_NORMAL = 1,
+			MSM_DISABLED = 2,
 		}
 		#endregion
 	}
