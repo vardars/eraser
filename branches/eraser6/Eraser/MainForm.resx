@@ -1762,11 +1762,8 @@
     <value>246, 17</value>
   </metadata>
   <metadata name="ToolBar.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
+    <value>14, 26</value>
   </metadata>
-  <data name="ToolBar.AutoSize" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="ToolBar.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>None</value>
   </data>
@@ -1780,13 +1777,13 @@
     <value>New Task</value>
   </data>
   <data name="tbScheduleDropDown.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>BottomCenter</value>
+    <value>BottomLeft</value>
   </data>
   <data name="tbScheduleDropDown.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
     <value>None</value>
   </data>
   <data name="tbScheduleDropDown.Size" type="System.Drawing.Size, System.Drawing">
-    <value>20, 28</value>
+    <value>16, 28</value>
   </data>
   <data name="tbScheduleDropDown.Text" xml:space="preserve">
     <value>Erase Schedule</value>
@@ -1815,6 +1812,9 @@
   <data name="aboutEraserToolStripMenuItem.Text" xml:space="preserve">
     <value>About Eraser</value>
   </data>
+  <data name="tbHelpDropDown.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>BottomLeft</value>
+  </data>
   <data name="tbHelpDropDown.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
     <value>None</value>
   </data>
@@ -1825,10 +1825,10 @@
     <value>Help</value>
   </data>
   <data name="ToolBar.Location" type="System.Drawing.Point, System.Drawing">
-    <value>14, 26</value>
+    <value>14, 27</value>
   </data>
   <data name="ToolBar.Size" type="System.Drawing.Size, System.Drawing">
-    <value>500, 32</value>
+    <value>404, 32</value>
   </data>
   <data name="ToolBar.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
