@@ -43,6 +43,9 @@ namespace Eraser
 		public MainForm()
 		{
 			InitializeComponent();
+			UxThemeAPI.UpdateControlTheme(toolbarScheduleMenu);
+			UxThemeAPI.UpdateControlTheme(toolbarHelpMenu);
+			UxThemeAPI.UpdateControlTheme(notificationMenu);
 			SettingsPage.CreateControl();
 			SchedulerPage.CreateControl();
 

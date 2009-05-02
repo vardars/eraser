@@ -42,7 +42,8 @@ namespace Eraser
 		public SettingsPanel()
 		{
 			InitializeComponent();
-			Dock = DockStyle.None;
+			UxThemeAPI.UpdateControlTheme(this);
+			UxThemeAPI.UpdateControlTheme(pluginsMenu);
 
 			//For new plugins, register the callback.
 			Host.Instance.PluginLoaded += OnNewPluginLoaded;
