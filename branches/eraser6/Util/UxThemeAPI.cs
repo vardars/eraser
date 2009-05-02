@@ -124,6 +124,11 @@ namespace Eraser.Util
 
 	public class UxThemeMenuRenderer : ToolStripRenderer
 	{
+		~UxThemeMenuRenderer()
+		{
+			CloseThemeData(hTheme);
+		}
+
 		protected override void Initialize(ToolStrip toolStrip)
 		{
 			base.Initialize(toolStrip);
@@ -134,7 +139,6 @@ namespace Eraser.Util
 
 		protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
 		{
-			base.OnRenderToolStripBackground(e);
 			IntPtr hDC = e.Graphics.GetHdc();
 			Rectangle rect = e.AffectedBounds;
 
@@ -151,8 +155,6 @@ namespace Eraser.Util
 
 		protected override void OnRenderImageMargin(ToolStripRenderEventArgs e)
 		{
-			base.OnRenderImageMargin(e);
-
 			IntPtr hDC = e.Graphics.GetHdc();
 			Rectangle rect = e.AffectedBounds;
 			rect.Width = GutterWidth;
@@ -168,8 +170,6 @@ namespace Eraser.Util
 
 		protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
 		{
-			base.OnRenderMenuItemBackground(e);
-
 			ToolStripItem item = e.Item as ToolStripItem;
 
 			Rectangle rect = Rectangle.Truncate(e.Graphics.VisibleClipBounds);
@@ -187,8 +187,6 @@ namespace Eraser.Util
 
 		protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
 		{
-			base.OnRenderSeparator(e);
-
 			IntPtr hDC = e.Graphics.GetHdc();
 			Rectangle rect = new Rectangle(GutterWidth, 0, e.Item.Width, e.Item.Height);
 			rect.Inflate(4, 0);
@@ -235,15 +233,21 @@ namespace Eraser.Util
 				(e.Item.Enabled ? POPUPITEMSTATES.MPI_HOT : POPUPITEMSTATES.MPI_DISABLEDHOT) :
 				(e.Item.Enabled ? POPUPITEMSTATES.MPI_NORMAL : POPUPITEMSTATES.MPI_DISABLED));
 
-			Rectangle rect = new Rectangle(e.TextRectangle.Left, 0, e.Item.Width, e.Item.Height);
+			Rectangle rect = new Rectangle(e.TextRectangle.Left, 0,
+				e.Item.Width - e.TextRectangle.Left, e.Item.Height);
 			IntPtr hFont = e.TextFont.ToHfont();
 			IntPtr hDC = e.Graphics.GetHdc();
 			SelectObject(hDC, hFont);
 
 			DrawThemeText(hTheme, hDC, (int)MENUPARTS.MENU_POPUPITEM, itemState, e.Text,
-				-1, (int)e.TextFormat | DT_VCENTER | DT_SINGLELINE, 0, ref rect);
+				-1, e.TextFormat | TextFormatFlags.WordEllipsis | TextFormatFlags.SingleLine, 0, ref rect);
 
 			e.Graphics.ReleaseHdc();
+		}
+
+		protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
+		{
+			base.OnRenderArrow(e);
 		}
 
 		private int GutterWidth
@@ -257,9 +261,12 @@ namespace Eraser.Util
 		private ToolStrip control;
 		private IntPtr hTheme;
 
-		#region Imported functions
+		#region Imported UxTheme functions and constants
 		[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
 		private static extern IntPtr OpenThemeData(IntPtr hwnd, string pszClassList);
+
+		[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
+		private static extern IntPtr CloseThemeData(IntPtr hwndTeme);
 
 		[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
 		private static extern IntPtr DrawThemeParentBackground(IntPtr hwnd,
@@ -277,11 +284,10 @@ namespace Eraser.Util
 		[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
 		private extern static int DrawThemeText(IntPtr hTheme, IntPtr hDC, int iPartId,
 			int iStateId, [MarshalAs(UnmanagedType.LPWStr)] string pszText, int iCharCount,
-			int dwTextFlag, int dwTextFlags2, ref Rectangle pRect);
+			TextFormatFlags dwTextFlag, int dwTextFlags2, ref Rectangle pRect);
 
 		[DllImport("Gdi32.dll")]
 		private extern static IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
-		#endregion
 
 		private enum MENUPARTS
 		{
@@ -329,21 +335,6 @@ namespace Eraser.Util
 			MPI_DISABLED = 3,
 			MPI_DISABLEDHOT = 4,
 		}
-
-		private const int DT_TOP = 0x00000000;
-		private const int DT_LEFT = 0x00000000;
-		private const int DT_CENTER = 0x00000001;
-		private const int DT_RIGHT = 0x00000002;
-		private const int DT_VCENTER = 0x00000004;
-		private const int DT_BOTTOM = 0x00000008;
-		private const int DT_WORDBREAK = 0x00000010;
-		private const int DT_SINGLELINE = 0x00000020;
-		private const int DT_EXPANDTABS = 0x00000040;
-		private const int DT_TABSTOP = 0x00000080;
-		private const int DT_NOCLIP = 0x00000100;
-		private const int DT_EXTERNALLEADING = 0x00000200;
-		private const int DT_CALCRECT = 0x00000400;
-		private const int DT_NOPREFIX = 0x00000800;
-		private const int DT_INTERNAL = 0x00001000;
+		#endregion
 	}
 }
