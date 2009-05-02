@@ -62,15 +62,15 @@ namespace Eraser
 			this.notificationIconTimer = new System.Windows.Forms.Timer(this.components);
 			this.ToolBar = new Eraser.ToolBar();
 			this.tbScheduleDropDown = new System.Windows.Forms.ToolStripMenuItem();
+			this.tbScheduleMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.newTaskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.tbSettings = new System.Windows.Forms.ToolStripMenuItem();
 			this.tbHelp = new System.Windows.Forms.ToolStripMenuItem();
 			this.tbHelpDropDown = new System.Windows.Forms.ToolStripMenuItem();
-			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.tbScheduleMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.tbHelpMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.newTaskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.checkForUpdatesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutEraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.notificationMenu.SuspendLayout();
 			this.ToolBar.SuspendLayout();
 			this.tbScheduleMenu.SuspendLayout();
@@ -157,6 +157,20 @@ namespace Eraser
 			this.tbScheduleDropDown.Name = "tbScheduleDropDown";
 			this.tbScheduleDropDown.Padding = new System.Windows.Forms.Padding(0);
 			// 
+			// tbScheduleMenu
+			// 
+			this.tbScheduleMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newTaskToolStripMenuItem});
+			this.tbScheduleMenu.Name = "tbScheduleMenu";
+			this.tbScheduleMenu.OwnerItem = this.tbScheduleDropDown;
+			resources.ApplyResources(this.tbScheduleMenu, "tbScheduleMenu");
+			// 
+			// newTaskToolStripMenuItem
+			// 
+			this.newTaskToolStripMenuItem.Name = "newTaskToolStripMenuItem";
+			resources.ApplyResources(this.newTaskToolStripMenuItem, "newTaskToolStripMenuItem");
+			this.newTaskToolStripMenuItem.Click += new System.EventHandler(this.newTaskToolStripMenuItem_Click);
+			// 
 			// tbSettings
 			// 
 			this.tbSettings.Image = global::Eraser.Properties.Resources.ToolbarSettings;
@@ -180,41 +194,32 @@ namespace Eraser
 			this.tbHelpDropDown.Name = "tbHelpDropDown";
 			this.tbHelpDropDown.Padding = new System.Windows.Forms.Padding(2, 0, 4, 0);
 			// 
-			// checkForUpdatesToolStripMenuItem
-			// 
-			this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
-			resources.ApplyResources(this.checkForUpdatesToolStripMenuItem, "checkForUpdatesToolStripMenuItem");
-			this.checkForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesToolStripMenuItem_Click);
-			// 
-			// tbScheduleMenu
-			// 
-			this.tbScheduleMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newTaskToolStripMenuItem});
-			this.tbScheduleMenu.Name = "tbScheduleMenu";
-			resources.ApplyResources(this.tbScheduleMenu, "tbScheduleMenu");
-			// 
 			// tbHelpMenu
 			// 
 			this.tbHelpMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.checkForUpdatesToolStripMenuItem1,
             this.aboutEraserToolStripMenuItem});
 			this.tbHelpMenu.Name = "tbHelpMenu";
+			this.tbHelpMenu.OwnerItem = this.tbHelpDropDown;
 			resources.ApplyResources(this.tbHelpMenu, "tbHelpMenu");
-			// 
-			// newTaskToolStripMenuItem
-			// 
-			this.newTaskToolStripMenuItem.Name = "newTaskToolStripMenuItem";
-			resources.ApplyResources(this.newTaskToolStripMenuItem, "newTaskToolStripMenuItem");
 			// 
 			// checkForUpdatesToolStripMenuItem1
 			// 
 			this.checkForUpdatesToolStripMenuItem1.Name = "checkForUpdatesToolStripMenuItem1";
 			resources.ApplyResources(this.checkForUpdatesToolStripMenuItem1, "checkForUpdatesToolStripMenuItem1");
+			this.checkForUpdatesToolStripMenuItem1.Click += new System.EventHandler(this.checkForUpdatesToolStripMenuItem_Click);
 			// 
 			// aboutEraserToolStripMenuItem
 			// 
 			this.aboutEraserToolStripMenuItem.Name = "aboutEraserToolStripMenuItem";
 			resources.ApplyResources(this.aboutEraserToolStripMenuItem, "aboutEraserToolStripMenuItem");
+			this.aboutEraserToolStripMenuItem.Click += new System.EventHandler(this.aboutEraserToolStripMenuItem_Click);
+			// 
+			// checkForUpdatesToolStripMenuItem
+			// 
+			this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
+			resources.ApplyResources(this.checkForUpdatesToolStripMenuItem, "checkForUpdatesToolStripMenuItem");
+			this.checkForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
