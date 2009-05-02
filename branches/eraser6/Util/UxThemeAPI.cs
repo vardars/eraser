@@ -38,10 +38,8 @@ namespace Eraser.Util
 		{
 			if (control is ListView)
 				UpdateControlTheme((ListView)control);
-			else if (control is ContextMenuStrip)
-				UpdateControlTheme((ContextMenuStrip)control);
-			else if (control is MenuStrip)
-				UpdateControlTheme((MenuStrip)control);
+			else if (control is ToolStrip)
+				UpdateControlTheme((ToolStrip)control);
 
 			if (control.ContextMenuStrip != null)
 				UpdateControlTheme(control.ContextMenuStrip);
@@ -71,21 +69,15 @@ namespace Eraser.Util
 		/// Updates the control's theme to fit in with the latest Windows visuals.
 		/// </summary>
 		/// <param name="lv">The List View control to set the theme on.</param>
-		public static void UpdateControlTheme(ContextMenuStrip menu)
+		public static void UpdateControlTheme(ToolStrip menu)
 		{
 			if (Environment.OSVersion.Version.Major >= 6)
 				if (!(menu.Renderer is UxThemeMenuRenderer))
 					menu.Renderer = new UxThemeMenuRenderer();
-		}
 
-		/// <summary>
-		/// Updates the control's theme to fit in with the latest Windows visuals.
-		/// </summary>
-		/// <param name="lv">The List View control to set the theme on.</param>
-		public static void UpdateControlTheme(MenuStrip menu)
-		{
-			foreach (ToolStripMenuItem item in menu.Items)
-				UpdateControlTheme(item);
+			foreach (ToolStripItem item in menu.Items)
+				if (item is ToolStripMenuItem)
+					UpdateControlTheme((ToolStripMenuItem)item);
 		}
 
 		/// <summary>

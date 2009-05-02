@@ -41,7 +41,7 @@ namespace Eraser
 			Renderer = new EraserToolStripRenderer();
 		}
 
-		private class EraserToolStripRenderer : UxThemeMenuRenderer
+		private class EraserToolStripRenderer : ToolStripRenderer
 		{
 			protected override void Initialize(ToolStrip toolStrip)
 			{
@@ -49,31 +49,21 @@ namespace Eraser
 				owner = toolStrip;
 			}
 
-			protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
+			protected override void InitializeItem(ToolStripItem item)
 			{
-				if (e.ToolStrip == owner)
-					//Draw the parent background image. This is not portable in that it will render
-					//this code unreusable, but for the lack of anything better this will have to suffice!
-					e.Graphics.DrawImage(Properties.Resources.BackgroundGradient,
-						new Point(-owner.Left, -owner.Top));
-				else
-					base.OnRenderToolStripBackground(e);
+				base.InitializeItem(item);
 			}
 
-			protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
+			protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
 			{
-				if (e.ToolStrip != owner)
-					base.OnRenderMenuItemBackground(e);
+				//Draw the parent background image. This is not portable in that it will render
+				//this code unreusable, but for the lack of anything better this will have to suffice!
+				e.Graphics.DrawImage(Properties.Resources.BackgroundGradient,
+					new Point(-owner.Left, -owner.Top));
 			}
 
 			protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
 			{
-				if (e.ToolStrip != owner)
-				{
-					base.OnRenderItemText(e);
-					return;
-				}
-
 				Graphics g = e.Graphics;
 
 				//Draw the actual text
@@ -110,6 +100,9 @@ namespace Eraser
 			/// </summary>
 			private readonly Color TextColour = Color.White;
 
+			/// <summary>
+			/// The toolstrip using this renderer.
+			/// </summary>
 			private ToolStrip owner;
 		}
 	}
