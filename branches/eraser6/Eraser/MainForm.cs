@@ -35,7 +35,6 @@ namespace Eraser
 {
 	public partial class MainForm : Form
 	{
-		private ToolBar ToolBar = new ToolBar();
 		private BasePanel CurrPage;
 		private SchedulerPanel SchedulerPage = new SchedulerPanel();
 		private SettingsPanel SettingsPage = new SettingsPanel();
@@ -43,8 +42,6 @@ namespace Eraser
 		public MainForm()
 		{
 			InitializeComponent();
-			UxThemeAPI.UpdateControlTheme(toolbarScheduleMenu);
-			UxThemeAPI.UpdateControlTheme(toolbarHelpMenu);
 			UxThemeAPI.UpdateControlTheme(notificationMenu);
 			SettingsPage.CreateControl();
 			SchedulerPage.CreateControl();
@@ -55,38 +52,6 @@ namespace Eraser
 
 			//Check the notification area context menu's minimise to tray item.
 			hideWhenMinimisedToolStripMenuItem.Checked = EraserSettings.Get().HideWhenMinimised;
-
-			//Create the toolbar control
-			ToolBar.Name = "toolBar";
-			ToolBar.Location = new Point(14, 27);
-			ToolBar.Size = new Size(500, 26);
-			ToolBar.TabIndex = 1;
-			Controls.Add(ToolBar);
-
-			ToolBarItem tbSchedule = new ToolBarItem();
-			tbSchedule.Bitmap = Properties.Resources.ToolbarSchedule;
-			tbSchedule.Text = S._("Erase Schedule");
-			tbSchedule.Menu = toolbarScheduleMenu;
-			tbSchedule.ToolBarItemClicked += delegate(object sender, EventArgs args)
-			{
-				ChangePage(MainFormPage.Scheduler);
-			};
-			ToolBar.Items.Add(tbSchedule);
-
-			ToolBarItem tbSettings = new ToolBarItem();
-			tbSettings.Bitmap = Properties.Resources.ToolbarSettings;
-			tbSettings.Text = S._("Settings");
-			tbSettings.ToolBarItemClicked += delegate(object sender, EventArgs args)
-			{
-				ChangePage(MainFormPage.Settings);
-			};
-			ToolBar.Items.Add(tbSettings);
-
-			ToolBarItem tbHelp = new ToolBarItem();
-			tbHelp.Bitmap = Properties.Resources.ToolbarHelp;
-			tbHelp.Text = S._("Help");
-			tbHelp.Menu = toolbarHelpMenu;
-			ToolBar.Items.Add(tbHelp);
 
 			//Set the docking style for each of the pages
 			SchedulerPage.Dock = DockStyle.Fill;
@@ -226,6 +191,16 @@ namespace Eraser
 			{
 				Visible = false;
 			}
+		}
+
+		private void tbSchedule_Click(object sender, EventArgs e)
+		{
+			ChangePage(MainFormPage.Scheduler);
+		}
+
+		private void tbSettings_Click(object sender, EventArgs e)
+		{
+			ChangePage(MainFormPage.Settings);
 		}
 
 		private void newTaskToolStripMenuItem_Click(object sender, EventArgs e)

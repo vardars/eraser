@@ -28,367 +28,89 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Collections.ObjectModel;
+using Eraser.Util;
 
 namespace Eraser
 {
-	public partial class ToolBar : Control
+	public partial class ToolBar : System.Windows.Forms.MenuStrip
 	{
 		public ToolBar()
 		{
 			//Create the base component
 			InitializeComponent();
-
-			//Initialize the toolbar item list
-			Items = new ToolBarItemCollection(this);
-
-			//Hook mouse move events to show the currently selected item
-			MouseMove += ToolBar_MouseMove;
-			MouseLeave += ToolBar_MouseLeave;
-			MouseClick += ToolBar_MouseClick;
+			Renderer = new EraserToolStripRenderer();
 		}
 
-		void ToolBar_MouseMove(object sender, MouseEventArgs e)
+		private class EraserToolStripRenderer : UxThemeMenuRenderer
 		{
-			Redraw();
-		}
-
-		void ToolBar_MouseLeave(object sender, EventArgs e)
-		{
-			Redraw();
-		}
-
-		void ToolBar_MouseClick(object sender, MouseEventArgs e)
-		{
-			//See if the click was on any item's arrow.
-			Rectangle mouse_rect = new Rectangle(e.Location, new Size(1, 1));
-			foreach (ToolBarItem i in Items)
+			protected override void Initialize(ToolStrip toolStrip)
 			{
-				if (i.Menu != null && mouse_rect.IntersectsWith(i.MenuRect))
-				{
-					//Show the menu below the toolbar item.
-					Point mouse_point = PointToScreen(i.Rectangle.Location);
-					i.Menu.Show(mouse_point.X, mouse_point.Y + i.Rectangle.Height);
-				}
-				else if (mouse_rect.IntersectsWith(i.Rectangle))
-				{
-					//Broadcast the item click event
-					i.OnToolbarItemClicked(this);
-				}
+				base.Initialize(toolStrip);
+				owner = toolStrip;
 			}
-		}
-		
-		/// <summary>
-		/// Draws the Tool Bar on the given graphics object.
-		/// </summary>
-		/// <param name="dc">Graphics object to draw on.</param>
-		public void Draw(Graphics rawDC)
-		{
-			//Create a backing bitmap buffer to prevent flicker
-			Bitmap back_bmp = new Bitmap(Width, Height);
-			Graphics dc = Graphics.FromImage(back_bmp);
 
-			//Draw the parent background image. This is not portable in that it will render
-			//this code unreusable, but for the lack of anything better this will have to suffice!
-			dc.DrawImage(Properties.Resources.BackgroundGradient, new Point(-Left, -Top));
-			
-			Point mouse_pos = PointToClient(MousePosition);
-			int x = 0;
-
-			foreach (ToolBarItem i in Items)
+			protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
 			{
+				if (e.ToolStrip == owner)
+					//Draw the parent background image. This is not portable in that it will render
+					//this code unreusable, but for the lack of anything better this will have to suffice!
+					e.Graphics.DrawImage(Properties.Resources.BackgroundGradient,
+						new Point(-owner.Left, -owner.Top));
+				else
+					base.OnRenderToolStripBackground(e);
+			}
+
+			protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
+			{
+				if (e.ToolStrip != owner)
+					base.OnRenderMenuItemBackground(e);
+			}
+
+			protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
+			{
+				if (e.ToolStrip != owner)
 				{
-					Point pos = i.Rectangle.Location;
-					pos.X = x;
-					pos.Y = 0;
-					i.Rectangle.Location = pos;
+					base.OnRenderItemText(e);
+					return;
 				}
 
-				if (i.Bitmap != null)
+				Graphics g = e.Graphics;
+
+				//Draw the actual text
+				Rectangle tempRect = e.TextRectangle;
+				tempRect.Inflate(3, 0);
+				tempRect.Offset(3, 0);
+				e.TextRectangle = tempRect;
+				using (SolidBrush textBrush = new SolidBrush(TextColour))
+					g.DrawString(e.Text, e.TextFont, textBrush, e.TextRectangle);
+
+				//If the text has got a selection, draw an underline
+				if (e.Item.Selected)
 				{
-					i.BitmapRect = new Rectangle(x, 0, i.Bitmap.Width, i.Bitmap.Height);
-					dc.DrawImage(i.Bitmap, i.BitmapRect);
+					SizeF textSize = g.MeasureString(e.Text, e.TextFont);
+					using (Pen underlinePen = new Pen(TextColour))
+					{
+						Point underlineStart = e.TextRectangle.Location;
+						underlineStart.Offset(0, Point.Truncate(textSize.ToPointF()).Y);
+						Point underlineEnd = underlineStart;
+						underlineEnd.Offset(e.TextRectangle.Width, 0);
 
-					x += i.BitmapRect.Width + 4;
+						g.DrawLine(underlinePen, underlineStart, underlineEnd);
+					}
 				}
-
-				//Draw the toolbar item text
-				SizeF string_size = dc.MeasureString(i.Text, Font);
-				i.TextRect = new Rectangle(x, (int)(Height - string_size.Height) / 2,
-					(int)string_size.Width, (int)string_size.Height);
-				dc.DrawString(i.Text, Font, Brushes.White, i.TextRect.Location);
-				x += i.TextRect.Width;
-				
-				//If there is a menu associated draw a drop-down glyph
-				if (i.Menu != null)
-				{
-					Bitmap menu_arrow = Properties.Resources.ToolbarArrow;
-					i.MenuRect = new Rectangle(x += 6, i.TextRect.Y,
-						menu_arrow.Width, menu_arrow.Height);
-					dc.DrawImage(menu_arrow, i.MenuRect);
-					x += i.MenuRect.Width;
-				}
-
-				//Update the size of the item rectangle
-				{
-					Size size = i.Rectangle.Size;
-					size.Width = x - i.Rectangle.Location.X;
-					size.Height = Height;
-					i.Rectangle.Size = size;
-				}
-
-				//If the mouse cursor intersects with the item then draw an underline.
-				if (i.Rectangle.IntersectsWith(new Rectangle(mouse_pos, new Size(1, 1))))
-					dc.DrawLine(Pens.White, new Point(i.TextRect.Left, i.TextRect.Bottom + 1),
-						new Point(i.TextRect.Right, i.TextRect.Bottom + 1));
-
-				//Padding between items.
-				x += 16;
 			}
 
-			rawDC.DrawImage(back_bmp, new Point(0, 0));
+			/// <summary>
+			/// The margin between a drop-down arrow and the surrounding items.
+			/// </summary>
+			private const int ArrowMargin = 0;
+
+			/// <summary>
+			/// The colour of the menu bar text.
+			/// </summary>
+			private readonly Color TextColour = Color.White;
+
+			private ToolStrip owner;
 		}
-
-		/// <summary>
-		/// Redraws the Tool Bar by creating a Graphics object.
-		/// </summary>
-		public void Redraw()
-		{
-			Draw(CreateGraphics());
-		}
-
-		/// <summary>
-		/// Paints the control.
-		/// </summary>
-		/// <param name="pe">Paint event object.</param>
-		protected override void OnPaint(PaintEventArgs e)
-		{
-			Draw(e.Graphics);
-
-			// Calling the base class OnPaint
-			base.OnPaint(e);
-		}
-
-		/// <summary>
-		/// Stores the items in the Tool Bar.
-		/// </summary>
-		public ToolBarItemCollection Items
-		{
-			get;
-			private set;
-		}
-	}
-
-	public class ToolBarItem
-	{
-		/// <summary>
-		/// Tool bar item text.
-		/// </summary>
-		[Description("Toolbar item text")]
-		public string Text
-		{
-			get { return text; }
-			set
-			{
-				text = value;
-				if (Window != null)
-					Window.Redraw();
-			}
-		}
-
-		/// <summary>
-		/// Item bitmap.
-		/// </summary>
-		[Description("Item Bitmap")]
-		public Bitmap Bitmap
-		{
-			get { return bitmap; }
-			set
-			{
-				bitmap = value;
-				if (Window != null)
-					Window.Redraw();
-			}
-		}
-
-		/// <summary>
-		/// Item drop-down menu
-		/// </summary>
-		public ContextMenuStrip Menu
-		{
-			get { return menu; }
-			set
-			{
-				menu = value;
-				if (Window != null)
-					Window.Redraw();
-			}
-		}
-
-		/// <summary>
-		/// Item click event handler
-		/// </summary>
-		public EventHandler<EventArgs> ToolBarItemClicked
-		{
-			get;
-			set;
-		}
-
-		internal void OnToolbarItemClicked(object sender)
-		{
-			if (ToolBarItemClicked != null)
-				ToolBarItemClicked(sender, new EventArgs());
-		}
-
-		private string text;
-		private Bitmap bitmap;
-		private ContextMenuStrip menu;
-
-		/// <summary>
-		/// The owning window of this item.
-		/// </summary>
-		internal ToolBar Window;
-
-		/// <summary>
-		/// Stores the rectangle of this item.
-		/// </summary>
-		internal Rectangle Rectangle;
-
-		/// <summary>
-		/// Stores the rectangle of the bitmap.
-		/// </summary>
-		internal Rectangle BitmapRect;
-
-		/// <summary>
-		/// Stores the rectangle of the text.
-		/// </summary>
-		internal Rectangle TextRect;
-
-		/// <summary>
-		/// Stores the rectangle of the drop-down arrow.
-		/// </summary>
-		internal Rectangle MenuRect;
-	}
-
-	public class ToolBarItemCollection : ICollection<ToolBarItem>, IList<ToolBarItem>,
-		IEnumerable<ToolBarItem>
-	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="win">The owning toolbar window.</param>
-		internal ToolBarItemCollection(ToolBar win)
-		{
-			window = win;
-		}
-
-		#region ICollection<ToolBarItem> Members
-		public void Add(ToolBarItem item)
-		{
-			Insert(Count, item);
-		}
-
-		public void Clear()
-		{
-			foreach (ToolBarItem item in list)
-				item.Window = null;
-			list.Clear();
-			window.Redraw();
-		}
-
-		public bool Contains(ToolBarItem item)
-		{
-			return list.Contains(item);
-		}
-
-		public void CopyTo(ToolBarItem[] array, int arrayIndex)
-		{
-			list.CopyTo(array, arrayIndex);
-		}
-
-		public int Count
-		{
-			get { return list.Count; }
-		}
-
-		public bool IsReadOnly
-		{
-			get { return false; }
-		}
-
-		public bool Remove(ToolBarItem item)
-		{
-			int index = IndexOf(item);
-			if (index < 0)
-				return false;
-
-			RemoveAt(index);
-			return true;
-		}
-		#endregion
-
-		#region IEnumerable<ToolBarItem> Members
-		public IEnumerator<ToolBarItem> GetEnumerator()
-		{
-			return list.GetEnumerator();
-		}
-		#endregion
-
-		#region IEnumerable Members
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-		{
-			return list.GetEnumerator();
-		}
-		#endregion
-
-		#region IList<ToolBarItem> Members
-		public int IndexOf(ToolBarItem item)
-		{
-			return list.IndexOf(item);
-		}
-
-		public void Insert(int index, ToolBarItem item)
-		{
-			if (item.Window != null)
-				throw new ArgumentException("The item being added already is owned by " +
-					"another ToolBar control. Remove the item from the other control " +
-					"before inserting it into this one.");
-
-			item.Window = window;
-			list.Insert(index, item);
-			window.Redraw();
-		}
-
-		public void RemoveAt(int index)
-		{
-			ToolBarItem item = list[index];
-			item.Window = null;
-			list.RemoveAt(index);
-			window.Redraw();
-		}
-
-		public ToolBarItem this[int index]
-		{
-			get
-			{
-				return list[index];
-			}
-			set
-			{
-				list[index] = value;
-				if (window != null)
-					window.Redraw();
-			}
-		}
-		#endregion
-
-		/// <summary>
-		/// The window owning the items in this list.
-		/// </summary>
-		private ToolBar window;
-
-		/// <summary>
-		/// The list storing the toolbar items.
-		/// </summary>
-		private List<ToolBarItem> list = new List<ToolBarItem>();
 	}
 }

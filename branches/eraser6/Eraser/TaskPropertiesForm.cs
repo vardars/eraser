@@ -39,7 +39,6 @@ namespace Eraser
 		{
 			InitializeComponent();
 			UxThemeAPI.UpdateControlTheme(this);
-			UxThemeAPI.UpdateControlTheme(dataContextMenuStrip);
 			scheduleTime.CustomFormat = DateTimeFormatInfo.CurrentInfo.ShortTimePattern;
 
 			//Set a default task type

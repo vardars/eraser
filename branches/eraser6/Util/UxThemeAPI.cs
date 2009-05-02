@@ -40,6 +40,12 @@ namespace Eraser.Util
 				UpdateControlTheme((ListView)control);
 			else if (control is ContextMenuStrip)
 				UpdateControlTheme((ContextMenuStrip)control);
+			/*else if (control is MenuStrip)
+				UpdateControlTheme((MenuStrip)control);
+
+			if (control.ContextMenuStrip != null)
+				UpdateControlTheme(control.ContextMenuStrip);
+			*/
 			foreach (Control child in control.Controls)
 				UpdateControlTheme(child);
 		}
@@ -65,10 +71,30 @@ namespace Eraser.Util
 		/// Updates the control's theme to fit in with the latest Windows visuals.
 		/// </summary>
 		/// <param name="lv">The List View control to set the theme on.</param>
-		public static void UpdateControlTheme(ContextMenuStrip lv)
+		public static void UpdateControlTheme(ContextMenuStrip menu)
 		{
 			if (Environment.OSVersion.Version.Major >= 6)
-				lv.Renderer = new UxThemeMenuRenderer();
+				if (!(menu.Renderer is UxThemeMenuRenderer))
+					menu.Renderer = new UxThemeMenuRenderer();
+		}
+
+		/// <summary>
+		/// Updates the control's theme to fit in with the latest Windows visuals.
+		/// </summary>
+		/// <param name="lv">The List View control to set the theme on.</param>
+		public static void UpdateControlTheme(MenuStrip menu)
+		{
+			foreach (ToolStripMenuItem item in menu.Items)
+				UpdateControlTheme(item);
+		}
+
+		/// <summary>
+		/// Updates the control's theme to fit in with the latest Windows visuals.
+		/// </summary>
+		/// <param name="lv">The List View control to set the theme on.</param>
+		public static void UpdateControlTheme(ToolStripMenuItem menu)
+		{
+			UpdateControlTheme(menu.DropDown);
 		}
 
 		#region ListView double buffering

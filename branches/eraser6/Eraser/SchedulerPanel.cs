@@ -41,7 +41,6 @@ namespace Eraser
 		{
 			InitializeComponent();
 			UxThemeAPI.UpdateControlTheme(this);
-			UxThemeAPI.UpdateControlTheme(schedulerMenu);
 			UxThemeAPI.UpdateControlTheme(schedulerDefaultMenu);
 
 			//Populate the scheduler list-view with the current task list

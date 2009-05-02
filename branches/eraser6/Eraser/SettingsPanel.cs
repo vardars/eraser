@@ -43,7 +43,6 @@ namespace Eraser
 		{
 			InitializeComponent();
 			UxThemeAPI.UpdateControlTheme(this);
-			UxThemeAPI.UpdateControlTheme(pluginsMenu);
 
 			//For new plugins, register the callback.
 			Host.Instance.PluginLoaded += OnNewPluginLoaded;
