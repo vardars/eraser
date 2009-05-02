@@ -78,8 +78,8 @@ namespace Eraser
 
 				//Draw the actual text
 				Rectangle tempRect = e.TextRectangle;
-				tempRect.Inflate(3, 0);
-				tempRect.Offset(3, 0);
+				tempRect.Inflate(3, 3);
+				tempRect.Offset(3, 3);
 				e.TextRectangle = tempRect;
 				using (SolidBrush textBrush = new SolidBrush(TextColour))
 					g.DrawString(e.Text, e.TextFont, textBrush, e.TextRectangle);
