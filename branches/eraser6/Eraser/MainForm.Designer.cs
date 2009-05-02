@@ -126,8 +126,8 @@ namespace Eraser
 			// 
 			// openEraserToolStripMenuItem
 			// 
-			this.openEraserToolStripMenuItem.Name = "openEraserToolStripMenuItem";
 			resources.ApplyResources(this.openEraserToolStripMenuItem, "openEraserToolStripMenuItem");
+			this.openEraserToolStripMenuItem.Name = "openEraserToolStripMenuItem";
 			this.openEraserToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
 			// 
 			// toolStripMenuItem1
