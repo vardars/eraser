@@ -749,7 +749,6 @@ namespace Eraser {
 			parametersStrm << "\"" << action << L"\" -q " << parameters;
 			finalParameters = parametersStrm.str();
 		}
-		MessageBox(NULL, finalParameters.c_str(), L"Eraser Command Line", MB_OK | MB_ICONINFORMATION);
 
 		//If the process must be elevated we use ShellExecute with the runas verb
 		//to elevate the new process.
