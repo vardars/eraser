@@ -532,11 +532,21 @@ namespace Eraser {
 							item.erase(item.end() - 1);
 						DWORD attributes = GetFileAttributes(item.c_str());
 
+						//Escape the command line (= and , are special characters)
+						std::wstring escapedItem;
+						escapedItem.reserve(item.length());
+						for (std::wstring::const_iterator i = item.begin(); i != item.end(); ++i)
+						{
+							if (wcschr(L"\\=,", *i))
+								escapedItem += '\\';
+							escapedItem += *i;
+						}
+
 						//Add the correct command line for the file type.
 						if (attributes & FILE_ATTRIBUTE_DIRECTORY)
-							commandLine += L"\"-d=" + item + L"\" ";
+							commandLine += L"\"-d=" + escapedItem + L"\" ";
 						else
-							commandLine += L"\"" + item + L"\" ";
+							commandLine += L"\"" + escapedItem + L"\" ";
 					}
 				}
 
@@ -739,6 +749,7 @@ namespace Eraser {
 			parametersStrm << "\"" << action << L"\" -q " << parameters;
 			finalParameters = parametersStrm.str();
 		}
+		MessageBox(NULL, finalParameters.c_str(), L"Eraser Command Line", MB_OK | MB_ICONINFORMATION);
 
 		//If the process must be elevated we use ShellExecute with the runas verb
 		//to elevate the new process.

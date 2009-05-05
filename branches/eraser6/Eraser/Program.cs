@@ -695,22 +695,62 @@ namespace Eraser
 
 				while (commaPos != -1)
 				{
-					//Extract the current subparameter, and dissect the subparameter at
-					//the first =.
-					string subParam = param.Substring(lastPos, commaPos - lastPos);
-					int equalPos = subParam.IndexOf('=');
-					if (equalPos == -1)
-						result.Add(new KeyValuePair<string, string>(subParam, null));
+					//Check that the first parameter is not a \ otherwise this comma
+					//is escaped
+					if (commaPos == 0 ||									//No possibility of escaping
+						(commaPos >= 1 && param[commaPos - 1] != '\\') ||	//Second character
+						(commaPos >= 2 && param[commaPos - 2] == '\\'))		//Cannot be a \\ which is an escape
+					{
+						//Extract the current subparameter, and dissect the subparameter
+						//at the first =.
+						string subParam = param.Substring(lastPos, commaPos - lastPos);
+						int equalPos = -1;
+
+						do
+						{
+							equalPos = subParam.IndexOf('=', equalPos + 1);
+							if (equalPos == -1)
+							{
+								result.Add(new KeyValuePair<string, string>(
+									UnescapeCommandLine(subParam), null));
+							}
+							else if (equalPos == 0 ||								//No possibility of escaping
+								(equalPos >= 1 && subParam[equalPos - 1] != '\\') ||//Second character
+								(equalPos >= 2 && subParam[equalPos - 2] == '\\'))	//Double \\ which is an escape
+							{
+								result.Add(new KeyValuePair<string, string>(
+									UnescapeCommandLine(subParam.Substring(0, equalPos)),
+									UnescapeCommandLine(subParam.Substring(equalPos + 1))));
+								break;
+							}
+						}
+						while (equalPos != -1);
+						lastPos = ++commaPos;
+					}
 					else
-						result.Add(new KeyValuePair<string, string>(subParam.Substring(0, equalPos),
-							subParam.Substring(equalPos + 1)));
+						++commaPos;
 
 					//Find the next ,
-					lastPos = ++commaPos;
 					commaPos = param.IndexOf(',', commaPos);
 				}
 
 				return result;
+			}
+
+			/// <summary>
+			/// Unescapes a subparameter command line, removing the extra 
+			/// </summary>
+			/// <param name="param"></param>
+			/// <returns></returns>
+			private static string UnescapeCommandLine(string param)
+			{
+				StringBuilder result = new StringBuilder(param.Length);
+				for (int i = 0; i < param.Length; ++i)
+					if (param[i] == '\\' && i < param.Length - 1)
+						result.Append(param[++i]);
+					else
+						result.Append(param[i]);
+				return result.ToString();
 			}
 
 			/// <summary>
@@ -1104,9 +1144,10 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			//Send the task out.
 			try
 			{
-				using (Program.eraserClient = new RemoteExecutorClient())
+				using (RemoteExecutorClient client = new RemoteExecutorClient())
 				{
-					if (!((RemoteExecutorClient)Program.eraserClient).Connect())
+					client.Run();
+					if (!client.IsConnected)
 					{
 						//The client cannot connect to the server. This probably means
 						//that the server process isn't running. Start an instance.
@@ -1114,13 +1155,13 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 							Assembly.GetExecutingAssembly().Location, "--quiet");
 						eraserInstance.WaitForInputIdle();
 
-						if (!((RemoteExecutorClient)Program.eraserClient).Connect())
+						client.Run();
+						if (!client.IsConnected)
 							throw new IOException("Eraser cannot connect to the running " +
 								"instance for erasures.");
 					}
 
-					Program.eraserClient.Run();
-					Program.eraserClient.Tasks.Add(task);
+					client.Tasks.Add(task);
 				}
 			}
 			catch (UnauthorizedAccessException e)
