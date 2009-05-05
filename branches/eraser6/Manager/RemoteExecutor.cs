@@ -109,14 +109,16 @@ namespace Eraser.Manager
 				//Close the polling thread that creates new server instances
 				thread.Abort();
 
-				//Acquire all available locks to ensure no more server instances exist,
-				//then destroy the semaphore
-				for (int i = 0; i < maxServerInstances; ++i)
-					serverLock.WaitOne();
-				serverLock.Close();
+				//Close all waiting streams
+				lock (servers)
+					foreach (NamedPipeServerStream server in servers)
+						server.Close();
 
-				base.Dispose(disposing);
+				//Destroy the semaphore since all server instances have been closed
+				serverLock.Close();
 			}
+
+			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -135,6 +137,9 @@ namespace Eraser.Manager
 					PipeDirection.InOut, maxServerInstances, PipeTransmissionMode.Message,
 					PipeOptions.Asynchronous);
 				server.BeginWaitForConnection(EndWaitForConnection, server);
+				
+				lock (servers)
+					servers.Add(server);
 			}
 		}
 
@@ -247,8 +252,13 @@ namespace Eraser.Manager
 			catch (OperationCanceledException)
 			{
 			}
+			catch (ObjectDisposedException)
+			{
+			}
 			finally
 			{
+				lock (servers)
+					servers.Remove(server);
 				server.Close();
 				serverLock.Release();
 			}
@@ -263,6 +273,11 @@ namespace Eraser.Manager
 		/// Counts the number of available server instances.
 		/// </summary>
 		private Semaphore serverLock;
+
+		/// <summary>
+		/// The list storing all available created server instances.
+		/// </summary>
+		private List<NamedPipeServerStream> servers = new List<NamedPipeServerStream>();
 
 		/// <summary>
 		/// The maximum number of server instances existing concurrently.
