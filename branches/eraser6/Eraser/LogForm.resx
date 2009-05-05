@@ -142,7 +142,7 @@
     <value>12, 12</value>
   </data>
   <data name="log.Size" type="System.Drawing.Size, System.Drawing">
-    <value>414, 361</value>
+    <value>600, 391</value>
   </data>
   <data name="log.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -157,13 +157,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;log.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <data name="clear.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
+    <value>Bottom, Right</value>
   </data>
   <data name="clear.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 392</value>
+    <value>12, 409</value>
   </data>
   <data name="clear.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -184,13 +184,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;clear.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="close.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
   <data name="close.Location" type="System.Drawing.Point, System.Drawing">
-    <value>351, 392</value>
+    <value>537, 409</value>
   </data>
   <data name="close.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -211,13 +211,10 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;close.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="copy.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
+    <value>1</value>
   </data>
   <data name="copy.Location" type="System.Drawing.Point, System.Drawing">
-    <value>96, 392</value>
+    <value>96, 409</value>
   </data>
   <data name="copy.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -238,33 +235,6 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;copy.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="separator.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left, Right</value>
-  </data>
-  <data name="separator.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 387</value>
-  </data>
-  <data name="separator.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 11, 0, 0</value>
-  </data>
-  <data name="separator.Size" type="System.Drawing.Size, System.Drawing">
-    <value>420, 2</value>
-  </data>
-  <data name="separator.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;separator.Name" xml:space="preserve">
-    <value>separator</value>
-  </data>
-  <data name="&gt;&gt;separator.Type" xml:space="preserve">
-    <value>Trustbridge.Windows.Controls.BevelLine, BevelLine, Version=1.0.3240.33061, Culture=neutral, PublicKeyToken=552aec48acab06da</value>
-  </data>
-  <data name="&gt;&gt;separator.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;separator.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -274,16 +244,10 @@
     <value>96, 96</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>438, 427</value>
+    <value>624, 444</value>
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Microsoft Sans Serif, 9pt</value>
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>274, 197</value>
+    <value>Segoe UI, 9pt</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Log Viewer</value>

@@ -40,7 +40,6 @@ namespace Eraser
 			InitializeComponent();
 			UxThemeAPI.UpdateControlTheme(this);
 			this.task = task;
-			Rectangle r;
 
 			//Update the title
 			Text = string.Format(CultureInfo.InvariantCulture, "{0} - {1}", Text, task.UIText);
@@ -55,10 +54,10 @@ namespace Eraser
 					task_Logged(this, new LogEventArgs(entry));
 			}
 
-			clear.Enabled = copy.Enabled  = log.Count > 0;
 			//Register our event handler to get live log messages
 			task.Log.Logged += task_Logged;
 			this.log.EndUpdate();
+			EnableButtons();
 		}
 
 		private void LogForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -102,13 +101,16 @@ namespace Eraser
 					item.ForeColor = Color.Orange;
 					break;
 			}
+
+			//Enable the clear and copy log buttons only if we have entries to copy.
+			EnableButtons();
 		}
 
 		private void clear_Click(object sender, EventArgs e)
 		{
-			this.task.Log.Clear();
+			task.Log.Clear();
 			log.Items.Clear();
-			copy.Enabled = clear.Enabled = log.Items.Count > 0;
+			EnableButtons();
 		}
 
 		private void copy_Click(object sender, EventArgs e)
@@ -126,7 +128,8 @@ namespace Eraser
 				}
 			}
 
-			Clipboard.SetText(text.ToString(), TextDataFormat.CommaSeparatedValue);
+			if (text.Length > 0)
+				Clipboard.SetText(text.ToString(), TextDataFormat.CommaSeparatedValue);
 		}
 
 		private void close_Click(object sender, EventArgs e)
@@ -134,6 +137,17 @@ namespace Eraser
 			Close();
 		}
 
+		/// <summary>
+		/// Enables/disables buttons based on the current system state.
+		/// </summary>
+		private void EnableButtons()
+		{
+			clear.Enabled = copy.Enabled = task.Log.Entries.Count > 0;
+		}
+
+		/// <summary>
+		/// The task which this log is displaying entries for
+		/// </summary>
 		private Task task;
 	}
 }
