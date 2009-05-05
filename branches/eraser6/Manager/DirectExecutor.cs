@@ -839,8 +839,12 @@ namespace Eraser.Manager
 				FolderTarget fldr = (FolderTarget)target;
 				if (fldr.DeleteIfEmpty)
 				{
-					FileSystem fsManager = FileSystem.Get(VolumeInfo.FromMountpoint(fldr.Path));
-					fsManager.DeleteFolder(new DirectoryInfo(fldr.Path));
+					DirectoryInfo info = new DirectoryInfo(fldr.Path);
+					if (info.GetFiles("*", SearchOption.AllDirectories).Length == 0)
+					{
+						FileSystem fsManager = FileSystem.Get(VolumeInfo.FromMountpoint(fldr.Path));
+						fsManager.DeleteFolder(info);
+					}
 				}
 			}
 
