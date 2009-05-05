@@ -1041,6 +1041,10 @@ namespace Eraser.Manager
 		{
 			//Load the list into the dictionary
 			list = (List<Task>)new BinaryFormatter().Deserialize(stream);
+
+			//Restore the task's references
+			foreach (Task task in list)
+				task.Executor = Owner;
 		}
 
 		/// <summary>
