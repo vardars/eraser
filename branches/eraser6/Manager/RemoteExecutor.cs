@@ -303,31 +303,20 @@ namespace Eraser.Manager
 			if (disposing)
 			{
 				client.Close();
-				client.Dispose();
 			}
 
 			base.Dispose(disposing);
 		}
 
-		/// <summary>
-		/// Connects to the remote server.
-		/// </summary>
-		/// <returns>True if the connection to the remote server was established.</returns>
-		public bool Connect()
+		public override void Run()
 		{
 			try
 			{
-				client.Connect(3000);
+				client.Connect(500);
 			}
 			catch (TimeoutException)
 			{
 			}
-
-			return client.IsConnected;
-		}
-
-		public override void Run()
-		{
 		}
 
 		/// <summary>
@@ -404,6 +393,14 @@ namespace Eraser.Manager
 		}
 
 		public override ExecutorTasksCollection Tasks { get; protected set; }
+
+		/// <summary>
+		/// Checks whether the executor instance has connected to a server.
+		/// </summary>
+		public bool IsConnected 
+		{
+			get { return client.IsConnected; }
+		}
 
 		/// <summary>
 		/// The named pipe used to connect to another running instance of Eraser.
