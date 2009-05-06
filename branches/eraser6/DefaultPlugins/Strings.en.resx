@@ -198,9 +198,6 @@
   <data name="RNGCryptoServiceProvider" xml:space="preserve">
     <value>RNGCryptoServiceProvider</value>
   </data>
-  <data name="ISAAC CSPRNG" xml:space="preserve">
-    <value>ISAAC CSPRNG</value>
-  </data>
   <data name="An invalid erasure method was selected." xml:space="preserve">
     <value>An invalid erasure method was selected.</value>
   </data>
