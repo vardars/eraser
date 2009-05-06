@@ -118,7 +118,7 @@ Eraser Project Members:
 				SizeF copyrightSize = g.MeasureString(copyrightText, Font);
 				g.DrawString(copyrightText, Font, textBrush, copyrightPos);
 
-				string websiteText = "http://eraser.sourceforge.net/";
+				string websiteText = "http://eraser.heidi.ie/";
 				PointF websitePos = new PointF(copyrightPos.X, copyrightPos.Y + copyrightSize.Height);
 				SizeF websiteSize = g.MeasureString(websiteText, Font);
 				g.DrawString(websiteText, underlineFont, textBrush, websitePos);
