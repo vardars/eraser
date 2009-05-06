@@ -125,7 +125,7 @@ namespace Eraser
 		private void stop_Click(object sender, EventArgs e)
 		{
 			if (task.Executing)
-				task.Executor.UnqueueTask(task);
+				task.Cancel();
 			Close();
 		}
 	}

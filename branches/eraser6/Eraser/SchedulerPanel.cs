@@ -397,7 +397,7 @@ namespace Eraser
 				Task task = (Task)item.Tag;
 				if (task.Executing || task.Queued)
 				{
-					Program.eraserClient.UnqueueTask(task);
+					task.Cancel();
 
 					//Update the UI
 					item.SubItems[1].Text = string.Empty;
