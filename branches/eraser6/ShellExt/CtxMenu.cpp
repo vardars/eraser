@@ -131,15 +131,14 @@ namespace Eraser {
 		}
 
 		//Check the value of the IntegrateWithShell value.
-		DWORD valueType;		
-		BYTE valueBuffer[512];
-		DWORD valueBufferSize = sizeof(valueBuffer);
+		DWORD value = 0;
+		DWORD valueType = 0;
+		DWORD valueSize = sizeof(value);
 		DWORD error = RegQueryValueEx(eraserKey, L"IntegrateWithShell", NULL, &valueType,
-			valueBuffer, &valueBufferSize);
-		if (error == ERROR_SUCCESS)
+			reinterpret_cast<BYTE*>(&value), &valueSize);
+		if (error == ERROR_SUCCESS && value == 0)
 		{
-			if (!*reinterpret_cast<char*>(valueBuffer + 51))
-				return E_FAIL;
+			return E_FAIL;
 		}
 
 		return S_OK;

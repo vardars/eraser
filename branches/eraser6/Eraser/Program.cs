@@ -1214,9 +1214,13 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			{
 				get
 				{
-					byte[] currentSetting = (byte[])key.GetValue(setting, null);
-					if (currentSetting != null && currentSetting.Length != 0)
-						using (MemoryStream stream = new MemoryStream(currentSetting))
+					//Get the raw registry value
+					object rawResult = key.GetValue(setting, null);
+
+					//Check if it is a serialised object
+					if (rawResult is byte[])
+					{
+						using (MemoryStream stream = new MemoryStream((byte[])rawResult))
 							try
 							{
 								return new BinaryFormatter().Deserialize(stream);
@@ -1230,6 +1234,11 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 									MessageBoxDefaultButton.Button1,
 									S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
 							}
+					}
+					else
+					{
+						return rawResult;
+					}
 
 					return null;
 				}
@@ -1241,11 +1250,20 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 					}
 					else
 					{
-						using (MemoryStream stream = new MemoryStream())
-						{
-							new BinaryFormatter().Serialize(stream, value);
-							key.SetValue(setting, stream.ToArray(), RegistryValueKind.Binary);
-						}
+						if (value is bool)
+							key.SetValue(setting, value, RegistryValueKind.DWord);
+						else if ((value is int) || (value is uint))
+							key.SetValue(setting, value, RegistryValueKind.DWord);
+						else if ((value is long) || (value is ulong))
+							key.SetValue(setting, value, RegistryValueKind.QWord);
+						else if (value is string)
+							key.SetValue(setting, value, RegistryValueKind.String);
+						else
+							using (MemoryStream stream = new MemoryStream())
+							{
+								new BinaryFormatter().Serialize(stream, value);
+								key.SetValue(setting, stream.ToArray(), RegistryValueKind.Binary);
+							}
 					}
 				}
 			}
@@ -1343,7 +1361,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			get
 			{
 				return settings["IntegrateWithShell"] == null ?
-					true : (bool)settings["IntegrateWithShell"];
+					true : Convert.ToBoolean(settings["IntegrateWithShell"]);
 			}
 			set
 			{
@@ -1360,7 +1378,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			get
 			{
 				return settings["HideWhenMinimised"] == null ?
-					true : (bool)settings["HideWhenMinimised"];
+					true : Convert.ToBoolean(settings["HideWhenMinimised"]);
 			}
 			set
 			{
@@ -1377,7 +1395,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			get
 			{
 				return settings["ClearCompletedTasks"] == null ?
-					true : (bool)settings["ClearCompletedTasks"];
+					true : Convert.ToBoolean(settings["ClearCompletedTasks"]);
 			}
 			set
 			{

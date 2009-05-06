@@ -283,7 +283,7 @@ namespace Eraser.Manager
 			get
 			{
 				return settings["EraseLockedFilesOnRestart"] == null ? true :
-					(bool)settings["EraseLockedFilesOnRestart"];
+					Convert.ToBoolean(settings["EraseLockedFilesOnRestart"]);
 			}
 			set
 			{
@@ -300,7 +300,7 @@ namespace Eraser.Manager
 			get
 			{
 				return settings["ConfirmEraseOnRestart"] == null ?
-					true : (bool)settings["ConfirmEraseOnRestart"];
+					true : Convert.ToBoolean(settings["ConfirmEraseOnRestart"]);
 			}
 			set
 			{
@@ -316,7 +316,7 @@ namespace Eraser.Manager
 			get
 			{
 				return settings["ExecuteMissedTasksImmediately"] == null ?
-					true : (bool)settings["ExecuteMissedTasksImmediately"];
+					true : Convert.ToBoolean(settings["ExecuteMissedTasksImmediately"]);
 			}
 			set
 			{
@@ -335,7 +335,7 @@ namespace Eraser.Manager
 			get
 			{
 				return settings["PlausibleDeniability"] == null ? false :
-					(bool)settings["PlausibleDeniability"];
+					Convert.ToBoolean(settings["PlausibleDeniability"]);
 			}
 			set
 			{
