@@ -23,9 +23,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
-
-using Eraser.Manager;
 using System.Security.Permissions;
+
+using Eraser.Util;
+using Eraser.Manager;
 
 namespace Eraser.DefaultPlugins
 {
@@ -141,8 +142,8 @@ namespace Eraser.DefaultPlugins
 					Random = true;
 				}
 				else
-					throw new ArgumentException("The custom erasure method can only comprise " +
-						"passes containining constant or random passes");
+					throw new ArgumentException(S._("The custom erasure method can only comprise " +
+						"passes containining constant or random passes"));
 			}
 
 			public static implicit operator ErasureMethodPass(PassData pass)
