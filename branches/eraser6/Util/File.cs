@@ -190,7 +190,7 @@ namespace Eraser.Util
 		/// <summary>
 		/// Checks whether the path given is compressed.
 		/// </summary>
-		/// <param name="filePath">The path to the file or folder</param>
+		/// <param name="path">The path to the file or folder</param>
 		/// <returns>True if the file or folder is compressed.</returns>
 		public static bool IsCompressed(string path)
 		{

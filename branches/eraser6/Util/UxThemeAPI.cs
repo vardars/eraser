@@ -68,7 +68,7 @@ namespace Eraser.Util
 		/// <summary>
 		/// Updates the control's theme to fit in with the latest Windows visuals.
 		/// </summary>
-		/// <param name="lv">The List View control to set the theme on.</param>
+		/// <param name="menu">The tool strip control to set the theme on.</param>
 		public static void UpdateControlTheme(ToolStrip menu)
 		{
 			if (Environment.OSVersion.Version.Major >= 6)
@@ -83,7 +83,7 @@ namespace Eraser.Util
 		/// <summary>
 		/// Updates the control's theme to fit in with the latest Windows visuals.
 		/// </summary>
-		/// <param name="lv">The List View control to set the theme on.</param>
+		/// <param name="menu">The List View control to set the theme on.</param>
 		public static void UpdateControlTheme(ToolStripMenuItem menu)
 		{
 			UpdateControlTheme(menu.DropDown);

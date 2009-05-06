@@ -34,7 +34,7 @@ namespace Eraser.Util
 	{
 		/// <summary>
 		/// Initializes a new instance of the Eraser.Util.FileInfo class, which
-		//  acts as a wrapper for a file path.
+		/// acts as a wrapper for a file path.
 		/// </summary>
 		/// <param name="path">The fully qualified name (with :ADSName for ADSes)
 		/// of the new file, or the relative file name.</param>

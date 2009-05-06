@@ -115,7 +115,7 @@ namespace Eraser.Util
 		/// </returns>
 		[DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
 		public static extern IntPtr SHGetFileInfo(string path, uint fileAttributes,
-			ref SHFILEINFO psfi, int fileInfo, SHGetFileInfoFlags flags);
+			ref SHFILEINFO psfi, int cbFileInfo, SHGetFileInfoFlags uFlags);
 
 		public enum SHGetFileInfoFlags
 		{
