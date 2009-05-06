@@ -127,6 +127,64 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// Writes a file for plausible deniability over the current stream.
+		/// </summary>
+		/// <param name="fileStream">The stream to write the data to.</param>
+		protected void CopyPlausibleDeniabilityFile(Stream destFileStream)
+		{
+			//Get the template file to copy
+			FileInfo shadowFileInfo;
+			{
+				string shadowFile = null;
+				List<string> entries = ManagerLibrary.Settings.PlausibleDeniabilityFiles.GetRange(
+					0, ManagerLibrary.Settings.PlausibleDeniabilityFiles.Count);
+				Prng prng = PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng);
+				do
+				{
+					if (entries.Count == 0)
+						throw new FatalException(S._("Plausible deniability was selected, " +
+							"but no decoy files were found. The current file has been only " +
+							"replaced with random data."));
+
+					int index = prng.Next(entries.Count - 1);
+					if ((System.IO.File.GetAttributes(entries[index]) & FileAttributes.Directory) != 0)
+					{
+						DirectoryInfo dir = new DirectoryInfo(entries[index]);
+						FileInfo[] files = dir.GetFiles("*", SearchOption.AllDirectories);
+						foreach (FileInfo f in files)
+							entries.Add(f.FullName);
+					}
+					else
+						shadowFile = entries[index];
+
+					entries.RemoveAt(index);
+				}
+				while (shadowFile == null || shadowFile.Length == 0);
+				shadowFileInfo = new FileInfo(shadowFile);
+			}
+
+			//Dump the copy (the first 4MB, or less, depending on the file size and available
+			//user space)
+			long amountToCopy = Math.Min(4 * 1024 * 1024, shadowFileInfo.Length);
+			using (FileStream shadowFileStream = shadowFileInfo.OpenRead())
+			{
+				while (destFileStream.Position < amountToCopy)
+				{
+					byte[] buf = new byte[524288];
+					int bytesRead = shadowFileStream.Read(buf, 0, buf.Length);
+
+					//Stop bothering if the input stream is at the end
+					if (bytesRead == 0)
+						break;
+
+					//Dump the read contents onto the file to be deleted
+					destFileStream.Write(buf, 0,
+						(int)Math.Min(bytesRead, amountToCopy - destFileStream.Position));
+				}
+			}
+		}
+
+		/// <summary>
 		/// Securely deletes the file reference from the directory structures
 		/// as well as resetting the Date Created, Date Accessed and Date Modified
 		/// records.
@@ -190,16 +248,15 @@ namespace Eraser.Manager
 	public delegate void FileSystemEntriesEraseProgress(int currentFile, int totalFiles);
 
 	/// <summary>
-	/// Provides functions to handle erasures specific to NTFS volumes.
+	/// Base class for all Windows filesystems.
 	/// </summary>
-	class NtfsFileSystem : FileSystem
+	public abstract class WindowsFileSystem : FileSystem
 	{
 		public override void DeleteFile(FileInfo info)
 		{
 			//Set the date of the file to be invalid to prevent forensic
 			//detection
-			info.CreationTime = info.LastWriteTime = info.LastAccessTime =
-				new DateTime(1980, 1, 1, 0, 0, 0);
+			info.CreationTime = info.LastWriteTime = info.LastAccessTime = MinTimestamp;
 			info.Attributes = FileAttributes.Normal;
 			info.Attributes = FileAttributes.NotContentIndexed;
 
@@ -231,57 +288,7 @@ namespace Eraser.Manager
 			//volume and write it over.
 			if (Manager.ManagerLibrary.Settings.PlausibleDeniability)
 			{
-				//Get the template file to copy
-				FileInfo shadowFileInfo;
-				{
-					string shadowFile = null;
-					List<string> entries = ManagerLibrary.Settings.PlausibleDeniabilityFiles.GetRange(
-						0, ManagerLibrary.Settings.PlausibleDeniabilityFiles.Count);
-					Prng prng = PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng);
-					do
-					{
-						if (entries.Count == 0)
-							throw new FatalException(S._("Plausible deniability was selected, " +
-								"but no decoy files were found. The current file has been only " +
-								"replaced with random data."));
-
-						int index = prng.Next(entries.Count - 1);
-						if ((System.IO.File.GetAttributes(entries[index]) & FileAttributes.Directory) != 0)
-						{
-							DirectoryInfo dir = new DirectoryInfo(entries[index]);
-							FileInfo[] files = dir.GetFiles("*", SearchOption.AllDirectories);
-							foreach (FileInfo f in files)
-								entries.Add(f.FullName);
-						}
-						else
-							shadowFile = entries[index];
-
-						entries.RemoveAt(index);
-					}
-					while (shadowFile == null || shadowFile.Length == 0);
-					shadowFileInfo = new FileInfo(shadowFile);
-				}
-
-				//Dump the copy (the first 4MB, or less, depending on the file size and available
-				//user space)
-				long amountToCopy = Math.Min(4 * 1024 * 1024, shadowFileInfo.Length);
-				using (FileStream shadowFileStream = shadowFileInfo.OpenRead())
-				using (FileStream destFileStream = info.OpenWrite())
-				{
-					while (destFileStream.Position < amountToCopy)
-					{
-						byte[] buf = new byte[524288];
-						int bytesRead = shadowFileStream.Read(buf, 0, buf.Length);
-
-						//Stop bothering if the input stream is at the end
-						if (bytesRead == 0)
-							break;
-
-						//Dump the read contents onto the file to be deleted
-						destFileStream.Write(buf, 0,
-							(int)Math.Min(bytesRead, amountToCopy - destFileStream.Position));
-					}
-				}
+				CopyPlausibleDeniabilityFile(info.OpenWrite());
 			}
 
 			//Then delete the file.
@@ -331,6 +338,18 @@ namespace Eraser.Manager
 			info.Delete(true);
 		}
 
+		/// <summary>
+		/// The minimum timestamp the file system can take. This is for secure file
+		/// deletion.
+		/// </summary>
+		protected abstract DateTime MinTimestamp { get; }
+	}
+
+	/// <summary>
+	/// Provides functions to handle erasures specific to NTFS volumes.
+	/// </summary>
+	public class NtfsFileSystem : WindowsFileSystem
+	{
 		public override void EraseOldFileSystemResidentFiles(VolumeInfo info,
 			ErasureMethod method, FileSystemEntriesEraseProgress callback)
 		{
@@ -422,23 +441,21 @@ namespace Eraser.Manager
 				DeleteFolder(tempDir);
 			}
 		}
+
+		protected override DateTime MinTimestamp
+		{
+			get
+			{
+				return new DateTime(1600, 1, 1, 0, 0, 0);
+			}
+		}
 	}
 
 	/// <summary>
 	/// Provides functions to handle erasures specific to FAT volumes.
 	/// </summary>
-	class FatFileSystem : FileSystem
+	public class FatFileSystem : WindowsFileSystem
 	{
-		public override void DeleteFile(FileInfo info)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void DeleteFolder(DirectoryInfo info)
-		{
-			throw new NotImplementedException();
-		}
-
 		public override void EraseOldFileSystemResidentFiles(VolumeInfo info, ErasureMethod method, FileSystemEntriesEraseProgress callback)
 		{
 			throw new NotImplementedException();
@@ -447,6 +464,14 @@ namespace Eraser.Manager
 		public override void EraseDirectoryStructures(VolumeInfo info, FileSystemEntriesEraseProgress callback)
 		{
 			throw new NotImplementedException();
+		}
+
+		protected override DateTime MinTimestamp
+		{
+			get
+			{
+				return new DateTime(1980, 1, 1, 0, 0, 0);
+			}
 		}
 	}
 }

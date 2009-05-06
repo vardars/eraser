@@ -186,11 +186,11 @@
   <data name="EntropySource GUID not found: {0}" xml:space="preserve">
     <value>EntropySource GUID not found: {0}</value>
   </data>
-  <data name="The file {0} is currently in use and cannot be removed." xml:space="preserve">
-    <value>The file {0} is currently in use and cannot be removed.</value>
-  </data>
   <data name="Plausible deniability was selected, but no decoy files were found. The current file has been only replaced with random data." xml:space="preserve">
     <value>Plausible deniability was selected, but no decoy files were found. The current file has been only replaced with random data.</value>
+  </data>
+  <data name="The file {0} is currently in use and cannot be removed." xml:space="preserve">
+    <value>The file {0} is currently in use and cannot be removed.</value>
   </data>
   <data name="{0} (1 pass)" xml:space="preserve">
     <value>{0} (1 pass)</value>
