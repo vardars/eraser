@@ -1040,11 +1040,9 @@ namespace Eraser.Manager
 		public override void LoadFromStream(Stream stream)
 		{
 			//Load the list into the dictionary
-			list = (List<Task>)new BinaryFormatter().Deserialize(stream);
-
-			//Restore the task's references
-			foreach (Task task in list)
-				task.Executor = Owner;
+			StreamingContext context = new StreamingContext(
+				StreamingContextStates.All, Owner);
+			list = (List<Task>)new BinaryFormatter(null, context).Deserialize(stream);
 		}
 
 		/// <summary>

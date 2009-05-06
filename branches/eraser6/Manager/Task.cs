@@ -41,6 +41,7 @@ namespace Eraser.Manager
 		protected Task(SerializationInfo info, StreamingContext context)
 		{
 			Name = (string)info.GetValue("Name", typeof(string));
+			Executor = context.Context as Executor;
 			Targets = (ErasureTargetsCollection)info.GetValue("Targets", typeof(ErasureTargetsCollection));
 			Targets.Owner = this;
 			Log = (Logger)info.GetValue("Log", typeof(Logger));
