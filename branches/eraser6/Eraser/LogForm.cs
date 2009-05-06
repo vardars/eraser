@@ -30,6 +30,7 @@ using System.Windows.Forms;
 using Eraser.Manager;
 using System.Globalization;
 using Eraser.Util;
+using System.IO;
 
 namespace Eraser
 {
@@ -115,21 +116,40 @@ namespace Eraser
 
 		private void copy_Click(object sender, EventArgs e)
 		{
-			StringBuilder text = new StringBuilder();
+			StringBuilder csvText = new StringBuilder();
+			StringBuilder rawText = new StringBuilder();
 			LogSessionDictionary logEntries = task.Log.Entries;
+
 			foreach (DateTime sessionTime in logEntries.Keys)
 			{
-				text.AppendLine(S._("Session: {0:F}", sessionTime));
+				csvText.AppendLine(S._("Session: {0:F}", sessionTime));
+				rawText.AppendLine(S._("Session: {0:F}", sessionTime));
 				foreach (LogEntry entry in logEntries[sessionTime])
 				{
-					text.AppendFormat("{0}	{1}	{2}\n",
-						entry.Timestamp.ToString("F", CultureInfo.CurrentCulture).Replace("\"", "\"\""),
-						entry.Level.ToString(), entry.Message);
+					string timeStamp = entry.Timestamp.ToString("F", CultureInfo.CurrentCulture);
+					string message = entry.Message;
+					csvText.AppendFormat("\"{0}\",\"{1}\",\"{2}\"\n",
+						timeStamp.Replace("\"", "\"\""), entry.Level.ToString(),
+						message.Replace("\"", "\"\""));
+					rawText.AppendFormat("{0}	{1}	{2}", timeStamp, entry.Level.ToString(),
+						message);
 				}
 			}
 
-			if (text.Length > 0)
-				Clipboard.SetText(text.ToString(), TextDataFormat.CommaSeparatedValue);
+			if (csvText.Length > 0 || rawText.Length > 0)
+			{
+				//Set the simple text data for data-unaware applications like Word
+				DataObject tableText = new DataObject();
+				tableText.SetText(rawText.ToString());
+
+				//Then a UTF-8 stream CSV for Excel
+				byte[] bytes = Encoding.UTF8.GetBytes(csvText.ToString());
+				MemoryStream tableStream = new MemoryStream(bytes);
+				tableText.SetData(DataFormats.CommaSeparatedValue, tableStream);
+
+				//Set the clipboard
+				Clipboard.SetDataObject(tableText, true);
+			}
 		}
 
 		private void close_Click(object sender, EventArgs e)

@@ -51,9 +51,9 @@ namespace Eraser
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LogForm));
 			this.log = new System.Windows.Forms.ListView();
-			this.timestamp = new System.Windows.Forms.ColumnHeader();
-			this.severity = new System.Windows.Forms.ColumnHeader();
-			this.message = new System.Windows.Forms.ColumnHeader();
+			this.logTimestampColumn = new System.Windows.Forms.ColumnHeader();
+			this.logSeverityColumn = new System.Windows.Forms.ColumnHeader();
+			this.logMessageColumn = new System.Windows.Forms.ColumnHeader();
 			this.clear = new System.Windows.Forms.Button();
 			this.close = new System.Windows.Forms.Button();
 			this.copy = new System.Windows.Forms.Button();
@@ -63,9 +63,9 @@ namespace Eraser
 			// 
 			resources.ApplyResources(this.log, "log");
 			this.log.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.timestamp,
-            this.severity,
-            this.message});
+            this.logTimestampColumn,
+            this.logSeverityColumn,
+            this.logMessageColumn});
 			this.log.FullRowSelect = true;
 			this.log.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.log.MultiSelect = false;
@@ -73,17 +73,17 @@ namespace Eraser
 			this.log.UseCompatibleStateImageBehavior = false;
 			this.log.View = System.Windows.Forms.View.Details;
 			// 
-			// timestamp
+			// logTimestampColumn
 			// 
-			resources.ApplyResources(this.timestamp, "timestamp");
+			resources.ApplyResources(this.logTimestampColumn, "logTimestampColumn");
 			// 
-			// severity
+			// logSeverityColumn
 			// 
-			resources.ApplyResources(this.severity, "severity");
+			resources.ApplyResources(this.logSeverityColumn, "logSeverityColumn");
 			// 
-			// message
+			// logMessageColumn
 			// 
-			resources.ApplyResources(this.message, "message");
+			resources.ApplyResources(this.logMessageColumn, "logMessageColumn");
 			// 
 			// clear
 			// 
@@ -129,9 +129,9 @@ namespace Eraser
 		private System.Windows.Forms.ListView log;
 		private System.Windows.Forms.Button clear;
 		private System.Windows.Forms.Button close;
-		private System.Windows.Forms.ColumnHeader timestamp;
-		private System.Windows.Forms.ColumnHeader severity;
-		private System.Windows.Forms.ColumnHeader message;
+		private System.Windows.Forms.ColumnHeader logTimestampColumn;
+		private System.Windows.Forms.ColumnHeader logSeverityColumn;
+		private System.Windows.Forms.ColumnHeader logMessageColumn;
 		private System.Windows.Forms.Button copy;
 	}
 }

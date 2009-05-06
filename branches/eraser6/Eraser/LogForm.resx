@@ -121,20 +121,20 @@
   <data name="log.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
-  <data name="timestamp.Text" xml:space="preserve">
+  <data name="logTimestampColumn.Text" xml:space="preserve">
     <value>Timestamp</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="timestamp.Width" type="System.Int32, mscorlib">
+  <data name="logTimestampColumn.Width" type="System.Int32, mscorlib">
     <value>140</value>
   </data>
-  <data name="severity.Text" xml:space="preserve">
+  <data name="logSeverityColumn.Text" xml:space="preserve">
     <value>Severity</value>
   </data>
-  <data name="message.Text" xml:space="preserve">
+  <data name="logMessageColumn.Text" xml:space="preserve">
     <value>Message</value>
   </data>
-  <data name="message.Width" type="System.Int32, mscorlib">
+  <data name="logMessageColumn.Width" type="System.Int32, mscorlib">
     <value>375</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
@@ -252,22 +252,22 @@
   <data name="$this.Text" xml:space="preserve">
     <value>Log Viewer</value>
   </data>
-  <data name="&gt;&gt;timestamp.Name" xml:space="preserve">
-    <value>timestamp</value>
+  <data name="&gt;&gt;logTimestampColumn.Name" xml:space="preserve">
+    <value>logTimestampColumn</value>
   </data>
-  <data name="&gt;&gt;timestamp.Type" xml:space="preserve">
+  <data name="&gt;&gt;logTimestampColumn.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;severity.Name" xml:space="preserve">
-    <value>severity</value>
+  <data name="&gt;&gt;logSeverityColumn.Name" xml:space="preserve">
+    <value>logSeverityColumn</value>
   </data>
-  <data name="&gt;&gt;severity.Type" xml:space="preserve">
+  <data name="&gt;&gt;logSeverityColumn.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;message.Name" xml:space="preserve">
-    <value>message</value>
+  <data name="&gt;&gt;logMessageColumn.Name" xml:space="preserve">
+    <value>logMessageColumn</value>
   </data>
-  <data name="&gt;&gt;message.Type" xml:space="preserve">
+  <data name="&gt;&gt;logMessageColumn.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
