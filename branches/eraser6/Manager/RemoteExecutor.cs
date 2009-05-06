@@ -114,7 +114,10 @@ namespace Eraser.Manager
 					foreach (NamedPipeServerStream server in servers)
 						server.Close();
 
-				//Destroy the semaphore since all server instances have been closed
+				//Acquire all available locks to ensure no more server instances exist,
+				//then destroy the semaphore
+				for (int i = 0; i < maxServerInstances; ++i)
+					serverLock.WaitOne();
 				serverLock.Close();
 			}
 
