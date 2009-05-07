@@ -192,6 +192,8 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Loads the task list from the given stream.
 		/// </summary>
+		/// <remarks>This will append the tasks in the given stream to the current list of
+		/// tasks instead of overwriting it.</remarks>
 		/// <param name="stream">The stream to save to.</param>
 		public abstract void LoadFromStream(Stream stream);
 
