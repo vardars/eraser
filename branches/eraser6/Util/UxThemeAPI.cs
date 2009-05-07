@@ -145,194 +145,225 @@ namespace Eraser.Util
 			public static extern void SetWindowTheme(IntPtr hwnd, string pszSubAppName,
 				string pszSubIdList);
 		}
+	}
 
-		public class UxThemeMenuRenderer : ToolStripRenderer
+	public class UxThemeMenuRenderer : ToolStripRenderer
+	{
+		~UxThemeMenuRenderer()
 		{
-			~UxThemeMenuRenderer()
+			hTheme.Close();
+		}
+
+		protected override void Initialize(ToolStrip toolStrip)
+		{
+			base.Initialize(toolStrip);
+
+			control = toolStrip;
+			hTheme = NativeMethods.OpenThemeData(toolStrip.Handle, "MENU");
+		}
+
+		protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
+		{
+			IntPtr hDC = e.Graphics.GetHdc();
+			Rectangle rect = e.AffectedBounds;
+
+			if (NativeMethods.IsThemeBackgroundPartiallyTransparent(hTheme,
+				(int)NativeMethods.MENUPARTS.MENU_POPUPBACKGROUND, 0))
 			{
-				CloseThemeData(hTheme);
+				NativeMethods.DrawThemeParentBackground(control.Handle, hDC, ref rect);
+			}
+			NativeMethods.DrawThemeBackground(hTheme, hDC,
+				(int)NativeMethods.MENUPARTS.MENU_POPUPBACKGROUND, 0, ref rect, ref rect);
+
+			if (NativeMethods.IsThemeBackgroundPartiallyTransparent(hTheme,
+				(int)NativeMethods.MENUPARTS.MENU_POPUPBORDERS, 0))
+			{
+				NativeMethods.DrawThemeParentBackground(control.Handle, hDC, ref rect);
+			}
+			NativeMethods.DrawThemeBackground(hTheme, hDC, (int)
+				NativeMethods.MENUPARTS.MENU_POPUPBORDERS, 0, ref rect, ref rect);
+
+			e.Graphics.ReleaseHdc();
+		}
+
+		protected override void OnRenderImageMargin(ToolStripRenderEventArgs e)
+		{
+			IntPtr hDC = e.Graphics.GetHdc();
+			Rectangle rect = e.AffectedBounds;
+			rect.Width = GutterWidth;
+			rect.Inflate(-1, -1);
+			rect.Offset(1, 0);
+
+			if (NativeMethods.IsThemeBackgroundPartiallyTransparent(hTheme,
+				(int)NativeMethods.MENUPARTS.MENU_POPUPGUTTER, 0))
+			{
+				NativeMethods.DrawThemeParentBackground(control.Handle, hDC, ref rect);
+			}
+			NativeMethods.DrawThemeBackground(hTheme, hDC,
+				(int)NativeMethods.MENUPARTS.MENU_POPUPGUTTER, 0, ref rect, ref rect);
+
+			e.Graphics.ReleaseHdc();
+		}
+
+		protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
+		{
+			Rectangle rect = Rectangle.Truncate(e.Graphics.VisibleClipBounds);
+			rect.Inflate(-1, 0);
+			rect.Offset(1, 0);
+			IntPtr hDC = e.Graphics.GetHdc();
+
+			int itemState = (int)(e.Item.Selected ?
+				(e.Item.Enabled ? NativeMethods.POPUPITEMSTATES.MPI_HOT :
+					NativeMethods.POPUPITEMSTATES.MPI_DISABLEDHOT) :
+				(e.Item.Enabled ? NativeMethods.POPUPITEMSTATES.MPI_NORMAL :
+					NativeMethods.POPUPITEMSTATES.MPI_DISABLED));
+			NativeMethods.DrawThemeBackground(hTheme, hDC,
+				(int)NativeMethods.MENUPARTS.MENU_POPUPITEM, itemState, ref rect, ref rect);
+
+			e.Graphics.ReleaseHdc();
+		}
+
+		protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
+		{
+			IntPtr hDC = e.Graphics.GetHdc();
+			Rectangle rect = new Rectangle(GutterWidth, 0, e.Item.Width, e.Item.Height);
+			rect.Inflate(4, 0);
+
+			NativeMethods.DrawThemeBackground(hTheme, hDC,
+				(int)NativeMethods.MENUPARTS.MENU_POPUPSEPARATOR, 0, ref rect, ref rect);
+
+			e.Graphics.ReleaseHdc();
+		}
+
+		protected override void OnRenderItemCheck(ToolStripItemImageRenderEventArgs e)
+		{
+			if (!(e.Item is ToolStripMenuItem))
+			{
+				base.OnRenderItemCheck(e);
+				return;
 			}
 
-			protected override void Initialize(ToolStrip toolStrip)
-			{
-				base.Initialize(toolStrip);
+			Rectangle imgRect = e.ImageRectangle;
+			imgRect.Inflate(4, 3);
+			imgRect.Offset(1, 0);
+			Rectangle bgRect = imgRect;
 
-				control = toolStrip;
-				hTheme = OpenThemeData(toolStrip.Handle, "MENU");
+			IntPtr hDC = e.Graphics.GetHdc();
+			ToolStripMenuItem item = (ToolStripMenuItem)e.Item;
+
+			int bgState = (int)(e.Item.Enabled ? NativeMethods.POPUPCHECKBACKGROUNDSTATES.MCB_NORMAL :
+				NativeMethods.POPUPCHECKBACKGROUNDSTATES.MCB_DISABLED);
+			NativeMethods.DrawThemeBackground(hTheme, hDC,
+				(int)NativeMethods.MENUPARTS.MENU_POPUPCHECKBACKGROUND, bgState,
+				ref bgRect, ref bgRect);
+
+			int checkState = (int)(item.Checked ?
+				(item.Enabled ? NativeMethods.POPUPCHECKSTATES.MC_CHECKMARKNORMAL :
+					NativeMethods.POPUPCHECKSTATES.MC_CHECKMARKDISABLED) : 0);
+			if (NativeMethods.IsThemeBackgroundPartiallyTransparent(hTheme,
+				(int)NativeMethods.MENUPARTS.MENU_POPUPCHECK, checkState))
+			{
+				NativeMethods.DrawThemeParentBackground(control.Handle, hDC, ref imgRect);
 			}
+			NativeMethods.DrawThemeBackground(hTheme, hDC,
+				(int)NativeMethods.MENUPARTS.MENU_POPUPCHECK, checkState,
+				ref imgRect, ref imgRect);
 
-			protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
+			e.Graphics.ReleaseHdc();
+		}
+
+		protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
+		{
+			int itemState = (int)(e.Item.Selected ?
+				(e.Item.Enabled ? NativeMethods.POPUPITEMSTATES.MPI_HOT :
+					NativeMethods.POPUPITEMSTATES.MPI_DISABLEDHOT) :
+				(e.Item.Enabled ? NativeMethods.POPUPITEMSTATES.MPI_NORMAL :
+					NativeMethods.POPUPITEMSTATES.MPI_DISABLED));
+
+			Rectangle rect = new Rectangle(e.TextRectangle.Left, 0,
+				e.Item.Width - e.TextRectangle.Left, e.Item.Height);
+			IntPtr hFont = e.TextFont.ToHfont();
+			IntPtr hDC = e.Graphics.GetHdc();
+			NativeMethods.SelectObject(hDC, hFont);
+
+			NativeMethods.DrawThemeText(hTheme, hDC,
+				(int)NativeMethods.MENUPARTS.MENU_POPUPITEM, itemState, e.Text,
+				-1, e.TextFormat | TextFormatFlags.WordEllipsis | TextFormatFlags.SingleLine,
+				0, ref rect);
+
+			e.Graphics.ReleaseHdc();
+		}
+
+		protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
+		{
+			int itemState = (int)(e.Item.Enabled ? NativeMethods.POPUPSUBMENUSTATES.MSM_NORMAL :
+				NativeMethods.POPUPSUBMENUSTATES.MSM_DISABLED);
+
+			//Strangely, UxTheme won't draw any arrow once the starting coordinate
+			//is beyond 5px. So draw the arrow on a backing image then blit
+			//to the actual one.
+			using (Bitmap backBmp = new Bitmap(e.ArrowRectangle.Width, e.ArrowRectangle.Height))
 			{
-				IntPtr hDC = e.Graphics.GetHdc();
-				Rectangle rect = e.AffectedBounds;
-
-				if (IsThemeBackgroundPartiallyTransparent(hTheme, (int)MENUPARTS.MENU_POPUPBACKGROUND, 0))
-					DrawThemeParentBackground(control.Handle, hDC, ref rect);
-				DrawThemeBackground(hTheme, hDC, (int)MENUPARTS.MENU_POPUPBACKGROUND, 0, ref rect, ref rect);
-
-				if (IsThemeBackgroundPartiallyTransparent(hTheme, (int)MENUPARTS.MENU_POPUPBORDERS, 0))
-					DrawThemeParentBackground(control.Handle, hDC, ref rect);
-				DrawThemeBackground(hTheme, hDC, (int)MENUPARTS.MENU_POPUPBORDERS, 0, ref rect, ref rect);
-
-				e.Graphics.ReleaseHdc();
-			}
-
-			protected override void OnRenderImageMargin(ToolStripRenderEventArgs e)
-			{
-				IntPtr hDC = e.Graphics.GetHdc();
-				Rectangle rect = e.AffectedBounds;
-				rect.Width = GutterWidth;
-				rect.Inflate(-1, -1);
-				rect.Offset(1, 0);
-
-				if (IsThemeBackgroundPartiallyTransparent(hTheme, (int)MENUPARTS.MENU_POPUPGUTTER, 0))
-					DrawThemeParentBackground(control.Handle, hDC, ref rect);
-				DrawThemeBackground(hTheme, hDC, (int)MENUPARTS.MENU_POPUPGUTTER, 0, ref rect, ref rect);
-
-				e.Graphics.ReleaseHdc();
-			}
-
-			protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
-			{
-				ToolStripItem item = e.Item as ToolStripItem;
-
-				Rectangle rect = Rectangle.Truncate(e.Graphics.VisibleClipBounds);
-				rect.Inflate(-1, 0);
-				rect.Offset(1, 0);
-				IntPtr hDC = e.Graphics.GetHdc();
-
-				int itemState = (int)(e.Item.Selected ?
-					(e.Item.Enabled ? POPUPITEMSTATES.MPI_HOT : POPUPITEMSTATES.MPI_DISABLEDHOT) :
-					(e.Item.Enabled ? POPUPITEMSTATES.MPI_NORMAL : POPUPITEMSTATES.MPI_DISABLED));
-				DrawThemeBackground(hTheme, hDC, (int)MENUPARTS.MENU_POPUPITEM, itemState, ref rect, ref rect);
-
-				e.Graphics.ReleaseHdc();
-			}
-
-			protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
-			{
-				IntPtr hDC = e.Graphics.GetHdc();
-				Rectangle rect = new Rectangle(GutterWidth, 0, e.Item.Width, e.Item.Height);
-				rect.Inflate(4, 0);
-
-				DrawThemeBackground(hTheme, hDC, (int)MENUPARTS.MENU_POPUPSEPARATOR, 0, ref rect, ref rect);
-
-				e.Graphics.ReleaseHdc();
-			}
-
-			protected override void OnRenderItemCheck(ToolStripItemImageRenderEventArgs e)
-			{
-				if (!(e.Item is ToolStripMenuItem))
+				using (Graphics backGfx = Graphics.FromImage(backBmp))
 				{
-					base.OnRenderItemCheck(e);
-					return;
+					IntPtr hDC = backGfx.GetHdc();
+
+					Rectangle backRect = new Rectangle(new Point(0, 0), backBmp.Size);
+					NativeMethods.DrawThemeBackground(hTheme, hDC,
+						(int)NativeMethods.MENUPARTS.MENU_POPUPSUBMENU, itemState,
+						ref backRect, ref backRect);
+					backGfx.ReleaseHdc();
 				}
 
-				Rectangle imgRect = e.ImageRectangle;
-				imgRect.Inflate(4, 3);
-				imgRect.Offset(1, 0);
-				Rectangle bgRect = imgRect;
-
-				IntPtr hDC = e.Graphics.GetHdc();
-				ToolStripMenuItem item = (ToolStripMenuItem)e.Item;
-
-				int bgState = (int)(e.Item.Enabled ? POPUPCHECKBACKGROUNDSTATES.MCB_NORMAL :
-					POPUPCHECKBACKGROUNDSTATES.MCB_DISABLED);
-				DrawThemeBackground(hTheme, hDC, (int)MENUPARTS.MENU_POPUPCHECKBACKGROUND, bgState,
-					ref bgRect, ref bgRect);
-
-				int checkState = (int)(item.Checked ?
-					(item.Enabled ? POPUPCHECKSTATES.MC_CHECKMARKNORMAL : POPUPCHECKSTATES.MC_CHECKMARKDISABLED) : 0);
-				if (IsThemeBackgroundPartiallyTransparent(hTheme, (int)MENUPARTS.MENU_POPUPCHECK, checkState))
-					DrawThemeParentBackground(control.Handle, hDC, ref imgRect);
-				DrawThemeBackground(hTheme, hDC, (int)MENUPARTS.MENU_POPUPCHECK, checkState,
-					ref imgRect, ref imgRect);
-
-				e.Graphics.ReleaseHdc();
+				e.Graphics.DrawImageUnscaled(backBmp, e.ArrowRectangle);
 			}
+		}
 
-			protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
+		private static int GutterWidth
+		{
+			get
 			{
-				int itemState = (int)(e.Item.Selected ?
-					(e.Item.Enabled ? POPUPITEMSTATES.MPI_HOT : POPUPITEMSTATES.MPI_DISABLEDHOT) :
-					(e.Item.Enabled ? POPUPITEMSTATES.MPI_NORMAL : POPUPITEMSTATES.MPI_DISABLED));
-
-				Rectangle rect = new Rectangle(e.TextRectangle.Left, 0,
-					e.Item.Width - e.TextRectangle.Left, e.Item.Height);
-				IntPtr hFont = e.TextFont.ToHfont();
-				IntPtr hDC = e.Graphics.GetHdc();
-				SelectObject(hDC, hFont);
-
-				DrawThemeText(hTheme, hDC, (int)MENUPARTS.MENU_POPUPITEM, itemState, e.Text,
-					-1, e.TextFormat | TextFormatFlags.WordEllipsis | TextFormatFlags.SingleLine, 0, ref rect);
-
-				e.Graphics.ReleaseHdc();
+				return 2 * (SystemInformation.MenuCheckSize.Width + SystemInformation.BorderSize.Width);
 			}
+		}
 
-			protected override void OnRenderArrow(ToolStripArrowRenderEventArgs e)
-			{
-				int itemState = (int)(e.Item.Enabled ? POPUPSUBMENUSTATES.MSM_NORMAL :
-					POPUPSUBMENUSTATES.MSM_DISABLED);
+		private ToolStrip control;
+		private SafeThemeHandle hTheme;
 
-				//Strangely, UxTheme won't draw any arrow once the starting coordinate
-				//is beyond 5px. So draw the arrow on a backing image then blit
-				//to the actual one.
-				using (Bitmap backBmp = new Bitmap(e.ArrowRectangle.Width, e.ArrowRectangle.Height))
-				{
-					using (Graphics backGfx = Graphics.FromImage(backBmp))
-					{
-						IntPtr hDC = backGfx.GetHdc();
-
-						Rectangle backRect = new Rectangle(new Point(0, 0), backBmp.Size);
-						DrawThemeBackground(hTheme, hDC, (int)MENUPARTS.MENU_POPUPSUBMENU, itemState,
-							ref backRect, ref backRect);
-						backGfx.ReleaseHdc();
-					}
-
-					e.Graphics.DrawImageUnscaled(backBmp, e.ArrowRectangle);
-				}
-			}
-
-			private int GutterWidth
-			{
-				get
-				{
-					return 2 * (SystemInformation.MenuCheckSize.Width + SystemInformation.BorderSize.Width);
-				}
-			}
-
-			private ToolStrip control;
-			private IntPtr hTheme;
-
-			#region Imported UxTheme functions and constants
+		/// <summary>
+		/// Imported UxTheme functions and constants.
+		/// </summary>
+		internal static class NativeMethods
+		{
 			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			private static extern IntPtr OpenThemeData(IntPtr hwnd, string pszClassList);
+			public static extern SafeThemeHandle OpenThemeData(IntPtr hwnd, string pszClassList);
 
 			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			private static extern IntPtr CloseThemeData(IntPtr hwndTeme);
+			public static extern IntPtr CloseThemeData(IntPtr hwndTeme);
 
 			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			private static extern IntPtr DrawThemeParentBackground(IntPtr hwnd,
+			public static extern IntPtr DrawThemeParentBackground(IntPtr hwnd,
 				IntPtr hdc, ref Rectangle prc);
 
 			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			private static extern bool IsThemeBackgroundPartiallyTransparent(IntPtr hTheme,
-				int iPartId, int iStateId);
+			public static extern bool IsThemeBackgroundPartiallyTransparent(
+				SafeThemeHandle hTheme, int iPartId, int iStateId);
 
 			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			private static extern IntPtr DrawThemeBackground(
-				IntPtr hTheme, IntPtr hdc, int iPartId, int iStateId, ref Rectangle pRect,
-				ref Rectangle pClipRect);
+			public static extern IntPtr DrawThemeBackground(
+				SafeThemeHandle hTheme, IntPtr hdc, int iPartId, int iStateId,
+				ref Rectangle pRect, ref Rectangle pClipRect);
 
 			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			private extern static int DrawThemeText(IntPtr hTheme, IntPtr hDC, int iPartId,
-				int iStateId, [MarshalAs(UnmanagedType.LPWStr)] string pszText, int iCharCount,
+			public extern static int DrawThemeText(SafeThemeHandle hTheme,
+				IntPtr hDC, int iPartId, int iStateId,
+				[MarshalAs(UnmanagedType.LPWStr)] string pszText, int iCharCount,
 				TextFormatFlags dwTextFlag, int dwTextFlags2, ref Rectangle pRect);
 
 			[DllImport("Gdi32.dll")]
-			private extern static IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
+			public extern static IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
 
-			private enum MENUPARTS
+			public enum MENUPARTS
 			{
 				MENU_MENUITEM_TMSCHEMA = 1,
 				MENU_MENUDROPDOWN_TMSCHEMA = 2,
@@ -356,7 +387,7 @@ namespace Eraser.Util
 				MENU_SYSTEMRESTORE = 20,
 			}
 
-			private enum POPUPCHECKSTATES
+			public enum POPUPCHECKSTATES
 			{
 				MC_CHECKMARKNORMAL = 1,
 				MC_CHECKMARKDISABLED = 2,
@@ -364,14 +395,14 @@ namespace Eraser.Util
 				MC_BULLETDISABLED = 4,
 			}
 
-			private enum POPUPCHECKBACKGROUNDSTATES
+			public enum POPUPCHECKBACKGROUNDSTATES
 			{
 				MCB_DISABLED = 1,
 				MCB_NORMAL = 2,
 				MCB_BITMAP = 3,
 			}
 
-			private enum POPUPITEMSTATES
+			public enum POPUPITEMSTATES
 			{
 				MPI_NORMAL = 1,
 				MPI_HOT = 2,
@@ -379,12 +410,31 @@ namespace Eraser.Util
 				MPI_DISABLEDHOT = 4,
 			}
 
-			private enum POPUPSUBMENUSTATES
+			public enum POPUPSUBMENUSTATES
 			{
 				MSM_NORMAL = 1,
 				MSM_DISABLED = 2,
 			}
-			#endregion
+		}
+	}
+
+	internal class SafeThemeHandle : SafeHandle
+	{
+		public SafeThemeHandle()
+			: base(IntPtr.Zero, true)
+		{
+		}
+
+		public override bool IsInvalid
+		{
+			get { return handle == IntPtr.Zero; }
+		}
+
+		protected override bool ReleaseHandle()
+		{
+			UxThemeMenuRenderer.NativeMethods.CloseThemeData(handle);
+			handle = IntPtr.Zero;
+			return true;
 		}
 	}
 }

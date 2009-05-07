@@ -70,8 +70,10 @@ namespace Eraser.Util
 			/// parameter and the output parameter for StrongNameSignatureVerificationEx
 			/// are of type BOOLEAN instead of DWORD.</remarks>
 			[DllImport("MsCoree.dll", CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.Bool)]
 			public static extern bool StrongNameSignatureVerificationEx(
-				string wszFilePath, bool fForceVerification, out bool pfWasVerified);
+				string wszFilePath, [MarshalAs(UnmanagedType.Bool)] bool fForceVerification,
+				[MarshalAs(UnmanagedType.Bool)] out bool pfWasVerified);
 
 		}
 	}

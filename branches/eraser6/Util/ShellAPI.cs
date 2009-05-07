@@ -310,7 +310,7 @@ namespace Eraser.Util
 	}
 
 	[Flags]
-	public enum EmptyRecycleBinFlags : uint
+	public enum EmptyRecycleBinFlags
 	{
 		/// <summary>
 		/// No flags specified.
@@ -320,16 +320,16 @@ namespace Eraser.Util
 		/// <summary>
 		/// No dialog box confirming the deletion of the objects will be displayed. 
 		/// </summary>
-		NoConfirmation = ShellAPI.NativeMethods.SHEmptyRecycleBinFlags.SHERB_NOCONFIRMATION,
+		NoConfirmation = (int)ShellAPI.NativeMethods.SHEmptyRecycleBinFlags.SHERB_NOCONFIRMATION,
 
 		/// <summary>
 		/// No dialog box indicating the progress will be displayed.
 		/// </summary>
-		NoProgressUI = ShellAPI.NativeMethods.SHEmptyRecycleBinFlags.SHERB_NOPROGRESSUI,
+		NoProgressUI = (int)ShellAPI.NativeMethods.SHEmptyRecycleBinFlags.SHERB_NOPROGRESSUI,
 
 		/// <summary>
 		/// No sound will be played when the operation is complete.
 		/// </summary>
-		NoSound = ShellAPI.NativeMethods.SHEmptyRecycleBinFlags.SHERB_NOSOUND
+		NoSound = (int)ShellAPI.NativeMethods.SHEmptyRecycleBinFlags.SHERB_NOSOUND
 	}
 }

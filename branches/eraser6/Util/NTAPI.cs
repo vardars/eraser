@@ -32,17 +32,17 @@ namespace Eraser.Util
 		/// <summary>
 		/// Queries system parameters using the NT Native API.
 		/// </summary>
-		/// <param name="dwType">The type of information to retrieve.</param>
-		/// <param name="dwData">The buffer to receive the information.</param>
-		/// <param name="dwMaxSize">The size of the buffer.</param>
-		/// <param name="dwDataSize">Receives the amount of data written to the
+		/// <param name="type">The type of information to retrieve.</param>
+		/// <param name="data">The buffer to receive the information.</param>
+		/// <param name="maxSize">The size of the buffer.</param>
+		/// <param name="dataSize">Receives the amount of data written to the
 		/// buffer.</param>
 		/// <returns>A system error code.</returns>
-		public static uint NtQuerySystemInformation(uint dwType, byte[] dwData,
-			uint dwMaxSize, out uint dwDataSize)
+		public static uint NtQuerySystemInformation(uint type, byte[] data,
+			uint maxSize, out uint dataSize)
 		{
-			return NativeMethods.NtQuerySystemInformation(dwType, dwData, dwMaxSize,
-				out dwDataSize);
+			return NativeMethods.NtQuerySystemInformation(type, data, maxSize,
+				out dataSize);
 		}
 
 		internal static class NativeMethods
@@ -177,6 +177,7 @@ namespace Eraser.Util
 			}
 
 			[DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.Bool)]
 			public static extern bool DeviceIoControl(SafeFileHandle hDevice,
 				uint dwIoControlCode, IntPtr lpInBuffer, uint nInBufferSize,
 				out NTFS_VOLUME_DATA_BUFFER lpOutBuffer, uint nOutBufferSize,
