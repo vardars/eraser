@@ -152,7 +152,7 @@ namespace Eraser.Util
 			{
 				long fileSize;
 				using (SafeFileHandle handle = fileHandle)
-					if (KernelAPI.NativeMethods.GetFileSizeEx(handle, out fileSize))
+					if (KernelApi.NativeMethods.GetFileSizeEx(handle, out fileSize))
 						return fileSize;
 
 				return 0;
@@ -172,7 +172,10 @@ namespace Eraser.Util
 		/// </summary>
 		public void Delete()
 		{
-			throw new InvalidOperationException("Deleting streams are not implemented");
+			if (streamName == null)
+				File.Delete();
+			else
+				throw new InvalidOperationException("Deleting streams are not implemented");
 		}
 
 		/// <summary>
@@ -253,14 +256,14 @@ namespace Eraser.Util
 			switch (access)
 			{
 				case FileAccess.Read:
-					iAccess = KernelAPI.NativeMethods.GENERIC_READ;
+					iAccess = KernelApi.NativeMethods.GENERIC_READ;
 					break;
 				case FileAccess.ReadWrite:
-					iAccess = KernelAPI.NativeMethods.GENERIC_READ |
-						KernelAPI.NativeMethods.GENERIC_WRITE;
+					iAccess = KernelApi.NativeMethods.GENERIC_READ |
+						KernelApi.NativeMethods.GENERIC_WRITE;
 					break;
 				case FileAccess.Write:
-					iAccess = KernelAPI.NativeMethods.GENERIC_WRITE;
+					iAccess = KernelApi.NativeMethods.GENERIC_WRITE;
 					break;
 			}
 
@@ -273,7 +276,7 @@ namespace Eraser.Util
 				throw new NotSupportedException("Asynchronous handles are not implemented.");
 			
 			//Create the handle
-			return KernelAPI.NativeMethods.CreateFile(FullName, iAccess, (uint)share,
+			return KernelApi.NativeMethods.CreateFile(FullName, iAccess, (uint)share,
 				IntPtr.Zero, (uint)mode, (uint)options, IntPtr.Zero);
 		}
 

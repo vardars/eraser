@@ -47,7 +47,7 @@ namespace Eraser.Util
 		/// </summary>
 		/// <returns>Returns true if UAC is enabled under Vista. Will return false
 		/// under pre-Vista OSes</returns>
-		public static bool UACEnabled()
+		public static bool UacEnabled()
 		{
 			//Check whether we're on Vista
 			if (Environment.OSVersion.Platform != PlatformID.Win32NT ||
@@ -59,7 +59,7 @@ namespace Eraser.Util
 
 			//Get the process token.
 			IntPtr hToken = IntPtr.Zero;
-			bool result = NativeMethods.OpenProcessToken(KernelAPI.NativeMethods.GetCurrentProcess(),
+			bool result = NativeMethods.OpenProcessToken(KernelApi.NativeMethods.GetCurrentProcess(),
 				NativeMethods.TOKEN_QUERY, out hToken);
 			if (!result || hToken == IntPtr.Zero)
 				throw new Win32Exception(Marshal.GetLastWin32Error(),
@@ -88,7 +88,7 @@ namespace Eraser.Util
 			}
 			finally
 			{
-				KernelAPI.NativeMethods.CloseHandle(hToken);
+				KernelApi.NativeMethods.CloseHandle(hToken);
 				Marshal.FreeHGlobal(pElevationType);
 			}
 		}
@@ -345,12 +345,12 @@ namespace Eraser.Util
 		}
 	}
 
-	public sealed class CryptAPI : IDisposable
+	public sealed class CryptApi : IDisposable
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		private CryptAPI()
+		private CryptApi()
 		{
 			/* Intel i8xx (82802 Firmware Hub Device) hardware random number generator */
 			const string IntelDefaultProvider = "Intel Hardware Cryptographic Service Provider";
@@ -381,7 +381,7 @@ namespace Eraser.Util
 		}
 
 		#region IDisposable Members
-		~CryptAPI()
+		~CryptApi()
 		{
 			Dispose(false);
 		}
@@ -421,7 +421,7 @@ namespace Eraser.Util
 		/// <summary>
 		/// The global CryptAPI instance.
 		/// </summary>
-		private static CryptAPI instance = new CryptAPI();
+		private static CryptApi instance = new CryptApi();
 	}
 
 	internal class SafeCryptHandle : SafeHandle

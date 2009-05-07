@@ -211,7 +211,7 @@ namespace Eraser.Manager.Plugin
 			//the plugin for the presence of a valid signature.
 			Dictionary<Guid, bool> approvals = ManagerLibrary.Settings.PluginApprovals;
 			if ((reflectAssembly.GetName().GetPublicKey().Length == 0 ||
-				!MsCorEEAPI.VerifyStrongName(filePath) ||
+				!MsCorEEApi.VerifyStrongName(filePath) ||
 				instance.AssemblyAuthenticode == null) &&
 				!approvals.ContainsKey(instance.AssemblyInfo.Guid))
 			{
@@ -297,7 +297,7 @@ namespace Eraser.Manager.Plugin
 			IsCore = false;
 
 			//Verify the certificate in the assembly.
-			if (WintrustAPI.VerifyAuthenticode(assembly.Location))
+			if (WintrustApi.VerifyAuthenticode(assembly.Location))
 			{
 				X509Certificate2 cert = new X509Certificate2(
 					X509Certificate.CreateFromSignedFile(assembly.Location));

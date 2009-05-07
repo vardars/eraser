@@ -50,19 +50,19 @@ namespace Eraser.Util
 				SafeFileHandle streamHandle = stream.SafeFileHandle;
 
 				//Allocate the structures
-				KernelAPI.NativeMethods.WIN32_STREAM_ID streamID =
-					new KernelAPI.NativeMethods.WIN32_STREAM_ID();
+				KernelApi.NativeMethods.WIN32_STREAM_ID streamID =
+					new KernelApi.NativeMethods.WIN32_STREAM_ID();
 				IntPtr context = IntPtr.Zero;
 				uint bytesRead = 0;
 
 				//Read the header of the WIN32_STREAM_ID
-				KernelAPI.NativeMethods.BackupRead(streamHandle, out streamID,
+				KernelApi.NativeMethods.BackupRead(streamHandle, out streamID,
 					(uint)Marshal.SizeOf(streamID), out bytesRead, false, false,
 					ref context);
 
 				while (bytesRead == Marshal.SizeOf(streamID))
 				{
-					if (streamID.dwStreamId == KernelAPI.NativeMethods.BACKUP_ALTERNATE_DATA)
+					if (streamID.dwStreamId == KernelApi.NativeMethods.BACKUP_ALTERNATE_DATA)
 					{
 						//Allocate memory to copy the stream name into, then copy the name
 						IntPtr pName = Marshal.AllocHGlobal((int)streamID.dwStreamNameSize);
@@ -71,7 +71,7 @@ namespace Eraser.Util
 
 						try
 						{
-							KernelAPI.NativeMethods.BackupRead(streamHandle, pName,
+							KernelApi.NativeMethods.BackupRead(streamHandle, pName,
 								streamID.dwStreamNameSize, out bytesRead, false, false,
 								ref context);
 							Marshal.Copy(pName, name, 0, (int)nameLength);
@@ -88,19 +88,19 @@ namespace Eraser.Util
 
 					//Skip the file contents. Jump to the next header.
 					uint seekLow = 0, seekHigh = 0;
-					KernelAPI.NativeMethods.BackupSeek(streamHandle,
+					KernelApi.NativeMethods.BackupSeek(streamHandle,
 						(uint)(streamID.Size & uint.MaxValue),
 						(uint)(streamID.Size >> (sizeof(uint) * 8)), out seekLow,
 						out seekHigh, ref context);
 
 					//And try to read the header
-					KernelAPI.NativeMethods.BackupRead(streamHandle, out streamID,
+					KernelApi.NativeMethods.BackupRead(streamHandle, out streamID,
 						(uint)Marshal.SizeOf(streamID), out bytesRead, false, false,
 						ref context);
 				}
 
 				//Free the context
-				KernelAPI.NativeMethods.BackupRead(streamHandle, IntPtr.Zero, 0,
+				KernelApi.NativeMethods.BackupRead(streamHandle, IntPtr.Zero, 0,
 					out bytesRead, true, false, ref context);
 			}
 
@@ -117,9 +117,9 @@ namespace Eraser.Util
 		/// <returns>A string containing the description</returns>
 		public static string GetFileDescription(string path)
 		{
-			ShellAPI.NativeMethods.SHFILEINFO shfi = new ShellAPI.NativeMethods.SHFILEINFO();
-			ShellAPI.NativeMethods.SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
-				ShellAPI.NativeMethods.SHGetFileInfoFlags.SHGFI_DISPLAYNAME);
+			ShellApi.NativeMethods.SHFILEINFO shfi = new ShellApi.NativeMethods.SHFILEINFO();
+			ShellApi.NativeMethods.SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
+				ShellApi.NativeMethods.SHGetFileInfoFlags.SHGFI_DISPLAYNAME);
 			return shfi.szDisplayName;
 		}
 
@@ -133,10 +133,10 @@ namespace Eraser.Util
 		/// <returns>An Icon object containing the bitmap</returns>
 		public static Icon GetFileIcon(string path)
 		{
-			ShellAPI.NativeMethods.SHFILEINFO shfi = new ShellAPI.NativeMethods.SHFILEINFO();
-			ShellAPI.NativeMethods.SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
-				ShellAPI.NativeMethods.SHGetFileInfoFlags.SHGFI_SMALLICON |
-				ShellAPI.NativeMethods.SHGetFileInfoFlags.SHGFI_ICON);
+			ShellApi.NativeMethods.SHFILEINFO shfi = new ShellApi.NativeMethods.SHFILEINFO();
+			ShellApi.NativeMethods.SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
+				ShellApi.NativeMethods.SHGetFileInfoFlags.SHGFI_SMALLICON |
+				ShellApi.NativeMethods.SHGetFileInfoFlags.SHGFI_ICON);
 
 			if (shfi.hIcon != IntPtr.Zero)
 				return Icon.FromHandle(shfi.hIcon);
@@ -172,7 +172,7 @@ namespace Eraser.Util
 
 				while (g.MeasureString(builder.ToString(), drawFont).Width > newWidth)
 				{
-					if (!ShellAPI.NativeMethods.PathCompactPathEx(builder, longPath,
+					if (!ShellApi.NativeMethods.PathCompactPathEx(builder, longPath,
 						(uint)charCount--, 0))
 					{
 						return string.Empty;
@@ -215,16 +215,16 @@ namespace Eraser.Util
 			uint bytesReturned = 0;
 
 			using (FileStream strm = new FileStream(
-				KernelAPI.NativeMethods.CreateFile(path,
-				KernelAPI.NativeMethods.GENERIC_READ | KernelAPI.NativeMethods.GENERIC_WRITE,
-				0, IntPtr.Zero, KernelAPI.NativeMethods.OPEN_EXISTING,
-				KernelAPI.NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.Read))
+				KernelApi.NativeMethods.CreateFile(path,
+				KernelApi.NativeMethods.GENERIC_READ | KernelApi.NativeMethods.GENERIC_WRITE,
+				0, IntPtr.Zero, KernelApi.NativeMethods.OPEN_EXISTING,
+				KernelApi.NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.Read))
 			{
-				if (KernelAPI.NativeMethods.DeviceIoControl(strm.SafeFileHandle,
-					KernelAPI.NativeMethods.FSCTL_GET_COMPRESSION, IntPtr.Zero, 0,
+				if (KernelApi.NativeMethods.DeviceIoControl(strm.SafeFileHandle,
+					KernelApi.NativeMethods.FSCTL_GET_COMPRESSION, IntPtr.Zero, 0,
 					out compressionStatus, sizeof(ushort), out bytesReturned, IntPtr.Zero))
 				{
-					return compressionStatus != KernelAPI.NativeMethods.COMPRESSION_FORMAT_NONE;
+					return compressionStatus != KernelApi.NativeMethods.COMPRESSION_FORMAT_NONE;
 				}
 			}
 
@@ -239,18 +239,18 @@ namespace Eraser.Util
 		public static bool SetCompression(string path, bool compressed)
 		{
 			ushort compressionStatus = compressed ?
-				KernelAPI.NativeMethods.COMPRESSION_FORMAT_DEFAULT :
-				KernelAPI.NativeMethods.COMPRESSION_FORMAT_NONE;
+				KernelApi.NativeMethods.COMPRESSION_FORMAT_DEFAULT :
+				KernelApi.NativeMethods.COMPRESSION_FORMAT_NONE;
 			uint bytesReturned = 0;
 
 			using (FileStream strm = new FileStream(
-				KernelAPI.NativeMethods.CreateFile(path,
-				KernelAPI.NativeMethods.GENERIC_READ | KernelAPI.NativeMethods.GENERIC_WRITE,
-				0, IntPtr.Zero, KernelAPI.NativeMethods.OPEN_EXISTING,
-				KernelAPI.NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.ReadWrite))
+				KernelApi.NativeMethods.CreateFile(path,
+				KernelApi.NativeMethods.GENERIC_READ | KernelApi.NativeMethods.GENERIC_WRITE,
+				0, IntPtr.Zero, KernelApi.NativeMethods.OPEN_EXISTING,
+				KernelApi.NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.ReadWrite))
 			{
-				return KernelAPI.NativeMethods.DeviceIoControl(strm.SafeFileHandle,
-					KernelAPI.NativeMethods.FSCTL_SET_COMPRESSION, ref compressionStatus,
+				return KernelApi.NativeMethods.DeviceIoControl(strm.SafeFileHandle,
+					KernelApi.NativeMethods.FSCTL_SET_COMPRESSION, ref compressionStatus,
 					sizeof(ushort), IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
 			}
 		}

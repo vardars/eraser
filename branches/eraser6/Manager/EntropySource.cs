@@ -294,11 +294,11 @@ namespace Eraser.Manager
 				Root.FullName).TotalFreeSpace));
 
 			//Miscellaneous window handles
-			result.AddRange(StructToBuffer(UserAPI.MessagePos));
-			result.AddRange(StructToBuffer(UserAPI.MessageTime));
+			result.AddRange(StructToBuffer(UserApi.MessagePos));
+			result.AddRange(StructToBuffer(UserApi.MessageTime));
 
 			//The caret and cursor positions
-			result.AddRange(StructToBuffer(UserAPI.CaretPos));
+			result.AddRange(StructToBuffer(UserApi.CaretPos));
 			result.AddRange(StructToBuffer(Cursor.Position));
 
 			//Currently running threads (dynamic, but not very)
@@ -342,14 +342,14 @@ namespace Eraser.Manager
 			result.AddRange(StructToBuffer(DateTime.Now.Ticks));
 
 			//The high resolution performance counter
-			result.AddRange(StructToBuffer(KernelAPI.PerformanceCounter));
+			result.AddRange(StructToBuffer(KernelApi.PerformanceCounter));
 
 			//Ticks since start up
 			result.AddRange(StructToBuffer(Environment.TickCount));
 
 			//CryptGenRandom
 			byte[] cryptGenRandom = new byte[160];
-			if (CryptAPI.CryptGenRandom(cryptGenRandom))
+			if (CryptApi.CryptGenRandom(cryptGenRandom))
 				result.AddRange(cryptGenRandom);
 
 			return result.ToArray();
@@ -364,7 +364,7 @@ namespace Eraser.Manager
 			List<byte> result = new List<byte>();
 
 			//NetAPI statistics
-			result.AddRange(NetAPI.NetStatisticsGet(null, NetServices.Workstation, 0, 0));
+			result.AddRange(NetApi.NetStatisticsGet(null, NetServices.Workstation, 0, 0));
 
 #if false
 			//Get disk I/O statistics for all the hard drives
@@ -405,7 +405,7 @@ namespace Eraser.Manager
 			uint totalEntropy = 0;
 			for (uint infoType = 0; infoType < 64; ++infoType)
 			{
-				uint sysInfo = NTAPI.NtQuerySystemInformation(infoType, infoBuffer,
+				uint sysInfo = NTApi.NtQuerySystemInformation(infoType, infoBuffer,
 					(uint)infoBuffer.Length, out dataWritten);
 
 				if (sysInfo == 0 /*ERROR_SUCCESS*/ && dataWritten > 0)
@@ -421,7 +421,7 @@ namespace Eraser.Manager
 
 			//Finally, our good friend CryptGenRandom()
 			byte[] cryptGenRandom = new byte[1536];
-			if (CryptAPI.CryptGenRandom(cryptGenRandom))
+			if (CryptApi.CryptGenRandom(cryptGenRandom))
 				result.AddRange(cryptGenRandom);
 
 			return result.ToArray();
