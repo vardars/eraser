@@ -204,12 +204,6 @@ namespace Eraser.Util
 			[return: MarshalAs(UnmanagedType.Bool)]
 			public static extern bool CloseHandle(IntPtr hObject);
 
-			[DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
-			public static extern bool DeviceIoControl(SafeFileHandle hDevice,
-				uint dwIoControlCode, out byte[] lpInBuffer, uint nInBufferSize,
-				out byte[] lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
-				IntPtr lpOverlapped);
-
 			/// <summary>
 			/// Retrieves a pseudo handle for the current process.
 			/// </summary>
@@ -240,15 +234,6 @@ namespace Eraser.Util
 			/// handle must be closed.</remarks>
 			[DllImport("Kernel32.dll", SetLastError = true)]
 			public static extern IntPtr GetCurrentProcess();
-
-			/// <summary>
-			/// Retrieves the contents of the STARTUPINFO structure that was specified
-			/// when the calling process was created.
-			/// </summary>
-			/// <param name="lpStartupInfo">A pointer to a STARTUPINFO structure that
-			/// receives the startup information.</param>
-			[DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
-			public static extern void GetStartupInfo(out STARTUPINFO lpStartupInfo);
 
 			/// <summary>
 			/// Retrieves information about the current system.
@@ -398,188 +383,6 @@ namespace Eraser.Util
 				public ushort processorRevision;
 			}
 
-			/// <summary>
-			/// Specifies the window station, desktop, standard handles, and appearance
-			/// of the main window for a process at creation time.
-			/// </summary>
-			[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-			public struct STARTUPINFO
-			{
-				/// <summary>
-				/// The size of the structure, in bytes.
-				/// </summary>
-				public uint cbSize;
-
-				/// <summary>
-				/// Reserved; must be NULL.
-				/// </summary>
-				private readonly IntPtr lpReserved;
-
-				/// <summary>
-				/// The name of the desktop, or the name of both the desktop and window
-				/// station for this process. A backslash in the string indicates that
-				/// the string includes both the desktop and window station names.
-				/// For more information, see Thread Connection to a Desktop.
-				/// </summary>
-				public string lpDesktop
-				{
-					get
-					{
-						return Marshal.PtrToStringAuto(lpDesktop2);
-					}
-					set
-					{
-						lpDesktop2 = Marshal.StringToHGlobalUni(value);
-					}
-				}
-				private IntPtr lpDesktop2;
-
-				/// <summary>
-				/// For console processes, this is the title displayed in the title
-				/// bar if a new console window is created. If NULL, the name of the
-				/// executable file is used as the window title instead. This parameter
-				/// must be NULL for GUI or console processes that do not create a
-				/// new console window.
-				/// </summary>
-				public string lpTitle
-				{
-					get
-					{
-						return Marshal.PtrToStringAuto(lpTitle2);
-					}
-					set
-					{
-						lpTitle2 = Marshal.StringToHGlobalUni(value);
-					}
-				}
-				private IntPtr lpTitle2;
-
-				/// <summary>
-				/// If dwFlags specifies STARTF_USEPOSITION, this member is the x
-				/// offset of the upper left corner of a window if a new window is
-				/// created, in pixels. Otherwise, this member is ignored.
-				/// 
-				/// The offset is from the upper left corner of the screen. For GUI
-				/// processes, the specified position is used the first time the
-				/// new process calls CreateWindow to create an overlapped window
-				/// if the x parameter of CreateWindow is CW_USEDEFAULT.
-				/// </summary>
-				public int dwX;
-
-				/// <summary>
-				/// If dwFlags specifies STARTF_USEPOSITION, this member is the y
-				/// offset of the upper left corner of a window if a new window is
-				/// created, in pixels. Otherwise, this member is ignored.
-				/// 
-				/// The offset is from the upper left corner of the screen. For GUI
-				/// processes, the specified position is used the first time the new
-				/// process calls CreateWindow to create an overlapped window if the
-				/// y parameter of CreateWindow is CW_USEDEFAULT.
-				/// </summary>
-				public int dwY;
-
-				/// <summary>
-				/// If dwFlags specifies STARTF_USESIZE, this member is the width of
-				/// the window if a new window is created, in pixels. Otherwise,
-				/// this member is ignored.
-				/// 
-				/// For GUI processes, this is used only the first time the new process
-				/// calls CreateWindow to create an overlapped window if the nWidth 
-				/// parameter of CreateWindow is CW_USEDEFAULT.
-				/// </summary>
-				public int dwXSize;
-
-				/// <summary>
-				/// If dwFlags specifies STARTF_USESIZE, this member is the height of
-				/// the window if a new window is created, in pixels. Otherwise, this
-				/// member is ignored.
-				/// 
-				/// For GUI processes, this is used only the first time the new process
-				/// calls CreateWindow to create an overlapped window if the nHeight
-				/// parameter of CreateWindow is CW_USEDEFAULT.
-				/// </summary>
-				public int dwYSize;
-
-				/// <summary>
-				/// If dwFlags specifies STARTF_USECOUNTCHARS, if a new console window
-				/// is created in a console process, this member specifies the screen
-				/// buffer width, in character columns. Otherwise, this member is ignored.
-				/// </summary>
-				public int dwXCountChars;
-
-				/// <summary>
-				/// If dwFlags specifies STARTF_USECOUNTCHARS, if a new console window
-				/// is created in a console process, this member specifies the screen
-				/// buffer height, in character rows. Otherwise, this member is ignored.
-				/// </summary>
-				public int dwYCountChars;
-
-				/// <summary>
-				/// If dwFlags specifies STARTF_USEFILLATTRIBUTE, this member is the
-				/// initial text and background colors if a new console window is
-				/// created in a console application. Otherwise, this member is ignored.
-				/// 
-				/// This value can be any combination of the following values:
-				/// FOREGROUND_BLUE, FOREGROUND_GREEN, FOREGROUND_RED, FOREGROUND_INTENSITY,
-				/// BACKGROUND_BLUE, BACKGROUND_GREEN, BACKGROUND_RED, and BACKGROUND_INTENSITY.
-				/// 
-				/// For example, the following combination of values produces red text
-				/// on a white background:
-				///		FOREGROUND_RED| BACKGROUND_RED| BACKGROUND_GREEN| BACKGROUND_BLUE
-				/// </summary>
-				public int dwFillAttribute;
-
-				/// <summary>
-				/// A bit field that determines whether certain STARTUPINFO members
-				/// are used when the process creates a window.
-				/// </summary>
-				public int dwFlags;
-
-				/// <summary>
-				/// If dwFlags specifies STARTF_USESHOWWINDOW, this member can be any
-				/// of the SW_ constants defined in Winuser.h. Otherwise, this member is ignored.
-				/// 
-				/// For GUI processes, wShowWindow specifies the default value the
-				/// first time ShowWindow is called. The nCmdShow parameter of ShowWindow
-				/// is ignored. In subsequent calls to ShowWindow, the wShowWindow member
-				/// is used if the nCmdShow parameter of ShowWindow is set to SW_SHOWDEFAULT.
-				/// </summary>
-				public short wShowWindow;
-
-				/// <summary>
-				/// Reserved for use by the C Run-time; must be zero.
-				/// </summary>
-				private const short cbReserved2 = 0;
-
-				/// <summary>
-				/// Reserved for use by the C Run-time; must be NULL.
-				/// </summary>
-				private readonly IntPtr lpReserved2;
-
-				/// <summary>
-				/// If dwFlags specifies STARTF_USESTDHANDLES, this member is the
-				/// standard input handle for the process. Otherwise, this member is
-				/// ignored and the default for standard input is the keyboard buffer.
-				/// </summary>
-				public IntPtr hStdInput;
-
-				/// <summary>
-				/// If dwFlags specifies STARTF_USESTDHANDLES, this member is the
-				/// standard output handle for the process. Otherwise, this member is
-				/// ignored and the default for standard output is the console window's
-				/// buffer.
-				/// </summary>
-				public IntPtr hStdOutput;
-
-				/// <summary>
-				/// If dwFlags specifies STARTF_USESTDHANDLES, this member is the
-				/// standard error handle for the process. Otherwise, this member is
-				/// ignored and the default for standard error is the console window's
-				/// buffer.
-				/// </summary>
-				public IntPtr hStdError;
-			}
-
 			[DllImport("Kernel32.dll")]
 			public static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
 
@@ -597,15 +400,22 @@ namespace Eraser.Util
 			}
 
 			[DllImport("Kernel32.dll", SetLastError = true)]
+			[return: MarshalAs(UnmanagedType.Bool)]
 			public static extern bool AllocConsole();
 
 			[DllImport("Kernel32.dll", SetLastError = true)]
+			[return: MarshalAs(UnmanagedType.Bool)]
 			public static extern bool FreeConsole();
 		}
 	}
 
 	public enum ThreadExecutionState
 	{
+		/// <summary>
+		/// No specific state
+		/// </summary>
+		None = 0,
+
 		/// <summary>
 		/// Enables away mode. This value must be specified with ES_CONTINUOUS.
 		/// 
