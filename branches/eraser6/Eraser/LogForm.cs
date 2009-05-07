@@ -39,7 +39,7 @@ namespace Eraser
 		public LogForm(Task task)
 		{
 			InitializeComponent();
-			UXThemeAPI.UpdateControlTheme(this);
+			UXThemeApi.UpdateControlTheme(this);
 			this.task = task;
 
 			//Update the title

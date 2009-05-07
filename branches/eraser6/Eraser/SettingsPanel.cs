@@ -42,7 +42,7 @@ namespace Eraser
 		public SettingsPanel()
 		{
 			InitializeComponent();
-			UXThemeAPI.UpdateControlTheme(this);
+			UXThemeApi.UpdateControlTheme(this);
 
 			//For new plugins, register the callback.
 			Host.Instance.PluginLoaded += OnNewPluginLoaded;

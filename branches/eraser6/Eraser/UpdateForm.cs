@@ -44,7 +44,7 @@ namespace Eraser
 		public UpdateForm()
 		{
 			InitializeComponent();
-			UXThemeAPI.UpdateControlTheme(this);
+			UXThemeApi.UpdateControlTheme(this);
 			updateListDownloader.RunWorkerAsync();
 		}
 
@@ -160,7 +160,7 @@ namespace Eraser
 				//any is always compatible.
 				compatibleArchs.Add("any");
 
-				switch (KernelAPI.ProcessorArchitecture)
+				switch (KernelApi.ProcessorArchitecture)
 				{
 					case ProcessorArchitecture.Amd64:
 						compatibleArchs.Add("x64");

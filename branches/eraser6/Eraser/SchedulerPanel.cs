@@ -40,8 +40,8 @@ namespace Eraser
 		public SchedulerPanel()
 		{
 			InitializeComponent();
-			UXThemeAPI.UpdateControlTheme(this);
-			UXThemeAPI.UpdateControlTheme(schedulerDefaultMenu);
+			UXThemeApi.UpdateControlTheme(this);
+			UXThemeApi.UpdateControlTheme(schedulerDefaultMenu);
 
 			//Populate the scheduler list-view with the current task list
 			ExecutorTasksCollection tasks = Program.eraserClient.Tasks;

@@ -116,7 +116,7 @@ namespace Eraser
 					Console.ReadLine();
 				}
 
-				KernelAPI.FreeConsole();
+				KernelApi.FreeConsole();
 			}
 		}
 
@@ -1002,7 +1002,7 @@ namespace Eraser
 		/// </summary>
 		private static void CreateConsole()
 		{
-			if (KernelAPI.AllocConsole())
+			if (KernelApi.AllocConsole())
 			{
 				Console.SetOut(new StreamWriter(Console.OpenStandardOutput()));
 				Console.SetIn(new StreamReader(Console.OpenStandardInput()));
