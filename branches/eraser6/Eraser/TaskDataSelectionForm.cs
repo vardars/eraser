@@ -68,8 +68,7 @@ namespace Eraser
 						continue;
 
 					DriveItem item = new DriveItem();
-					string volumePath = volume.IsMounted ?
-						volume.MountPoints[0] : volume.VolumeID;
+					string volumePath = volume.MountPoints[0];
 					item.Drive = volumePath;
 					item.Label = Eraser.Util.File.GetFileDescription(volumePath);
 					item.Icon = Eraser.Util.File.GetFileIcon(volumePath);
