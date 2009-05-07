@@ -44,7 +44,7 @@ namespace Eraser
 		public UpdateForm()
 		{
 			InitializeComponent();
-			UxThemeAPI.UpdateControlTheme(this);
+			UXThemeAPI.UpdateControlTheme(this);
 			updateListDownloader.RunWorkerAsync();
 		}
 
