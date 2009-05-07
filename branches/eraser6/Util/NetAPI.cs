@@ -54,8 +54,8 @@ namespace Eraser.Util
 			uint level, uint options)
 		{
 			IntPtr netAPIStats = IntPtr.Zero;
-			string serviceName = "Lanman" + service.ToString(); ;
-			if (NativeMethods.NetStatisticsGet(server, serviceName, 0, 0, out netAPIStats) == 0)
+			string serviceName = "Lanman" + service.ToString();
+			if (NativeMethods.NetStatisticsGet(server, serviceName, level, options, out netAPIStats) == 0)
 			{
 				try
 				{

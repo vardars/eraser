@@ -346,6 +346,7 @@ namespace Eraser.Util
 				IntPtr hdc, ref Rectangle prc);
 
 			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.Bool)]
 			public static extern bool IsThemeBackgroundPartiallyTransparent(
 				SafeThemeHandle hTheme, int iPartId, int iStateId);
 

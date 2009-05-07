@@ -128,8 +128,8 @@ namespace Eraser.Util
 		/// preventing the system from entering sleep or turning off the display
 		/// while the application is running.
 		/// </summary>
-		/// <param name="esFlags">The thread's execution requirements. This parameter
-		/// can be one or more of the EXECUTION_STATE values.</param>
+		/// <param name="executionState">The thread's execution requirements. This
+		/// parameter can be one or more of the EXECUTION_STATE values.</param>
 		/// <returns>If the function succeeds, the return value is the previous
 		/// thread execution state.
 		/// 
@@ -177,10 +177,11 @@ namespace Eraser.Util
 		/// 
 		/// This function does not stop the screen saver from executing. 
 		/// </remarks>
-		public static ThreadExecutionState SetThreadExecutionState(ThreadExecutionState esFlags)
+		public static ThreadExecutionState SetThreadExecutionState(
+			ThreadExecutionState executionState)
 		{
 			return (ThreadExecutionState)NativeMethods.SetThreadExecutionState(
-				(NativeMethods.EXECUTION_STATE)esFlags);
+				(NativeMethods.EXECUTION_STATE)executionState);
 		}
 
 		/// <summary>

@@ -32,12 +32,12 @@ namespace Eraser.Util
 		/// <summary>
 		/// Empties the recycle bin for the current user.
 		/// </summary>
-		/// <param name="flags">The list of flags to pass to the shell regarding
+		/// <param name="options">The list of flags to pass to the shell regarding
 		/// the user feedback, etc.</param>
-		public static void EmptyRecycleBin(EmptyRecycleBinFlags flags)
+		public static void EmptyRecycleBin(EmptyRecycleBinFlags options)
 		{
 			NativeMethods.SHEmptyRecycleBin(Form.ActiveForm.Handle, null,
-				(NativeMethods.SHEmptyRecycleBinFlags)flags);
+				(NativeMethods.SHEmptyRecycleBinFlags)options);
 		}
 
 		/// <summary>
