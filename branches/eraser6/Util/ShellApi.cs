@@ -34,7 +34,7 @@ namespace Eraser.Util
 		/// </summary>
 		/// <param name="options">The list of flags to pass to the shell regarding
 		/// the user feedback, etc.</param>
-		public static void EmptyRecycleBin(EmptyRecycleBinFlags options)
+		public static void EmptyRecycleBin(EmptyRecycleBinOptions options)
 		{
 			NativeMethods.SHEmptyRecycleBin(Form.ActiveForm.Handle, null,
 				(NativeMethods.SHEmptyRecycleBinFlags)options);
@@ -328,7 +328,7 @@ namespace Eraser.Util
 	}
 
 	[Flags]
-	public enum EmptyRecycleBinFlags
+	public enum EmptyRecycleBinOptions
 	{
 		/// <summary>
 		/// No flags specified.

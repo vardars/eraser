@@ -855,8 +855,8 @@ namespace Eraser.Manager
 				progress.Event.CurrentItemName = S._("Emptying recycle bin...");
 				task.OnProgressChanged(progress.Event);
 
-				ShellApi.EmptyRecycleBin(EmptyRecycleBinFlags.NoConfirmation |
-					EmptyRecycleBinFlags.NoProgressUI | EmptyRecycleBinFlags.NoSound);
+				ShellApi.EmptyRecycleBin(EmptyRecycleBinOptions.NoConfirmation |
+					EmptyRecycleBinOptions.NoProgressUI | EmptyRecycleBinOptions.NoSound);
 			}
 		}
 

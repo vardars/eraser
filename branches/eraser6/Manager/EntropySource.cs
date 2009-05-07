@@ -364,7 +364,7 @@ namespace Eraser.Manager
 			List<byte> result = new List<byte>();
 
 			//NetAPI statistics
-			result.AddRange(NetApi.NetStatisticsGet(null, NetServices.Workstation, 0, 0));
+			result.AddRange(NetApi.NetStatisticsGet(null, NetApiService.Workstation, 0, 0));
 
 #if false
 			//Get disk I/O statistics for all the hard drives

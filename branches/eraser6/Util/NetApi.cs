@@ -50,7 +50,7 @@ namespace Eraser.Util
 		/// 
 		/// If the function fails, the return value is a system error code. For
 		/// a list of error codes, see System Error Codes.</returns>
-		public static byte[] NetStatisticsGet(string server, NetServices service,
+		public static byte[] NetStatisticsGet(string server, NetApiService service,
 			uint level, uint options)
 		{
 			IntPtr netAPIStats = IntPtr.Zero;
@@ -118,7 +118,7 @@ namespace Eraser.Util
 		}
 	}
 
-	public enum NetServices
+	public enum NetApiService
 	{
 		Workstation,
 		Server

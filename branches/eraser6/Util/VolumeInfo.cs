@@ -39,7 +39,7 @@ namespace Eraser.Util
 		public VolumeInfo(string volumeId)
 		{
 			//Set the volume Id
-			VolumeID = volumeId;
+			VolumeId = volumeId;
 
 			//Get the paths of the said volume
 			IntPtr pathNamesBuffer = IntPtr.Zero;
@@ -49,7 +49,7 @@ namespace Eraser.Util
 				uint currentBufferSize = KernelApi.NativeMethods.MaxPath;
 				uint returnLength = 0;
 				pathNamesBuffer = Marshal.AllocHGlobal((int)(currentBufferSize * sizeof(char)));
-				while (!KernelApi.NativeMethods.GetVolumePathNamesForVolumeName(VolumeID,
+				while (!KernelApi.NativeMethods.GetVolumePathNamesForVolumeName(VolumeId,
 					pathNamesBuffer, currentBufferSize, out returnLength))
 				{
 					if (Marshal.GetLastWin32Error() == 234/*ERROR_MORE_DATA*/)
@@ -196,7 +196,7 @@ namespace Eraser.Util
 		/// <summary>
 		/// Returns the volume identifier as would be returned from FindFirstVolume.
 		/// </summary>
-		public string VolumeID { get; private set; }
+		public string VolumeId { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the volume label of a drive.
@@ -215,7 +215,7 @@ namespace Eraser.Util
 		{
 			get
 			{
-				return (DriveType)KernelApi.NativeMethods.GetDriveType(VolumeID);
+				return (DriveType)KernelApi.NativeMethods.GetDriveType(VolumeId);
 			}
 		}
 
@@ -227,7 +227,7 @@ namespace Eraser.Util
 			get
 			{
 				uint clusterSize, sectorSize, freeClusters, totalClusters;
-				if (KernelApi.NativeMethods.GetDiskFreeSpace(VolumeID, out clusterSize,
+				if (KernelApi.NativeMethods.GetDiskFreeSpace(VolumeId, out clusterSize,
 					out sectorSize, out freeClusters, out totalClusters))
 				{
 					return (int)(clusterSize * sectorSize);
@@ -245,7 +245,7 @@ namespace Eraser.Util
 			get
 			{
 				ulong freeBytesAvailable, totalNumberOfBytes, totalNumberOfFreeBytes;
-				if (KernelApi.NativeMethods.GetDiskFreeSpaceEx(VolumeID, out freeBytesAvailable,
+				if (KernelApi.NativeMethods.GetDiskFreeSpaceEx(VolumeId, out freeBytesAvailable,
 					out totalNumberOfBytes, out totalNumberOfFreeBytes))
 				{
 					return totalNumberOfFreeBytes != freeBytesAvailable;
@@ -273,7 +273,7 @@ namespace Eraser.Util
 			get
 			{
 				ulong result, dummy;
-				if (KernelApi.NativeMethods.GetDiskFreeSpaceEx(VolumeID, out dummy,
+				if (KernelApi.NativeMethods.GetDiskFreeSpaceEx(VolumeId, out dummy,
 					out dummy, out result))
 				{
 					return (long)result;
@@ -291,7 +291,7 @@ namespace Eraser.Util
 			get
 			{
 				ulong result, dummy;
-				if (KernelApi.NativeMethods.GetDiskFreeSpaceEx(VolumeID, out dummy,
+				if (KernelApi.NativeMethods.GetDiskFreeSpaceEx(VolumeId, out dummy,
 					out result, out dummy))
 				{
 					return (long)result;
@@ -309,7 +309,7 @@ namespace Eraser.Util
 			get
 			{
 				ulong result, dummy;
-				if (KernelApi.NativeMethods.GetDiskFreeSpaceEx(VolumeID, out result,
+				if (KernelApi.NativeMethods.GetDiskFreeSpaceEx(VolumeId, out result,
 					out dummy, out dummy))
 				{
 					return (long)result;
@@ -331,7 +331,7 @@ namespace Eraser.Util
 				StringBuilder nextMountpoint = new StringBuilder(
 					KernelApi.NativeMethods.LongPath * sizeof(char));
 
-				SafeHandle handle = KernelApi.NativeMethods.FindFirstVolumeMountPoint(VolumeID,
+				SafeHandle handle = KernelApi.NativeMethods.FindFirstVolumeMountPoint(VolumeId,
 					nextMountpoint, KernelApi.NativeMethods.LongPath);
 				if (handle.IsInvalid)
 					return result;

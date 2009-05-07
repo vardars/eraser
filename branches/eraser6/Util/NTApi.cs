@@ -159,7 +159,7 @@ namespace Eraser.Util
 			public static NTFS_VOLUME_DATA_BUFFER GetNtfsVolumeData(VolumeInfo volume)
 			{
 				using (SafeFileHandle volumeHandle = KernelApi.NativeMethods.CreateFile(
-					volume.VolumeID.Remove(volume.VolumeID.Length - 1),
+					volume.VolumeId.Remove(volume.VolumeId.Length - 1),
 					KernelApi.NativeMethods.GENERIC_READ, KernelApi.NativeMethods.FILE_SHARE_READ |
 					KernelApi.NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero,
 					KernelApi.NativeMethods.OPEN_EXISTING, 0, IntPtr.Zero))
