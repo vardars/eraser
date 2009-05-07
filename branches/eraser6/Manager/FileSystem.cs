@@ -357,7 +357,7 @@ namespace Eraser.Manager
 			{
 				//Squeeze one-byte files until the volume or the MFT is full.
 				DirectoryInfo rootDir = new DirectoryInfo(info.MountPoints[0]);
-				long oldMFTSize = NtfsAPI.GetMftValidSize(info);
+				long oldMFTSize = NtfsApi.GetMftValidSize(info);
 
 				for ( ; ; )
 				{
@@ -376,7 +376,7 @@ namespace Eraser.Manager
 					}
 
 					//We can stop when the MFT has grown.
-					if (NtfsAPI.GetMftValidSize(info) > oldMFTSize)
+					if (NtfsApi.GetMftValidSize(info) > oldMFTSize)
 						break;
 				}
 			}
@@ -397,8 +397,8 @@ namespace Eraser.Manager
 			try
 			{
 				//Get the size of the MFT
-				long mftSize = NtfsAPI.GetMftValidSize(info);
-				long mftRecordSegmentSize = NtfsAPI.GetMftRecordSegmentSize(info);
+				long mftSize = NtfsApi.GetMftValidSize(info);
+				long mftRecordSegmentSize = NtfsApi.GetMftRecordSegmentSize(info);
 				int pollingInterval = (int)Math.Max(1, (mftSize / info.ClusterSize / 20));
 				int totalFiles = (int)Math.Max(1L, mftSize / mftRecordSegmentSize) *
 					(FileNameErasePasses + 1);
@@ -418,7 +418,7 @@ namespace Eraser.Manager
 							callback(filesCreated, totalFiles);
 
 						//Check if the MFT has grown.
-						if (mftSize < NtfsAPI.GetMftValidSize(info))
+						if (mftSize < NtfsApi.GetMftValidSize(info))
 							break;
 					}
 				}
@@ -446,7 +446,7 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return new DateTime(1600, 1, 1, 0, 0, 0);
+				return new DateTime(1601, 1, 1, 0, 0, 0);
 			}
 		}
 	}
