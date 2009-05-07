@@ -523,6 +523,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Resources\EraserTaskList.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\ShellExt.rc"
 				>
 			</File>

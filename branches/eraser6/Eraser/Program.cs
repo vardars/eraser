@@ -945,6 +945,42 @@ namespace Eraser
 			private Schedule schedule = Schedule.RunNow;
 			private List<ErasureTarget> targets = new List<ErasureTarget>();
 		}
+
+		/// <summary>
+		/// Manages a command line for importing a task list into the global
+		/// DirectExecutor.
+		/// </summary>
+		class ImportTaskListCommandLine : CommandLine
+		{
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="cmdParams">The raw command line arguments passed to the program.</param>
+			public ImportTaskListCommandLine(string[] cmdParams)
+				: base(cmdParams)
+			{
+			}
+
+			protected override bool ResolveParameter(string param)
+			{
+				if (!System.IO.File.Exists(param))
+					throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
+						"The file {0} does not exist.", param));
+				
+				files.Add(param);
+				return true;
+			}
+
+			public ICollection<string> Files
+			{
+				get
+				{
+					return files.AsReadOnly();
+				}
+			}
+
+			private List<string> files = new List<string>();
+		}
 		#endregion
 
 		/// <summary>
@@ -964,6 +1000,9 @@ namespace Eraser
 					case "addtask":
 						Arguments = new AddTaskCommandLine(cmdParams);
 						break;
+					case "importtasklist":
+						Arguments = new ImportTaskListCommandLine(cmdParams);
+						break;
 					case "querymethods":
 					case "help":
 					default:
@@ -977,6 +1016,7 @@ namespace Eraser
 
 				//Map actions to their handlers
 				actionHandlers.Add("addtask", AddTask);
+				actionHandlers.Add("importtasklist", ImportTaskList);
 				actionHandlers.Add("querymethods", QueryMethods);
 				actionHandlers.Add("help", Help);
 			}
@@ -1162,6 +1202,51 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 					}
 
 					client.Tasks.Add(task);
+				}
+			}
+			catch (UnauthorizedAccessException e)
+			{
+				//We can't connect to the pipe because the other instance of Eraser
+				//is running with higher privileges than this instance.
+				throw new UnauthorizedAccessException("Another instance of Eraser " +
+					"is already running but it is running with higher privileges than " +
+					"this instance of Eraser. Tasks cannot be added in this manner.\n\n" +
+					"Close the running instance of Eraser and start it again without " +
+					"administrator privileges, or run the command again as an " +
+					"administrator.", e);
+			}
+		}
+
+		/// <summary>
+		/// Imports the given tasklists and adds them to the global Eraser instance.
+		/// </summary>
+		private void ImportTaskList()
+		{
+			ImportTaskListCommandLine cmdLine = (ImportTaskListCommandLine)Arguments;
+
+			//Import the task list
+			try
+			{
+				using (RemoteExecutorClient client = new RemoteExecutorClient())
+				{
+					client.Run();
+					if (!client.IsConnected)
+					{
+						//The client cannot connect to the server. This probably means
+						//that the server process isn't running. Start an instance.
+						Process eraserInstance = Process.Start(
+							Assembly.GetExecutingAssembly().Location, "--quiet");
+						eraserInstance.WaitForInputIdle();
+
+						client.Run();
+						if (!client.IsConnected)
+							throw new IOException("Eraser cannot connect to the running " +
+								"instance for erasures.");
+					}
+
+					foreach (string path in cmdLine.Files)
+						using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
+							client.Tasks.LoadFromStream(stream);
 				}
 			}
 			catch (UnauthorizedAccessException e)
