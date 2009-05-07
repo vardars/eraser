@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 
 namespace Eraser.Util
 {
-	public static class NetAPI
+	public static class NetApi
 	{
 		/// <summary>
 		/// The NetStatisticsGet function retrieves operating statistics for a service.

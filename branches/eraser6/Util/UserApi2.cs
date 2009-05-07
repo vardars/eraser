@@ -27,7 +27,7 @@ using System.Drawing;
 
 namespace Eraser.Util
 {
-	public static class UserAPI
+	public static class UserApi
 	{
 		/// <summary>
 		/// Gets the current position of the system caret.

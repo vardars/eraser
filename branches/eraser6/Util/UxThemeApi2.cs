@@ -28,7 +28,7 @@ using System.Drawing;
 
 namespace Eraser.Util
 {
-	public static class UxThemeAPI
+	public static class UXThemeApi
 	{
 		/// <summary>
 		/// Updates the control's theme to fit in with the latest Windows visuals.
@@ -57,10 +57,10 @@ namespace Eraser.Util
 			try
 			{
 				NativeMethods.SetWindowTheme(lv.Handle, "EXPLORER", null);
-				UserAPI.NativeMethods.SendMessage(lv.Handle,
-					UserAPI.NativeMethods.LVM_SETEXTENDEDLISTVIEWSTYLE,
-					(UIntPtr)UserAPI.NativeMethods.LVS_EX_DOUBLEBUFFER,
-					(IntPtr)UserAPI.NativeMethods.LVS_EX_DOUBLEBUFFER);
+				UserApi.NativeMethods.SendMessage(lv.Handle,
+					UserApi.NativeMethods.LVM_SETEXTENDEDLISTVIEWSTYLE,
+					(UIntPtr)UserApi.NativeMethods.LVS_EX_DOUBLEBUFFER,
+					(IntPtr)UserApi.NativeMethods.LVS_EX_DOUBLEBUFFER);
 			}
 			catch (DllNotFoundException)
 			{
@@ -74,8 +74,8 @@ namespace Eraser.Util
 		public static void UpdateControlTheme(ToolStrip menu)
 		{
 			if (Environment.OSVersion.Version.Major >= 6)
-				if (!(menu.Renderer is UxThemeMenuRenderer))
-					menu.Renderer = new UxThemeMenuRenderer();
+				if (!(menu.Renderer is UXThemeMenuRenderer))
+					menu.Renderer = new UXThemeMenuRenderer();
 
 			foreach (ToolStripItem item in menu.Items)
 				if (item is ToolStripMenuItem)
@@ -115,9 +115,9 @@ namespace Eraser.Util
 		}
 	}
 
-	public class UxThemeMenuRenderer : ToolStripRenderer
+	public class UXThemeMenuRenderer : ToolStripRenderer
 	{
-		~UxThemeMenuRenderer()
+		~UXThemeMenuRenderer()
 		{
 			hTheme.Close();
 		}
@@ -401,7 +401,7 @@ namespace Eraser.Util
 
 		protected override bool ReleaseHandle()
 		{
-			UxThemeMenuRenderer.NativeMethods.CloseThemeData(handle);
+			UXThemeMenuRenderer.NativeMethods.CloseThemeData(handle);
 			handle = IntPtr.Zero;
 			return true;
 		}

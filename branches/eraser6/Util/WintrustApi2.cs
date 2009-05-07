@@ -27,7 +27,7 @@ using System.Windows.Forms;
 
 namespace Eraser.Util
 {
-	public static class WintrustAPI
+	public static class WintrustApi
 	{
 		/// <summary>
 		/// Verifies the Authenticode signature in a file.

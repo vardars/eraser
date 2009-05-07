@@ -27,7 +27,7 @@ using System.Windows.Forms;
 
 namespace Eraser.Util
 {
-	public static class ShellAPI
+	public static class ShellApi
 	{
 		/// <summary>
 		/// Empties the recycle bin for the current user.
@@ -338,16 +338,16 @@ namespace Eraser.Util
 		/// <summary>
 		/// No dialog box confirming the deletion of the objects will be displayed. 
 		/// </summary>
-		NoConfirmation = (int)ShellAPI.NativeMethods.SHEmptyRecycleBinFlags.SHERB_NOCONFIRMATION,
+		NoConfirmation = (int)ShellApi.NativeMethods.SHEmptyRecycleBinFlags.SHERB_NOCONFIRMATION,
 
 		/// <summary>
 		/// No dialog box indicating the progress will be displayed.
 		/// </summary>
-		NoProgressUI = (int)ShellAPI.NativeMethods.SHEmptyRecycleBinFlags.SHERB_NOPROGRESSUI,
+		NoProgressUI = (int)ShellApi.NativeMethods.SHEmptyRecycleBinFlags.SHERB_NOPROGRESSUI,
 
 		/// <summary>
 		/// No sound will be played when the operation is complete.
 		/// </summary>
-		NoSound = (int)ShellAPI.NativeMethods.SHEmptyRecycleBinFlags.SHERB_NOSOUND
+		NoSound = (int)ShellApi.NativeMethods.SHEmptyRecycleBinFlags.SHERB_NOSOUND
 	}
 }

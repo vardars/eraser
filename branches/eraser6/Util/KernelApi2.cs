@@ -28,7 +28,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace Eraser.Util
 {
-	public static class KernelAPI
+	public static class KernelApi
 	{
 		/// <summary>
 		/// Allocates a new console for the calling process.
@@ -1045,25 +1045,25 @@ namespace Eraser.Util
 		/// Windows Server 2003 and Windows XP/2000: ES_AWAYMODE_REQUIRED is
 		/// not supported.
 		/// </summary>
-		AwayModeRequired = (int)KernelAPI.NativeMethods.EXECUTION_STATE.ES_AWAYMODE_REQUIRED,
+		AwayModeRequired = (int)KernelApi.NativeMethods.EXECUTION_STATE.ES_AWAYMODE_REQUIRED,
 
 		/// <summary>
 		/// Informs the system that the state being set should remain in effect
 		/// until the next call that uses ES_CONTINUOUS and one of the other
 		/// state flags is cleared.
 		/// </summary>
-		Continuous = unchecked((int)KernelAPI.NativeMethods.EXECUTION_STATE.ES_CONTINUOUS),
+		Continuous = unchecked((int)KernelApi.NativeMethods.EXECUTION_STATE.ES_CONTINUOUS),
 
 		/// <summary>
 		/// Forces the display to be on by resetting the display idle timer.
 		/// </summary>
-		DisplayRequired = (int)KernelAPI.NativeMethods.EXECUTION_STATE.ES_DISPLAY_REQUIRED,
+		DisplayRequired = (int)KernelApi.NativeMethods.EXECUTION_STATE.ES_DISPLAY_REQUIRED,
 
 		/// <summary>
 		/// Forces the system to be in the working state by resetting the system
 		/// idle timer.
 		/// </summary>
-		SystemRequired = (int)KernelAPI.NativeMethods.EXECUTION_STATE.ES_SYSTEM_REQUIRED,
+		SystemRequired = (int)KernelApi.NativeMethods.EXECUTION_STATE.ES_SYSTEM_REQUIRED,
 
 		/// <summary>
 		/// This value is not supported. If ES_USER_PRESENT is combined with
@@ -1074,6 +1074,6 @@ namespace Eraser.Util
 		/// user is present and resets the display and system idle timers.
 		/// ES_USER_PRESENT must be called with ES_CONTINUOUS.
 		/// </summary>
-		UserPresent = (int)KernelAPI.NativeMethods.EXECUTION_STATE.ES_USER_PRESENT
+		UserPresent = (int)KernelApi.NativeMethods.EXECUTION_STATE.ES_USER_PRESENT
 	}
 }

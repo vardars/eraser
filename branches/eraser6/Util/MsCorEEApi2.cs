@@ -30,7 +30,7 @@ namespace Eraser.Util
 	/// <summary>
 	/// Provides an interface to MsCoree.dll
 	/// </summary>
-	public static class MsCorEEAPI
+	public static class MsCorEEApi
 	{
 		/// <summary>
 		/// Gets a value indicating whether the assembly manifest at the supplied

@@ -25,7 +25,7 @@ using System.Text;
 
 namespace Eraser.Util
 {
-	public static class NtfsAPI
+	public static class NtfsApi
 	{
 		/// <summary>
 		/// Gets the actual size of the MFT.
@@ -34,8 +34,8 @@ namespace Eraser.Util
 		/// <returns>The size of the MFT.</returns>
 		public static long GetMftValidSize(VolumeInfo volume)
 		{
-			NTAPI.NativeMethods.NTFS_VOLUME_DATA_BUFFER data =
-				NTAPI.NativeMethods.GetNtfsVolumeData(volume);
+			NTApi.NativeMethods.NTFS_VOLUME_DATA_BUFFER data =
+				NTApi.NativeMethods.GetNtfsVolumeData(volume);
 			return data.MftValidDataLength;
 		}
 
@@ -46,8 +46,8 @@ namespace Eraser.Util
 		/// <returns>The size of one MFT record segment.</returns>
 		public static long GetMftRecordSegmentSize(VolumeInfo volume)
 		{
-			NTAPI.NativeMethods.NTFS_VOLUME_DATA_BUFFER data =
-				NTAPI.NativeMethods.GetNtfsVolumeData(volume);
+			NTApi.NativeMethods.NTFS_VOLUME_DATA_BUFFER data =
+				NTApi.NativeMethods.GetNtfsVolumeData(volume);
 			return data.BytesPerFileRecordSegment;
 		}
 	}
