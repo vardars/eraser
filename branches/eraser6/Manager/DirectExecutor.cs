@@ -826,8 +826,9 @@ namespace Eraser.Manager
 				}
 				finally
 				{
-					//Re-set the read-only flag
-					info.IsReadOnly = isReadOnly;
+					//Re-set the read-only flag if the file exists (i.e. there was an error)
+					if (info.Exists)
+						info.IsReadOnly = isReadOnly;
 				}
 			}
 

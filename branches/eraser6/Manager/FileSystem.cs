@@ -1,5 +1,5 @@
 ﻿/* 
- * $Id: DirectExecutor.cs 894 2009-04-27 11:46:42Z lowjoel $
+ * $Id$
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By: Kasra Nassiri <cjax@users.sourceforge.net> @17/10/2008
@@ -446,7 +446,7 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return new DateTime(1601, 1, 1, 0, 0, 0);
+				return new DateTime(1601, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 			}
 		}
 	}
@@ -456,12 +456,14 @@ namespace Eraser.Manager
 	/// </summary>
 	public class FatFileSystem : WindowsFileSystem
 	{
-		public override void EraseOldFileSystemResidentFiles(VolumeInfo info, ErasureMethod method, FileSystemEntriesEraseProgress callback)
+		public override void EraseOldFileSystemResidentFiles(VolumeInfo info,
+			ErasureMethod method, FileSystemEntriesEraseProgress callback)
 		{
-			throw new NotImplementedException();
+			//Nothing to be done here. FAT doesn't store files in its FAT.
 		}
 
-		public override void EraseDirectoryStructures(VolumeInfo info, FileSystemEntriesEraseProgress callback)
+		public override void EraseDirectoryStructures(VolumeInfo info,
+			FileSystemEntriesEraseProgress callback)
 		{
 			throw new NotImplementedException();
 		}
