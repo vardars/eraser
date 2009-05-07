@@ -31,6 +31,8 @@ using System.Reflection;
 using System.IO;
 using Microsoft.Win32.SafeHandles;
 using Eraser.Util;
+using System.Windows.Forms;
+using Microsoft.VisualBasic.Devices;
 
 namespace Eraser.Manager
 {
@@ -246,16 +248,9 @@ namespace Eraser.Manager
 		{
 			List<byte> result = new List<byte>();
 
-			//Process startup information
-			KernelAPI.STARTUPINFO startupInfo = new KernelAPI.STARTUPINFO();
-			startupInfo.cbSize = (uint)Marshal.SizeOf(typeof(KernelAPI.STARTUPINFO));
-			KernelAPI.GetStartupInfo(out startupInfo);
-			result.AddRange(StructToBuffer(startupInfo));
-
-			//System information
-			KernelAPI.SYSTEM_INFO systemInfo = new KernelAPI.SYSTEM_INFO();
-			KernelAPI.GetSystemInfo(out systemInfo);
-			result.AddRange(StructToBuffer(systemInfo));
+			//Process information
+			result.AddRange(StructToBuffer(Process.GetCurrentProcess().Id));
+			result.AddRange(StructToBuffer(Process.GetCurrentProcess().StartTime));
 
 			result.AddRange(GetFastEntropy());
 			result.AddRange(GetSlowEntropy());
@@ -299,67 +294,59 @@ namespace Eraser.Manager
 				Root.FullName).TotalFreeSpace));
 
 			//Miscellaneous window handles
-			result.AddRange(StructToBuffer(UserAPI.GetCapture()));
-			result.AddRange(StructToBuffer(UserAPI.GetClipboardOwner()));
-			result.AddRange(StructToBuffer(UserAPI.GetClipboardViewer()));
-			result.AddRange(StructToBuffer(UserAPI.GetDesktopWindow()));
-			result.AddRange(StructToBuffer(UserAPI.GetForegroundWindow()));
-			result.AddRange(StructToBuffer(UserAPI.GetMessagePos()));
-			result.AddRange(StructToBuffer(UserAPI.GetMessageTime()));
-			result.AddRange(StructToBuffer(UserAPI.GetOpenClipboardWindow()));
-			result.AddRange(StructToBuffer(UserAPI.GetProcessWindowStation()));
-			result.AddRange(StructToBuffer(KernelAPI.GetCurrentProcessId()));
-			result.AddRange(StructToBuffer(KernelAPI.GetCurrentThreadId()));
-			result.AddRange(StructToBuffer(KernelAPI.GetProcessHeap()));
+			result.AddRange(StructToBuffer(Form.ActiveForm.Handle));
+			result.AddRange(StructToBuffer(UserAPI.MessagePos));
+			result.AddRange(StructToBuffer(UserAPI.MessageTime));
 
 			//The caret and cursor positions
-			UserAPI.POINT point;
-			UserAPI.GetCaretPos(out point);
-			result.AddRange(StructToBuffer(point));
-			UserAPI.GetCursorPos(out point);
-			result.AddRange(StructToBuffer(point));
+			result.AddRange(StructToBuffer(UserAPI.CaretPos));
+			result.AddRange(StructToBuffer(Cursor.Position));
+
+			//Currently running threads (dynamic, but not very)
+			Process currProcess = Process.GetCurrentProcess();
+			foreach (ProcessThread thread in currProcess.Threads)
+				result.AddRange(StructToBuffer(thread.Id));
+
+			//Various process statistics
+			result.AddRange(StructToBuffer(currProcess.VirtualMemorySize64));
+			result.AddRange(StructToBuffer(currProcess.MaxWorkingSet));
+			result.AddRange(StructToBuffer(currProcess.MinWorkingSet));
+			result.AddRange(StructToBuffer(currProcess.NonpagedSystemMemorySize64));
+			result.AddRange(StructToBuffer(currProcess.PagedMemorySize64));
+			result.AddRange(StructToBuffer(currProcess.PagedSystemMemorySize64));
+			result.AddRange(StructToBuffer(currProcess.PeakPagedMemorySize64));
+			result.AddRange(StructToBuffer(currProcess.PeakVirtualMemorySize64));
+			result.AddRange(StructToBuffer(currProcess.PeakWorkingSet64));
+			result.AddRange(StructToBuffer(currProcess.PrivateMemorySize64));
+			result.AddRange(StructToBuffer(currProcess.WorkingSet64));
+			result.AddRange(StructToBuffer(currProcess.HandleCount));
 
 			//Amount of free memory
-			KernelAPI.MEMORYSTATUSEX memoryStatus = new KernelAPI.MEMORYSTATUSEX();
-			memoryStatus.dwLength = (uint)Marshal.SizeOf(memoryStatus);
-			if (KernelAPI.GlobalMemoryStatusEx(ref memoryStatus))
-			{
-				result.AddRange(StructToBuffer(memoryStatus.ullAvailPhys));
-				result.AddRange(StructToBuffer(memoryStatus.ullAvailVirtual));
-				result.AddRange(StructToBuffer(memoryStatus));
-			}
-
-			//Thread execution times
-			long creationTime, exitTime, kernelTime, userTime;
-			if (KernelAPI.GetThreadTimes(KernelAPI.GetCurrentThread(), out creationTime,
-				out exitTime, out kernelTime, out userTime))
-			{
-				result.AddRange(StructToBuffer(creationTime));
-				result.AddRange(StructToBuffer(kernelTime));
-				result.AddRange(StructToBuffer(userTime));
-			}
+			ComputerInfo computerInfo = new ComputerInfo();
+			result.AddRange(StructToBuffer(computerInfo.AvailablePhysicalMemory));
+			result.AddRange(StructToBuffer(computerInfo.AvailableVirtualMemory));
 
 			//Process execution times
-			if (KernelAPI.GetProcessTimes(KernelAPI.GetCurrentProcess(), out creationTime,
-				out exitTime, out kernelTime, out userTime))
+			result.AddRange(StructToBuffer(currProcess.TotalProcessorTime));
+			result.AddRange(StructToBuffer(currProcess.UserProcessorTime));
+			result.AddRange(StructToBuffer(currProcess.PrivilegedProcessorTime));
+
+			//Thread execution times
+			foreach (ProcessThread thread in currProcess.Threads)
 			{
-				result.AddRange(StructToBuffer(creationTime));
-				result.AddRange(StructToBuffer(kernelTime));
-				result.AddRange(StructToBuffer(userTime));
+				result.AddRange(StructToBuffer(thread.TotalProcessorTime));
+				result.AddRange(StructToBuffer(thread.UserProcessorTime));
+				result.AddRange(StructToBuffer(thread.PrivilegedProcessorTime));
 			}
 
 			//Current system time
 			result.AddRange(StructToBuffer(DateTime.Now.Ticks));
 
 			//The high resolution performance counter
-			long perfCount = 0;
-			if (KernelAPI.QueryPerformanceCounter(out perfCount))
-				result.AddRange(StructToBuffer(perfCount));
+			result.AddRange(StructToBuffer(KernelAPI.PerformanceCounter));
 
 			//Ticks since start up
-			uint tickCount = KernelAPI.GetTickCount();
-			if (tickCount != 0)
-				result.AddRange(StructToBuffer(tickCount));
+			result.AddRange(StructToBuffer(Environment.TickCount));
 
 			//CryptGenRandom
 			byte[] cryptGenRandom = new byte[160];

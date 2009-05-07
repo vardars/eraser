@@ -62,7 +62,8 @@ namespace Eraser.Util
 
 			//Get the process token.
 			IntPtr hToken = IntPtr.Zero;
-			bool result = OpenProcessToken(KernelAPI.GetCurrentProcess(), TOKEN_QUERY, out hToken);
+			bool result = OpenProcessToken(KernelAPI.NativeMethods.GetCurrentProcess(),
+				TOKEN_QUERY, out hToken);
 			if (!result || hToken == IntPtr.Zero)
 				throw new Exception("Could not open process token.");
 
@@ -84,7 +85,7 @@ namespace Eraser.Util
 			}
 			finally
 			{
-				KernelAPI.CloseHandle(hToken);
+				KernelAPI.NativeMethods.CloseHandle(hToken);
 				Marshal.FreeHGlobal(pElevationType);
 			}
 		}

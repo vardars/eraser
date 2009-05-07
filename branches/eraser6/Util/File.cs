@@ -103,9 +103,9 @@ namespace Eraser.Util
 		/// <returns>A string containing the description</returns>
 		public static string GetFileDescription(string path)
 		{
-			ShellAPI.SHFILEINFO shfi = new ShellAPI.SHFILEINFO();
-			ShellAPI.SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
-				ShellAPI.SHGetFileInfoFlags.SHGFI_DISPLAYNAME);
+			ShellAPI.NativeMethods.SHFILEINFO shfi = new ShellAPI.NativeMethods.SHFILEINFO();
+			ShellAPI.NativeMethods.SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
+				ShellAPI.NativeMethods.SHGetFileInfoFlags.SHGFI_DISPLAYNAME);
 			return shfi.szDisplayName;
 		}
 
@@ -119,9 +119,10 @@ namespace Eraser.Util
 		/// <returns>An Icon object containing the bitmap</returns>
 		public static Icon GetFileIcon(string path)
 		{
-			ShellAPI.SHFILEINFO shfi = new ShellAPI.SHFILEINFO();
-			ShellAPI.SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
-				ShellAPI.SHGetFileInfoFlags.SHGFI_SMALLICON | ShellAPI.SHGetFileInfoFlags.SHGFI_ICON);
+			ShellAPI.NativeMethods.SHFILEINFO shfi = new ShellAPI.NativeMethods.SHFILEINFO();
+			ShellAPI.NativeMethods.SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
+				ShellAPI.NativeMethods.SHGetFileInfoFlags.SHGFI_SMALLICON |
+				ShellAPI.NativeMethods.SHGetFileInfoFlags.SHGFI_ICON);
 
 			if (shfi.hIcon != IntPtr.Zero)
 				return Icon.FromHandle(shfi.hIcon);
@@ -326,7 +327,6 @@ namespace Eraser.Util
 			[MarshalAs(UnmanagedType.Bool)] bool bAbort,
 			[MarshalAs(UnmanagedType.Bool)] bool bProcessSecurity,
 			ref IntPtr lpContext);
-
 		
 		[DllImport("Kernel32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]

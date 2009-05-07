@@ -160,19 +160,15 @@ namespace Eraser
 				//any is always compatible.
 				compatibleArchs.Add("any");
 
-				KernelAPI.SYSTEM_INFO info = new KernelAPI.SYSTEM_INFO();
-				KernelAPI.GetSystemInfo(out info);
-				switch (info.processorArchitecture)
+				switch (KernelAPI.ProcessorArchitecture)
 				{
-					case KernelAPI.SYSTEM_INFO.ProcessorArchitecture.PROCESSOR_ARCHITECTURE_AMD64:
+					case ProcessorArchitecture.Amd64:
 						compatibleArchs.Add("x64");
 						break;
-
-					case KernelAPI.SYSTEM_INFO.ProcessorArchitecture.PROCESSOR_ARCHITECTURE_IA64:
+					case ProcessorArchitecture.IA64:
 						compatibleArchs.Add("ia64");
 						break;
-
-					case KernelAPI.SYSTEM_INFO.ProcessorArchitecture.PROCESSOR_ARCHITECTURE_INTEL:
+					case ProcessorArchitecture.X86:
 						compatibleArchs.Add("x86");
 						break;
 				}
