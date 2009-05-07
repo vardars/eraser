@@ -86,7 +86,6 @@ namespace Eraser.Util
 			public static extern uint NetStatisticsGet(string server, string service,
 				uint level, uint options, out IntPtr bufptr);
 
-
 			/// <summary>
 			/// The NetApiBufferSize function returns the size, in bytes, of a buffer
 			/// allocated by a call to the NetApiBufferAllocate function.

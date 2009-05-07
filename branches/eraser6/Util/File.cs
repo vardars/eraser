@@ -172,7 +172,8 @@ namespace Eraser.Util
 
 				while (g.MeasureString(builder.ToString(), drawFont).Width > newWidth)
 				{
-					if (!PathCompactPathEx(builder, longPath, (uint)charCount--, 0))
+					if (!ShellAPI.NativeMethods.PathCompactPathEx(builder, longPath,
+						(uint)charCount--, 0))
 					{
 						return string.Empty;
 					}
@@ -253,24 +254,6 @@ namespace Eraser.Util
 					sizeof(ushort), IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
 			}
 		}
-
-		/// <summary>
-		/// Truncates a path to fit within a certain number of characters by
-		/// replacing path components with ellipses.
-		/// </summary>
-		/// <param name="pszOut">[out] The address of the string that has been altered.</param>
-		/// <param name="pszSrc">[in] A pointer to a null-terminated string of maximum
-		/// length MAX_PATH that contains the path to be altered.</param>
-		/// <param name="cchMax">[in] The maximum number of characters to be
-		/// contained in the new string, including the terminating NULL character.
-		/// For example, if cchMax = 8, the resulting string can contain a maximum
-		/// of 7 characters plus the terminating NULL character.</param>
-		/// <param name="dwFlags">Reserved.</param>
-		/// <returns>Returns TRUE if successful, or FALSE otherwise.</returns>
-		[DllImport("Shlwapi.dll", CharSet = CharSet.Unicode)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool PathCompactPathEx(StringBuilder pszOut,
-			string pszSrc, uint cchMax, uint dwFlags);
 
 		/// <summary>
 		/// Determines whether the specified file is protected. Applications

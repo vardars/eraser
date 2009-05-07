@@ -46,6 +46,24 @@ namespace Eraser.Util
 		internal static class NativeMethods
 		{
 			/// <summary>
+			/// Truncates a path to fit within a certain number of characters by
+			/// replacing path components with ellipses.
+			/// </summary>
+			/// <param name="pszOut">[out] The address of the string that has been altered.</param>
+			/// <param name="pszSrc">[in] A pointer to a null-terminated string of maximum
+			/// length MAX_PATH that contains the path to be altered.</param>
+			/// <param name="cchMax">[in] The maximum number of characters to be
+			/// contained in the new string, including the terminating NULL character.
+			/// For example, if cchMax = 8, the resulting string can contain a maximum
+			/// of 7 characters plus the terminating NULL character.</param>
+			/// <param name="dwFlags">Reserved.</param>
+			/// <returns>Returns TRUE if successful, or FALSE otherwise.</returns>
+			[DllImport("Shlwapi.dll", CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool PathCompactPathEx(StringBuilder pszOut,
+				string pszSrc, uint cchMax, uint dwFlags);
+
+			/// <summary>
 			/// Empties the Recycle Bin on the specified drive.
 			/// </summary>
 			/// <param name="hwnd">A handle to the parent window of any dialog boxes

@@ -57,9 +57,10 @@ namespace Eraser.Util
 			try
 			{
 				NativeMethods.SetWindowTheme(lv.Handle, "EXPLORER", null);
-				NativeMethods.SendMessage(lv.Handle, NativeMethods.LVM_SETEXTENDEDLISTVIEWSTYLE,
-					(UIntPtr)NativeMethods.LVS_EX_DOUBLEBUFFER,
-					(IntPtr)NativeMethods.LVS_EX_DOUBLEBUFFER);
+				UserAPI.NativeMethods.SendMessage(lv.Handle,
+					UserAPI.NativeMethods.LVM_SETEXTENDEDLISTVIEWSTYLE,
+					(UIntPtr)UserAPI.NativeMethods.LVS_EX_DOUBLEBUFFER,
+					(IntPtr)UserAPI.NativeMethods.LVS_EX_DOUBLEBUFFER);
 			}
 			catch (DllNotFoundException)
 			{
@@ -95,39 +96,6 @@ namespace Eraser.Util
 		/// </summary>
 		internal static class NativeMethods
 		{
-			#region ListView double buffering
-			/// <summary>
-			/// Paints via double-buffering, which reduces flicker. This extended
-			/// style also enables alpha-blended marquee selection on systems where
-			/// it is supported.
-			/// </summary>
-			public const uint LVS_EX_DOUBLEBUFFER = 0x00010000u;
-
-			public const uint LVM_FIRST = 0x1000;
-
-			/// <summary>
-			/// Sets extended styles in list-view controls.
-			/// </summary>
-			public const uint LVM_SETEXTENDEDLISTVIEWSTYLE = (LVM_FIRST + 54);
-
-			/// <summary>
-			/// Sends the specified message to a window or windows. The SendMessage
-			/// function calls the window procedure for the specified window and does
-			/// not return until the window procedure has processed the message.
-			/// </summary>
-			/// <param name="hWnd">Handle to the window whose window procedure will
-			/// receive the message. If this parameter is HWND_BROADCAST, the message
-			/// is sent to all top-level windows in the system, including disabled
-			/// or invisible unowned windows, overlapped windows, and pop-up windows;
-			/// but the message is not sent to child windows.</param>
-			/// <param name="Msg">Specifies the message to be sent.</param>
-			/// <param name="wParam">Specifies additional message-specific information.</param>
-			/// <param name="lParam">Specifies additional message-specific information.</param>
-			[DllImport("User32.dll", SetLastError = true)]
-			public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, UIntPtr wParam,
-				IntPtr lParam);
-			#endregion
-
 			/// <summary>
 			/// Causes a window to use a different set of visual style information
 			/// than its class normally uses.
