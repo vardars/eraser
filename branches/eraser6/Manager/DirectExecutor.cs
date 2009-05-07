@@ -1041,7 +1041,11 @@ namespace Eraser.Manager
 			//Load the list into the dictionary
 			StreamingContext context = new StreamingContext(
 				StreamingContextStates.All, Owner);
-			list = (List<Task>)new BinaryFormatter(null, context).Deserialize(stream);
+			List<Task> deserialised = (List<Task>)new BinaryFormatter(null, context).Deserialize(stream);
+			list.AddRange(deserialised);
+
+			foreach (Task task in deserialised)
+				Owner.OnTaskAdded(new TaskEventArgs(task));
 		}
 
 		/// <summary>

@@ -1779,8 +1779,23 @@
   <data name="newTaskToolStripMenuItem.Text" xml:space="preserve">
     <value>New Task</value>
   </data>
+  <data name="toolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>165, 6</value>
+  </data>
+  <data name="exportTaskListToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>168, 22</value>
+  </data>
+  <data name="exportTaskListToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export Task List</value>
+  </data>
+  <data name="importTaskListToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>168, 22</value>
+  </data>
+  <data name="importTaskListToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import Task List</value>
+  </data>
   <data name="tbScheduleMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>169, 26</value>
+    <value>169, 98</value>
   </data>
   <data name="&gt;&gt;tbScheduleMenu.Name" xml:space="preserve">
     <value>tbScheduleMenu</value>
@@ -1864,7 +1879,7 @@
     <value>ToolBar</value>
   </data>
   <data name="&gt;&gt;ToolBar.Type" xml:space="preserve">
-    <value>Eraser.ToolBar, Eraser, Version=6.0.5.971, Culture=neutral, PublicKeyToken=311f5aaf640c645d</value>
+    <value>Eraser.ToolBar, Eraser, Version=6.0.5.986, Culture=neutral, PublicKeyToken=311f5aaf640c645d</value>
   </data>
   <data name="&gt;&gt;ToolBar.Parent" xml:space="preserve">
     <value>$this</value>
@@ -3510,6 +3525,18 @@
   <data name="&gt;&gt;newTaskToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;toolStripMenuItem2.Name" xml:space="preserve">
+    <value>toolStripMenuItem2</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;exportTaskListToolStripMenuItem.Name" xml:space="preserve">
+    <value>exportTaskListToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;exportTaskListToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;tbSettings.Name" xml:space="preserve">
     <value>tbSettings</value>
   </data>
@@ -3544,6 +3571,12 @@
     <value>checkForUpdatesToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;checkForUpdatesToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;importTaskListToolStripMenuItem.Name" xml:space="preserve">
+    <value>importTaskListToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;importTaskListToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">

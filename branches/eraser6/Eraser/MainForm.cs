@@ -30,6 +30,7 @@ using System.Windows.Forms;
 using Eraser.Util;
 using Eraser.Manager;
 using Eraser.Properties;
+using System.IO;
 
 namespace Eraser
 {
@@ -213,6 +214,43 @@ namespace Eraser
 				{
 					Task task = form.Task;
 					Program.eraserClient.Tasks.Add(task);
+				}
+			}
+		}
+
+		private void exportTaskListToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (SaveFileDialog dialog = new SaveFileDialog())
+			{
+				dialog.Filter = "Eraser 6 task lists (*.ersx)|*.ersx";
+				dialog.DefaultExt = "ersx";
+				dialog.OverwritePrompt = true;
+
+				if (dialog.ShowDialog() == DialogResult.OK)
+				{
+					using (FileStream stream = new FileStream(dialog.FileName,
+						FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
+					{
+						Program.eraserClient.Tasks.SaveToStream(stream);
+					}
+				}
+			}
+		}
+
+		private void importTaskListToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			using (OpenFileDialog dialog = new OpenFileDialog())
+			{
+				dialog.Filter = "Eraser 6 task lists (*.ersx)|*.ersx";
+				dialog.DefaultExt = "ersx";
+
+				if (dialog.ShowDialog() == DialogResult.OK)
+				{
+					using (FileStream stream = new FileStream(dialog.FileName,
+						FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+					{
+						Program.eraserClient.Tasks.LoadFromStream(stream);
+					}
 				}
 			}
 		}

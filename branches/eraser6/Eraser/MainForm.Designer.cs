@@ -64,6 +64,8 @@ namespace Eraser
 			this.tbScheduleDropDown = new System.Windows.Forms.ToolStripMenuItem();
 			this.tbScheduleMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.newTaskToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+			this.exportTaskListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.tbSettings = new System.Windows.Forms.ToolStripMenuItem();
 			this.tbHelp = new System.Windows.Forms.ToolStripMenuItem();
 			this.tbHelpDropDown = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,6 +73,7 @@ namespace Eraser
 			this.checkForUpdatesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutEraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.importTaskListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.notificationMenu.SuspendLayout();
 			this.ToolBar.SuspendLayout();
 			this.tbScheduleMenu.SuspendLayout();
@@ -160,7 +163,10 @@ namespace Eraser
 			// tbScheduleMenu
 			// 
 			this.tbScheduleMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newTaskToolStripMenuItem});
+            this.newTaskToolStripMenuItem,
+            this.toolStripMenuItem2,
+            this.exportTaskListToolStripMenuItem,
+            this.importTaskListToolStripMenuItem});
 			this.tbScheduleMenu.Name = "tbScheduleMenu";
 			this.tbScheduleMenu.OwnerItem = this.tbScheduleDropDown;
 			resources.ApplyResources(this.tbScheduleMenu, "tbScheduleMenu");
@@ -170,6 +176,17 @@ namespace Eraser
 			this.newTaskToolStripMenuItem.Name = "newTaskToolStripMenuItem";
 			resources.ApplyResources(this.newTaskToolStripMenuItem, "newTaskToolStripMenuItem");
 			this.newTaskToolStripMenuItem.Click += new System.EventHandler(this.newTaskToolStripMenuItem_Click);
+			// 
+			// toolStripMenuItem2
+			// 
+			this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+			resources.ApplyResources(this.toolStripMenuItem2, "toolStripMenuItem2");
+			// 
+			// exportTaskListToolStripMenuItem
+			// 
+			this.exportTaskListToolStripMenuItem.Name = "exportTaskListToolStripMenuItem";
+			resources.ApplyResources(this.exportTaskListToolStripMenuItem, "exportTaskListToolStripMenuItem");
+			this.exportTaskListToolStripMenuItem.Click += new System.EventHandler(this.exportTaskListToolStripMenuItem_Click);
 			// 
 			// tbSettings
 			// 
@@ -221,6 +238,12 @@ namespace Eraser
 			resources.ApplyResources(this.checkForUpdatesToolStripMenuItem, "checkForUpdatesToolStripMenuItem");
 			this.checkForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesToolStripMenuItem_Click);
 			// 
+			// importTaskListToolStripMenuItem
+			// 
+			this.importTaskListToolStripMenuItem.Name = "importTaskListToolStripMenuItem";
+			resources.ApplyResources(this.importTaskListToolStripMenuItem, "importTaskListToolStripMenuItem");
+			this.importTaskListToolStripMenuItem.Click += new System.EventHandler(this.importTaskListToolStripMenuItem_Click);
+			// 
 			// MainForm
 			// 
 			resources.ApplyResources(this, "$this");
@@ -267,5 +290,8 @@ namespace Eraser
 		private System.Windows.Forms.ContextMenuStrip tbHelpMenu;
 		private System.Windows.Forms.ToolStripMenuItem checkForUpdatesToolStripMenuItem1;
 		private System.Windows.Forms.ToolStripMenuItem aboutEraserToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+		private System.Windows.Forms.ToolStripMenuItem exportTaskListToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem importTaskListToolStripMenuItem;
 	}
 }
