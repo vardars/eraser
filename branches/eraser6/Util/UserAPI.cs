@@ -68,7 +68,7 @@ namespace Eraser.Util
 		/// <summary>
 		/// Classes, structs and constants imported from User32.dll
 		/// </summary>
-		internal class NativeMethods
+		internal static class NativeMethods
 		{
 			/// <summary>
 			/// The GetCaretPos function copies the caret's position to the specified

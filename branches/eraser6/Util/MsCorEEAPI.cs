@@ -36,26 +36,6 @@ namespace Eraser.Util
 		/// Gets a value indicating whether the assembly manifest at the supplied
 		/// path contains a strong name signature. 
 		/// </summary>
-		/// <param name="wszFilePath">The path to the portable executable (.exe or
-		/// .dll) file for the assembly to be verified.</param>
-		/// <param name="fForceVerification">true to perform verification, even if
-		/// it is necessary to override registry settings; otherwise, false.</param>
-		/// <param name="pfWasVerified">True if the strong name signature was verified;
-		/// otherwise, false. pfWasVerified is also set to false if the verification
-		/// was successful due to registry settings.</param>
-		/// <returns>True if the verification was successful; otherwise, false.</returns>
-		/// <remarks>StrongNameSignatureVerificationEx provides a capability similar to
-		/// the StrongNameSignatureVerification function. However, the second input
-		/// parameter and the output parameter for StrongNameSignatureVerificationEx
-		/// are of type BOOLEAN instead of DWORD.</remarks>
-		[DllImport("MsCoree.dll", CharSet=CharSet.Unicode)]
-		public static extern bool StrongNameSignatureVerificationEx(
-			string wszFilePath, bool fForceVerification, out bool pfWasVerified);
-
-		/// <summary>
-		/// Gets a value indicating whether the assembly manifest at the supplied
-		/// path contains a strong name signature. 
-		/// </summary>
 		/// <param name="assemblyPath">The path to the portable executable (.exe or
 		/// .dll) file for the assembly to be verified.</param>
 		/// <returns>True if the verification was successful; otherwise, false.</returns>
@@ -64,8 +44,35 @@ namespace Eraser.Util
 		public static bool VerifyStrongName(string assemblyPath)
 		{
 			bool wasVerified = false;
-			return StrongNameSignatureVerificationEx(assemblyPath, false,
+			return NativeMethods.StrongNameSignatureVerificationEx(assemblyPath, false,
 				out wasVerified) && wasVerified;
+		}
+
+		/// <summary>
+		/// Function, struct and constants imported from MsCorEE.dll
+		/// </summary>
+		internal static class NativeMethods
+		{
+			/// <summary>
+			/// Gets a value indicating whether the assembly manifest at the supplied
+			/// path contains a strong name signature. 
+			/// </summary>
+			/// <param name="wszFilePath">The path to the portable executable (.exe or
+			/// .dll) file for the assembly to be verified.</param>
+			/// <param name="fForceVerification">true to perform verification, even if
+			/// it is necessary to override registry settings; otherwise, false.</param>
+			/// <param name="pfWasVerified">True if the strong name signature was verified;
+			/// otherwise, false. pfWasVerified is also set to false if the verification
+			/// was successful due to registry settings.</param>
+			/// <returns>True if the verification was successful; otherwise, false.</returns>
+			/// <remarks>StrongNameSignatureVerificationEx provides a capability similar to
+			/// the StrongNameSignatureVerification function. However, the second input
+			/// parameter and the output parameter for StrongNameSignatureVerificationEx
+			/// are of type BOOLEAN instead of DWORD.</remarks>
+			[DllImport("MsCoree.dll", CharSet = CharSet.Unicode)]
+			public static extern bool StrongNameSignatureVerificationEx(
+				string wszFilePath, bool fForceVerification, out bool pfWasVerified);
+
 		}
 	}
 }

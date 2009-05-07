@@ -365,32 +365,7 @@ namespace Eraser.Manager
 			List<byte> result = new List<byte>();
 
 			//NetAPI statistics
-			unsafe
-			{
-				IntPtr netAPIStats = IntPtr.Zero;
-				if (NetAPI.NetStatisticsGet(null, NetAPI.SERVICE_WORKSTATION,
-					0, 0, out netAPIStats) == 0)
-				{
-					try
-					{
-						//Get the size of the buffer
-						uint size = 0;
-						NetAPI.NetApiBufferSize(netAPIStats, out size);
-						byte[] entropy = new byte[size];
-
-						//Copy the buffer
-						Marshal.Copy(entropy, 0, netAPIStats, entropy.Length);
-
-						//And add it to the pool
-						result.AddRange(entropy);
-					}
-					finally
-					{
-						//Free the statistics buffer
-						NetAPI.NetApiBufferFree(netAPIStats);
-					}
-				}
-			}
+			result.AddRange(NetAPI.NetStatisticsGet(null, NetServices.Workstation, 0, 0));
 
 #if false
 			//Get disk I/O statistics for all the hard drives
@@ -416,20 +391,16 @@ namespace Eraser.Manager
 			}
 #endif
 
-			/*
-			 Query performance data. Because the Win32 version of this API (through
-			 registry) may be buggy, use the NT Native API instead.
-			 
-			 Scan the first 64 possible information types (we don't bother
-			 with increasing the buffer size as we do with the Win32
-			 version of the performance data read, we may miss a few classes
-			 but it's no big deal).  In addition the returned size value for
-			 some classes is wrong (eg 23 and 24 return a size of 0) so we
-			 miss a few more things, but again it's no big deal.  This scan
-			 typically yields around 20 pieces of data, there's nothing in
-			 the range 65...128 so chances are there won't be anything above
-			 there either.
-			*/
+			//Query performance data. Because the Win32 version of this API (through
+			//the registry) may be buggy, use the NT Native API instead.
+			//
+			//Scan the first 64 possible information types (we don't bother with increasing
+			//the buffer size as we do with the Win32 version of the performance data
+			//read, we may miss a few classes but it's no big deal).  In addition the
+			//returned size value for some classes is wrong (eg 23 and 24 return a
+			//size of 0) so we miss a few more things, but again it's no big deal. This
+			//scan typically yields around 20 pieces of data, there's nothing in the
+			//range 65...128 so chances are there won't be anything above there either.
 			uint dataWritten = 0;
 			byte[] infoBuffer = new byte[65536];
 			uint totalEntropy = 0;

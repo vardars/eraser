@@ -186,7 +186,7 @@ namespace Eraser.Util
 		/// <summary>
 		/// Stores Kernel32.dll functions, structs and constants.
 		/// </summary>
-		internal class NativeMethods
+		internal static class NativeMethods
 		{
 			/// <summary>
 			/// Closes an open object handle.
@@ -203,6 +203,12 @@ namespace Eraser.Util
 			[DllImport("Kernel32.dll", SetLastError = true)]
 			[return: MarshalAs(UnmanagedType.Bool)]
 			public static extern bool CloseHandle(IntPtr hObject);
+
+			[DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
+			public static extern bool DeviceIoControl(SafeFileHandle hDevice,
+				uint dwIoControlCode, out byte[] lpInBuffer, uint nInBufferSize,
+				out byte[] lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
+				IntPtr lpOverlapped);
 
 			/// <summary>
 			/// Retrieves a pseudo handle for the current process.

@@ -50,40 +50,78 @@ namespace Eraser.Util
 		/// 
 		/// If the function fails, the return value is a system error code. For
 		/// a list of error codes, see System Error Codes.</returns>
-		[DllImport("Netapi32.dll", CharSet = CharSet.Unicode)]
-		public static extern uint NetStatisticsGet(string server, string service,
-			uint level, uint options, out IntPtr bufptr);
+		public static byte[] NetStatisticsGet(string server, NetServices service,
+			uint level, uint options)
+		{
+			IntPtr netAPIStats = IntPtr.Zero;
+			string serviceName = "Lanman" + service.ToString(); ;
+			if (NativeMethods.NetStatisticsGet(server, serviceName, 0, 0, out netAPIStats) == 0)
+			{
+				try
+				{
+					//Get the size of the buffer
+					uint size = 0;
+					NativeMethods.NetApiBufferSize(netAPIStats, out size);
+					byte[] result = new byte[size];
 
-		/// <summary>
-		/// The NetApiBufferSize function returns the size, in bytes, of a buffer
-		/// allocated by a call to the NetApiBufferAllocate function.
-		/// </summary>
-		/// <param name="Buffer">Pointer to a buffer returned by the NetApiBufferAllocate
-		/// function.</param>
-		/// <param name="ByteCount">Receives the size of the buffer, in bytes.</param>
-		/// <returns>If the function succeeds, the return value is NERR_Success.
-		/// 
-		/// If the function fails, the return value is a system error code. For
-		/// a list of error codes, see System Error Codes.</returns>
-		[DllImport("Netapi32.dll")]
-		public static extern uint NetApiBufferSize(IntPtr Buffer, out uint ByteCount);
+					//Copy the buffer
+					Marshal.Copy(result, 0, netAPIStats, result.Length);
 
-		/// <summary>
-		/// The NetApiBufferFree function frees the memory that the NetApiBufferAllocate
-		/// function allocates. Call NetApiBufferFree to free the memory that other
-		/// network management functions return.
-		/// </summary>
-		/// <param name="Buffer">Pointer to a buffer returned previously by another
-		/// network management function.</param>
-		/// <returns>If the function succeeds, the return value is NERR_Success.
-		/// 
-		/// If the function fails, the return value is a system error code. For
-		/// a list of error codes, see System Error Codes.</returns>
-		[DllImport("Netapi32.dll")]
-		public static extern uint NetApiBufferFree(IntPtr Buffer);
+					//Return the result
+					return result;
+				}
+				finally
+				{
+					//Free the statistics buffer
+					NativeMethods.NetApiBufferFree(netAPIStats);
+				}
+			}
 
-		private const uint NERR_Success = 0;
-		public const string SERVICE_WORKSTATION = "LanmanWorkstation";
-		public const string SERVICE_SERVER      = "LanmanServer";
+			return null;
+		}
+
+		internal static class NativeMethods
+		{
+			[DllImport("Netapi32.dll", CharSet = CharSet.Unicode)]
+			public static extern uint NetStatisticsGet(string server, string service,
+				uint level, uint options, out IntPtr bufptr);
+
+
+			/// <summary>
+			/// The NetApiBufferSize function returns the size, in bytes, of a buffer
+			/// allocated by a call to the NetApiBufferAllocate function.
+			/// </summary>
+			/// <param name="Buffer">Pointer to a buffer returned by the NetApiBufferAllocate
+			/// function.</param>
+			/// <param name="ByteCount">Receives the size of the buffer, in bytes.</param>
+			/// <returns>If the function succeeds, the return value is NERR_Success.
+			/// 
+			/// If the function fails, the return value is a system error code. For
+			/// a list of error codes, see System Error Codes.</returns>
+			[DllImport("Netapi32.dll")]
+			public static extern uint NetApiBufferSize(IntPtr Buffer, out uint ByteCount);
+
+			/// <summary>
+			/// The NetApiBufferFree function frees the memory that the NetApiBufferAllocate
+			/// function allocates. Call NetApiBufferFree to free the memory that other
+			/// network management functions return.
+			/// </summary>
+			/// <param name="Buffer">Pointer to a buffer returned previously by another
+			/// network management function.</param>
+			/// <returns>If the function succeeds, the return value is NERR_Success.
+			/// 
+			/// If the function fails, the return value is a system error code. For
+			/// a list of error codes, see System Error Codes.</returns>
+			[DllImport("Netapi32.dll")]
+			public static extern uint NetApiBufferFree(IntPtr Buffer);
+
+			private const uint NERR_Success = 0;
+		}
+	}
+
+	public enum NetServices
+	{
+		Workstation,
+		Server
 	}
 }

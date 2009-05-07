@@ -146,8 +146,8 @@ namespace Eraser.Manager
 					try
 					{
 						//Prevent the system from sleeping.
-						KernelAPI.SetThreadExecutionState(KernelAPI.EXECUTION_STATE.ES_CONTINUOUS |
-							KernelAPI.EXECUTION_STATE.ES_SYSTEM_REQUIRED);
+						KernelAPI.SetThreadExecutionState(ThreadExecutionState.Continuous |
+							ThreadExecutionState.SystemRequired);
 
 						//Broadcast the task started event.
 						task.Queued = false;
@@ -193,7 +193,7 @@ namespace Eraser.Manager
 					finally
 					{
 						//Allow the system to sleep again.
-						KernelAPI.SetThreadExecutionState(KernelAPI.EXECUTION_STATE.ES_CONTINUOUS);
+						KernelAPI.SetThreadExecutionState(ThreadExecutionState.Continuous);
 
 						//If the task is a recurring task, reschedule it since we are done.
 						if (task.Schedule is RecurringSchedule)
@@ -441,7 +441,8 @@ namespace Eraser.Manager
 			DirectoryInfo info = new DirectoryInfo(target.Drive);
 			VolumeInfo volInfo = VolumeInfo.FromMountpoint(target.Drive);
 			FileSystem fsManager = FileSystem.Get(volInfo);
-			info = info.CreateSubdirectory(FileSystem.GenerateRandomFileName(info, 18));
+			info = info.CreateSubdirectory(Path.GetFileName(
+				FileSystem.GenerateRandomFileName(info, 18)));
 
 			try
 			{
@@ -854,10 +855,8 @@ namespace Eraser.Manager
 				progress.Event.CurrentItemName = S._("Emptying recycle bin...");
 				task.OnProgressChanged(progress.Event);
 
-				ShellAPI.SHEmptyRecycleBin(IntPtr.Zero, null,
-					ShellAPI.SHEmptyRecycleBinFlags.SHERB_NOCONFIRMATION |
-					ShellAPI.SHEmptyRecycleBinFlags.SHERB_NOPROGRESSUI |
-					ShellAPI.SHEmptyRecycleBinFlags.SHERB_NOSOUND);
+				ShellAPI.EmptyRecycleBin(EmptyRecycleBinFlags.NoConfirmation |
+					EmptyRecycleBinFlags.NoProgressUI | EmptyRecycleBinFlags.NoSound);
 			}
 		}
 

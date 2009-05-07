@@ -43,7 +43,7 @@ namespace Eraser.Util
 		/// <summary>
 		/// Encapsulates all functions, structs and constants from Shell32.dll
 		/// </summary>
-		internal class NativeMethods
+		internal static class NativeMethods
 		{
 			/// <summary>
 			/// Empties the Recycle Bin on the specified drive.
