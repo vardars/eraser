@@ -250,7 +250,7 @@ namespace Eraser.Manager
 
 			//Process information
 			result.AddRange(StructToBuffer(Process.GetCurrentProcess().Id));
-			result.AddRange(StructToBuffer(Process.GetCurrentProcess().StartTime));
+			result.AddRange(StructToBuffer(Process.GetCurrentProcess().StartTime.Ticks));
 
 			result.AddRange(GetFastEntropy());
 			result.AddRange(GetSlowEntropy());
@@ -294,7 +294,6 @@ namespace Eraser.Manager
 				Root.FullName).TotalFreeSpace));
 
 			//Miscellaneous window handles
-			result.AddRange(StructToBuffer(Form.ActiveForm.Handle));
 			result.AddRange(StructToBuffer(UserAPI.MessagePos));
 			result.AddRange(StructToBuffer(UserAPI.MessageTime));
 
