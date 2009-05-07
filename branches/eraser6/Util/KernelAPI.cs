@@ -407,6 +407,623 @@ namespace Eraser.Util
 			[DllImport("Kernel32.dll", SetLastError = true)]
 			[return: MarshalAs(UnmanagedType.Bool)]
 			public static extern bool FreeConsole();
+
+			/// <summary>
+			/// The BackupRead function can be used to back up a file or directory,
+			/// including the security information. The function reads data associated
+			/// with a specified file or directory into a buffer, which can then be
+			/// written to the backup medium using the WriteFile function.
+			/// </summary>
+			/// <param name="hFile">Handle to the file or directory to be backed up.
+			/// To obtain the handle, call the CreateFile function. The SACLs are not
+			/// read unless the file handle was created with the ACCESS_SYSTEM_SECURITY
+			/// access right. For more information, see File Security and Access Rights.
+			/// 
+			/// The BackupRead function may fail if CreateFile was called with the flag
+			/// FILE_FLAG_NO_BUFFERING. In this case, the GetLastError function
+			/// returns the value ERROR_INVALID_PARAMETER.</param>
+			/// <param name="lpBuffer">Pointer to a buffer that receives the data.</param>
+			/// <param name="nNumberOfBytesToRead">Length of the buffer, in bytes. The
+			/// buffer size must be greater than the size of a WIN32_STREAM_ID structure.</param>
+			/// <param name="lpNumberOfBytesRead">Pointer to a variable that receives
+			/// the number of bytes read.
+			/// 
+			/// If the function returns a nonzero value, and the variable pointed to
+			/// by lpNumberOfBytesRead is zero, then all the data associated with the
+			/// file handle has been read.</param>
+			/// <param name="bAbort">Indicates whether you have finished using BackupRead
+			/// on the handle. While you are backing up the file, specify this parameter
+			/// as FALSE. Once you are done using BackupRead, you must call BackupRead
+			/// one more time specifying TRUE for this parameter and passing the appropriate
+			/// lpContext. lpContext must be passed when bAbort is TRUE; all other
+			/// parameters are ignored.</param>
+			/// <param name="bProcessSecurity">Indicates whether the function will
+			/// restore the access-control list (ACL) data for the file or directory.
+			/// 
+			/// If bProcessSecurity is TRUE, the ACL data will be backed up.</param>
+			/// <param name="lpContext">Pointer to a variable that receives a pointer
+			/// to an internal data structure used by BackupRead to maintain context
+			/// information during a backup operation.
+			/// 
+			/// You must set the variable pointed to by lpContext to NULL before the
+			/// first call to BackupRead for the specified file or directory. The
+			/// function allocates memory for the data structure, and then sets the
+			/// variable to point to that structure. You must not change lpContext or
+			/// the variable that it points to between calls to BackupRead.
+			/// 
+			/// To release the memory used by the data structure, call BackupRead with
+			/// the bAbort parameter set to TRUE when the backup operation is complete.</param>
+			/// <returns>If the function succeeds, the return value is nonzero.
+			/// 
+			/// If the function fails, the return value is zero, indicating that an
+			/// I/O error occurred. To get extended error information, call
+			/// Marshal.GetLastWin32Error.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool BackupRead(SafeFileHandle hFile,
+				IntPtr lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead,
+				[MarshalAs(UnmanagedType.Bool)] bool bAbort,
+				[MarshalAs(UnmanagedType.Bool)] bool bProcessSecurity,
+				ref IntPtr lpContext);
+
+			[DllImport("Kernel32.dll", SetLastError = true)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool BackupRead(SafeFileHandle hFile,
+				out WIN32_STREAM_ID lpBuffer, uint nNumberOfBytesToRead,
+				out uint lpNumberOfBytesRead, [MarshalAs(UnmanagedType.Bool)] bool bAbort,
+				[MarshalAs(UnmanagedType.Bool)] bool bProcessSecurity,
+				ref IntPtr lpContext);
+
+			/// <summary>
+			/// The BackupSeek function seeks forward in a data stream initially
+			/// accessed by using the BackupRead or BackupWrite function.
+			/// </summary>
+			/// <param name="hFile">Handle to the file or directory. This handle is
+			/// created by using the CreateFile function.</param>
+			/// <param name="dwLowBytesToSeek">Low-order part of the number of bytes
+			/// to seek.</param>
+			/// <param name="dwHighBytesToSeek">High-order part of the number of bytes
+			/// to seek.</param>
+			/// <param name="lpdwLowByteSeeked">Pointer to a variable that receives
+			/// the low-order bits of the number of bytes the function actually seeks.</param>
+			/// <param name="lpdwHighByteSeeked">Pointer to a variable that receives
+			/// the high-order bits of the number of bytes the function actually seeks.</param>
+			/// <param name="lpContext">Pointer to an internal data structure used by
+			/// the function. This structure must be the same structure that was
+			/// initialized by the BackupRead function. An application must not touch
+			/// the contents of this structure.</param>
+			/// <returns>If the function could seek the requested amount, the function
+			/// returns a nonzero value.
+			/// 
+			/// If the function could not seek the requested amount, the function 
+			/// returns zero. To get extended error information, call
+			/// Marshal.GetLastWin32Error.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool BackupSeek(SafeFileHandle hFile, uint dwLowBytesToSeek,
+				uint dwHighBytesToSeek, out uint lpdwLowByteSeeked, out uint lpdwHighByteSeeked,
+				ref IntPtr lpContext);
+
+			/// <summary>
+			/// The WIN32_STREAM_ID structure contains stream data.
+			/// </summary>
+			public struct WIN32_STREAM_ID
+			{
+				/// <summary>
+				/// Type of data. This member can be one of the BACKUP_* values.
+				/// </summary>
+				public uint dwStreamId;
+
+				/// <summary>
+				/// Attributes of data to facilitate cross-operating system transfer.
+				/// This member can be one or more of the following values.
+				/// Value						Meaning
+				/// STREAM_MODIFIED_WHEN_READ	Attribute set if the stream contains
+				///								data that is modified when read. Allows
+				///								the backup application to know that
+				///								verification of data will fail.
+				///	STREAM_CONTAINS_SECURITY	Stream contains security data
+				///								(general attributes). Allows the stream
+				///								to be ignored on cross-operations restore.
+				/// </summary>
+				public uint dwStreamAttributes;
+
+				/// <summary>
+				/// Size of data, in bytes.
+				/// </summary>
+				public long Size;
+
+				/// <summary>
+				/// Length of the name of the alternative data stream, in bytes.
+				/// </summary>
+				public uint dwStreamNameSize;
+			}
+
+			/// <summary>
+			/// Alternative data streams.
+			/// </summary>
+			public const uint BACKUP_ALTERNATE_DATA = 0x00000004;
+
+			/// <summary>
+			/// Standard data.
+			/// </summary>
+			public const uint BACKUP_DATA = 0x00000001;
+
+			/// <summary>
+			/// Extended attribute data.
+			/// </summary>
+			public const uint BACKUP_EA_DATA = 0x00000002;
+
+			/// <summary>
+			/// Hard link information.
+			/// </summary>
+			public const uint BACKUP_LINK = 0x00000005;
+
+			/// <summary>
+			/// Objects identifiers.
+			/// </summary>
+			public const uint BACKUP_OBJECT_ID = 0x00000007;
+
+			/// <summary>
+			/// Property data.
+			/// </summary>
+			public const uint BACKUP_PROPERTY_DATA = 0x00000006;
+
+			/// <summary>
+			/// Reparse points.
+			/// </summary>
+			public const uint BACKUP_REPARSE_DATA = 0x00000008;
+
+			/// <summary>
+			/// Security descriptor data.
+			/// </summary>
+			public const uint BACKUP_SECURITY_DATA = 0x00000003;
+
+			/// <summary>
+			/// Sparse file.
+			/// </summary>
+			public const uint BACKUP_SPARSE_BLOCK = 0x00000009;
+
+			/// <summary>
+			/// The CreateFile function creates or opens a file, file stream, directory,
+			/// physical disk, volume, console buffer, tape drive, communications resource,
+			/// mailslot, or named pipe. The function returns a handle that can be used
+			/// to access an object.
+			/// </summary>
+			/// <param name="FileName"></param>
+			/// <param name="DesiredAccess"> access to the object, which can be read,
+			/// write, or both</param>
+			/// <param name="ShareMode">The sharing mode of an object, which can be
+			/// read, write, both, or none</param>
+			/// <param name="SecurityAttributes">A pointer to a SECURITY_ATTRIBUTES
+			/// structure that determines whether or not the returned handle can be
+			/// inherited by child processes. Can be null</param>
+			/// <param name="CreationDisposition">An action to take on files that exist
+			/// and do not exist</param>
+			/// <param name="FlagsAndAttributes">The file attributes and flags.</param>
+			/// <param name="hTemplateFile">A handle to a template file with the
+			/// GENERIC_READ access right. The template file supplies file attributes
+			/// and extended attributes for the file that is being created. This
+			/// parameter can be null</param>
+			/// <returns>If the function succeeds, the return value is an open handle
+			/// to a specified file. If a specified file exists before the function
+			/// all and dwCreationDisposition is CREATE_ALWAYS or OPEN_ALWAYS, a call
+			/// to GetLastError returns ERROR_ALREADY_EXISTS, even when the function
+			/// succeeds. If a file does not exist before the call, GetLastError
+			/// returns 0.
+			/// 
+			/// If the function fails, the return value is INVALID_HANDLE_VALUE.
+			/// To get extended error information, call Marshal.GetLastWin32Error().</returns>
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+			public static extern SafeFileHandle CreateFile(string lpFileName, uint dwDesiredAccess,
+				uint dwShareMode, IntPtr SecurityAttributes, uint dwCreationDisposition,
+				uint dwFlagsAndAttributes, IntPtr hTemplateFile);
+
+			public const uint GENERIC_READ = 0x80000000;
+			public const uint GENERIC_WRITE = 0x40000000;
+			public const uint GENERIC_EXECUTE = 0x20000000;
+			public const uint GENERIC_ALL = 0x10000000;
+
+			public const uint FILE_SHARE_READ = 0x00000001;
+			public const uint FILE_SHARE_WRITE = 0x00000002;
+			public const uint FILE_SHARE_DELETE = 0x00000004;
+
+			public const uint CREATE_NEW = 1;
+			public const uint CREATE_ALWAYS = 2;
+			public const uint OPEN_EXISTING = 3;
+			public const uint OPEN_ALWAYS = 4;
+			public const uint TRUNCATE_EXISTING = 5;
+
+			public const uint FILE_FLAG_WRITE_THROUGH = 0x80000000;
+			public const uint FILE_FLAG_OVERLAPPED = 0x40000000;
+			public const uint FILE_FLAG_NO_BUFFERING = 0x20000000;
+			public const uint FILE_FLAG_RANDOM_ACCESS = 0x10000000;
+			public const uint FILE_FLAG_SEQUENTIAL_SCAN = 0x08000000;
+			public const uint FILE_FLAG_DELETE_ON_CLOSE = 0x04000000;
+			public const uint FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
+			public const uint FILE_FLAG_POSIX_SEMANTICS = 0x01000000;
+			public const uint FILE_FLAG_OPEN_REPARSE_POINT = 0x00200000;
+			public const uint FILE_FLAG_OPEN_NO_RECALL = 0x00100000;
+			public const uint FILE_FLAG_FIRST_PIPE_INSTANCE = 0x00080000;
+
+			[DllImport("Kernel32.dll", SetLastError = true)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public extern static bool DeviceIoControl(SafeFileHandle hDevice,
+				uint dwIoControlCode, IntPtr lpInBuffer, uint nInBufferSize,
+				out ushort lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
+				IntPtr lpOverlapped);
+
+			[DllImport("Kernel32.dll", SetLastError = true)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public extern static bool DeviceIoControl(SafeFileHandle hDevice,
+				uint dwIoControlCode, ref ushort lpInBuffer, uint nInBufferSize,
+				IntPtr lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
+				IntPtr lpOverlapped);
+
+			public const uint FSCTL_GET_COMPRESSION = 0x9003C;
+			public const uint FSCTL_SET_COMPRESSION = 0x9C040;
+			public const ushort COMPRESSION_FORMAT_NONE = 0x0000;
+			public const ushort COMPRESSION_FORMAT_DEFAULT = 0x0001;
+
+			/// <summary>
+			/// Retrieves the size of the specified file.
+			/// </summary>
+			/// <param name="hFile">A handle to the file. The handle must have been
+			/// created with either the GENERIC_READ or GENERIC_WRITE access right.
+			/// For more information, see File Security and Access Rights.</param>
+			/// <param name="lpFileSize">A reference to a long that receives the file
+			/// size, in bytes.</param>
+			/// <returns>If the function succeeds, the return value is nonzero.
+			/// 
+			/// If the function fails, the return value is zero. To get extended error
+			/// information, call Marshal.GetLastWin32Error.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool GetFileSizeEx(SafeFileHandle hFile, out long lpFileSize);
+
+			/// <summary>
+			/// Retrieves the name of a volume on a computer. FindFirstVolume is used
+			/// to begin scanning the volumes of a computer.
+			/// </summary>
+			/// <param name="lpszVolumeName">A pointer to a buffer that receives a
+			/// null-terminated string that specifies the unique volume name of the
+			/// first volume found.</param>
+			/// <param name="cchBufferLength">The length of the buffer to receive the
+			/// name, in TCHARs.</param>
+			/// <returns>If the function succeeds, the return value is a search handle
+			/// used in a subsequent call to the FindNextVolume and FindVolumeClose
+			/// functions.
+			/// 
+			/// If the function fails to find any volumes, the return value is the
+			/// INVALID_HANDLE_VALUE error code. To get extended error information,
+			/// call GetLastError.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+			public static extern SafeFileHandle FindFirstVolume(StringBuilder lpszVolumeName,
+				uint cchBufferLength);
+
+			/// <summary>
+			/// Continues a volume search started by a call to the FindFirstVolume
+			/// function. FindNextVolume finds one volume per call.
+			/// </summary>
+			/// <param name="hFindVolume">The volume search handle returned by a previous
+			/// call to the FindFirstVolume function.</param>
+			/// <param name="lpszVolumeName">A pointer to a string that receives the
+			/// unique volume name found.</param>
+			/// <param name="cchBufferLength">The length of the buffer that receives
+			/// the name, in TCHARs.</param>
+			/// <returns>If the function succeeds, the return value is nonzero.
+			/// 
+			/// If the function fails, the return value is zero. To get extended error
+			/// information, call GetLastError. If no matching files can be found, the
+			/// GetLastError function returns the ERROR_NO_MORE_FILES error code. In
+			/// that case, close the search with the FindVolumeClose function.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool FindNextVolume(SafeHandle hFindVolume,
+				StringBuilder lpszVolumeName, uint cchBufferLength);
+
+			/// <summary>
+			/// Closes the specified volume search handle. The FindFirstVolume and
+			/// FindNextVolume functions use this search handle to locate volumes.
+			/// </summary>
+			/// <param name="hFindVolume">The volume search handle to be closed. This
+			/// handle must have been previously opened by the FindFirstVolume function.</param>
+			/// <returns>If the function succeeds, the return value is nonzero.
+			/// 
+			/// If the function fails, the return value is zero. To get extended error
+			/// information, call GetLastError.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool FindVolumeClose(SafeHandle hFindVolume);
+
+			/// <summary>
+			/// Retrieves the name of a volume mount point on the specified volume.
+			/// FindFirstVolumeMountPoint is used to begin scanning the volume mount
+			/// points on a volume.
+			/// </summary>
+			/// <param name="lpszRootPathName">The unique volume name of the volume
+			/// to scan for volume mount points. A trailing backslash is required.</param>
+			/// <param name="lpszVolumeMountPoint">A pointer to a buffer that receives
+			/// the name of the first volume mount point found.</param>
+			/// <param name="cchBufferLength">The length of the buffer that receives
+			/// the volume mount point name, in TCHARs.</param>
+			/// <returns>If the function succeeds, the return value is a search handle
+			/// used in a subsequent call to the FindNextVolumeMountPoint and
+			/// FindVolumeMountPointClose functions.
+			/// 
+			/// If the function fails to find a volume mount point on the volume, the
+			/// return value is the INVALID_HANDLE_VALUE error code. To get extended
+			/// error information, call GetLastError.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+			public static extern SafeFileHandle FindFirstVolumeMountPoint(
+				string lpszRootPathName, StringBuilder lpszVolumeMountPoint,
+				uint cchBufferLength);
+
+			/// <summary>
+			/// Continues a volume mount point search started by a call to the
+			/// FindFirstVolumeMountPoint function. FindNextVolumeMountPoint finds one
+			/// volume mount point per call.
+			/// </summary>
+			/// <param name="hFindVolumeMountPoint">A mount-point search handle returned
+			/// by a previous call to the FindFirstVolumeMountPoint function.</param>
+			/// <param name="lpszVolumeMountPoint">A pointer to a buffer that receives
+			/// the name of the volume mount point found.</param>
+			/// <param name="cchBufferLength">The length of the buffer that receives
+			/// the names, in TCHARs.</param>
+			/// <returns>If the function succeeds, the return value is nonzero.
+			/// 
+			/// If the function fails, the return value is zero. To get extended error
+			/// information, call GetLastError. If no matching files can be found, the
+			/// GetLastError function returns the ERROR_NO_MORE_FILES error code. In
+			/// that case, close the search with the FindVolumeMountPointClose function.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool FindNextVolumeMountPoint(
+				SafeHandle hFindVolumeMountPoint, StringBuilder lpszVolumeMountPoint,
+				uint cchBufferLength);
+
+			/// <summary>
+			/// Closes the specified mount-point search handle. The FindFirstVolumeMountPoint
+			/// and FindNextVolumeMountPoint  functions use this search handle to locate
+			/// volume mount points on a specified volume.
+			/// </summary>
+			/// <param name="hFindVolumeMountPoint">The mount-point search handle to
+			/// be closed. This handle must have been previously opened by the
+			/// FindFirstVolumeMountPoint function.</param>
+			/// <returns>If the function succeeds, the return value is nonzero.
+			///
+			/// If the function fails, the return value is zero. To get extended error
+			/// information, call GetLastError.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool FindVolumeMountPointClose(SafeHandle hFindVolumeMountPoint);
+
+			/// <summary>
+			/// Retrieves information about the specified disk, including the amount
+			/// of free space on the disk.
+			/// 
+			/// The GetDiskFreeSpace function cannot report volume sizes that are
+			/// greater than 2 gigabytes (GB). To ensure that your application works
+			/// with large capacity hard drives, use the GetDiskFreeSpaceEx function.
+			/// </summary>
+			/// <param name="lpRootPathName">The root directory of the disk for which
+			/// information is to be returned. If this parameter is NULL, the function
+			/// uses the root of the current disk. If this parameter is a UNC name,
+			/// it must include a trailing backslash (for example, \\MyServer\MyShare\).
+			/// Furthermore, a drive specification must have a trailing backslash
+			/// (for example, C:\). The calling application must have FILE_LIST_DIRECTORY
+			/// access rights for this directory.</param>
+			/// <param name="lpSectorsPerCluster">A pointer to a variable that receives
+			/// the number of sectors per cluster.</param>
+			/// <param name="lpBytesPerSector">A pointer to a variable that receives
+			/// the number of bytes per sector.</param>
+			/// <param name="lpNumberOfFreeClusters">A pointer to a variable that
+			/// receives the total number of free clusters on the disk that are
+			/// available to the user who is associated with the calling thread.
+			/// 
+			/// If per-user disk quotas are in use, this value may be less than the 
+			/// total number of free clusters on the disk.</param>
+			/// <param name="lpTotalNumberOfClusters">A pointer to a variable that
+			/// receives the total number of clusters on the disk that are available
+			/// to the user who is associated with the calling thread.
+			/// 
+			/// If per-user disk quotas are in use, this value may be less than the
+			/// total number of clusters on the disk.</param>
+			/// <returns>If the function succeeds, the return value is true. To get
+			/// extended error information, call Marshal.GetLastWin32Error().</returns>
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool GetDiskFreeSpace(
+				string lpRootPathName, out UInt32 lpSectorsPerCluster, out UInt32 lpBytesPerSector,
+				out UInt32 lpNumberOfFreeClusters, out UInt32 lpTotalNumberOfClusters);
+
+
+			/// <summary>
+			/// Retrieves information about the amount of space that is available on
+			/// a disk volume, which is the total amount of space, the total amount
+			/// of free space, and the total amount of free space available to the
+			/// user that is associated with the calling thread.
+			/// </summary>
+			/// <param name="lpDirectoryName">A directory on the disk.
+			/// 
+			/// If this parameter is NULL, the function uses the root of the current
+			/// disk.
+			/// 
+			/// If this parameter is a UNC name, it must include a trailing backslash,
+			/// for example, "\\MyServer\MyShare\".
+			/// 
+			/// This parameter does not have to specify the root directory on a disk.
+			/// The function accepts any directory on a disk.
+			/// 
+			/// The calling application must have FILE_LIST_DIRECTORY access rights
+			/// for this directory.</param>
+			/// <param name="lpFreeBytesAvailable">A pointer to a variable that receives
+			/// the total number of free bytes on a disk that are available to the
+			/// user who is associated with the calling thread.
+			/// 
+			/// This parameter can be NULL.
+			/// 
+			/// If per-user quotas are being used, this value may be less than the
+			/// total number of free bytes on a disk.</param>
+			/// <param name="lpTotalNumberOfBytes">A pointer to a variable that receives
+			/// the total number of bytes on a disk that are available to the user who
+			/// is associated with the calling thread.
+			/// 
+			/// This parameter can be NULL.
+			/// 
+			/// If per-user quotas are being used, this value may be less than the
+			/// total number of bytes on a disk.
+			/// 
+			/// To determine the total number of bytes on a disk or volume, use
+			/// IOCTL_DISK_GET_LENGTH_INFO.</param>
+			/// <param name="lpTotalNumberOfFreeBytes">A pointer to a variable that
+			/// receives the total number of free bytes on a disk.
+			/// 
+			/// This parameter can be NULL.</param>
+			/// <returns>If the function succeeds, the return value is nonzero.
+			/// 
+			/// If the function fails, the return value is zero (0). To get extended
+			/// error information, call GetLastError.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool GetDiskFreeSpaceEx(
+				string lpDirectoryName,
+				out UInt64 lpFreeBytesAvailable,
+				out UInt64 lpTotalNumberOfBytes,
+				out UInt64 lpTotalNumberOfFreeBytes);
+
+			/// <summary>
+			/// Determines whether a disk drive is a removable, fixed, CD-ROM, RAM disk,
+			/// or network drive.
+			/// </summary>
+			/// <param name="lpRootPathName">The root directory for the drive.
+			/// 
+			/// A trailing backslash is required. If this parameter is NULL, the function
+			/// uses the root of the current directory.</param>
+			/// <returns>The return value specifies the type of drive, which can be
+			/// one of the DriveInfo.DriveType values.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+			public static extern uint GetDriveType(string lpRootPathName);
+
+			/// <summary>
+			/// Retrieves information about the file system and volume associated with
+			/// the specified root directory.
+			/// 
+			/// To specify a handle when retrieving this information, use the
+			/// GetVolumeInformationByHandleW function.
+			/// 
+			/// To retrieve the current compression state of a file or directory, use
+			/// FSCTL_GET_COMPRESSION.
+			/// </summary>
+			/// <param name="lpRootPathName">    A pointer to a string that contains
+			/// the root directory of the volume to be described.
+			/// 
+			/// If this parameter is NULL, the root of the current directory is used.
+			/// A trailing backslash is required. For example, you specify
+			/// \\MyServer\MyShare as "\\MyServer\MyShare\", or the C drive as "C:\".</param>
+			/// <param name="lpVolumeNameBuffer">A pointer to a buffer that receives
+			/// the name of a specified volume. The maximum buffer size is MAX_PATH+1.</param>
+			/// <param name="nVolumeNameSize">The length of a volume name buffer, in
+			/// TCHARs. The maximum buffer size is MAX_PATH+1.
+			/// 
+			/// This parameter is ignored if the volume name buffer is not supplied.</param>
+			/// <param name="lpVolumeSerialNumber">A pointer to a variable that receives
+			/// the volume serial number.
+			/// 
+			/// This parameter can be NULL if the serial number is not required.
+			/// 
+			/// This function returns the volume serial number that the operating system
+			/// assigns when a hard disk is formatted. To programmatically obtain the
+			/// hard disk's serial number that the manufacturer assigns, use the
+			/// Windows Management Instrumentation (WMI) Win32_PhysicalMedia property
+			/// SerialNumber.</param>
+			/// <param name="lpMaximumComponentLength">A pointer to a variable that
+			/// receives the maximum length, in TCHARs, of a file name component that
+			/// a specified file system supports.
+			/// 
+			/// A file name component is the portion of a file name between backslashes.
+			/// 
+			/// The value that is stored in the variable that *lpMaximumComponentLength
+			/// points to is used to indicate that a specified file system supports
+			/// long names. For example, for a FAT file system that supports long names,
+			/// the function stores the value 255, rather than the previous 8.3 indicator.
+			/// Long names can also be supported on systems that use the NTFS file system.</param>
+			/// <param name="lpFileSystemFlags">A pointer to a variable that receives
+			/// flags associated with the specified file system.
+			/// 
+			/// This parameter can be one or more of the FS_FILE* flags. However,
+			/// FS_FILE_COMPRESSION and FS_VOL_IS_COMPRESSED are mutually exclusive.</param>
+			/// <param name="lpFileSystemNameBuffer">A pointer to a buffer that receives
+			/// the name of the file system, for example, the FAT file system or the
+			/// NTFS file system. The maximum buffer size is MAX_PATH+1.</param>
+			/// <param name="nFileSystemNameSize">The length of the file system name
+			/// buffer, in TCHARs. The maximum buffer size is MAX_PATH+1.
+			/// 
+			/// This parameter is ignored if the file system name buffer is not supplied.</param>
+			/// <returns>If all the requested information is retrieved, the return value
+			/// is nonzero.
+			/// 
+			/// 
+			/// If not all the requested information is retrieved, the return value is
+			/// zero (0). To get extended error information, call GetLastError.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool GetVolumeInformation(
+				string lpRootPathName,
+				StringBuilder lpVolumeNameBuffer,
+				uint nVolumeNameSize,
+				out uint lpVolumeSerialNumber,
+				out uint lpMaximumComponentLength,
+				out uint lpFileSystemFlags,
+				StringBuilder lpFileSystemNameBuffer,
+				uint nFileSystemNameSize);
+
+			/// <summary>
+			/// Retrieves the unique volume name for the specified volume mount point or root directory.
+			/// </summary>
+			/// <param name="lpszVolumeMountPoint">The path of a volume mount point (with a trailing
+			/// backslash, "\") or a drive letter indicating a root directory (in the
+			/// form "D:\").</param>
+			/// <param name="lpszVolumeName">A pointer to a string that receives the
+			/// volume name. This name is a unique volume name of the form
+			/// "\\?\Volume{GUID}\" where GUID is the GUID that identifies the volume.</param>
+			/// <param name="cchBufferLength">The length of the output buffer, in TCHARs.
+			/// A reasonable size for the buffer to accommodate the largest possible
+			/// volume name is 50 characters.</param>
+			/// <returns>If the function succeeds, the return value is nonzero.
+			/// 
+			/// If the function fails, the return value is zero. To get extended
+			/// error information, call GetLastError.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool GetVolumeNameForVolumeMountPoint(
+				string lpszVolumeMountPoint, StringBuilder lpszVolumeName,
+				uint cchBufferLength);
+
+			/// <summary>
+			/// Retrieves a list of path names for the specified volume name.
+			/// </summary>
+			/// <param name="lpszVolumeName">The volume name.</param>
+			/// <param name="lpszVolumePathNames">A pointer to a buffer that receives
+			/// the list of volume path names. The list is an array of null-terminated
+			/// strings terminated by an additional NULL character. If the buffer is
+			/// not large enough to hold the complete list, the buffer holds as much
+			/// of the list as possible.</param>
+			/// <param name="cchBufferLength">The length of the lpszVolumePathNames
+			/// buffer, in TCHARs.</param>
+			/// <param name="lpcchReturnLength">If the call is successful, this parameter
+			/// is the number of TCHARs copied to the lpszVolumePathNames buffer. Otherwise,
+			/// this parameter is the size of the buffer required to hold the complete
+			/// list, in TCHARs.</param>
+			/// <returns></returns>
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool GetVolumePathNamesForVolumeName(
+				string lpszVolumeName, IntPtr lpszVolumePathNames, uint cchBufferLength,
+				out uint lpcchReturnLength);
+
+			public const int MaxPath = 260;
+			public const int LongPath = 32768;
 		}
 	}
 

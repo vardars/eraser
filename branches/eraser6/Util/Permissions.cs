@@ -25,6 +25,7 @@ using System.Text;
 
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.ComponentModel;
 
 namespace Eraser.Util
 {
@@ -65,7 +66,8 @@ namespace Eraser.Util
 			bool result = NativeMethods.OpenProcessToken(KernelAPI.NativeMethods.GetCurrentProcess(),
 				NativeMethods.TOKEN_QUERY, out hToken);
 			if (!result || hToken == IntPtr.Zero)
-				throw new Exception("Could not open process token.");
+				throw new Win32Exception(Marshal.GetLastWin32Error(),
+					"Could not open process token.");
 
 			IntPtr pElevationType = Marshal.AllocHGlobal(Marshal.SizeOf(
 				typeof(NativeMethods.TOKEN_ELEVATION_TYPE)));
@@ -80,7 +82,8 @@ namespace Eraser.Util
 
 				//Check the return code
 				if (!result)
-					throw new Exception("Could not retrieve token information.");
+					throw new Win32Exception(Marshal.GetLastWin32Error(),
+						"Could not retrieve token information.");
 
 				NativeMethods.TOKEN_ELEVATION_TYPE elevationType =
 					(NativeMethods.TOKEN_ELEVATION_TYPE)Marshal.PtrToStructure(

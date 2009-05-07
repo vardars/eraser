@@ -50,25 +50,36 @@ namespace Eraser.Util
 				SafeFileHandle streamHandle = stream.SafeFileHandle;
 
 				//Allocate the structures
-				WIN32_STREAM_ID streamID = new WIN32_STREAM_ID();
+				KernelAPI.NativeMethods.WIN32_STREAM_ID streamID =
+					new KernelAPI.NativeMethods.WIN32_STREAM_ID();
 				IntPtr context = IntPtr.Zero;
 				uint bytesRead = 0;
 
 				//Read the header of the WIN32_STREAM_ID
-				BackupRead(streamHandle, ref streamID, (uint)Marshal.SizeOf(streamID),
-					ref bytesRead, false, false, ref context);
+				KernelAPI.NativeMethods.BackupRead(streamHandle, out streamID,
+					(uint)Marshal.SizeOf(streamID), out bytesRead, false, false,
+					ref context);
 
 				while (bytesRead == Marshal.SizeOf(streamID))
 				{
-					if (streamID.dwStreamId == BACKUP_ALTERNATE_DATA)
+					if (streamID.dwStreamId == KernelAPI.NativeMethods.BACKUP_ALTERNATE_DATA)
 					{
 						//Allocate memory to copy the stream name into, then copy the name
 						IntPtr pName = Marshal.AllocHGlobal((int)streamID.dwStreamNameSize);
 						uint nameLength = streamID.dwStreamNameSize / sizeof(char);
 						char[] name = new char[nameLength];
-						BackupRead(streamHandle, pName, streamID.dwStreamNameSize, ref bytesRead,
-							false, false, ref context);
-						Marshal.Copy(pName, name, 0, (int)nameLength);
+
+						try
+						{
+							KernelAPI.NativeMethods.BackupRead(streamHandle, pName,
+								streamID.dwStreamNameSize, out bytesRead, false, false,
+								ref context);
+							Marshal.Copy(pName, name, 0, (int)nameLength);
+						}
+						finally
+						{
+							Marshal.FreeHGlobal(pName);
+						}
 
 						//Get the name of the stream. The raw value is :NAME:$DATA
 						string streamName = new string(name);
@@ -77,17 +88,20 @@ namespace Eraser.Util
 
 					//Skip the file contents. Jump to the next header.
 					uint seekLow = 0, seekHigh = 0;
-					BackupSeek(streamHandle, (uint)(streamID.Size & uint.MaxValue),
+					KernelAPI.NativeMethods.BackupSeek(streamHandle,
+						(uint)(streamID.Size & uint.MaxValue),
 						(uint)(streamID.Size >> (sizeof(uint) * 8)), out seekLow,
 						out seekHigh, ref context);
 
 					//And try to read the header
-					BackupRead(streamHandle, ref streamID, (uint)Marshal.SizeOf(streamID),
-						ref bytesRead, false, false, ref context);
+					KernelAPI.NativeMethods.BackupRead(streamHandle, out streamID,
+						(uint)Marshal.SizeOf(streamID), out bytesRead, false, false,
+						ref context);
 				}
 
 				//Free the context
-				BackupRead(streamHandle, IntPtr.Zero, 0, ref bytesRead, true, false, ref context);
+				KernelAPI.NativeMethods.BackupRead(streamHandle, IntPtr.Zero, 0,
+					out bytesRead, true, false, ref context);
 			}
 
 			return result;
@@ -127,7 +141,8 @@ namespace Eraser.Util
 			if (shfi.hIcon != IntPtr.Zero)
 				return Icon.FromHandle(shfi.hIcon);
 			else
-				throw new IOException(string.Format("Could not load file icon from {0}", path),
+				throw new IOException(string.Format(CultureInfo.CurrentCulture,
+					"Could not load file icon from {0}", path),
 					Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error()));
 		}
 
@@ -198,16 +213,17 @@ namespace Eraser.Util
 			ushort compressionStatus = 0;
 			uint bytesReturned = 0;
 
-			using (FileStream strm = new FileStream(CreateFile(path,
-				GENERIC_READ | GENERIC_WRITE, 0, IntPtr.Zero, OPEN_EXISTING,
-				FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.Read))
+			using (FileStream strm = new FileStream(
+				KernelAPI.NativeMethods.CreateFile(path,
+				KernelAPI.NativeMethods.GENERIC_READ | KernelAPI.NativeMethods.GENERIC_WRITE,
+				0, IntPtr.Zero, KernelAPI.NativeMethods.OPEN_EXISTING,
+				KernelAPI.NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.Read))
 			{
-				if (DeviceIoControl(strm.SafeFileHandle.DangerousGetHandle(),
-					FSCTL_GET_COMPRESSION, IntPtr.Zero, 0, out compressionStatus,
-					sizeof(ushort), out bytesReturned, IntPtr.Zero))
+				if (KernelAPI.NativeMethods.DeviceIoControl(strm.SafeFileHandle,
+					KernelAPI.NativeMethods.FSCTL_GET_COMPRESSION, IntPtr.Zero, 0,
+					out compressionStatus, sizeof(ushort), out bytesReturned, IntPtr.Zero))
 				{
-					const ushort COMPRESSION_FORMAT_NONE = 0x0000;
-					return compressionStatus != COMPRESSION_FORMAT_NONE;
+					return compressionStatus != KernelAPI.NativeMethods.COMPRESSION_FORMAT_NONE;
 				}
 			}
 
@@ -222,15 +238,18 @@ namespace Eraser.Util
 		public static bool SetCompression(string path, bool compressed)
 		{
 			ushort compressionStatus = compressed ?
-				COMPRESSION_FORMAT_DEFAULT : COMPRESSION_FORMAT_NONE;
+				KernelAPI.NativeMethods.COMPRESSION_FORMAT_DEFAULT :
+				KernelAPI.NativeMethods.COMPRESSION_FORMAT_NONE;
 			uint bytesReturned = 0;
 
-			using (FileStream strm = new FileStream(CreateFile(path,
-				GENERIC_READ | GENERIC_WRITE, 0, IntPtr.Zero, OPEN_EXISTING,
-				FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.ReadWrite))
+			using (FileStream strm = new FileStream(
+				KernelAPI.NativeMethods.CreateFile(path,
+				KernelAPI.NativeMethods.GENERIC_READ | KernelAPI.NativeMethods.GENERIC_WRITE,
+				0, IntPtr.Zero, KernelAPI.NativeMethods.OPEN_EXISTING,
+				KernelAPI.NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.ReadWrite))
 			{
-				return DeviceIoControl(strm.SafeFileHandle.DangerousGetHandle(),
-					FSCTL_SET_COMPRESSION, ref compressionStatus,
+				return KernelAPI.NativeMethods.DeviceIoControl(strm.SafeFileHandle,
+					KernelAPI.NativeMethods.FSCTL_SET_COMPRESSION, ref compressionStatus,
 					sizeof(ushort), IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
 			}
 		}
@@ -271,271 +290,6 @@ namespace Eraser.Util
 			string ProtFileName);
 
 		/// <summary>
-		/// The BackupRead function can be used to back up a file or directory,
-		/// including the security information. The function reads data associated
-		/// with a specified file or directory into a buffer, which can then be
-		/// written to the backup medium using the WriteFile function.
-		/// </summary>
-		/// <param name="hFile">Handle to the file or directory to be backed up.
-		/// To obtain the handle, call the CreateFile function. The SACLs are not
-		/// read unless the file handle was created with the ACCESS_SYSTEM_SECURITY
-		/// access right. For more information, see File Security and Access Rights.
-		/// 
-		/// The BackupRead function may fail if CreateFile was called with the flag
-		/// FILE_FLAG_NO_BUFFERING. In this case, the GetLastError function
-		/// returns the value ERROR_INVALID_PARAMETER.</param>
-		/// <param name="lpBuffer">Pointer to a buffer that receives the data.</param>
-		/// <param name="nNumberOfBytesToRead">Length of the buffer, in bytes. The
-		/// buffer size must be greater than the size of a WIN32_STREAM_ID structure.</param>
-		/// <param name="lpNumberOfBytesRead">Pointer to a variable that receives
-		/// the number of bytes read.
-		/// 
-		/// If the function returns a nonzero value, and the variable pointed to
-		/// by lpNumberOfBytesRead is zero, then all the data associated with the
-		/// file handle has been read.</param>
-		/// <param name="bAbort">Indicates whether you have finished using BackupRead
-		/// on the handle. While you are backing up the file, specify this parameter
-		/// as FALSE. Once you are done using BackupRead, you must call BackupRead
-		/// one more time specifying TRUE for this parameter and passing the appropriate
-		/// lpContext. lpContext must be passed when bAbort is TRUE; all other
-		/// parameters are ignored.</param>
-		/// <param name="bProcessSecurity">Indicates whether the function will
-		/// restore the access-control list (ACL) data for the file or directory.
-		/// 
-		/// If bProcessSecurity is TRUE, the ACL data will be backed up.</param>
-		/// <param name="lpContext">Pointer to a variable that receives a pointer
-		/// to an internal data structure used by BackupRead to maintain context
-		/// information during a backup operation.
-		/// 
-		/// You must set the variable pointed to by lpContext to NULL before the
-		/// first call to BackupRead for the specified file or directory. The
-		/// function allocates memory for the data structure, and then sets the
-		/// variable to point to that structure. You must not change lpContext or
-		/// the variable that it points to between calls to BackupRead.
-		/// 
-		/// To release the memory used by the data structure, call BackupRead with
-		/// the bAbort parameter set to TRUE when the backup operation is complete.</param>
-		/// <returns>If the function succeeds, the return value is nonzero.
-		/// 
-		/// If the function fails, the return value is zero, indicating that an
-		/// I/O error occurred. To get extended error information, call
-		/// Marshal.GetLastWin32Error.</returns>
-		[DllImport("Kernel32.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool BackupRead(SafeFileHandle hFile,
-			IntPtr lpBuffer, uint nNumberOfBytesToRead, ref uint lpNumberOfBytesRead,
-			[MarshalAs(UnmanagedType.Bool)] bool bAbort,
-			[MarshalAs(UnmanagedType.Bool)] bool bProcessSecurity,
-			ref IntPtr lpContext);
-		
-		[DllImport("Kernel32.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool BackupRead(SafeFileHandle hFile,
-			ref WIN32_STREAM_ID lpBuffer, uint nNumberOfBytesToRead,
-			ref uint lpNumberOfBytesRead, [MarshalAs(UnmanagedType.Bool)] bool bAbort,
-			[MarshalAs(UnmanagedType.Bool)] bool bProcessSecurity,
-			ref IntPtr lpContext);
-
-		/// <summary>
-		/// The BackupSeek function seeks forward in a data stream initially
-		/// accessed by using the BackupRead or BackupWrite function.
-		/// </summary>
-		/// <param name="hFile">Handle to the file or directory. This handle is
-		/// created by using the CreateFile function.</param>
-		/// <param name="dwLowBytesToSeek">Low-order part of the number of bytes
-		/// to seek.</param>
-		/// <param name="dwHighBytesToSeek">High-order part of the number of bytes
-		/// to seek.</param>
-		/// <param name="lpdwLowByteSeeked">Pointer to a variable that receives
-		/// the low-order bits of the number of bytes the function actually seeks.</param>
-		/// <param name="lpdwHighByteSeeked">Pointer to a variable that receives
-		/// the high-order bits of the number of bytes the function actually seeks.</param>
-		/// <param name="lpContext">Pointer to an internal data structure used by
-		/// the function. This structure must be the same structure that was
-		/// initialized by the BackupRead function. An application must not touch
-		/// the contents of this structure.</param>
-		/// <returns>If the function could seek the requested amount, the function
-		/// returns a nonzero value.
-		/// 
-		/// If the function could not seek the requested amount, the function 
-		/// returns zero. To get extended error information, call
-		/// Marshal.GetLastWin32Error.</returns>
-		[DllImport("Kernel32.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool BackupSeek(SafeFileHandle hFile, uint dwLowBytesToSeek,
-			uint dwHighBytesToSeek, out uint lpdwLowByteSeeked, out uint lpdwHighByteSeeked,
-			ref IntPtr lpContext);
-
-		/// <summary>
-		/// The WIN32_STREAM_ID structure contains stream data.
-		/// </summary>
-		[StructLayout(LayoutKind.Sequential, Pack = 4)]
-		private struct WIN32_STREAM_ID
-		{
-			/// <summary>
-			/// Type of data. This member can be one of the BACKUP_* values.
-			/// </summary>
-			public uint dwStreamId;
-
-			/// <summary>
-			/// Attributes of data to facilitate cross-operating system transfer.
-			/// This member can be one or more of the following values.
-			/// Value						Meaning
-			/// STREAM_MODIFIED_WHEN_READ	Attribute set if the stream contains
-			///								data that is modified when read. Allows
-			///								the backup application to know that
-			///								verification of data will fail.
-			///	STREAM_CONTAINS_SECURITY	Stream contains security data
-			///								(general attributes). Allows the stream
-			///								to be ignored on cross-operations restore.
-			/// </summary>
-			public uint dwStreamAttributes;
-
-			/// <summary>
-			/// Size of data, in bytes.
-			/// </summary>
-			public long Size;
-
-			/// <summary>
-			/// Length of the name of the alternative data stream, in bytes.
-			/// </summary>
-			public uint dwStreamNameSize;
-		}
-
-		/// <summary>
-		/// Alternative data streams.
-		/// </summary>
-		public const uint BACKUP_ALTERNATE_DATA = 0x00000004;
-
-		/// <summary>
-		/// Standard data.
-		/// </summary>
-		public const uint BACKUP_DATA = 0x00000001;
-
-		/// <summary>
-		/// Extended attribute data.
-		/// </summary>
-		public const uint BACKUP_EA_DATA = 0x00000002;
-
-		/// <summary>
-		/// Hard link information.
-		/// </summary>
-		public const uint BACKUP_LINK = 0x00000005;
-
-		/// <summary>
-		/// Objects identifiers.
-		/// </summary>
-		public const uint BACKUP_OBJECT_ID = 0x00000007;
-
-		/// <summary>
-		/// Property data.
-		/// </summary>
-		public const uint BACKUP_PROPERTY_DATA = 0x00000006;
-
-		/// <summary>
-		/// Reparse points.
-		/// </summary>
-		public const uint BACKUP_REPARSE_DATA = 0x00000008;
-
-		/// <summary>
-		/// Security descriptor data.
-		/// </summary>
-		public const uint BACKUP_SECURITY_DATA = 0x00000003;
-
-		/// <summary>
-		/// Sparse file.
-		/// </summary>
-		public const uint BACKUP_SPARSE_BLOCK = 0x00000009;
-
-		/// <summary>
-		/// The CreateFile function creates or opens a file, file stream, directory,
-		/// physical disk, volume, console buffer, tape drive, communications resource,
-		/// mailslot, or named pipe. The function returns a handle that can be used
-		/// to access an object.
-		/// </summary>
-		/// <param name="FileName"></param>
-		/// <param name="DesiredAccess"> access to the object, which can be read,
-		/// write, or both</param>
-		/// <param name="ShareMode">The sharing mode of an object, which can be
-		/// read, write, both, or none</param>
-		/// <param name="SecurityAttributes">A pointer to a SECURITY_ATTRIBUTES
-		/// structure that determines whether or not the returned handle can be
-		/// inherited by child processes. Can be null</param>
-		/// <param name="CreationDisposition">An action to take on files that exist
-		/// and do not exist</param>
-		/// <param name="FlagsAndAttributes">The file attributes and flags.</param>
-		/// <param name="hTemplateFile">A handle to a template file with the
-		/// GENERIC_READ access right. The template file supplies file attributes
-		/// and extended attributes for the file that is being created. This
-		/// parameter can be null</param>
-		/// <returns>If the function succeeds, the return value is an open handle
-		/// to a specified file. If a specified file exists before the function
-		/// all and dwCreationDisposition is CREATE_ALWAYS or OPEN_ALWAYS, a call
-		/// to GetLastError returns ERROR_ALREADY_EXISTS, even when the function
-		/// succeeds. If a file does not exist before the call, GetLastError
-		/// returns 0.
-		/// 
-		/// If the function fails, the return value is INVALID_HANDLE_VALUE.
-		/// To get extended error information, call Marshal.GetLastWin32Error().</returns>
-		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-		public static extern SafeFileHandle CreateFile(string lpFileName, uint dwDesiredAccess,
-			uint dwShareMode, IntPtr SecurityAttributes, uint dwCreationDisposition,
-			uint dwFlagsAndAttributes, IntPtr hTemplateFile);
-
-		public const uint GENERIC_READ = 0x80000000;
-		public const uint GENERIC_WRITE = 0x40000000;
-		public const uint GENERIC_EXECUTE = 0x20000000;
-		public const uint GENERIC_ALL = 0x10000000;
-
-		public const uint FILE_SHARE_READ = 0x00000001;
-		public const uint FILE_SHARE_WRITE = 0x00000002;
-		public const uint FILE_SHARE_DELETE = 0x00000004;
-
-		public const uint CREATE_NEW = 1;
-		public const uint CREATE_ALWAYS = 2;
-		public const uint OPEN_EXISTING = 3;
-		public const uint OPEN_ALWAYS = 4;
-		public const uint TRUNCATE_EXISTING = 5;
-
-		public const uint FILE_FLAG_WRITE_THROUGH = 0x80000000;
-		public const uint FILE_FLAG_OVERLAPPED = 0x40000000;
-		public const uint FILE_FLAG_NO_BUFFERING = 0x20000000;
-		public const uint FILE_FLAG_RANDOM_ACCESS = 0x10000000;
-		public const uint FILE_FLAG_SEQUENTIAL_SCAN = 0x08000000;
-		public const uint FILE_FLAG_DELETE_ON_CLOSE = 0x04000000;
-		public const uint FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
-		public const uint FILE_FLAG_POSIX_SEMANTICS = 0x01000000;
-		public const uint FILE_FLAG_OPEN_REPARSE_POINT = 0x00200000;
-		public const uint FILE_FLAG_OPEN_NO_RECALL = 0x00100000;
-		public const uint FILE_FLAG_FIRST_PIPE_INSTANCE = 0x00080000;
-
-		[DllImport("Kernel32.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private extern static bool DeviceIoControl(IntPtr hDevice,
-			uint dwIoControlCode, IntPtr lpInBuffer, uint nInBufferSize,
-			IntPtr lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
-			IntPtr lpOverlapped);
-
-		[DllImport("Kernel32.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private extern static bool DeviceIoControl(IntPtr hDevice,
-			uint dwIoControlCode, IntPtr lpInBuffer, uint nInBufferSize,
-			out ushort lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
-			IntPtr lpOverlapped);
-
-		[DllImport("Kernel32.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private extern static bool DeviceIoControl(IntPtr hDevice,
-			uint dwIoControlCode, ref ushort lpInBuffer, uint nInBufferSize,
-			IntPtr lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
-			IntPtr lpOverlapped);
-
-		private const uint FSCTL_GET_COMPRESSION = 0x9003C;
-		private const uint FSCTL_SET_COMPRESSION = 0x9C040;
-		private const ushort COMPRESSION_FORMAT_NONE = 0x0000;
-		private const ushort COMPRESSION_FORMAT_DEFAULT = 0x0001;
-
-		/// <summary>
 		/// Gets the human-readable representation of a file size from the byte-wise
 		/// length of a file. This returns a KB = 1024 bytes (Windows convention.)
 		/// </summary>
@@ -560,14 +314,16 @@ namespace Eraser.Util
 			{
 				if (dBytes < 1020.0)
 					if (i <= 1)
-						return string.Format("{0} {1}", (int)dBytes, units[i]);
+						return string.Format(CultureInfo.CurrentCulture,
+							"{0} {1}", (int)dBytes, units[i]);
 					else
-						return string.Format(CultureInfo.CurrentCulture, "{0:0.00} {1}",
-							dBytes, units[i]);
+						return string.Format(CultureInfo.CurrentCulture,
+							"{0:0.00} {1}", dBytes, units[i]);
 				dBytes /= 1024.0;
 			}
 
-			return string.Format("{0, 2} {1}", dBytes, units[units.Length - 1]);
+			return string.Format(CultureInfo.CurrentCulture, "{0, 2} {1}",
+				dBytes, units[units.Length - 1]);
 		}
 	}
 }

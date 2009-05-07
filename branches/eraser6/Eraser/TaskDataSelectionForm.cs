@@ -54,7 +54,7 @@ namespace Eraser
 			file.Checked = true;
 
 			//Populate the drives list
-			List<VolumeInfo> volumes = VolumeInfo.GetVolumes();
+			ICollection<VolumeInfo> volumes = VolumeInfo.Volumes;
 			foreach (VolumeInfo volume in volumes)
 			{
 				DriveType driveType = volume.VolumeType;
@@ -64,7 +64,7 @@ namespace Eraser
 					driveType != DriveType.Network)
 				{
 					//Skip drives which are not mounted: we cannot erase their unused space.
-					if (volume.MountPoints.Count == 0)
+					if (!volume.IsMounted)
 						continue;
 
 					DriveItem item = new DriveItem();
