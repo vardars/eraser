@@ -1,5 +1,5 @@
 ﻿/* 
- * $Id: UserAPI.cs 461 2008-11-06 10:16:32Z lowjoel $
+ * $Id$
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By:

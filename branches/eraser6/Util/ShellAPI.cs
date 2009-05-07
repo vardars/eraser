@@ -1,5 +1,5 @@
 ﻿/* 
- * $Id: KernelAPI.cs 825 2008-12-29 10:14:29Z lowjoel $
+ * $Id$
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By: Garrett Trant <gtrant@users.sourceforge.net>

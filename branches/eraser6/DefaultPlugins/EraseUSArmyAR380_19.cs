@@ -1,5 +1,5 @@
 /* 
- * $Id: EraseDoD.cs 348 2008-04-02 13:05:06Z lowjoel $
+ * $Id$
  * Copyright 2008 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By:
