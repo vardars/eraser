@@ -277,20 +277,29 @@ namespace Eraser {
 
 			if (isVistaOrLater)
 			{
-				Handle<HICON> icon(reinterpret_cast<HICON>(LoadImage(NULL,
-					MAKEINTRESOURCE(32518) /*IDI_SHIELD*/, IMAGE_ICON, 0, 0,
-					LR_SHARED | LR_DEFAULTSIZE)));
+				SHSTOCKICONINFO sii;
+				::ZeroMemory(&sii, sizeof(sii));
+				sii.cbSize = sizeof(sii);
 
-				unsigned dimensions = GetSystemMetrics(SM_CXMENUCHECK);
-				HBITMAP dib(CreateDIB(dimensions, dimensions, NULL));
-				Handle<HDC> hdc(CreateCompatibleDC(NULL));
-				SelectObject(hdc, dib);
+				unsigned dimensions = GetSystemMetrics(SM_CXICON);
+				if (SUCCEEDED(SHGetStockIconInfo(SIID_SHIELD, SHGSI_ICON | SHGSI_SMALLICON, &sii)))
+				{
+					Handle<HICON> icon(sii.hIcon);
+					static HBITMAP dib = NULL;
 
-				DrawIconEx(hdc, 0, 0, icon, dimensions, dimensions, 0, NULL, DI_NORMAL);
-				SelectObject(hdc, NULL);
+					if (dib == NULL)
+					{
+						dib = CreateDIB(dimensions, dimensions, NULL);
+						Handle<HDC> hdc(CreateCompatibleDC(NULL));
+						SelectObject(hdc, dib);
 
-				mii.hbmpItem = dib;
-				mii.fMask |= MIIM_BITMAP;
+						DrawIconEx(hdc, 0, 0, icon, dimensions, dimensions, 0, NULL, DI_NORMAL);
+						SelectObject(hdc, NULL);
+					}
+
+					mii.hbmpItem = dib;
+					mii.fMask |= MIIM_BITMAP;
+				}
 			}
 			
 			InsertMenuItem(hSubmenu, ACTION_ERASE_UNUSED_SPACE, MF_BYPOSITION, &mii);
