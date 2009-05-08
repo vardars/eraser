@@ -174,16 +174,18 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <param name="value">The GUID of the PRNG.</param>
 		/// <returns>The PRNG instance.</returns>
-		public static Prng GetInstance(Guid value)
+		public static Prng GetInstance(Guid guid)
 		{
+			lock (ManagerLibrary.Instance.PRNGManager.prngs)
 			try
 			{
-				lock (ManagerLibrary.Instance.PRNGManager.prngs)
-					return ManagerLibrary.Instance.PRNGManager.prngs[value];
+				if (!ManagerLibrary.Instance.PRNGManager.prngs.ContainsKey(guid))
+					throw new FatalException(S._("PRNG not found: {0}", guid.ToString()));
+				return ManagerLibrary.Instance.PRNGManager.prngs[guid];
 			}
 			catch (KeyNotFoundException)
 			{
-				throw new FatalException(S._("PRNG not found: {0}", value.ToString()));
+				throw new FatalException(S._("PRNG not found: {0}", guid.ToString()));
 			}
 		}
 

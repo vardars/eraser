@@ -165,7 +165,14 @@ namespace Eraser.Manager
 			try
 			{
 				//We're done waiting for the connection
-				server.EndWaitForConnection(result);
+				try
+				{
+					server.EndWaitForConnection(result);
+				}
+				catch (OperationCanceledException)
+				{
+					return;
+				}
 
 				while (server.IsConnected)
 				{
