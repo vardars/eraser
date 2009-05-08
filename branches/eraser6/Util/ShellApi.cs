@@ -36,7 +36,7 @@ namespace Eraser.Util
 		/// the user feedback, etc.</param>
 		public static void EmptyRecycleBin(EmptyRecycleBinOptions options)
 		{
-			NativeMethods.SHEmptyRecycleBin(Form.ActiveForm.Handle, null,
+			NativeMethods.SHEmptyRecycleBin(IntPtr.Zero, null,
 				(NativeMethods.SHEmptyRecycleBinFlags)options);
 		}
 
