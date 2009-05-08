@@ -152,6 +152,8 @@ namespace Eraser
 					scheduler.Items.Remove(item);
 					break;
 				}
+
+			PositionProgressBar();
 		}
 
 		/// <summary>
@@ -173,7 +175,7 @@ namespace Eraser
 			item.SubItems[1].Text = S._("Running...");
 
 			//Show the progress bar
-			schedulerProgress.Tag = item.Index;
+			schedulerProgress.Tag = item;
 			schedulerProgress.Visible = true;
 			schedulerProgress.Value = 0;
 			PositionProgressBar();
@@ -216,8 +218,7 @@ namespace Eraser
 			item.SubItems[1].Text = S._("Completed");
 
 			//Hide the progress bar
-			if (schedulerProgress.Tag != null &&
-				(int)schedulerProgress.Tag == item.Index)
+			if (schedulerProgress.Tag != null && schedulerProgress.Tag == item)
 			{
 				schedulerProgress.Tag = null;
 				schedulerProgress.Visible = false;
@@ -497,7 +498,8 @@ namespace Eraser
 		{
 			if (schedulerProgress.Tag == null)
 				return;
-			Rectangle rect = scheduler.Items[(int)schedulerProgress.Tag].SubItems[2].Bounds;
+
+			Rectangle rect = ((ListViewItem)schedulerProgress.Tag).SubItems[2].Bounds;
 			schedulerProgress.Location = rect.Location;
 			schedulerProgress.Size = rect.Size;
 		}
