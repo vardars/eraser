@@ -31,6 +31,7 @@ using Eraser.Util;
 using Eraser.Manager;
 using Eraser.Properties;
 using System.IO;
+using System.Diagnostics;
 
 namespace Eraser
 {
@@ -165,11 +166,6 @@ namespace Eraser
 			//The top gradient
 			dc.DrawImage(Properties.Resources.BackgroundGradient, new Point(0, 0));
 
-			//And the logo
-			Bitmap logo = Properties.Resources.BackgroundLogo;
-			dc.DrawImage(logo, new Rectangle(ClientSize.Width - logo.Width - 10,
-				(contentPanel.Top - logo.Height) / 2, logo.Width, logo.Height));
-
 			dc.SmoothingMode = SmoothingMode.AntiAlias;
 			dc.FillPath(Brushes.White, CreateRoundRect(11, 74, contentPanel.Width + 8, ClientSize.Height - 85, 3));
 		}
@@ -269,6 +265,11 @@ namespace Eraser
 			{
 				form.ShowDialog();
 			}
+		}
+
+		private void eraserLogo_Click(object sender, EventArgs e)
+		{
+			Process.Start("http://eraser.heidi.ie/");
 		}
 
 		#region Task processing code (for notification area animation)

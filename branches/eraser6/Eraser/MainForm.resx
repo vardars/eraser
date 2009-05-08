@@ -145,7 +145,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;contentPanel.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="tbSchedule.Size" type="System.Drawing.Size, System.Drawing">
     <value>113, 28</value>
@@ -154,35 +154,11 @@
     <value>Erase Schedule</value>
   </data>
   <metadata name="notificationIcon.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>420, 17</value>
+    <value>374, 17</value>
   </metadata>
   <metadata name="notificationMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>723, 17</value>
+    <value>677, 17</value>
   </metadata>
-  <data name="openEraserToolStripMenuItem.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 9pt, style=Bold</value>
-  </data>
-  <data name="openEraserToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>192, 22</value>
-  </data>
-  <data name="openEraserToolStripMenuItem.Text" xml:space="preserve">
-    <value>Open Eraser</value>
-  </data>
-  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>189, 6</value>
-  </data>
-  <data name="hideWhenMinimisedToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>192, 22</value>
-  </data>
-  <data name="hideWhenMinimisedToolStripMenuItem.Text" xml:space="preserve">
-    <value>Hide When Minimised</value>
-  </data>
-  <data name="exitToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>192, 22</value>
-  </data>
-  <data name="exitToolStripMenuItem.Text" xml:space="preserve">
-    <value>E&amp;xit Eraser</value>
-  </data>
   <data name="notificationMenu.Size" type="System.Drawing.Size, System.Drawing">
     <value>193, 76</value>
   </data>
@@ -1758,14 +1734,62 @@
   <data name="notificationIcon.Visible" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="openEraserToolStripMenuItem.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 9pt, style=Bold</value>
+  </data>
+  <data name="openEraserToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>192, 22</value>
+  </data>
+  <data name="openEraserToolStripMenuItem.Text" xml:space="preserve">
+    <value>Open Eraser</value>
+  </data>
+  <data name="toolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>189, 6</value>
+  </data>
+  <data name="hideWhenMinimisedToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>192, 22</value>
+  </data>
+  <data name="hideWhenMinimisedToolStripMenuItem.Text" xml:space="preserve">
+    <value>Hide When Minimised</value>
+  </data>
+  <data name="exitToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>192, 22</value>
+  </data>
+  <data name="exitToolStripMenuItem.Text" xml:space="preserve">
+    <value>E&amp;xit Eraser</value>
+  </data>
   <metadata name="notificationIconTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>556, 17</value>
+    <value>510, 17</value>
   </metadata>
   <metadata name="ToolBar.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>14, 27</value>
+    <value>17, 17</value>
   </metadata>
   <data name="ToolBar.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>None</value>
+  </data>
+  <data name="ToolBar.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 27</value>
+  </data>
+  <data name="ToolBar.Size" type="System.Drawing.Size, System.Drawing">
+    <value>310, 32</value>
+  </data>
+  <data name="ToolBar.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="ToolBar.Text" xml:space="preserve">
+    <value>ToolBar</value>
+  </data>
+  <data name="&gt;&gt;ToolBar.Name" xml:space="preserve">
+    <value>ToolBar</value>
+  </data>
+  <data name="&gt;&gt;ToolBar.Type" xml:space="preserve">
+    <value>Eraser.ToolBar, Eraser, Version=6.0.5.1015, Culture=neutral, PublicKeyToken=311f5aaf640c645d</value>
+  </data>
+  <data name="&gt;&gt;ToolBar.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;ToolBar.ZOrder" xml:space="preserve">
+    <value>5</value>
   </data>
   <metadata name="tbScheduleMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>110, 17</value>
@@ -1795,7 +1819,7 @@
     <value>Import Task List</value>
   </data>
   <data name="tbScheduleMenu.Size" type="System.Drawing.Size, System.Drawing">
-    <value>169, 98</value>
+    <value>169, 76</value>
   </data>
   <data name="&gt;&gt;tbScheduleMenu.Name" xml:space="preserve">
     <value>tbScheduleMenu</value>
@@ -1828,7 +1852,7 @@
     <value>Help</value>
   </data>
   <metadata name="tbHelpMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>265, 17</value>
+    <value>254, 17</value>
   </metadata>
   <data name="checkForUpdatesToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>171, 22</value>
@@ -1863,35 +1887,35 @@
   <data name="tbHelpDropDown.Text" xml:space="preserve">
     <value>Help</value>
   </data>
-  <data name="ToolBar.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 27</value>
-  </data>
-  <data name="ToolBar.Size" type="System.Drawing.Size, System.Drawing">
-    <value>402, 32</value>
-  </data>
-  <data name="ToolBar.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="ToolBar.Text" xml:space="preserve">
-    <value>ToolBar</value>
-  </data>
-  <data name="&gt;&gt;ToolBar.Name" xml:space="preserve">
-    <value>ToolBar</value>
-  </data>
-  <data name="&gt;&gt;ToolBar.Type" xml:space="preserve">
-    <value>Eraser.ToolBar, Eraser, Version=6.0.5.1015, Culture=neutral, PublicKeyToken=311f5aaf640c645d</value>
-  </data>
-  <data name="&gt;&gt;ToolBar.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;ToolBar.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
   <data name="checkForUpdatesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>171, 22</value>
   </data>
   <data name="checkForUpdatesToolStripMenuItem.Text" xml:space="preserve">
     <value>Check for Updates</value>
+  </data>
+  <data name="eraserLogo.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="eraserLogo.Location" type="System.Drawing.Point, System.Drawing">
+    <value>636, 15</value>
+  </data>
+  <data name="eraserLogo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>118, 44</value>
+  </data>
+  <data name="eraserLogo.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;eraserLogo.Name" xml:space="preserve">
+    <value>eraserLogo</value>
+  </data>
+  <data name="&gt;&gt;eraserLogo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;eraserLogo.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;eraserLogo.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

@@ -74,10 +74,12 @@ namespace Eraser
 			this.checkForUpdatesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutEraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.eraserLogo = new System.Windows.Forms.PictureBox();
 			this.notificationMenu.SuspendLayout();
 			this.ToolBar.SuspendLayout();
 			this.tbScheduleMenu.SuspendLayout();
 			this.tbHelpMenu.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.eraserLogo)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// contentPanel
@@ -141,6 +143,7 @@ namespace Eraser
 			// ToolBar
 			// 
 			this.ToolBar.AllowItemReorder = true;
+			this.ToolBar.BackColor = System.Drawing.Color.Transparent;
 			resources.ApplyResources(this.ToolBar, "ToolBar");
 			this.ToolBar.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this.ToolBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -226,6 +229,7 @@ namespace Eraser
             this.checkForUpdatesToolStripMenuItem1,
             this.aboutEraserToolStripMenuItem});
 			this.tbHelpMenu.Name = "tbHelpMenu";
+			this.tbHelpMenu.OwnerItem = this.tbHelpDropDown;
 			resources.ApplyResources(this.tbHelpMenu, "tbHelpMenu");
 			// 
 			// checkForUpdatesToolStripMenuItem1
@@ -246,11 +250,22 @@ namespace Eraser
 			resources.ApplyResources(this.checkForUpdatesToolStripMenuItem, "checkForUpdatesToolStripMenuItem");
 			this.checkForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesToolStripMenuItem_Click);
 			// 
+			// eraserLogo
+			// 
+			resources.ApplyResources(this.eraserLogo, "eraserLogo");
+			this.eraserLogo.BackColor = System.Drawing.Color.Transparent;
+			this.eraserLogo.Cursor = System.Windows.Forms.Cursors.Hand;
+			this.eraserLogo.Image = global::Eraser.Properties.Resources.BackgroundLogo;
+			this.eraserLogo.Name = "eraserLogo";
+			this.eraserLogo.TabStop = false;
+			this.eraserLogo.Click += new System.EventHandler(this.eraserLogo_Click);
+			// 
 			// MainForm
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-			this.BackColor = System.Drawing.SystemColors.Control;
+			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(41)))), ((int)(((byte)(41)))));
+			this.Controls.Add(this.eraserLogo);
 			this.Controls.Add(this.contentPanel);
 			this.Controls.Add(this.ToolBar);
 			this.DoubleBuffered = true;
@@ -265,6 +280,7 @@ namespace Eraser
 			this.ToolBar.PerformLayout();
 			this.tbScheduleMenu.ResumeLayout(false);
 			this.tbHelpMenu.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.eraserLogo)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -295,5 +311,6 @@ namespace Eraser
 		private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
 		private System.Windows.Forms.ToolStripMenuItem exportTaskListToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem importTaskListToolStripMenuItem;
+		private System.Windows.Forms.PictureBox eraserLogo;
 	}
 }
