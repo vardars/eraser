@@ -49,11 +49,6 @@ namespace Eraser
 				owner = toolStrip;
 			}
 
-			protected override void InitializeItem(ToolStripItem item)
-			{
-				base.InitializeItem(item);
-			}
-
 			protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
 			{
 				//Draw the parent background image. This is not portable in that it will render
