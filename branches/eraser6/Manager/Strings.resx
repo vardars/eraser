@@ -168,6 +168,9 @@
   <data name="{0} did not have its cluster tips erased. The error returned was: {1}" xml:space="preserve">
     <value>{0} did not have its cluster tips erased. The error returned was: {1}</value>
   </data>
+  <data name="The file provided does not exist." xml:space="preserve">
+    <value>The file provided does not exist.</value>
+  </data>
   <data name="Erasing files..." xml:space="preserve">
     <value>Erasing files...</value>
   </data>

@@ -276,8 +276,11 @@ namespace Eraser.Util
 				throw new NotSupportedException("Asynchronous handles are not implemented.");
 			
 			//Create the handle
-			return KernelApi.NativeMethods.CreateFile(FullName, iAccess, (uint)share,
-				IntPtr.Zero, (uint)mode, (uint)options, IntPtr.Zero);
+			SafeFileHandle result = KernelApi.NativeMethods.CreateFile(FullName, iAccess,
+				(uint)share, IntPtr.Zero, (uint)mode, (uint)options, IntPtr.Zero);
+			if (result.IsInvalid)
+				throw new Win32Exception(Marshal.GetLastWin32Error());
+			return result;
 		}
 
 		/// <summary>

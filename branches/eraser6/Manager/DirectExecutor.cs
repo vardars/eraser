@@ -697,46 +697,48 @@ namespace Eraser.Manager
 		{
 			//Get the file access times
 			StreamInfo streamInfo = new StreamInfo(file);
-			DateTime lastAccess = DateTime.MinValue,
-			         lastWrite = DateTime.MinValue,
-			         created = DateTime.MinValue;
-			//Create the stream, lengthen the file, then tell the erasure method
-			//to erase the tips.
-			using (FileStream stream = streamInfo.Open(FileMode.Open, FileAccess.Write,
-				FileShare.None, FileOptions.WriteThrough))
+			FileInfo fileInfo = streamInfo.File;
+			if (fileInfo == null)
+				throw new ArgumentException(S._("The file provided does not exist."));
+
+			DateTime lastAccess = fileInfo.LastAccessTime;
+			DateTime lastWrite = fileInfo.LastWriteTime;
+			DateTime created = fileInfo.CreationTime;
+
+			//And get the file lengths to know how much to overwrite
+			long fileArea = GetFileArea(file);
+			long fileLength = streamInfo.Length;
+
+			//If the file length equals the file area there is no cluster tip to overwrite
+			if (fileArea == fileLength)
+				return;
+
+			try
 			{
-				long fileLength = stream.Length;
-				long fileArea = GetFileArea(file);
-
-				try
+				//Otherwise, create the stream, lengthen the file, then tell the erasure
+				//method to erase the cluster tips.
+				using (FileStream stream = streamInfo.Open(FileMode.Open, FileAccess.Write,
+					FileShare.None, FileOptions.WriteThrough))
 				{
-					//Get the file access times
-					FileInfo info = streamInfo.File;
-					if (info != null)
+					try
 					{
-						lastAccess = info.LastAccessTime;
-						lastWrite = info.LastWriteTime;
-						created = info.CreationTime;
+						stream.SetLength(fileArea);
+						stream.Seek(fileLength, SeekOrigin.Begin);
+
+						//Erase the file
+						method.Erase(stream, long.MaxValue, PrngManager.GetInstance(
+							ManagerLibrary.Settings.ActivePrng), null);
 					}
-
-					stream.SetLength(fileArea);
-					stream.Seek(fileLength, SeekOrigin.Begin);
-
-					//Erase the file
-					method.Erase(stream, long.MaxValue, PrngManager.GetInstance(
-						ManagerLibrary.Settings.ActivePrng), null);
-				}
-				finally
-				{
-					//Make sure the file is restored!
-					stream.SetLength(fileLength);
+					finally
+					{
+						//Make sure the file length is restored!
+						stream.SetLength(fileLength);
+					}
 				}
 			}
-
-			//Set the file times
-			FileInfo fileInfo = streamInfo.File;
-			if (fileInfo != null)
+			finally
 			{
+				//Reset the file times
 				fileInfo.LastAccessTime = lastAccess;
 				fileInfo.LastWriteTime = lastWrite;
 				fileInfo.CreationTime = created;
