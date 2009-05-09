@@ -344,6 +344,23 @@ namespace Eraser {
 
 			MenuID = uMenuIndex++;
 			InsertMenuItem(hmenu, MenuID, TRUE, &mii);
+
+			//Disable the menu item - IF the user selected the recycle bin AND the
+			//recycle bin is empty
+			if (InvokeReason == INVOKEREASON_RECYCLEBIN)
+			{
+				SHQUERYRBINFO sqrbi;
+				::ZeroMemory(&sqrbi, sizeof(sqrbi));
+				sqrbi.cbSize = sizeof(sqrbi);
+				if (SUCCEEDED(SHQueryRecycleBin(NULL, &sqrbi)))
+				{
+					std::wstringstream strm;
+					strm << "Files in bin: " << sqrbi.i64NumItems;
+					MessageBox(NULL, strm.str().c_str(), L"Recycler", MB_OK);
+					EnableMenuItem(hmenu, MenuID, MF_BYPOSITION |
+						((sqrbi.i64NumItems != 0) ? MF_ENABLED : MF_DISABLED));
+				}
+			}
 		}
 
 		return MAKE_HRESULT(SEVERITY_SUCCESS, FACILITY_NULL, uID - uidFirstCmd);
@@ -430,9 +447,10 @@ namespace Eraser {
 			Handle<HICON> icon(GetMenuIcon());
 			int iconSize = GetSystemMetrics(SM_CXMENUCHECK);
 			int iconMargin = GetSystemMetrics(SM_CXEDGE);
-			DrawIconEx(hdc, rect.left + iconMargin, rect.top + (rect.bottom - rect.top - iconSize) / 2,
-				icon, 0, 0, 0, bgBrush, DI_NORMAL);
-
+			DrawState(hdc, NULL, NULL, reinterpret_cast<LPARAM>(static_cast<HICON>(icon)),
+				NULL, rect.left + iconMargin, rect.top + (rect.bottom - rect.top - iconSize) / 2,
+				0, 0, DST_ICON | ((state & ODS_DISABLED) ? DSS_DISABLED : 0));
+			
 			//Move the rectangle's left bound to the text starting position
 			rect.left += iconMargin * 2 + iconSize;
 		}
@@ -447,8 +465,10 @@ namespace Eraser {
 		if (!GetTextExtentPoint32(hdc, MenuTitle, static_cast<DWORD>(wcslen(MenuTitle)), &textSize))
 			return false;
 
-		COLORREF oldColour = SetTextColor(hdc, (state & ODS_SELECTED) ?
-			GetSysColor(COLOR_HIGHLIGHTTEXT) : GetSysColor(COLOR_MENUTEXT));
+		COLORREF oldColour = SetTextColor(hdc, 
+			(state & ODS_DISABLED) ? GetSysColor(COLOR_GRAYTEXT) :			//Disabled menu item
+			(state & ODS_SELECTED) ? GetSysColor(COLOR_HIGHLIGHTTEXT) :		//Highlighted menu item
+				GetSysColor(COLOR_MENUTEXT));								//Normal menu item
 		UINT flags = DST_PREFIXTEXT;
 		if (state & ODS_NOACCEL)
 			flags |= DSS_HIDEPREFIX;
