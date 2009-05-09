@@ -179,8 +179,11 @@ namespace Eraser.Util
 			}
 			set
 			{
-				using (SafeFileHandle handle = fileHandle)
+				using (SafeFileHandle handle = OpenHandle(FileMode.Open, FileAccess.Write,
+					FileShare.Read, FileOptions.None))
+				{
 					KernelApi.SetFileTime(handle, DateTime.MinValue, value, DateTime.MinValue);
+				}
 			}
 		}
 
@@ -196,8 +199,11 @@ namespace Eraser.Util
 			}
 			set
 			{
-				using (SafeFileHandle handle = fileHandle)
+				using (SafeFileHandle handle = OpenHandle(FileMode.Open, FileAccess.Write,
+					FileShare.Read, FileOptions.None))
+				{
 					KernelApi.SetFileTime(handle, DateTime.MinValue, DateTime.MinValue, value);
+				}
 			}
 		}
 
@@ -213,8 +219,11 @@ namespace Eraser.Util
 			}
 			set
 			{
-				using (SafeFileHandle handle = fileHandle)
+				using (SafeFileHandle handle = OpenHandle(FileMode.Open, FileAccess.Write,
+					FileShare.Read, FileOptions.None))
+				{
 					KernelApi.SetFileTime(handle, value, DateTime.MinValue, DateTime.MinValue);
+				}
 			}
 		}
 
