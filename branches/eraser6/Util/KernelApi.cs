@@ -277,6 +277,23 @@ namespace Eraser.Util
 			public static extern bool CloseHandle(IntPtr hObject);
 
 			/// <summary>
+			/// Deletes an existing file.
+			/// </summary>
+			/// <param name="lpFileName">The name of the file to be deleted.
+			/// 
+			/// In the ANSI version of this function, the name is limited to MAX_PATH
+			/// characters. To extend this limit to 32,767 wide characters, call
+			/// the Unicode version of the function and prepend "\\?\" to the path.
+			/// For more information, see Naming a File.</param>
+			/// <returns>If the function succeeds, the return value is nonzero.
+			/// 
+			/// If the function fails, the return value is zero (0). To get extended
+			/// error information, call Marshal.GetLastWin32Error().</returns>
+			[DllImport("Kernel32.dll", SetLastError = true)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool DeleteFile(string lpFileName);
+
+			/// <summary>
 			/// Retrieves a pseudo handle for the current process.
 			/// </summary>
 			/// <returns>A pseudo handle to the current process.</returns>

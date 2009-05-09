@@ -235,7 +235,8 @@ namespace Eraser.Util
 			if (streamName == null)
 				File.Delete();
 			else
-				throw new InvalidOperationException("Deleting streams are not implemented");
+				if (!KernelApi.NativeMethods.DeleteFile(FullName))
+					throw new Win32Exception(Marshal.GetLastWin32Error());
 		}
 
 		/// <summary>
