@@ -578,6 +578,7 @@ namespace Eraser.Util
 			/// <summary>
 			/// The WIN32_STREAM_ID structure contains stream data.
 			/// </summary>
+			[StructLayout(LayoutKind.Sequential, Pack = 1)]
 			public struct WIN32_STREAM_ID
 			{
 				/// <summary>
