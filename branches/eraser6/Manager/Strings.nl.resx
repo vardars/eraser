@@ -192,6 +192,9 @@
   <data name="EntropySource GUID not found: {0}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
+  <data name="The file system on the drive {0} is not supported." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Plausible deniability was selected, but no decoy files were found. The current file has been only replaced with random data." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>

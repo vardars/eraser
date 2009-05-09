@@ -48,12 +48,14 @@ namespace Eraser.Manager
 			switch (volume.VolumeFormat)
 			{
 				case "FAT":
+				case "FAT32":
 					return new FatFileSystem();
 				case "NTFS":
 					return new NtfsFileSystem();
 			}
 
-			throw new NotSupportedException();
+			throw new NotSupportedException(S._("The file system on the drive {0} is not " +
+				"supported.", volume.IsMounted ? volume.MountPoints[0] : volume.VolumeId));
 		}
 
 		/// <summary>
