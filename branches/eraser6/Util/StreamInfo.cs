@@ -89,6 +89,14 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
+		/// Gets the name of the file.
+		/// </summary>
+		public string Name
+		{
+			get { return fileName; }
+		}
+
+		/// <summary>
 		/// Gets an instance of the main file. If this object refers to an ADS, the
 		/// result is null.
 		/// </summary>
@@ -159,12 +167,55 @@ namespace Eraser.Util
 			}
 		}
 
-		/// <summary>
-		/// Gets the name of the file.
-		/// </summary>
-		public string Name
+		public DateTime LastAccessTime
 		{
-			get { return fileName; }
+			get
+			{
+				DateTime creationTime, lastAccess, lastWrite;
+				using (SafeFileHandle handle = fileHandle)
+					KernelApi.GetFileTime(handle, out creationTime, out lastAccess,
+						out lastWrite);
+				return lastAccess;
+			}
+			set
+			{
+				using (SafeFileHandle handle = fileHandle)
+					KernelApi.SetFileTime(handle, DateTime.MinValue, value, DateTime.MinValue);
+			}
+		}
+
+		public DateTime LastWriteTime
+		{
+			get
+			{
+				DateTime creationTime, lastAccess, lastWrite;
+				using (SafeFileHandle handle = fileHandle)
+					KernelApi.GetFileTime(handle, out creationTime, out lastAccess,
+						out lastWrite);
+				return lastWrite;
+			}
+			set
+			{
+				using (SafeFileHandle handle = fileHandle)
+					KernelApi.SetFileTime(handle, DateTime.MinValue, DateTime.MinValue, value);
+			}
+		}
+
+		public DateTime CreationTime
+		{
+			get
+			{
+				DateTime creationTime, lastAccess, lastWrite;
+				using (SafeFileHandle handle = fileHandle)
+					KernelApi.GetFileTime(handle, out creationTime, out lastAccess,
+						out lastWrite);
+				return creationTime;
+			}
+			set
+			{
+				using (SafeFileHandle handle = fileHandle)
+					KernelApi.SetFileTime(handle, value, DateTime.MinValue, DateTime.MinValue);
+			}
 		}
 
 		/// <summary>

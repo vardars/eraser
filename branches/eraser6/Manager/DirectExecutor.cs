@@ -697,13 +697,9 @@ namespace Eraser.Manager
 		{
 			//Get the file access times
 			StreamInfo streamInfo = new StreamInfo(file);
-			FileInfo fileInfo = streamInfo.File;
-			if (fileInfo == null)
-				throw new ArgumentException(S._("The file provided does not exist."));
-
-			DateTime lastAccess = fileInfo.LastAccessTime;
-			DateTime lastWrite = fileInfo.LastWriteTime;
-			DateTime created = fileInfo.CreationTime;
+			DateTime lastAccess = streamInfo.LastAccessTime;
+			DateTime lastWrite = streamInfo.LastWriteTime;
+			DateTime created = streamInfo.CreationTime;
 
 			//And get the file lengths to know how much to overwrite
 			long fileArea = GetFileArea(file);
@@ -739,9 +735,9 @@ namespace Eraser.Manager
 			finally
 			{
 				//Reset the file times
-				fileInfo.LastAccessTime = lastAccess;
-				fileInfo.LastWriteTime = lastWrite;
-				fileInfo.CreationTime = created;
+				streamInfo.LastAccessTime = lastAccess;
+				streamInfo.LastWriteTime = lastWrite;
+				streamInfo.CreationTime = created;
 			}
 		}
 		#endregion

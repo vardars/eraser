@@ -25,6 +25,7 @@ using System.Text;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
+using System.ComponentModel;
 
 namespace Eraser.Util
 {
@@ -82,6 +83,76 @@ namespace Eraser.Util
 		public static bool FreeConsole()
 		{
 			return NativeMethods.FreeConsole();
+		}
+
+		private static DateTime FileTimeToDateTime(System.Runtime.InteropServices.ComTypes.FILETIME value)
+		{
+			long time = (long)((((ulong)value.dwHighDateTime) << sizeof(int) * 8) |
+				(uint)value.dwLowDateTime);
+			return DateTime.FromFileTime(time);
+		}
+
+		private static System.Runtime.InteropServices.ComTypes.FILETIME DateTimeToFileTime(DateTime value)
+		{
+			long time = value.ToFileTime();
+
+			System.Runtime.InteropServices.ComTypes.FILETIME result =
+				new System.Runtime.InteropServices.ComTypes.FILETIME();
+			result.dwLowDateTime = (int)(time & 0xFFFFFFFFL);
+			result.dwHighDateTime = (int)(time >> 32);
+
+			return result;
+		}
+
+		public static void GetFileTime(SafeFileHandle file, out DateTime creationTime,
+			out DateTime accessedTime, out DateTime modifiedTime)
+		{
+			System.Runtime.InteropServices.ComTypes.FILETIME accessedTimeNative =
+				new System.Runtime.InteropServices.ComTypes.FILETIME();
+			System.Runtime.InteropServices.ComTypes.FILETIME modifiedTimeNative =
+				new System.Runtime.InteropServices.ComTypes.FILETIME();
+			System.Runtime.InteropServices.ComTypes.FILETIME createdTimeNative =
+				new System.Runtime.InteropServices.ComTypes.FILETIME();
+
+			if (!NativeMethods.GetFileTime(file, out createdTimeNative, out accessedTimeNative,
+				out modifiedTimeNative))
+			{
+				throw new Win32Exception(Marshal.GetLastWin32Error());
+			}
+
+			creationTime = FileTimeToDateTime(createdTimeNative);
+			accessedTime = FileTimeToDateTime(accessedTimeNative);
+			modifiedTime = FileTimeToDateTime(modifiedTimeNative);
+		}
+
+		public static void SetFileTime(SafeFileHandle file, DateTime creationTime,
+			DateTime accessedTime, DateTime modifiedTime)
+		{
+			System.Runtime.InteropServices.ComTypes.FILETIME accessedTimeNative =
+				new System.Runtime.InteropServices.ComTypes.FILETIME();
+			System.Runtime.InteropServices.ComTypes.FILETIME modifiedTimeNative =
+				new System.Runtime.InteropServices.ComTypes.FILETIME();
+			System.Runtime.InteropServices.ComTypes.FILETIME createdTimeNative =
+				new System.Runtime.InteropServices.ComTypes.FILETIME();
+
+			if (!NativeMethods.GetFileTime(file, out createdTimeNative,
+				out accessedTimeNative, out modifiedTimeNative))
+			{
+				throw new Win32Exception(Marshal.GetLastWin32Error());
+			}
+
+			if (creationTime != DateTime.MinValue)
+				createdTimeNative = DateTimeToFileTime(creationTime);
+			if (accessedTime != DateTime.MinValue)
+				accessedTimeNative = DateTimeToFileTime(accessedTime);
+			if (modifiedTime != DateTime.MinValue)
+				modifiedTimeNative = DateTimeToFileTime(modifiedTime);
+
+			if (!NativeMethods.SetFileTime(file, ref createdTimeNative,
+				ref accessedTimeNative, ref modifiedTimeNative))
+			{
+				throw new Win32Exception(Marshal.GetLastWin32Error());
+			}
 		}
 
 		/// <summary>
@@ -680,6 +751,79 @@ namespace Eraser.Util
 			[DllImport("Kernel32.dll", SetLastError = true)]
 			[return: MarshalAs(UnmanagedType.Bool)]
 			public static extern bool GetFileSizeEx(SafeFileHandle hFile, out long lpFileSize);
+
+			/// <summary>
+			/// Retrieves the date and time that a file or directory was created, last
+			/// accessed, and last modified.
+			/// </summary>
+			/// <param name="hFile">A handle to the file or directory for which dates
+			/// and times are to be retrieved. The handle must have been created using
+			/// the CreateFile function with the GENERIC_READ access right. For more
+			/// information, see File Security and Access Rights.</param>
+			/// <param name="lpCreationTime">A pointer to a FILETIME structure to
+			/// receive the date and time the file or directory was created. This
+			/// parameter can be NULL if the application does not require this
+			/// information.</param>
+			/// <param name="lpLastAccessTime">A pointer to a FILETIME structure to
+			/// receive the date and time the file or directory was last accessed. The
+			/// last access time includes the last time the file or directory was
+			/// written to, read from, or, in the case of executable files, run. This
+			/// parameter can be NULL if the application does not require this
+			/// information.</param>
+			/// <param name="lpLastWriteTime">A pointer to a FILETIME structure to
+			/// receive the date and time the file or directory was last written to,
+			/// truncated, or overwritten (for example, with WriteFile or SetEndOfFile).
+			/// This date and time is not updated when file attributes or security
+			/// descriptors are changed. This parameter can be NULL if the application
+			/// does not require this information.</param>
+			/// <returns>If the function succeeds, the return value is nonzero.
+			/// 
+			/// If the function fails, the return value is zero. To get extended error
+			/// information, call Marshal.GetLastWin32Error().</returns>
+			[DllImport("Kernel32.dll", SetLastError = true)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool GetFileTime(SafeFileHandle hFile,
+				out System.Runtime.InteropServices.ComTypes.FILETIME lpCreationTime,
+				out System.Runtime.InteropServices.ComTypes.FILETIME lpLastAccessTime,
+				out System.Runtime.InteropServices.ComTypes.FILETIME lpLastWriteTime);
+
+			/// <summary>
+			/// Sets the date and time that the specified file or directory was created,
+			/// last accessed, or last modified.
+			/// </summary>
+			/// <param name="hFile">A handle to the file or directory. The handle must
+			/// have been created using the CreateFile function with the
+			/// FILE_WRITE_ATTRIBUTES access right. For more information, see File
+			/// Security and Access Rights.</param>
+			/// <param name="lpCreationTime">A pointer to a FILETIME structure that
+			/// contains the new creation date and time for the file or directory.
+			/// This parameter can be NULL if the application does not need to change
+			/// this information.</param>
+			/// <param name="lpLastAccessTime">A pointer to a FILETIME structure that
+			/// contains the new last access date and time for the file or directory.
+			/// The last access time includes the last time the file or directory was
+			/// written to, read from, or (in the case of executable files) run. This
+			/// parameter can be NULL if the application does not need to change this
+			/// information.
+			/// 
+			/// To preserve the existing last access time for a file even after accessing
+			/// a file, call SetFileTime immediately after opening the file handle
+			/// with this parameter's FILETIME structure members initialized to
+			/// 0xFFFFFFFF.</param>
+			/// <param name="lpLastWriteTime">A pointer to a FILETIME structure that
+			/// contains the new last modified date and time for the file or directory.
+			/// This parameter can be NULL if the application does not need to change
+			/// this information.</param>
+			/// <returns>If the function succeeds, the return value is nonzero.
+			/// 
+			/// If the function fails, the return value is zero. To get extended error
+			/// information, call GetLastError.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool SetFileTime(SafeFileHandle hFile,
+				ref System.Runtime.InteropServices.ComTypes.FILETIME lpCreationTime,
+				ref System.Runtime.InteropServices.ComTypes.FILETIME lpLastAccessTime,
+				ref System.Runtime.InteropServices.ComTypes.FILETIME lpLastWriteTime);
 
 			/// <summary>
 			/// Retrieves the name of a volume on a computer. FindFirstVolume is used
