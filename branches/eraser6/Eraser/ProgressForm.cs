@@ -157,7 +157,7 @@ namespace Eraser
 				{
 					int chars = 0;
 					int lines = 0;
-					g.MeasureString(itemName, item.Font, new SizeF(item.Width, 15),
+					g.MeasureString(itemName, item.Font, new SizeF(item.Width - 2, 15),
 						StringFormat.GenericDefault, out chars, out lines);
 
 					result.AppendLine(itemName.Substring(0, chars));
