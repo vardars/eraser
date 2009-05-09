@@ -36,11 +36,13 @@ namespace Eraser
 	public partial class ProgressForm : Form
 	{
 		private Task task;
+		private DateTime lastUpdate;
 
 		public ProgressForm(Task task)
 		{
 			InitializeComponent();
 			this.task = task;
+			this.lastUpdate = DateTime.Now;
 
 			//Register the event handlers
 			jobTitle.Text = task.UIText;
@@ -54,16 +56,21 @@ namespace Eraser
 			task.TaskFinished -= task_TaskFinished;
 		}
 
-		void task_ProgressChanged(object sender, TaskProgressEventArgs e)
+		private void task_ProgressChanged(object sender, TaskProgressEventArgs e)
 		{
 			if (InvokeRequired)
 			{
+				//Don't update too often - we can slow down the code.
+				if (DateTime.Now - lastUpdate < new TimeSpan(0, 0, 0, 0, 300))
+					return;
+
+				lastUpdate = DateTime.Now;
 				Invoke(new EventHandler<TaskProgressEventArgs>(task_ProgressChanged), sender, e);
 				return;
 			}
 
-			status.Text = S._("Overwriting...");
-			item.Text = File.GetCompactPath(e.CurrentItemName, item.Width * 2, item.Font);
+			status.Text = e.CurrentTargetStatus;
+			item.Text = WrapItemName(e.CurrentItemName);
 			pass.Text = e.CurrentTargetTotalPasses != 0 ?
 				S._("{0} out of {1}", e.CurrentItemPass, e.CurrentTargetTotalPasses) :
 				e.CurrentItemPass.ToString(CultureInfo.CurrentCulture);
@@ -73,14 +80,24 @@ namespace Eraser
 			else
 				timeLeft.Text = S._("Unknown");
 
-			itemProgress.Value = (int)(e.CurrentItemProgress * 1000);
-			itemProgressLbl.Text = e.CurrentItemProgress.ToString("#0%",
-				CultureInfo.CurrentCulture);
+			if (e.CurrentItemProgress >= 0.0f)
+			{
+				itemProgress.Style = ProgressBarStyle.Continuous;
+				itemProgress.Value = (int)(e.CurrentItemProgress * 1000);
+				itemProgressLbl.Text = e.CurrentItemProgress.ToString("#0%",
+					CultureInfo.CurrentCulture);
+			}
+			else
+			{
+				itemProgress.Style = ProgressBarStyle.Marquee;
+				itemProgressLbl.Text = string.Empty;
+			}
+
 			overallProgress.Value = (int)(e.OverallProgress * 1000);
 			overallProgressLbl.Text = S._("Total: {0,2:#0.00%}", e.OverallProgress);
 		}
 
-		void task_TaskFinished(object sender, TaskEventArgs e)
+		private void task_TaskFinished(object sender, TaskEventArgs e)
 		{
 			if (InvokeRequired)
 			{
@@ -127,6 +144,27 @@ namespace Eraser
 			if (task.Executing)
 				task.Cancel();
 			Close();
+		}
+
+		private string WrapItemName(string itemName)
+		{
+			StringBuilder result = new StringBuilder(itemName.Length);
+			using (Graphics g = item.CreateGraphics())
+			{
+				//Split the long file name into lines which fit into the width of the label
+				while (itemName.Length > 0)
+				{
+					int chars = 0;
+					int lines = 0;
+					g.MeasureString(itemName, item.Font, new SizeF(item.Width, 15),
+						StringFormat.GenericDefault, out chars, out lines);
+
+					result.AppendLine(itemName.Substring(0, chars));
+					itemName = itemName.Remove(0, chars);
+				}
+			}
+
+			return result.ToString();
 		}
 	}
 }

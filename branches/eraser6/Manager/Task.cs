@@ -950,7 +950,13 @@ namespace Eraser.Manager
 		public int CurrentTargetTotalPasses { get; internal set; }
 
 		/// <summary>
+		/// The stage of the erasure the executor is at.
+		/// </summary>
+		public string CurrentTargetStatus { get; internal set; }
+
+		/// <summary>
 		/// A number from 0 to 1 detailing the overall progress of the item.
+		/// Negative numbers indicate indeterminate progress.
 		/// </summary>
 		public float CurrentItemProgress { get; internal set; }
 

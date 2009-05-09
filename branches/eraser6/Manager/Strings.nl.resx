@@ -129,25 +129,25 @@
   <data name="The drive which is having its unused space erased has disk quotas active. This will prevent the complete erasure of unused space and will pose a security concern" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="Cluster tips" xml:space="preserve">
-    <value>(Untranslated)</value>
-  </data>
-  <data name="(Tips) {0}" xml:space="preserve">
+  <data name="Searching for files' cluster tips..." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="The task was cancelled." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="Unused space" xml:space="preserve">
+  <data name="Erasing cluster tips..." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Erasing unused space..." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Old resident file system table files" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="Removing temporary files" xml:space="preserve">
+  <data name="Removing temporary files..." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="Old file system entries" xml:space="preserve">
+  <data name="Erasing unused directory structures..." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Files in {0} did not have their cluster tips erased because it is a hard link or a symbolic link." xml:space="preserve">
@@ -166,6 +166,9 @@
     <value>(Untranslated)</value>
   </data>
   <data name="{0} did not have its cluster tips erased. The error returned was: {1}" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Erasing files..." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="The file {0} could not be erased because the file was either compressed, encrypted or a sparse file." xml:space="preserve">
