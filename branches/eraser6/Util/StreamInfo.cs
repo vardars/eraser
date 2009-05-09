@@ -126,9 +126,18 @@ namespace Eraser.Util
 		{
 			get
 			{
-				using (SafeFileHandle handle = fileHandle)
-					return !(Marshal.GetLastWin32Error() == 2 /*ERROR_FILE_NOT_FOUND*/ &&
-						handle.IsInvalid);
+				using (SafeFileHandle handle = KernelApi.NativeMethods.CreateFile(
+					FullName, KernelApi.NativeMethods.GENERIC_READ,
+					KernelApi.NativeMethods.FILE_SHARE_READ, IntPtr.Zero,
+					KernelApi.NativeMethods.OPEN_ALWAYS, 0, IntPtr.Zero))
+				{
+					if (!handle.IsInvalid)
+						return true;
+					else if (Marshal.GetLastWin32Error() == 2 /*ERROR_FILE_NOT_FOUND*/)
+						return false;
+
+					throw new Win32Exception(Marshal.GetLastWin32Error());
+				}
 			}
 		}
 
