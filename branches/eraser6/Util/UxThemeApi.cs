@@ -36,6 +36,8 @@ namespace Eraser.Util
 		/// <remarks>This function will also set the volume on all child controls.</remarks>
 		public static void UpdateControlTheme(Control control)
 		{
+			if (control is Form)
+				((Form)control).Font = SystemFonts.MessageBoxFont;
 			if (control is ListView)
 				UpdateControlTheme((ListView)control);
 			else if (control is ToolStrip)
@@ -74,7 +76,7 @@ namespace Eraser.Util
 		public static void UpdateControlTheme(ToolStrip menu)
 		{
 			if (Environment.OSVersion.Version.Major >= 6)
-				if (!(menu.Renderer is UXThemeMenuRenderer))
+				if (menu.Renderer is ToolStripProfessionalRenderer)
 					menu.Renderer = new UXThemeMenuRenderer();
 
 			foreach (ToolStripItem item in menu.Items)

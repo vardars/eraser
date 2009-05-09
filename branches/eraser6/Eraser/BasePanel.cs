@@ -34,6 +34,7 @@ namespace Eraser
 		public BasePanel()
 		{
 			InitializeComponent();
+			titleLabel.Font = new Font(SystemFonts.MessageBoxFont.Name, 18f);
 		}
 	}
 }

@@ -51,6 +51,7 @@ namespace Eraser
 		{
 			//Create the UI
 			InitializeComponent();
+			UXThemeApi.UpdateControlTheme(this);
 			file.Checked = true;
 
 			//Populate the drives list

@@ -41,6 +41,7 @@ namespace Eraser
 		public ProgressForm(Task task)
 		{
 			InitializeComponent();
+			UXThemeApi.UpdateControlTheme(this);
 			this.task = task;
 			this.lastUpdate = DateTime.Now;
 

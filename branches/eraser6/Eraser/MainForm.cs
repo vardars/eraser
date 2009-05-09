@@ -44,6 +44,7 @@ namespace Eraser
 		public MainForm()
 		{
 			InitializeComponent();
+			UXThemeApi.UpdateControlTheme(this);
 			UXThemeApi.UpdateControlTheme(tbScheduleDropDown);
 			UXThemeApi.UpdateControlTheme(tbHelpDropDown);
 			UXThemeApi.UpdateControlTheme(notificationMenu);
