@@ -801,11 +801,12 @@ namespace Eraser.Manager
 
 					//Create the file stream, and call the erasure method to write to
 					//the stream.
+					long fileArea = GetFileArea(paths[i]);
 					using (FileStream strm = info.Open(FileMode.Open, FileAccess.Write,
 						FileShare.None, FileOptions.WriteThrough))
 					{
 						//Set the end of the stream after the wrap-round the cluster size
-						strm.SetLength(GetFileArea(paths[i]));
+						strm.SetLength(fileArea);
 
 						//If the stream is empty, there's nothing to overwrite. Continue
 						//to the next entry
