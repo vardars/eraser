@@ -354,9 +354,6 @@ namespace Eraser {
 				sqrbi.cbSize = sizeof(sqrbi);
 				if (SUCCEEDED(SHQueryRecycleBin(NULL, &sqrbi)))
 				{
-					std::wstringstream strm;
-					strm << "Files in bin: " << sqrbi.i64NumItems;
-					MessageBox(NULL, strm.str().c_str(), L"Recycler", MB_OK);
 					EnableMenuItem(hmenu, MenuID, MF_BYPOSITION |
 						((sqrbi.i64NumItems != 0) ? MF_ENABLED : MF_DISABLED));
 				}
