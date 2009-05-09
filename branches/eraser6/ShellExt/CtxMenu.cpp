@@ -281,7 +281,13 @@ namespace Eraser {
 				::ZeroMemory(&sii, sizeof(sii));
 				sii.cbSize = sizeof(sii);
 
-				unsigned dimensions = GetSystemMetrics(SM_CXICON);
+				static HMODULE shellAPI = LoadLibrary(L"Shell32.dll");
+				typedef HRESULT (*pSHGetStockIconInfo)(SHSTOCKICONID siid, UINT uFlags,
+					SHSTOCKICONINFO *psii);
+				pSHGetStockIconInfo SHGetStockIconInfo = reinterpret_cast<pSHGetStockIconInfo>(
+					GetProcAddress(shellAPI, "SHGetStockIconInfo"));
+
+				unsigned dimensions = GetSystemMetrics(SM_CXSMICON);
 				if (SUCCEEDED(SHGetStockIconInfo(SIID_SHIELD, SHGSI_ICON | SHGSI_SMALLICON, &sii)))
 				{
 					Handle<HICON> icon(sii.hIcon);
