@@ -129,6 +129,10 @@
 						Key="InternetShortcut\shellex\ContextMenuHandlers\Eraser"
 						Value="{BC9B776A-90D7-4476-A791-79D835F30650}"
 						Type="string" />
+					<!-- Recycle Bin -->
+					<RegistryValue Id="EraserShellHKCRRecycleBin" Root="HKCR"
+						Key="CLSID\{645FF040-5081-101B-9F08-00AA002F954E}\shellex\ContextMenuHandlers\{BC9B776A-90D7-4476-A791-79D835F30650}"
+						Value="" Type="string" />
 
 					<!-- CLSID registration -->
 					<RegistryKey Root="HKCR" Key="EraserShellExt.ShellExt.1">
@@ -188,9 +192,6 @@
 					<Component Id="EraserPlugins" Guid="39A307BD-4244-4972-BC12-A5F5A76E684A">
 						<File Id="DefaultPlugins" Name="Eraser.DefaultPlugins.dll"
 							Source="..\bin\Release\Plugins\Eraser.DefaultPlugins.dll"
-							ProcessorArchitecture="msil" />
-						<File Id="ISAAC" Name="ISAAC.dll"
-							Source="..\bin\Release\Plugins\ISAAC.dll"
 							ProcessorArchitecture="msil" />
 					</Component>
 
