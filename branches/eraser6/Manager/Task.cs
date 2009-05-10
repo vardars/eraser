@@ -315,7 +315,9 @@ namespace Eraser.Manager
 		/// Constructor.
 		/// </summary>
 		protected FileSystemObjectTarget()
+			: base()
 		{
+			method = ErasureMethodManager.Default;
 		}
 
 		/// <summary>
@@ -426,7 +428,9 @@ namespace Eraser.Manager
 		/// Constructor.
 		/// </summary>
 		public UnusedSpaceTarget()
+			: base()
 		{
+			method = ErasureMethodManager.Default;
 		}
 
 		public override ErasureMethod Method
