@@ -705,9 +705,9 @@ namespace Eraser.Manager
 				{
 					if (fsInfo is FileInfo)
 					{
-						paths.Add(fsInfo.FullName);
 						totalSize += ((FileInfo)fsInfo).Length;
 						GetPathADSes(paths, out totalSize, fsInfo.FullName);
+						paths.Add(fsInfo.FullName);
 					}
 					else
 						GetRecyclerFiles((DirectoryInfo)fsInfo, ref paths, ref totalSize);
