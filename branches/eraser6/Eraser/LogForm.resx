@@ -160,7 +160,7 @@
     <value>3</value>
   </data>
   <data name="clear.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Right</value>
+    <value>Bottom, Left</value>
   </data>
   <data name="clear.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 409</value>
@@ -213,6 +213,9 @@
   <data name="&gt;&gt;close.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="copy.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left</value>
+  </data>
   <data name="copy.Location" type="System.Drawing.Point, System.Drawing">
     <value>96, 409</value>
   </data>
@@ -248,6 +251,9 @@
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 9pt</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>640, 482</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Log Viewer</value>
