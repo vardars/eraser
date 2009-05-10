@@ -129,7 +129,7 @@ namespace Eraser.Util
 				using (SafeFileHandle handle = KernelApi.NativeMethods.CreateFile(
 					FullName, KernelApi.NativeMethods.GENERIC_READ,
 					KernelApi.NativeMethods.FILE_SHARE_READ, IntPtr.Zero,
-					KernelApi.NativeMethods.OPEN_ALWAYS, 0, IntPtr.Zero))
+					KernelApi.NativeMethods.OPEN_EXISTING, 0, IntPtr.Zero))
 				{
 					if (!handle.IsInvalid)
 						return true;

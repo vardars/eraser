@@ -779,14 +779,14 @@ namespace Eraser.Manager
 				//Get the filesystem provider to handle the secure file erasures
 				StreamInfo info = new StreamInfo(paths[i]);
 				FileSystem fsManager = FileSystem.Get(VolumeInfo.FromMountpoint(info.DirectoryName));
-
-				//Remove the read-only flag, if it is set.
 				bool isReadOnly = false;
-				if (isReadOnly = info.IsReadOnly)
-					info.IsReadOnly = false;
-
+				
 				try
 				{
+					//Remove the read-only flag, if it is set.
+					if (isReadOnly = info.IsReadOnly)
+						info.IsReadOnly = false;
+
 					//Make sure the file does not have any attributes which may affect
 					//the erasure process
 					if ((info.Attributes & FileAttributes.Compressed) != 0 || 
@@ -862,7 +862,7 @@ namespace Eraser.Manager
 				finally
 				{
 					//Re-set the read-only flag if the file exists (i.e. there was an error)
-					if (info.Exists)
+					if (isReadOnly && info.Exists && !info.IsReadOnly)
 						info.IsReadOnly = isReadOnly;
 				}
 			}
