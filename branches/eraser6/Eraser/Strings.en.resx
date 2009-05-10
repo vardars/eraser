@@ -204,6 +204,15 @@
   <data name="Task executed" xml:space="preserve">
     <value>Task executed</value>
   </data>
+  <data name="Import tasks from {0}%1" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Erase {0}%1" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Could not import task list from {0}. The error returned was: {1}" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Are you sure you want to delete the selected tasks?" xml:space="preserve">
     <value>Are you sure you want to delete the selected tasks?</value>
   </data>

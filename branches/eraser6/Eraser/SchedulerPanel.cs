@@ -32,6 +32,8 @@ using Eraser.Util;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.Serialization;
 
 namespace Eraser
 {
@@ -315,6 +317,111 @@ namespace Eraser
 		}
 
 		/// <summary>
+		/// Occurs when the user drags a file over the scheduler
+		/// </summary>
+		private void scheduler_DragEnter(object sender, DragEventArgs e)
+		{
+			string descriptionMessage = string.Empty;
+			string descriptionInsert = string.Empty;
+			if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+				e.Effect = DragDropEffects.None;
+			else
+			{
+				string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+				bool isTaskList = true;
+				foreach (string file in files)
+				{
+					descriptionInsert += string.Format(CultureInfo.InvariantCulture, "{0}, ",
+						Path.GetFileNameWithoutExtension(file));
+					if (Path.GetExtension(file) != ".ersx")
+						isTaskList = false;
+				}
+				descriptionInsert = descriptionInsert.Remove(descriptionInsert.Length - 2);
+
+				if (isTaskList)
+				{
+					e.Effect = DragDropEffects.Copy;
+					descriptionMessage = S._("Import tasks from {0}", "%1");
+				}
+				else
+				{
+					e.Effect = DragDropEffects.Move;
+					descriptionMessage = S._("Erase {0}", "%1");
+				}
+			}
+
+			DropTargetHelper.DragEnter(this, e.Data, new Point(e.X, e.Y), e.Effect,
+				descriptionMessage, descriptionInsert);
+		}
+
+		private void scheduler_DragLeave(object sender, EventArgs e)
+		{
+			DropTargetHelper.DragLeave(this);
+		}
+
+		private void scheduler_DragOver(object sender, DragEventArgs e)
+		{
+			DropTargetHelper.DragOver(new Point(e.X, e.Y), e.Effect);
+		}
+
+		/// <summary>
+		/// Occurs when the user drops a file into the scheduler.
+		/// </summary>
+		private void scheduler_DragDrop(object sender, DragEventArgs e)
+		{
+			if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+				e.Effect = DragDropEffects.None;
+			else
+			{
+				string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+				//Determine whether we are importing a task list or dragging files for
+				//erasure.
+				if (e.Effect == DragDropEffects.Copy)
+				{
+					foreach (string file in files)
+						using (FileStream stream = new FileStream(file, FileMode.Open,
+							FileAccess.Read, FileShare.Read))
+						{
+							try
+							{
+								Program.eraserClient.Tasks.LoadFromStream(stream);
+							}
+							catch (SerializationException ex)
+							{
+								MessageBox.Show(S._("Could not import task list from {0}. The error " +
+									"returned was: {1}", file, ex.Message), S._("Eraser"),
+									MessageBoxButtons.OK, MessageBoxIcon.Error,
+									MessageBoxDefaultButton.Button1,
+									S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
+							}
+						}
+				}
+				else if (e.Effect == DragDropEffects.Move)
+				{
+					//Create a task with the default settings
+					Task task = new Task();
+					foreach (string file in files)
+					{
+						FileSystemObjectTarget target;
+						if (Directory.Exists(file))
+							target = new FolderTarget();
+						else
+							target = new FileTarget();
+						target.Path = file;
+
+						task.Targets.Add(target);
+					}
+
+					//Add the task.
+					Program.eraserClient.Tasks.Add(task);
+				}
+			}
+
+			DropTargetHelper.Drop(e.Data, new Point(e.X, e.Y), e.Effect);
+		}
+
+		/// <summary>
 		/// Occurs when the user right-clicks the list view.
 		/// </summary>
 		/// <param name="sender">The list view which generated this event.</param>
@@ -518,4 +625,3 @@ namespace Eraser
 		#endregion
 	}
 }
-

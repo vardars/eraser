@@ -72,9 +72,9 @@ namespace Eraser
 			this.schedulerDefaultMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// titleLbl
+			// titleLabel
 			// 
-			resources.ApplyResources(this.titleLabel, "titleLbl");
+			resources.ApplyResources(this.titleLabel, "titleLabel");
 			// 
 			// titleIcon
 			// 
@@ -87,6 +87,7 @@ namespace Eraser
 			// 
 			// scheduler
 			// 
+			this.scheduler.AllowDrop = true;
 			resources.ApplyResources(this.scheduler, "scheduler");
 			this.scheduler.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.schedulerColName,
@@ -105,6 +106,10 @@ namespace Eraser
 			this.scheduler.View = System.Windows.Forms.View.Details;
 			this.scheduler.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.scheduler_DrawColumnHeader);
 			this.scheduler.ItemActivate += new System.EventHandler(this.scheduler_ItemActivate);
+			this.scheduler.DragDrop += new System.Windows.Forms.DragEventHandler(this.scheduler_DragDrop);
+			this.scheduler.DragEnter += new System.Windows.Forms.DragEventHandler(this.scheduler_DragEnter);
+			this.scheduler.DragLeave += new System.EventHandler(this.scheduler_DragLeave);
+			this.scheduler.DragOver += new System.Windows.Forms.DragEventHandler(this.scheduler_DragOver);
 			this.scheduler.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.scheduler_DrawSubItem);
 			// 
 			// schedulerColName
