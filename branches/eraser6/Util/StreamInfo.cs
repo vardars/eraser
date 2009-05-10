@@ -115,8 +115,8 @@ namespace Eraser.Util
 		/// </summary>
 		public FileAttributes Attributes
 		{
-			get { return System.IO.File.GetAttributes(fileName); }
-			set { System.IO.File.SetAttributes(fileName, value); }
+			get { return (FileAttributes)KernelApi.NativeMethods.GetFileAttributes(FullName); }
+			set { KernelApi.NativeMethods.SetFileAttributes(FullName, (uint)value); }
 		}
 		
 		/// <summary>

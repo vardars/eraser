@@ -272,7 +272,7 @@ namespace Eraser.Util
 			/// or a pseudo-handle value. This can happen if you close a handle twice,
 			/// or if you call CloseHandle on a handle returned by the FindFirstFile
 			/// function.</returns>
-			[DllImport("Kernel32.dll", SetLastError = true)]
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 			[return: MarshalAs(UnmanagedType.Bool)]
 			public static extern bool CloseHandle(IntPtr hObject);
 
@@ -289,7 +289,7 @@ namespace Eraser.Util
 			/// 
 			/// If the function fails, the return value is zero (0). To get extended
 			/// error information, call Marshal.GetLastWin32Error().</returns>
-			[DllImport("Kernel32.dll", SetLastError = true)]
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 			[return: MarshalAs(UnmanagedType.Bool)]
 			public static extern bool DeleteFile(string lpFileName);
 
@@ -753,6 +753,40 @@ namespace Eraser.Util
 			public const uint FSCTL_SET_COMPRESSION = 0x9C040;
 			public const ushort COMPRESSION_FORMAT_NONE = 0x0000;
 			public const ushort COMPRESSION_FORMAT_DEFAULT = 0x0001;
+
+
+			/// <summary>
+			/// Retrieves a set of FAT file system attributes for a specified file or
+			/// directory.
+			/// </summary>
+			/// <param name="lpFileName">The name of the file or directory.</param>
+			/// <returns>If the function succeeds, the return value contains the attributes
+			/// of the specified file or directory.
+			/// 
+			/// If the function fails, the return value is INVALID_FILE_ATTRIBUTES.
+			/// To get extended error information, call Marshal.GetLastWin32Error.
+			/// 
+			/// The attributes can be one or more of the FILE_ATTRIBUTE_* values.</returns>
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+			public static extern uint GetFileAttributes(string lpFileName);
+
+			/// <summary>
+			/// Sets the attributes for a file or directory.
+			/// </summary>
+			/// <param name="lpFileName">The name of the file whose attributes are
+			/// to be set.</param>
+			/// <param name="dwFileAttributes">The file attributes to set for the file.
+			/// This parameter can be one or more of the FILE_ATTRIBUTE_* values.
+			/// However, all other values override FILE_ATTRIBUTE_NORMAL.</param>
+			/// <returns>If the function succeeds, the return value is nonzero.
+			/// 
+			/// If the function fails, the return value is zero. To get extended error
+			/// information, call Marshal.GetLastWin32Error.</returns>
+			[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2205:UseManagedEquivalentsOfWin32Api")]
+			[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool SetFileAttributes(string lpFileName,
+				uint dwFileAttributes);
 
 			/// <summary>
 			/// Retrieves the size of the specified file.
