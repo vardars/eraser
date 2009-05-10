@@ -566,8 +566,13 @@ namespace Eraser.Manager
 					if ((file.Attributes & FileAttributes.ReparsePoint) != 0)
 						continue;
 
+					//Get the size of the file and its ADSes
 					totalSize += file.Length;
-					GetPathADSes(result, out totalSize, file.FullName);
+					long adsesSize = 0;
+					GetPathADSes(result, out adsesSize, file.FullName);
+					totalSize += adsesSize;
+
+					//Append this file to the list of files to erase.
 					result.Add(file.FullName);
 				}
 
