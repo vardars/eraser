@@ -204,10 +204,10 @@
   <data name="Task executed" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="Import tasks from {0}%1" xml:space="preserve">
+  <data name="Import tasks from {0}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="Erase {0}%1" xml:space="preserve">
+  <data name="Erase {0}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Could not import task list from {0}. The error returned was: {1}" xml:space="preserve">

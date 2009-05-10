@@ -323,6 +323,7 @@ namespace Eraser
 		{
 			string descriptionMessage = string.Empty;
 			string descriptionInsert = string.Empty;
+			const string descrptionPlaceholder = "%1";
 			if (!e.Data.GetDataPresent(DataFormats.FileDrop))
 				e.Effect = DragDropEffects.None;
 			else
@@ -341,12 +342,12 @@ namespace Eraser
 				if (isTaskList)
 				{
 					e.Effect = DragDropEffects.Copy;
-					descriptionMessage = S._("Import tasks from {0}", "%1");
+					descriptionMessage = S._("Import tasks from {0}", descrptionPlaceholder);
 				}
 				else
 				{
 					e.Effect = DragDropEffects.Move;
-					descriptionMessage = S._("Erase {0}", "%1");
+					descriptionMessage = S._("Erase {0}", descrptionPlaceholder);
 				}
 			}
 
