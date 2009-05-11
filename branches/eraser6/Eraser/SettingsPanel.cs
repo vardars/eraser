@@ -199,9 +199,7 @@ namespace Eraser
 			{
 				defaultsList.Add(S._("User interface language"));
 				foreach (Language lang in uiLanguage.Items)
-					//TODO: This is an approximation - but that's the best I can think of at the moment
-					if (((CultureInfo)lang).ThreeLetterISOLanguageName ==
-						Thread.CurrentThread.CurrentUICulture.ThreeLetterISOLanguageName)
+					if (lang == CultureInfo.CurrentUICulture)
 						uiLanguage.SelectedItem = lang;
 			}
 			if (eraseFilesMethod.SelectedIndex == -1)
