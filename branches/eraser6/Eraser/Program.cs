@@ -259,7 +259,7 @@ namespace Eraser
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			this.instanceID = instanceID;
-			this.commandLine = commandLine;
+			this.CommandLine = commandLine;
 
 			//Check if there already is another instance of the program.
 			globalMutex = new Mutex(true, instanceID, out isFirstInstance);
@@ -313,7 +313,7 @@ namespace Eraser
 
 					//Handle the exit instance event. This will occur when the main form
 					//has been closed.
-					mainForm.FormClosed += OnExitInstance;
+					MainForm.FormClosed += OnExitInstance;
 
 					if (ShowMainForm)
 						Application.Run(MainForm);
@@ -344,8 +344,8 @@ namespace Eraser
 						PipeDirection.Out);
 					client.Connect(500);
 
-					StringBuilder commandLineStr = new StringBuilder(commandLine.Length * 64);
-					foreach (string param in commandLine)
+					StringBuilder commandLineStr = new StringBuilder(CommandLine.Length * 64);
+					foreach (string param in CommandLine)
 						commandLineStr.Append(string.Format(
 							CultureInfo.InvariantCulture, "{0}\0", param));
 
@@ -450,13 +450,7 @@ namespace Eraser
 		/// <summary>
 		/// Gets the command line arguments this instance was started with.
 		/// </summary>
-		public string[] CommandLine
-		{
-			get
-			{
-				return commandLine;
-			}
-		}
+		public string[] CommandLine { get; private set; }
 
 		/// <summary>
 		/// Gets whether another instance of the program is already running.
@@ -581,16 +575,6 @@ namespace Eraser
 		/// Holds whether this instance of the program is the first instance.
 		/// </summary>
 		private bool isFirstInstance;
-
-		/// <summary>
-		/// The command line arguments this instance was started with.
-		/// </summary>
-		private string[] commandLine;
-
-		/// <summary>
-		/// The main form for this program instance.
-		/// </summary>
-		private Form mainForm;
 		#endregion
 	}
 
