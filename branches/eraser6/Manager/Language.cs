@@ -113,7 +113,7 @@ namespace Eraser.Manager
 
 		public static bool operator !=(Language language, CultureInfo culture)
 		{
-			return language.culture != culture;
+			return !language.Equals(culture);
 		}
 
 		public override int GetHashCode()
