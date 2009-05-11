@@ -298,7 +298,7 @@ namespace Eraser
 		{
 			//If no other instances are running, set up our pipe server so clients
 			//can connect and give us subsequent command lines.
-			if (IsAlreadyRunning)
+			if (IsFirstInstance)
 			{
 				try
 				{
@@ -307,7 +307,15 @@ namespace Eraser
 					pipeServer.Start();
 
 					//Initialise and run the program.
-					if (OnInitInstance(this) && MainForm != null)
+					bool ShowMainForm = OnInitInstance(this);
+					if (MainForm == null)
+						return false;
+
+					//Handle the exit instance event. This will occur when the main form
+					//has been closed.
+					mainForm.FormClosed += OnExitInstance;
+
+					if (ShowMainForm)
 						Application.Run(MainForm);
 					else
 					{
@@ -317,12 +325,11 @@ namespace Eraser
 						IntPtr handle = MainForm.Handle;
 						Application.Run();
 					}
+
 					return true;
 				}
 				finally
 				{
-					//Since the program was initialised we must let the program clean up.
-					OnExitInstance(this);
 					pipeServer.Abort();
 				}
 			}
@@ -454,7 +461,7 @@ namespace Eraser
 		/// <summary>
 		/// Gets whether another instance of the program is already running.
 		/// </summary>
-		public bool IsAlreadyRunning
+		public bool IsFirstInstance
 		{
 			get
 			{
@@ -466,17 +473,7 @@ namespace Eraser
 		/// The main form for this program instance. This form will be shown when
 		/// run is called if it is non-null and if its Visible property is true.
 		/// </summary>
-		public Form MainForm
-		{
-			get
-			{
-				return mainForm;
-			}
-			set
-			{
-				mainForm = value;
-			}
-		}
+		public Form MainForm { get; set; }
 
 		#region Events
 		/// <summary>
@@ -546,6 +543,17 @@ namespace Eraser
 		/// </summary>
 		/// <param name="sender">The sender of the event.</param>
 		private void OnExitInstance(object sender)
+		{
+			if (ExitInstance != null)
+				ExitInstance(sender);
+		}
+
+		/// <summary>
+		/// Broadcasts the ExitInstance event after getting the FormClosed event from
+		/// the application's main form.
+		/// </summary>
+		/// <param name="sender">The sender of the event.</param>
+		private void OnExitInstance(object sender, FormClosedEventArgs e)
 		{
 			if (ExitInstance != null)
 				ExitInstance(sender);
