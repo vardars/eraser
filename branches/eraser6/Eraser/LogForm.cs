@@ -70,17 +70,7 @@ namespace Eraser
 		{
 			if (InvokeRequired)
 			{
-				//Todo: I get crashes here... but alas, I can't fix it!
-				try
-				{
-					Invoke(new EventHandler<LogEventArgs>(task_Logged), sender, e);
-				}
-				catch (ObjectDisposedException)
-				{
-				}
-				catch (InvalidOperationException)
-				{
-				}
+				Invoke(new EventHandler<LogEventArgs>(task_Logged), sender, e);
 				return;
 			}
 
