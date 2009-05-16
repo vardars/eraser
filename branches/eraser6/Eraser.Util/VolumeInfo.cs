@@ -190,7 +190,8 @@ namespace Eraser.Util
 			}
 			while (mountpointDir != null);
 
-			throw new Win32Exception(4390 /*ERROR_NOT_A_REPARSE_POINT*/);
+			throw Marshal.GetExceptionForHR(KernelApi.GetHRForWin32Error(
+				4390 /*ERROR_NOT_A_REPARSE_POINT*/));
 		}
 
 		/// <summary>

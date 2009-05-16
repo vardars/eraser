@@ -104,6 +104,29 @@ namespace Eraser.Util
 			return result;
 		}
 
+		/// <summary>
+		/// Converts a Win32 Error code to a HRESULT.
+		/// </summary>
+		/// <param name="errorCode">The error code to convert.</param>
+		/// <returns>A HRESULT value representing the error code.</returns>
+		internal static int GetHRForWin32Error(int errorCode)
+		{
+			const uint FACILITY_WIN32 = 7;
+			return errorCode <= 0 ? errorCode :
+				(int)((((uint)errorCode) & 0x0000FFFF) | (FACILITY_WIN32 << 16) | 0x80000000);
+		}
+
+		/// <summary>
+		/// Gets a Exception for the given Win32 error code.
+		/// </summary>
+		/// <param name="errorCode">The error code.</param>
+		/// <returns>An exception object representing the error code.</returns>
+		internal static Exception GetExceptionForWin32Error(int errorCode)
+		{
+			int HR = GetHRForWin32Error(errorCode);
+			return Marshal.GetExceptionForHR(HR);
+		}
+
 		public static void GetFileTime(SafeFileHandle file, out DateTime creationTime,
 			out DateTime accessedTime, out DateTime modifiedTime)
 		{
@@ -117,7 +140,7 @@ namespace Eraser.Util
 			if (!NativeMethods.GetFileTime(file, out createdTimeNative, out accessedTimeNative,
 				out modifiedTimeNative))
 			{
-				throw new Win32Exception(Marshal.GetLastWin32Error());
+				throw GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
 
 			creationTime = FileTimeToDateTime(createdTimeNative);
@@ -138,7 +161,7 @@ namespace Eraser.Util
 			if (!NativeMethods.GetFileTime(file, out createdTimeNative,
 				out accessedTimeNative, out modifiedTimeNative))
 			{
-				throw new Win32Exception(Marshal.GetLastWin32Error());
+				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
 
 			if (creationTime != DateTime.MinValue)
@@ -151,7 +174,7 @@ namespace Eraser.Util
 			if (!NativeMethods.SetFileTime(file, ref createdTimeNative,
 				ref accessedTimeNative, ref modifiedTimeNative))
 			{
-				throw new Win32Exception(Marshal.GetLastWin32Error());
+				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
 		}
 

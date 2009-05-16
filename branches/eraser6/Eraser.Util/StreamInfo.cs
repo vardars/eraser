@@ -136,7 +136,7 @@ namespace Eraser.Util
 					else if (Marshal.GetLastWin32Error() == 2 /*ERROR_FILE_NOT_FOUND*/)
 						return false;
 
-					throw new Win32Exception(Marshal.GetLastWin32Error());
+					throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 				}
 			}
 		}
@@ -245,7 +245,7 @@ namespace Eraser.Util
 				File.Delete();
 			else
 				if (!KernelApi.NativeMethods.DeleteFile(FullName))
-					throw new Win32Exception(Marshal.GetLastWin32Error());
+					throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 		}
 
 		/// <summary>
@@ -349,7 +349,7 @@ namespace Eraser.Util
 			SafeFileHandle result = KernelApi.NativeMethods.CreateFile(FullName, iAccess,
 				(uint)share, IntPtr.Zero, (uint)mode, (uint)options, IntPtr.Zero);
 			if (result.IsInvalid)
-				throw new Win32Exception(Marshal.GetLastWin32Error());
+				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			return result;
 		}
 
