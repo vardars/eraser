@@ -17,9 +17,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eraser.Util", "Eraser.Util\Eraser.Util.csproj", "{D083E1A8-3A4C-4683-9B3F-D5FEDE61B9C9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eraser.DefaultPlugins", "Eraser.DefaultPlugins\Eraser.DefaultPlugins.csproj", "{21752123-7BD7-4B44-B512-14A963C55FD8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238} = {BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}
+	EndProjectSection
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Installer", "Installer\Installer.wixproj", "{318964CF-278D-41B2-A825-B9A0D1F5D766}"
 	ProjectSection(ProjectDependencies) = postProject
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238} = {BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}
 		{21752123-7BD7-4B44-B512-14A963C55FD8} = {21752123-7BD7-4B44-B512-14A963C55FD8}
 		{C1AC3255-0939-499D-A69D-725E3DD4F574} = {C1AC3255-0939-499D-A69D-725E3DD4F574}
 		{738F455B-2220-4F8F-B87F-DA93F0B0F1BA} = {738F455B-2220-4F8F-B87F-DA93F0B0F1BA}
@@ -27,12 +31,14 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Installer", "Installer\Inst
 		{A9884ABF-46E8-42C1-A30B-9A3DD6C38004} = {A9884ABF-46E8-42C1-A30B-9A3DD6C38004}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bootstrapper", "Installer\Bootstrapper\Bootstrapper.vcproj", "{4F6CD250-0A08-4DB8-8E07-848E4FF01C21}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Installer.Bootstrapper", "Installer\Bootstrapper\Bootstrapper.vcproj", "{4F6CD250-0A08-4DB8-8E07-848E4FF01C21}"
 	ProjectSection(ProjectDependencies) = postProject
 		{318964CF-278D-41B2-A825-B9A0D1F5D766} = {318964CF-278D-41B2-A825-B9A0D1F5D766}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShellExt", "ShellExt\ShellExt.vcproj", "{738F455B-2220-4F8F-B87F-DA93F0B0F1BA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Eraser.Unlocker", "Eraser.Unlocker\Eraser.Unlocker.vcproj", "{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,8 +119,8 @@ Global
 		{21752123-7BD7-4B44-B512-14A963C55FD8}.Release|x86.ActiveCfg = Release|Any CPU
 		{21752123-7BD7-4B44-B512-14A963C55FD8}.Release|x86.Build.0 = Release|Any CPU
 		{318964CF-278D-41B2-A825-B9A0D1F5D766}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{318964CF-278D-41B2-A825-B9A0D1F5D766}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
-		{318964CF-278D-41B2-A825-B9A0D1F5D766}.Debug|Win32.ActiveCfg = Debug|x64
+		{318964CF-278D-41B2-A825-B9A0D1F5D766}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{318964CF-278D-41B2-A825-B9A0D1F5D766}.Debug|Win32.ActiveCfg = Debug|x86
 		{318964CF-278D-41B2-A825-B9A0D1F5D766}.Debug|x64.ActiveCfg = Debug|x64
 		{318964CF-278D-41B2-A825-B9A0D1F5D766}.Debug|x86.ActiveCfg = Debug|x86
 		{318964CF-278D-41B2-A825-B9A0D1F5D766}.Release|Any CPU.ActiveCfg = Release|x86
@@ -157,6 +163,25 @@ Global
 		{738F455B-2220-4F8F-B87F-DA93F0B0F1BA}.Release|x64.ActiveCfg = Release|x64
 		{738F455B-2220-4F8F-B87F-DA93F0B0F1BA}.Release|x64.Build.0 = Release|x64
 		{738F455B-2220-4F8F-B87F-DA93F0B0F1BA}.Release|x86.ActiveCfg = Release|Win32
+		{738F455B-2220-4F8F-B87F-DA93F0B0F1BA}.Release|x86.Build.0 = Release|Win32
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Debug|Win32.Build.0 = Debug|Win32
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Debug|x64.ActiveCfg = Debug|x64
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Debug|x64.Build.0 = Debug|x64
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Debug|x86.ActiveCfg = Debug|Win32
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Debug|x86.Build.0 = Debug|Win32
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Release|Any CPU.ActiveCfg = Release|Win32
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Release|Mixed Platforms.Build.0 = Release|x64
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Release|Win32.ActiveCfg = Release|Win32
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Release|Win32.Build.0 = Release|Win32
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Release|x64.ActiveCfg = Release|x64
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Release|x64.Build.0 = Release|x64
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Release|x86.ActiveCfg = Release|Win32
+		{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

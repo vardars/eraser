@@ -83,11 +83,12 @@
 			<Feature Id="EraserMainShell" Title="Eraser Shell Extension"
 					Description="Eraser shell integration" Level="1">
 				<ComponentRef Id="EraserShell" />
-				<MergeRef Id="VCRedist"/>
-				<MergeRef Id="VCMfcRedist"/>
-				<MergeRef Id="VCAtlRedist"/>
 			</Feature>
 			<FeatureRef Id="EraserLanguages" />
+
+			<MergeRef Id="VCRedist"/>
+			<MergeRef Id="VCMfcRedist"/>
+			<MergeRef Id="VCAtlRedist"/>
 		</Feature>
 	</Product>
 </Wix>

@@ -12,6 +12,7 @@ signtool sign /r "The Eraser Project, http://eraser.heidi.ie"^
  "%~1\bin\Release\Eraser.Manager.dll" "%~1\bin\Release\Eraser.Util.dll"^
  "%~1\bin\Release\Plugins\Eraser.DefaultPlugins.dll" ^
  "%~1\bin\Release\x64\Eraser.Shell.dll" "%~1\bin\Release\Win32\Eraser.Shell.dll" ^
+ "%~1\bin\Release\x64\Eraser.Unlocker.dll" "%~1\bin\Release\Win32\Eraser.Unlocker.dll" ^
  ^
  "%~1\bin\Release\en\Eraser.Manager.resources.dll" "%~1\bin\Release\en\Eraser.resources.dll"^
  "%~1\bin\Release\nl\Eraser.Manager.resources.dll" "%~1\bin\Release\nl\Eraser.resources.dll"^
