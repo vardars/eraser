@@ -275,11 +275,11 @@
     <Content Include="Resources\ToolbarSettings.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Manager\Eraser.Manager.csproj">
+    <ProjectReference Include="..\Eraser.Manager\Eraser.Manager.csproj">
       <Project>{C1AC3255-0939-499D-A69D-725E3DD4F574}</Project>
       <Name>Eraser.Manager</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Util\Eraser.Util.csproj">
+    <ProjectReference Include="..\Eraser.Util\Eraser.Util.csproj">
       <Project>{D083E1A8-3A4C-4683-9B3F-D5FEDE61B9C9}</Project>
       <Name>Eraser.Util</Name>
     </ProjectReference>

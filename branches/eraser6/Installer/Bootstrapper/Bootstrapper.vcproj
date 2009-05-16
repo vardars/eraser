@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="Bootstrapper"
+	Name="Installer.Bootstrapper"
 	ProjectGUID="{4F6CD250-0A08-4DB8-8E07-848E4FF01C21}"
 	RootNamespace="Bootstrapper"
 	Keyword="Win32Proj"
