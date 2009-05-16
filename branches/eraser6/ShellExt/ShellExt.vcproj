@@ -21,7 +21,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="obj\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
 			UseOfMFC="2"
@@ -81,7 +81,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalDependencies="shlwapi.lib comsvcs.lib"
-				OutputFile="$(OutDir)\Eraser.Shell ($(PlatformName)).dll"
+				OutputFile="$(OutDir)\Eraser.Shell.dll"
 				LinkIncremental="2"
 				ModuleDefinitionFile="$(ProjectDir)DllMain.def"
 				GenerateDebugInformation="true"
@@ -112,7 +112,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="obj\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
 			UseOfMFC="2"
@@ -171,7 +171,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalDependencies="shlwapi.lib comsvcs.lib"
-				OutputFile="$(OutDir)\Eraser.Shell ($(PlatformName)).dll"
+				OutputFile="$(OutDir)\Eraser.Shell.dll"
 				LinkIncremental="2"
 				ModuleDefinitionFile="$(ProjectDir)DllMain.def"
 				GenerateDebugInformation="true"
@@ -202,7 +202,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="obj\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
 			UseOfMFC="2"
@@ -262,7 +262,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalDependencies="shlwapi.lib comsvcs.lib"
-				OutputFile="$(OutDir)\Eraser.Shell ($(PlatformName)).dll"
+				OutputFile="$(OutDir)\Eraser.Shell.dll"
 				LinkIncremental="1"
 				ModuleDefinitionFile="$(ProjectDir)DllMain.def"
 				GenerateDebugInformation="true"
@@ -295,7 +295,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="obj\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
 			UseOfMFC="2"
@@ -354,7 +354,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="true"
 				AdditionalDependencies="shlwapi.lib comsvcs.lib"
-				OutputFile="$(OutDir)\Eraser.Shell ($(PlatformName)).dll"
+				OutputFile="$(OutDir)\Eraser.Shell.dll"
 				LinkIncremental="1"
 				ModuleDefinitionFile="$(ProjectDir)DllMain.def"
 				GenerateDebugInformation="true"
