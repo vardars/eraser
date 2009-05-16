@@ -351,6 +351,12 @@ namespace Eraser.Manager
 					totalSize += info.Length;
 				}
 			}
+			catch (IOException e)
+			{
+				//The system cannot open the file, assume no ADSes for lack of
+				//more information.
+				Task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Error));
+			}
 			catch (UnauthorizedAccessException e)
 			{
 				//The system cannot read the file, assume no ADSes for lack of
