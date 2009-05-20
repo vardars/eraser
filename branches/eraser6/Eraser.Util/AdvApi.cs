@@ -202,7 +202,7 @@ namespace Eraser.Util
 			/// error information, call Marshal.GetLastWin32Error.</returns>
 			[DllImport("Advapi32.dll", SetLastError = true)]
 			[return: MarshalAs(UnmanagedType.Bool)]
-			public static extern bool CryptReleaseContext(IntPtr hProv, uint dwFlags);
+			public static extern bool CryptReleaseContext(SafeCryptHandle hProv, uint dwFlags);
 
 			public const uint PROV_RSA_FULL = 1;
 			public const uint PROV_RSA_SIG = 2;
@@ -284,7 +284,7 @@ namespace Eraser.Util
 			[DllImport("Advapi32.dll", SetLastError = true)]
 			[return: MarshalAs(UnmanagedType.Bool)]
 			public static extern bool OpenProcessToken(IntPtr ProcessHandle,
-				UInt32 DesiredAccess, out IntPtr TokenHandle);
+				UInt32 DesiredAccess, out SafeTokenHandle TokenHandle);
 
 			public const uint STANDARD_RIGHTS_REQUIRED = 0xF0000;
 			public const uint TOKEN_ASSIGN_PRIMARY = 0x00001;
@@ -436,7 +436,27 @@ namespace Eraser.Util
 
 		protected override bool ReleaseHandle()
 		{
-			AdvApi.NativeMethods.CryptReleaseContext(handle, 0u);
+			AdvApi.NativeMethods.CryptReleaseContext(this, 0u);
+			handle = IntPtr.Zero;
+			return true;
+		}
+	}
+
+	internal class SafeTokenHandle : SafeHandle
+	{
+		public SafeTokenHandle()
+			: base(IntPtr.Zero, true)
+		{
+		}
+
+		public override bool IsInvalid
+		{
+			get { return handle == IntPtr.Zero; }
+		}
+
+		protected override bool ReleaseHandle()
+		{
+			KernelApi.NativeMethods.CloseHandle(handle);
 			handle = IntPtr.Zero;
 			return true;
 		}
