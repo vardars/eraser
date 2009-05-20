@@ -58,10 +58,10 @@ namespace Eraser.Util
 			}
 
 			//Get the process token.
-			IntPtr hToken = IntPtr.Zero;
+			SafeTokenHandle hToken = new SafeTokenHandle();
 			bool result = NativeMethods.OpenProcessToken(KernelApi.NativeMethods.GetCurrentProcess(),
 				NativeMethods.TOKEN_QUERY, out hToken);
-			if (!result || hToken == IntPtr.Zero)
+			if (!result || hToken.IsInvalid)
 				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 
 			IntPtr pElevationType = Marshal.AllocHGlobal(Marshal.SizeOf(
@@ -86,7 +86,6 @@ namespace Eraser.Util
 			}
 			finally
 			{
-				KernelApi.NativeMethods.CloseHandle(hToken);
 				Marshal.FreeHGlobal(pElevationType);
 			}
 		}
@@ -262,7 +261,7 @@ namespace Eraser.Util
 			/// extended error information, call Marshal.GetLastWin32Error().</returns>
 			[DllImport("Advapi32.dll", SetLastError = true)]
 			[return: MarshalAs(UnmanagedType.Bool)]
-			public static extern bool GetTokenInformation(IntPtr TokenHandle,
+			public static extern bool GetTokenInformation(SafeTokenHandle TokenHandle,
 				TOKEN_INFORMATION_CLASS TokenInformationClass, IntPtr TokenInformation,
 				uint TokenInformationLength, out uint ReturnLength);
 
