@@ -27,6 +27,7 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.IO;
 using Microsoft.Win32.SafeHandles;
+using System.Collections.ObjectModel;
 
 namespace Eraser.Util
 {
@@ -74,7 +75,6 @@ namespace Eraser.Util
 			//of strings containing all of the volumes mountpoints; because the
 			//GetVolumePathNamesForVolumeName function returns a convoluted structure
 			//containing the path names.
-			MountPoints = new List<string>();
 			for (int lastIndex = 0, i = 0; i != pathNames.Length; ++i)
 			{
 				if (pathNames[i] == '\0')
@@ -84,7 +84,7 @@ namespace Eraser.Util
 					if (i - lastIndex == 0)
 						break;
 
-					MountPoints.Add(pathNames.Substring(lastIndex, i - lastIndex));
+					mountPoints.Add(pathNames.Substring(lastIndex, i - lastIndex));
 
 					lastIndex = i + 1;
 					if (pathNames[lastIndex] == '\0')
@@ -357,7 +357,13 @@ namespace Eraser.Util
 		/// paths which may be a drive or a mountpoint. Every string includes the
 		/// trailing backslash.
 		/// </summary>
-		public List<string> MountPoints { get; private set; }
+		public ReadOnlyCollection<string> MountPoints
+		{
+			get
+			{
+				return mountPoints.AsReadOnly();
+			}
+		}
 
 		/// <summary>
 		/// Gets whether the current volume is mounted at any place.
@@ -366,5 +372,7 @@ namespace Eraser.Util
 		{
 			get { return MountPoints.Count != 0; }
 		}
+
+		private List<string> mountPoints = new List<string>();
 	}
 }

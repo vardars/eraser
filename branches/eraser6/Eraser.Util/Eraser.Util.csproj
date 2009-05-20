@@ -22,7 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <CodeAnalysisRules>-Microsoft.Naming#CA1704</CodeAnalysisRules>
+    <CodeAnalysisRules>-Microsoft.Interoperability#CA1404;-Microsoft.Naming#CA1704;-Microsoft.Naming#CA1707</CodeAnalysisRules>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

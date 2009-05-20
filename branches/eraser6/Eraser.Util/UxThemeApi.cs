@@ -80,8 +80,11 @@ namespace Eraser.Util
 					menu.Renderer = new UXThemeMenuRenderer();
 
 			foreach (ToolStripItem item in menu.Items)
-				if (item is ToolStripMenuItem)
-					UpdateControlTheme((ToolStripMenuItem)item);
+			{
+				ToolStripMenuItem toolStripItem = item as ToolStripMenuItem;
+				if (toolStripItem != null)
+					UpdateControlTheme(toolStripItem);
+			}
 		}
 
 		/// <summary>

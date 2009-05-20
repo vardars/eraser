@@ -374,7 +374,7 @@ namespace Eraser.Util
 				}
 			}
 
-			throw new Exception("Unable to acquire a cryptographic service provider.");
+			throw new NotSupportedException("Unable to acquire a cryptographic service provider.");
 		}
 
 		#region IDisposable Members
