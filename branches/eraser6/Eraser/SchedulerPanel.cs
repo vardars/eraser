@@ -86,7 +86,10 @@ namespace Eraser
 
 			//Set the next run time of the task
 			if (task.Queued)
+			{
 				item.SubItems[1].Text = S._("Queued for execution");
+				item.SubItems[2].Text = string.Empty;
+			}
 			else if (task.Schedule is RecurringSchedule)
 				item.SubItems[1].Text = ((task.Schedule as RecurringSchedule).NextRun.
 					ToString("F", CultureInfo.CurrentCulture));
@@ -216,9 +219,6 @@ namespace Eraser
 			if (item == null)
 				return;
 
-			//Update the status.
-			item.SubItems[1].Text = S._("Completed");
-
 			//Hide the progress bar
 			if (schedulerProgress.Tag != null && schedulerProgress.Tag == item)
 			{
@@ -277,16 +277,16 @@ namespace Eraser
 				switch (highestLevel)
 				{
 					case LogLevel.Warning:
-						item.SubItems[1].Text = S._("Completed with warnings");
+						item.SubItems[2].Text = S._("Completed with warnings");
 						break;
 					case LogLevel.Error:
-						item.SubItems[1].Text = S._("Completed with errors");
+						item.SubItems[2].Text = S._("Completed with errors");
 						break;
 					case LogLevel.Fatal:
-						item.SubItems[1].Text = S._("Not completed");
+						item.SubItems[2].Text = S._("Not completed");
 						break;
 					default:
-						item.SubItems[1].Text = S._("Completed");
+						item.SubItems[2].Text = S._("Completed");
 						break;
 				}
 
@@ -294,6 +294,9 @@ namespace Eraser
 				//category since run-on-restart tasks will be changed to immediately
 				//run tasks.
 				CategorizeTask(e.Task, item);
+
+				//Update the status of the task.
+				UpdateTask(item);
 			}
 		}
 

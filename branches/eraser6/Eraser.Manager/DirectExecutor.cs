@@ -118,6 +118,9 @@ namespace Eraser.Manager
 						if (scheduledTasks.Values[i][j] == task)
 						{
 							scheduledTasks.Values[i].RemoveAt(i);
+
+							if (scheduledTasks.Values[i].Count == 0)
+								scheduledTasks.RemoveAt(i);
 							break;
 						}
 		}
@@ -145,6 +148,11 @@ namespace Eraser.Manager
 						List<Task> tasks = scheduledTasks.Values[0];
 						task = tasks[0];
 						tasks.RemoveAt(0);
+
+						//Remove the entry from the sorted list if the list of tasks
+						//with that one time to run has all been executed
+						if (tasks.Count == 0)
+							scheduledTasks.RemoveAt(0);
 					}
 				}
 
@@ -217,9 +225,10 @@ namespace Eraser.Manager
 						//And the task finished event.
 						task.OnTaskFinished(new TaskEventArgs(task));
 						OnTaskProcessed(new TaskEventArgs(task));
-					}
 
-					currentTask = null;
+						//Remove the actively executing task from our instance variable
+						currentTask = null;
+					}
 				}
 
 				//Wait for half a minute to check for the next scheduled task.
