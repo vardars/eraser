@@ -74,7 +74,10 @@ namespace Eraser.Manager
 				task.Queued = true;
 
 				//Queue the task to be run immediately.
-				scheduledTasks.Add(DateTime.Now, task);
+				DateTime executionTime = DateTime.Now;
+				if (!scheduledTasks.ContainsKey(executionTime))
+					scheduledTasks.Add(executionTime, new List<Task>());
+				scheduledTasks[executionTime].Add(task);
 				schedulerInterrupt.Set();
 			}
 		}
@@ -82,13 +85,19 @@ namespace Eraser.Manager
 		public override void ScheduleTask(Task task)
 		{
 			RecurringSchedule schedule = (RecurringSchedule)task.Schedule;
-			if (schedule.MissedPreviousSchedule &&
-				ManagerLibrary.Settings.ExecuteMissedTasksImmediately)
-				//OK, we've missed the schedule and the user wants the thing
-				//to follow up immediately.
-				scheduledTasks.Add(DateTime.Now, task);
-			else
-				scheduledTasks.Add(schedule.NextRun, task);
+			if (schedule == null)
+				return;
+
+			DateTime executionTime = (schedule.MissedPreviousSchedule &&
+				ManagerLibrary.Settings.ExecuteMissedTasksImmediately) ?
+					DateTime.Now : schedule.NextRun;
+
+			lock (tasksLock)
+			{
+				if (!scheduledTasks.ContainsKey(executionTime))
+					scheduledTasks.Add(executionTime, new List<Task>());
+				scheduledTasks[executionTime].Add(task);
+			}
 		}
 
 		public override void QueueRestartTasks()
@@ -105,11 +114,12 @@ namespace Eraser.Manager
 		{
 			lock (tasksLock)
 				for (int i = 0; i != scheduledTasks.Count; ++i)
-					if (scheduledTasks.Values[i] == task)
-					{
-						scheduledTasks.RemoveAt(i);
-						break;
-					}
+					for (int j = 0; j < scheduledTasks.Values[i].Count; ++j)
+						if (scheduledTasks.Values[i][j] == task)
+						{
+							scheduledTasks.Values[i].RemoveAt(i);
+							break;
+						}
 		}
 
 		public override ExecutorTasksCollection Tasks { get; protected set; }
@@ -129,12 +139,12 @@ namespace Eraser.Manager
 				Task task = null;
 				lock (tasksLock)
 				{
-					if (scheduledTasks.Count != 0 &&
-						(scheduledTasks.Values[0].Schedule == Schedule.RunNow ||
-						 scheduledTasks.Keys[0] <= DateTime.Now))
+					if (scheduledTasks.Count != 0 && scheduledTasks.Values[0].Count != 0 &&
+						scheduledTasks.Keys[0] <= DateTime.Now)
 					{
-						task = scheduledTasks.Values[0];
-						scheduledTasks.RemoveAt(0);
+						List<Task> tasks = scheduledTasks.Values[0];
+						task = tasks[0];
+						tasks.RemoveAt(0);
 					}
 				}
 
@@ -942,8 +952,8 @@ namespace Eraser.Manager
 		/// timestamp (the key) has been past. This list assumes that all tasks
 		/// are sorted by timestamp, smallest one first.
 		/// </summary>
-		private SortedList<DateTime, Task> scheduledTasks =
-			new SortedList<DateTime, Task>();
+		private SortedList<DateTime, List<Task>> scheduledTasks =
+			new SortedList<DateTime, List<Task>>();
 
 		/// <summary>
 		/// The currently executing task.
@@ -1091,7 +1101,11 @@ namespace Eraser.Manager
 			list.AddRange(deserialised);
 
 			foreach (Task task in deserialised)
+			{
 				Owner.OnTaskAdded(new TaskEventArgs(task));
+				if (task.Schedule is RecurringSchedule)
+					Owner.ScheduleTask(task);
+			}
 		}
 
 		/// <summary>
