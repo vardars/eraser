@@ -139,8 +139,13 @@ namespace Eraser.Manager
 		{
 			lock (Entries)
 			{
+				LogEntryCollection lastSessionEntries = null;
+				if (Entries.ContainsKey(lastSession))
+					lastSessionEntries = Entries[lastSession];
 				Entries.Clear();
-				lastSession = DateTime.MinValue;
+
+				if (lastSessionEntries != null)
+					Entries.Add(lastSession, lastSessionEntries);
 			}
 		}
 
