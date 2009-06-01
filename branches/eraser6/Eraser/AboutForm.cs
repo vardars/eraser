@@ -31,6 +31,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using Eraser.Util;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Eraser
 {
@@ -110,7 +111,9 @@ Eraser Project Members:
 				PointF eraserPos = new PointF(168, 80);
 				SizeF eraserSize = g.MeasureString(S._("Eraser"), boldFont);
 				g.DrawString(S._("Eraser"), boldFont, textBrush, eraserPos);
-				g.DrawString(Assembly.GetExecutingAssembly().GetName().Version.ToString(),
+				S._("{0} (Built: {1:F})");
+				g.DrawString(S._("{0} (Built: {1:F})",
+					Assembly.GetExecutingAssembly().GetName().Version, BuildInfo.BuildDate),
 					Font, textBrush, new PointF(eraserPos.X + eraserSize.Width + 3, eraserPos.Y));
 
 				//Copyright and Website

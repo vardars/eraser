@@ -25,6 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="$(SolutionDir)UpdateVersions.bat &quot;$(SolutionDir)\&quot; &quot;$(SolutionDir)Version.rc.in&quot; &quot;$(SolutionDir)Version.rc&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -100,6 +101,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="$(SolutionDir)UpdateVersions.bat &quot;$(SolutionDir)\&quot; &quot;$(SolutionDir)Version.rc.in&quot; &quot;$(SolutionDir)Version.rc&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"

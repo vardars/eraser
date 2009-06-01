@@ -123,6 +123,9 @@
   <data name="Eraser" xml:space="preserve">
     <value>Eraser</value>
   </data>
+  <data name="{0} (Built: {1:F})" xml:space="preserve">
+    <value>{0} (Built: {1:F})</value>
+  </data>
   <data name="copyright © 2008 The Eraser Project" xml:space="preserve">
     <value>copyright © 2008 The Eraser Project</value>
   </data>

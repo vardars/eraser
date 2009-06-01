@@ -77,7 +77,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>call $(SolutionDir)UpdateVersions.bat "$(SolutionDir)\" "$(SolutionDir)Version.cs.in" "$(SolutionDir)Version.cs"
+</PreBuildEvent>
   </PropertyGroup>
 </Project>

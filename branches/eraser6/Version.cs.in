@@ -18,8 +18,16 @@
  * A copy of the GNU General Public License can be found at
  * <http://www.gnu.org/licenses/>.
  */
+using System;
+using System.Reflection;
 
-#define ERASER_FILE_VERSION 6,0,4,875
-#define ERASER_PRODUCT_VERSION ERASER_FILE_VERSION
-#define ERASER_STRING_FILE_VERSION "6.0.4.875"
-#define ERASER_STRING_PRODUCT_VERSION ERASER_STRING_FILE_VERSION
+[assembly: AssemblyFileVersion("6.0.5.$WCREV$")]
+[assembly: AssemblyVersion("6.0.5.$WCREV$")]
+
+namespace Eraser {
+	internal static class BuildInfo
+	{
+		public static readonly DateTime BuildDate = DateTime.Parse("$WCNOW$",
+			System.Globalization.CultureInfo.InvariantCulture);
+	}
+}
