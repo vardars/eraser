@@ -50,9 +50,17 @@ namespace Eraser
 			LogSessionDictionary log = task.Log.Entries;
 			foreach (DateTime sessionTime in log.Keys)
 			{
-				this.log.Groups.Add(new ListViewGroup(S._("Session: {0:F}", sessionTime)));
-				foreach (LogEntry entry in log[sessionTime])
-					task_Logged(this, new LogEventArgs(entry));
+				ListViewGroup sessionGroup = new ListViewGroup(S._("Session: {0:F}", sessionTime));
+				this.log.Groups.Add(sessionGroup);
+
+				if (log[sessionTime].Count == 0)
+				{
+					ListViewItem item = this.log.Items.Add(string.Empty);
+					item.Group = sessionGroup;
+				}
+				else
+					foreach (LogEntry entry in log[sessionTime])
+						task_Logged(this, new LogEventArgs(entry));
 			}
 
 			//Register our event handler to get live log messages
