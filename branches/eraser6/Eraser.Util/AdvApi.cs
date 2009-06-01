@@ -175,10 +175,10 @@ namespace Eraser.Util
 			/// 
 			/// Optionally, the application can fill this buffer with data to use as
 			/// an auxiliary random seed.</param>
-			[DllImport("Advapi32.dll", SetLastError = true, EntryPoint = "CryptGenRandom")]
+			[DllImport("Advapi32.dll", SetLastError = true)]
 			[return: MarshalAs(UnmanagedType.Bool)]
-			public static extern bool CryptGenRandomInternal(SafeCryptHandle hProv,
-				uint dwLen, byte[] pbBuffer);
+			public static extern bool CryptGenRandom(SafeCryptHandle hProv, uint dwLen,
+				byte[] pbBuffer);
 
 			/// <summary>
 			/// The CryptReleaseContext function releases the handle of a cryptographic
@@ -201,7 +201,7 @@ namespace Eraser.Util
 			/// error information, call Marshal.GetLastWin32Error.</returns>
 			[DllImport("Advapi32.dll", SetLastError = true)]
 			[return: MarshalAs(UnmanagedType.Bool)]
-			public static extern bool CryptReleaseContext(SafeCryptHandle hProv, uint dwFlags);
+			public static extern bool CryptReleaseContext(IntPtr hProv, uint dwFlags);
 
 			public const uint PROV_RSA_FULL = 1;
 			public const uint PROV_RSA_SIG = 2;
@@ -406,7 +406,7 @@ namespace Eraser.Util
 		/// an auxiliary random seed.</param>
 		public static bool CryptGenRandom(byte[] buffer)
 		{
-			return AdvApi.NativeMethods.CryptGenRandomInternal(instance.handle,
+			return AdvApi.NativeMethods.CryptGenRandom(instance.handle,
 				(uint)buffer.Length, buffer);
 		}
 
@@ -435,7 +435,7 @@ namespace Eraser.Util
 
 		protected override bool ReleaseHandle()
 		{
-			AdvApi.NativeMethods.CryptReleaseContext(this, 0u);
+			AdvApi.NativeMethods.CryptReleaseContext(handle, 0u);
 			handle = IntPtr.Zero;
 			return true;
 		}
