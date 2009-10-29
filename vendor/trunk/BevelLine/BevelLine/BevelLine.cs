@@ -99,16 +99,18 @@ namespace Trustbridge.Windows.Controls
 			set
 			{
 				orientation = value;
-				if (orientation == Orientation.Horizontal)
-				{
-					this.Width = this.Height;
-					Angle = 90;
-				}
-				else
-				{
-					this.Height = this.Width;
-					Angle = 0;
-				}
+
+				if (Created)
+					if (orientation == Orientation.Horizontal)
+					{
+						this.Width = this.Height;
+						Angle = 90;
+					}
+					else
+					{
+						this.Height = this.Width;
+						Angle = 0;
+					}
 
 				OnResize(null);
 
@@ -199,6 +201,9 @@ namespace Trustbridge.Windows.Controls
 		}
 		protected override void OnResize(EventArgs e)
 		{
+			if (!Created)
+				return;
+
 			if (orientation == Orientation.Horizontal)
 			{
 				this.Height = bevelLineWidth * 2;
