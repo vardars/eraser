@@ -43,8 +43,10 @@
 			// ReportsLb
 			// 
 			resources.ApplyResources(this.ReportsLb, "ReportsLb");
+			this.ReportsLb.CheckOnClick = true;
 			this.ReportsLb.FormattingEnabled = true;
 			this.ReportsLb.Name = "ReportsLb";
+			this.ReportsLb.ThreeDCheckBoxes = true;
 			// 
 			// SubmitBtn
 			// 
