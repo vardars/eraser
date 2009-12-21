@@ -32,7 +32,9 @@
 			this.ButtonsPnl = new System.Windows.Forms.Panel();
 			this.CancelBtn = new System.Windows.Forms.Button();
 			this.TitleLbl = new System.Windows.Forms.Label();
-			this.progressBar1 = new System.Windows.Forms.ProgressBar();
+			this.ProgressPb = new System.Windows.Forms.ProgressBar();
+			this.UploadWorker = new System.ComponentModel.BackgroundWorker();
+			this.ProgressLbl = new System.Windows.Forms.Label();
 			this.ButtonsPnl.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -78,12 +80,29 @@
 			this.TitleLbl.TabIndex = 2;
 			this.TitleLbl.Text = "Uploading Crash Report";
 			// 
-			// progressBar1
+			// ProgressPb
 			// 
-			this.progressBar1.Location = new System.Drawing.Point(13, 73);
-			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(321, 17);
-			this.progressBar1.TabIndex = 3;
+			this.ProgressPb.Location = new System.Drawing.Point(13, 73);
+			this.ProgressPb.Name = "ProgressPb";
+			this.ProgressPb.Size = new System.Drawing.Size(321, 17);
+			this.ProgressPb.TabIndex = 3;
+			// 
+			// UploadWorker
+			// 
+			this.UploadWorker.WorkerReportsProgress = true;
+			this.UploadWorker.WorkerSupportsCancellation = true;
+			this.UploadWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.UploadWorker_DoWork);
+			this.UploadWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.UploadWorker_RunWorkerCompleted);
+			this.UploadWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.UploadWorker_ProgressChanged);
+			// 
+			// ProgressLbl
+			// 
+			this.ProgressLbl.AutoSize = true;
+			this.ProgressLbl.Location = new System.Drawing.Point(11, 55);
+			this.ProgressLbl.Name = "ProgressLbl";
+			this.ProgressLbl.Size = new System.Drawing.Size(126, 15);
+			this.ProgressLbl.TabIndex = 4;
+			this.ProgressLbl.Text = "Compressing reports...";
 			// 
 			// BlackBoxUploadForm
 			// 
@@ -91,7 +110,8 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.BackColor = System.Drawing.SystemColors.Window;
 			this.ClientSize = new System.Drawing.Size(344, 132);
-			this.Controls.Add(this.progressBar1);
+			this.Controls.Add(this.ProgressLbl);
+			this.Controls.Add(this.ProgressPb);
 			this.Controls.Add(this.TitleLbl);
 			this.Controls.Add(this.ButtonsPnl);
 			this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -112,6 +132,8 @@
 		private System.Windows.Forms.Panel ButtonsPnl;
 		private System.Windows.Forms.Button CancelBtn;
 		private System.Windows.Forms.Label TitleLbl;
-		private System.Windows.Forms.ProgressBar progressBar1;
+		private System.Windows.Forms.ProgressBar ProgressPb;
+		private System.ComponentModel.BackgroundWorker UploadWorker;
+		private System.Windows.Forms.Label ProgressLbl;
 	}
 }

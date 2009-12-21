@@ -138,6 +138,12 @@
   <data name="Please help us to continue developing Eraser - donate some coffee!" xml:space="preserve">
     <value>Aiutateci a continuare lo sviluppo di Eraser - offriteci un caffè!</value>
   </data>
+  <data name="Compressing Report {0}" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Uploading Report {0}" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Session: {0:F}" xml:space="preserve">
     <value>Sessione: {0:F}</value>
   </data>
