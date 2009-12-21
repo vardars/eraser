@@ -31,6 +31,7 @@ using System.Threading;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Reflection;
+using System.Collections.ObjectModel;
 
 namespace Eraser.Util
 {
@@ -259,12 +260,12 @@ namespace Eraser.Util
 		/// Enumerates the list of crash dumps waiting for upload.
 		/// </summary>
 		/// <returns>A string array containing the list of dumps waiting for upload.</returns>
-		public string[] GetDumps()
+		public BlackBoxReport[] GetDumps()
 		{
 			DirectoryInfo dirInfo = new DirectoryInfo(CrashReportsPath);
-			List<string> result = new List<string>();
+			List<BlackBoxReport> result = new List<BlackBoxReport>();
 			foreach (DirectoryInfo subDir in dirInfo.GetDirectories())
-				result.Add(subDir.Name);
+				result.Add(new BlackBoxReport(Path.Combine(CrashReportsPath, subDir.Name)));
 
 			return result.ToArray();
 		}
@@ -423,5 +424,56 @@ namespace Eraser.Util
 		/// </summary>
 		private readonly string CrashReportsPath = Path.Combine(Environment.GetFolderPath(
 			Environment.SpecialFolder.LocalApplicationData), @"Eraser 6\Crash Reports");
+	}
+
+	/// <summary>
+	/// Represents one BlackBox crash report.
+	/// </summary>
+	public class BlackBoxReport
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="path">Path to the folder containing the memory dump, screenshot and
+		/// debug log.</param>
+		internal BlackBoxReport(string path)
+		{
+			Path = path;
+		}
+
+		/// <summary>
+		/// The name of the report.
+		/// </summary>
+		public string Name
+		{
+			get
+			{
+				return System.IO.Path.GetFileName(Path);
+			}
+		}
+
+		/// <summary>
+		/// The files which comprise the error report.
+		/// </summary>
+		public ICollection<FileInfo> Files
+		{
+			get
+			{
+				List<FileInfo> result = new List<FileInfo>();
+				DirectoryInfo directory = new DirectoryInfo(Path);
+				result.AddRange(directory.GetFiles());
+				return result.AsReadOnly();
+			}
+		}
+
+		public override string ToString()
+		{
+			return Name;
+		}
+
+		/// <summary>
+		/// The path to the folder containing the report.
+		/// </summary>
+		private string Path;
 	}
 }
