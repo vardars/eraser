@@ -17,15 +17,24 @@ namespace Eraser
 			InitializeComponent();
 			UXThemeApi.UpdateControlTheme(this);
 
-			foreach (string id in BlackBox.GetDumps())
-				ReportsLb.Items.Add(id);
+			ReportsLb.BeginUpdate();
+			foreach (BlackBoxReport report in BlackBox.GetDumps())
+			{
+				ReportsLb.Items.Add(report);
+				ReportsLb.SetItemChecked(ReportsLb.Items.Count - 1, true);
+			}
+			ReportsLb.EndUpdate();
 		}
 
 		private void SubmitBtn_Click(object sender, EventArgs e)
 		{
 			Visible = false;
-			using (BlackBoxUploadForm form = new BlackBoxUploadForm())
+
+			BlackBoxReport[] selectedReports = new BlackBoxReport[ReportsLb.CheckedItems.Count];
+			ReportsLb.CheckedItems.CopyTo(selectedReports, 0);
+			using (BlackBoxUploadForm form = new BlackBoxUploadForm(selectedReports))
 				form.ShowDialog();
+
 			Close();
 		}
 
