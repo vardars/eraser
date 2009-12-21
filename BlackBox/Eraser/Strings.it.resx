@@ -144,6 +144,9 @@
   <data name="Uploading Report {0}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
+  <data name="Close" xml:space="preserve">
+    <value>Chiudi</value>
+  </data>
   <data name="Session: {0:F}" xml:space="preserve">
     <value>Sessione: {0:F}</value>
   </data>
@@ -182,9 +185,6 @@
   </data>
   <data name="Completed" xml:space="preserve">
     <value>Completata</value>
-  </data>
-  <data name="Close" xml:space="preserve">
-    <value>Chiudi</value>
   </data>
   <data name="Queued for execution" xml:space="preserve">
     <value>Pianificata per l'esecuzione</value>
