@@ -69,8 +69,7 @@ namespace Eraser
 		private void MainForm_Load(object sender, EventArgs e)
 		{
 			BlackBox blackBox = BlackBox.Get();
-			string[] dumps = blackBox.GetDumps();
-			if (dumps.Length == 0)
+			if (blackBox.GetDumps().Length == 0)
 				return;
 
 			using (BlackBoxMainForm form = new BlackBoxMainForm())
