@@ -149,7 +149,11 @@ namespace Eraser
 				//Add the report into a tar file
 				TarArchive archive = TarArchive.CreateOutputTarArchive(archiveStream);
 				foreach (FileInfo file in Report.Files)
-					archive.WriteEntry(TarEntry.CreateEntryFromFile(file.FullName), false);
+				{
+					TarEntry entry = TarEntry.CreateEntryFromFile(file.FullName);
+					entry.Name = Path.GetFileName(entry.Name);
+					archive.WriteEntry(entry, false);
+				}
 				archive.Close();
 			}
 
@@ -250,6 +254,9 @@ namespace Eraser
 			using (FileStream stream = new FileStream(FileName, FileMode.Open, FileAccess.Write,
 				FileShare.Read))
 			{
+				//Append data!
+				stream.Seek(0, SeekOrigin.End);
+
 				StringBuilder currentBoundary = new StringBuilder();
 				currentBoundary.AppendFormat("--{0}\r\n", Boundary);
 				if (field is FormFileField)
@@ -275,7 +282,7 @@ namespace Eraser
 					stream.Write(buffer, 0, lastRead);
 
 				currentBoundary = new StringBuilder();
-				currentBoundary.AppendFormat("--{0}--\r\n", Boundary);
+				currentBoundary.AppendFormat("\r\n--{0}--\r\n", Boundary);
 				boundary = Encoding.UTF8.GetBytes(currentBoundary.ToString());
 				stream.Write(boundary, 0, boundary.Length);
 			}
