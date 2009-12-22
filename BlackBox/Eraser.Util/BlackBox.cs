@@ -546,11 +546,7 @@ namespace Eraser.Util
 				}
 
 				if (currentException.Count != 0)
-				{
 					result.Add(currentException);
-					currentException.Clear();
-				}
-
 				return result;
 			}
 		}
