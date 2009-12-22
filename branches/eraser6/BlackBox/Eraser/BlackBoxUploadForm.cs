@@ -101,35 +101,39 @@ namespace Eraser
 
 				using (FileStream bzipFile = new FileStream(reportBaseName + ".tbz",
 					FileMode.Open, FileAccess.Read, FileShare.Read, 131072, FileOptions.DeleteOnClose))
+				using (Stream logFile = reports[i].DebugLog)
 				{
 					//Upload the file
 					UploadWorker.ReportProgress(baseProgress + progressPerReport / 2,
 						S._("Uploading Report {0}", reports[i].Name));
 					MultipartFormDataBuilder builder = new MultipartFormDataBuilder();
-					bzipFile.Position = 0;
-					builder.AddPart("crashReport", "Report.tbz", bzipFile);
+					builder.AddPart(new FormFileField("CrashReport", "Report.tbz", bzipFile));
+					builder.AddPart(new FormFileField("DebugLog", "Debug.log", logFile));
 
-					WebRequest reportRequest = HttpWebRequest.Create("http://eraser.heidi.ie/BlackBox/upload.php");
+					Uri blackBoxServer = new Uri("http://eraser.heidi.ie/BlackBox/upload.php");
+					WebRequest reportRequest = HttpWebRequest.Create(blackBoxServer);
 					reportRequest.ContentType = "multipart/form-data; boundary=" + builder.Boundary;
 					reportRequest.Method = "POST";
 					using (Stream formStream = builder.Stream)
-					using (Stream requestStream = reportRequest.GetRequestStream())
 					{
 						reportRequest.ContentLength = formStream.Length;
-						while ((lastRead = formStream.Read(buffer, 0, buffer.Length)) != 0)
+						using (Stream requestStream = reportRequest.GetRequestStream())
 						{
-							requestStream.Write(buffer, 0, lastRead);
-							UploadWorker.ReportProgress(baseProgress + progressPerReport / stepsPerReport +
-								(int)(formStream.Position * progressPerReport / formStream.Length / 2));
+							while ((lastRead = formStream.Read(buffer, 0, buffer.Length)) != 0)
+							{
+								requestStream.Write(buffer, 0, lastRead);
+								UploadWorker.ReportProgress(baseProgress + progressPerReport / stepsPerReport +
+									(int)(formStream.Position * progressPerReport / formStream.Length / 2));
+							}
 						}
-					}
 
-					HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
-					if (response.StatusCode != HttpStatusCode.OK)
-					{
-						using (Stream responseStream = response.GetResponseStream())
-						using (TextReader reader = new StreamReader(responseStream))
-							throw new ArgumentException(reader.ReadToEnd());
+						HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
+						if (response.StatusCode != HttpStatusCode.OK)
+						{
+							using (Stream responseStream = response.GetResponseStream())
+							using (TextReader reader = new StreamReader(responseStream))
+								throw new ArgumentException(reader.ReadToEnd());
+						}
 					}
 				}
 			}
@@ -157,7 +161,7 @@ namespace Eraser
 				Close();
 		}
 
-		private ICollection<BlackBoxReport> Reports;
+		private IList<BlackBoxReport> Reports;
 	}
 
 	class MultipartFormDataBuilder
@@ -167,13 +171,12 @@ namespace Eraser
 			FileName = Path.GetTempFileName();
 		}
 
-		public void AddPart(string fieldName, string fileName, Stream data)
+		public void AddPart(FormField field)
 		{
 			//Generate a random part boundary
 			if (Boundary == null)
 			{
 				Random rand = new Random();
-				Boundary = "--";
 				for (int i = 0; i < 10 + rand.Next(16); ++i)
 					Boundary += ' ' + rand.Next(62);
 			}
@@ -182,21 +185,31 @@ namespace Eraser
 				FileShare.Read))
 			{
 				StringBuilder currentBoundary = new StringBuilder();
-				currentBoundary.AppendFormat("{0}\r\n", Boundary);
-				currentBoundary.AppendFormat("Content-Disposition: file; name=\"{0}\"; filename=\"{1}\"\r\n",
-					fieldName, fileName);
-				currentBoundary.AppendLine("Content-Type: binary");
+				currentBoundary.AppendFormat("--{0}\r\n", Boundary);
+				if (field is FormFileField)
+				{
+					currentBoundary.AppendFormat(
+						"Content-Disposition: file; name=\"{0}\"; filename=\"{1}\"\r\n",
+						field.FieldName, ((FormFileField)field).FileName);
+					currentBoundary.AppendLine("Content-Type: application/octet-stream");
+				}
+				else
+				{
+					currentBoundary.AppendFormat("Content-Disposition: form-data; name=\"{0}\"\r\n",
+						field.FieldName);
+				}
+				
 				currentBoundary.AppendLine();
 				byte[] boundary = Encoding.UTF8.GetBytes(currentBoundary.ToString());
 				stream.Write(boundary, 0, boundary.Length);
 				
 				int lastRead = 0;
 				byte[] buffer = new byte[524288];
-				while ((lastRead = data.Read(buffer, 0, buffer.Length)) != 0)
+				while ((lastRead = field.Stream.Read(buffer, 0, buffer.Length)) != 0)
 					stream.Write(buffer, 0, lastRead);
 
 				currentBoundary = new StringBuilder();
-				currentBoundary.AppendFormat("{0}--\r\n", Boundary);
+				currentBoundary.AppendFormat("--{0}--\r\n", Boundary);
 				boundary = Encoding.UTF8.GetBytes(currentBoundary.ToString());
 				stream.Write(boundary, 0, boundary.Length);
 			}
@@ -224,5 +237,49 @@ namespace Eraser
 		}
 
 		private string FileName;
+	}
+
+	class FormField
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="fieldName">The name of the field.</param>
+		/// <param name="stream">The stream containing the field data.</param>
+		public FormField(string fieldName, Stream stream)
+		{
+			FieldName = fieldName;
+			Stream = stream;
+		}
+
+		/// <summary>
+		/// The name of the field.
+		/// </summary>
+		public string FieldName;
+
+		/// <summary>
+		/// The stream containing the data for this field.
+		/// </summary>
+		public Stream Stream;
+	}
+
+	class FormFileField : FormField
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="fieldName">The name of the form field.</param>
+		/// <param name="fileName">The name of the file.</param>
+		/// <param name="stream">The stream containing the field data.</param>
+		public FormFileField(string fieldName, string fileName, Stream stream)
+			: base(fieldName, stream)
+		{
+			FileName = fileName;
+		}
+
+		/// <summary>
+		/// The name of the file.
+		/// </summary>
+		public string FileName;
 	}
 }
