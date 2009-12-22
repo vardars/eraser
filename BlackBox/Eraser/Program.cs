@@ -210,7 +210,21 @@ namespace Eraser
 
 			//Run the eraser client.
 			eraserClient.Run();
+
+			//Register to handle BlackBox reports when the application has loaded.
+			Application.Idle += OnGUIIdle;
 			return showMainForm;
+		}
+
+		private static void OnGUIIdle(object sender, EventArgs e)
+		{
+			Application.Idle -= OnGUIIdle;
+			BlackBox blackBox = BlackBox.Get();
+			if (blackBox.GetDumps().Length == 0)
+				return;
+
+			using (BlackBoxMainForm form = new BlackBoxMainForm())
+				form.ShowDialog();
 		}
 
 		/// <summary>
