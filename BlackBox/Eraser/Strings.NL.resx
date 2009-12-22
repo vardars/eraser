@@ -150,6 +150,9 @@
   <data name="Close" xml:space="preserve">
     <value>Sluiten</value>
   </data>
+  <data name="Unknown crash report server response." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Session: {0:F}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
