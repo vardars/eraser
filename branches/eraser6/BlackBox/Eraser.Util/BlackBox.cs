@@ -386,10 +386,9 @@ namespace Eraser.Util
 						string[] stackTrace = currentException.StackTrace.Split(new char[] { '\n' });
 						for (uint j = 0; j < stackTrace.Length; ++j)
 						{
-							string stackFrame = string.Format(lineFormat,
-								string.Format("Stack Trace [{0}]", j), stackTrace[j].Trim());
-							stream.WriteLine(stackFrame);
-							stackTraceLog.WriteLine(stackFrame);
+							stream.WriteLine(string.Format(lineFormat,
+								string.Format("Stack Trace [{0}]", j), stackTrace[j].Trim()));
+							stackTraceLog.WriteLine(string.Format("{0}", stackTrace[j].Trim()));
 						}
 
 						uint k = 0;
