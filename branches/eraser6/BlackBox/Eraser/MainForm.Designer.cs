@@ -360,7 +360,6 @@ namespace Eraser
 			this.DoubleBuffered = true;
 			this.MainMenuStrip = this.ToolBar;
 			this.Name = "MainForm";
-			this.Load += new System.EventHandler(this.MainForm_Load);
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
 			this.VisibleChanged += new System.EventHandler(this.MainForm_VisibleChanged);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);

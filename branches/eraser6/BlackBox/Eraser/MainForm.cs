@@ -66,16 +66,6 @@ namespace Eraser
 			ChangePage(MainFormPage.Scheduler);
 		}
 
-		private void MainForm_Load(object sender, EventArgs e)
-		{
-			BlackBox blackBox = BlackBox.Get();
-			if (blackBox.GetDumps().Length == 0)
-				return;
-
-			using (BlackBoxMainForm form = new BlackBoxMainForm())
-				form.ShowDialog();
-		}
-
 		/// <summary>
 		/// Diplays the given title, message and icon as a system notification area balloon.
 		/// </summary>
