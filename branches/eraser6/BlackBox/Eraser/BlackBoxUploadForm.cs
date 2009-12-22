@@ -102,10 +102,19 @@ namespace Eraser
 
 		private void UploadWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
-			if (e.Error != null)
-				MessageBox.Show(e.Error.Message);
-			ProgressLbl.Text = S._("Reports submitted successfully.");
-			CancelBtn.Text = S._("Close");
+			if (e.Error == null)
+			{
+				ProgressLbl.Text = S._("Reports submitted successfully.");
+				CancelBtn.Text = S._("Close");
+			}
+			else
+			{
+				MessageBox.Show(this, e.Error.Message,
+					S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error,
+					MessageBoxDefaultButton.Button1, S.IsRightToLeft(this) ?
+						MessageBoxOptions.RtlReading : 0);
+				Close();
+			}
 		}
 
 		private void CancelBtn_Click(object sender, EventArgs e)
@@ -159,10 +168,30 @@ namespace Eraser
 				}
 			}
 
-			HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
-			if (response.StatusCode != HttpStatusCode.OK)
+			try
 			{
+				HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
 				using (Stream responseStream = response.GetResponseStream())
+				{
+					XmlReader reader = XmlReader.Create(responseStream);
+					reader.ReadToFollowing("crashReport");
+					string reportStatus = reader.GetAttribute("status");
+					switch (reportStatus)
+					{
+						case "exists":
+							return false;
+
+						case "new":
+							return true;
+
+						default:
+							throw new InvalidDataException(S._("Unknown crash report server response."));
+					}
+				}
+			}
+			catch (WebException e)
+			{
+				using (Stream responseStream = e.Response.GetResponseStream())
 				{
 					try
 					{
@@ -176,25 +205,7 @@ namespace Eraser
 					}
 				}
 
-				throw new InvalidDataException(response.StatusDescription);
-			}
-
-			using (Stream responseStream = response.GetResponseStream())
-			{
-				XmlReader reader = XmlReader.Create(responseStream);
-				reader.ReadToFollowing("crashReport");
-				string reportStatus = reader.GetAttribute("status");
-				switch (reportStatus)
-				{
-					case "exists":
-						return false;
-
-					case "new":
-						return true;
-
-					default:
-						throw new InvalidDataException(S._("Unknown crash report server response."));
-				}
+				throw new InvalidDataException(((HttpWebResponse)e.Response).StatusDescription);
 			}
 		}
 
@@ -264,10 +275,13 @@ namespace Eraser
 					}
 				}
 
-				HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
-				if (response.StatusCode != HttpStatusCode.OK)
+				try
 				{
-					using (Stream responseStream = response.GetResponseStream())
+					reportRequest.GetResponse();
+				}
+				catch (WebException e)
+				{
+					using (Stream responseStream = e.Response.GetResponseStream())
 					{
 						try
 						{
@@ -281,7 +295,7 @@ namespace Eraser
 						}
 					}
 
-					throw new InvalidDataException(response.StatusDescription);
+					throw new InvalidDataException(((HttpWebResponse)e.Response).StatusDescription);
 				}
 			}
 		}
