@@ -422,8 +422,24 @@ namespace Eraser.Util
 		/// <summary>
 		/// The path to all Eraser crash reports.
 		/// </summary>
-		private readonly string CrashReportsPath = Path.Combine(Environment.GetFolderPath(
+		private static readonly string CrashReportsPath = Path.Combine(Environment.GetFolderPath(
 			Environment.SpecialFolder.LocalApplicationData), @"Eraser 6\Crash Reports");
+
+		/// <summary>
+		/// The file name of the memory dump.
+		/// </summary>
+		/// 
+		internal static readonly string MemoryDumpFileName = "Memory.dmp";
+
+		/// <summary>
+		/// The file name of the debug log.
+		/// </summary>
+		internal static readonly string DebugLogFileName = "Debug.log";
+
+		/// <summary>
+		/// The file name of the screenshot.
+		/// </summary>
+		internal static readonly string ScreenshotFileName = "Screenshot.png";
 	}
 
 	/// <summary>
@@ -463,6 +479,18 @@ namespace Eraser.Util
 				DirectoryInfo directory = new DirectoryInfo(Path);
 				result.AddRange(directory.GetFiles());
 				return result.AsReadOnly();
+			}
+		}
+
+		/// <summary>
+		/// Gets a read-only stream which reads the Debug log.
+		/// </summary>
+		public Stream DebugLog
+		{
+			get
+			{
+				return new FileStream(System.IO.Path.Combine(Path, BlackBox.DebugLogFileName),
+					FileMode.Open, FileAccess.Read);
 			}
 		}
 
