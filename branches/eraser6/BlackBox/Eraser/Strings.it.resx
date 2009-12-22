@@ -147,10 +147,16 @@
   <data name="Uploading Report {0}: {1}%" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
+  <data name="Reports submitted successfully." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Chiudi</value>
   </data>
   <data name="Unknown crash report server response." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="The server encountered a problem while processing the request: {0}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Session: {0:F}" xml:space="preserve">
