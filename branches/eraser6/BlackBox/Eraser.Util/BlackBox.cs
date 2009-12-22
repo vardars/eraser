@@ -515,12 +515,43 @@ namespace Eraser.Util
 		/// <summary>
 		/// Gets the stack trace for this crash report.
 		/// </summary>
-		public string StackTrace
+		public IList<IList<string>> StackTrace
 		{
 			get
 			{
-				return new StreamReader(System.IO.Path.Combine(Path, BlackBox.StackTraceFileName)).
-					ReadToEnd();
+				List<IList<string>> result = new List<IList<string>>();
+				string[] stackTrace = null;
+				using (StreamReader reader = new StreamReader(
+					System.IO.Path.Combine(Path, BlackBox.StackTraceFileName)))
+				{
+					stackTrace = reader.ReadToEnd().Split(new char[] { '\n' });
+				}
+
+				//Parse the lines in the file.
+				List<string> currentException = new List<string>();
+				foreach (string str in stackTrace)
+				{
+					if (str.StartsWith("Exception "))
+					{
+						if (currentException.Count != 0)
+						{
+							result.Add(new List<string>(currentException));
+							currentException.Clear();
+						}
+					}
+					else if (!string.IsNullOrEmpty(str.Trim()))
+					{
+						currentException.Add(str.Trim());
+					}
+				}
+
+				if (currentException.Count != 0)
+				{
+					result.Add(currentException);
+					currentException.Clear();
+				}
+
+				return result;
 			}
 		}
 

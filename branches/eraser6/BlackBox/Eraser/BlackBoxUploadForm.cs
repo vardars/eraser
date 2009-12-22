@@ -139,20 +139,10 @@ namespace Eraser
 		/// <returns>True if the report is new; false otherwise</returns>
 		public bool ReportIsNew()
 		{
-			string[] stackTrace = Report.StackTrace.Split(new char[] { '\n' });
 			MultipartFormDataBuilder builder = new MultipartFormDataBuilder();
 			builder.AddPart(new FormField("action", "status"));
-			int exceptionIndex = 0;
-
-			foreach (string str in stackTrace)
-			{
-				if (str.StartsWith("Exception "))
-					++exceptionIndex;
-				else if (!string.IsNullOrEmpty(str.Trim()))
-					builder.AddPart(new FormField(
-						string.Format("stackTrace[{0}][]", exceptionIndex), str.Trim()));
-			}
-
+			AddStackTraceToRequest(Report.StackTrace, builder);
+			
 			WebRequest reportRequest = HttpWebRequest.Create(BlackBoxServer);
 			reportRequest.ContentType = "multipart/form-data; boundary=" + builder.Boundary;
 			reportRequest.Method = "POST";
@@ -237,6 +227,7 @@ namespace Eraser
 				MultipartFormDataBuilder builder = new MultipartFormDataBuilder();
 				builder.AddPart(new FormField("action", "upload"));
 				builder.AddPart(new FormFileField("crashReport", "Report.tbz", bzipFile));
+				AddStackTraceToRequest(Report.StackTrace, builder);
 
 				//Upload the POST request
 				WebRequest reportRequest = HttpWebRequest.Create(BlackBoxServer);
@@ -261,6 +252,24 @@ namespace Eraser
 				HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
 				if (response.StatusCode != HttpStatusCode.OK)
 					throw new InvalidDataException(response.StatusDescription);
+			}
+		}
+
+		/// <summary>
+		/// Adds the stack trace to the given form request.
+		/// </summary>
+		/// <param name="stackTrace">The stack trace to add.</param>
+		/// <param name="builder">The Form request builder to add the stack trace to.</param>
+		private static void AddStackTraceToRequest(IList<IList<string>> stackTrace,
+			MultipartFormDataBuilder builder)
+		{
+			int exceptionIndex = 0;
+			foreach (IList<string> exceptionStack in stackTrace)
+			{
+				foreach (string stackFrame in exceptionStack)
+					builder.AddPart(new FormField(
+						string.Format("stackTrace[{0}][]", exceptionIndex), stackFrame));
+				++exceptionIndex;
 			}
 		}
 
