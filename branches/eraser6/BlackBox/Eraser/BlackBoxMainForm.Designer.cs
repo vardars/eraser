@@ -33,6 +33,8 @@
 			this.ReportsLb = new System.Windows.Forms.CheckedListBox();
 			this.SubmitBtn = new System.Windows.Forms.Button();
 			this.PostponeBtn = new System.Windows.Forms.Button();
+			this.BlackBoxPic = new System.Windows.Forms.PictureBox();
+			((System.ComponentModel.ISupportInitialize)(this.BlackBoxPic)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// MainLbl
@@ -62,10 +64,18 @@
 			this.PostponeBtn.UseVisualStyleBackColor = true;
 			this.PostponeBtn.Click += new System.EventHandler(this.PostponeBtn_Click);
 			// 
+			// BlackBoxPic
+			// 
+			this.BlackBoxPic.Image = global::Eraser.Properties.Resources.BlackBox;
+			resources.ApplyResources(this.BlackBoxPic, "BlackBoxPic");
+			this.BlackBoxPic.Name = "BlackBoxPic";
+			this.BlackBoxPic.TabStop = false;
+			// 
 			// BlackBoxMainForm
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+			this.Controls.Add(this.BlackBoxPic);
 			this.Controls.Add(this.PostponeBtn);
 			this.Controls.Add(this.SubmitBtn);
 			this.Controls.Add(this.ReportsLb);
@@ -75,6 +85,7 @@
 			this.MinimizeBox = false;
 			this.Name = "BlackBoxMainForm";
 			this.ShowInTaskbar = false;
+			((System.ComponentModel.ISupportInitialize)(this.BlackBoxPic)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -85,5 +96,6 @@
 		private System.Windows.Forms.CheckedListBox ReportsLb;
 		private System.Windows.Forms.Button SubmitBtn;
 		private System.Windows.Forms.Button PostponeBtn;
+		private System.Windows.Forms.PictureBox BlackBoxPic;
 	}
 }

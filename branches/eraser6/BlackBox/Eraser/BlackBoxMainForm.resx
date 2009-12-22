@@ -123,17 +123,19 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="MainLbl.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 9</value>
+    <value>82, 9</value>
   </data>
   <data name="MainLbl.Size" type="System.Drawing.Size, System.Drawing">
-    <value>307, 64</value>
+    <value>467, 112</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="MainLbl.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
   <data name="MainLbl.Text" xml:space="preserve">
-    <value>Eraser has encountered problems while running earlier and needed to close. The logs of these errors have been stored on your computer. These logs can be sent to the Eraser developers for review and fixing if necessary. Select the logs you will wish to upload to the server; logs not selected for uploading will be discarded after submitting the rest.</value>
+    <value>Eraser has encountered problems while running earlier and needed to close.
+
+The program's state and other information about the error have been stored on your computer as reports and can be sent to the Eraser developers for review. Select the reports you wish to submit by checking the name of the report below; the contents of each report can be viewed by double-clicking on the report name below. Reports not selected for submission will be discarded after the rest have been submitted.</value>
   </data>
   <data name="&gt;&gt;MainLbl.Name" xml:space="preserve">
     <value>MainLbl</value>
@@ -145,16 +147,19 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;MainLbl.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="ReportsLb.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="ReportsLb.IntegralHeight" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="ReportsLb.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 76</value>
+    <value>12, 124</value>
   </data>
   <data name="ReportsLb.Size" type="System.Drawing.Size, System.Drawing">
-    <value>307, 184</value>
+    <value>537, 186</value>
   </data>
   <data name="ReportsLb.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -169,10 +174,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;ReportsLb.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
+  </data>
+  <data name="SubmitBtn.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
   </data>
   <data name="SubmitBtn.Location" type="System.Drawing.Point, System.Drawing">
-    <value>113, 267</value>
+    <value>343, 316</value>
   </data>
   <data name="SubmitBtn.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 23</value>
@@ -193,10 +201,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;SubmitBtn.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
+  </data>
+  <data name="PostponeBtn.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
   </data>
   <data name="PostponeBtn.Location" type="System.Drawing.Point, System.Drawing">
-    <value>219, 267</value>
+    <value>449, 316</value>
   </data>
   <data name="PostponeBtn.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 23</value>
@@ -217,6 +228,27 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;PostponeBtn.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="BlackBoxPic.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 12</value>
+  </data>
+  <data name="BlackBoxPic.Size" type="System.Drawing.Size, System.Drawing">
+    <value>64, 64</value>
+  </data>
+  <data name="BlackBoxPic.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;BlackBoxPic.Name" xml:space="preserve">
+    <value>BlackBoxPic</value>
+  </data>
+  <data name="&gt;&gt;BlackBoxPic.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;BlackBoxPic.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;BlackBoxPic.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -226,7 +258,7 @@
     <value>96, 96</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>331, 302</value>
+    <value>561, 351</value>
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 9pt</value>
