@@ -319,7 +319,7 @@ namespace Eraser.Util
 		private void WriteMemoryDump(string dumpFolder, Exception e)
 		{
 			//Open a file stream
-			using (FileStream stream = new FileStream(Path.Combine(dumpFolder, "Memory.dmp"),
+			using (FileStream stream = new FileStream(Path.Combine(dumpFolder, MemoryDumpFileName),
 				FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
 			{
 				//Store the exception information
@@ -343,7 +343,7 @@ namespace Eraser.Util
 		/// <param name="exception">The exception to log about.</param>
 		private void WriteDebugLog(string dumpFolder, Exception exception)
 		{
-			using (FileStream file = new FileStream(Path.Combine(dumpFolder, "Debug.log"),
+			using (FileStream file = new FileStream(Path.Combine(dumpFolder, DebugLogFileName),
 				FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
 			using (StreamWriter stream = new StreamWriter(file))
 			{
@@ -368,28 +368,39 @@ namespace Eraser.Util
 				stream.WriteLine("Exception Information (Outermost to innermost)");
 				stream.WriteLine(separator);
 
-				Exception currentException = exception;
-				for (uint i = 1; currentException != null; ++i)
+				//Open a stream to the Stack Trace Log file. We want to separate the stack
+				//trace do we can check against the server to see if the crash is a new one
+				using (StreamWriter stackTraceLog = new StreamWriter(
+					Path.Combine(dumpFolder, StackTraceFileName)))
 				{
-					stream.WriteLine(string.Format("Exception {0}:", i));
-					stream.WriteLine(string.Format(lineFormat, "Message", currentException.Message));
-					stream.WriteLine(string.Format(lineFormat, "Exception Type",
-						currentException.GetType().Name));
+					Exception currentException = exception;
+					for (uint i = 1; currentException != null; ++i)
+					{
+						stream.WriteLine(string.Format("Exception {0}:", i));
+						stackTraceLog.WriteLine(string.Format("Exception {0}:", i));
+						stream.WriteLine(string.Format(lineFormat, "Message", currentException.Message));
+						stream.WriteLine(string.Format(lineFormat, "Exception Type",
+							currentException.GetType().Name));
 
-					//Parse the stack trace
-					string[] stackTrace = currentException.StackTrace.Split(new char[] { '\n' });
-					for (uint j = 0; j < stackTrace.Length; ++j)
-						stream.WriteLine(string.Format(lineFormat,
-							string.Format("Stack Trace [{0}]", j), stackTrace[j].Trim()));
+						//Parse the stack trace
+						string[] stackTrace = currentException.StackTrace.Split(new char[] { '\n' });
+						for (uint j = 0; j < stackTrace.Length; ++j)
+						{
+							string stackFrame = string.Format(lineFormat,
+								string.Format("Stack Trace [{0}]", j), stackTrace[j].Trim());
+							stream.WriteLine(stackFrame);
+							stackTraceLog.WriteLine(stackFrame);
+						}
 
-					uint k = 0;
-					foreach (System.Collections.DictionaryEntry value in currentException.Data)
-						stream.WriteLine(string.Format(lineFormat, string.Format("Data[{0}]", ++k),
-							string.Format("{0} {1}", value.Key.ToString(), value.Value.ToString())));
+						uint k = 0;
+						foreach (System.Collections.DictionaryEntry value in currentException.Data)
+							stream.WriteLine(string.Format(lineFormat, string.Format("Data[{0}]", ++k),
+								string.Format("{0} {1}", value.Key.ToString(), value.Value.ToString())));
 
-					//End the exception and get the inner exception.
-					stream.WriteLine();
-					currentException = exception.InnerException;
+						//End the exception and get the inner exception.
+						stream.WriteLine();
+						currentException = exception.InnerException;
+					}
 				}
 			}
 		}
@@ -411,7 +422,7 @@ namespace Eraser.Util
 			bitmap.CopyFromScreen(0, 0, 0, 0, rect.Size, CopyPixelOperation.SourceCopy);
 
 			//Save the bitmap to disk
-			screenShot.Save(Path.Combine(dumpFolder, "Screenshot.png"), ImageFormat.Png);
+			screenShot.Save(Path.Combine(dumpFolder, ScreenshotFileName), ImageFormat.Png);
 		}
 
 		/// <summary>
@@ -440,6 +451,11 @@ namespace Eraser.Util
 		/// The file name of the screenshot.
 		/// </summary>
 		internal static readonly string ScreenshotFileName = "Screenshot.png";
+
+		/// <summary>
+		/// The file name of the stack trace.
+		/// </summary>
+		internal static readonly string StackTraceFileName = "Stack Trace.log";
 	}
 
 	/// <summary>
@@ -477,7 +493,10 @@ namespace Eraser.Util
 			{
 				List<FileInfo> result = new List<FileInfo>();
 				DirectoryInfo directory = new DirectoryInfo(Path);
-				result.AddRange(directory.GetFiles());
+				foreach (FileInfo file in directory.GetFiles())
+					if (file.Name != BlackBox.StackTraceFileName)
+						result.Add(file);
+
 				return result.AsReadOnly();
 			}
 		}
@@ -491,6 +510,18 @@ namespace Eraser.Util
 			{
 				return new FileStream(System.IO.Path.Combine(Path, BlackBox.DebugLogFileName),
 					FileMode.Open, FileAccess.Read);
+			}
+		}
+
+		/// <summary>
+		/// Gets the stack trace for this crash report.
+		/// </summary>
+		public string StackTrace
+		{
+			get
+			{
+				return new StreamReader(System.IO.Path.Combine(Path, BlackBox.StackTraceFileName)).
+					ReadToEnd();
 			}
 		}
 
