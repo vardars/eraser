@@ -247,8 +247,8 @@ namespace Eraser
 			if (Boundary == null)
 			{
 				Random rand = new Random();
-				for (int i = 0; i < 10 + rand.Next(16); ++i)
-					Boundary += ' ' + rand.Next(62);
+				for (int i = 0; i < 20 + rand.Next(40); ++i)
+					Boundary += ValidBoundaryChars[rand.Next(ValidBoundaryChars.Length)];
 			}
 
 			using (FileStream stream = new FileStream(FileName, FileMode.Open, FileAccess.Write,
@@ -310,6 +310,9 @@ namespace Eraser
 		}
 
 		private string FileName;
+
+		private static readonly string ValidBoundaryChars =
+			"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'()+_,-./:=?";
 	}
 
 	class FormField
