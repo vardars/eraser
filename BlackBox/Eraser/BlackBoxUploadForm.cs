@@ -81,7 +81,7 @@ namespace Eraser
 
 				//Upload the report.
 				UploadWorker.ReportProgress(baseProgress + progressPerReport / 2,
-					S._("Uploading Report {0}: {1}%", reports[i].Name));
+					S._("Uploading Report {0}: {1}%", reports[i].Name, 0));
 				uploader.Upload(delegate(object from, ProgressChangedEventArgs progress)
 					{
 						UploadWorker.ReportProgress(baseProgress + progressPerReport / stepsPerReport +
@@ -193,7 +193,7 @@ namespace Eraser
 					using (Stream requestStream = reportRequest.GetRequestStream())
 					{
 						int lastRead = 0;
-						byte[] buffer = new byte[524288];
+						byte[] buffer = new byte[32768];
 						while ((lastRead = formStream.Read(buffer, 0, buffer.Length)) != 0)
 						{
 							requestStream.Write(buffer, 0, lastRead);
