@@ -247,7 +247,7 @@ namespace Eraser
 			if (Boundary == null)
 			{
 				Random rand = new Random();
-				for (int i = 0; i < 20 + rand.Next(40); ++i)
+				for (int i = 0, j = 20 + rand.Next(40); i < j; ++i)
 					Boundary += ValidBoundaryChars[rand.Next(ValidBoundaryChars.Length)];
 			}
 
@@ -311,6 +311,9 @@ namespace Eraser
 
 		private string FileName;
 
+		/// <summary>
+		/// Characters valid for use in the multipart boundary.
+		/// </summary>
 		private static readonly string ValidBoundaryChars =
 			"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'()+_,-./:=?";
 	}
