@@ -104,6 +104,7 @@ namespace Eraser
 		{
 			if (e.Error != null)
 				MessageBox.Show(e.Error.Message);
+			ProgressLbl.Text = S._("Reports submitted successfully.");
 			CancelBtn.Text = S._("Close");
 		}
 
@@ -160,13 +161,27 @@ namespace Eraser
 
 			HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
 			if (response.StatusCode != HttpStatusCode.OK)
+			{
+				using (Stream responseStream = response.GetResponseStream())
+				{
+					try
+					{
+						XmlReader reader = XmlReader.Create(responseStream);
+						reader.ReadToFollowing("error");
+						throw new InvalidDataException(S._("The server encountered a problem " +
+							"while processing the request: {0}", reader.ReadString()));
+					}
+					catch (XmlException)
+					{
+					}
+				}
+
 				throw new InvalidDataException(response.StatusDescription);
+			}
 
 			using (Stream responseStream = response.GetResponseStream())
-			using (StreamReader rdr = new StreamReader(responseStream))
 			{
-				string str = rdr.ReadToEnd();
-				XmlReader reader = XmlReader.Create(new MemoryStream(Encoding.UTF8.GetBytes(str)));
+				XmlReader reader = XmlReader.Create(responseStream);
 				reader.ReadToFollowing("crashReport");
 				string reportStatus = reader.GetAttribute("status");
 				switch (reportStatus)
@@ -251,7 +266,23 @@ namespace Eraser
 
 				HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
 				if (response.StatusCode != HttpStatusCode.OK)
+				{
+					using (Stream responseStream = response.GetResponseStream())
+					{
+						try
+						{
+							XmlReader reader = XmlReader.Create(responseStream);
+							reader.ReadToFollowing("error");
+							throw new InvalidDataException(S._("The server encountered a problem " +
+								"while processing the request: {0}", reader.ReadString()));
+						}
+						catch (XmlException)
+						{
+						}
+					}
+
 					throw new InvalidDataException(response.StatusDescription);
+				}
 			}
 		}
 
@@ -283,7 +314,7 @@ namespace Eraser
 		/// The URI to the BlackBox server.
 		/// </summary>
 		private static readonly Uri BlackBoxServer =
-			new Uri("http://eraser.joelsplace.dyndns.org/BlackBox/upload.php");
+			new Uri("http://eraser.heidi.ie/BlackBox/upload.php");
 
 		/// <summary>
 		/// The report being uploaded.
