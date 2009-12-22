@@ -32,6 +32,7 @@ using Eraser.Util;
 using ICSharpCode.SharpZipLib.Tar;
 using ICSharpCode.SharpZipLib.BZip2;
 using System.Net;
+using System.Xml;
 
 namespace Eraser
 {
@@ -138,7 +139,58 @@ namespace Eraser
 		/// <returns>True if the report is new; false otherwise</returns>
 		public bool ReportIsNew()
 		{
-			throw new NotImplementedException();
+			string[] stackTrace = Report.StackTrace.Split(new char[] { '\n' });
+			MultipartFormDataBuilder builder = new MultipartFormDataBuilder();
+			builder.AddPart(new FormField("action", "status"));
+			int exceptionIndex = 0;
+
+			foreach (string str in stackTrace)
+			{
+				if (str.StartsWith("Exception "))
+					++exceptionIndex;
+				else if (!string.IsNullOrEmpty(str.Trim()))
+					builder.AddPart(new FormField(
+						string.Format("stackTrace[{0}][]", exceptionIndex), str.Trim()));
+			}
+
+			WebRequest reportRequest = HttpWebRequest.Create(BlackBoxServer);
+			reportRequest.ContentType = "multipart/form-data; boundary=" + builder.Boundary;
+			reportRequest.Method = "POST";
+			using (Stream formStream = builder.Stream)
+			{
+				reportRequest.ContentLength = formStream.Length;
+				using (Stream requestStream = reportRequest.GetRequestStream())
+				{
+					int lastRead = 0;
+					byte[] buffer = new byte[32768];
+					while ((lastRead = formStream.Read(buffer, 0, buffer.Length)) != 0)
+						requestStream.Write(buffer, 0, lastRead);
+				}
+			}
+
+			HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
+			if (response.StatusCode != HttpStatusCode.OK)
+				throw new InvalidDataException(response.StatusDescription);
+
+			using (Stream responseStream = response.GetResponseStream())
+			using (StreamReader rdr = new StreamReader(responseStream))
+			{
+				string str = rdr.ReadToEnd();
+				XmlReader reader = XmlReader.Create(new MemoryStream(Encoding.UTF8.GetBytes(str)));
+				reader.ReadToFollowing("crashReport");
+				string reportStatus = reader.GetAttribute("status");
+				switch (reportStatus)
+				{
+					case "exists":
+						return false;
+
+					case "new":
+						return true;
+
+					default:
+						throw new InvalidDataException(S._("Unknown crash report server response."));
+				}
+			}
 		}
 
 		public void Compress(ProgressChangedEventHandler progressChanged)
@@ -183,12 +235,11 @@ namespace Eraser
 			{
 				//Build the POST request
 				MultipartFormDataBuilder builder = new MultipartFormDataBuilder();
-				builder.AddPart(new FormFileField("CrashReport", "Report.tbz", bzipFile));
-				builder.AddPart(new FormFileField("DebugLog", "Debug.log", logFile));
+				builder.AddPart(new FormField("action", "upload"));
+				builder.AddPart(new FormFileField("crashReport", "Report.tbz", bzipFile));
 
 				//Upload the POST request
-				Uri blackBoxServer = new Uri("http://eraser.heidi.ie/BlackBox/upload.php");
-				WebRequest reportRequest = HttpWebRequest.Create(blackBoxServer);
+				WebRequest reportRequest = HttpWebRequest.Create(BlackBoxServer);
 				reportRequest.ContentType = "multipart/form-data; boundary=" + builder.Boundary;
 				reportRequest.Method = "POST";
 				using (Stream formStream = builder.Stream)
@@ -209,11 +260,7 @@ namespace Eraser
 
 				HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
 				if (response.StatusCode != HttpStatusCode.OK)
-				{
-					using (Stream responseStream = response.GetResponseStream())
-					using (TextReader reader = new StreamReader(responseStream))
-						throw new ArgumentException(reader.ReadToEnd());
-				}
+					throw new InvalidDataException(response.StatusDescription);
 			}
 		}
 
@@ -222,6 +269,12 @@ namespace Eraser
 		/// </summary>
 		private static readonly string UploadTempDir =
 			Path.Combine(Path.GetTempPath(), "Eraser Crash Reports");
+
+		/// <summary>
+		/// The URI to the BlackBox server.
+		/// </summary>
+		private static readonly Uri BlackBoxServer =
+			new Uri("http://eraser.joelsplace.dyndns.org/BlackBox/upload.php");
 
 		/// <summary>
 		/// The report being uploaded.
@@ -329,6 +382,16 @@ namespace Eraser
 		{
 			FieldName = fieldName;
 			Stream = stream;
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="fieldName">The name of the field.</param>
+		/// <param name="stream">The content of the field.</param>
+		public FormField(string fieldName, string content)
+			: this(fieldName, new MemoryStream(Encoding.UTF8.GetBytes(content)))
+		{
 		}
 
 		/// <summary>
