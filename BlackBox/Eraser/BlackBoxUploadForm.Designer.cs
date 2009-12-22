@@ -83,7 +83,7 @@
 			// 
 			// ProgressPb
 			// 
-			this.ProgressPb.Location = new System.Drawing.Point(13, 73);
+			this.ProgressPb.Location = new System.Drawing.Point(13, 70);
 			this.ProgressPb.Name = "ProgressPb";
 			this.ProgressPb.Size = new System.Drawing.Size(321, 17);
 			this.ProgressPb.TabIndex = 3;
@@ -99,7 +99,7 @@
 			// ProgressLbl
 			// 
 			this.ProgressLbl.AutoSize = true;
-			this.ProgressLbl.Location = new System.Drawing.Point(11, 55);
+			this.ProgressLbl.Location = new System.Drawing.Point(11, 52);
 			this.ProgressLbl.Name = "ProgressLbl";
 			this.ProgressLbl.Size = new System.Drawing.Size(126, 15);
 			this.ProgressLbl.TabIndex = 4;
@@ -120,7 +120,9 @@
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "BlackBoxUploadForm";
+			this.ShowInTaskbar = false;
 			this.Text = "Eraser Crash Assistant";
+			this.TopMost = true;
 			this.ButtonsPnl.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
