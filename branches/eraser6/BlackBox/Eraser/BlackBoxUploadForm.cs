@@ -53,89 +53,42 @@ namespace Eraser
 		private void UploadWorker_DoWork(object sender, DoWorkEventArgs e)
 		{
 			IList<BlackBoxReport> reports = (IList<BlackBoxReport>)e.Argument;
-			string uploadDir = Path.Combine(Path.GetTempPath(), "Eraser Crash Reports");
-			if (!Directory.Exists(uploadDir))
-				Directory.CreateDirectory(uploadDir);
-
 			for (int i = 0; i < reports.Count; ++i)
 			{
-				//Generate the base name of the report.
-				string reportBaseName = Path.Combine(uploadDir, reports[i].Name);
-
-				//Calculate the base progress percentage for this job. Add values up to 10
-				//to indicate report progress
-				int baseProgress = i * 100 / reports.Count;
+				//Calculate the base progress percentage for this job.
 				int progressPerReport = 100 / reports.Count;
+				int baseProgress = i * progressPerReport;
 				int stepsPerReport = 2;
 
-				using (FileStream archiveStream = new FileStream(reportBaseName + ".tar",
-					FileMode.Create, FileAccess.Write))
-				{
-					UploadWorker.ReportProgress(baseProgress,
-						S._("Compressing Report {0}", reports[i].Name));
+				BlackBoxReportUploader uploader = new BlackBoxReportUploader(reports[i]);
 
-					//Add the report into a tar file
-					TarArchive archive = TarArchive.CreateOutputTarArchive(archiveStream);
-					foreach (FileInfo file in reports[i].Files)
-						archive.WriteEntry(TarEntry.CreateEntryFromFile(file.FullName), false);
-					archive.Close();
-				}
-
-				int lastRead = 0;
-				byte[] buffer = new byte[524288];
-				using (FileStream bzipFile = new FileStream(reportBaseName + ".tbz",
-					FileMode.Create))
-				using (FileStream tarStream = new FileStream(reportBaseName + ".tar",
-					FileMode.Open, FileAccess.Read, FileShare.Read, 262144, FileOptions.DeleteOnClose))
-				using (BZip2OutputStream bzipStream = new BZip2OutputStream(bzipFile, 262144))
-				{
-					//Compress the tar file
-					while ((lastRead = tarStream.Read(buffer, 0, buffer.Length)) != 0)
+				//Check that a similar report has not yet been uploaded.
+				UploadWorker.ReportProgress(baseProgress,
+					S._("Checking for status of report {0}...", reports[i].Name));
+				if (!uploader.ReportIsNew())
+					continue;
+				
+				//No similar reports have been uploaded. Compress the report.
+				UploadWorker.ReportProgress(baseProgress,
+					S._("Compressing Report {0}: {1}%", reports[i].Name, 0));
+				uploader.Compress(delegate(object from, ProgressChangedEventArgs progress)
 					{
-						bzipStream.Write(buffer, 0, lastRead);
 						UploadWorker.ReportProgress(baseProgress +
-							(int)(tarStream.Position * progressPerReport / tarStream.Length /
-								stepsPerReport));
-					}
-				}
+							progress.ProgressPercentage * progressPerReport / 100 / stepsPerReport,
+							S._("Compressing Report {0}: {1}%",
+								reports[i].Name, progress.ProgressPercentage));
+					});
 
-				using (FileStream bzipFile = new FileStream(reportBaseName + ".tbz",
-					FileMode.Open, FileAccess.Read, FileShare.Read, 131072, FileOptions.DeleteOnClose))
-				using (Stream logFile = reports[i].DebugLog)
-				{
-					//Upload the file
-					UploadWorker.ReportProgress(baseProgress + progressPerReport / 2,
-						S._("Uploading Report {0}", reports[i].Name));
-					MultipartFormDataBuilder builder = new MultipartFormDataBuilder();
-					builder.AddPart(new FormFileField("CrashReport", "Report.tbz", bzipFile));
-					builder.AddPart(new FormFileField("DebugLog", "Debug.log", logFile));
-
-					Uri blackBoxServer = new Uri("http://eraser.heidi.ie/BlackBox/upload.php");
-					WebRequest reportRequest = HttpWebRequest.Create(blackBoxServer);
-					reportRequest.ContentType = "multipart/form-data; boundary=" + builder.Boundary;
-					reportRequest.Method = "POST";
-					using (Stream formStream = builder.Stream)
+				//Upload the report.
+				UploadWorker.ReportProgress(baseProgress + progressPerReport / 2,
+					S._("Uploading Report {0}: {1}%", reports[i].Name));
+				uploader.Upload(delegate(object from, ProgressChangedEventArgs progress)
 					{
-						reportRequest.ContentLength = formStream.Length;
-						using (Stream requestStream = reportRequest.GetRequestStream())
-						{
-							while ((lastRead = formStream.Read(buffer, 0, buffer.Length)) != 0)
-							{
-								requestStream.Write(buffer, 0, lastRead);
-								UploadWorker.ReportProgress(baseProgress + progressPerReport / stepsPerReport +
-									(int)(formStream.Position * progressPerReport / formStream.Length / 2));
-							}
-						}
-
-						HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
-						if (response.StatusCode != HttpStatusCode.OK)
-						{
-							using (Stream responseStream = response.GetResponseStream())
-							using (TextReader reader = new StreamReader(responseStream))
-								throw new ArgumentException(reader.ReadToEnd());
-						}
-					}
-				}
+						UploadWorker.ReportProgress(baseProgress + progressPerReport / stepsPerReport +
+							progress.ProgressPercentage * progressPerReport / 100 / stepsPerReport,
+							S._("Uploading Report {0}: {1}%",
+								reports[i].Name, progress.ProgressPercentage));
+					});
 			}
 		}
 
@@ -162,6 +115,119 @@ namespace Eraser
 		}
 
 		private IList<BlackBoxReport> Reports;
+	}
+
+	class BlackBoxReportUploader
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="report">The report to upload.</param>
+		public BlackBoxReportUploader(BlackBoxReport report)
+		{
+			Report = report;
+			if (!Directory.Exists(UploadTempDir))
+				Directory.CreateDirectory(UploadTempDir);
+
+			ReportBaseName =  Path.Combine(UploadTempDir, Report.Name);
+		}
+
+		/// <summary>
+		/// Verifies the stack trace against the server to see if the report is new.
+		/// </summary>
+		/// <returns>True if the report is new; false otherwise</returns>
+		public bool ReportIsNew()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Compress(ProgressChangedEventHandler progressChanged)
+		{
+			using (FileStream archiveStream = new FileStream(ReportBaseName + ".tar",
+					FileMode.Create, FileAccess.Write))
+			{
+				//Add the report into a tar file
+				TarArchive archive = TarArchive.CreateOutputTarArchive(archiveStream);
+				foreach (FileInfo file in Report.Files)
+					archive.WriteEntry(TarEntry.CreateEntryFromFile(file.FullName), false);
+				archive.Close();
+			}
+
+			using (FileStream bzipFile = new FileStream(ReportBaseName + ".tbz",
+				FileMode.Create))
+			using (FileStream tarStream = new FileStream(ReportBaseName + ".tar",
+				FileMode.Open, FileAccess.Read, FileShare.Read, 262144, FileOptions.DeleteOnClose))
+			using (BZip2OutputStream bzipStream = new BZip2OutputStream(bzipFile, 262144))
+			{
+				//Compress the tar file
+				int lastRead = 0;
+				byte[] buffer = new byte[524288];
+				while ((lastRead = tarStream.Read(buffer, 0, buffer.Length)) != 0)
+				{
+					bzipStream.Write(buffer, 0, lastRead);
+					progressChanged(this, new ProgressChangedEventArgs(
+						(int)(tarStream.Position * 100 / tarStream.Length), null));
+				}
+			}
+		}
+
+		public void Upload(ProgressChangedEventHandler progressChanged)
+		{
+			using (FileStream bzipFile = new FileStream(ReportBaseName + ".tbz",
+				FileMode.Open, FileAccess.Read, FileShare.Read, 131072, FileOptions.DeleteOnClose))
+			using (Stream logFile = Report.DebugLog)
+			{
+				//Build the POST request
+				MultipartFormDataBuilder builder = new MultipartFormDataBuilder();
+				builder.AddPart(new FormFileField("CrashReport", "Report.tbz", bzipFile));
+				builder.AddPart(new FormFileField("DebugLog", "Debug.log", logFile));
+
+				//Upload the POST request
+				Uri blackBoxServer = new Uri("http://eraser.heidi.ie/BlackBox/upload.php");
+				WebRequest reportRequest = HttpWebRequest.Create(blackBoxServer);
+				reportRequest.ContentType = "multipart/form-data; boundary=" + builder.Boundary;
+				reportRequest.Method = "POST";
+				using (Stream formStream = builder.Stream)
+				{
+					reportRequest.ContentLength = formStream.Length;
+					using (Stream requestStream = reportRequest.GetRequestStream())
+					{
+						int lastRead = 0;
+						byte[] buffer = new byte[524288];
+						while ((lastRead = formStream.Read(buffer, 0, buffer.Length)) != 0)
+						{
+							requestStream.Write(buffer, 0, lastRead);
+							progressChanged(this, new ProgressChangedEventArgs(
+								(int)(formStream.Position * 100 / formStream.Length), null));
+						}
+					}
+				}
+
+				HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
+				if (response.StatusCode != HttpStatusCode.OK)
+				{
+					using (Stream responseStream = response.GetResponseStream())
+					using (TextReader reader = new StreamReader(responseStream))
+						throw new ArgumentException(reader.ReadToEnd());
+				}
+			}
+		}
+
+		/// <summary>
+		/// The path to where the temporary files are stored before uploading.
+		/// </summary>
+		private static readonly string UploadTempDir =
+			Path.Combine(Path.GetTempPath(), "Eraser Crash Reports");
+
+		/// <summary>
+		/// The report being uploaded.
+		/// </summary>
+		private BlackBoxReport Report;
+
+		/// <summary>
+		/// The base name of the report.
+		/// </summary>
+		private readonly string ReportBaseName;
 	}
 
 	class MultipartFormDataBuilder
