@@ -97,7 +97,7 @@
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "BlackBoxUploadForm";
-			this.ShowInTaskbar = false;
+			this.TopMost = true;
 			this.ButtonsPnl.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
