@@ -277,16 +277,6 @@ namespace Eraser.Util
 		{
 			AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
-			Application.Idle += OnApplicationIdle;
-		}
-
-		/// <summary>
-		/// Called when the application has reached the idle state. This is used to
-		/// process and upload crash reports to the Eraser server.
-		/// </summary>
-		private void OnApplicationIdle(object sender, EventArgs e)
-		{
-			Application.Idle -= OnApplicationIdle;
 		}
 
 		/// <summary>
@@ -378,9 +368,9 @@ namespace Eraser.Util
 						stream.WriteLine(string.Format("Exception {0}:", i));
 						stream.WriteLine(string.Format(lineFormat, "Message", currentException.Message));
 						stream.WriteLine(string.Format(lineFormat, "Exception Type",
-							currentException.GetType().Name));
+							currentException.GetType().FullName));
 						stackTraceLog.WriteLine(string.Format("Exception {0}: {1}", i,
-							currentException.GetType().Name));
+							currentException.GetType().FullName));
 
 						//Parse the stack trace
 						string[] stackTrace = currentException.StackTrace.Split(new char[] { '\n' });
