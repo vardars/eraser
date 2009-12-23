@@ -40,6 +40,9 @@ namespace Eraser
 			ReportsLb.BeginUpdate();
 			foreach (BlackBoxReport report in BlackBox.GetDumps())
 			{
+				if (report.Submitted)
+					continue;
+
 				ReportsLb.Items.Add(report);
 				ReportsLb.SetItemChecked(ReportsLb.Items.Count - 1, true);
 			}

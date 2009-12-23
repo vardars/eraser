@@ -46,8 +46,6 @@ namespace Eraser
 		{
 			InitializeComponent();
 			UXThemeApi.UpdateControlTheme(this);
-
-			Reports = reports;
 			UploadWorker.RunWorkerAsync(reports);
 		}
 
@@ -105,6 +103,7 @@ namespace Eraser
 			if (e.Error == null)
 			{
 				ProgressLbl.Text = S._("Reports submitted successfully.");
+				ProgressPb.Value = ProgressPb.Maximum;
 				CancelBtn.Text = S._("Close");
 			}
 			else
@@ -124,8 +123,6 @@ namespace Eraser
 			else
 				Close();
 		}
-
-		private IList<BlackBoxReport> Reports;
 	}
 
 	class BlackBoxReportUploader
@@ -179,6 +176,7 @@ namespace Eraser
 					switch (reportStatus)
 					{
 						case "exists":
+							Report.Submitted = true;
 							return false;
 
 						case "new":
@@ -278,6 +276,7 @@ namespace Eraser
 				try
 				{
 					reportRequest.GetResponse();
+					Report.Submitted = true;
 				}
 				catch (WebException e)
 				{

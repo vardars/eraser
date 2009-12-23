@@ -529,7 +529,7 @@ namespace Eraser.Util
 				List<FileInfo> result = new List<FileInfo>();
 				DirectoryInfo directory = new DirectoryInfo(Path);
 				foreach (FileInfo file in directory.GetFiles())
-					if (file.Name != BlackBox.StackTraceFileName)
+					if (!InternalFiles.Contains(file.Name))
 						result.Add(file);
 
 				return result.AsReadOnly();
@@ -559,6 +559,34 @@ namespace Eraser.Util
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets whether the given report has been uploaded to the server.
+		/// </summary>
+		public bool Submitted
+		{
+			get
+			{
+				byte[] buffer = new byte[1];
+				using (FileStream stream = new FileStream(System.IO.Path.Combine(Path, StatusFileName),
+					FileMode.OpenOrCreate, FileAccess.Read, FileShare.Read))
+				{
+					stream.Read(buffer, 0, buffer.Length);
+				}
+
+				return buffer[0] == 1;
+			}
+
+			set
+			{
+				byte[] buffer = { Convert.ToByte(value) };
+				using (FileStream stream = new FileStream(System.IO.Path.Combine(Path, StatusFileName),
+					FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
+				{
+					stream.Write(buffer, 0, buffer.Length);
+				}
+			}
+		}
+
 		public override string ToString()
 		{
 			return Name;
@@ -573,6 +601,21 @@ namespace Eraser.Util
 		/// The backing variable for the <see cref="StackTrace"/> field.
 		/// </summary>
 		private List<BlackBoxExceptionEntry> StackTraceCache;
+
+		/// <summary>
+		/// The file name for the status file.
+		/// </summary>
+		private static readonly string StatusFileName = "Status.txt";
+
+		/// <summary>
+		/// The list of files internal to the report.
+		/// </summary>
+		private static readonly List<string> InternalFiles = new List<string>(
+			new string[] {
+				 BlackBox.StackTraceFileName,
+				 "Status.txt"
+			}
+		);
 	}
 
 	/// <summary>
