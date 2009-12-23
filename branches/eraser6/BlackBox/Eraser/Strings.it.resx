@@ -153,6 +153,9 @@
   <data name="Close" xml:space="preserve">
     <value>Chiudi</value>
   </data>
+  <data name="Submission was cancelled." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Unknown crash report server response." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>

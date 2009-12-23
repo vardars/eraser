@@ -153,6 +153,9 @@
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="Submission was cancelled." xml:space="preserve">
+    <value>Submission was cancelled.</value>
+  </data>
   <data name="Unknown crash report server response." xml:space="preserve">
     <value>Unknown crash report server response.</value>
   </data>
