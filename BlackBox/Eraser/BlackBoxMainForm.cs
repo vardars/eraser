@@ -27,6 +27,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Eraser.Util;
+using System.Diagnostics;
 
 namespace Eraser
 {
@@ -37,27 +38,39 @@ namespace Eraser
 			InitializeComponent();
 			UXThemeApi.UpdateControlTheme(this);
 
-			ReportsLb.BeginUpdate();
+			ReportsLv.BeginUpdate();
 			foreach (BlackBoxReport report in BlackBox.GetDumps())
 			{
 				if (report.Submitted)
 					continue;
 
-				ReportsLb.Items.Add(report);
-				ReportsLb.SetItemChecked(ReportsLb.Items.Count - 1, true);
+				ListViewItem item = ReportsLv.Items.Add(report.Name);
+				item.Tag = report;
+				item.Checked = true;
 			}
-			ReportsLb.EndUpdate();
+			ReportsLv.EndUpdate();
+		}
+
+		private void ReportsLv_ItemActivate(object sender, EventArgs e)
+		{
+			Process.Start((ReportsLv.SelectedItems[0].Tag as BlackBoxReport).Path);
 		}
 
 		private void SubmitBtn_Click(object sender, EventArgs e)
 		{
 			Visible = false;
+			List<BlackBoxReport> reports = new List<BlackBoxReport>();
+			foreach (ListViewItem item in ReportsLv.Items)
+				if (item.Checked)
+					reports.Add((BlackBoxReport)item.Tag);
+				else
+					((BlackBoxReport)item.Tag).Delete();
 
-			BlackBoxReport[] selectedReports = new BlackBoxReport[ReportsLb.CheckedItems.Count];
-			ReportsLb.CheckedItems.CopyTo(selectedReports, 0);
-			BlackBoxUploadForm form = new BlackBoxUploadForm(selectedReports);
-			form.Show();
-
+			if (reports.Count != 0)
+			{
+				BlackBoxUploadForm form = new BlackBoxUploadForm(reports);
+				form.Show();
+			}
 			Close();
 		}
 

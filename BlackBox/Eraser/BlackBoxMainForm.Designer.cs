@@ -30,10 +30,11 @@
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BlackBoxMainForm));
 			this.MainLbl = new System.Windows.Forms.Label();
-			this.ReportsLb = new System.Windows.Forms.CheckedListBox();
 			this.SubmitBtn = new System.Windows.Forms.Button();
 			this.PostponeBtn = new System.Windows.Forms.Button();
 			this.BlackBoxPic = new System.Windows.Forms.PictureBox();
+			this.ReportsLv = new System.Windows.Forms.ListView();
+			this.ReportsLvNameColumn = new System.Windows.Forms.ColumnHeader();
 			((System.ComponentModel.ISupportInitialize)(this.BlackBoxPic)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -41,14 +42,6 @@
 			// 
 			resources.ApplyResources(this.MainLbl, "MainLbl");
 			this.MainLbl.Name = "MainLbl";
-			// 
-			// ReportsLb
-			// 
-			resources.ApplyResources(this.ReportsLb, "ReportsLb");
-			this.ReportsLb.CheckOnClick = true;
-			this.ReportsLb.FormattingEnabled = true;
-			this.ReportsLb.Name = "ReportsLb";
-			this.ReportsLb.ThreeDCheckBoxes = true;
 			// 
 			// SubmitBtn
 			// 
@@ -71,14 +64,31 @@
 			this.BlackBoxPic.Name = "BlackBoxPic";
 			this.BlackBoxPic.TabStop = false;
 			// 
+			// ReportsLv
+			// 
+			resources.ApplyResources(this.ReportsLv, "ReportsLv");
+			this.ReportsLv.CheckBoxes = true;
+			this.ReportsLv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.ReportsLvNameColumn});
+			this.ReportsLv.FullRowSelect = true;
+			this.ReportsLv.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+			this.ReportsLv.Name = "ReportsLv";
+			this.ReportsLv.UseCompatibleStateImageBehavior = false;
+			this.ReportsLv.View = System.Windows.Forms.View.Details;
+			this.ReportsLv.ItemActivate += new System.EventHandler(this.ReportsLv_ItemActivate);
+			// 
+			// ReportsLvNameColumn
+			// 
+			resources.ApplyResources(this.ReportsLvNameColumn, "ReportsLvNameColumn");
+			// 
 			// BlackBoxMainForm
 			// 
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+			this.Controls.Add(this.ReportsLv);
 			this.Controls.Add(this.BlackBoxPic);
 			this.Controls.Add(this.PostponeBtn);
 			this.Controls.Add(this.SubmitBtn);
-			this.Controls.Add(this.ReportsLb);
 			this.Controls.Add(this.MainLbl);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
@@ -93,9 +103,10 @@
 		#endregion
 
 		private System.Windows.Forms.Label MainLbl;
-		private System.Windows.Forms.CheckedListBox ReportsLb;
 		private System.Windows.Forms.Button SubmitBtn;
 		private System.Windows.Forms.Button PostponeBtn;
 		private System.Windows.Forms.PictureBox BlackBoxPic;
+		private System.Windows.Forms.ListView ReportsLv;
+		private System.Windows.Forms.ColumnHeader ReportsLvNameColumn;
 	}
 }
