@@ -49,6 +49,15 @@ namespace Eraser
 			UploadWorker.RunWorkerAsync(reports);
 		}
 
+		private void BlackBoxUploadForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			if (UploadWorker.IsBusy)
+			{
+				UploadWorker.CancelAsync();
+				e.Cancel = true;
+			}
+		}
+
 		private void UploadWorker_DoWork(object sender, DoWorkEventArgs e)
 		{
 			IList<BlackBoxReport> reports = (IList<BlackBoxReport>)e.Argument;
