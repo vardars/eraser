@@ -509,6 +509,14 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
+		/// Deletes the report and its contents.
+		/// </summary>
+		public void Delete()
+		{
+			Directory.Delete(Path, true);
+		}
+
+		/// <summary>
 		/// The name of the report.
 		/// </summary>
 		public string Name
@@ -517,6 +525,15 @@ namespace Eraser.Util
 			{
 				return System.IO.Path.GetFileName(Path);
 			}
+		}
+
+		/// <summary>
+		/// The path to the folder containing the report.
+		/// </summary>
+		public string Path
+		{
+			get;
+			private set;
 		}
 
 		/// <summary>
@@ -591,11 +608,6 @@ namespace Eraser.Util
 		{
 			return Name;
 		}
-
-		/// <summary>
-		/// The path to the folder containing the report.
-		/// </summary>
-		private string Path;
 
 		/// <summary>
 		/// The backing variable for the <see cref="StackTrace"/> field.
