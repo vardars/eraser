@@ -66,7 +66,10 @@ namespace Eraser
 					S._("Checking for status of report {0}...", reports[i].Name));
 				if (!uploader.ReportIsNew())
 					continue;
-				
+
+				if (UploadWorker.CancellationPending)
+					throw new OperationCanceledException();
+
 				//No similar reports have been uploaded. Compress the report.
 				UploadWorker.ReportProgress(baseProgress,
 					S._("Compressing Report {0}: {1}%", reports[i].Name, 0));
@@ -76,6 +79,9 @@ namespace Eraser
 							progress.ProgressPercentage * progressPerReport / 100 / stepsPerReport,
 							S._("Compressing Report {0}: {1}%",
 								reports[i].Name, progress.ProgressPercentage));
+
+						if (UploadWorker.CancellationPending)
+							throw new OperationCanceledException();
 					});
 
 				//Upload the report.
@@ -87,6 +93,9 @@ namespace Eraser
 							progress.ProgressPercentage * progressPerReport / 100 / stepsPerReport,
 							S._("Uploading Report {0}: {1}%",
 								reports[i].Name, progress.ProgressPercentage));
+
+						if (UploadWorker.CancellationPending)
+							throw new OperationCanceledException();
 					});
 			}
 		}
@@ -103,6 +112,12 @@ namespace Eraser
 			if (e.Error == null)
 			{
 				ProgressLbl.Text = S._("Reports submitted successfully.");
+				ProgressPb.Value = ProgressPb.Maximum;
+				CancelBtn.Text = S._("Close");
+			}
+			else if (e.Error is OperationCanceledException)
+			{
+				ProgressLbl.Text = S._("Submission was cancelled.");
 				ProgressPb.Value = ProgressPb.Maximum;
 				CancelBtn.Text = S._("Close");
 			}
@@ -257,6 +272,7 @@ namespace Eraser
 				WebRequest reportRequest = HttpWebRequest.Create(BlackBoxServer);
 				reportRequest.ContentType = "multipart/form-data; boundary=" + builder.Boundary;
 				reportRequest.Method = "POST";
+				reportRequest.Timeout = int.MaxValue;
 				using (Stream formStream = builder.Stream)
 				{
 					reportRequest.ContentLength = formStream.Length;
