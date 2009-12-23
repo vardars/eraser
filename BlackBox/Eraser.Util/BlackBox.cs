@@ -377,9 +377,10 @@ namespace Eraser.Util
 					for (uint i = 1; currentException != null; ++i)
 					{
 						stream.WriteLine(string.Format("Exception {0}:", i));
-						stackTraceLog.WriteLine(string.Format("Exception {0}:", i));
 						stream.WriteLine(string.Format(lineFormat, "Message", currentException.Message));
 						stream.WriteLine(string.Format(lineFormat, "Exception Type",
+							currentException.GetType().Name));
+						stackTraceLog.WriteLine(string.Format("Exception {0}: {1}", i,
 							currentException.GetType().Name));
 
 						//Parse the stack trace
@@ -470,6 +471,41 @@ namespace Eraser.Util
 		internal BlackBoxReport(string path)
 		{
 			Path = path;
+
+			string[] stackTrace = null;
+			using (StreamReader reader = new StreamReader(
+				System.IO.Path.Combine(Path, BlackBox.StackTraceFileName)))
+			{
+				stackTrace = reader.ReadToEnd().Split(new char[] { '\n' });
+			}
+
+			//Parse the lines in the file.
+			StackTraceCache = new List<BlackBoxExceptionEntry>();
+			List<string> currentException = new List<string>();
+			string exceptionType = null;
+			foreach (string str in stackTrace)
+			{
+				if (str.StartsWith("Exception "))
+				{
+					//Add the current exception to the list of exceptions.
+					if (currentException.Count != 0)
+					{
+						StackTraceCache.Add(new BlackBoxExceptionEntry(exceptionType,
+							new List<string>(currentException)));
+						currentException.Clear();
+					}
+
+					//Set the exception type for the next exception.
+					exceptionType = str.Substring(str.IndexOf(':') + 1);
+				}
+				else if (!string.IsNullOrEmpty(str.Trim()))
+				{
+					currentException.Add(str.Trim());
+				}
+			}
+
+			if (currentException.Count != 0)
+				StackTraceCache.Add(new BlackBoxExceptionEntry(exceptionType, currentException));
 		}
 
 		/// <summary>
@@ -486,7 +522,7 @@ namespace Eraser.Util
 		/// <summary>
 		/// The files which comprise the error report.
 		/// </summary>
-		public ICollection<FileInfo> Files
+		public ReadOnlyCollection<FileInfo> Files
 		{
 			get
 			{
@@ -515,39 +551,11 @@ namespace Eraser.Util
 		/// <summary>
 		/// Gets the stack trace for this crash report.
 		/// </summary>
-		public IList<IList<string>> StackTrace
+		public ReadOnlyCollection<BlackBoxExceptionEntry> StackTrace
 		{
 			get
 			{
-				List<IList<string>> result = new List<IList<string>>();
-				string[] stackTrace = null;
-				using (StreamReader reader = new StreamReader(
-					System.IO.Path.Combine(Path, BlackBox.StackTraceFileName)))
-				{
-					stackTrace = reader.ReadToEnd().Split(new char[] { '\n' });
-				}
-
-				//Parse the lines in the file.
-				List<string> currentException = new List<string>();
-				foreach (string str in stackTrace)
-				{
-					if (str.StartsWith("Exception "))
-					{
-						if (currentException.Count != 0)
-						{
-							result.Add(new List<string>(currentException));
-							currentException.Clear();
-						}
-					}
-					else if (!string.IsNullOrEmpty(str.Trim()))
-					{
-						currentException.Add(str.Trim());
-					}
-				}
-
-				if (currentException.Count != 0)
-					result.Add(currentException);
-				return result;
+				return StackTraceCache.AsReadOnly();
 			}
 		}
 
@@ -560,5 +568,53 @@ namespace Eraser.Util
 		/// The path to the folder containing the report.
 		/// </summary>
 		private string Path;
+
+		/// <summary>
+		/// The backing variable for the <see cref="StackTrace"/> field.
+		/// </summary>
+		private List<BlackBoxExceptionEntry> StackTraceCache;
+	}
+
+	/// <summary>
+	/// Represents one exception which can be chained <see cref="InnerException"/>
+	/// to represent the exception handled by BlackBox
+	/// </summary>
+	public class BlackBoxExceptionEntry
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="exceptionType">The type of the exception.</param>
+		/// <param name="stackTrace">The stack trace for this exception.</param>
+		internal BlackBoxExceptionEntry(string exceptionType, List<string> stackTrace)
+		{
+			ExceptionType = exceptionType;
+			StackTraceCache = stackTrace;
+		}
+
+		/// <summary>
+		/// The type of the exception.
+		/// </summary>
+		public string ExceptionType
+		{
+			get;
+			private set;
+		}
+
+		/// <summary>
+		/// The stack trace for this exception.
+		/// </summary>
+		public ReadOnlyCollection<string> StackTrace
+		{
+			get
+			{
+				return StackTraceCache.AsReadOnly();
+			}
+		}
+
+		/// <summary>
+		/// The backing variable for the <see cref="StackTrace"/> property.
+		/// </summary>
+		private List<string> StackTraceCache;
 	}
 }
