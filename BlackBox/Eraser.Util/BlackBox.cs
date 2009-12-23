@@ -496,7 +496,7 @@ namespace Eraser.Util
 					}
 
 					//Set the exception type for the next exception.
-					exceptionType = str.Substring(str.IndexOf(':') + 1);
+					exceptionType = str.Substring(str.IndexOf(':') + 1).Trim();
 				}
 				else if (!string.IsNullOrEmpty(str.Trim()))
 				{
