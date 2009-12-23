@@ -149,33 +149,6 @@ The program's state and other information about the error have been stored on yo
   <data name="&gt;&gt;MainLbl.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
-  <data name="ReportsLb.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
-  </data>
-  <data name="ReportsLb.IntegralHeight" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="ReportsLb.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 124</value>
-  </data>
-  <data name="ReportsLb.Size" type="System.Drawing.Size, System.Drawing">
-    <value>537, 186</value>
-  </data>
-  <data name="ReportsLb.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;ReportsLb.Name" xml:space="preserve">
-    <value>ReportsLb</value>
-  </data>
-  <data name="&gt;&gt;ReportsLb.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckedListBox, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ReportsLb.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;ReportsLb.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
   <data name="SubmitBtn.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
@@ -186,7 +159,7 @@ The program's state and other information about the error have been stored on yo
     <value>100, 23</value>
   </data>
   <data name="SubmitBtn.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="SubmitBtn.Text" xml:space="preserve">
     <value>Submit Now</value>
@@ -201,7 +174,7 @@ The program's state and other information about the error have been stored on yo
     <value>$this</value>
   </data>
   <data name="&gt;&gt;SubmitBtn.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="PostponeBtn.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
@@ -213,7 +186,7 @@ The program's state and other information about the error have been stored on yo
     <value>100, 23</value>
   </data>
   <data name="PostponeBtn.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="PostponeBtn.Text" xml:space="preserve">
     <value>Submit Later</value>
@@ -228,7 +201,7 @@ The program's state and other information about the error have been stored on yo
     <value>$this</value>
   </data>
   <data name="&gt;&gt;PostponeBtn.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="BlackBoxPic.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 12</value>
@@ -249,6 +222,36 @@ The program's state and other information about the error have been stored on yo
     <value>$this</value>
   </data>
   <data name="&gt;&gt;BlackBoxPic.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="ReportsLv.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="ReportsLvNameColumn.Text" xml:space="preserve">
+    <value>Report Name</value>
+  </data>
+  <data name="ReportsLvNameColumn.Width" type="System.Int32, mscorlib">
+    <value>530</value>
+  </data>
+  <data name="ReportsLv.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 124</value>
+  </data>
+  <data name="ReportsLv.Size" type="System.Drawing.Size, System.Drawing">
+    <value>537, 186</value>
+  </data>
+  <data name="ReportsLv.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;ReportsLv.Name" xml:space="preserve">
+    <value>ReportsLv</value>
+  </data>
+  <data name="&gt;&gt;ReportsLv.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ReportsLv.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;ReportsLv.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -265,6 +268,12 @@ The program's state and other information about the error have been stored on yo
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Eraser Crash Assistant</value>
+  </data>
+  <data name="&gt;&gt;ReportsLvNameColumn.Name" xml:space="preserve">
+    <value>ReportsLvNameColumn</value>
+  </data>
+  <data name="&gt;&gt;ReportsLvNameColumn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>BlackBoxMainForm</value>
