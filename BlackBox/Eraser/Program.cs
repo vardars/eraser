@@ -220,7 +220,16 @@ namespace Eraser
 		{
 			Application.Idle -= OnGUIIdle;
 			BlackBox blackBox = BlackBox.Get();
-			if (blackBox.GetDumps().Length == 0)
+
+			bool allSubmitted = true;
+			foreach (BlackBoxReport report in blackBox.GetDumps())
+				if (!report.Submitted)
+				{
+					allSubmitted = false;
+					break;
+				}
+
+			if (allSubmitted)
 				return;
 
 			using (BlackBoxMainForm form = new BlackBoxMainForm())
