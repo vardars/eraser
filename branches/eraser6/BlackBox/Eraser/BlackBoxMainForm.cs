@@ -55,8 +55,8 @@ namespace Eraser
 
 			BlackBoxReport[] selectedReports = new BlackBoxReport[ReportsLb.CheckedItems.Count];
 			ReportsLb.CheckedItems.CopyTo(selectedReports, 0);
-			using (BlackBoxUploadForm form = new BlackBoxUploadForm(selectedReports))
-				form.ShowDialog();
+			BlackBoxUploadForm form = new BlackBoxUploadForm(selectedReports);
+			form.Show();
 
 			Close();
 		}
