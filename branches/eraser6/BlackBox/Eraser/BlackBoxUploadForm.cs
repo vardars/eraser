@@ -305,15 +305,17 @@ namespace Eraser
 		/// </summary>
 		/// <param name="stackTrace">The stack trace to add.</param>
 		/// <param name="builder">The Form request builder to add the stack trace to.</param>
-		private static void AddStackTraceToRequest(IList<IList<string>> stackTrace,
+		private static void AddStackTraceToRequest(IList<BlackBoxExceptionEntry> stackTrace,
 			MultipartFormDataBuilder builder)
 		{
 			int exceptionIndex = 0;
-			foreach (IList<string> exceptionStack in stackTrace)
+			foreach (BlackBoxExceptionEntry exceptionStack in stackTrace)
 			{
-				foreach (string stackFrame in exceptionStack)
+				foreach (string stackFrame in exceptionStack.StackTrace)
 					builder.AddPart(new FormField(
 						string.Format("stackTrace[{0}][]", exceptionIndex), stackFrame));
+				builder.AddPart(new FormField(string.Format(
+					"stackTrace[{0}][exception]", exceptionIndex), exceptionStack.ExceptionType));
 				++exceptionIndex;
 			}
 		}
@@ -422,7 +424,7 @@ namespace Eraser
 		/// Characters valid for use in the multipart boundary.
 		/// </summary>
 		private static readonly string ValidBoundaryChars =
-			"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'()+_,-./:=?";
+			"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	}
 
 	class FormField
