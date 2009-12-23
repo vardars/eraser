@@ -58,7 +58,6 @@ namespace Eraser
 
 		private void SubmitBtn_Click(object sender, EventArgs e)
 		{
-			Visible = false;
 			List<BlackBoxReport> reports = new List<BlackBoxReport>();
 			foreach (ListViewItem item in ReportsLv.Items)
 				if (item.Checked)
@@ -71,6 +70,7 @@ namespace Eraser
 				BlackBoxUploadForm form = new BlackBoxUploadForm(reports);
 				form.Show();
 			}
+
 			Close();
 		}
 

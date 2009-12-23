@@ -95,6 +95,7 @@
 			this.MinimizeBox = false;
 			this.Name = "BlackBoxMainForm";
 			this.ShowInTaskbar = false;
+			this.TopMost = true;
 			((System.ComponentModel.ISupportInitialize)(this.BlackBoxPic)).EndInit();
 			this.ResumeLayout(false);
 
