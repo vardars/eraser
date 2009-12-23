@@ -95,9 +95,7 @@
 			this.Controls.Add(this.ButtonsPnl);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximizeBox = false;
-			this.MinimizeBox = false;
 			this.Name = "BlackBoxUploadForm";
-			this.TopMost = true;
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BlackBoxUploadForm_FormClosing);
 			this.ButtonsPnl.ResumeLayout(false);
 			this.ResumeLayout(false);

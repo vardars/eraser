@@ -232,8 +232,8 @@ namespace Eraser
 			if (allSubmitted)
 				return;
 
-			using (BlackBoxMainForm form = new BlackBoxMainForm())
-				form.ShowDialog();
+			BlackBoxMainForm form = new BlackBoxMainForm();
+			form.Show();
 		}
 
 		/// <summary>
