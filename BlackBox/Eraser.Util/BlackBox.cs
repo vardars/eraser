@@ -295,8 +295,7 @@ namespace Eraser.Util
 		private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			//Generate a unique identifier for this report.
-			string crashName = DateTime.Now.ToString();
-			crashName = crashName.Replace('/', '-').Replace(":", "");
+			string crashName = DateTime.Now.ToString("yyyyMMdd HHmmss.FFF");
 			string currentCrashReport = Path.Combine(CrashReportsPath, crashName);
 			Directory.CreateDirectory(currentCrashReport);
 
