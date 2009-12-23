@@ -98,6 +98,7 @@
 			this.MinimizeBox = false;
 			this.Name = "BlackBoxUploadForm";
 			this.TopMost = true;
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.BlackBoxUploadForm_FormClosing);
 			this.ButtonsPnl.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
