@@ -264,8 +264,9 @@ namespace Eraser.Util
 		{
 			DirectoryInfo dirInfo = new DirectoryInfo(CrashReportsPath);
 			List<BlackBoxReport> result = new List<BlackBoxReport>();
-			foreach (DirectoryInfo subDir in dirInfo.GetDirectories())
-				result.Add(new BlackBoxReport(Path.Combine(CrashReportsPath, subDir.Name)));
+			if (dirInfo.Exists)
+				foreach (DirectoryInfo subDir in dirInfo.GetDirectories())
+					result.Add(new BlackBoxReport(Path.Combine(CrashReportsPath, subDir.Name)));
 
 			return result.ToArray();
 		}
