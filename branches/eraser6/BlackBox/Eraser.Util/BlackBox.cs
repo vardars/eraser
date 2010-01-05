@@ -257,6 +257,30 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
+		/// Creates a new BlackBox report based on the exception provided.
+		/// </summary>
+		/// <param name="e">The exception which triggered this dump.</param>
+		public void CreateReport(Exception e)
+		{
+			if (e == null)
+				throw new ArgumentNullException("e");
+
+			//Generate a unique identifier for this report.
+			string crashName = DateTime.Now.ToString("yyyyMMdd HHmmss.FFF");
+			string currentCrashReport = Path.Combine(CrashReportsPath, crashName);
+			Directory.CreateDirectory(currentCrashReport);
+
+			//Write a memory dump to the folder
+			WriteMemoryDump(currentCrashReport, e);
+
+			//Then write a user-readable summary
+			WriteDebugLog(currentCrashReport, e);
+
+			//Take a screenshot
+			WriteScreenshot(currentCrashReport);
+		}
+
+		/// <summary>
 		/// Enumerates the list of crash dumps waiting for upload.
 		/// </summary>
 		/// <returns>A string array containing the list of dumps waiting for upload.</returns>
@@ -285,20 +309,7 @@ namespace Eraser.Util
 		/// </summary>
 		private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-			//Generate a unique identifier for this report.
-			string crashName = DateTime.Now.ToString("yyyyMMdd HHmmss.FFF");
-			string currentCrashReport = Path.Combine(CrashReportsPath, crashName);
-			Directory.CreateDirectory(currentCrashReport);
-
-			//Write a memory dump to the folder
-			Exception exception = (e.ExceptionObject as Exception);
-			WriteMemoryDump(currentCrashReport, exception);
-
-			//Then write a user-readable summary
-			WriteDebugLog(currentCrashReport, exception);
-
-			//Take a screenshot
-			WriteScreenshot(currentCrashReport);
+			CreateReport(e.ExceptionObject as Exception);
 		}
 
 		/// <summary>
