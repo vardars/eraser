@@ -34,7 +34,8 @@
 			this.PostponeBtn = new System.Windows.Forms.Button();
 			this.BlackBoxPic = new System.Windows.Forms.PictureBox();
 			this.ReportsLv = new System.Windows.Forms.ListView();
-			this.ReportsLvNameColumn = new System.Windows.Forms.ColumnHeader();
+			this.ReportsLvTimestampColumn = new System.Windows.Forms.ColumnHeader();
+			this.ReportsLvErrorColumn = new System.Windows.Forms.ColumnHeader();
 			((System.ComponentModel.ISupportInitialize)(this.BlackBoxPic)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -69,17 +70,22 @@
 			resources.ApplyResources(this.ReportsLv, "ReportsLv");
 			this.ReportsLv.CheckBoxes = true;
 			this.ReportsLv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.ReportsLvNameColumn});
+            this.ReportsLvTimestampColumn,
+            this.ReportsLvErrorColumn});
 			this.ReportsLv.FullRowSelect = true;
-			this.ReportsLv.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+			this.ReportsLv.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.ReportsLv.Name = "ReportsLv";
 			this.ReportsLv.UseCompatibleStateImageBehavior = false;
 			this.ReportsLv.View = System.Windows.Forms.View.Details;
 			this.ReportsLv.ItemActivate += new System.EventHandler(this.ReportsLv_ItemActivate);
 			// 
-			// ReportsLvNameColumn
+			// ReportsLvTimestampColumn
 			// 
-			resources.ApplyResources(this.ReportsLvNameColumn, "ReportsLvNameColumn");
+			resources.ApplyResources(this.ReportsLvTimestampColumn, "ReportsLvTimestampColumn");
+			// 
+			// ReportsLvErrorColumn
+			// 
+			resources.ApplyResources(this.ReportsLvErrorColumn, "ReportsLvErrorColumn");
 			// 
 			// BlackBoxMainForm
 			// 
@@ -108,6 +114,7 @@
 		private System.Windows.Forms.Button PostponeBtn;
 		private System.Windows.Forms.PictureBox BlackBoxPic;
 		private System.Windows.Forms.ListView ReportsLv;
-		private System.Windows.Forms.ColumnHeader ReportsLvNameColumn;
+		private System.Windows.Forms.ColumnHeader ReportsLvTimestampColumn;
+		private System.Windows.Forms.ColumnHeader ReportsLvErrorColumn;
 	}
 }

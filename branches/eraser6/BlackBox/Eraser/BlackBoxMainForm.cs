@@ -28,6 +28,7 @@ using System.Text;
 using System.Windows.Forms;
 using Eraser.Util;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Eraser
 {
@@ -44,7 +45,10 @@ namespace Eraser
 				if (report.Submitted)
 					continue;
 
-				ListViewItem item = ReportsLv.Items.Add(report.Name);
+				ListViewItem item = ReportsLv.Items.Add(report.Timestamp.ToString(
+					"F", CultureInfo.CurrentCulture));
+				if (report.StackTrace.Count != 0)
+					item.SubItems.Add(report.StackTrace[0].ExceptionType);
 				item.Tag = report;
 				item.Checked = true;
 			}
