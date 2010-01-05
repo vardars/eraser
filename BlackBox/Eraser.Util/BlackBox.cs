@@ -32,6 +32,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Reflection;
 using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace Eraser.Util
 {
@@ -266,7 +267,7 @@ namespace Eraser.Util
 				throw new ArgumentNullException("e");
 
 			//Generate a unique identifier for this report.
-			string crashName = DateTime.Now.ToString("yyyyMMdd HHmmss.FFF");
+			string crashName = DateTime.Now.ToString(CrashReportName, CultureInfo.InvariantCulture);
 			string currentCrashReport = Path.Combine(CrashReportsPath, crashName);
 			Directory.CreateDirectory(currentCrashReport);
 
@@ -438,6 +439,11 @@ namespace Eraser.Util
 			Environment.SpecialFolder.LocalApplicationData), @"Eraser 6\Crash Reports");
 
 		/// <summary>
+		/// The report name format.
+		/// </summary>
+		internal static readonly string CrashReportName = "yyyyMMdd HHmmss.FFF";
+
+		/// <summary>
 		/// The file name of the memory dump.
 		/// </summary>
 		/// 
@@ -525,6 +531,18 @@ namespace Eraser.Util
 			get
 			{
 				return System.IO.Path.GetFileName(Path);
+			}
+		}
+
+		/// <summary>
+		/// The timestamp of the report.
+		/// </summary>
+		public DateTime Timestamp
+		{
+			get
+			{
+				return DateTime.ParseExact(Name, BlackBox.CrashReportName,
+					CultureInfo.InvariantCulture);
 			}
 		}
 
