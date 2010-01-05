@@ -133,7 +133,7 @@
     <value>0</value>
   </data>
   <data name="MainLbl.Text" xml:space="preserve">
-    <value>Eraser has encountered problems while running earlier and needed to close.
+    <value>Eraser has encountered problems while running earlier.
 
 The program's state and other information about the error have been stored on your computer as reports and can be sent to the Eraser developers for review. Select the reports you wish to submit by checking the name of the report below; the contents of each report can be viewed by double-clicking on the report name below. Reports not selected for submission will be discarded after the rest have been submitted.</value>
   </data>
@@ -227,6 +227,18 @@ The program's state and other information about the error have been stored on yo
   <data name="ReportsLv.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="ReportsLvTimestampColumn.Text" xml:space="preserve">
+    <value>Report Created</value>
+  </data>
+  <data name="ReportsLvTimestampColumn.Width" type="System.Int32, mscorlib">
+    <value>280</value>
+  </data>
+  <data name="ReportsLvErrorColumn.Text" xml:space="preserve">
+    <value>Error Type</value>
+  </data>
+  <data name="ReportsLvErrorColumn.Width" type="System.Int32, mscorlib">
+    <value>250</value>
+  </data>
   <data name="ReportsLv.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 124</value>
   </data>
@@ -247,12 +259,6 @@ The program's state and other information about the error have been stored on yo
   </data>
   <data name="&gt;&gt;ReportsLv.ZOrder" xml:space="preserve">
     <value>0</value>
-  </data>
-  <data name="ReportsLvNameColumn.Text" xml:space="preserve">
-    <value>Report Name</value>
-  </data>
-  <data name="ReportsLvNameColumn.Width" type="System.Int32, mscorlib">
-    <value>530</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -1829,10 +1835,16 @@ The program's state and other information about the error have been stored on yo
   <data name="$this.Text" xml:space="preserve">
     <value>Eraser Crash Assistant</value>
   </data>
-  <data name="&gt;&gt;ReportsLvNameColumn.Name" xml:space="preserve">
-    <value>ReportsLvNameColumn</value>
+  <data name="&gt;&gt;ReportsLvTimestampColumn.Name" xml:space="preserve">
+    <value>ReportsLvTimestampColumn</value>
   </data>
-  <data name="&gt;&gt;ReportsLvNameColumn.Type" xml:space="preserve">
+  <data name="&gt;&gt;ReportsLvTimestampColumn.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ReportsLvErrorColumn.Name" xml:space="preserve">
+    <value>ReportsLvErrorColumn</value>
+  </data>
+  <data name="&gt;&gt;ReportsLvErrorColumn.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
