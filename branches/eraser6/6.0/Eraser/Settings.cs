@@ -265,15 +265,23 @@ namespace Eraser
 		}
 
 		/// <summary>
-		/// Gets the current UI culture, correct to the top-level culture (i.e., English
-		/// instead of English (United Kingdom))
+		/// Gets the most specific UI culture with a localisation available, defaulting to English
+		/// if none exist.
 		/// </summary>
 		/// <returns>The CultureInfo of the current UI culture, correct to the top level.</returns>
 		private static CultureInfo GetCurrentCulture()
 		{
+			System.Reflection.Assembly entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
 			CultureInfo culture = CultureInfo.CurrentUICulture;
-			while (culture.Parent != CultureInfo.InvariantCulture)
+			while (culture.Parent != CultureInfo.InvariantCulture &&
+				!S.LocalisationExists(culture, entryAssembly))
+			{
 				culture = culture.Parent;
+			}
+
+			//Default to English if any of our cultures don't exist.
+			if (!S.LocalisationExists(culture, entryAssembly))
+				culture = new CultureInfo("en");
 
 			return culture;
 		}
