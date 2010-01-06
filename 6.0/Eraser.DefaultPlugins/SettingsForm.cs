@@ -155,12 +155,15 @@ namespace Eraser.DefaultPlugins
 				ErasureMethodManager.Unregister(guid);
 			}
 
-			//Save the list of custom erasure methods
-			DefaultPlugin.Settings.EraseCustom = customMethods;
-
 			//Update the Erasure method manager on the methods
 			foreach (CustomErasureMethod method in addCustomMethods)
+			{
+				customMethods.Add(method.Guid, method);
 				ErasureMethodManager.Register(new EraseCustom(method), new object[] { method });
+			}
+
+			//Save the list of custom erasure methods
+			DefaultPlugin.Settings.EraseCustom = customMethods;
 
 			//Close the dialog
 			DialogResult = DialogResult.OK;
