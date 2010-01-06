@@ -187,7 +187,10 @@ namespace Eraser.DefaultPlugins
 					 MessageBoxButtons.OK, MessageBoxIcon.Information,
 					 MessageBoxDefaultButton.Button1,
 					 S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
+
+				passTypeHex.CheckedChanged -= passType_CheckedChanged;
 				passTypeHex.Checked = true;
+				passTypeHex.CheckedChanged += passType_CheckedChanged;
 			}
 		}
 
