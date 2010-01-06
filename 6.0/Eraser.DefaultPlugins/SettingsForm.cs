@@ -90,14 +90,20 @@ namespace Eraser.DefaultPlugins
 			{
 				//Remove the old definition of the erasure method
 				CustomErasureMethod method = editorForm.Method;
-				removeCustomMethods.Add(method.Guid);
-				customMethod.Items.Remove(item);
-				customMethods.Remove(method.Guid);
+				if (removeCustomMethods.IndexOf(method.Guid) == -1)
+					removeCustomMethods.Add(method.Guid);
 
 				//Add the new definition
-				method = editorForm.Method;
+				foreach (CustomErasureMethod addMethod in addCustomMethods)
+					if (addMethod.Guid == method.Guid)
+					{
+						addCustomMethods.Remove(addMethod);
+						break;
+					}
+
+				customMethods[method.Guid] = method;
 				addCustomMethods.Add(method);
-				AddMethod(method);
+				item.Tag = method;
 			}
 		}
 
