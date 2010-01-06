@@ -92,8 +92,9 @@ namespace Eraser
 							catch (SerializationException)
 							{
 								key.DeleteValue(setting);
-								MessageBox.Show(S._("Could not load the setting {0} for plugin {1}. " +
-									"The setting has been lost.", key, pluginID.ToString()),
+								MessageBox.Show(S._("Could not load the setting {0}\\{1} for " +
+										"plugin {2}. The setting has been lost.", key, setting,
+										pluginID.ToString()),
 									S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error,
 									MessageBoxDefaultButton.Button1,
 									S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
