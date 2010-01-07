@@ -45,8 +45,7 @@ namespace Eraser.DefaultPlugins
 					method = ErasureMethodManager.GetInstance(
 						ManagerLibrary.Settings.DefaultFileErasureMethod);
 				else
-					method = ErasureMethodManager.GetInstance(
-						new Guid("1407FC4E-FEFF-4375-B4FB-D7EFBB7E9922"));
+					method = ErasureMethodManager.GetInstance(new Gutmann().Guid);
 			}
 			catch (ErasureMethodNotFoundException)
 			{

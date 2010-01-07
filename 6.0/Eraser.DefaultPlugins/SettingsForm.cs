@@ -57,10 +57,13 @@ namespace Eraser.DefaultPlugins
 
 			if (fl16MethodCmb.SelectedIndex == -1)
 			{
-				Guid defaultMethodGuid =
+				Guid methodGuid =
 					ManagerLibrary.Settings.DefaultFileErasureMethod;
+				if (methodGuid == new FirstLast16KB().Guid)
+					methodGuid = new Gutmann().Guid;
+				
 				foreach (object item in fl16MethodCmb.Items)
-					if (((ErasureMethod)item).Guid == defaultMethodGuid)
+					if (((ErasureMethod)item).Guid == methodGuid)
 					{
 						fl16MethodCmb.SelectedItem = item;
 						break;
@@ -69,7 +72,8 @@ namespace Eraser.DefaultPlugins
 
 			if (DefaultPlugin.Settings.EraseCustom != null)
 			{
-				customMethods = DefaultPlugin.Settings.EraseCustom;
+				customMethods = new Dictionary<Guid,CustomErasureMethod>(
+					DefaultPlugin.Settings.EraseCustom);
 
 				//Display the whole set on the list.
 				foreach (Guid guid in customMethods.Keys)
@@ -113,7 +117,6 @@ namespace Eraser.DefaultPlugins
 			if (form.ShowDialog() == DialogResult.OK)
 			{
 				CustomErasureMethod method = form.Method;
-				customMethods.Add(method.Guid, method);
 				addCustomMethods.Add(method);
 				AddMethod(method);
 			}
