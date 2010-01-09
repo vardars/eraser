@@ -93,11 +93,11 @@ namespace Eraser.DefaultPlugins
 				string str = text.Replace(" ", "").ToUpper(CultureInfo.CurrentCulture);
 				List<byte> passConstantList = new List<byte>();
 
-				if (str.Length >= 2)
+				if (!string.IsNullOrEmpty(str))
 				{
 					for (int i = 0, j = str.Length - 2; i < j; i += 2)
 						passConstantList.Add(Convert.ToByte(str.Substring(i, 2), 16));
-					passConstantList.Add(Convert.ToByte(str.Substring(str.Length - 2), 16));
+					passConstantList.Add(Convert.ToByte(str.Substring(Math.Max(0, str.Length - 2)), 16));
 				}
 
 				byte[] result = new byte[passConstantList.Count];
@@ -125,13 +125,6 @@ namespace Eraser.DefaultPlugins
 			if (array == null || array.Length == 0)
 				return string.Empty;
 
-			//Check for the presence of null bytes in the source string. If so,
-			//the display is always hexadecimal.
-			foreach (byte b in array)
-				if (b == 0)
-					throw new DecoderFallbackException("The custom pass constant contains " +
-						"embedded NULL bytes which cannot be represented as text.");
-
 			if (asHex)
 			{
 				StringBuilder displayText = new StringBuilder();
@@ -140,9 +133,19 @@ namespace Eraser.DefaultPlugins
 						"{0:X2} ", b, 16));
 				return displayText.ToString();
 			}
+			else
+			{
+				//Check for the presence of null bytes in the source string. If so,
+				//the display is always hexadecimal.
+				foreach (byte b in array)
+					if (b == 0)
+						throw new DecoderFallbackException("The custom pass constant contains " +
+							"embedded NULL bytes which cannot be represented as text.");
 
-			UTF8Encoding encoding = new UTF8Encoding(false, true);
-			return encoding.GetString(array);
+				//Parse the binary data as UTF-8
+				UTF8Encoding encoding = new UTF8Encoding(false, true);
+				return encoding.GetString(array);
+			}
 		}
 
 		/// <summary>
@@ -200,6 +203,13 @@ namespace Eraser.DefaultPlugins
 			try
 			{
 				passData = GetConstantArray(passTxt.Text, passTypeHex.Checked);
+				if (!passTypeRandom.Checked && passData.Length == 0)
+				{
+					e.Cancel = true;
+					Control control = (Control)sender;
+					errorProvider.SetError(control, S._("The pass constant must not be empty."));
+					errorProvider.SetIconPadding(control, -errorProvider.Icon.Width);
+				}
 			}
 			catch (FormatException)
 			{
