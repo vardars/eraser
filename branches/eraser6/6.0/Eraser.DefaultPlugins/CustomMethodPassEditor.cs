@@ -185,15 +185,26 @@ namespace Eraser.DefaultPlugins
 			}
 			catch (DecoderFallbackException)
 			{
+				passTypeHex.CheckedChanged -= passType_CheckedChanged;
+				passTypeHex.Checked = true;
+				passTypeHex.CheckedChanged += passType_CheckedChanged;
+
 				MessageBox.Show(this, S._("The pass constant cannot be displayed as " +
 					"text because it contains invalid characters."), S._("Eraser"),
 					 MessageBoxButtons.OK, MessageBoxIcon.Information,
 					 MessageBoxDefaultButton.Button1,
 					 S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
+			}
+		}
 
-				passTypeHex.CheckedChanged -= passType_CheckedChanged;
-				passTypeHex.Checked = true;
-				passTypeHex.CheckedChanged += passType_CheckedChanged;
+		private void CustomMethodPassEditor_Validating(object sender, CancelEventArgs e)
+		{
+			if ((passTypeText.Checked || passTypeHex.Checked) &&
+				(passData == null || passData.Length == 0))
+			{
+				errorProvider.SetError(passTxt, S._("The pass constant must not be empty."));
+				errorProvider.SetIconPadding(passTxt, -errorProvider.Icon.Width);
+				e.Cancel = true;
 			}
 		}
 
@@ -203,13 +214,6 @@ namespace Eraser.DefaultPlugins
 			try
 			{
 				passData = GetConstantArray(passTxt.Text, passTypeHex.Checked);
-				if (!passTypeRandom.Checked && passData.Length == 0)
-				{
-					e.Cancel = true;
-					Control control = (Control)sender;
-					errorProvider.SetError(control, S._("The pass constant must not be empty."));
-					errorProvider.SetIconPadding(control, -errorProvider.Icon.Width);
-				}
 			}
 			catch (FormatException)
 			{
@@ -218,6 +222,11 @@ namespace Eraser.DefaultPlugins
 					"for the current data type. Valid hexadecimal characters are the " +
 					"digits 0-9 and letters A-F"));
 			}
+		}
+
+		private void passTxt_Validated(object sender, EventArgs e)
+		{
+			errorProvider.Clear();
 		}
 
 		private void passType_CheckedChanged(object sender, EventArgs e)

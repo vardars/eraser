@@ -49,6 +49,7 @@ namespace Eraser.DefaultPlugins
 			this.passTxt.Name = "passTxt";
 			this.passTxt.Size = new System.Drawing.Size(456, 188);
 			this.passTxt.TabIndex = 6;
+			this.passTxt.Validated += new System.EventHandler(this.passTxt_Validated);
 			this.passTxt.Validating += new System.ComponentModel.CancelEventHandler(this.passText_Validating);
 			// 
 			// passTypeGrp
@@ -75,7 +76,6 @@ namespace Eraser.DefaultPlugins
 			this.passTypeText.TabStop = true;
 			this.passTypeText.Text = "Text";
 			this.passTypeText.UseVisualStyleBackColor = true;
-			this.passTypeText.Validating += new System.ComponentModel.CancelEventHandler(this.passText_Validating);
 			this.passTypeText.CheckedChanged += new System.EventHandler(this.passType_CheckedChanged);
 			// 
 			// passTypeHex
@@ -88,7 +88,6 @@ namespace Eraser.DefaultPlugins
 			this.passTypeHex.TabIndex = 1;
 			this.passTypeHex.Text = "Hexadecimal";
 			this.passTypeHex.UseVisualStyleBackColor = true;
-			this.passTypeHex.Validating += new System.ComponentModel.CancelEventHandler(this.passText_Validating);
 			this.passTypeHex.CheckedChanged += new System.EventHandler(this.passType_CheckedChanged);
 			// 
 			// passTypeRandom
@@ -115,6 +114,7 @@ namespace Eraser.DefaultPlugins
 			this.Controls.Add(this.passTypeGrp);
 			this.Name = "CustomMethodPassEditor";
 			this.Size = new System.Drawing.Size(456, 211);
+			this.Validating += new System.ComponentModel.CancelEventHandler(this.CustomMethodPassEditor_Validating);
 			this.passTypeGrp.ResumeLayout(false);
 			this.passTypeGrp.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
