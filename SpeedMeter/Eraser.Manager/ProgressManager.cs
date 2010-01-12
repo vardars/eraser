@@ -261,6 +261,7 @@ namespace Eraser.Manager
 			public StepsList(SteppedProgressManager manager)
 			{
 				List = new List<Step>();
+				ListLock = manager.ListLock;
 				Manager = manager;
 			}
 
@@ -268,32 +269,43 @@ namespace Eraser.Manager
 
 			public int IndexOf(Step item)
 			{
-				return List.IndexOf(item);
+				lock (ListLock)
+					return List.IndexOf(item);
 			}
 
 			public void Insert(int index, Step item)
 			{
-				List.Insert(index, item);
-				TotalWeights += item.Weight;
+				lock (ListLock)
+				{
+					List.Insert(index, item);
+					TotalWeights += item.Weight;
+				}
 			}
 
 			public void RemoveAt(int index)
 			{
-				TotalWeights -= List[index].Weight;
-				List.RemoveAt(index);
+				lock (ListLock)
+				{
+					TotalWeights -= List[index].Weight;
+					List.RemoveAt(index);
+				}
 			}
 
 			public Step this[int index]
 			{
 				get
 				{
-					return List[index];
+					lock (ListLock)
+						return List[index];
 				}
 				set
 				{
-					TotalWeights -= List[index].Weight;
-					List[index] = value;
-					TotalWeights += value.Weight;
+					lock (ListLock)
+					{
+						TotalWeights -= List[index].Weight;
+						List[index] = value;
+						TotalWeights += value.Weight;
+					}
 				}
 			}
 
@@ -303,29 +315,41 @@ namespace Eraser.Manager
 
 			public void Add(Step item)
 			{
-				List.Add(item);
-				TotalWeights += item.Weight;
+				lock (ListLock)
+				{
+					List.Add(item);
+					TotalWeights += item.Weight;
+				}
 			}
 
 			public void Clear()
 			{
-				List.Clear();
-				TotalWeights = 0;
+				lock (ListLock)
+				{
+					List.Clear();
+					TotalWeights = 0;
+				}
 			}
 
 			public bool Contains(Step item)
 			{
-				return List.Contains(item);
+				lock (ListLock)
+					return List.Contains(item);
 			}
 
 			public void CopyTo(Step[] array, int arrayIndex)
 			{
-				List.CopyTo(array, arrayIndex);
+				lock (ListLock)
+					List.CopyTo(array, arrayIndex);
 			}
 
 			public int Count
 			{
-				get { return List.Count; }
+				get
+				{
+					lock (ListLock) 
+						return List.Count;
+				}
 			}
 
 			public bool IsReadOnly
@@ -365,13 +389,13 @@ namespace Eraser.Manager
 			/// <summary>
 			/// The total weights of all the steps.
 			/// </summary>
-			public float TotalWeights
+			private float TotalWeights
 			{
 				get
 				{
 					return totalWeights;
 				}
-				private set
+				set
 				{
 					if (value >= 1.1f || value < 0.0f)
 						throw new ArgumentOutOfRangeException("The total weights of all steps in " +
@@ -385,6 +409,11 @@ namespace Eraser.Manager
 			/// The list storing the steps for this instance.
 			/// </summary>
 			private List<Step> List;
+
+			/// <summary>
+			/// The lock object guarding the list against parallel writes.
+			/// </summary>
+			private object ListLock;
 
 			/// <summary>
 			/// The <see cref="SteppedProgressManager"/> instance which owns this list.
@@ -403,6 +432,7 @@ namespace Eraser.Manager
 		public SteppedProgressManager()
 		{
 			Steps = new StepsList(this);
+			ListLock = new object();
 		}
 
 		public override float Progress
@@ -410,8 +440,9 @@ namespace Eraser.Manager
 			get
 			{
 				float result = 0.0f;
-				foreach (Step step in Steps)
-					result += step.Progress.Progress * step.Weight;
+				lock (ListLock)
+					foreach (Step step in Steps)
+						result += step.Progress.Progress * step.Weight;
 
 				return result;
 			}
@@ -456,17 +487,25 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				if (Steps.Count == 0)
-					return null;
+				lock (ListLock)
+				{
+					if (Steps.Count == 0)
+						return null;
 
-				foreach (Step step in Steps)
-					if (step.Progress.Progress < 1.0f)
-						return step;
+					foreach (Step step in Steps)
+						if (step.Progress.Progress < 1.0f)
+							return step;
 
-				//Return the last step since we don't have any
-				return Steps[Steps.Count - 1];
+					//Return the last step since we don't have any
+					return Steps[Steps.Count - 1];
+				}
 			}
 		}
+
+		/// <summary>
+		/// The lock object guarding the list of steps against concurrent read and write.
+		/// </summary>
+		private object ListLock;
 	}
 
 	/// <summary>
@@ -480,37 +519,43 @@ namespace Eraser.Manager
 		/// </summary>
 		public class SubTasksList : IList<ProgressManagerBase>
 		{
-			public SubTasksList()
+			public SubTasksList(ParallelProgressManager manager)
 			{
 				List = new List<ProgressManagerBase>();
+				ListLock = manager.TaskLock;
 			}
 
 			#region IList<SubTasksList> Members
 
 			public int IndexOf(ProgressManagerBase item)
 			{
-				return List.IndexOf(item);
+				lock (ListLock)
+					return List.IndexOf(item);
 			}
 
 			public void Insert(int index, ProgressManagerBase item)
 			{
-				List.Insert(index, item);
+				lock (ListLock)
+					List.Insert(index, item);
 			}
 
 			public void RemoveAt(int index)
 			{
-				List.RemoveAt(index);
+				lock (ListLock)
+					List.RemoveAt(index);
 			}
 
 			public ProgressManagerBase this[int index]
 			{
 				get
 				{
-					return List[index];
+					lock (ListLock)
+						return List[index];
 				}
 				set
 				{
-					List[index] = value;
+					lock (ListLock)
+						List[index] = value;
 				}
 			}
 
@@ -520,12 +565,14 @@ namespace Eraser.Manager
 
 			public void Add(ProgressManagerBase item)
 			{
-				List.Add(item);
+				lock (ListLock)
+					List.Add(item);
 			}
 
 			public void Clear()
 			{
-				List.Clear();
+				lock (ListLock)
+					List.Clear();
 			}
 
 			public bool Contains(ProgressManagerBase item)
@@ -535,12 +582,17 @@ namespace Eraser.Manager
 
 			public void CopyTo(ProgressManagerBase[] array, int arrayIndex)
 			{
-				List.CopyTo(array, arrayIndex);
+				lock (ListLock)
+					List.CopyTo(array, arrayIndex);
 			}
 
 			public int Count
 			{
-				get { return List.Count; }
+				get
+				{
+					lock (ListLock) 
+						return List.Count;
+				}
 			}
 
 			public bool IsReadOnly
@@ -550,7 +602,8 @@ namespace Eraser.Manager
 
 			public bool Remove(ProgressManagerBase item)
 			{
-				return List.Remove(item);
+				lock (ListLock)
+					return List.Remove(item);
 			}
 
 			#endregion
@@ -579,13 +632,9 @@ namespace Eraser.Manager
 			private List<ProgressManagerBase> List;
 
 			/// <summary>
-			/// The total weights of all the steps.
+			/// The lock object guarding the list from concurrent read/writes.
 			/// </summary>
-			public int TotalWeights
-			{
-				get;
-				private set;
-			}
+			private object ListLock;
 		}
 
 		/// <summary>
@@ -593,7 +642,8 @@ namespace Eraser.Manager
 		/// </summary>
 		public ParallelProgressManager()
 		{
-			Tasks = new SubTasksList();
+			Tasks = new SubTasksList(this);
+			TaskLock = new object();
 		}
 
 		public override float Progress
@@ -601,8 +651,9 @@ namespace Eraser.Manager
 			get
 			{
 				float result = 0.0f;
-				foreach (ProgressManagerBase subTask in Tasks)
-					result += subTask.Progress * (1.0f / Tasks.Count);
+				lock (TaskLock)
+					foreach (ProgressManagerBase subTask in Tasks)
+						result += subTask.Progress * (1.0f / Tasks.Count);
 
 				return result;
 			}
@@ -613,8 +664,9 @@ namespace Eraser.Manager
 			get
 			{
 				int maxSpeed = 0;
-				foreach (ProgressManagerBase subTask in Tasks)
-					maxSpeed = Math.Max(subTask.Speed, maxSpeed);
+				lock (TaskLock)
+					foreach (ProgressManagerBase subTask in Tasks)
+						maxSpeed = Math.Max(subTask.Speed, maxSpeed);
 
 				return maxSpeed;
 			}
@@ -625,9 +677,10 @@ namespace Eraser.Manager
 			get
 			{
 				TimeSpan maxTime = TimeSpan.MinValue;
-				foreach (ProgressManagerBase subTask in Tasks)
-					if (maxTime < subTask.TimeLeft)
-						maxTime = subTask.TimeLeft;
+				lock (TaskLock)
+					foreach (ProgressManagerBase subTask in Tasks)
+						if (maxTime < subTask.TimeLeft)
+							maxTime = subTask.TimeLeft;
 
 				return maxTime;
 			}
@@ -642,5 +695,10 @@ namespace Eraser.Manager
 			get;
 			private set;
 		}
+
+		/// <summary>
+		/// The lock object guarding the list of tasks against concurrent read and write.
+		/// </summary>
+		private object TaskLock;
 	}
 }
