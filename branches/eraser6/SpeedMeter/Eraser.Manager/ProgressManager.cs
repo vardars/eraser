@@ -99,6 +99,9 @@ namespace Eraser.Manager
 		{
 			get
 			{
+				if (Total == 0)
+					return 0.0f;
+
 				return (float)((double)Completed / Total);
 			}
 		}
@@ -407,9 +410,7 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				float totalWeight = (float)Steps.TotalWeights;
 				float result = 0.0f;
-
 				foreach (Step step in Steps)
 					result += step.Progress.Progress * step.Weight;
 
@@ -421,6 +422,9 @@ namespace Eraser.Manager
 		{
 			get
 			{
+				if (CurrentStep == null)
+					return 0;
+
 				return CurrentStep.Progress.Speed;
 			}
 		}
@@ -429,6 +433,9 @@ namespace Eraser.Manager
 		{
 			get
 			{
+				if (StartTime == DateTime.MinValue)
+					return TimeSpan.MinValue;
+
 				long ticksElapsed = (DateTime.Now - StartTime).Ticks;
 				float progressRemaining = 1.0f - Progress;
 				return new TimeSpan((long)
@@ -456,11 +463,15 @@ namespace Eraser.Manager
 				if (StartTime == DateTime.MinValue)
 					return null;
 
+				if (Steps.Count == 0)
+					return null;
+
 				foreach (Step step in Steps)
 					if (step.Progress.Progress < 1.0f)
 						return step;
 
-				return null;
+				//Return the last step since we don't have any
+				return Steps[Steps.Count - 1];
 			}
 		}
 	}
