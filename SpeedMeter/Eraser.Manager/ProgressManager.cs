@@ -373,7 +373,7 @@ namespace Eraser.Manager
 				}
 				private set
 				{
-					if (value > 1.0f || value < 0.0f)
+					if (value >= 1.1f || value < 0.0f)
 						throw new ArgumentOutOfRangeException("The total weights of all steps in " +
 							"the task must be within the range [0.0, 1.0]");
 
