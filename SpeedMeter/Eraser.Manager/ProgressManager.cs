@@ -2,7 +2,6 @@
  * $Id$
  * Copyright 2008-2009 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
- * Modified By: Kasra Nassiri <cjax@users.sourceforge.net> @17/10/2008
  * Modified By: 
  * 
  * This file is part of Eraser.
@@ -33,11 +32,25 @@ namespace Eraser.Manager
 	public abstract class ProgressManagerBase
 	{
 		/// <summary>
-		/// Records the starting time of the task. This allows the computation of
+		/// Constructor.
+		/// 
+		/// This sets the starting time of this task to allow the computation of
 		/// the estimated end time by extrapolating collected data based on the
 		/// amount of time already elapsed.
 		/// </summary>
-		public abstract void Start();
+		public ProgressManagerBase()
+		{
+			StartTime = DateTime.Now;
+		}
+
+		/// <summary>
+		/// Resets the starting time of the task. The speed measurement is
+		/// automatically started when the ProgressManagerBase object is created.
+		/// </summary>
+		public void Restart()
+		{
+			StartTime = DateTime.Now;
+		}
 
 		/// <summary>
 		/// Gets the percentage of the operation completed.
@@ -64,6 +77,15 @@ namespace Eraser.Manager
 		{
 			get;
 		}
+
+		/// <summary>
+		/// The starting time of this task.
+		/// </summary>
+		public DateTime StartTime
+		{
+			get;
+			private set;
+		}
 	}
 
 	/// <summary>
@@ -72,11 +94,6 @@ namespace Eraser.Manager
 	/// </summary>
 	public class ProgressManager : ProgressManagerBase
 	{
-		public override void Start()
-		{
-			startTime = DateTime.Now;
-		}
-
 		/// <summary>
 		/// Gets or sets the number of work units already completed.
 		/// </summary>
@@ -110,7 +127,7 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				if (DateTime.Now == startTime)
+				if (DateTime.Now == StartTime)
 					return 0;
 
 				if ((DateTime.Now - lastSpeedCalc).Seconds < 5 && lastSpeed != 0)
@@ -140,11 +157,6 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// The starting time of the operation, used to determine average speed.
-		/// </summary>
-		private DateTime startTime;
-
-		/// <summary>
 		/// The last time a speed calculation was computed so that speed is not
 		/// computed too often.
 		/// </summary>
@@ -166,19 +178,6 @@ namespace Eraser.Manager
 	/// </summary>
 	public abstract class ChainedProgressManager : ProgressManagerBase
 	{
-		public override void Start()
-		{
-			StartTime = DateTime.Now;
-		}
-
-		/// <summary>
-		/// The time the process was started.
-		/// </summary>
-		protected DateTime StartTime
-		{
-			get;
-			private set;
-		}
 	}
 
 	/// <summary>
@@ -433,9 +432,6 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				if (StartTime == DateTime.MinValue)
-					return TimeSpan.MinValue;
-
 				long ticksElapsed = (DateTime.Now - StartTime).Ticks;
 				float progressRemaining = 1.0f - Progress;
 				return new TimeSpan((long)
@@ -460,9 +456,6 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				if (StartTime == DateTime.MinValue)
-					return null;
-
 				if (Steps.Count == 0)
 					return null;
 

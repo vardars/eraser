@@ -403,7 +403,6 @@ namespace Eraser.Manager
 					};
 
 				//Start counting statistics
-				tipProgress.Start();
 				fsManager.EraseClusterTips(VolumeInfo.FromMountpoint(target.Drive),
 					method, task.Log, searchProgress, eraseProgress);
 			}
@@ -420,7 +419,6 @@ namespace Eraser.Manager
 				ProgressManager mainProgress = new ProgressManager();
 				progress.Steps.Add(new SteppedProgressManager.Step(mainProgress,
 					target.EraseClusterTips ? 0.9f : 0.8f, S._("Erasing unused space...")));
-				mainProgress.Start();
 
 				//Continue creating files while there is free space.
 				while (volInfo.AvailableFreeSpace > 0)
@@ -474,7 +472,6 @@ namespace Eraser.Manager
 				ProgressManager residentProgress = new ProgressManager();
 				progress.Steps.Add(new SteppedProgressManager.Step(residentProgress,
 					0.05f, S._("Old resident file system table files")));
-				residentProgress.Start();
 				fsManager.EraseOldFileSystemResidentFiles(volInfo, info, method,
 					delegate(int currentFile, int totalFiles)
 					{
@@ -502,7 +499,6 @@ namespace Eraser.Manager
 			ProgressManager structureProgress = new ProgressManager();
 			progress.Steps.Add(new SteppedProgressManager.Step(structureProgress,
 				0.05f, S._("Erasing unused directory structures...")));
-			structureProgress.Start();
 			fsManager.EraseDirectoryStructures(volInfo,
 				delegate(int currentFile, int totalFiles)
 				{
@@ -552,7 +548,7 @@ namespace Eraser.Manager
 				//Update the task progress
 				ProgressManager step = new ProgressManager();
 				progress.Steps.Add(new SteppedProgressManager.Step(step,
-					i / (float)paths.Count, S._("Erasing files...")));
+					1.0f / paths.Count, S._("Erasing files...")));
 				task.OnProgressChanged(target, new TaskProgressEventArgs(
 					task, paths[i], 0, method.Passes));
 				
@@ -681,8 +677,6 @@ namespace Eraser.Manager
 					if (!isVolumeRoot && info.Exists && info.GetFiles("*", SearchOption.AllDirectories).Length == 0)
 						fsManager.DeleteFolder(info);
 				}
-
-				target.Progress = null;
 			}
 
 			//If the user was erasing the recycle bin, clear the bin.
@@ -696,6 +690,8 @@ namespace Eraser.Manager
 				ShellApi.EmptyRecycleBin(EmptyRecycleBinOptions.NoConfirmation |
 					EmptyRecycleBinOptions.NoProgressUI | EmptyRecycleBinOptions.NoSound);
 			}
+
+			target.Progress = null;
 		}
 
 		/// <summary>
