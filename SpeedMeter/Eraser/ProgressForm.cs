@@ -50,6 +50,10 @@ namespace Eraser
 			jobTitle.Text = task.UIText;
 			task.ProgressChanged += task_ProgressChanged;
 			task.TaskFinished += task_TaskFinished;
+
+			//Set the current progress
+			if (task.Progress.CurrentStep != null)
+				UpdateProgress((SteppedProgressManager)task.Progress.CurrentStep.Progress, null);
 		}
 
 		private void ProgressForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -72,33 +76,14 @@ namespace Eraser
 			}
 
 			ErasureTarget target = sender as ErasureTarget;
+			if (target == null)
+				return;
+
 			SteppedProgressManager progress = target.Progress as SteppedProgressManager;
-			status.Text = progress.CurrentStep.Name;
-			item.Text = WrapItemName(e.ItemName);
-			pass.Text = e.ItemTotalPasses != 0 ?
-				S._("{0} out of {1}", e.ItemPass, e.ItemTotalPasses) :
-				e.ItemPass.ToString(CultureInfo.CurrentCulture);
+			if (progress == null)
+				return;
 
-			if (target.Progress.TimeLeft >= TimeSpan.Zero)
-				timeLeft.Text = S._("About {0} left", RoundToSeconds(target.Progress.TimeLeft));
-			else
-				timeLeft.Text = S._("Unknown");
-
-			if (target.Progress.Progress >= 0.0f)
-			{
-				itemProgress.Style = ProgressBarStyle.Continuous;
-				itemProgress.Value = (int)(target.Progress.Progress * 1000);
-				itemProgressLbl.Text = target.Progress.Progress.ToString("#0%",
-					CultureInfo.CurrentCulture);
-			}
-			else
-			{
-				itemProgress.Style = ProgressBarStyle.Marquee;
-				itemProgressLbl.Text = string.Empty;
-			}
-
-			overallProgress.Value = (int)(e.Task.Progress.Progress * 1000);
-			overallProgressLbl.Text = S._("Total: {0,2:#0.00%}", e.Task.Progress.Progress);
+			UpdateProgress(progress, e);
 		}
 
 		private void task_TaskFinished(object sender, TaskEventArgs e)
@@ -156,6 +141,40 @@ namespace Eraser
 			if (task.Executing)
 				task.Cancel();
 			Close();
+		}
+
+		private void UpdateProgress(SteppedProgressManager targetProgress, TaskProgressEventArgs e)
+		{
+			status.Text = targetProgress.CurrentStep.Name;
+
+			if (e != null)
+			{
+				item.Text = WrapItemName(e.ItemName);
+				pass.Text = e.ItemTotalPasses != 0 ?
+					S._("{0} out of {1}", e.ItemPass, e.ItemTotalPasses) :
+					e.ItemPass.ToString(CultureInfo.CurrentCulture);
+			}
+
+			if (targetProgress.TimeLeft >= TimeSpan.Zero)
+				timeLeft.Text = S._("About {0} left", RoundToSeconds(targetProgress.TimeLeft));
+			else
+				timeLeft.Text = S._("Unknown");
+
+			if (targetProgress.Progress >= 0.0f)
+			{
+				itemProgress.Style = ProgressBarStyle.Continuous;
+				itemProgress.Value = (int)(targetProgress.Progress * 1000);
+				itemProgressLbl.Text = targetProgress.Progress.ToString("#0%",
+					CultureInfo.CurrentCulture);
+			}
+			else
+			{
+				itemProgress.Style = ProgressBarStyle.Marquee;
+				itemProgressLbl.Text = string.Empty;
+			}
+
+			overallProgress.Value = (int)(task.Progress.Progress * 1000);
+			overallProgressLbl.Text = S._("Total: {0,2:#0.00%}", task.Progress.Progress);
 		}
 
 		private string WrapItemName(string itemName)
