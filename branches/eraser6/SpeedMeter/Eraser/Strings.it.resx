@@ -156,8 +156,8 @@
   <data name="{0} out of {1}" xml:space="preserve">
     <value>{0} di {1}</value>
   </data>
-  <data name="About {0:T} left" xml:space="preserve">
-    <value>Circa {0:T} rimasti</value>
+  <data name="About {0} left" xml:space="preserve">
+    <value>Circa {0} rimasti</value>
   </data>
   <data name="Unknown" xml:space="preserve">
     <value>Sconosciuto</value>
