@@ -135,11 +135,11 @@
   <data name="Searching for files' cluster tips..." xml:space="preserve">
     <value>Searching for files' cluster tips...</value>
   </data>
-  <data name="Erasing cluster tips..." xml:space="preserve">
-    <value>Erasing cluster tips...</value>
-  </data>
   <data name="The task was cancelled." xml:space="preserve">
     <value>The task was cancelled.</value>
+  </data>
+  <data name="Erasing cluster tips..." xml:space="preserve">
+    <value>Erasing cluster tips...</value>
   </data>
   <data name="Erasing unused space..." xml:space="preserve">
     <value>Erasing unused space..</value>

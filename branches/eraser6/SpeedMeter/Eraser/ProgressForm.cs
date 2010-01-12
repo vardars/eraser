@@ -58,7 +58,7 @@ namespace Eraser
 			task.TaskFinished -= task_TaskFinished;
 		}
 
-		private void task_ProgressChanged(object sender, TaskEventArgs e)
+		private void task_ProgressChanged(object sender, TaskProgressEventArgs e)
 		{
 			if (InvokeRequired)
 			{
@@ -67,26 +67,28 @@ namespace Eraser
 					return;
 
 				lastUpdate = DateTime.Now;
-				Invoke(new EventHandler<TaskEventArgs>(task_ProgressChanged), sender, e);
+				Invoke(new EventHandler<TaskProgressEventArgs>(task_ProgressChanged), sender, e);
 				return;
 			}
 
-			status.Text = e.CurrentTargetStatus;
-			item.Text = WrapItemName(e.CurrentItemName);
-			pass.Text = e.CurrentTargetTotalPasses != 0 ?
-				S._("{0} out of {1}", e.CurrentItemPass, e.CurrentTargetTotalPasses) :
-				e.CurrentItemPass.ToString(CultureInfo.CurrentCulture);
+			ErasureTarget target = sender as ErasureTarget;
+			SteppedProgressManager progress = target.Progress as SteppedProgressManager;
+			status.Text = progress.CurrentStep.Name;
+			item.Text = WrapItemName(e.ItemName);
+			pass.Text = e.ItemTotalPasses != 0 ?
+				S._("{0} out of {1}", e.ItemPass, e.ItemTotalPasses) :
+				e.ItemPass.ToString(CultureInfo.CurrentCulture);
 
-			if (e.TimeLeft >= TimeSpan.Zero)
-				timeLeft.Text = S._("About {0:T} left", e.TimeLeft);
+			if (target.Progress.TimeLeft >= TimeSpan.Zero)
+				timeLeft.Text = S._("About {0:T} left", target.Progress.TimeLeft);
 			else
 				timeLeft.Text = S._("Unknown");
 
-			if (e.CurrentItemProgress >= 0.0f)
+			if (target.Progress.Progress >= 0.0f)
 			{
 				itemProgress.Style = ProgressBarStyle.Continuous;
-				itemProgress.Value = (int)(e.CurrentItemProgress * 1000);
-				itemProgressLbl.Text = e.CurrentItemProgress.ToString("#0%",
+				itemProgress.Value = (int)(target.Progress.Progress * 1000);
+				itemProgressLbl.Text = target.Progress.Progress.ToString("#0%",
 					CultureInfo.CurrentCulture);
 			}
 			else

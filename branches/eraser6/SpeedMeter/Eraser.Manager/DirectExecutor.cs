@@ -363,45 +363,47 @@ namespace Eraser.Manager
 			VolumeInfo volInfo = VolumeInfo.FromMountpoint(target.Drive);
 			FileSystem fsManager = FileSystemManager.Get(volInfo);
 
-			//Prepare our progress reporting machinery
-			TaskEventArgs eventArgs = new TaskEventArgs(task);
-			task.Progress.Start();
+			//Start sampling the speed of the task.
+			SteppedProgressManager progress = new SteppedProgressManager();
+			target.Progress = progress;
+			task.Progress.Steps.Add(new SteppedProgressManager.Step(
+				progress, 1.0f / task.Targets.Count));
 
 			//Erase the cluster tips of every file on the drive.
 			if (target.EraseClusterTips)
 			{
-				eventArgs.CurrentTargetStatus = S._("Searching for files' cluster tips...");
-				eventArgs.CurrentTargetTotalPasses = method.Passes;
-
-				//Start counting statistics
-				SteppedProgressManagerStep tipProgress = new SteppedProgressManagerStep(0.1f,
-					S._("Erasing cluster tips..."));
-				task.Progress.Steps.Add(tipProgress);
-				tipProgress.Start();
-				
 				//Define the callback handlers
+				ProgressManager tipSearch = new ProgressManager();
+				progress.Steps.Add(new SteppedProgressManager.Step(tipSearch, 
+					0.0f, S._("Searching for files' cluster tips...")));
+				tipSearch.Total = 1;
 				ClusterTipsSearchProgress searchProgress = delegate(string path)
 					{
-						eventArgs.CurrentItemName = path;
-						task.OnProgressChanged(eventArgs);
-
 						if (currentTask.Canceled)
 							throw new OperationCanceledException(S._("The task was cancelled."));
+
+						task.OnProgressChanged(target, new TaskProgressEventArgs(task,
+							path, 0, 0));
 					};
 
+				ProgressManager tipProgress = new ProgressManager();
+				progress.Steps.Add(new SteppedProgressManager.Step(tipProgress, 0.1f,
+					S._("Erasing cluster tips...")));
 				ClusterTipsEraseProgress eraseProgress =
 					delegate(int currentFile, int totalFiles, string currentFilePath)
 					{
+						tipSearch.Completed = tipSearch.Total;
 						tipProgress.Total = totalFiles;
 						tipProgress.Completed = currentFile;
-
-						eventArgs.CurrentItemName = currentFilePath;
-						task.OnProgressChanged(eventArgs);
+						task.OnProgressChanged(target, new TaskProgressEventArgs(task,
+							currentFilePath, 0, 0));
 
 						if (currentTask.Canceled)
 							throw new OperationCanceledException(S._("The task was cancelled."));
 					};
 
+				//Start counting statistics
+				tipProgress.Start();
 				fsManager.EraseClusterTips(VolumeInfo.FromMountpoint(target.Drive),
 					method, task.Log, searchProgress, eraseProgress);
 			}
@@ -415,15 +417,12 @@ namespace Eraser.Manager
 				if (Eraser.Util.File.IsCompressed(info.FullName))
 					Eraser.Util.File.SetCompression(info.FullName, false);
 
-				SteppedProgressManagerStep progress = new SteppedProgressManagerStep(
-					target.EraseClusterTips ? 0.9f : 0.8f, S._("Erasing unused space..."));
-				task.Progress.Steps.Add(progress);
+				ProgressManager mainProgress = new ProgressManager();
+				progress.Steps.Add(new SteppedProgressManager.Step(mainProgress,
+					target.EraseClusterTips ? 0.9f : 0.8f, S._("Erasing unused space...")));
+				mainProgress.Start();
 
 				//Continue creating files while there is free space.
-				eventArgs.CurrentItemName = target.Drive;
-				task.OnProgressChanged(eventArgs);
-				progress.Start();
-
 				while (volInfo.AvailableFreeSpace > 0)
 				{
 					//Generate a non-existant file name
@@ -459,10 +458,10 @@ namespace Eraser.Manager
 							PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng),
 							delegate(long lastWritten, long totalData, int currentPass)
 							{
-								progress.Completed += lastWritten;
-								progress.Total = totalData;
-								eventArgs.CurrentItemPass = currentPass;
-								task.OnProgressChanged(eventArgs);
+								mainProgress.Completed += lastWritten;
+								mainProgress.Total = totalData;
+								task.OnProgressChanged(target, new TaskProgressEventArgs(task,
+									target.Drive, currentPass, method.Passes));
 
 								if (currentTask.Canceled)
 									throw new OperationCanceledException(S._("The task was cancelled."));
@@ -472,18 +471,17 @@ namespace Eraser.Manager
 				}
 
 				//Erase old resident file system table files
-				eventArgs.CurrentItemName = S._("Old resident file system table files");
-				task.OnProgressChanged(eventArgs);
-
-				SteppedProgressManagerStep residentProgress = new SteppedProgressManagerStep(0.05f);
-				task.Progress.Steps.Add(residentProgress);
+				ProgressManager residentProgress = new ProgressManager();
+				progress.Steps.Add(new SteppedProgressManager.Step(residentProgress,
+					0.05f, S._("Old resident file system table files")));
 				residentProgress.Start();
 				fsManager.EraseOldFileSystemResidentFiles(volInfo, info, method,
 					delegate(int currentFile, int totalFiles)
 					{
 						residentProgress.Completed = currentFile;
 						residentProgress.Total = totalFiles;
-						task.OnProgressChanged(eventArgs);
+						task.OnProgressChanged(target, new TaskProgressEventArgs(task,
+							string.Empty, 0, 0));
 
 						if (currentTask.Canceled)
 							throw new OperationCanceledException(S._("The task was cancelled."));
@@ -493,15 +491,17 @@ namespace Eraser.Manager
 			finally
 			{
 				//Remove the folder holding all our temporary files.
-				eventArgs.CurrentTargetStatus = S._("Removing temporary files...");
-				task.OnProgressChanged(eventArgs);
+				ProgressManager tempFiles = new ProgressManager();
+				progress.Steps.Add(new SteppedProgressManager.Step(tempFiles,
+					0.0f, S._("Removing temporary files...")));
+				task.OnProgressChanged(target, new TaskProgressEventArgs(task, string.Empty, 0, 0));
 				fsManager.DeleteFolder(info);
 			}
 
 			//Then clean the old file system entries
-			SteppedProgressManagerStep structureProgress =
-				new SteppedProgressManagerStep(0.05f, S._("Erasing unused directory structures..."));
-			task.Progress.Steps.Add(structureProgress);
+			ProgressManager structureProgress = new ProgressManager();
+			progress.Steps.Add(new SteppedProgressManager.Step(structureProgress,
+				0.05f, S._("Erasing unused directory structures...")));
 			structureProgress.Start();
 			fsManager.EraseDirectoryStructures(volInfo,
 				delegate(int currentFile, int totalFiles)
@@ -514,9 +514,12 @@ namespace Eraser.Manager
 					structureProgress.Completed = currentFile;
 
 					//Set the event parameters, then broadcast the progress event.
-					task.OnProgressChanged(eventArgs);
+					task.OnProgressChanged(target, new TaskProgressEventArgs(task,
+						string.Empty, 0, 0));
 				}
 			);
+
+			target.Progress = null;
 		}
 
 		/// <summary>
@@ -540,18 +543,18 @@ namespace Eraser.Manager
 			//Set the event's current target status.
 			TaskEventArgs eventArgs = new TaskEventArgs(task);
 			SteppedProgressManager progress = new SteppedProgressManager();
+			target.Progress = progress;
+			task.Progress.Steps.Add(new SteppedProgressManager.Step(progress, 1.0f / task.Targets.Count));
 
 			//Iterate over every path, and erase the path.
 			for (int i = 0; i < paths.Count; ++i)
 			{
 				//Update the task progress
-				SteppedProgressManagerStep step = new SteppedProgressManagerStep(
-					i / (float)paths.Count, S._("Erasing files..."));
-				eventArgs.CurrentTarget = target;
-				eventArgs.CurrentItemName = paths[i];
-				eventArgs.CurrentItemProgress = 0;
-				eventArgs.CurrentTargetTotalPasses = method.Passes;
-				task.OnProgressChanged(eventArgs);
+				ProgressManager step = new ProgressManager();
+				progress.Steps.Add(new SteppedProgressManager.Step(step,
+					i / (float)paths.Count, S._("Erasing files...")));
+				task.OnProgressChanged(target, new TaskProgressEventArgs(
+					task, paths[i], 0, method.Passes));
 				
 				//Get the filesystem provider to handle the secure file erasures
 				StreamInfo info = new StreamInfo(paths[i]);
@@ -586,17 +589,16 @@ namespace Eraser.Manager
 							"a sparse file.", info.FullName), LogLevel.Error));
 					}
 
-					long itemWritten = 0;
 					fsManager.EraseFileSystemObject(info, method,
 						delegate(long lastWritten, long totalData, int currentPass)
 						{
-							step.Completed += lastWritten;
-							step.Total = totalData;
-							eventArgs.CurrentItemPass = currentPass;
-							task.OnProgressChanged(eventArgs);
-
 							if (currentTask.Canceled)
 								throw new OperationCanceledException(S._("The task was cancelled."));
+
+							step.Completed += lastWritten;
+							step.Total = totalData;
+							task.OnProgressChanged(target, new TaskProgressEventArgs(task,
+								info.FullName, currentPass, method.Passes));
 						});
 
 					//Remove the file.
@@ -640,7 +642,9 @@ namespace Eraser.Manager
 			//If the user requested a folder removal, do it.
 			if (target is FolderTarget)
 			{
-				eventArgs.CurrentTargetStatus = S._("Removing folders...");
+				ProgressManager step = new ProgressManager();
+				progress.Steps.Add(new SteppedProgressManager.Step(step,
+					0.0f, S._("Removing folders...")));
 				
 				//Remove all subfolders which are empty.
 				FolderTarget fldr = (FolderTarget)target;
@@ -650,9 +654,8 @@ namespace Eraser.Manager
 				{
 					 foreach (DirectoryInfo subDir in info.GetDirectories())
 						 eraseEmptySubFolders(subDir);
-
-					 eventArgs.CurrentItemName = info.FullName;
-					 task.OnProgressChanged(eventArgs);
+					 task.OnProgressChanged(target, new TaskProgressEventArgs(
+						 task, info.FullName, 0, 0));
 
 					 FileSystemInfo[] files = info.GetFileSystemInfos();
 					 if (files.Length == 0)
@@ -663,8 +666,8 @@ namespace Eraser.Manager
 				if (fldr.DeleteIfEmpty)
 				{
 					DirectoryInfo info = new DirectoryInfo(fldr.Path);
-					eventArgs.CurrentItemName = info.FullName;
-					task.OnProgressChanged(eventArgs);
+					task.OnProgressChanged(target, new TaskProgressEventArgs(
+						 task, info.FullName, 0, 0));
 
 					//See if this is the root of a volume.
 					bool isVolumeRoot = info.Parent == null;
@@ -678,13 +681,17 @@ namespace Eraser.Manager
 					if (!isVolumeRoot && info.Exists && info.GetFiles("*", SearchOption.AllDirectories).Length == 0)
 						fsManager.DeleteFolder(info);
 				}
+
+				target.Progress = null;
 			}
 
 			//If the user was erasing the recycle bin, clear the bin.
 			if (target is RecycleBinTarget)
 			{
-				eventArgs.CurrentTargetStatus = S._("Emptying recycle bin...");
-				task.OnProgressChanged(eventArgs);
+				ProgressManager step = new ProgressManager();
+				progress.Steps.Add(new SteppedProgressManager.Step(step,
+					0.0f, S._("Emptying recycle bin...")));
+				task.OnProgressChanged(target, new TaskProgressEventArgs(task, string.Empty, 0, 0));
 
 				ShellApi.EmptyRecycleBin(EmptyRecycleBinOptions.NoConfirmation |
 					EmptyRecycleBinOptions.NoProgressUI | EmptyRecycleBinOptions.NoSound);

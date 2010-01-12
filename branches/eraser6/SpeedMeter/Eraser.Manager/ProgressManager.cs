@@ -179,53 +179,6 @@ namespace Eraser.Manager
 	}
 
 	/// <summary>
-	/// Represents one step of the steps associated with the <see cref="SteppedProgressManager"/>
-	/// </summary>
-	public class SteppedProgressManagerStep : ProgressManager
-	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="weight">The weight of this step. The weight is a decimal
-		/// number in the range [0.0, 1.0] which represents the percentage of the
-		/// entire process this particular step is.</param>
-		/// <param name="name">A user-specified value of the name of this step.
-		/// This value is not used by the class at all.</param>
-		public SteppedProgressManagerStep(float weight, string name)
-		{
-			Weight = weight;
-			Name = name;
-		}
-
-		/// <summary>
-		/// The weight associated with this step.
-		/// </summary>
-		public float Weight
-		{
-			get;
-			private set;
-		}
-
-		/// <summary>
-		/// The name of this step.
-		/// </summary>
-		public string Name
-		{
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// The <see cref="SteppedProgressManager"/> which manages this step.
-		/// </summary>
-		internal SteppedProgressManager Manager
-		{
-			get;
-			set;
-		}
-	}
-
-	/// <summary>
 	/// Manages progress based on sub-tasks, taking each sub-task to be a step
 	/// in which the next step will not be executed until the current step is
 	/// complete. Each step is also assign weights so that certain steps which
@@ -235,42 +188,100 @@ namespace Eraser.Manager
 	public class SteppedProgressManager : ChainedProgressManager
 	{
 		/// <summary>
+		/// Represents one step in the list of steps to complete.
+		/// </summary>
+		public class Step
+		{
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="progress">The <see cref="ProgressManagerBase"/> instance
+			/// which measures the progress of this step.</param>
+			/// <param name="weight">The weight of this step. The weight is a decimal
+			/// number in the range [0.0, 1.0] which represents the percentage of the
+			/// entire process this particular step is.</param>
+			public Step(ProgressManagerBase progress, float weight)
+				: this(progress, weight, null)
+			{
+			}
+
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="progress">The <see cref="ProgressManagerBase"/> instance
+			/// which measures the progress of this step.</param>
+			/// <param name="weight">The weight of this step. The weight is a decimal
+			/// number in the range [0.0, 1.0] which represents the percentage of the
+			/// entire process this particular step is.</param>
+			/// <param name="name">A user-specified value of the name of this step.
+			/// This value is not used by the class at all.</param>
+			public Step(ProgressManagerBase progress, float weight, string name)
+			{
+				Progress = progress;
+				Weight = weight;
+				Name = name;
+			}
+
+			/// <summary>
+			/// The <see cref="ProgressManagerBase"/> instance which measures the
+			/// progress of the step.
+			/// </summary>
+			public ProgressManagerBase Progress
+			{
+				get;
+				set;
+			}
+
+			/// <summary>
+			/// The weight associated with this step.
+			/// </summary>
+			public float Weight
+			{
+				get;
+				private set;
+			}
+
+			/// <summary>
+			/// The name of this step.
+			/// </summary>
+			public string Name
+			{
+				get;
+				set;
+			}
+		}
+
+		/// <summary>
 		/// The class which manages the steps which comprise the overall progress.
 		/// </summary>
-		public class StepsList : IList<SteppedProgressManagerStep>
+		public class StepsList : IList<Step>
 		{
 			public StepsList(SteppedProgressManager manager)
 			{
-				List = new List<SteppedProgressManagerStep>();
+				List = new List<Step>();
 				Manager = manager;
 			}
 
-			#region IList<SteppedProgressManagerStep> Members
+			#region IList<Step> Members
 
-			public int IndexOf(SteppedProgressManagerStep item)
+			public int IndexOf(Step item)
 			{
 				return List.IndexOf(item);
 			}
 
-			public void Insert(int index, SteppedProgressManagerStep item)
+			public void Insert(int index, Step item)
 			{
-				if (item.Manager != null)
-					throw new ArgumentException("The step cannot be added to " +
-						"multiple SteppedProgressManager instances simultaneously.");
-
 				List.Insert(index, item);
-				item.Manager = Manager;
 				TotalWeights += item.Weight;
 			}
 
 			public void RemoveAt(int index)
 			{
 				TotalWeights -= List[index].Weight;
-				List[index].Manager = null;
 				List.RemoveAt(index);
 			}
 
-			public SteppedProgressManagerStep this[int index]
+			public Step this[int index]
 			{
 				get
 				{
@@ -279,40 +290,33 @@ namespace Eraser.Manager
 				set
 				{
 					TotalWeights -= List[index].Weight;
-					List[index].Manager = null;
-
 					List[index] = value;
 					TotalWeights += value.Weight;
-					value.Manager = Manager;
 				}
 			}
 
 			#endregion
 
-			#region ICollection<SteppedProgressManagerStep> Members
+			#region ICollection<Step> Members
 
-			public void Add(SteppedProgressManagerStep item)
+			public void Add(Step item)
 			{
 				List.Add(item);
 				TotalWeights += item.Weight;
-				item.Manager = Manager;
 			}
 
 			public void Clear()
 			{
-				foreach (SteppedProgressManagerStep step in List)
-					step.Manager = null;
-
 				List.Clear();
 				TotalWeights = 0;
 			}
 
-			public bool Contains(SteppedProgressManagerStep item)
+			public bool Contains(Step item)
 			{
 				return List.Contains(item);
 			}
 
-			public void CopyTo(SteppedProgressManagerStep[] array, int arrayIndex)
+			public void CopyTo(Step[] array, int arrayIndex)
 			{
 				List.CopyTo(array, arrayIndex);
 			}
@@ -327,23 +331,20 @@ namespace Eraser.Manager
 				get { return false; }
 			}
 
-			public bool Remove(SteppedProgressManagerStep item)
+			public bool Remove(Step item)
 			{
 				int index = List.IndexOf(item);
 				if (index != -1)
-				{
 					TotalWeights -= List[index].Weight;
-					List[index].Manager = null;
-				}
 
 				return List.Remove(item);
 			}
 
 			#endregion
 
-			#region IEnumerable<SteppedProgressManagerStep> Members
+			#region IEnumerable<Step> Members
 
-			public IEnumerator<SteppedProgressManagerStep> GetEnumerator()
+			public IEnumerator<Step> GetEnumerator()
 			{
 				return List.GetEnumerator();
 			}
@@ -381,7 +382,7 @@ namespace Eraser.Manager
 			/// <summary>
 			/// The list storing the steps for this instance.
 			/// </summary>
-			private List<SteppedProgressManagerStep> List;
+			private List<Step> List;
 
 			/// <summary>
 			/// The <see cref="SteppedProgressManager"/> instance which owns this list.
@@ -409,8 +410,8 @@ namespace Eraser.Manager
 				float totalWeight = (float)Steps.TotalWeights;
 				float result = 0.0f;
 
-				foreach (SteppedProgressManagerStep step in Steps)
-					result += step.Progress * step.Weight;
+				foreach (Step step in Steps)
+					result += step.Progress.Progress * step.Weight;
 
 				return result;
 			}
@@ -420,7 +421,7 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				throw new NotSupportedException();
+				return CurrentStep.Progress.Speed;
 			}
 		}
 
@@ -448,15 +449,15 @@ namespace Eraser.Manager
 		/// Gets the current step which is executing. This property is null if
 		/// no steps are executing (also when the task is complete)
 		/// </summary>
-		public SteppedProgressManagerStep CurrentStep
+		public Step CurrentStep
 		{
 			get
 			{
 				if (StartTime == DateTime.MinValue)
 					return null;
 
-				foreach (SteppedProgressManagerStep step in Steps)
-					if (step.Progress < 1.0f)
+				foreach (Step step in Steps)
+					if (step.Progress.Progress < 1.0f)
 						return step;
 
 				return null;
@@ -596,8 +597,8 @@ namespace Eraser.Manager
 			get
 			{
 				float result = 0.0f;
-				foreach (SteppedProgressManagerStep step in Tasks)
-					result += step.Progress * (1.0f / Tasks.Count);
+				foreach (ProgressManagerBase subTask in Tasks)
+					result += subTask.Progress * (1.0f / Tasks.Count);
 
 				return result;
 			}
@@ -608,8 +609,8 @@ namespace Eraser.Manager
 			get
 			{
 				int maxSpeed = 0;
-				foreach (SteppedProgressManagerStep step in Tasks)
-					maxSpeed = Math.Max(step.Speed, maxSpeed);
+				foreach (ProgressManagerBase subTask in Tasks)
+					maxSpeed = Math.Max(subTask.Speed, maxSpeed);
 
 				return maxSpeed;
 			}
@@ -620,9 +621,9 @@ namespace Eraser.Manager
 			get
 			{
 				TimeSpan maxTime = TimeSpan.MinValue;
-				foreach (SteppedProgressManagerStep step in Tasks)
-					if (maxTime < step.TimeLeft)
-						maxTime = step.TimeLeft;
+				foreach (ProgressManagerBase subTask in Tasks)
+					if (maxTime < subTask.TimeLeft)
+						maxTime = subTask.TimeLeft;
 
 				return maxTime;
 			}
