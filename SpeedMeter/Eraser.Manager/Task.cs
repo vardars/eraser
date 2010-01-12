@@ -234,7 +234,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The event object holding all event handlers.
 		/// </summary>
-		public EventHandler<TaskEventArgs> ProgressChanged { get; set; }
+		public EventHandler<TaskProgressEventArgs> ProgressChanged { get; set; }
 
 		/// <summary>
 		/// The completion of the execution of a task.
@@ -265,11 +265,13 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Broadcasts a ProgressChanged event.
 		/// </summary>
+		/// <param name="sender">The <see cref="ErasureTarget"/> which is reporting
+		/// progress.</param>
 		/// <param name="e">The new progress value.</param>
-		internal void OnProgressChanged(TaskEventArgs e)
+		internal void OnProgressChanged(ErasureTarget sender, TaskProgressEventArgs e)
 		{
 			if (ProgressChanged != null)
-				ProgressChanged(this, e);
+				ProgressChanged(sender, e);
 		}
 
 		/// <summary>
@@ -366,20 +368,18 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Gets the progress for this target. If this target is not currently
-		/// executing or if the target has completed, this property will return
-		/// null.
-		/// </summary>
-		public abstract ProgressManagerBase Progress
-		{
-			get;
-			protected set;
-		}
-
-		/// <summary>
 		/// Erasure method to use for the target.
 		/// </summary>
 		private ErasureMethod method;
+
+		/// <summary>
+		/// The progress of this target.
+		/// </summary>
+		public ProgressManagerBase Progress
+		{
+			get;
+			internal set;
+		}
 	}
 
 	/// <summary>
@@ -570,18 +570,6 @@ namespace Eraser.Manager
 		/// Whether cluster tips should be erased.
 		/// </summary>
 		public bool EraseClusterTips { get; set; }
-
-		public override ProgressManagerBase Progress
-		{
-			get
-			{
-				return new ProgressManager();
-			}
-			protected set
-			{
-				throw new NotImplementedException();
-			}
-		}
 	}
 
 	/// <summary>
@@ -618,18 +606,6 @@ namespace Eraser.Manager
 
 			result.Add(Path);
 			return result;
-		}
-
-		public override ProgressManagerBase Progress
-		{
-			get
-			{
-				return new ProgressManager();
-			}
-			protected set
-			{
-				throw new NotImplementedException();
-			}
 		}
 	}
 
@@ -765,18 +741,6 @@ namespace Eraser.Manager
 		/// Determines if Eraser should delete the folder after the erase process.
 		/// </summary>
 		public bool DeleteIfEmpty { get; set; }
-
-		public override ProgressManagerBase Progress
-		{
-			get
-			{
-				return new SteppedProgressManager();
-			}
-			protected set
-			{
-				throw new NotImplementedException();
-			}
-		}
 	}
 
 	[Serializable]
@@ -859,18 +823,6 @@ namespace Eraser.Manager
 			get
 			{
 				return S._("Recycle Bin");
-			}
-		}
-
-		public override ProgressManagerBase Progress
-		{
-			get
-			{
-				return new SteppedProgressManager();
-			}
-			protected set
-			{
-				throw new NotImplementedException();
 			}
 		}
 	}
@@ -1056,5 +1008,41 @@ namespace Eraser.Manager
 		/// The executing task.
 		/// </summary>
 		public Task Task { get; private set; }
+	}
+
+	public class TaskProgressEventArgs : TaskEventArgs
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="task">The task being referred to by this event.</param>
+		/// <param name="itemName">The item whose erasure progress is being erased.</param>
+		/// <param name="itemPass">The current pass number for this item.</param>
+		/// <param name="itemTotalPasses">The total number of passes to complete erasure
+		/// of this item.</param>
+		public TaskProgressEventArgs(Task task, string itemName, int itemPass,
+			int itemTotalPasses)
+			: base(task)
+		{
+			ItemName = itemName;
+			ItemPass = itemPass;
+			ItemTotalPasses = itemTotalPasses;
+		}
+
+		/// <summary>
+		/// The file name of the item being erased.
+		/// </summary>
+		public string ItemName { get; private set; }
+
+		/// <summary>
+		/// The pass number of a multi-pass erasure method.
+		/// </summary>
+		public int ItemPass { get; private set; }
+
+		/// <summary>
+		/// The total number of passes to complete before this erasure method is
+		/// completed.
+		/// </summary>
+		public int ItemTotalPasses { get; private set; }
 	}
 }
