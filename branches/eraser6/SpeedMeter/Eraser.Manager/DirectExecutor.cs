@@ -418,7 +418,7 @@ namespace Eraser.Manager
 
 				ProgressManager mainProgress = new ProgressManager();
 				progress.Steps.Add(new SteppedProgressManager.Step(mainProgress,
-					target.EraseClusterTips ? 0.9f : 0.8f, S._("Erasing unused space...")));
+					target.EraseClusterTips ? 0.8f : 0.9f, S._("Erasing unused space...")));
 
 				//Continue creating files while there is free space.
 				while (volInfo.AvailableFreeSpace > 0)
@@ -432,8 +432,9 @@ namespace Eraser.Manager
 					{
 						//Set the length of the file to be the amount of free space left
 						//or the maximum size of one of these dumps.
+						mainProgress.Total = mainProgress.Completed + volInfo.AvailableFreeSpace;
 						long streamLength = Math.Min(ErasureMethod.FreeSpaceFileUnit,
-							volInfo.AvailableFreeSpace);
+							mainProgress.Total);
 
 						//Handle IO exceptions gracefully, because the filesystem
 						//may require more space than demanded by us for file allocation.
@@ -457,7 +458,6 @@ namespace Eraser.Manager
 							delegate(long lastWritten, long totalData, int currentPass)
 							{
 								mainProgress.Completed += lastWritten;
-								mainProgress.Total = totalData;
 								task.OnProgressChanged(target, new TaskProgressEventArgs(task,
 									target.Drive, currentPass, method.Passes));
 
@@ -467,6 +467,9 @@ namespace Eraser.Manager
 						);
 					}
 				}
+
+				//Mark the main bulk of the progress as complete
+				mainProgress.Completed = mainProgress.Total;
 
 				//Erase old resident file system table files
 				ProgressManager residentProgress = new ProgressManager();
@@ -484,6 +487,8 @@ namespace Eraser.Manager
 							throw new OperationCanceledException(S._("The task was cancelled."));
 					}
 				);
+
+				residentProgress.Completed = residentProgress.Total = 1;
 			}
 			finally
 			{
@@ -493,6 +498,7 @@ namespace Eraser.Manager
 					0.0f, S._("Removing temporary files...")));
 				task.OnProgressChanged(target, new TaskProgressEventArgs(task, string.Empty, 0, 0));
 				fsManager.DeleteFolder(info);
+				tempFiles.Completed = tempFiles.Total = 1;
 			}
 
 			//Then clean the old file system entries
@@ -515,6 +521,7 @@ namespace Eraser.Manager
 				}
 			);
 
+			structureProgress.Completed = structureProgress.Total;
 			target.Progress = null;
 		}
 
@@ -601,6 +608,7 @@ namespace Eraser.Manager
 					FileInfo fileInfo = info.File;
 					if (fileInfo != null)
 						fsManager.DeleteFile(fileInfo);
+					step.Completed = step.Total = 1;
 				}
 				catch (UnauthorizedAccessException)
 				{
