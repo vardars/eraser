@@ -80,7 +80,7 @@ namespace Eraser
 				e.ItemPass.ToString(CultureInfo.CurrentCulture);
 
 			if (target.Progress.TimeLeft >= TimeSpan.Zero)
-				timeLeft.Text = S._("About {0:T} left", target.Progress.TimeLeft);
+				timeLeft.Text = S._("About {0} left", RoundToSeconds(target.Progress.TimeLeft));
 			else
 				timeLeft.Text = S._("Unknown");
 
@@ -185,6 +185,11 @@ namespace Eraser
 			}
 
 			return result.ToString();
+		}
+
+		private TimeSpan RoundToSeconds(TimeSpan span)
+		{
+			return new TimeSpan(span.Ticks - span.Ticks % TimeSpan.TicksPerSecond);
 		}
 	}
 }
