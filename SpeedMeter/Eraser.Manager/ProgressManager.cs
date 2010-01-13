@@ -431,8 +431,8 @@ namespace Eraser.Manager
 		/// </summary>
 		public SteppedProgressManager()
 		{
-			Steps = new StepsList(this);
 			ListLock = new object();
+			Steps = new StepsList(this);
 		}
 
 		public override float Progress
