@@ -701,4 +701,42 @@ namespace Eraser.Manager
 		/// </summary>
 		private object TaskLock;
 	}
+
+	/// <summary>
+	/// Provides data for the Eraser.Manager.ProgressChanged event.
+	/// </summary>
+	public class ProgressChangedEventArgs : EventArgs
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="progress">The ProgressManagerBase object that stores the progress
+		/// for the given task.</param>
+		/// <param name="userState">A client-specified state object.</param>
+		public ProgressChangedEventArgs(ProgressManagerBase progress, object userState)
+		{
+			Progress = progress;
+			UserState = userState;
+		}
+
+		/// <summary>
+		/// The ProgressManagerBase object that stores the progress for the given
+		/// task.
+		/// </summary>
+		public ProgressManagerBase Progress { get; private set; }
+
+		/// <summary>
+		/// A client-specified state object.
+		/// </summary>
+		public object UserState { get; private set; }
+	}
+
+	/// <summary>
+	/// Represents the method that will handle the ProgressChanged event from
+	/// the <see cref="ProgressManagerBase"/> class.
+	/// </summary>
+	/// <param name="sender">The source of the event.</param>
+	/// <param name="e">A <see cref="ProgressChangedEventArgs"/> event that
+	/// stores the event data.</param>
+	public delegate void ProgressChangedEventHandler(object sender, ProgressChangedEventArgs e);
 }

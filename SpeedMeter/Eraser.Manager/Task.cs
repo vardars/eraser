@@ -234,7 +234,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The event object holding all event handlers.
 		/// </summary>
-		public EventHandler<TaskProgressEventArgs> ProgressChanged { get; set; }
+		public EventHandler<ProgressChangedEventArgs> ProgressChanged { get; set; }
 
 		/// <summary>
 		/// The completion of the execution of a task.
@@ -263,13 +263,28 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Broadcasts a ProgressChanged event.
+		/// Broadcasts a ProgressChanged event. The sender will be the erasure target
+		/// which broadcast this event; e.UserState will contain extra information
+		/// about the progress which is stored as a TaskProgressChangedEventArgs
+		/// object.
 		/// </summary>
 		/// <param name="sender">The <see cref="ErasureTarget"/> which is reporting
 		/// progress.</param>
 		/// <param name="e">The new progress value.</param>
-		internal void OnProgressChanged(ErasureTarget sender, TaskProgressEventArgs e)
+		/// <exception cref="ArgumentException">e.UserState must be of the type
+		/// <see cref="TaskProgressEventargs"/></exception>
+		/// <exception cref="ArgumentNullException">Both sender and e cannot be null.</exception>
+		internal void OnProgressChanged(ErasureTarget sender, ProgressChangedEventArgs e)
 		{
+			if (sender == null)
+				throw new ArgumentNullException("sender");
+			if (e == null)
+				throw new ArgumentNullException("sender");
+			if (e.UserState.GetType() != typeof(TaskProgressChangedEventArgs))
+				throw new ArgumentException("The Task.OnProgressChanged event expects a " +
+					"TaskProgressEventArgs argument for the ProgressChangedEventArgs' UserState " +
+					"object.", "e");
+
 			if (ProgressChanged != null)
 				ProgressChanged(sender, e);
 		}
@@ -1010,19 +1025,21 @@ namespace Eraser.Manager
 		public Task Task { get; private set; }
 	}
 
-	public class TaskProgressEventArgs : TaskEventArgs
+	/// <summary>
+	/// Stores extra information in the <see cref="ProgressChangedEventArgs"/>
+	/// structure that is not conveyed in the ProgressManagerBase classes.
+	/// </summary>
+	public class TaskProgressChangedEventArgs
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="task">The task being referred to by this event.</param>
 		/// <param name="itemName">The item whose erasure progress is being erased.</param>
 		/// <param name="itemPass">The current pass number for this item.</param>
 		/// <param name="itemTotalPasses">The total number of passes to complete erasure
 		/// of this item.</param>
-		public TaskProgressEventArgs(Task task, string itemName, int itemPass,
+		public TaskProgressChangedEventArgs(string itemName, int itemPass,
 			int itemTotalPasses)
-			: base(task)
 		{
 			ItemName = itemName;
 			ItemPass = itemPass;
