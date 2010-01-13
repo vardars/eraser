@@ -54,7 +54,8 @@ namespace Eraser
 
 			//Set the current progress
 			if (task.Progress.CurrentStep != null)
-				UpdateProgress((SteppedProgressManager)task.Progress.CurrentStep.Progress, null);
+				UpdateProgress((SteppedProgressManager)task.Progress.CurrentStep.Progress,
+					new ProgressChangedEventArgs(task.Progress.CurrentStep.Progress, null));
 		}
 
 		private void ProgressForm_FormClosed(object sender, FormClosedEventArgs e)
