@@ -30,6 +30,7 @@ using System.Windows.Forms;
 using Eraser.Manager;
 using Eraser.Util;
 using System.Globalization;
+using ProgressChangedEventArgs = Eraser.Manager.ProgressChangedEventArgs;
 
 namespace Eraser
 {
@@ -62,7 +63,7 @@ namespace Eraser
 			task.TaskFinished -= task_TaskFinished;
 		}
 
-		private void task_ProgressChanged(object sender, TaskProgressEventArgs e)
+		private void task_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
 			if (InvokeRequired)
 			{
@@ -71,7 +72,7 @@ namespace Eraser
 					return;
 
 				lastUpdate = DateTime.Now;
-				Invoke(new EventHandler<TaskProgressEventArgs>(task_ProgressChanged), sender, e);
+				Invoke((EventHandler<ProgressChangedEventArgs>)task_ProgressChanged, sender, e);
 				return;
 			}
 
@@ -143,16 +144,17 @@ namespace Eraser
 			Close();
 		}
 
-		private void UpdateProgress(SteppedProgressManager targetProgress, TaskProgressEventArgs e)
+		private void UpdateProgress(SteppedProgressManager targetProgress, ProgressChangedEventArgs e)
 		{
-			status.Text = targetProgress.CurrentStep.Name;
+			TaskProgressChangedEventArgs e2 = (TaskProgressChangedEventArgs)e.UserState;
 
-			if (e != null)
+			status.Text = targetProgress.CurrentStep.Name;
+			if (e2 != null)
 			{
-				item.Text = WrapItemName(e.ItemName);
-				pass.Text = e.ItemTotalPasses != 0 ?
-					S._("{0} out of {1}", e.ItemPass, e.ItemTotalPasses) :
-					e.ItemPass.ToString(CultureInfo.CurrentCulture);
+				item.Text = WrapItemName(e2.ItemName);
+				pass.Text = e2.ItemTotalPasses != 0 ?
+					S._("{0} out of {1}", e2.ItemPass, e2.ItemTotalPasses) :
+					e2.ItemPass.ToString(CultureInfo.CurrentCulture);
 			}
 
 			if (targetProgress.TimeLeft >= TimeSpan.Zero)
