@@ -307,7 +307,7 @@ namespace Eraser
 		{
 			if (InvokeRequired)
 			{
-				Invoke(new EventHandler<TaskEventArgs>(OnTaskProcessing), sender, e);
+				Invoke((EventHandler<TaskEventArgs>)OnTaskProcessing, sender, e);
 				return;
 			}
 
@@ -324,7 +324,7 @@ namespace Eraser
 		{
 			if (InvokeRequired)
 			{
-				Invoke(new EventHandler<TaskEventArgs>(OnTaskProcessed), sender, e);
+				Invoke((EventHandler<TaskEventArgs>)OnTaskProcessed, sender, e);
 				return;
 			}
 

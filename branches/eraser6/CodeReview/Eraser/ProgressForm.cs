@@ -92,7 +92,7 @@ namespace Eraser
 		{
 			if (InvokeRequired)
 			{
-				Invoke(new EventHandler<TaskEventArgs>(task_TaskFinished), sender, e);
+				Invoke((EventHandler<TaskEventArgs>)task_TaskFinished, sender, e);
 				return;
 			}
 
