@@ -26,11 +26,11 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Globalization;
+using System.IO;
 
 using Eraser.Manager;
-using System.Globalization;
 using Eraser.Util;
-using System.IO;
 
 namespace Eraser
 {
@@ -55,18 +55,19 @@ namespace Eraser
 			filterSeverityCombobox.SelectedIndex = 0;
 
 			//Display the log entries
-			this.task = task;
+			Task = task;
 			RefreshMessages();
 			EnableButtons();
 
 			//Register our event handler to get live log messages
-			task.Log.Logged += task_Logged;
-			task.Log.NewSession += task_NewSession;
+			Task.Log.Logged += task_Logged;
+			Task.Log.NewSession += task_NewSession;
 		}
 
 		private void LogForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			task.Log.Logged -= task_Logged;
+			Task.Log.NewSession -= task_NewSession;
+			Task.Log.Logged -= task_Logged;
 		}
 
 		private void filter_Changed(object sender, EventArgs e)
@@ -82,7 +83,7 @@ namespace Eraser
 				return;
 			}
 
-			filterSessionCombobox.Items.Add(task.Log.LastSession);
+			filterSessionCombobox.Items.Add(Task.Log.LastSession);
 		}
 
 		private void task_Logged(object sender, LogEventArgs e)
@@ -97,14 +98,14 @@ namespace Eraser
 			//this is an event handler for new log messages only, we should only
 			//display this entry when the session in question is the last one.
 			if (filterSessionCombobox.SelectedItem == null ||
-				(DateTime)filterSessionCombobox.SelectedItem != task.Log.LastSession ||
+				(DateTime)filterSessionCombobox.SelectedItem != Task.Log.LastSession ||
 				!MeetsCriteria(e.LogEntry))
 			{
 				return;
 			}
 
 			//Add it to the cache and increase our virtual list size.
-			entryCache.Add(e.LogEntry);
+			EntryCache.Add(e.LogEntry);
 			++log.VirtualListSize;
 
 			//Enable the clear and copy log buttons only if we have entries to copy.
@@ -113,7 +114,7 @@ namespace Eraser
 
 		private void log_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
 		{
-			LogEntry entry = entryCache[e.ItemIndex];
+			LogEntry entry = EntryCache[e.ItemIndex];
 			e.Item = new ListViewItem(entry.Timestamp.ToString("F", CultureInfo.CurrentCulture));
 			e.Item.SubItems.Add(entry.Level.ToString());
 			e.Item.SubItems.Add(entry.Message);
@@ -136,12 +137,11 @@ namespace Eraser
 		{
 			if (e.IsSelected)
 			{
-				if (!selectedEntries.ContainsKey(e.ItemIndex))
-					selectedEntries.Add(e.ItemIndex, null);
+				SelectedEntries.Add(e.ItemIndex, EntryCache[e.ItemIndex]);
 			}
 			else
 			{
-				selectedEntries.Remove(e.ItemIndex);
+				SelectedEntries.Remove(e.ItemIndex);
 			}
 		}
 
@@ -151,36 +151,24 @@ namespace Eraser
 			{
 				if (e.IsSelected)
 				{
-					if (!selectedEntries.ContainsKey(i))
-						selectedEntries.Add(i, null);
+					SelectedEntries.Add(i, EntryCache[i]);
 				}
 				else
 				{
-					selectedEntries.Remove(i);
+					SelectedEntries.Remove(i);
 				}
 			}
 		}
 
 		private void log_ItemActivate(object sender, EventArgs e)
 		{
-			if (selectedEntries.Count < 1)
+			if (SelectedEntries.Count < 1)
 				return;
 
-			int currentEntryIndex = 0;
-			LogEntry selectedEntry = new LogEntry();
-			foreach (LogEntry entry in task.Log.Entries[(DateTime)filterSessionCombobox.SelectedItem])
-			{
-				//Only copy entries which meet the display criteria and that they are selected
-				if (!MeetsCriteria(entry))
-					continue;
-				if (!selectedEntries.ContainsKey(currentEntryIndex++))
-					continue;
+			//Get the selected entry from the entry cache.
+			LogEntry selectedEntry = SelectedEntries.Values[0];
 
-				selectedEntry = entry;
-				break;
-			}
-
-			//Decide on the icon
+			//Decide on the icon.
 			MessageBoxIcon icon = MessageBoxIcon.None;
 			switch (selectedEntry.Level)
 			{
@@ -204,32 +192,26 @@ namespace Eraser
 
 		private void logContextMenuStrip_Opening(object sender, CancelEventArgs e)
 		{
-			copySelectedEntriesToolStripMenuItem.Enabled = selectedEntries.Count != 0;
+			copySelectedEntriesToolStripMenuItem.Enabled = SelectedEntries.Count != 0;
 		}
 
 		private void copySelectedEntriesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			//Ensure we've got stuff to copy.
-			if (selectedEntries.Count == 0)
+			if (SelectedEntries.Count == 0)
 				return;
 
 			StringBuilder csvText = new StringBuilder();
 			StringBuilder rawText = new StringBuilder();
-			LogSessionDictionary logEntries = task.Log.Entries;
+			LogSessionDictionary logEntries = Task.Log.Entries;
 
 			DateTime sessionTime = (DateTime)filterSessionCombobox.SelectedItem;
 			csvText.AppendLine(S._("Session: {0:F}", sessionTime));
 			rawText.AppendLine(S._("Session: {0:F}", sessionTime));
 
-			int currentEntryIndex = 0;
-			foreach (LogEntry entry in logEntries[sessionTime])
+			foreach (LogEntry entry in SelectedEntries.Values)
 			{
-				//Only copy entries which meet the display criteria and that they are selected
-				if (!MeetsCriteria(entry))
-					continue;
-				if (!selectedEntries.ContainsKey(currentEntryIndex++))
-					continue;
-
+				//Append the entry's contents to our buffer.
 				string timeStamp = entry.Timestamp.ToString("F", CultureInfo.CurrentCulture);
 				string message = entry.Message;
 				csvText.AppendFormat("\"{0}\",\"{1}\",\"{2}\"\n",
@@ -258,15 +240,15 @@ namespace Eraser
 		private void clear_Click(object sender, EventArgs e)
 		{
 			//Clear the backing store
-			task.Log.Clear();
+			Task.Log.Clear();
 
 			//Reset the list of sessions
 			filterSessionCombobox.Items.Clear();
 
 			//And reset the list-view control
 			log.VirtualListSize = 0;
-			selectedEntries.Clear();
-			entryCache.Clear();
+			SelectedEntries.Clear();
+			EntryCache.Clear();
 
 			//Finally update the UI state.
 			EnableButtons();
@@ -313,13 +295,13 @@ namespace Eraser
 		private void RefreshMessages()
 		{
 			//Check if we have a task
-			if (task == null)
+			if (Task == null)
 				return;
 
 			Application.UseWaitCursor = true;
-			LogSessionDictionary log = task.Log.Entries;
-			entryCache.Clear();
-			selectedEntries.Clear();
+			LogSessionDictionary log = Task.Log.Entries;
+			EntryCache.Clear();
+			SelectedEntries.Clear();
 
 			//Iterate over every key
 			foreach (DateTime sessionTime in log.Keys)
@@ -333,12 +315,12 @@ namespace Eraser
 				{
 					//Check if the entry meets the criteria for viewing
 					if (MeetsCriteria(entry))
-						entryCache.Add(entry);
+						EntryCache.Add(entry);
 				}
 			}
 
 			//Set the list view size and update all the control states
-			this.log.VirtualListSize = entryCache.Count;
+			this.log.VirtualListSize = EntryCache.Count;
 			this.log.Refresh();
 			EnableButtons();
 			Application.UseWaitCursor = false;
@@ -349,22 +331,23 @@ namespace Eraser
 		/// </summary>
 		private void EnableButtons()
 		{
-			clear.Enabled = task.Log.Entries.Count > 0;
+			clear.Enabled = Task.Log.Entries.Count > 0;
 		}
 
 		/// <summary>
 		/// The task which this log is displaying entries for
 		/// </summary>
-		private Task task;
+		private Task Task;
 
 		/// <summary>
 		/// Stores all log entries fulfilling the current criteria for rapid access.
 		/// </summary>
-		private List<LogEntry> entryCache = new List<LogEntry>();
+		private List<LogEntry> EntryCache = new List<LogEntry>();
 
 		/// <summary>
-		/// Stores all currently selected list view entry indices.
+		/// Stores all currently selected list view entry indices. The key is the
+		/// index which is selected.
 		/// </summary>
-		private SortedList<int, object> selectedEntries = new SortedList<int, object>();
+		private SortedList<int, LogEntry> SelectedEntries = new SortedList<int, LogEntry>();
 	}
 }
