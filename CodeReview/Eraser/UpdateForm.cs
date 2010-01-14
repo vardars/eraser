@@ -107,8 +107,8 @@ namespace Eraser
 				if (updateListDownloader.CancellationPending)
 					throw new OperationCanceledException();
 
-				Invoke(new EventHandler<ProgressEventArgs>(
-					updateListDownloader_ProgressChanged), sender, e);
+				Invoke((EventHandler<ProgressEventArgs>)updateListDownloader_ProgressChanged,
+					sender, e);
 				return;
 			}
 
@@ -302,7 +302,7 @@ namespace Eraser
 				if (updateListDownloader.CancellationPending)
 					throw new OperationCanceledException();
 
-				Invoke(new EventHandler<ProgressEventArgs>(downloader_ProgressChanged),
+				Invoke((EventHandler<ProgressEventArgs>)downloader_ProgressChanged,
 					sender, e);
 				return;
 			}
@@ -412,7 +412,7 @@ namespace Eraser
 				if (updateListDownloader.CancellationPending)
 					throw new OperationCanceledException();
 
-				Invoke(new EventHandler<ProgressEventArgs>(installer_ProgressChanged),
+				Invoke((EventHandler<ProgressEventArgs>)installer_ProgressChanged,
 					sender, e);
 				return;
 			}

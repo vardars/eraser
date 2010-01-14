@@ -124,7 +124,7 @@ namespace Eraser
 		{
 			if (InvokeRequired)
 			{
-				Invoke(new EventHandler<TaskEventArgs>(TaskAdded), sender, e);
+				Invoke((EventHandler<TaskEventArgs>)TaskAdded, sender, e);
 				return;
 			}
 
@@ -165,7 +165,7 @@ namespace Eraser
 		{
 			if (InvokeRequired)
 			{
-				Invoke(new EventHandler<TaskEventArgs>(TaskDeleted), sender, e);
+				Invoke((EventHandler<TaskEventArgs>)TaskDeleted, sender, e);
 				return;
 			}
 
@@ -187,7 +187,7 @@ namespace Eraser
 		{
 			if (scheduler.InvokeRequired)
 			{
-				Invoke(new EventHandler<TaskEventArgs>(task_TaskStarted), sender, e);
+				Invoke((EventHandler<TaskEventArgs>)task_TaskStarted, sender, e);
 				return;
 			}
 
@@ -229,7 +229,7 @@ namespace Eraser
 		{
 			if (InvokeRequired)
 			{
-				Invoke(new EventHandler<TaskEventArgs>(task_TaskFinished), sender, e);
+				Invoke((EventHandler<TaskEventArgs>)task_TaskFinished, sender, e);
 				return;
 			}
 

@@ -79,7 +79,7 @@ namespace Eraser
 		{
 			if (InvokeRequired)
 			{
-				Invoke(new EventHandler<EventArgs>(task_NewSession), sender, e);
+				Invoke((EventHandler<EventArgs>)task_NewSession, sender, e);
 				return;
 			}
 
@@ -90,7 +90,7 @@ namespace Eraser
 		{
 			if (InvokeRequired)
 			{
-				Invoke(new EventHandler<LogEventArgs>(task_Logged), sender, e);
+				Invoke((EventHandler<LogEventArgs>)task_Logged, sender, e);
 				return;
 			}
 
