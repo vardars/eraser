@@ -99,7 +99,15 @@ namespace Eraser
 				//Re-parse the command line arguments as arguments for the given action.
 				ConsoleActionData data = Handlers[Arguments.Action];
 				ConsoleArguments arguments = data.Arguments;
-				Args.Parse(CommandLine, CommandLinePrefixes, CommandLineSeparators, arguments);
+				ComLib.BoolMessageItem<Args> parseResult = Args.Parse(CommandLine,
+					CommandLinePrefixes, CommandLineSeparators, arguments);
+				if (!parseResult.Success)
+					throw new ArgumentException(parseResult.Message);
+
+				//Remove the action from the positional arguments before sending it to the handler
+				System.Diagnostics.Debug.Assert(Arguments.Action == parseResult.Item.Positional[0]);
+				parseResult.Item.Positional.RemoveAt(0);
+				arguments.PositionalArguments = parseResult.Item.Positional;
 
 				//Then invoke the handler for this action.
 				data.Handler(arguments);
