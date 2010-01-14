@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 
 using System.IO;
+using System.Threading;
 using System.Globalization;
 using System.ComponentModel;
 using System.Runtime.Serialization;
@@ -33,11 +34,40 @@ using ComLib.Arguments;
 
 using Eraser.Manager;
 using Eraser.Util;
+using File = System.IO.File;
 
 namespace Eraser
 {
 	internal static partial class Program
 	{
+		/// <summary>
+		/// The common program arguments shared between the GUI and console programs.
+		/// </summary>
+		class Arguments
+		{
+			/// <summary>
+			/// True if the program should not be started with any user-visible interfaces.
+			/// </summary>
+			/// <remarks>Errors will also be silently ignored.</remarks>
+			[Arg("quiet", "The program should not be started with any user-visible interfaces. " +
+				"Errors will be silently ignored.", typeof(bool), false, false, null)]
+			public bool Quiet { get; set; }
+		}
+
+		/// <summary>
+		/// Program arguments which only apply to the GUI program.
+		/// </summary>
+		class GuiArguments : Arguments
+		{
+			/// <summary>
+			/// True if the command line specified atRestart, which should result in the
+			/// queueing of tasks meant for running at restart.
+			/// </summary>
+			[Arg("atRestart", "The program should queue all tasks scheduled for running at " +
+				"the system restart.", typeof(bool), false, false, null)]
+			public bool AtRestart { get; set; }
+		}
+
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
@@ -151,15 +181,14 @@ namespace Eraser
 
 			//Set our UI language
 			EraserSettings settings = EraserSettings.Get();
-			System.Threading.Thread.CurrentThread.CurrentUICulture =
-				new CultureInfo(settings.Language);
+			Thread.CurrentThread.CurrentUICulture = new CultureInfo(settings.Language);
 			Application.SafeTopLevelCaptionFormat = S._("Eraser");
 
 			//Load the task list
 			SettingsCompatibility.Execute();
 			try
 			{
-				if (System.IO.File.Exists(TaskListPath))
+				if (File.Exists(TaskListPath))
 				{
 					using (FileStream stream = new FileStream(TaskListPath, FileMode.Open,
 						FileAccess.Read, FileShare.Read))
@@ -167,9 +196,6 @@ namespace Eraser
 						eraserClient.Tasks.LoadFromStream(stream);
 					}
 				}
-			}
-			catch (FileLoadException)
-			{
 			}
 			catch (SerializationException ex)
 			{
@@ -183,22 +209,15 @@ namespace Eraser
 
 			//Create the main form
 			program.MainForm = new MainForm();
-			foreach (string param in program.CommandLine)
-			{
-				//Run tasks which are meant to be run on restart
-				switch (param)
-				{
-					case "--atRestart":
-						eraserClient.QueueRestartTasks();
-						goto case "--quiet";
 
-					//Hide the main form if the user specified the quiet command
-					//line
-					case "--quiet":
-						e.ShowMainForm = false;
-						break;
-				}
-			}
+			//Decide whether to display any UI
+			GuiArguments arguments = new GuiArguments();
+			Args.Parse(program.CommandLine, "/-", ":", arguments);
+			e.ShowMainForm = !arguments.AtRestart && !arguments.Quiet;
+
+			//Queue tasks meant for running at restart if we are given that command line.
+			if (arguments.AtRestart)
+				eraserClient.QueueRestartTasks();
 
 			//Run the eraser client.
 			eraserClient.Run();
