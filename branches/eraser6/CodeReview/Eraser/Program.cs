@@ -29,6 +29,7 @@ using System.Globalization;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Security.Principal;
+using System.Text.RegularExpressions;
 
 using System.Reflection;
 using System.Diagnostics;
@@ -38,7 +39,6 @@ using ComLib.Arguments;
 using Eraser.Manager;
 using Eraser.Util;
 using File = System.IO.File;
-using System.Text.RegularExpressions;
 
 namespace Eraser
 {
