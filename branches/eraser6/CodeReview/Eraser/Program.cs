@@ -38,6 +38,7 @@ using ComLib.Arguments;
 using Eraser.Manager;
 using Eraser.Util;
 using File = System.IO.File;
+using System.Text.RegularExpressions;
 
 namespace Eraser
 {
@@ -78,6 +79,11 @@ namespace Eraser
 			/// </summary>
 			[Arg(0, "The action this command line is stating.", typeof(string), true, null, null)]
 			public string Action { get; set; }
+
+			/// <summary>
+			/// The list of command line parameters not placed in a switch.
+			/// </summary>
+			public List<string> PositionalArguments { get; set; }
 		}
 
 		class AddTaskArguments : ConsoleArguments
@@ -85,26 +91,14 @@ namespace Eraser
 			/// <summary>
 			/// The erasure method which the user specified on the command line.
 			/// </summary>
+			[Arg("method", "The erasure method to use", typeof(Guid), false, null, null)]
 			public Guid ErasureMethod { get; set; }
 
 			/// <summary>
 			/// The schedule for the current set of targets.
 			/// </summary>
-			public Schedule Schedule { get; set; }
-
-			/// <summary>
-			/// The list of targets which was specified on the command line.
-			/// </summary>
-			public List<ErasureTarget> Targets { get; set; }
-		}
-
-		class ImportTaskListArguments : ConsoleArguments
-		{
-			/// <summary>
-			/// The list of files which was provided on the command line.
-			/// </summary>
-			[Arg(0, "The list of files to import.", typeof(List<string>), true, true, null, null, null)]
-			public List<string> Files { get; set; }
+			[Arg("schedule", "The schedule to use", typeof(Schedule), true, null, null)]
+			public string Schedule { get; set; }
 		}
 
 		/// <summary>
@@ -156,7 +150,7 @@ namespace Eraser
 					program.Handlers.Add("addtask",
 						new ConsoleActionData(CommandAddTask, new AddTaskArguments()));
 					program.Handlers.Add("importtasklist",
-						new ConsoleActionData(CommandImportTaskList, new ImportTaskListArguments()));
+						new ConsoleActionData(CommandImportTaskList, new ConsoleArguments()));
 					program.Run();
 					return 0;
 				}
@@ -197,33 +191,32 @@ parameters for help:
     no parameters to set.
 
 parameters for addtask:
-    eraser addtask [--method=<methodGUID>] [--schedule=(now|manually|restart)] (--recycled " +
-@"| --unused=<volume> | --dir=<directory> | --file=<file>)[...]
+    eraser addtask [--method=<methodGUID>] [--schedule=(now|manually|restart)] (recyclebin | unused=<volume> | dir=<directory> | file=<file>)[...]
 
-    --method, -m            The Erasure method to use.
-    --schedule, -s          The schedule the task will follow. The value must
+    --method                The Erasure method to use.
+    --schedule              The schedule the task will follow. The value must
                             be one of:
             now             The task will be queued for immediate execution.
             manually        The task will be created but not queued for execution.
             restart         The task will be queued for execution when the
                             computer is next restarted.
                             This parameter defaults to now.
-    --recycled, -r          Erases files and folders in the recycle bin
-    --unused, -u            Erases unused space in the volume.
-        optional arguments: --unused=<drive>[,clusterTips]
+    recyclebin              Erases files and folders in the recycle bin
+    unused                  Erases unused space in the volume.
+        optional arguments: unused=<drive>[,clusterTips[=(true|false)]]
             clusterTips     If specified, the drive's files will have their
                             cluster tips erased.
-    --dir, --directory, -d  Erases files and folders in the directory
-        optional arguments: --dir=<directory>[,e=excludeMask][,i=includeMask][,delete]
+    dir                     Erases files and folders in the directory
+        optional arguments: dir=<directory>[,-excludeMask][,+includeMask][,deleteIfEmpty]
             excludeMask     A wildcard expression for files and folders to
                             exclude.
             includeMask     A wildcard expression for files and folders to
                             include.
                             The include mask is applied before the exclude
                             mask.
-            delete          Deletes the folder at the end of the erasure if
-                            specified.
-    --file, -f              Erases the specified file
+            deleteIfEmpty   Deletes the folder at the end of the erasure if it
+                            is empty.
+    file                    Erases the specified file
 
 parameters for querymethods:
     eraser querymethods
@@ -231,10 +224,9 @@ parameters for querymethods:
     no parameters to set.
 
 parameters for importtasklist:
-    eraser importtasklist [file1](,[file2])[...]
+    eraser importtasklist (file)[...]
 
-    [file1]                 The list of files to import.
-    [fileN]
+    [file]                  A list of one or more files to import.
 
 All arguments are case sensitive.");
 			Console.Out.Flush();
@@ -283,14 +275,103 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		{
 			AddTaskArguments arguments = (AddTaskArguments)arg;
 
-			//Create the task, and set the method to use.
+			//Create the task then set the method as well as schedule
 			Task task = new Task();
 			ErasureMethod method = arguments.ErasureMethod == Guid.Empty ?
 				ErasureMethodManager.Default :
 				ErasureMethodManager.GetInstance(arguments.ErasureMethod);
-
-			foreach (ErasureTarget target in arguments.Targets)
+			switch (arguments.Schedule.ToLowerInvariant())
 			{
+				case "now":
+					task.Schedule = Schedule.RunNow;
+					break;
+				case "manually":
+					task.Schedule = Schedule.RunManually;
+					break;
+				case "restart":
+					task.Schedule = Schedule.RunOnRestart;
+					break;
+				default:
+					throw new ArgumentException(string.Format(
+						"Unknown schedule type: {0}", arguments.Schedule), "--schedule");
+			}
+
+			//Parse the rest of the command line parameters as target expressions.
+			List<string> trueValues = new List<string>(new string[] { "yes", "true" });
+			string[] strings = new string[] {
+				//The recycle bin target
+				"(?<recycleBin>recyclebin)",
+
+				//The unused space erasure target, taking the optional clusterTips
+				//argument which defaults to true; if none is specified it's assumed
+				//false
+				"unused=(?<unusedVolume>.*)(?<unusedTips>,clusterTips(=(?<unusedTipsValue>true|false))?)?",
+
+				//The directory target, taking a list of + and - wildcard expressions.
+				"dir=(?<directoryName>.*)(?<directoryParams>(?<directoryExcludeMask>,-[^,]+)|(?<directoryIncludeMask>,\\+[^,]+)|(?<directoryDeleteIfEmpty>,deleteIfEmpty(=(?<directoryDeleteIfEmptyValue>true|false))?))*",
+
+				//The file target.
+				"file=(?<fileName>.*)"
+			};
+
+			Regex regex = new Regex(string.Join("|", strings),
+				RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.RightToLeft);
+			foreach (string argument in arguments.PositionalArguments)
+			{
+				Match match = regex.Match(argument);
+				if (match.Captures.Count == 0)
+				{
+					Console.WriteLine("Unknown argument: {0}, skipped.", argument);
+					continue;
+				}
+
+				ErasureTarget target = null;
+				if (match.Groups["recycleBin"].Success)
+				{
+					target = new RecycleBinTarget();
+				}
+				else if (match.Groups["unusedVolume"].Success)
+				{
+					UnusedSpaceTarget unusedSpaceTarget = new UnusedSpaceTarget();
+					target = unusedSpaceTarget;
+					unusedSpaceTarget.Drive = match.Groups["unusedVolume"].Value;
+
+					if (!match.Groups["unusedTips"].Success)
+						unusedSpaceTarget.EraseClusterTips = false;
+					else if (!match.Groups["unusedTipsValue"].Success)
+						unusedSpaceTarget.EraseClusterTips = true;
+					else
+						unusedSpaceTarget.EraseClusterTips =
+							trueValues.IndexOf(match.Groups["unusedTipsValue"].Value) != -1;
+				}
+				else if (match.Groups["directoryName"].Success)
+				{
+					FolderTarget folderTarget = new FolderTarget();
+					target = folderTarget;
+
+					folderTarget.Path = match.Groups["directoryName"].Value;
+					if (!match.Groups["directoryDeleteIfEmpty"].Success)
+						folderTarget.DeleteIfEmpty = false;
+					else if (!match.Groups["directoryDeleteIfEmptyValue"].Success)
+						folderTarget.DeleteIfEmpty = true;
+					else
+						folderTarget.DeleteIfEmpty =
+							trueValues.IndexOf(match.Groups["directoryDeleteIfEmptyValue"].Value) != -1;
+					if (match.Groups["directoryExcludeMask"].Success)
+						folderTarget.ExcludeMask += match.Groups["directoryExcludeMask"].Value.Remove(0, 2) + ' ';
+					if (match.Groups["directoryIncludeMask"].Success)
+						folderTarget.IncludeMask += match.Groups["directoryIncludeMask"].Value.Remove(0, 2) + ' ';
+				}
+				else if (match.Groups["fileName"].Success)
+				{
+					FileTarget fileTarget = new FileTarget();
+					target = fileTarget;
+					fileTarget.Path = match.Groups["fileName"].Value;
+				}
+
+				if (target == null)
+					continue;
+
 				target.Method = method;
 				task.Targets.Add(target);
 			}
@@ -298,9 +379,6 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			//Check the number of tasks in the task.
 			if (task.Targets.Count == 0)
 				throw new ArgumentException("Tasks must contain at least one erasure target.");
-
-			//Set the schedule for the task.
-			task.Schedule = arguments.Schedule;
 
 			//Send the task out.
 			try
@@ -344,8 +422,6 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// <param name="args">The list of files specified on the command line.</param>
 		private static void CommandImportTaskList(ConsoleArguments args)
 		{
-			ImportTaskListArguments arguments = (ImportTaskListArguments)args;
-
 			//Import the task list
 			try
 			{
@@ -366,7 +442,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 								"instance for erasures.");
 					}
 
-					foreach (string path in arguments.Files)
+					foreach (string path in args.PositionalArguments)
 						using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
 							client.Tasks.LoadFromStream(stream);
 				}
