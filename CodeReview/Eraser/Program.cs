@@ -30,6 +30,9 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Security.Principal;
 
+using System.Reflection;
+using System.Diagnostics;
+
 using ComLib.Arguments;
 
 using Eraser.Manager;
@@ -68,6 +71,42 @@ namespace Eraser
 			public bool AtRestart { get; set; }
 		}
 
+		class ConsoleArguments : Arguments
+		{
+			/// <summary>
+			/// The Action which this handler is in charge of.
+			/// </summary>
+			[Arg(0, "The action this command line is stating.", typeof(string), true, null, null)]
+			public string Action { get; set; }
+		}
+
+		class AddTaskArguments : ConsoleArguments
+		{
+			/// <summary>
+			/// The erasure method which the user specified on the command line.
+			/// </summary>
+			public Guid ErasureMethod { get; set; }
+
+			/// <summary>
+			/// The schedule for the current set of targets.
+			/// </summary>
+			public Schedule Schedule { get; set; }
+
+			/// <summary>
+			/// The list of targets which was specified on the command line.
+			/// </summary>
+			public List<ErasureTarget> Targets { get; set; }
+		}
+
+		class ImportTaskListArguments : ConsoleArguments
+		{
+			/// <summary>
+			/// The list of files which was provided on the command line.
+			/// </summary>
+			[Arg(0, "The list of files to import.", typeof(List<string>), true, true, null, null, null)]
+			public List<string> Files { get; set; }
+		}
+
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
@@ -75,7 +114,8 @@ namespace Eraser
 		static int Main(string[] commandLine)
 		{
 			//Immediately parse command line arguments
-			ComLib.BoolMessageItem argumentParser = Args.Parse(commandLine, "/", ":");
+			ComLib.BoolMessageItem argumentParser = Args.Parse(commandLine,
+				CommandLinePrefixes, CommandLineSeparators);
 			Args parsedArguments = (Args)argumentParser.Item;
 
 			//We default to a GUI if:
@@ -98,56 +138,254 @@ namespace Eraser
 			return 0;
 		}
 
+		#region Console Program code
 		/// <summary>
 		/// Runs Eraser as a command-line application.
 		/// </summary>
 		/// <param name="commandLine">The command line parameters passed to Eraser.</param>
 		private static int CommandMain(string[] commandLine)
 		{
-			//True if the user specified a quiet command.
-			bool isQuiet = false;
-
-			try
-			{
-				ConsoleProgram program = new ConsoleProgram(commandLine);
-				isQuiet = program.Arguments.Quiet;
-
-				using (ManagerLibrary library = new ManagerLibrary(new Settings()))
-					program.Run();
-
-				return 0;
-			}
-			catch (UnauthorizedAccessException)
-			{
-				return 5; //ERROR_ACCESS_DENIED
-			}
-			catch (Win32Exception e)
-			{
-				Console.WriteLine(e.Message);
-				return e.ErrorCode;
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e.Message);
-				return 1;
-			}
-			finally
-			{
-				//Flush the buffered output to the console
-				Console.Out.Flush();
-
-				//Don't ask for a key to press if the user specified Quiet
-				if (!isQuiet)
+			using (ConsoleProgram program = new ConsoleProgram(commandLine))
+			using (ManagerLibrary library = new ManagerLibrary(new Settings()))
+				try
 				{
-					Console.Write("\nPress enter to continue . . . ");
-					Console.Out.Flush();
-					Console.ReadLine();
+					program.Handlers.Add("help",
+						new ConsoleActionData(CommandHelp, new ConsoleArguments()));
+					program.Handlers.Add("querymethods",
+						new ConsoleActionData(CommandQueryMethods, new ConsoleArguments()));
+					program.Handlers.Add("addtask",
+						new ConsoleActionData(CommandAddTask, new AddTaskArguments()));
+					program.Handlers.Add("importtasklist",
+						new ConsoleActionData(CommandImportTaskList, new ImportTaskListArguments()));
+					program.Run();
+					return 0;
 				}
+				catch (UnauthorizedAccessException)
+				{
+					return 5; //ERROR_ACCESS_DENIED
+				}
+				catch (Win32Exception e)
+				{
+					Console.WriteLine(e.Message);
+					return e.ErrorCode;
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e.Message);
+					return 1;
+				}
+		}
 
-				KernelApi.FreeConsole();
+		/// <summary>
+		/// Prints the command line help for Eraser.
+		/// </summary>
+		private static void PrintCommandHelp()
+		{
+			Console.WriteLine(@"usage: Eraser <action> <arguments>
+where action is
+    help                    Show this help message.
+    addtask                 Adds tasks to the current task list.
+    querymethods            Lists all registered Erasure methods.
+	importtasklist          Imports an Eraser Task list to the curren user's Task List.
+
+global parameters:
+    --quiet, -q	            Do not create a Console window to display progress.
+
+parameters for help:
+    eraser help
+
+    no parameters to set.
+
+parameters for addtask:
+    eraser addtask [--method=<methodGUID>] [--schedule=(now|manually|restart)] (--recycled " +
+@"| --unused=<volume> | --dir=<directory> | --file=<file>)[...]
+
+    --method, -m            The Erasure method to use.
+    --schedule, -s          The schedule the task will follow. The value must
+                            be one of:
+            now             The task will be queued for immediate execution.
+            manually        The task will be created but not queued for execution.
+            restart         The task will be queued for execution when the
+                            computer is next restarted.
+                            This parameter defaults to now.
+    --recycled, -r          Erases files and folders in the recycle bin
+    --unused, -u            Erases unused space in the volume.
+        optional arguments: --unused=<drive>[,clusterTips]
+            clusterTips     If specified, the drive's files will have their
+                            cluster tips erased.
+    --dir, --directory, -d  Erases files and folders in the directory
+        optional arguments: --dir=<directory>[,e=excludeMask][,i=includeMask][,delete]
+            excludeMask     A wildcard expression for files and folders to
+                            exclude.
+            includeMask     A wildcard expression for files and folders to
+                            include.
+                            The include mask is applied before the exclude
+                            mask.
+            delete          Deletes the folder at the end of the erasure if
+                            specified.
+    --file, -f              Erases the specified file
+
+parameters for querymethods:
+    eraser querymethods
+
+    no parameters to set.
+
+parameters for importtasklist:
+    eraser importtasklist [file1](,[file2])[...]
+
+    [file1]                 The list of files to import.
+    [fileN]
+
+All arguments are case sensitive.");
+			Console.Out.Flush();
+		}
+
+		/// <summary>
+		/// Prints the help text for Eraser (with copyright)
+		/// </summary>
+		/// <param name="arguments">Not used.</param>
+		private static void CommandHelp(ConsoleArguments arguments)
+		{
+			Console.WriteLine(@"Eraser {0}
+(c) 2008-2010 The Eraser Project
+Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
+", Assembly.GetExecutingAssembly().GetName().Version);
+
+			PrintCommandHelp();
+		}
+
+		/// <summary>
+		/// Lists all registered erasure methods.
+		/// </summary>
+		/// <param name="arguments">Not used.</param>
+		private static void CommandQueryMethods(ConsoleArguments arguments)
+		{
+			//Output the header
+			const string methodFormat = "{0,-2} {1,-39} {2}";
+			Console.WriteLine(methodFormat, "", "Method", "GUID");
+			Console.WriteLine(new string('-', 79));
+
+			//Refresh the list of erasure methods
+			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.Items;
+			foreach (ErasureMethod method in methods.Values)
+			{
+				Console.WriteLine(methodFormat, (method is UnusedSpaceErasureMethod) ?
+					"U" : "", method.Name, method.Guid.ToString());
 			}
 		}
 
+		/// <summary>
+		/// Parses the command line for tasks and adds them using the
+		/// <see cref="RemoteExecutor"/> class.
+		/// </summary>
+		/// <param name="arg">The command line parameters passed to the program.</param>
+		private static void CommandAddTask(ConsoleArguments arg)
+		{
+			AddTaskArguments arguments = (AddTaskArguments)arg;
+
+			//Create the task, and set the method to use.
+			Task task = new Task();
+			ErasureMethod method = arguments.ErasureMethod == Guid.Empty ?
+				ErasureMethodManager.Default :
+				ErasureMethodManager.GetInstance(arguments.ErasureMethod);
+
+			foreach (ErasureTarget target in arguments.Targets)
+			{
+				target.Method = method;
+				task.Targets.Add(target);
+			}
+
+			//Check the number of tasks in the task.
+			if (task.Targets.Count == 0)
+				throw new ArgumentException("Tasks must contain at least one erasure target.");
+
+			//Set the schedule for the task.
+			task.Schedule = arguments.Schedule;
+
+			//Send the task out.
+			try
+			{
+				using (RemoteExecutorClient client = new RemoteExecutorClient())
+				{
+					client.Run();
+					if (!client.IsConnected)
+					{
+						//The client cannot connect to the server. This probably means
+						//that the server process isn't running. Start an instance.
+						Process eraserInstance = Process.Start(
+							Assembly.GetExecutingAssembly().Location, "--quiet");
+						eraserInstance.WaitForInputIdle();
+
+						client.Run();
+						if (!client.IsConnected)
+							throw new IOException("Eraser cannot connect to the running " +
+								"instance for erasures.");
+					}
+
+					client.Tasks.Add(task);
+				}
+			}
+			catch (UnauthorizedAccessException e)
+			{
+				//We can't connect to the pipe because the other instance of Eraser
+				//is running with higher privileges than this instance.
+				throw new UnauthorizedAccessException("Another instance of Eraser " +
+					"is already running but it is running with higher privileges than " +
+					"this instance of Eraser. Tasks cannot be added in this manner.\n\n" +
+					"Close the running instance of Eraser and start it again without " +
+					"administrator privileges, or run the command again as an " +
+					"administrator.", e);
+			}
+		}
+
+		/// <summary>
+		/// Imports the given tasklists and adds them to the global Eraser instance.
+		/// </summary>
+		/// <param name="args">The list of files specified on the command line.</param>
+		private static void CommandImportTaskList(ConsoleArguments args)
+		{
+			ImportTaskListArguments arguments = (ImportTaskListArguments)args;
+
+			//Import the task list
+			try
+			{
+				using (RemoteExecutorClient client = new RemoteExecutorClient())
+				{
+					client.Run();
+					if (!client.IsConnected)
+					{
+						//The client cannot connect to the server. This probably means
+						//that the server process isn't running. Start an instance.
+						Process eraserInstance = Process.Start(
+							Assembly.GetExecutingAssembly().Location, "--quiet");
+						eraserInstance.WaitForInputIdle();
+
+						client.Run();
+						if (!client.IsConnected)
+							throw new IOException("Eraser cannot connect to the running " +
+								"instance for erasures.");
+					}
+
+					foreach (string path in arguments.Files)
+						using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
+							client.Tasks.LoadFromStream(stream);
+				}
+			}
+			catch (UnauthorizedAccessException e)
+			{
+				//We can't connect to the pipe because the other instance of Eraser
+				//is running with higher privileges than this instance.
+				throw new UnauthorizedAccessException("Another instance of Eraser " +
+					"is already running but it is running with higher privileges than " +
+					"this instance of Eraser. Tasks cannot be added in this manner.\n\n" +
+					"Close the running instance of Eraser and start it again without " +
+					"administrator privileges, or run the command again as an " +
+					"administrator.", e);
+			}
+		}
+		#endregion
+
+		#region GUI Program code
 		/// <summary>
 		/// Runs Eraser as a GUI application.
 		/// </summary>
@@ -212,7 +450,7 @@ namespace Eraser
 
 			//Decide whether to display any UI
 			GuiArguments arguments = new GuiArguments();
-			Args.Parse(program.CommandLine, "/-", ":", arguments);
+			Args.Parse(program.CommandLine, CommandLinePrefixes, CommandLineSeparators, arguments);
 			e.ShowMainForm = !arguments.AtRestart && !arguments.Quiet;
 
 			//Queue tasks meant for running at restart if we are given that command line.
@@ -265,6 +503,17 @@ namespace Eraser
 			//Dispose the eraser executor instance
 			eraserClient.Dispose();
 		}
+		#endregion
+
+		/// <summary>
+		/// The acceptable list of command line prefixes we will accept.
+		/// </summary>
+		public const string CommandLinePrefixes = "(/|-|--)";
+
+		/// <summary>
+		/// The acceptable list of command line separators we will accept.
+		/// </summary>
+		public const string CommandLineSeparators = "(:|=)";
 
 		/// <summary>
 		/// The global Executor instance.
