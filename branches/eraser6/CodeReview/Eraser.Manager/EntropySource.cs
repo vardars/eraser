@@ -101,7 +101,7 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <typeparam name="T">Any value type</typeparam>
 		/// <param name="entropy">A value which will be XORed with pool contents.</param>
-		protected unsafe static byte[] StructToBuffer<T>(T entropy) where T : struct
+		protected static byte[] StructToBuffer<T>(T entropy) where T : struct
 		{
 			int sizeofObject = Marshal.SizeOf(entropy);
 			IntPtr memory = Marshal.AllocHGlobal(sizeofObject);
