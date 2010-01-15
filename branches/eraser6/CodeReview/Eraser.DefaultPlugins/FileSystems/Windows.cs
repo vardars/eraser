@@ -27,6 +27,7 @@ using System.IO;
 using System.Threading;
 using Eraser.Manager;
 using Eraser.Util;
+using Eraser.Util.ExtensionMethods;
 
 namespace Eraser.DefaultPlugins
 {
@@ -37,6 +38,38 @@ namespace Eraser.DefaultPlugins
 	{
 		public override void DeleteFile(FileInfo info)
 		{
+			//If the user wants plausible deniability, find a random file from the
+			//list of decoys and write it over.
+			if (Manager.ManagerLibrary.Settings.PlausibleDeniability)
+			{
+				CopyPlausibleDeniabilityFile(info.OpenWrite());
+			}
+
+			DeleteFileSystemInfo(info);
+		}
+
+		public override void DeleteFolder(DirectoryInfo info, bool recursive)
+		{
+			if (!recursive && info.GetFileSystemInfos().Length != 0)
+				throw new InvalidOperationException(S._("The folder {0} cannot be deleted as it is " +
+					"not empty."));
+
+			//TODO: check for reparse points
+			foreach (DirectoryInfo dir in info.GetDirectories())
+				DeleteFolder(dir);
+			foreach (FileInfo file in info.GetFiles())
+				DeleteFile(file);
+
+			DeleteFileSystemInfo(info);
+		}
+
+		/// <summary>
+		/// Deletes a directory or file from disk. This assumes that directories already
+		/// have been deleted.
+		/// </summary>
+		/// <param name="info">The file or directory to delete.</param>
+		private void DeleteFileSystemInfo(FileSystemInfo info)
+		{
 			//Set the date of the file to be invalid to prevent forensic
 			//detection
 			info.CreationTime = info.LastWriteTime = info.LastAccessTime = MinTimestamp;
@@ -45,13 +78,15 @@ namespace Eraser.DefaultPlugins
 
 			//Rename the file a few times to erase the entry from the file system
 			//table.
-			string newPath = GenerateRandomFileName(info.Directory, info.Name.Length);
 			for (int i = 0, tries = 0; i < FileNameErasePasses; ++tries)
 			{
-				//Try to rename the file. If it fails, it is probably due to another
-				//process locking the file. Defer, then rename again.
+				//Generate a new file name for the file/directory.
+				string newPath = GenerateRandomFileName(info.GetParent(), info.Name.Length);
+
 				try
 				{
+					//Try to rename the file. If it fails, it is probably due to another
+					//process locking the file. Defer, then rename again.
 					info.MoveTo(newPath);
 					++i;
 				}
@@ -79,13 +114,6 @@ namespace Eraser.DefaultPlugins
 							throw;
 					}
 				}
-			}
-
-			//If the user wants plausible deniability, find a random file on the same
-			//volume and write it over.
-			if (Manager.ManagerLibrary.Settings.PlausibleDeniability)
-			{
-				CopyPlausibleDeniabilityFile(info.OpenWrite());
 			}
 
 			//Then delete the file.
@@ -119,65 +147,6 @@ namespace Eraser.DefaultPlugins
 							throw;
 					}
 				}
-		}
-
-		public override void DeleteFolder(DirectoryInfo info, bool recursive)
-		{
-			if (!recursive && info.GetFileSystemInfos().Length != 0)
-				throw new InvalidOperationException(S._("The folder {0} cannot be deleted as it is " +
-					"not empty."));
-
-			//TODO: check for reparse points
-			foreach (DirectoryInfo dir in info.GetDirectories())
-				DeleteFolder(dir);
-			foreach (FileInfo file in info.GetFiles())
-				DeleteFile(file);
-
-			//Then clean up this folder.
-			for (int i = 0, tries = 0; i < FileNameErasePasses; ++tries)
-			{
-				//Rename the folder.
-				string newPath = GenerateRandomFileName(info.Parent, info.Name.Length);
-
-				//Try to rename the file. If it fails, it is probably due to another
-				//process locking the file. Defer, then rename again.
-				try
-				{
-					info.MoveTo(newPath);
-					++i;
-				}
-				catch (IOException e)
-				{
-					switch (System.Runtime.InteropServices.Marshal.GetLastWin32Error())
-					{
-						case 5: //ERROR_ACCESS_DENIED
-							throw new UnauthorizedAccessException(S._("The file {0} could not " +
-								"be erased because the file's permissions prevent access to the file.",
-								info.FullName), e);
-
-						case 32: //ERROR_SHARING_VIOLATION
-							//If after FilenameEraseTries the file is still locked, some program is
-							//definitely using the file; throw an exception.
-							if (tries > FileNameEraseTries)
-								throw new IOException(S._("The file {0} is currently in use and " +
-									"cannot be removed.", info.FullName), e);
-
-							//Let the process locking the file release the lock
-							Thread.Sleep(100);
-							break;
-
-						default:
-							throw;
-					}
-				}
-			}
-
-			//Set the date of the directory to be invalid to prevent forensic
-			//detection
-			info.CreationTime = info.LastWriteTime = info.LastAccessTime = MinTimestamp;
-
-			//Remove the folder
-			info.Delete(true);
 		}
 
 		public override void EraseClusterTips(VolumeInfo info, ErasureMethod method,
