@@ -36,22 +36,30 @@ namespace Eraser.Util
 		/// <returns>True if the file contains a valid Authenticode certificate.</returns>
 		public static bool VerifyAuthenticode(string pathToFile)
 		{
-			NativeMethods.WINTRUST_FILE_INFO fileinfo = new NativeMethods.WINTRUST_FILE_INFO();
-			fileinfo.cbStruct = (uint)Marshal.SizeOf(typeof(NativeMethods.WINTRUST_FILE_INFO));
-			fileinfo.pcwszFilePath = pathToFile;
+			IntPtr unionPointer = IntPtr.Zero;
 
-			NativeMethods.WINTRUST_DATA data = new NativeMethods.WINTRUST_DATA();
-			data.cbStruct = (uint)Marshal.SizeOf(typeof(NativeMethods.WINTRUST_DATA));
-			data.dwUIChoice = NativeMethods.WINTRUST_DATA.UIChoices.WTD_UI_NONE;
-			data.fdwRevocationChecks = NativeMethods.WINTRUST_DATA.RevocationChecks.WTD_REVOKE_NONE;
-			data.dwUnionChoice = NativeMethods.WINTRUST_DATA.UnionChoices.WTD_CHOICE_FILE;
-			data.pUnion = Marshal.AllocHGlobal((int)fileinfo.cbStruct);
-			Marshal.StructureToPtr(fileinfo, data.pUnion, false);
+			try
+			{
+				NativeMethods.WINTRUST_FILE_INFO fileinfo = new NativeMethods.WINTRUST_FILE_INFO();
+				fileinfo.cbStruct = (uint)Marshal.SizeOf(typeof(NativeMethods.WINTRUST_FILE_INFO));
+				fileinfo.pcwszFilePath = pathToFile;
 
-			Guid guid = NativeMethods.WINTRUST_ACTION_GENERIC_VERIFY_V2;
-			int result = NativeMethods.WinVerifyTrust(IntPtr.Zero, ref guid, ref data);
-			Marshal.FreeHGlobal(data.pUnion);
-			return result == 0;
+				NativeMethods.WINTRUST_DATA data = new NativeMethods.WINTRUST_DATA();
+				data.cbStruct = (uint)Marshal.SizeOf(typeof(NativeMethods.WINTRUST_DATA));
+				data.dwUIChoice = NativeMethods.WINTRUST_DATA.UIChoices.WTD_UI_NONE;
+				data.fdwRevocationChecks = NativeMethods.WINTRUST_DATA.RevocationChecks.WTD_REVOKE_NONE;
+				data.dwUnionChoice = NativeMethods.WINTRUST_DATA.UnionChoices.WTD_CHOICE_FILE;
+				unionPointer = data.pUnion = Marshal.AllocHGlobal((int)fileinfo.cbStruct);
+				Marshal.StructureToPtr(fileinfo, data.pUnion, false);
+
+				Guid guid = NativeMethods.WINTRUST_ACTION_GENERIC_VERIFY_V2;
+				return NativeMethods.WinVerifyTrust(IntPtr.Zero, ref guid, ref data) == 0;
+			}
+			finally
+			{
+				if (unionPointer != IntPtr.Zero)
+					Marshal.FreeHGlobal(unionPointer);
+			}
 		}
 
 		internal static class NativeMethods
