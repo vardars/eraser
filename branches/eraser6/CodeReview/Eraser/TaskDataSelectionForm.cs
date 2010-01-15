@@ -55,8 +55,7 @@ namespace Eraser
 			file.Checked = true;
 
 			//Populate the drives list
-			ICollection<VolumeInfo> volumes = VolumeInfo.Volumes;
-			foreach (VolumeInfo volume in volumes)
+			foreach (VolumeInfo volume in VolumeInfo.Volumes)
 			{
 				DriveType driveType = volume.VolumeType;
 				if (driveType != DriveType.Unknown &&

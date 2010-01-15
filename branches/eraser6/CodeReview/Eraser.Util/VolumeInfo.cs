@@ -140,7 +140,7 @@ namespace Eraser.Util
 		/// </summary>
 		/// <returns>Returns a list of volumes representing all volumes present in
 		/// the system.</returns>
-		public static ICollection<VolumeInfo> Volumes
+		public static IList<VolumeInfo> Volumes
 		{
 			get
 			{
@@ -357,7 +357,7 @@ namespace Eraser.Util
 		/// Retrieves all mountpoints in the current volume, if the current volume
 		/// contains volume mountpoints.
 		/// </summary>
-		public ICollection<VolumeInfo> MountedVolumes
+		public IList<VolumeInfo> MountedVolumes
 		{
 			get
 			{
