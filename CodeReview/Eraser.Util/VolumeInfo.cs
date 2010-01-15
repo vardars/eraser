@@ -43,32 +43,23 @@ namespace Eraser.Util
 			VolumeId = volumeId;
 
 			//Get the paths of the said volume
-			IntPtr pathNamesBuffer = IntPtr.Zero;
-			string pathNames = string.Empty;
-			try
+			string pathNames;
 			{
-				uint currentBufferSize = KernelApi.NativeMethods.MaxPath;
 				uint returnLength = 0;
-				pathNamesBuffer = Marshal.AllocHGlobal((int)(currentBufferSize * sizeof(char)));
+				StringBuilder pathNamesBuffer = new StringBuilder();
+				pathNamesBuffer.EnsureCapacity(KernelApi.NativeMethods.MaxPath);
 				while (!KernelApi.NativeMethods.GetVolumePathNamesForVolumeName(VolumeId,
-					pathNamesBuffer, currentBufferSize, out returnLength))
+					pathNamesBuffer, (uint)pathNamesBuffer.Capacity, out returnLength))
 				{
-					if (Marshal.GetLastWin32Error() == 234/*ERROR_MORE_DATA*/)
-					{
-						Marshal.FreeHGlobal(pathNamesBuffer);
-						currentBufferSize *= 2;
-						pathNamesBuffer = Marshal.AllocHGlobal((int)(currentBufferSize * sizeof(char)));
-					}
+					if (Marshal.GetLastWin32Error() == 234 /*ERROR_MORE_DATA*/)
+						pathNamesBuffer.EnsureCapacity((int)returnLength);
 					else
 						throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
 				}
 
-				pathNames = Marshal.PtrToStringUni(pathNamesBuffer, (int)returnLength);
-			}
-			finally
-			{
-				if (pathNamesBuffer != IntPtr.Zero)
-					Marshal.FreeHGlobal(pathNamesBuffer);
+				if (pathNamesBuffer.Length < returnLength)
+					pathNamesBuffer.Length = (int)returnLength;
+				pathNames = pathNamesBuffer.ToString().Substring(0, (int)returnLength);
 			}
 
 			//OK, the marshalling is complete. Convert the pathNames string into a list
