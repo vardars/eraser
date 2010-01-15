@@ -155,8 +155,7 @@ namespace Eraser.Manager
 		}
 	}
 
-	public abstract class ExecutorTasksCollection : IList<Task>, ICollection<Task>,
-		IEnumerable<Task>
+	public abstract class ExecutorTasksCollection : IList<Task>
 	{
 		/// <summary>
 		/// Constructor.

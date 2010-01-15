@@ -67,7 +67,7 @@ namespace Eraser.Manager.Plugin
 		/// Retrieves the list of currently loaded plugins.
 		/// </summary>
 		/// <remarks>The returned list is read-only</remarks>
-		public abstract ICollection<PluginInstance> Plugins
+		public abstract IList<PluginInstance> Plugins
 		{
 			get;
 		}
@@ -174,7 +174,7 @@ namespace Eraser.Manager.Plugin
 		/// </summary>
 		public const string PLUGINSFOLDER = "Plugins";
 
-		public override ICollection<PluginInstance> Plugins
+		public override IList<PluginInstance> Plugins
 		{
 			get { return plugins.AsReadOnly(); }
 		}

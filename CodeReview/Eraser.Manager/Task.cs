@@ -447,7 +447,7 @@ namespace Eraser.Manager
 			try
 			{
 				//Get the ADS names
-				ICollection<string> adses = Util.File.GetADSes(new FileInfo(file));
+				IList<string> adses = Util.File.GetADSes(new FileInfo(file));
 
 				//Then prepend the path.
 				foreach (string adsName in adses)
@@ -846,8 +846,7 @@ namespace Eraser.Manager
 	/// Maintains a collection of erasure targets.
 	/// </summary>
 	[Serializable]
-	public class ErasureTargetsCollection : IList<ErasureTarget>, ICollection<ErasureTarget>,
-		IEnumerable<ErasureTarget>, ISerializable
+	public class ErasureTargetsCollection : IList<ErasureTarget>, ISerializable
 	{
 		#region Constructors
 		internal ErasureTargetsCollection(Task owner)

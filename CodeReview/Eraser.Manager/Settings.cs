@@ -343,7 +343,7 @@ namespace Eraser.Manager
 
 			//We have not computed the value. Compute the default.
 			Plugin.Host pluginHost = ManagerLibrary.Instance.Host;
-			ICollection<Plugin.PluginInstance> plugins = pluginHost.Plugins;
+			IList<Plugin.PluginInstance> plugins = pluginHost.Plugins;
 			SortedList<int, Guid> priorities = new SortedList<int, Guid>();
 
 			foreach (Plugin.PluginInstance plugin in plugins)
