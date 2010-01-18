@@ -192,7 +192,7 @@ namespace Eraser.Util
 						"ThemeMessageFilter can exist at any one time.");
 
 				Instance = this;
-				this.ThemesActive = UXThemeApi.ThemesActive;
+				ThemesActive = UXThemeApi.ThemesActive;
 				Application.AddMessageFilter(this);
 			}
 
