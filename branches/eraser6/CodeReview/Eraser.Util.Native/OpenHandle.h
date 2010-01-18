@@ -48,9 +48,9 @@ namespace Util {
 
 	public:
 		/// Retrieves all open handles on the system
-		static property ReadOnlyCollection<OpenHandle^>^ Items
+		static property IList<OpenHandle^>^ Items
 		{
-			ReadOnlyCollection<OpenHandle^>^ get();
+			IList<OpenHandle^>^ get();
 		}
 
 		/// Force the handle to close.
@@ -73,6 +73,7 @@ namespace Util {
 				return path;
 			}
 
+		private:
 			void set(String^ value)
 			{
 				path = value;
@@ -87,6 +88,7 @@ namespace Util {
 				return processId;
 			}
 
+		private:
 			void set(int value)
 			{
 				processId = value;
