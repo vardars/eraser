@@ -62,7 +62,7 @@
     <Compile Include="NativeMethods\WinTrust.cs" />
     <Compile Include="NtfsApi.cs" />
     <Compile Include="RecycleBin.cs" />
-    <Compile Include="SystemRestoreApi.cs">
+    <Compile Include="SystemRestore.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="StreamInfo.cs" />
