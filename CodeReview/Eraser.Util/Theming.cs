@@ -30,12 +30,12 @@ using Microsoft.Win32.SafeHandles;
 
 namespace Eraser.Util
 {
-	public static class UXThemeApi
+	public static class Theming
 	{
 		/// <summary>
 		/// Verifies whether themeing is active.
 		/// </summary>
-		public static bool ThemesActive
+		public static bool Active
 		{
 			get
 			{
@@ -54,7 +54,7 @@ namespace Eraser.Util
 		/// Updates the control's theme to fit in with the latest Windows visuals.
 		/// </summary>
 		/// <remarks>This function will also set the volume on all child controls.</remarks>
-		public static void UpdateControlTheme(Control control)
+		public static void ApplyTheme(Control control)
 		{
 			if (control is ContainerControl)
 				((ContainerControl)control).Font = SystemFonts.MessageBoxFont;
@@ -63,24 +63,24 @@ namespace Eraser.Util
 					control.Font.Size, control.Font.Style);
 
 			if (control is ButtonBase)
-				UpdateControlTheme((ButtonBase)control);
+				ApplyTheme((ButtonBase)control);
 			else if (control is ListView)
-				UpdateControlTheme((ListView)control);
+				ApplyTheme((ListView)control);
 			else if (control is ToolStrip)
-				UpdateControlTheme((ToolStrip)control);
+				ApplyTheme((ToolStrip)control);
 
 			if (control.ContextMenuStrip != null)
-				UpdateControlTheme(control.ContextMenuStrip);
+				ApplyTheme(control.ContextMenuStrip);
 			
 			foreach (Control child in control.Controls)
-				UpdateControlTheme(child);
+				ApplyTheme(child);
 		}
 
 		/// <summary>
 		/// Updates the control's theme to fit in with the latest Windows visuals.
 		/// </summary>
 		/// <param name="button">The ButtonBase control to set the theme on.</param>
-		public static void UpdateControlTheme(ButtonBase button)
+		public static void ApplyTheme(ButtonBase button)
 		{
 			if (button.FlatStyle == FlatStyle.Standard)
 				button.FlatStyle = FlatStyle.System;
@@ -90,7 +90,7 @@ namespace Eraser.Util
 		/// Updates the control's theme to fit in with the latest Windows visuals.
 		/// </summary>
 		/// <param name="lv">The List View control to set the theme on.</param>
-		public static void UpdateControlTheme(ListView lv)
+		public static void ApplyTheme(ListView lv)
 		{
 			try
 			{
@@ -108,7 +108,7 @@ namespace Eraser.Util
 		/// Updates the control's theme to fit in with the latest Windows visuals.
 		/// </summary>
 		/// <param name="menu">The tool strip control to set the theme on.</param>
-		public static void UpdateControlTheme(ToolStrip menu)
+		public static void ApplyTheme(ToolStrip menu)
 		{
 			//Register for Theme changed messages
 			if (ThemeMessageFilter.Instance == null)
@@ -125,7 +125,7 @@ namespace Eraser.Util
 				{
 					menu.Disposed += OnThemedMenuDisposed;
 					ThemedMenus.Add(menu, renderer);
-					if (ThemesActive)
+					if (Active)
 						menu.Renderer = renderer;
 				}
 			}
@@ -134,7 +134,7 @@ namespace Eraser.Util
 			{
 				ToolStripMenuItem toolStripItem = item as ToolStripMenuItem;
 				if (toolStripItem != null)
-					UpdateControlTheme(toolStripItem);
+					ApplyTheme(toolStripItem);
 			}
 		}
 
@@ -142,12 +142,12 @@ namespace Eraser.Util
 		/// Updates the control's theme to fit in with the latest Windows visuals.
 		/// </summary>
 		/// <param name="menu">The List View control to set the theme on.</param>
-		public static void UpdateControlTheme(ToolStripDropDownItem menuItem)
+		public static void ApplyTheme(ToolStripDropDownItem menuItem)
 		{
 			if (menuItem.Font != SystemFonts.MenuFont)
 				menuItem.Font = new Font(SystemFonts.MenuFont, menuItem.Font.Style);
 
-			UpdateControlTheme(menuItem.DropDown);
+			ApplyTheme(menuItem.DropDown);
 		}
 
 		/// <summary>
@@ -156,7 +156,7 @@ namespace Eraser.Util
 		/// </summary>
 		private static void OnThemeChanged(object sender, EventArgs e)
 		{
-			bool themesActive = ThemesActive;
+			bool themesActive = Active;
 			foreach (KeyValuePair<ToolStrip, UXThemeMenuRenderer> value in ThemedMenus)
 			{
 				if (themesActive)
@@ -196,23 +196,23 @@ namespace Eraser.Util
 						"ThemeMessageFilter can exist at any one time.");
 
 				Instance = this;
-				ThemesActive = UXThemeApi.ThemesActive;
+				ThemesActive = Theming.Active;
 				Application.AddMessageFilter(this);
 			}
 
 			#region IMessageFilter Members
 			public bool PreFilterMessage(ref Message m)
 			{
-				if (m.Msg == WM_THEMECHANGED)
+				if (m.Msg == NativeMethods.WM_THEMECHANGED)
 				{
-					ThemesActive = UXThemeApi.ThemesActive;
+					ThemesActive = Theming.Active;
 					ThemeChanged(null, EventArgs.Empty);
 				}
-				else if (m.Msg == WM_DWMCOMPOSITIONCHANGED)
+				else if (m.Msg == NativeMethods.WM_DWMCOMPOSITIONCHANGED)
 				{
-					if (ThemesActive != UXThemeApi.ThemesActive)
+					if (ThemesActive != Theming.Active)
 					{
-						ThemesActive = UXThemeApi.ThemesActive;
+						ThemesActive = Theming.Active;
 						ThemeChanged(null, EventArgs.Empty);
 					}
 				}
@@ -239,8 +239,6 @@ namespace Eraser.Util
 				set;
 			}
 
-			private const int WM_THEMECHANGED = 0x031A;
-			private const int WM_DWMCOMPOSITIONCHANGED = 0x031E;
 			private bool ThemesActive;
 		}
 	}

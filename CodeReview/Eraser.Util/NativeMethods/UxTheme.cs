@@ -163,5 +163,8 @@ namespace Eraser.Util
 			TS_TRUE,
 			TS_DRAW
 		}
+
+		public const int WM_THEMECHANGED = 0x031A;
+		public const int WM_DWMCOMPOSITIONCHANGED = 0x031E;
 	}
 }

@@ -68,7 +68,7 @@
     <Compile Include="StreamInfo.cs" />
     <Compile Include="KernelApi.cs" />
     <Compile Include="File.cs" />
-    <Compile Include="UxThemeApi.cs" />
+    <Compile Include="Theming.cs" />
     <Compile Include="VolumeInfo.cs" />
     <Compile Include="NetApi.cs" />
     <Compile Include="NTApi.cs" />
@@ -81,6 +81,7 @@
     </CodeAnalysisDictionary>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NativeMethods\Gdi.cs" />
     <Compile Include="NativeMethods\Sfc.cs" />
     <Compile Include="Win32ErrorCodes.cs" />
   </ItemGroup>
