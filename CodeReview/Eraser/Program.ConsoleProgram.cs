@@ -79,9 +79,9 @@ namespace Eraser
 				//Don't ask for a key to press if the user specified Quiet.
 				if (!Arguments.Quiet)
 				{
-					Console.Write("\nPress enter to continue . . . ");
+					Console.Write("\nPress any key to continue . . . ");
 					Console.Out.Flush();
-					Console.ReadLine();
+					Console.ReadKey(true);
 
 					if (disposing)
 						ConsoleWindow.Dispose();
