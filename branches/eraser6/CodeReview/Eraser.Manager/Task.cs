@@ -458,18 +458,24 @@ namespace Eraser.Manager
 					totalSize += info.Length;
 				}
 			}
-			catch (FileLoadException)
+			catch (IOException)
 			{
-				//The system cannot open the file, try to force the file handle to close.
-				if (!ManagerLibrary.Settings.ForceUnlockLockedFiles)
-					throw;
+				if (System.Runtime.InteropServices.Marshal.GetLastWin32Error() ==
+					Win32ErrorCode.SharingViolation)
+				{
+					//The system cannot open the file, try to force the file handle to close.
+					if (!ManagerLibrary.Settings.ForceUnlockLockedFiles)
+						throw;
 
-				foreach (OpenHandle handle in OpenHandle.Items)
-					if (handle.Path == file && handle.Close())
-					{
-						GetPathADSes(list, out totalSize, file);
-						return;
-					}
+					foreach (OpenHandle handle in OpenHandle.Items)
+						if (handle.Path == file && handle.Close())
+						{
+							GetPathADSes(list, out totalSize, file);
+							return;
+						}
+				}
+				else
+					throw;
 			}
 			catch (UnauthorizedAccessException e)
 			{
