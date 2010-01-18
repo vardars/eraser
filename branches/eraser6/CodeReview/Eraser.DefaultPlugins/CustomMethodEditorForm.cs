@@ -37,7 +37,7 @@ namespace Eraser.DefaultPlugins
 		public CustomMethodEditorForm()
 		{
 			InitializeComponent();
-			UXThemeApi.UpdateControlTheme(this);
+			Theming.ApplyTheme(this);
 		}
 
 		/// <summary>

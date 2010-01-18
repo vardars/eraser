@@ -56,7 +56,7 @@ namespace Eraser
 		{
 			//Create and position the dialog
 			InitializeComponent();
-			UXThemeApi.UpdateControlTheme(this);
+			Theming.ApplyTheme(this);
 			ClientSize = new Size(parent.ClientSize.Width, parent.ClientSize.Height);
 			Point point = parent.PointToScreen(new Point(0, 0));
 			Left = point.X;

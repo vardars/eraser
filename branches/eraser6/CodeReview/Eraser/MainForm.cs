@@ -49,8 +49,8 @@ namespace Eraser
 			contentPanel.Controls.Add(SettingsPage);
 			CreateControl();
 
-			UXThemeApi.UpdateControlTheme(this);
-			UXThemeApi.UpdateControlTheme(notificationMenu);
+			Theming.ApplyTheme(this);
+			Theming.ApplyTheme(notificationMenu);
 
 			//Connect to the executor task processing and processed events.
 			Program.eraserClient.TaskProcessing += OnTaskProcessing;
