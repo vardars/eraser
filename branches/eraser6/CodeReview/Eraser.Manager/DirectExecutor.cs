@@ -237,8 +237,8 @@ namespace Eraser.Manager
 					try
 					{
 						//Prevent the system from sleeping.
-						KernelApi.SetThreadExecutionState(ThreadExecutionState.Continuous |
-							ThreadExecutionState.SystemRequired);
+						Power.ExecutionState = ExecutionState.Continuous |
+							ExecutionState.SystemRequired;
 
 						//Broadcast the task started event.
 						task.Canceled = false;
@@ -293,7 +293,7 @@ namespace Eraser.Manager
 					finally
 					{
 						//Allow the system to sleep again.
-						KernelApi.SetThreadExecutionState(ThreadExecutionState.Continuous);
+						Power.ExecutionState = ExecutionState.Continuous;
 
 						//If the task is a recurring task, reschedule it since we are done.
 						if (task.Schedule is RecurringSchedule)
@@ -707,7 +707,7 @@ namespace Eraser.Manager
 					new ProgressChangedEventArgs(step,
 						new TaskProgressChangedEventArgs(string.Empty, 0, 0)));
 
-				RecycleBin.EmptyRecycleBin(EmptyRecycleBinOptions.NoConfirmation |
+				RecycleBin.Empty(EmptyRecycleBinOptions.NoConfirmation |
 					EmptyRecycleBinOptions.NoProgressUI | EmptyRecycleBinOptions.NoSound);
 			}
 

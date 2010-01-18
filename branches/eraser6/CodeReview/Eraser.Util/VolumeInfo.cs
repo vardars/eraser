@@ -493,7 +493,7 @@ namespace Eraser.Util
 				SplitCount = info.SplitCount;
 				QueryTime = info.QueryTime;
 				StorageDeviceNumber = info.StorageDeviceNumber;
-				StorageManagerName = new string((char*)info.StorageManagerName);
+				StorageManagerName = info.StorageManagerName;
 			}
 
 			public long BytesRead { get; private set; }
