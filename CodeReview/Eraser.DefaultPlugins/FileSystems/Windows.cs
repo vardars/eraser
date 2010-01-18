@@ -92,14 +92,14 @@ namespace Eraser.DefaultPlugins
 				}
 				catch (IOException e)
 				{
-					switch ((Win32ErrorCodes)System.Runtime.InteropServices.Marshal.GetLastWin32Error())
+					switch (System.Runtime.InteropServices.Marshal.GetLastWin32Error())
 					{
-						case Win32ErrorCodes.AccessDenied:
+						case Win32ErrorCode.AccessDenied:
 							throw new UnauthorizedAccessException(S._("The file {0} could not " +
 								"be erased because the file's permissions prevent access to the file.",
 								info.FullName));
 
-						case Win32ErrorCodes.SharingViolation:
+						case Win32ErrorCode.SharingViolation:
 							//If after FilenameEraseTries the file is still locked, some program is
 							//definitely using the file; throw an exception.
 							if (tries > FileNameEraseTries)
@@ -125,14 +125,14 @@ namespace Eraser.DefaultPlugins
 				}
 				catch (IOException e)
 				{
-					switch ((Win32ErrorCodes)System.Runtime.InteropServices.Marshal.GetLastWin32Error())
+					switch (System.Runtime.InteropServices.Marshal.GetLastWin32Error())
 					{
-						case Win32ErrorCodes.AccessDenied:
+						case Win32ErrorCode.AccessDenied:
 							throw new UnauthorizedAccessException(S._("The file {0} could not " +
 								"be erased because the file's permissions prevent access to the file.",
 								info.FullName), e);
 
-						case Win32ErrorCodes.SharingViolation:
+						case Win32ErrorCode.SharingViolation:
 							//If after FilenameEraseTries the file is still locked, some program is
 							//definitely using the file; throw an exception.
 							if (i > FileNameEraseTries)

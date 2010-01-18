@@ -63,7 +63,7 @@ namespace Eraser.Util
 			bool result = NativeMethods.OpenProcessToken(NativeMethods.GetCurrentProcess(),
 				NativeMethods.TOKEN_QUERY, out hToken);
 			if (!result || hToken.IsInvalid)
-				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 
 			IntPtr pElevationType = Marshal.AllocHGlobal(Marshal.SizeOf(
 				typeof(NativeMethods.TOKEN_ELEVATION_TYPE)));
@@ -78,7 +78,7 @@ namespace Eraser.Util
 
 				//Check the return code
 				if (!result)
-					throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+					throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 
 				NativeMethods.TOKEN_ELEVATION_TYPE elevationType =
 					(NativeMethods.TOKEN_ELEVATION_TYPE)Marshal.PtrToStructure(

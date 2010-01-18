@@ -51,7 +51,7 @@ namespace Eraser.Util
 				while (!NativeMethods.GetVolumePathNamesForVolumeName(VolumeId,
 					pathNamesBuffer, (uint)pathNamesBuffer.Capacity, out returnLength))
 				{
-					if (Marshal.GetLastWin32Error() == (int)Win32ErrorCodes.MoreData)
+					if (Marshal.GetLastWin32Error() == Win32ErrorCode.MoreData)
 						pathNamesBuffer.EnsureCapacity((int)returnLength);
 					else
 						throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
@@ -92,12 +92,12 @@ namespace Eraser.Util
 				NativeMethods.MaxPath))
 			{
 				int lastError = Marshal.GetLastWin32Error();
-				switch ((Win32ErrorCodes)lastError)
+				switch (lastError)
 				{
-					case Win32ErrorCodes.Success:
-					case Win32ErrorCodes.NotReady:
-					case Win32ErrorCodes.InvalidParameter:	//when the volume given is not mounted.
-					case Win32ErrorCodes.UnrecognizedVolume:
+					case Win32ErrorCode.Success:
+					case Win32ErrorCode.NotReady:
+					case Win32ErrorCode.InvalidParameter:	//when the volume given is not mounted.
+					case Win32ErrorCode.UnrecognizedVolume:
 						break;
 
 					default:
@@ -147,7 +147,7 @@ namespace Eraser.Util
 				while (NativeMethods.FindNextVolume(handle, nextVolume, NativeMethods.LongPath));
 
 				//Close the handle
-				if (Marshal.GetLastWin32Error() == (int)Win32ErrorCodes.NoMoreFiles)
+				if (Marshal.GetLastWin32Error() == Win32ErrorCode.NoMoreFiles)
 					NativeMethods.FindVolumeClose(handle);
 
 				return result.AsReadOnly();
@@ -176,12 +176,12 @@ namespace Eraser.Util
 				}
 				else
 				{
-					switch ((Win32ErrorCodes)Marshal.GetLastWin32Error())
+					switch (Marshal.GetLastWin32Error())
 					{
-						case Win32ErrorCodes.InvalidFunction:
-						case Win32ErrorCodes.FileNotFound:
-						case Win32ErrorCodes.PathNotFound:
-						case Win32ErrorCodes.NotAReparsePoint:
+						case Win32ErrorCode.InvalidFunction:
+						case Win32ErrorCode.FileNotFound:
+						case Win32ErrorCode.PathNotFound:
+						case Win32ErrorCode.NotAReparsePoint:
 							break;
 						default:
 							throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
@@ -192,8 +192,7 @@ namespace Eraser.Util
 			}
 			while (mountpointDir != null);
 
-			throw Marshal.GetExceptionForHR(KernelApi.GetHRForWin32Error(
-				(int)Win32ErrorCodes.NotAReparsePoint));
+			throw Win32ErrorCode.GetExceptionForWin32Error(Win32ErrorCode.NotAReparsePoint);
 		}
 
 		/// <summary>
@@ -271,7 +270,7 @@ namespace Eraser.Util
 				{
 					return totalNumberOfFreeBytes != freeBytesAvailable;
 				}
-				else if (Marshal.GetLastWin32Error() == (int)Win32ErrorCodes.NotReady)
+				else if (Marshal.GetLastWin32Error() == Win32ErrorCode.NotReady)
 				{
 					//For the lack of more appropriate responses.
 					return false;
@@ -361,7 +360,7 @@ namespace Eraser.Util
 				}
 
 				//Close the handle
-				if (Marshal.GetLastWin32Error() == (int)Win32ErrorCodes.NoMoreFiles)
+				if (Marshal.GetLastWin32Error() == Win32ErrorCode.NoMoreFiles)
 					NativeMethods.FindVolumeMountPointClose(handle);
 
 				return result.AsReadOnly();
@@ -474,7 +473,7 @@ namespace Eraser.Util
 			SafeFileHandle result = NativeMethods.CreateFile(openPath, iAccess,
 				(uint)share, IntPtr.Zero, (uint)FileMode.Open, (uint)options, IntPtr.Zero);
 			if (result.IsInvalid)
-				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 
 			return result;
 		}

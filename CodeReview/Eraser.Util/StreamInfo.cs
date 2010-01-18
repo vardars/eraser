@@ -132,10 +132,10 @@ namespace Eraser.Util
 				{
 					if (!handle.IsInvalid)
 						return true;
-					else if (Marshal.GetLastWin32Error() == (int)Win32ErrorCodes.FileNotFound)
+					else if (Marshal.GetLastWin32Error() == Win32ErrorCode.FileNotFound)
 						return false;
 
-					throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+					throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 				}
 			}
 		}
@@ -238,7 +238,7 @@ namespace Eraser.Util
 
 			try
 			{
-				KernelApi.GetFileTime(handle, out creationTime, out lastAccess, out lastWrite);
+				Util.File.GetFileTime(handle, out creationTime, out lastAccess, out lastWrite);
 			}
 			finally
 			{
@@ -267,7 +267,7 @@ namespace Eraser.Util
 
 			try
 			{
-				KernelApi.SetFileTime(handle, creationTime, lastAccess, lastWrite);
+				Util.File.SetFileTime(handle, creationTime, lastAccess, lastWrite);
 			}
 			finally
 			{
@@ -285,7 +285,7 @@ namespace Eraser.Util
 				File.Delete();
 			else
 				if (!NativeMethods.DeleteFile(FullName))
-					throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+					throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 		}
 
 		/// <summary>
@@ -388,7 +388,7 @@ namespace Eraser.Util
 			SafeFileHandle result = NativeMethods.CreateFile(FullName, iAccess,
 				(uint)share, IntPtr.Zero, (uint)mode, (uint)options, IntPtr.Zero);
 			if (result.IsInvalid)
-				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 
 			//Cache the handle if we have an exclusive handle - this is used for things like
 			//file times.
