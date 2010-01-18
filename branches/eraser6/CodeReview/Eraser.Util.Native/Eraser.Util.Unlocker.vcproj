@@ -402,11 +402,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Stdafx.h"
+				RelativePath=".\OpenHandle.NameResolver.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Unlocker.h"
+				RelativePath=".\Stdafx.h"
 				>
 			</File>
 		</Filter>
