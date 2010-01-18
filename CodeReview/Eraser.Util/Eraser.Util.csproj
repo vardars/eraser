@@ -52,6 +52,15 @@
     <Compile Include="ExtensionMethods\IO.cs" />
     <Compile Include="Localisation.cs" />
     <Compile Include="MsCorEEApi.cs" />
+    <Compile Include="NativeMethods\AdvApi.cs" />
+    <Compile Include="NativeMethods\Kernel.cs" />
+    <Compile Include="NativeMethods\MsCorEE.cs" />
+    <Compile Include="NativeMethods\NetApi.cs" />
+    <Compile Include="NativeMethods\NtDll.cs" />
+    <Compile Include="NativeMethods\Shell.cs" />
+    <Compile Include="NativeMethods\User.cs" />
+    <Compile Include="NativeMethods\UxTheme.cs" />
+    <Compile Include="NativeMethods\WinTrust.cs" />
     <Compile Include="NtfsApi.cs" />
     <Compile Include="ShellApi.cs" />
     <Compile Include="SystemRestoreApi.cs">
