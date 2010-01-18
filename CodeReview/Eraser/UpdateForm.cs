@@ -35,6 +35,8 @@ using System.Net.Cache;
 using System.Net.Mime;
 using System.Globalization;
 
+using ProgressChangedEventArgs = System.ComponentModel.ProgressChangedEventArgs;
+
 namespace Eraser
 {
 	public partial class UpdateForm : Form
@@ -539,7 +541,7 @@ namespace Eraser
 			using (Stream responseStream = response.GetResponseStream())
 			using (MemoryStream memoryStream = new MemoryStream())
 			{
-				Manager.ProgressManager progress = new Manager.ProgressManager();
+				Util.ProgressManager progress = new Util.ProgressManager();
 				progress.Total = response.ContentLength;
 
 				//Download the response
@@ -670,14 +672,14 @@ namespace Eraser
 
 			int currUpdate = 0;
 			Dictionary<string, UpdateInfo> tempFilesMap = new Dictionary<string, UpdateInfo>();
-			Manager.SteppedProgressManager progress = new Manager.SteppedProgressManager();
+			Util.SteppedProgressManager progress = new Util.SteppedProgressManager();
 			foreach (UpdateInfo update in downloadQueue)
 			{
 				try
 				{
 					//Add the update to the overall progress.
-					Manager.ProgressManager step = new Eraser.Manager.ProgressManager();
-					progress.Steps.Add(new Manager.SteppedProgressManager.Step(
+					Util.ProgressManager step = new Eraser.Util.ProgressManager();
+					progress.Steps.Add(new Util.SteppedProgressManager.Step(
 						step, 1.0f / downloadQueue.Count));
 
 					//Decide on the URL to connect to. The Link of the update may
@@ -754,7 +756,7 @@ namespace Eraser
 		/// <see cref="DownloadUpdates"/>.</param>
 		public void InstallUpdates(object value)
 		{
-			Manager.ProgressManager progress = new Manager.ProgressManager();
+			Util.ProgressManager progress = new Util.ProgressManager();
 			Dictionary<string, UpdateInfo> tempFiles = (Dictionary<string, UpdateInfo>)value;
 			Dictionary<string, UpdateInfo>.KeyCollection files = tempFiles.Keys;
 
