@@ -49,10 +49,10 @@ namespace Eraser.Util
 			using (SafeFileHandle streamHandle = stream.SafeFileHandle)
 			{
 				//Allocate the structures
-				NTApi.NativeMethods.FILE_STREAM_INFORMATION[] streams =
-					NTApi.NativeMethods.NtQueryInformationFile(streamHandle);
+				NativeMethods.FILE_STREAM_INFORMATION[] streams =
+					NTApi.NtQueryInformationFile(streamHandle);
 
-				foreach (NTApi.NativeMethods.FILE_STREAM_INFORMATION streamInfo in streams)
+				foreach (NativeMethods.FILE_STREAM_INFORMATION streamInfo in streams)
 				{
 					//Get the name of the stream. The raw value is :NAME:$DATA
 					string streamName = streamInfo.StreamName.Substring(1,
@@ -76,9 +76,9 @@ namespace Eraser.Util
 		/// <returns>A string containing the description</returns>
 		public static string GetFileDescription(string path)
 		{
-			ShellApi.NativeMethods.SHFILEINFO shfi = new ShellApi.NativeMethods.SHFILEINFO();
-			ShellApi.NativeMethods.SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
-				ShellApi.NativeMethods.SHGetFileInfoFlags.SHGFI_DISPLAYNAME);
+			NativeMethods.SHFILEINFO shfi = new NativeMethods.SHFILEINFO();
+			NativeMethods.SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
+				NativeMethods.SHGetFileInfoFlags.SHGFI_DISPLAYNAME);
 			return shfi.szDisplayName;
 		}
 
@@ -92,10 +92,10 @@ namespace Eraser.Util
 		/// <returns>An Icon object containing the bitmap</returns>
 		public static Icon GetFileIcon(string path)
 		{
-			ShellApi.NativeMethods.SHFILEINFO shfi = new ShellApi.NativeMethods.SHFILEINFO();
-			ShellApi.NativeMethods.SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
-				ShellApi.NativeMethods.SHGetFileInfoFlags.SHGFI_SMALLICON |
-				ShellApi.NativeMethods.SHGetFileInfoFlags.SHGFI_ICON);
+			NativeMethods.SHFILEINFO shfi = new NativeMethods.SHFILEINFO();
+			NativeMethods.SHGetFileInfo(path, 0, ref shfi, Marshal.SizeOf(shfi),
+				NativeMethods.SHGetFileInfoFlags.SHGFI_SMALLICON |
+				NativeMethods.SHGetFileInfoFlags.SHGFI_ICON);
 
 			if (shfi.hIcon != IntPtr.Zero)
 				return Icon.FromHandle(shfi.hIcon);
@@ -131,7 +131,7 @@ namespace Eraser.Util
 
 				while (g.MeasureString(builder.ToString(), drawFont).Width > newWidth)
 				{
-					if (!ShellApi.NativeMethods.PathCompactPathEx(builder, longPath,
+					if (!NativeMethods.PathCompactPathEx(builder, longPath,
 						(uint)charCount--, 0))
 					{
 						return string.Empty;
@@ -149,7 +149,7 @@ namespace Eraser.Util
 		/// <returns>True if the file is protected.</returns>
 		public static bool IsProtectedSystemFile(string filePath)
 		{
-			return SfcIsFileProtected(IntPtr.Zero, filePath);
+			return NativeMethods.SfcIsFileProtected(IntPtr.Zero, filePath);
 		}
 
 		/// <summary>
@@ -162,17 +162,16 @@ namespace Eraser.Util
 			ushort compressionStatus = 0;
 			uint bytesReturned = 0;
 
-			using (FileStream strm = new FileStream(
-				KernelApi.NativeMethods.CreateFile(path,
-				KernelApi.NativeMethods.GENERIC_READ | KernelApi.NativeMethods.GENERIC_WRITE,
-				0, IntPtr.Zero, KernelApi.NativeMethods.OPEN_EXISTING,
-				KernelApi.NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.Read))
+			using (FileStream strm = new FileStream(NativeMethods.CreateFile(path,
+				NativeMethods.GENERIC_READ | NativeMethods.GENERIC_WRITE,
+				0, IntPtr.Zero, NativeMethods.OPEN_EXISTING,
+				NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.Read))
 			{
-				if (KernelApi.NativeMethods.DeviceIoControl(strm.SafeFileHandle,
-					KernelApi.NativeMethods.FSCTL_GET_COMPRESSION, IntPtr.Zero, 0,
+				if (NativeMethods.DeviceIoControl(strm.SafeFileHandle,
+					NativeMethods.FSCTL_GET_COMPRESSION, IntPtr.Zero, 0,
 					out compressionStatus, sizeof(ushort), out bytesReturned, IntPtr.Zero))
 				{
-					return compressionStatus != KernelApi.NativeMethods.COMPRESSION_FORMAT_NONE;
+					return compressionStatus != NativeMethods.COMPRESSION_FORMAT_NONE;
 				}
 			}
 
@@ -187,33 +186,20 @@ namespace Eraser.Util
 		public static bool SetCompression(string path, bool compressed)
 		{
 			ushort compressionStatus = compressed ?
-				KernelApi.NativeMethods.COMPRESSION_FORMAT_DEFAULT :
-				KernelApi.NativeMethods.COMPRESSION_FORMAT_NONE;
+				NativeMethods.COMPRESSION_FORMAT_DEFAULT :
+				NativeMethods.COMPRESSION_FORMAT_NONE;
 			uint bytesReturned = 0;
 
-			using (FileStream strm = new FileStream(
-				KernelApi.NativeMethods.CreateFile(path,
-				KernelApi.NativeMethods.GENERIC_READ | KernelApi.NativeMethods.GENERIC_WRITE,
-				0, IntPtr.Zero, KernelApi.NativeMethods.OPEN_EXISTING,
-				KernelApi.NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.ReadWrite))
+			using (FileStream strm = new FileStream(NativeMethods.CreateFile(path,
+				NativeMethods.GENERIC_READ | NativeMethods.GENERIC_WRITE,
+				0, IntPtr.Zero, NativeMethods.OPEN_EXISTING,
+				NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.ReadWrite))
 			{
-				return KernelApi.NativeMethods.DeviceIoControl(strm.SafeFileHandle,
-					KernelApi.NativeMethods.FSCTL_SET_COMPRESSION, ref compressionStatus,
+				return NativeMethods.DeviceIoControl(strm.SafeFileHandle,
+					NativeMethods.FSCTL_SET_COMPRESSION, ref compressionStatus,
 					sizeof(ushort), IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
 			}
 		}
-
-		/// <summary>
-		/// Determines whether the specified file is protected. Applications
-		/// should avoid replacing protected system files.
-		/// </summary>
-		/// <param name="RpcHandle">This parameter must be NULL.</param>
-		/// <param name="ProtFileName">The name of the file.</param>
-		/// <returns>If the file is protected, the return value is true.</returns>
-		[DllImport("Sfc.dll", CharSet = CharSet.Unicode)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool SfcIsFileProtected(IntPtr RpcHandle,
-			string ProtFileName);
 
 		/// <summary>
 		/// Gets the human-readable representation of a file size from the byte-wise
