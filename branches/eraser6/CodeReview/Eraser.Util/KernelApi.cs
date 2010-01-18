@@ -58,6 +58,7 @@ namespace Eraser.Util
 		/// console. Console applications are initialized with a console, unless they
 		/// are created as detached processes (by calling the CreateProcess function
 		/// with the DETACHED_PROCESS flag).</remarks>
+		[Obsolete]
 		public static bool AllocConsole()
 		{
 			return NativeMethods.AllocConsole();
@@ -80,6 +81,7 @@ namespace Eraser.Util
 		/// closed when the last process attached to it terminates or calls FreeConsole.
 		/// After a process calls FreeConsole, it can call the AllocConsole function to
 		/// create a new console or AttachConsole to attach to another console.</remarks>
+		[Obsolete]
 		public static bool FreeConsole()
 		{
 			return NativeMethods.FreeConsole();
@@ -102,29 +104,6 @@ namespace Eraser.Util
 			result.dwHighDateTime = (int)(time >> 32);
 
 			return result;
-		}
-
-		/// <summary>
-		/// Converts a Win32 Error code to a HRESULT.
-		/// </summary>
-		/// <param name="errorCode">The error code to convert.</param>
-		/// <returns>A HRESULT value representing the error code.</returns>
-		internal static int GetHRForWin32Error(int errorCode)
-		{
-			const uint FACILITY_WIN32 = 7;
-			return errorCode <= 0 ? errorCode :
-				(int)((((uint)errorCode) & 0x0000FFFF) | (FACILITY_WIN32 << 16) | 0x80000000);
-		}
-
-		/// <summary>
-		/// Gets a Exception for the given Win32 error code.
-		/// </summary>
-		/// <param name="errorCode">The error code.</param>
-		/// <returns>An exception object representing the error code.</returns>
-		internal static Exception GetExceptionForWin32Error(int errorCode)
-		{
-			int HR = GetHRForWin32Error(errorCode);
-			return Marshal.GetExceptionForHR(HR);
 		}
 
 		public static void GetFileTime(SafeFileHandle file, out DateTime creationTime,
@@ -176,6 +155,29 @@ namespace Eraser.Util
 			{
 				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
+		}
+
+		/// <summary>
+		/// Converts a Win32 Error code to a HRESULT.
+		/// </summary>
+		/// <param name="errorCode">The error code to convert.</param>
+		/// <returns>A HRESULT value representing the error code.</returns>
+		internal static int GetHRForWin32Error(int errorCode)
+		{
+			const uint FACILITY_WIN32 = 7;
+			return errorCode <= 0 ? errorCode :
+				(int)((((uint)errorCode) & 0x0000FFFF) | (FACILITY_WIN32 << 16) | 0x80000000);
+		}
+
+		/// <summary>
+		/// Gets a Exception for the given Win32 error code.
+		/// </summary>
+		/// <param name="errorCode">The error code.</param>
+		/// <returns>An exception object representing the error code.</returns>
+		internal static Exception GetExceptionForWin32Error(int errorCode)
+		{
+			int HR = GetHRForWin32Error(errorCode);
+			return Marshal.GetExceptionForHR(HR);
 		}
 
 		/// <summary>
