@@ -119,6 +119,7 @@ namespace Eraser
 			//   is when the user is passing GUI options -- command line options always
 			//   start with the action, e.g. Eraser help, or Eraser addtask
 			if (!argumentParser.Success || parsedArguments.IsEmpty ||
+				parsedArguments.Positional.Count == 0 ||
 				parsedArguments.Positional[0] != parsedArguments.Raw[0])
 			{
 				GUIMain(commandLine);
