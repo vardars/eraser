@@ -115,8 +115,8 @@ namespace Eraser.Util
 		/// </summary>
 		public FileAttributes Attributes
 		{
-			get { return (FileAttributes)KernelApi.NativeMethods.GetFileAttributes(FullName); }
-			set { KernelApi.NativeMethods.SetFileAttributes(FullName, (uint)value); }
+			get { return (FileAttributes)NativeMethods.GetFileAttributes(FullName); }
+			set { NativeMethods.SetFileAttributes(FullName, (uint)value); }
 		}
 		
 		/// <summary>
@@ -126,10 +126,9 @@ namespace Eraser.Util
 		{
 			get
 			{
-				using (SafeFileHandle handle = KernelApi.NativeMethods.CreateFile(
-					FullName, KernelApi.NativeMethods.GENERIC_READ,
-					KernelApi.NativeMethods.FILE_SHARE_READ, IntPtr.Zero,
-					KernelApi.NativeMethods.OPEN_EXISTING, 0, IntPtr.Zero))
+				using (SafeFileHandle handle = NativeMethods.CreateFile(
+					FullName, NativeMethods.GENERIC_READ, NativeMethods.FILE_SHARE_READ,
+					IntPtr.Zero, NativeMethods.OPEN_EXISTING, 0, IntPtr.Zero))
 				{
 					if (!handle.IsInvalid)
 						return true;
@@ -169,7 +168,7 @@ namespace Eraser.Util
 			{
 				long fileSize;
 				using (SafeFileHandle handle = fileHandle)
-					if (KernelApi.NativeMethods.GetFileSizeEx(handle, out fileSize))
+					if (NativeMethods.GetFileSizeEx(handle, out fileSize))
 						return fileSize;
 
 				return 0;
@@ -285,7 +284,7 @@ namespace Eraser.Util
 			if (streamName == null)
 				File.Delete();
 			else
-				if (!KernelApi.NativeMethods.DeleteFile(FullName))
+				if (!NativeMethods.DeleteFile(FullName))
 					throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 		}
 
@@ -367,14 +366,13 @@ namespace Eraser.Util
 			switch (access)
 			{
 				case FileAccess.Read:
-					iAccess = KernelApi.NativeMethods.GENERIC_READ;
+					iAccess = NativeMethods.GENERIC_READ;
 					break;
 				case FileAccess.ReadWrite:
-					iAccess = KernelApi.NativeMethods.GENERIC_READ |
-						KernelApi.NativeMethods.GENERIC_WRITE;
+					iAccess = NativeMethods.GENERIC_READ | NativeMethods.GENERIC_WRITE;
 					break;
 				case FileAccess.Write:
-					iAccess = KernelApi.NativeMethods.GENERIC_WRITE;
+					iAccess = NativeMethods.GENERIC_WRITE;
 					break;
 			}
 
@@ -387,7 +385,7 @@ namespace Eraser.Util
 				throw new NotSupportedException("Asynchronous handles are not implemented.");
 			
 			//Create the handle
-			SafeFileHandle result = KernelApi.NativeMethods.CreateFile(FullName, iAccess,
+			SafeFileHandle result = NativeMethods.CreateFile(FullName, iAccess,
 				(uint)share, IntPtr.Zero, (uint)mode, (uint)options, IntPtr.Zero);
 			if (result.IsInvalid)
 				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
