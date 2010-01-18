@@ -177,56 +177,57 @@ namespace Eraser
 		{
 			Console.WriteLine(@"usage: Eraser <action> <arguments>
 where action is
-    help                    Show this help message.
-    addtask                 Adds tasks to the current task list.
-    querymethods            Lists all registered Erasure methods.
-	importtasklist          Imports an Eraser Task list to the curren user's Task List.
+  help                Show this help message.
+  addtask             Adds tasks to the current task list.
+  querymethods        Lists all registered Erasure methods.
+  importtasklist      Imports an Eraser Task list to the current user's Task
+                      List.
 
 global parameters:
-    --quiet, -q	            Do not create a Console window to display progress.
+  --quiet, -q	      Do not create a Console window to display progress.
 
 parameters for help:
-    eraser help
+  eraser help
 
-    no parameters to set.
+  no parameters to set.
 
 parameters for addtask:
-    eraser addtask [--method=<methodGUID>] [--schedule=(now|manually|restart)] (recyclebin | unused=<volume> | dir=<directory> | file=<file>)[...]
+  eraser addtask [--method=<methodGUID>] [--schedule=(now|manually|restart)] (recyclebin | unused=<volume> | dir=<directory> | file=<file>)[...]
 
-    --method                The Erasure method to use.
-    --schedule              The schedule the task will follow. The value must
-                            be one of:
-            now             The task will be queued for immediate execution.
-            manually        The task will be created but not queued for execution.
-            restart         The task will be queued for execution when the
-                            computer is next restarted.
-                            This parameter defaults to now.
-    recyclebin              Erases files and folders in the recycle bin
-    unused                  Erases unused space in the volume.
-        optional arguments: unused=<drive>[,clusterTips[=(true|false)]]
-            clusterTips     If specified, the drive's files will have their
-                            cluster tips erased.
-    dir                     Erases files and folders in the directory
-        optional arguments: dir=<directory>[,-excludeMask][,+includeMask][,deleteIfEmpty]
-            excludeMask     A wildcard expression for files and folders to
-                            exclude.
-            includeMask     A wildcard expression for files and folders to
-                            include.
-                            The include mask is applied before the exclude
-                            mask.
-            deleteIfEmpty   Deletes the folder at the end of the erasure if it
-                            is empty.
-    file                    Erases the specified file
+  --method            The Erasure method to use.
+  --schedule          The schedule the task will follow. The value must be one
+                      of:
+      now             The task will be queued for immediate execution.
+      manually        The task will be created but not queued for execution.
+      restart         The task will be queued for execution when the computer
+                      is next restarted.
+  recyclebin          Erases files and folders in the recycle bin
+  unused              Erases unused space in the volume.
+    optional arguments: unused=<drive>[,clusterTips[=(true|false)]]
+      clusterTips     If specified, the drive's files will have their
+                      cluster tips erased. This parameter accepts a Boolean
+                      value (true/false) as an argument; if none is specified
+                      true is assumed.
+  dir                 Erases files and folders in the directory
+    optional arguments: dir=<directory>[,-excludeMask][,+includeMask][,deleteIfEmpty]
+      excludeMask     A wildcard expression for files and folders to
+                      exclude.
+      includeMask     A wildcard expression for files and folders to
+                      include.
+                      The include mask is applied before the exclude mask.
+      deleteIfEmpty   Deletes the folder at the end of the erasure if it is
+                      empty.
+  file                Erases the specified file
 
 parameters for querymethods:
-    eraser querymethods
+  eraser querymethods
 
-    no parameters to set.
+  no parameters to set.
 
 parameters for importtasklist:
-    eraser importtasklist (file)[...]
+  eraser importtasklist (file)[...]
 
-    [file]                  A list of one or more files to import.
+  [file]              A list of one or more files to import.
 
 All arguments are case sensitive.");
 			Console.Out.Flush();
