@@ -20,7 +20,7 @@
  */
 
 #include "stdafx.h"
-#include "Eraser.Util.Unlocker.h"
+#include "Eraser.Util.Native.h"
 
 namespace Eraser {
 namespace Util {

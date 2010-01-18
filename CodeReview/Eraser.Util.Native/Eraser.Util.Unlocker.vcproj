@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="Eraser.Util.Unlocker"
+	Name="Eraser.Util.Native"
 	ProjectGUID="{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}"
 	RootNamespace="EraserUnlocker"
 	Keyword="ManagedCProj"
@@ -340,7 +340,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Eraser.Util.Unlocker.cpp"
+				RelativePath=".\Eraser.Util.Native.cpp"
 				>
 			</File>
 			<File
@@ -394,7 +394,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\Eraser.Util.Unlocker.h"
+				RelativePath=".\Eraser.Util.Native.h"
 				>
 			</File>
 			<File
@@ -416,7 +416,7 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\Eraser.Util.Unlocker.rc"
+				RelativePath=".\Eraser.Util.Native.rc"
 				>
 			</File>
 		</Filter>
