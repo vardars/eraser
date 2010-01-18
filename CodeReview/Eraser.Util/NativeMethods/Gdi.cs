@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace Eraser.Util.NativeMethods
+namespace Eraser.Util
 {
 	internal static partial class NativeMethods
 	{
