@@ -189,7 +189,7 @@ namespace Eraser.Util
 			{
 				if (Instance != null)
 					throw new InvalidOperationException("Only one instance of the " +
-						"ThemeMessageFilter can exist at any one time,");
+						"ThemeMessageFilter can exist at any one time.");
 
 				Instance = this;
 				this.ThemesActive = UXThemeApi.ThemesActive;
