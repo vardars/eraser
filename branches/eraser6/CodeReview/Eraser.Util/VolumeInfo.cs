@@ -480,7 +480,7 @@ namespace Eraser.Util
 
 		public class DiskPerformanceInfo
 		{
-			unsafe internal DiskPerformanceInfo(NativeMethods.DiskPerformanceInfoInternal info)
+			internal DiskPerformanceInfo(NativeMethods.DiskPerformanceInfoInternal info)
 			{
 				BytesRead = info.BytesRead;
 				BytesWritten = info.BytesWritten;
