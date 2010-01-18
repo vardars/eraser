@@ -25,7 +25,6 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Drawing;
-using System.IO;
 
 namespace Eraser.Util
 {
@@ -76,10 +75,9 @@ namespace Eraser.Util
 			try
 			{
 				NativeMethods.SetWindowTheme(lv.Handle, "EXPLORER", null);
-				UserApi.NativeMethods.SendMessage(lv.Handle,
-					UserApi.NativeMethods.LVM_SETEXTENDEDLISTVIEWSTYLE,
-					(UIntPtr)UserApi.NativeMethods.LVS_EX_DOUBLEBUFFER,
-					(IntPtr)UserApi.NativeMethods.LVS_EX_DOUBLEBUFFER);
+				NativeMethods.SendMessage(lv.Handle, NativeMethods.LVM_SETEXTENDEDLISTVIEWSTYLE,
+					(UIntPtr)NativeMethods.LVS_EX_DOUBLEBUFFER,
+					(IntPtr)NativeMethods.LVS_EX_DOUBLEBUFFER);
 			}
 			catch (DllNotFoundException)
 			{
@@ -223,48 +221,6 @@ namespace Eraser.Util
 			private const int WM_THEMECHANGED = 0x031A;
 			private const int WM_DWMCOMPOSITIONCHANGED = 0x031E;
 			private bool ThemesActive;
-		}
-
-		/// <summary>
-		/// Stores functions, structs and constants from UxTheme.dll and User32.dll
-		/// </summary>
-		internal static class NativeMethods
-		{
-			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			[return: MarshalAs(UnmanagedType.Bool)]
-			private static extern bool IsThemeActive();
-
-			public static bool ThemesActive
-			{
-				get
-				{
-					try
-					{
-						return IsThemeActive();
-					}
-					catch (FileLoadException)
-					{
-						return false;
-					}
-				}
-			}
-
-			/// <summary>
-			/// Causes a window to use a different set of visual style information
-			/// than its class normally uses.
-			/// </summary>
-			/// <param name="hwnd">Handle to the window whose visual style information
-			/// is to be changed.</param>
-			/// <param name="pszSubAppName">Pointer to a string that contains the
-			/// application name to use in place of the calling application's name.
-			/// If this parameter is NULL, the calling application's name is used.</param>
-			/// <param name="pszSubIdList">Pointer to a string that contains a
-			/// semicolon-separated list of class identifier (CLSID) names to use
-			/// in place of the actual list passed by the window's class. If this
-			/// parameter is NULL, the ID list from the calling class is used.</param>
-			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			public static extern void SetWindowTheme(IntPtr hwnd, string pszSubAppName,
-				string pszSubIdList);
 		}
 	}
 
