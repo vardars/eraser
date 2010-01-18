@@ -237,5 +237,75 @@ namespace Eraser.Util
 			return string.Format(CultureInfo.CurrentCulture, "{0, 2} {1}",
 				dBytes, units[units.Length - 1]);
 		}
+
+		private static DateTime FileTimeToDateTime(System.Runtime.InteropServices.ComTypes.FILETIME value)
+		{
+			long time = (long)((((ulong)value.dwHighDateTime) << sizeof(int) * 8) |
+				(uint)value.dwLowDateTime);
+			return DateTime.FromFileTime(time);
+		}
+
+		private static System.Runtime.InteropServices.ComTypes.FILETIME DateTimeToFileTime(DateTime value)
+		{
+			long time = value.ToFileTime();
+
+			System.Runtime.InteropServices.ComTypes.FILETIME result =
+				new System.Runtime.InteropServices.ComTypes.FILETIME();
+			result.dwLowDateTime = (int)(time & 0xFFFFFFFFL);
+			result.dwHighDateTime = (int)(time >> 32);
+
+			return result;
+		}
+
+		public static void GetFileTime(SafeFileHandle file, out DateTime creationTime,
+			out DateTime accessedTime, out DateTime modifiedTime)
+		{
+			System.Runtime.InteropServices.ComTypes.FILETIME accessedTimeNative =
+				new System.Runtime.InteropServices.ComTypes.FILETIME();
+			System.Runtime.InteropServices.ComTypes.FILETIME modifiedTimeNative =
+				new System.Runtime.InteropServices.ComTypes.FILETIME();
+			System.Runtime.InteropServices.ComTypes.FILETIME createdTimeNative =
+				new System.Runtime.InteropServices.ComTypes.FILETIME();
+
+			if (!NativeMethods.GetFileTime(file, out createdTimeNative, out accessedTimeNative,
+				out modifiedTimeNative))
+			{
+				throw GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+			}
+
+			creationTime = FileTimeToDateTime(createdTimeNative);
+			accessedTime = FileTimeToDateTime(accessedTimeNative);
+			modifiedTime = FileTimeToDateTime(modifiedTimeNative);
+		}
+
+		public static void SetFileTime(SafeFileHandle file, DateTime creationTime,
+			DateTime accessedTime, DateTime modifiedTime)
+		{
+			System.Runtime.InteropServices.ComTypes.FILETIME accessedTimeNative =
+				new System.Runtime.InteropServices.ComTypes.FILETIME();
+			System.Runtime.InteropServices.ComTypes.FILETIME modifiedTimeNative =
+				new System.Runtime.InteropServices.ComTypes.FILETIME();
+			System.Runtime.InteropServices.ComTypes.FILETIME createdTimeNative =
+				new System.Runtime.InteropServices.ComTypes.FILETIME();
+
+			if (!NativeMethods.GetFileTime(file, out createdTimeNative,
+				out accessedTimeNative, out modifiedTimeNative))
+			{
+				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+			}
+
+			if (creationTime != DateTime.MinValue)
+				createdTimeNative = DateTimeToFileTime(creationTime);
+			if (accessedTime != DateTime.MinValue)
+				accessedTimeNative = DateTimeToFileTime(accessedTime);
+			if (modifiedTime != DateTime.MinValue)
+				modifiedTimeNative = DateTimeToFileTime(modifiedTime);
+
+			if (!NativeMethods.SetFileTime(file, ref createdTimeNative,
+				ref accessedTimeNative, ref modifiedTimeNative))
+			{
+				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+			}
+		}
 	}
 }
