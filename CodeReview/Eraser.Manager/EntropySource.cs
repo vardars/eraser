@@ -449,7 +449,7 @@ namespace Eraser.Manager
 
 			//Finally, our good friend CryptGenRandom()
 			byte[] cryptGenRandom = new byte[1536];
-			if (CryptApi.CryptGenRandom(cryptGenRandom))
+			if (Security.Randomise(cryptGenRandom))
 				result.AddRange(cryptGenRandom);
 
 			return result.ToArray();

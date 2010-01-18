@@ -297,7 +297,7 @@ namespace Eraser.Manager.Plugin
 			IsCore = false;
 
 			//Verify the certificate in the assembly.
-			if (WintrustApi.VerifyAuthenticode(assembly.Location))
+			if (Security.VerifyAuthenticode(assembly.Location))
 			{
 				X509Certificate2 cert = new X509Certificate2(
 					X509Certificate.CreateFromSignedFile(assembly.Location));

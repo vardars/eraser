@@ -353,7 +353,7 @@ namespace Eraser.Manager
 				byte[] ourKey = Assembly.GetExecutingAssembly().GetName().GetPublicKey();
 
 				if (pluginKey.Length != ourKey.Length ||
-					!MsCorEEApi.VerifyStrongName(plugin.Assembly.Location))
+					!Security.VerifyStrongName(plugin.Assembly.Location))
 					continue;
 				bool officialPlugin = true;
 				for (int i = 0, j = ourKey.Length; i != j; ++i)
