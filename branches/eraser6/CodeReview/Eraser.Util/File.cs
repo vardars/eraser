@@ -329,7 +329,7 @@ namespace Eraser.Util
 			if (!NativeMethods.GetFileTime(file, out createdTimeNative, out accessedTimeNative,
 				out modifiedTimeNative))
 			{
-				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
 
 			creationTime = FileTimeToDateTime(createdTimeNative);
@@ -350,7 +350,7 @@ namespace Eraser.Util
 			if (!NativeMethods.GetFileTime(file, out createdTimeNative,
 				out accessedTimeNative, out modifiedTimeNative))
 			{
-				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
 
 			if (creationTime != DateTime.MinValue)
@@ -363,7 +363,7 @@ namespace Eraser.Util
 			if (!NativeMethods.SetFileTime(file, ref createdTimeNative,
 				ref accessedTimeNative, ref modifiedTimeNative))
 			{
-				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
 		}
 	}

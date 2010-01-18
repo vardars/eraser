@@ -156,7 +156,7 @@ namespace Eraser
 				}
 				catch (UnauthorizedAccessException)
 				{
-					return (int)Win32ErrorCodes.AccessDenied;
+					return Win32ErrorCode.AccessDenied;
 				}
 				catch (Win32Exception e)
 				{

@@ -88,29 +88,6 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
-		/// Converts a Win32 Error code to a HRESULT.
-		/// </summary>
-		/// <param name="errorCode">The error code to convert.</param>
-		/// <returns>A HRESULT value representing the error code.</returns>
-		internal static int GetHRForWin32Error(int errorCode)
-		{
-			const uint FACILITY_WIN32 = 7;
-			return errorCode <= 0 ? errorCode :
-				(int)((((uint)errorCode) & 0x0000FFFF) | (FACILITY_WIN32 << 16) | 0x80000000);
-		}
-
-		/// <summary>
-		/// Gets a Exception for the given Win32 error code.
-		/// </summary>
-		/// <param name="errorCode">The error code.</param>
-		/// <returns>An exception object representing the error code.</returns>
-		internal static Exception GetExceptionForWin32Error(int errorCode)
-		{
-			int HR = GetHRForWin32Error(errorCode);
-			return Marshal.GetExceptionForHR(HR);
-		}
-
-		/// <summary>
 		/// Retrieves the current value of the high-resolution performance counter.
 		/// </summary>
 		public static long PerformanceCounter

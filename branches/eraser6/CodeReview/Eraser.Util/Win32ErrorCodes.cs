@@ -21,25 +21,48 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace Eraser.Util
 {
-	public enum Win32ErrorCodes
+	public static class Win32ErrorCode
 	{
-		NoError = Success,
-		Success = 0,
-		InvalidFunction = 1,
-		FileNotFound = 2,
-		PathNotFound = 3,
-		AccessDenied = 5,
-		NoMoreFiles = 18,
-		NotReady = 21,
-		SharingViolation = 32,
-		InvalidParameter = 87,
-		MoreData = 234,
-		UnrecognizedVolume = 1005,
-		NotAReparsePoint = 4390
+		/// <summary>
+		/// Converts a Win32 Error code to a HRESULT.
+		/// </summary>
+		/// <param name="errorCode">The error code to convert.</param>
+		/// <returns>A HRESULT value representing the error code.</returns>
+		internal static int GetHRForWin32Error(int errorCode)
+		{
+			const uint FACILITY_WIN32 = 7;
+			return errorCode <= 0 ? errorCode :
+				(int)((((uint)errorCode) & 0x0000FFFF) | (FACILITY_WIN32 << 16) | 0x80000000);
+		}
+
+		/// <summary>
+		/// Gets a Exception for the given Win32 error code.
+		/// </summary>
+		/// <param name="errorCode">The error code.</param>
+		/// <returns>An exception object representing the error code.</returns>
+		internal static Exception GetExceptionForWin32Error(int errorCode)
+		{
+			int HR = GetHRForWin32Error(errorCode);
+			return Marshal.GetExceptionForHR(HR);
+		}
+
+		public const int NoError = Success;
+		public const int Success = 0;
+		public const int InvalidFunction = 1;
+		public const int FileNotFound = 2;
+		public const int PathNotFound = 3;
+		public const int AccessDenied = 5;
+		public const int NoMoreFiles = 18;
+		public const int NotReady = 21;
+		public const int SharingViolation = 32;
+		public const int InvalidParameter = 87;
+		public const int MoreData = 234;
+		public const int UnrecognizedVolume = 1005;
+		public const int NotAReparsePoint = 4390;
 	}
 }
