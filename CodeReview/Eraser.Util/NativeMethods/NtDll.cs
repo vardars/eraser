@@ -66,66 +66,9 @@ namespace Eraser.Util
 		/// <returns>ZwQueryInformationFile returns STATUS_SUCCESS or an appropriate
 		/// NTSTATUS error code.</returns>
 		[DllImport("NtDll.dll")]
-		private static extern uint NtQueryInformationFile(SafeFileHandle FileHandle,
+		public static extern uint NtQueryInformationFile(SafeFileHandle FileHandle,
 			ref IO_STATUS_BLOCK IoStatusBlock, IntPtr FileInformation, uint Length,
 			FILE_INFORMATION_CLASS FileInformationClass);
-
-		public static FILE_STREAM_INFORMATION[] NtQueryInformationFile(SafeFileHandle FileHandle)
-		{
-			IO_STATUS_BLOCK status = new IO_STATUS_BLOCK();
-			IntPtr fileInfoPtr = IntPtr.Zero;
-
-			try
-			{
-				FILE_STREAM_INFORMATION streamInfo = new FILE_STREAM_INFORMATION();
-				int fileInfoPtrLength = (Marshal.SizeOf(streamInfo) + 32768) / 2;
-				uint ntStatus = 0;
-
-				do
-				{
-					fileInfoPtrLength *= 2;
-					if (fileInfoPtr != IntPtr.Zero)
-						Marshal.FreeHGlobal(fileInfoPtr);
-					fileInfoPtr = Marshal.AllocHGlobal(fileInfoPtrLength);
-
-					ntStatus = NtQueryInformationFile(FileHandle, ref status, fileInfoPtr,
-						(uint)fileInfoPtrLength, FILE_INFORMATION_CLASS.FileStreamInformation);
-				}
-				while (ntStatus != 0 /*STATUS_SUCCESS*/ && ntStatus == 0x80000005 /*STATUS_BUFFER_OVERFLOW*/);
-
-				//Marshal the structure manually (argh!)
-				List<FILE_STREAM_INFORMATION> result = new List<FILE_STREAM_INFORMATION>();
-				unsafe
-				{
-					for (byte* i = (byte*)fileInfoPtr; streamInfo.NextEntryOffset != 0;
-						i += streamInfo.NextEntryOffset)
-					{
-						byte* currStreamPtr = i;
-						streamInfo.NextEntryOffset = *(uint*)currStreamPtr;
-						currStreamPtr += sizeof(uint);
-
-						streamInfo.StreamNameLength = *(uint*)currStreamPtr;
-						currStreamPtr += sizeof(uint);
-
-						streamInfo.StreamSize = *(long*)currStreamPtr;
-						currStreamPtr += sizeof(long);
-
-						streamInfo.StreamAllocationSize = *(long*)currStreamPtr;
-						currStreamPtr += sizeof(long);
-
-						streamInfo.StreamName = Marshal.PtrToStringUni((IntPtr)currStreamPtr,
-							(int)streamInfo.StreamNameLength / 2);
-						result.Add(streamInfo);
-					}
-				}
-
-				return result.ToArray();
-			}
-			finally
-			{
-				Marshal.FreeHGlobal(fileInfoPtr);
-			}
-		}
 
 		public struct IO_STATUS_BLOCK
 		{
@@ -291,34 +234,6 @@ namespace Eraser.Util
 			public uint ByteCount;
 			public ushort MajorVersion;
 			public ushort MinorVersion;
-		}
-
-		/// <summary>
-		/// Sends the FSCTL_GET_NTFS_VOLUME_DATA control code, returning the resuling
-		/// NTFS_VOLUME_DATA_BUFFER.
-		/// </summary>
-		/// <param name="volume">The volume to query.</param>
-		/// <returns>The NTFS_VOLUME_DATA_BUFFER structure representing the data
-		/// file systme structures for the volume.</returns>
-		public static NTFS_VOLUME_DATA_BUFFER GetNtfsVolumeData(VolumeInfo volume)
-		{
-			using (SafeFileHandle volumeHandle = NativeMethods.CreateFile(
-				volume.VolumeId.Remove(volume.VolumeId.Length - 1),
-				NativeMethods.GENERIC_READ, NativeMethods.FILE_SHARE_READ |
-				NativeMethods.FILE_SHARE_WRITE, IntPtr.Zero, NativeMethods.OPEN_EXISTING,
-				0, IntPtr.Zero))
-			{
-				uint resultSize = 0;
-				NTFS_VOLUME_DATA_BUFFER volumeData = new NTFS_VOLUME_DATA_BUFFER();
-				if (DeviceIoControl(volumeHandle, FSCTL_GET_NTFS_VOLUME_DATA,
-					IntPtr.Zero, 0, out volumeData, (uint)Marshal.SizeOf(volumeData),
-					out resultSize, IntPtr.Zero))
-				{
-					return volumeData;
-				}
-
-				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
-			}
 		}
 	}
 }

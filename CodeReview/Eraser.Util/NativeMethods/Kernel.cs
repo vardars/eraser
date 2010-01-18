@@ -63,6 +63,7 @@ namespace Eraser.Util
 		/// error information, call Marshal.GetLastWin32Error().</returns>
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
+		[Obsolete]
 		public static extern bool DeleteFile(string lpFileName);
 
 		/// <summary>
@@ -248,9 +249,6 @@ namespace Eraser.Util
 		[DllImport("Kernel32.dll")]
 		public static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
 
-		/// <summary>
-		/// Execution state values to be used in conjuction with SetThreadExecutionState
-		/// </summary>
 		[Flags]
 		public enum EXECUTION_STATE : uint
 		{
@@ -356,6 +354,7 @@ namespace Eraser.Util
 			uint dwIoControlCode, IntPtr lpInBuffer, uint nInBufferSize,
 			IntPtr lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
 			IntPtr lpOverlapped);
+
 		public const uint FSCTL_LOCK_VOLUME = 0x90018;
 		public const uint FSCTL_UNLOCK_VOLUME = 0x9001C;
 
@@ -363,8 +362,8 @@ namespace Eraser.Util
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public extern static bool DeviceIoControl(SafeFileHandle hDevice,
 			uint dwIoControlCode, IntPtr lpInBuffer, uint nInBufferSize,
-			out DiskPerformanceInfoInternal lpOutBuffer, uint nOutBufferSize, out uint lpBytesReturned,
-			IntPtr lpOverlapped);
+			out DiskPerformanceInfoInternal lpOutBuffer, uint nOutBufferSize,
+			out uint lpBytesReturned, IntPtr lpOverlapped);
 
 		public const uint IOCTL_DISK_PERFORMANCE = ((0x00000007) << 16) | ((0x0008) << 2);
 
