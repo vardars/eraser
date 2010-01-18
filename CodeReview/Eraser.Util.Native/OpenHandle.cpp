@@ -20,11 +20,11 @@
  */
 
 #include "stdafx.h"
-#include "Eraser.Util.Native.h"
+#include "OpenHandle.h"
 
 namespace Eraser {
 namespace Util {
-	ReadOnlyCollection<OpenHandle^>^ OpenHandle::Items::get()
+	IList<OpenHandle^>^ OpenHandle::Items::get()
 	{
 		List<OpenHandle^>^ handles = gcnew List<OpenHandle^>();
 

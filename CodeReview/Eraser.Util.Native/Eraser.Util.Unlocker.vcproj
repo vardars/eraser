@@ -340,11 +340,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Eraser.Util.Native.cpp"
+				RelativePath=".\Main.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Main.cpp"
+				RelativePath=".\OpenHandle.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenHandle.NameResolver.cpp"
 				>
 			</File>
 			<File
@@ -383,10 +387,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\Unlocker.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -394,11 +394,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\Eraser.Util.Native.h"
+				RelativePath=".\NTApi.h"
 				>
 			</File>
 			<File
-				RelativePath=".\NTApi.h"
+				RelativePath=".\OpenHandle.h"
 				>
 			</File>
 			<File
