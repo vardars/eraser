@@ -211,7 +211,7 @@ namespace Eraser.Manager.Plugin
 			//the plugin for the presence of a valid signature.
 			IDictionary<Guid, bool> approvals = ManagerLibrary.Settings.PluginApprovals;
 			if ((reflectAssembly.GetName().GetPublicKey().Length == 0 ||
-				!MsCorEEApi.VerifyStrongName(filePath) ||
+				!Security.VerifyStrongName(filePath) ||
 				instance.AssemblyAuthenticode == null) &&
 				!approvals.ContainsKey(instance.AssemblyInfo.Guid))
 			{

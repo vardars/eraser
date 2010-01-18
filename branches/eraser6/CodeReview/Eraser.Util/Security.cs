@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 
 namespace Eraser.Util
 {
-	public static class AdvApi
+	public static class Security
 	{
 		/// <summary>
 		/// Checks whether the current process is running with administrative
@@ -89,9 +89,70 @@ namespace Eraser.Util
 				Marshal.FreeHGlobal(pElevationType);
 			}
 		}
+
+		/// <summary>
+		/// Verifies the Authenticode signature in a file.
+		/// </summary>
+		/// <param name="pathToFile">The file to verify.</param>
+		/// <returns>True if the file contains a valid Authenticode certificate.</returns>
+		public static bool VerifyAuthenticode(string pathToFile)
+		{
+			IntPtr unionPointer = IntPtr.Zero;
+
+			try
+			{
+				NativeMethods.WINTRUST_FILE_INFO fileinfo = new NativeMethods.WINTRUST_FILE_INFO();
+				fileinfo.cbStruct = (uint)Marshal.SizeOf(typeof(NativeMethods.WINTRUST_FILE_INFO));
+				fileinfo.pcwszFilePath = pathToFile;
+
+				NativeMethods.WINTRUST_DATA data = new NativeMethods.WINTRUST_DATA();
+				data.cbStruct = (uint)Marshal.SizeOf(typeof(NativeMethods.WINTRUST_DATA));
+				data.dwUIChoice = NativeMethods.WINTRUST_DATA.UIChoices.WTD_UI_NONE;
+				data.fdwRevocationChecks = NativeMethods.WINTRUST_DATA.RevocationChecks.WTD_REVOKE_NONE;
+				data.dwUnionChoice = NativeMethods.WINTRUST_DATA.UnionChoices.WTD_CHOICE_FILE;
+				unionPointer = data.pUnion = Marshal.AllocHGlobal((int)fileinfo.cbStruct);
+				Marshal.StructureToPtr(fileinfo, data.pUnion, false);
+
+				Guid guid = NativeMethods.WINTRUST_ACTION_GENERIC_VERIFY_V2;
+				return NativeMethods.WinVerifyTrust(IntPtr.Zero, ref guid, ref data) == 0;
+			}
+			finally
+			{
+				if (unionPointer != IntPtr.Zero)
+					Marshal.FreeHGlobal(unionPointer);
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether the assembly manifest at the supplied
+		/// path contains a strong name signature. 
+		/// </summary>
+		/// <param name="assemblyPath">The path to the portable executable (.exe or
+		/// .dll) file for the assembly to be verified.</param>
+		/// <returns>True if the verification was successful; otherwise, false.</returns>
+		/// <remarks>VerifyStrongName is a utility function to check the validity
+		/// of an assembly, taking into account registry settings.</remarks>
+		public static bool VerifyStrongName(string assemblyPath)
+		{
+			bool wasVerified = false;
+			return NativeMethods.StrongNameSignatureVerificationEx(assemblyPath, false,
+				out wasVerified) && wasVerified;
+		}
+
+		/// <summary>
+		/// Randomises the provided buffer using CryptGenRandom.
+		/// </summary>
+		/// <param name="cryptGenRandom">The buffer which receives the random
+		/// data. The contents of this buffer can also be used as a random
+		/// seed.</param>
+		/// <returns>True if the operation suceeded.</returns>
+		public static bool Randomise(byte[] buffer)
+		{
+			return CryptApi.CryptGenRandom(buffer);
+		}
 	}
 
-	public sealed class CryptApi : IDisposable
+	internal sealed class CryptApi : IDisposable
 	{
 		/// <summary>
 		/// Constructor.

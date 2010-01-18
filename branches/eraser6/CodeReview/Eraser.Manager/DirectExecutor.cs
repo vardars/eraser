@@ -326,7 +326,7 @@ namespace Eraser.Manager
 		private void EraseUnusedSpace(Task task, UnusedSpaceTarget target)
 		{
 			//Check for sufficient privileges to run the unused space erasure.
-			if (!AdvApi.IsAdministrator())
+			if (!Security.IsAdministrator())
 			{
 				if (Environment.OSVersion.Platform == PlatformID.Win32NT &&
 					Environment.OSVersion.Version >= new Version(6, 0))
