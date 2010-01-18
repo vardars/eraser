@@ -81,6 +81,7 @@
     </CodeAnalysisDictionary>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleWindow.cs" />
     <Compile Include="Power.cs" />
     <Compile Include="NativeMethods\Gdi.cs" />
     <Compile Include="NativeMethods\Sfc.cs" />
