@@ -25,10 +25,10 @@ using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
-using System.ComponentModel;
-using Eraser.Util;
 using System.Security.Permissions;
 using System.Threading;
+
+using Eraser.Util;
 
 namespace Eraser.Manager
 {

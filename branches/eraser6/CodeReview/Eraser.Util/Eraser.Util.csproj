@@ -85,6 +85,7 @@
     <Compile Include="Power.cs" />
     <Compile Include="NativeMethods\Gdi.cs" />
     <Compile Include="NativeMethods\Sfc.cs" />
+    <Compile Include="ProgressManager.cs" />
     <Compile Include="Win32ErrorCodes.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

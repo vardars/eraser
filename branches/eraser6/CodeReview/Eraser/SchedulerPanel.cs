@@ -34,7 +34,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.ComponentModel;
-using ProgressChangedEventArgs = Eraser.Manager.ProgressChangedEventArgs;
+using ProgressChangedEventArgs = Eraser.Util.ProgressChangedEventArgs;
 
 namespace Eraser
 {

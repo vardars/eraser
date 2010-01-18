@@ -21,7 +21,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
@@ -30,7 +29,6 @@ using System.Windows.Forms;
 using Eraser.Manager;
 using Eraser.Util;
 using System.Globalization;
-using ProgressChangedEventArgs = Eraser.Manager.ProgressChangedEventArgs;
 
 namespace Eraser
 {
