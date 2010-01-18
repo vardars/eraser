@@ -411,7 +411,8 @@ namespace Eraser.Util
 
 		public const uint IOCTL_DISK_PERFORMANCE = ((0x00000007) << 16) | ((0x0008) << 2);
 
-		public unsafe struct DiskPerformanceInfoInternal
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+		public struct DiskPerformanceInfoInternal
 		{
 			public long BytesRead;
 			public long BytesWritten;
@@ -424,7 +425,9 @@ namespace Eraser.Util
 			public uint SplitCount;
 			public long QueryTime;
 			public uint StorageDeviceNumber;
-			public fixed short StorageManagerName[8];
+
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 8)]
+			public string StorageManagerName;
 		}
 
 		[DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
