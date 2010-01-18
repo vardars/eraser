@@ -25,11 +25,27 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
 
 namespace Eraser.Util
 {
 	public static class UXThemeApi
 	{
+		public static bool ThemesActive
+		{
+			get
+			{
+				try
+				{
+					return NativeMethods.IsThemeActive();
+				}
+				catch (FileLoadException)
+				{
+					return false;
+				}
+			}
+		}
+
 		/// <summary>
 		/// Updates the control's theme to fit in with the latest Windows visuals.
 		/// </summary>
@@ -105,7 +121,7 @@ namespace Eraser.Util
 				{
 					menu.Disposed += OnThemedMenuDisposed;
 					ThemedMenus.Add(menu, renderer);
-					if (NativeMethods.ThemesActive)
+					if (ThemesActive)
 						menu.Renderer = renderer;
 				}
 			}
@@ -136,7 +152,7 @@ namespace Eraser.Util
 		/// </summary>
 		private static void OnThemeChanged(object sender, EventArgs e)
 		{
-			bool themesActive = NativeMethods.ThemesActive;
+			bool themesActive = ThemesActive;
 			foreach (KeyValuePair<ToolStrip, UXThemeMenuRenderer> value in ThemedMenus)
 			{
 				if (themesActive)
@@ -174,8 +190,9 @@ namespace Eraser.Util
 				if (Instance != null)
 					throw new InvalidOperationException("Only one instance of the " +
 						"ThemeMessageFilter can exist at any one time,");
+
 				Instance = this;
-				ThemesActive = NativeMethods.ThemesActive;
+				this.ThemesActive = UXThemeApi.ThemesActive;
 				Application.AddMessageFilter(this);
 			}
 
@@ -184,14 +201,14 @@ namespace Eraser.Util
 			{
 				if (m.Msg == WM_THEMECHANGED)
 				{
-					ThemesActive = NativeMethods.ThemesActive;
+					ThemesActive = UXThemeApi.ThemesActive;
 					ThemeChanged(null, EventArgs.Empty);
 				}
 				else if (m.Msg == WM_DWMCOMPOSITIONCHANGED)
 				{
-					if (ThemesActive != NativeMethods.ThemesActive)
+					if (ThemesActive != UXThemeApi.ThemesActive)
 					{
-						ThemesActive = NativeMethods.ThemesActive;
+						ThemesActive = UXThemeApi.ThemesActive;
 						ThemeChanged(null, EventArgs.Empty);
 					}
 				}
@@ -421,128 +438,6 @@ namespace Eraser.Util
 
 		private ToolStrip control;
 		private SafeThemeHandle hTheme;
-
-		/// <summary>
-		/// Imported UxTheme functions and constants.
-		/// </summary>
-		internal static class NativeMethods
-		{
-			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			public static extern SafeThemeHandle OpenThemeData(IntPtr hwnd, string pszClassList);
-
-			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			public static extern IntPtr CloseThemeData(IntPtr hwndTeme);
-
-			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			public static extern IntPtr DrawThemeParentBackground(IntPtr hwnd,
-				IntPtr hdc, ref Rectangle prc);
-
-			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			[return: MarshalAs(UnmanagedType.Bool)]
-			public static extern bool IsThemeBackgroundPartiallyTransparent(
-				SafeThemeHandle hTheme, int iPartId, int iStateId);
-
-			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			public static extern IntPtr DrawThemeBackground(
-				SafeThemeHandle hTheme, IntPtr hdc, int iPartId, int iStateId,
-				ref Rectangle pRect, ref Rectangle pClipRect);
-
-			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			public extern static int DrawThemeText(SafeThemeHandle hTheme,
-				IntPtr hDC, int iPartId, int iStateId,
-				[MarshalAs(UnmanagedType.LPWStr)] string pszText, int iCharCount,
-				TextFormatFlags dwTextFlag, int dwTextFlags2, ref Rectangle pRect);
-
-			[DllImport("Gdi32.dll")]
-			public extern static IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
-
-			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			public static extern IntPtr GetThemeMargins(SafeThemeHandle hTheme,
-				IntPtr hdc, int iPartId, int iStateId, int iPropId, ref Rectangle prc,
-				ref Rectangle pMargins);
-
-			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			public static extern IntPtr GetThemeMargins(SafeThemeHandle hTheme,
-				IntPtr hdc, int iPartId, int iStateId, int iPropId, IntPtr prc,
-				ref Rectangle pMargins);
-
-			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			public static extern IntPtr GetThemePartSize(SafeThemeHandle hTheme,
-				IntPtr hdc, int iPartId, int iStateId, ref Rectangle prc,
-				THEMESIZE eSize, ref Size psz);
-
-			[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
-			public static extern IntPtr GetThemePartSize(SafeThemeHandle hTheme,
-				IntPtr hdc, int iPartId, int iStateId, IntPtr prc,
-				THEMESIZE eSize, ref Size psz);
-
-			public enum MENUPARTS
-			{
-				MENU_MENUITEM_TMSCHEMA = 1,
-				MENU_MENUDROPDOWN_TMSCHEMA = 2,
-				MENU_MENUBARITEM_TMSCHEMA = 3,
-				MENU_MENUBARDROPDOWN_TMSCHEMA = 4,
-				MENU_CHEVRON_TMSCHEMA = 5,
-				MENU_SEPARATOR_TMSCHEMA = 6,
-				MENU_BARBACKGROUND = 7,
-				MENU_BARITEM = 8,
-				MENU_POPUPBACKGROUND = 9,
-				MENU_POPUPBORDERS = 10,
-				MENU_POPUPCHECK = 11,
-				MENU_POPUPCHECKBACKGROUND = 12,
-				MENU_POPUPGUTTER = 13,
-				MENU_POPUPITEM = 14,
-				MENU_POPUPSEPARATOR = 15,
-				MENU_POPUPSUBMENU = 16,
-				MENU_SYSTEMCLOSE = 17,
-				MENU_SYSTEMMAXIMIZE = 18,
-				MENU_SYSTEMMINIMIZE = 19,
-				MENU_SYSTEMRESTORE = 20,
-			}
-
-			public enum POPUPCHECKSTATES
-			{
-				MC_CHECKMARKNORMAL = 1,
-				MC_CHECKMARKDISABLED = 2,
-				MC_BULLETNORMAL = 3,
-				MC_BULLETDISABLED = 4,
-			}
-
-			public enum POPUPCHECKBACKGROUNDSTATES
-			{
-				MCB_DISABLED = 1,
-				MCB_NORMAL = 2,
-				MCB_BITMAP = 3,
-			}
-
-			public enum POPUPITEMSTATES
-			{
-				MPI_NORMAL = 1,
-				MPI_HOT = 2,
-				MPI_DISABLED = 3,
-				MPI_DISABLEDHOT = 4,
-			}
-
-			public enum POPUPSUBMENUSTATES
-			{
-				MSM_NORMAL = 1,
-				MSM_DISABLED = 2,
-			}
-
-			public enum TMT_MARGINS
-			{
-				TMT_SIZINGMARGINS = 3601,
-				TMT_CONTENTMARGINS,
-				TMT_CAPTIONMARGINS
-			}
-
-			public enum THEMESIZE
-			{
-				TS_MIN,
-				TS_TRUE,
-				TS_DRAW
-			}
-		}
 	}
 
 	internal class SafeThemeHandle : SafeHandle
@@ -559,7 +454,7 @@ namespace Eraser.Util
 
 		protected override bool ReleaseHandle()
 		{
-			UXThemeMenuRenderer.NativeMethods.CloseThemeData(handle);
+			NativeMethods.CloseThemeData(handle);
 			handle = IntPtr.Zero;
 			return true;
 		}
