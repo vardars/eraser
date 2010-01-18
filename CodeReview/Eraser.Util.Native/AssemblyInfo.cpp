@@ -33,12 +33,12 @@ using namespace System::Security::Permissions;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly:AssemblyTitleAttribute("Eraser Unlocker")];
-[assembly:AssemblyDescriptionAttribute("Unlocks files opened by other processes")];
+[assembly:AssemblyTitleAttribute("Eraser Native Utility Functions")];
+[assembly:AssemblyDescriptionAttribute("Contains utility functions only accessible from unmanaged code")];
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("The Eraser Project")];
 [assembly:AssemblyProductAttribute("Eraser")];
-[assembly:AssemblyCopyrightAttribute("Copyright (c) 2009 The Eraser Project")];
+[assembly:AssemblyCopyrightAttribute("Copyright (c) 2009-2010 The Eraser Project")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
 
