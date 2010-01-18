@@ -35,7 +35,7 @@ namespace Eraser.DefaultPlugins
 		public CustomMethodPassEditor()
 		{
 			InitializeComponent();
-			UXThemeApi.UpdateControlTheme(this);
+			Theming.ApplyTheme(this);
 		}
 
 		/// <summary>
