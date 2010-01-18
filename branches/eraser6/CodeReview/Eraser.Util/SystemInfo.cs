@@ -29,7 +29,7 @@ using System.ComponentModel;
 
 namespace Eraser.Util
 {
-	public static class KernelApi
+	public static class SystemInfo
 	{
 		/// <summary>
 		/// Retrieves the current value of the high-resolution performance counter.

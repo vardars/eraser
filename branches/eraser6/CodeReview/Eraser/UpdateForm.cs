@@ -161,7 +161,7 @@ namespace Eraser
 				//any is always compatible.
 				compatibleArchs.Add("any");
 
-				switch (KernelApi.ProcessorArchitecture)
+				switch (SystemInfo.ProcessorArchitecture)
 				{
 					case ProcessorArchitecture.Amd64:
 						compatibleArchs.Add("x64");

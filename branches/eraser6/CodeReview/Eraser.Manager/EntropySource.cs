@@ -352,7 +352,7 @@ namespace Eraser.Manager
 			result.AddRange(StructToBuffer(DateTime.Now.Ticks));
 
 			//The high resolution performance counter
-			result.AddRange(StructToBuffer(KernelApi.PerformanceCounter));
+			result.AddRange(StructToBuffer(SystemInfo.PerformanceCounter));
 
 			//Ticks since start up
 			result.AddRange(StructToBuffer(Environment.TickCount));
