@@ -20,7 +20,7 @@
  */
 
 #include "stdafx.h"
-#include "Eraser.Util.Native.h"
+#include "OpenHandle.h"
 
 #pragma managed(push)
 #pragma unmanaged

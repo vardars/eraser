@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "Unlocker.h"
+#include "OpenHandle.NameResolver.h"
 
 using namespace System;
 using namespace System::Collections::Generic;

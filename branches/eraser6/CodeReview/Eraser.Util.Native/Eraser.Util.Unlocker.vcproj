@@ -328,6 +328,10 @@
 			AssemblyName="System.Xml, Version=2.0.0.0, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
 			MinFrameworkVersion="131072"
 		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{D083E1A8-3A4C-4683-9B3F-D5FEDE61B9C9}"
+			RelativePathToProject=".\Eraser.Util\Eraser.Util.csproj"
+		/>
 	</References>
 	<Files>
 		<Filter
@@ -337,6 +341,26 @@
 			>
 			<File
 				RelativePath=".\AssemblyInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Fat12Api.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Fat12Or16Api.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Fat16Api.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Fat32Api.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\FatApi.cpp"
 				>
 			</File>
 			<File
@@ -393,6 +417,14 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\Fat.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FatApi.h"
+				>
+			</File>
 			<File
 				RelativePath=".\NTApi.h"
 				>
