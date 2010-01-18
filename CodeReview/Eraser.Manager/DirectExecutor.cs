@@ -624,24 +624,32 @@ namespace Eraser.Manager
 						"be erased because the file's permissions prevent access to the file.",
 						info.FullName), LogLevel.Error));
 				}
-				catch (FileLoadException)
+				catch (IOException)
 				{
-					if (!ManagerLibrary.Settings.ForceUnlockLockedFiles)
+					if (System.Runtime.InteropServices.Marshal.GetLastWin32Error() ==
+						Win32ErrorCode.SharingViolation)
+					{
+						if (!ManagerLibrary.Settings.ForceUnlockLockedFiles)
+							throw;
+
+						List<System.Diagnostics.Process> processes =
+							new List<System.Diagnostics.Process>();
+						foreach (OpenHandle handle in OpenHandle.Items)
+							if (handle.Path == paths[i])
+								processes.Add(System.Diagnostics.Process.GetProcessById(handle.ProcessId));
+
+						StringBuilder processStr = new StringBuilder();
+						foreach (System.Diagnostics.Process process in processes)
+							processStr.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,
+								"{0}, ", process.MainModule.FileName);
+
+						task.Log.LastSessionEntries.Add(new LogEntry(S._(
+								"Could not force closure of file \"{0}\" (locked by {1})",
+								paths[i], processStr.ToString().Remove(processStr.Length - 2)),
+							LogLevel.Error));
+					}
+					else
 						throw;
-
-					List<System.Diagnostics.Process> processes = new List<System.Diagnostics.Process>();
-					foreach (OpenHandle handle in OpenHandle.Items)
-						if (handle.Path == paths[i])
-							processes.Add(System.Diagnostics.Process.GetProcessById(handle.ProcessId));
-
-					StringBuilder processStr = new StringBuilder();
-					foreach (System.Diagnostics.Process process in processes)
-						processStr.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,
-							"{0}, ", process.MainModule.FileName);
-
-					task.Log.LastSessionEntries.Add(new LogEntry(S._(
-						"Could not force closure of file \"{0}\" (locked by {1})",
-						paths[i], processStr.ToString().Remove(processStr.Length - 2)), LogLevel.Error));
 				}
 				finally
 				{

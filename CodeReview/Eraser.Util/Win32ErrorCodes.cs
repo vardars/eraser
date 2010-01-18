@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace Eraser.Util
 {
@@ -33,7 +34,7 @@ namespace Eraser.Util
 		/// </summary>
 		/// <param name="errorCode">The error code to convert.</param>
 		/// <returns>A HRESULT value representing the error code.</returns>
-		internal static int GetHRForWin32Error(int errorCode)
+		private static int GetHRForWin32Error(int errorCode)
 		{
 			const uint FACILITY_WIN32 = 7;
 			return errorCode <= 0 ? errorCode :
@@ -47,8 +48,15 @@ namespace Eraser.Util
 		/// <returns>An exception object representing the error code.</returns>
 		internal static Exception GetExceptionForWin32Error(int errorCode)
 		{
-			int HR = GetHRForWin32Error(errorCode);
-			return Marshal.GetExceptionForHR(HR);
+			switch (errorCode)
+			{
+				case NoError:			return null;
+				case SharingViolation:	return new IOException();
+
+				default:
+					int HR = GetHRForWin32Error(errorCode);
+					return Marshal.GetExceptionForHR(HR);
+			}
 		}
 
 		public const int NoError = Success;
