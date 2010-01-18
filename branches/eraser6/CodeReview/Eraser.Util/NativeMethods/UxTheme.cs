@@ -77,9 +77,6 @@ namespace Eraser.Util
 			[MarshalAs(UnmanagedType.LPWStr)] string pszText, int iCharCount,
 			TextFormatFlags dwTextFlag, int dwTextFlags2, ref Rectangle pRect);
 
-		[DllImport("Gdi32.dll")]
-		public extern static IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
-
 		[DllImport("UxTheme.dll", CharSet = CharSet.Unicode)]
 		public static extern IntPtr GetThemeMargins(SafeThemeHandle hTheme,
 			IntPtr hdc, int iPartId, int iStateId, int iPropId, ref Rectangle prc,
