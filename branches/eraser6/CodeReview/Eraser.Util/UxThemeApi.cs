@@ -32,6 +32,9 @@ namespace Eraser.Util
 {
 	public static class UXThemeApi
 	{
+		/// <summary>
+		/// Verifies whether themeing is active.
+		/// </summary>
 		public static bool ThemesActive
 		{
 			get
