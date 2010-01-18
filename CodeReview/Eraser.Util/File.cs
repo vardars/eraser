@@ -270,7 +270,7 @@ namespace Eraser.Util
 			if (!NativeMethods.GetFileTime(file, out createdTimeNative, out accessedTimeNative,
 				out modifiedTimeNative))
 			{
-				throw GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+				throw KernelApi.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
 
 			creationTime = FileTimeToDateTime(createdTimeNative);
