@@ -26,6 +26,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
+using Microsoft.Win32.SafeHandles;
 
 namespace Eraser.Util
 {
@@ -440,16 +441,11 @@ namespace Eraser.Util
 		private SafeThemeHandle hTheme;
 	}
 
-	internal class SafeThemeHandle : SafeHandle
+	internal class SafeThemeHandle : SafeHandleZeroOrMinusOneIsInvalid
 	{
 		public SafeThemeHandle()
-			: base(IntPtr.Zero, true)
+			: base(true)
 		{
-		}
-
-		public override bool IsInvalid
-		{
-			get { return handle == IntPtr.Zero; }
 		}
 
 		protected override bool ReleaseHandle()

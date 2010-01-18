@@ -25,6 +25,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Security.Principal;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 namespace Eraser.Util
 {
@@ -152,7 +153,7 @@ namespace Eraser.Util
 		}
 	}
 
-	internal sealed class CryptApi : IDisposable
+	internal sealed class CryptApi
 	{
 		/// <summary>
 		/// Constructor.
@@ -186,25 +187,6 @@ namespace Eraser.Util
 			throw new NotSupportedException("Unable to acquire a cryptographic service provider.");
 		}
 
-		#region IDisposable Members
-		~CryptApi()
-		{
-			Dispose(false);
-		}
-
-		public void Dispose(bool disposing)
-		{
-			if (disposing)
-				handle.Close();
-		}
-
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-		#endregion
-
 		/// <summary>
 		/// The GenRandom function fills a buffer with cryptographically random bytes.
 		/// </summary>
@@ -229,16 +211,11 @@ namespace Eraser.Util
 		private static CryptApi instance = new CryptApi();
 	}
 
-	internal class SafeCryptHandle : SafeHandle
+	internal class SafeCryptHandle : SafeHandleZeroOrMinusOneIsInvalid
 	{
 		public SafeCryptHandle()
-			: base(IntPtr.Zero, true)
+			: base(true)
 		{
-		}
-
-		public override bool IsInvalid
-		{
-			get { return handle == IntPtr.Zero; }
 		}
 
 		protected override bool ReleaseHandle()
@@ -249,16 +226,11 @@ namespace Eraser.Util
 		}
 	}
 
-	internal class SafeTokenHandle : SafeHandle
+	internal class SafeTokenHandle : SafeHandleZeroOrMinusOneIsInvalid
 	{
 		public SafeTokenHandle()
-			: base(IntPtr.Zero, true)
+			: base(true)
 		{
-		}
-
-		public override bool IsInvalid
-		{
-			get { return handle == IntPtr.Zero; }
 		}
 
 		protected override bool ReleaseHandle()
