@@ -27,6 +27,7 @@ using System.IO;
 using ComLib.Arguments;
 
 using Eraser.Manager;
+using Eraser.Util;
 
 namespace Eraser
 {
@@ -55,11 +56,7 @@ namespace Eraser
 
 				//Create the console window if we don't have the quiet argument.
 				if (!Arguments.Quiet)
-					if (Util.KernelApi.AllocConsole())
-					{
-						Console.SetOut(new StreamWriter(Console.OpenStandardOutput()));
-						Console.SetIn(new StreamReader(Console.OpenStandardInput()));
-					}
+					ConsoleWindow = new ConsoleWindow();
 			}
 
 			#region IDisposable Members
@@ -86,7 +83,8 @@ namespace Eraser
 					Console.Out.Flush();
 					Console.ReadLine();
 
-					Util.KernelApi.FreeConsole();
+					if (disposing)
+						ConsoleWindow.Dispose();
 				}
 			}
 			#endregion
@@ -125,6 +123,11 @@ namespace Eraser
 			/// Matches an action to a handler.
 			/// </summary>
 			public Dictionary<string, ConsoleActionData> Handlers { get; private set; }
+
+			/// <summary>
+			/// The Console Window created by this object.
+			/// </summary>
+			private ConsoleWindow ConsoleWindow;
 
 			/// <summary>
 			/// The command line arguments the program was started with.

@@ -29,9 +29,9 @@ namespace Eraser.Util
 	/// Allocates and deallocates a console window during the lifespan of this
 	/// object.
 	/// </summary>
-	class ConsoleWindow : IDisposable
+	public class ConsoleWindow : IDisposable
 	{
-		ConsoleWindow()
+		public ConsoleWindow()
 		{
 			NativeMethods.AllocConsole();
 		}
