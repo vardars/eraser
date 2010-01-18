@@ -141,14 +141,18 @@ namespace Eraser.Util
 				if (handle.IsInvalid)
 					return result;
 
-				//Iterate over the volume mountpoints
-				do
-					result.Add(new VolumeInfo(nextVolume.ToString()));
-				while (NativeMethods.FindNextVolume(handle, nextVolume, NativeMethods.LongPath));
-
-				//Close the handle
-				if (Marshal.GetLastWin32Error() == Win32ErrorCode.NoMoreFiles)
+				try
+				{
+					//Iterate over the volume mountpoints
+					do
+						result.Add(new VolumeInfo(nextVolume.ToString()));
+					while (NativeMethods.FindNextVolume(handle, nextVolume, NativeMethods.LongPath));
+				}
+				finally
+				{
+					//Close the handle
 					NativeMethods.FindVolumeClose(handle);
+				}
 
 				return result.AsReadOnly();
 			}
@@ -352,16 +356,20 @@ namespace Eraser.Util
 				if (handle.IsInvalid)
 					return result;
 
-				//Iterate over the volume mountpoints
-				while (NativeMethods.FindNextVolumeMountPoint(handle, nextMountpoint,
-					NativeMethods.LongPath))
+				try
 				{
-					result.Add(new VolumeInfo(nextMountpoint.ToString()));
+					//Iterate over the volume mountpoints
+					while (NativeMethods.FindNextVolumeMountPoint(handle, nextMountpoint,
+						NativeMethods.LongPath))
+					{
+						result.Add(new VolumeInfo(nextMountpoint.ToString()));
+					}
 				}
-
-				//Close the handle
-				if (Marshal.GetLastWin32Error() == Win32ErrorCode.NoMoreFiles)
+				finally
+				{
+					//Close the handle
 					NativeMethods.FindVolumeMountPointClose(handle);
+				}
 
 				return result.AsReadOnly();
 			}
