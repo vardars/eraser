@@ -114,26 +114,14 @@ namespace Eraser.Manager
 		/// </summary>
 		/// <returns>A 32-bit signed integer greater than or equal to zero and less
 		/// than System.Int32.MaxValue.</returns>
-		public unsafe int Next()
+		public int Next()
 		{
-			//Declare a return variable
-			int result;
-			int* fResult = &result;
-
 			//Get the random-valued bytes to fill the int.
 			byte[] rand = new byte[sizeof(int)];
 			NextBytes(rand);
 
-			//Copy the random buffer into the int.
-			fixed (byte* fRand = rand)
-			{
-				byte* pResult = (byte*)fResult;
-				byte* pRand = fRand;
-				for (int i = 0; i != sizeof(int); ++i)
-					*pResult++ = *pRand++;
-			}
-
-			return Math.Abs(result);
+			//Then return the integral representation of the buffer.
+			return Math.Abs(BitConverter.ToInt32(rand, 0));
 		}
 
 		/// <summary>
