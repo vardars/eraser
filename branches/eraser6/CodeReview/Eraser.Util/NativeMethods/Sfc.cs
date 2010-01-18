@@ -37,7 +37,7 @@ namespace Eraser.Util
 		/// <returns>If the file is protected, the return value is true.</returns>
 		[DllImport("Sfc.dll", CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool SfcIsFileProtected(IntPtr RpcHandle,
+		public static extern bool SfcIsFileProtected(IntPtr RpcHandle,
 			string ProtFileName);
 	}
 }
