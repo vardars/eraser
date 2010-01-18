@@ -343,7 +343,7 @@ namespace Eraser.Manager
 				}
 				catch (System.ComponentModel.Win32Exception e)
 				{
-					if (e.NativeErrorCode != 5) //ERROR_ACCESS_DENIED
+					if (e.NativeErrorCode != (int)Win32ErrorCodes.AccessDenied)
 						throw;
 				}
 			}
@@ -436,7 +436,7 @@ namespace Eraser.Manager
 				uint sysInfo = NTApi.NtQuerySystemInformation(infoType, infoBuffer,
 					(uint)infoBuffer.Length, out dataWritten);
 
-				if (sysInfo == 0 /*ERROR_SUCCESS*/ && dataWritten > 0)
+				if (sysInfo == (int)Win32ErrorCodes.Success && dataWritten > 0)
 				{
 					byte[] entropy = new byte[dataWritten];
 					Buffer.BlockCopy(infoBuffer, 0, entropy, 0, (int)dataWritten);
