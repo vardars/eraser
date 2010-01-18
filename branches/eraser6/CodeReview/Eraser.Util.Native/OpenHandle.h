@@ -31,7 +31,7 @@ using namespace Microsoft::Win32::SafeHandles;
 namespace Eraser {
 namespace Util {
 	/// Represents one open handle in the system.
-	public ref struct OpenHandle
+	public ref class OpenHandle
 	{
 	internal:
 		/// Constructor.
