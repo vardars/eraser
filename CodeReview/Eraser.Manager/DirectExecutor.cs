@@ -707,7 +707,7 @@ namespace Eraser.Manager
 					new ProgressChangedEventArgs(step,
 						new TaskProgressChangedEventArgs(string.Empty, 0, 0)));
 
-				ShellApi.EmptyRecycleBin(EmptyRecycleBinOptions.NoConfirmation |
+				RecycleBin.EmptyRecycleBin(EmptyRecycleBinOptions.NoConfirmation |
 					EmptyRecycleBinOptions.NoProgressUI | EmptyRecycleBinOptions.NoSound);
 			}
 

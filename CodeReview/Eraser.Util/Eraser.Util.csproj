@@ -61,7 +61,7 @@
     <Compile Include="NativeMethods\UxTheme.cs" />
     <Compile Include="NativeMethods\WinTrust.cs" />
     <Compile Include="NtfsApi.cs" />
-    <Compile Include="ShellApi.cs" />
+    <Compile Include="RecycleBin.cs" />
     <Compile Include="SystemRestoreApi.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -81,6 +81,7 @@
     </CodeAnalysisDictionary>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Power.cs" />
     <Compile Include="NativeMethods\Gdi.cs" />
     <Compile Include="NativeMethods\Sfc.cs" />
     <Compile Include="Win32ErrorCodes.cs" />

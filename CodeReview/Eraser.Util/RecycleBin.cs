@@ -22,19 +22,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
 namespace Eraser.Util
 {
-	public static class ShellApi
+	public static class RecycleBin
 	{
 		/// <summary>
 		/// Empties the recycle bin for the current user.
 		/// </summary>
 		/// <param name="options">The list of flags to pass to the shell regarding
 		/// the user feedback, etc.</param>
-		public static void EmptyRecycleBin(EmptyRecycleBinOptions options)
+		public static void Empty(EmptyRecycleBinOptions options)
 		{
 			NativeMethods.SHEmptyRecycleBin(IntPtr.Zero, null,
 				(NativeMethods.SHEmptyRecycleBinFlags)options);
