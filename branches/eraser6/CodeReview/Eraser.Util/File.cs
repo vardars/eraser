@@ -268,7 +268,7 @@ namespace Eraser.Util
 		/// <param name="bytes">The file size to scale.</param>
 		/// <returns>A string containing the file size and the associated unit.
 		/// Files larger than 1MB will be accurate to 2 decimal places.</returns>
-		public static string GetHumanReadableFilesize(long bytes)
+		public static string GetHumanReadableFileSize(long bytes)
 		{
 			//List of units, in ascending scale
 			string[] units = new string[] {
@@ -284,7 +284,7 @@ namespace Eraser.Util
 			double dBytes = (double)bytes;
 			for (int i = 0; i != units.Length; ++i)
 			{
-				if (dBytes < 1020.0)
+				if (dBytes < 1000.0)
 					if (i <= 1)
 						return string.Format(CultureInfo.CurrentCulture,
 							"{0} {1}", (int)dBytes, units[i]);
@@ -317,6 +317,9 @@ namespace Eraser.Util
 			return result;
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "1#")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "2#")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "3#")]
 		public static void GetFileTime(SafeFileHandle file, out DateTime creationTime,
 			out DateTime accessedTime, out DateTime modifiedTime)
 		{
