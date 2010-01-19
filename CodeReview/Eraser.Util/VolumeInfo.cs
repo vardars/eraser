@@ -489,8 +489,9 @@ namespace Eraser.Util
 				(uint)share, IntPtr.Zero, (uint)FileMode.Open, (uint)options, IntPtr.Zero);
 			if (result.IsInvalid)
 			{
+				int errorCode = Marshal.GetLastWin32Error();
 				result.Close();
-				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(errorCode);
 			}
 
 			return result;
