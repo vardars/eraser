@@ -282,15 +282,15 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			ErasureMethod method = arguments.ErasureMethod == Guid.Empty ?
 				ErasureMethodManager.Default :
 				ErasureMethodManager.GetInstance(arguments.ErasureMethod);
-			switch (arguments.Schedule.ToLowerInvariant())
+			switch (arguments.Schedule.ToUpperInvariant())
 			{
-				case "now":
+				case "NOW":
 					task.Schedule = Schedule.RunNow;
 					break;
-				case "manually":
+				case "MANUALLY":
 					task.Schedule = Schedule.RunManually;
 					break;
-				case "restart":
+				case "RESTART":
 					task.Schedule = Schedule.RunOnRestart;
 					break;
 				default:
