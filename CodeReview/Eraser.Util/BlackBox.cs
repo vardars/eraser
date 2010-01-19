@@ -585,7 +585,7 @@ namespace Eraser.Util
 							return true;
 
 						default:
-							throw new InvalidDataException(S._("Unknown crash report server response."));
+							throw new InvalidDataException("Unknown crash report server response.");
 					}
 				}
 			}
@@ -597,8 +597,9 @@ namespace Eraser.Util
 					{
 						XmlReader reader = XmlReader.Create(responseStream);
 						reader.ReadToFollowing("error");
-						throw new InvalidDataException(S._("The server encountered a problem " +
-							"while processing the request: {0}", reader.ReadString()));
+						throw new InvalidDataException(string.Format(CultureInfo.CurrentCulture,
+							"The server encountered a problem while processing the request: {0}",
+							reader.ReadString()));
 					}
 					catch (XmlException)
 					{
@@ -694,8 +695,9 @@ namespace Eraser.Util
 						{
 							XmlReader reader = XmlReader.Create(responseStream);
 							reader.ReadToFollowing("error");
-							throw new InvalidDataException(S._("The server encountered a problem " +
-								"while processing the request: {0}", reader.ReadString()));
+							throw new InvalidDataException(string.Format(CultureInfo.CurrentCulture,
+								"The server encountered a problem while processing the request: {0}",
+								reader.ReadString()));
 						}
 						catch (XmlException)
 						{
