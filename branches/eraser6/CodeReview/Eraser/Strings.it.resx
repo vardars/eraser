@@ -141,10 +141,10 @@
   <data name="Checking for status of report {0}..." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="Compressing Report {0}: {1}%" xml:space="preserve">
+  <data name="Compressing Report {0}: {1:#0.00%}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="Uploading Report {0}: {1}%" xml:space="preserve">
+  <data name="Uploading Report {0}: {1:#0.00%}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Reports submitted successfully." xml:space="preserve">
@@ -154,12 +154,6 @@
     <value>Chiudi</value>
   </data>
   <data name="Submission was cancelled." xml:space="preserve">
-    <value>(Untranslated)</value>
-  </data>
-  <data name="Unknown crash report server response." xml:space="preserve">
-    <value>(Untranslated)</value>
-  </data>
-  <data name="The server encountered a problem while processing the request: {0}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Session: {0:F}" xml:space="preserve">
