@@ -698,7 +698,7 @@ namespace Eraser
 						//Check for a suggested filename.
 						ContentDisposition contentDisposition = null;
 						foreach (string header in resp.Headers.AllKeys)
-							if (header.ToLowerInvariant() == "content-disposition")
+							if (header.ToUpperInvariant() == "CONTENT-DISPOSITION")
 								contentDisposition = new ContentDisposition(resp.Headers[header]);
 
 						string tempFilePath = Path.Combine(
