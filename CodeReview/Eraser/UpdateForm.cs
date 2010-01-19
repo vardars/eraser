@@ -192,7 +192,7 @@ namespace Eraser
 					ListViewItem item = new ListViewItem(update.Name);
 					item.SubItems.Add(update.Version.ToString());
 					item.SubItems.Add(update.Publisher);
-					item.SubItems.Add(Util.File.GetHumanReadableFilesize(update.FileSize));
+					item.SubItems.Add(Util.File.GetHumanReadableFileSize(update.FileSize));
 
 					item.Tag = update;
 					item.Group = group;
@@ -329,7 +329,7 @@ namespace Eraser
 				{
 					update.amountDownloaded = (long)(e.ProgressPercentage * update.Update.FileSize);
 					update.LVItem.ImageIndex = 0;
-					update.LVItem.SubItems[1].Text = Util.File.GetHumanReadableFilesize(
+					update.LVItem.SubItems[1].Text = Util.File.GetHumanReadableFileSize(
 						update.Update.FileSize - update.amountDownloaded);
 				}
 			}
@@ -342,7 +342,7 @@ namespace Eraser
 			foreach (UpdateData upd in uiUpdates.Values)
 				amountToDownload += upd.Update.FileSize - upd.amountDownloaded;
 			downloadingOverallLbl.Text = S._("Overall progress: {0} left",
-				Util.File.GetHumanReadableFilesize(amountToDownload));
+				Util.File.GetHumanReadableFileSize(amountToDownload));
 		}
 
 		/// <summary>
@@ -553,8 +553,8 @@ namespace Eraser
 					progress.Completed = memoryStream.Position;
 					OnProgress(new ProgressEventArgs(progress.Progress, progress.Progress, null,
 						S._("{0} of {1} downloaded",
-							Util.File.GetHumanReadableFilesize(progress.Completed),
-							Util.File.GetHumanReadableFilesize(progress.Total))));
+							Util.File.GetHumanReadableFileSize(progress.Completed),
+							Util.File.GetHumanReadableFileSize(progress.Total))));
 				}
 
 				//Parse it.
@@ -679,7 +679,7 @@ namespace Eraser
 				{
 					//Add the update to the overall progress.
 					Util.ProgressManager step = new Eraser.Util.ProgressManager();
-					progress.Steps.Add(new Util.SteppedProgressManager.Step(
+					progress.Steps.Add(new Util.SteppedProgressManagerStep(
 						step, 1.0f / downloadQueue.Count));
 
 					//Decide on the URL to connect to. The Link of the update may

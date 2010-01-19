@@ -318,7 +318,7 @@ namespace Eraser.DefaultPlugins
 		public override long GetFileArea(string filePath)
 		{
 			StreamInfo info = new StreamInfo(filePath);
-			VolumeInfo volume = VolumeInfo.FromMountpoint(info.Directory.FullName);
+			VolumeInfo volume = VolumeInfo.FromMountPoint(info.Directory.FullName);
 			long clusterSize = volume.ClusterSize;
 			return (info.Length + (clusterSize - 1)) & ~(clusterSize - 1);
 		}
