@@ -34,7 +34,7 @@ namespace Util {
 			throw gcnew ArgumentException(L"The volume provided is not a FAT32 volume.");
 	}
 
-	Fat32Api::Fat32Api(VolumeInfo^ info, Stream^ stream) : FatApi(info, stream)
+	Fat32Api::Fat32Api(VolumeInfo^ info, Stream^ stream) : FatApi( stream)
 	{
 		//Sanity checks: check that this volume is FAT32!
 		if (info->VolumeFormat != L"FAT32")

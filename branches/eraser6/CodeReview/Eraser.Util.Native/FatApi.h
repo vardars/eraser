@@ -41,9 +41,8 @@ namespace Util {
 
 		/// Constructor.
 		/// 
-		/// \param[in] info   The volume to create the FAT API for.
 		/// \param[in] stream The stream to use to read/write to the disk.
-		FatApi(VolumeInfo^ info, IO::Stream^ stream);
+		FatApi(IO::Stream^ stream);
 
 	public:
 		/// Loads the File Allocation Table from disk.
