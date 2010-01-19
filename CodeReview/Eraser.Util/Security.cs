@@ -60,7 +60,8 @@ namespace Eraser.Util
 
 			//Get the process token.
 			SafeTokenHandle hToken = new SafeTokenHandle();
-			bool result = NativeMethods.OpenProcessToken(NativeMethods.GetCurrentProcess(),
+			bool result = NativeMethods.OpenProcessToken(
+				System.Diagnostics.Process.GetCurrentProcess().Handle,
 				NativeMethods.TOKEN_QUERY, out hToken);
 			if (!result || hToken.IsInvalid)
 				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
