@@ -166,12 +166,12 @@ namespace Eraser.Util
 		/// <summary>
 		/// Creates a Volume object from its mountpoint.
 		/// </summary>
-		/// <param name="mountpoint">The path to the mountpoint.</param>
+		/// <param name="mountPoint">The path to the mountpoint.</param>
 		/// <returns>The volume object if such a volume exists, or an exception
 		/// is thrown.</returns>
-		public static VolumeInfo FromMountpoint(string mountpoint)
+		public static VolumeInfo FromMountPoint(string mountPoint)
 		{
-			DirectoryInfo mountpointDir = new DirectoryInfo(mountpoint);
+			DirectoryInfo mountpointDir = new DirectoryInfo(mountPoint);
 			StringBuilder volumeID = new StringBuilder(50 * sizeof(char));
 
 			do
@@ -488,7 +488,10 @@ namespace Eraser.Util
 			SafeFileHandle result = NativeMethods.CreateFile(openPath, iAccess,
 				(uint)share, IntPtr.Zero, (uint)FileMode.Open, (uint)options, IntPtr.Zero);
 			if (result.IsInvalid)
+			{
+				result.Close();
 				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+			}
 
 			return result;
 		}
