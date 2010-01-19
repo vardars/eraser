@@ -62,71 +62,53 @@ namespace Eraser
 		private void UploadWorker_DoWork(object sender, DoWorkEventArgs e)
 		{
 			IList<BlackBoxReport> reports = (IList<BlackBoxReport>)e.Argument;
-			SteppedProgressManager progress = new SteppedProgressManager();
+			SteppedProgressManager overallProgress = new SteppedProgressManager();
 
 			for (int i = 0; i < reports.Count; ++i)
 			{
 				//Create the progress object that will handle the progress for this report.
-				SteppedProgressManager reportProgress = new SteppedProgressManager();
-				progress.Steps.Add(new SteppedProgressManagerStep(reportProgress,
+				ProgressManager reportProgress = new ProgressManager();
+				overallProgress.Steps.Add(new SteppedProgressManagerStep(reportProgress,
 					1.0f / reports.Count));
 
 				BlackBoxReportUploader uploader = new BlackBoxReportUploader(reports[i]);
 
 				//Check that a similar report has not yet been uploaded.
-				UploadWorker.ReportProgress((int)(progress.Progress * 100),
+				UploadWorker.ReportProgress((int)(overallProgress.Progress * 100),
 					S._("Checking for status of report {0}...", reports[i].Name));
-				if (!uploader.ReportIsNew())
+				if (!uploader.IsNew)
 					continue;
 
 				if (UploadWorker.CancellationPending)
 					throw new OperationCanceledException();
 
-				{
-					//No similar reports have been uploaded. Compress the report.
-					ProgressManager step = new ProgressManager();
-					step.Total = 1000;
-					reportProgress.Steps.Add(new SteppedProgressManagerStep(step, 0.5f));
-					UploadWorker.ReportProgress((int)(progress.Progress * 100),
-						S._("Compressing Report {0}: {1}%", reports[i].Name, 0));
+				//Upload the report.
+				UploadWorker.ReportProgress((int)(overallProgress.Progress * 100),
+					S._("Compressing Report {0}: {1:#0.00%}", reports[i].Name, 0));
 
-					uploader.Compress(delegate(object from, EraserProgressChangedEventArgs e2)
-						{
-							step.Completed = (int)(e2.Progress.Progress * step.Total);
-							UploadWorker.ReportProgress((int)(progress.Progress * 100),
+				uploader.Submit(delegate(object from, EraserProgressChangedEventArgs e2)
+					{
+						reportProgress.Completed = (int)(e2.Progress.Progress * reportProgress.Total);
+						SteppedProgressManager reportSteps = (SteppedProgressManager)e2.Progress;
+						int step = reportSteps.Steps.IndexOf(reportSteps.CurrentStep);
+
+						UploadWorker.ReportProgress((int)overallProgress.Progress,
+							step == 0 ? 
 								S._("Compressing Report {0}: {1:#0.00%}",
-									reports[i].Name, e2.Progress.Progress));
-
-							if (UploadWorker.CancellationPending)
-								throw new OperationCanceledException();
-						});
-				}
-				{
-					//Upload the report.
-					ProgressManager step = new ProgressManager();
-					step.Total = 1000;
-					reportProgress.Steps.Add(new SteppedProgressManagerStep(step, 0.5f));
-					UploadWorker.ReportProgress((int)(progress.Progress * 100),
-						S._("Uploading Report {0}: {1}%", reports[i].Name, 0));
-
-					uploader.Upload(delegate(object from, EraserProgressChangedEventArgs e2)
-						{
-							step.Completed = (int)(e2.Progress.Progress * step.Total);
-							UploadWorker.ReportProgress((int)progress.Progress,
+									reports[i].Name, reportSteps.Progress) :
 								S._("Uploading Report {0}: {1:#0.00%}",
-									reports[i].Name, e2.Progress.Progress));
+									reports[i].Name, reportSteps.Progress));
 
-							if (UploadWorker.CancellationPending)
-								throw new OperationCanceledException();
-						});
-				}
+						if (UploadWorker.CancellationPending)
+							throw new OperationCanceledException();
+					});
 			}
 		}
 
 		private void UploadWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
 			if (e.UserState != null)
-				ProgressLbl.Text = e.UserState as string;
+				ProgressLbl.Text = (string)e.UserState;
 			ProgressPb.Value = e.ProgressPercentage;
 		}
 
