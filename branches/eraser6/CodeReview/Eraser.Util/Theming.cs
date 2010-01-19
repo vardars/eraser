@@ -199,7 +199,7 @@ namespace Eraser.Util
 			{
 				if (Instance != null)
 					throw new InvalidOperationException("Only one instance of the " +
-						"ThemeMessageFilter can exist at any one time.");
+						"theme-change message filter can exist at any one time.");
 
 				Instance = this;
 				ThemesActive = Theming.Active;

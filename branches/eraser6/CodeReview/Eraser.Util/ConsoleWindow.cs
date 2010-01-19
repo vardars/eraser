@@ -49,6 +49,7 @@ namespace Eraser.Util
 			GC.SuppressFinalize(this);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "disposing")]
 		private void Dispose(bool disposing)
 		{
 			NativeMethods.FreeConsole();
