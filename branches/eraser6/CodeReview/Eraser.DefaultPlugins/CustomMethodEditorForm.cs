@@ -217,7 +217,7 @@ namespace Eraser.DefaultPlugins
 			e.Effect = DragDropEffects.Move;
 		}
 
-		ListViewItem lastInsertionPoint = null;
+		ListViewItem lastInsertionPoint;
 		private void passesLv_GiveFeedback(object sender, GiveFeedbackEventArgs e)
 		{
 			e.UseDefaultCursors = true;
