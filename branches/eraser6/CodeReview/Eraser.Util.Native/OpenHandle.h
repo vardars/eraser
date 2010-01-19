@@ -72,12 +72,6 @@ namespace Util {
 			{
 				return path;
 			}
-
-		private:
-			void set(String^ value)
-			{
-				path = value;
-			}
 		}
 
 		/// The process ID of the process owning the handle.
@@ -86,12 +80,6 @@ namespace Util {
 			int get()
 			{
 				return processId;
-			}
-
-		private:
-			void set(int value)
-			{
-				processId = value;
 			}
 		};
 
