@@ -543,74 +543,86 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
-		/// Verifies the stack trace against the server to see if the report is new.
+		/// Gets from the server based on the stack trace whether this report is
+		/// new.
 		/// </summary>
-		/// <returns>True if the report is new; false otherwise</returns>
-		public bool ReportIsNew()
+		public bool IsNew
 		{
-			PostDataBuilder builder = new PostDataBuilder();
-			builder.AddPart(new PostDataField("action", "status"));
-			AddStackTraceToRequest(Report.StackTrace, builder);
-
-			WebRequest reportRequest = HttpWebRequest.Create(BlackBoxServer);
-			reportRequest.ContentType = builder.ContentType;
-			reportRequest.Method = "POST";
-			using (Stream formStream = builder.Stream)
+			get
 			{
-				reportRequest.ContentLength = formStream.Length;
-				using (Stream requestStream = reportRequest.GetRequestStream())
-				{
-					int lastRead = 0;
-					byte[] buffer = new byte[32768];
-					while ((lastRead = formStream.Read(buffer, 0, buffer.Length)) != 0)
-						requestStream.Write(buffer, 0, lastRead);
-				}
-			}
+				PostDataBuilder builder = new PostDataBuilder();
+				builder.AddPart(new PostDataField("action", "status"));
+				AddStackTraceToRequest(Report.StackTrace, builder);
 
-			try
-			{
-				HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
-				using (Stream responseStream = response.GetResponseStream())
+				WebRequest reportRequest = HttpWebRequest.Create(BlackBoxServer);
+				reportRequest.ContentType = builder.ContentType;
+				reportRequest.Method = "POST";
+				using (Stream formStream = builder.Stream)
 				{
-					XmlReader reader = XmlReader.Create(responseStream);
-					reader.ReadToFollowing("crashReport");
-					string reportStatus = reader.GetAttribute("status");
-					switch (reportStatus)
+					reportRequest.ContentLength = formStream.Length;
+					using (Stream requestStream = reportRequest.GetRequestStream())
 					{
-						case "exists":
-							Report.Submitted = true;
-							return false;
-
-						case "new":
-							return true;
-
-						default:
-							throw new InvalidDataException("Unknown crash report server response.");
+						int lastRead = 0;
+						byte[] buffer = new byte[32768];
+						while ((lastRead = formStream.Read(buffer, 0, buffer.Length)) != 0)
+							requestStream.Write(buffer, 0, lastRead);
 					}
 				}
-			}
-			catch (WebException e)
-			{
-				using (Stream responseStream = e.Response.GetResponseStream())
+
+				try
 				{
-					try
+					HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
+					using (Stream responseStream = response.GetResponseStream())
 					{
 						XmlReader reader = XmlReader.Create(responseStream);
-						reader.ReadToFollowing("error");
-						throw new InvalidDataException(string.Format(CultureInfo.CurrentCulture,
-							"The server encountered a problem while processing the request: {0}",
-							reader.ReadString()));
-					}
-					catch (XmlException)
-					{
+						reader.ReadToFollowing("crashReport");
+						string reportStatus = reader.GetAttribute("status");
+						switch (reportStatus)
+						{
+							case "exists":
+								Report.Submitted = true;
+								return false;
+
+							case "new":
+								return true;
+
+							default:
+								throw new InvalidDataException(
+									"Unknown crash report server response.");
+						}
 					}
 				}
+				catch (WebException e)
+				{
+					using (Stream responseStream = e.Response.GetResponseStream())
+					{
+						try
+						{
+							XmlReader reader = XmlReader.Create(responseStream);
+							reader.ReadToFollowing("error");
+							throw new InvalidDataException(string.Format(CultureInfo.CurrentCulture,
+								"The server encountered a problem while processing the request: {0}",
+								reader.ReadString()));
+						}
+						catch (XmlException)
+						{
+						}
+					}
 
-				throw new InvalidDataException(((HttpWebResponse)e.Response).StatusDescription);
+					throw new InvalidDataException(((HttpWebResponse)e.Response).StatusDescription);
+				}
 			}
 		}
 
-		public void Compress(ProgressChangedEventHandler progressChanged)
+		/// <summary>
+		/// Compresses the report for uploading.
+		/// </summary>
+		/// <param name="progress">The <see cref="ProgressManager"/> instance that the
+		/// Upload function is using.</param>
+		/// <param name="progressChanged">The progress changed event handler that should
+		/// be called for upload progress updates.</param>
+		private void Compress(SteppedProgressManager progress,
+			ProgressChangedEventHandler progressChanged)
 		{
 			using (FileStream archiveStream = new FileStream(ReportBaseName + ".tar",
 					FileMode.Create, FileAccess.Write))
@@ -626,7 +638,8 @@ namespace Eraser.Util
 				archive.Close();
 			}
 
-			ProgressManager progress = new ProgressManager();
+			ProgressManager step = new ProgressManager();
+			progress.Steps.Add(new SteppedProgressManagerStep(step, 0.5f, "Compressing"));
 			using (FileStream bzipFile = new FileStream(ReportBaseName + ".tbz",
 				FileMode.Create))
 			using (FileStream tarStream = new FileStream(ReportBaseName + ".tar",
@@ -639,15 +652,25 @@ namespace Eraser.Util
 				while ((lastRead = tarStream.Read(buffer, 0, buffer.Length)) != 0)
 				{
 					bzipStream.Write(buffer, 0, lastRead);
-					progress.Completed = tarStream.Position;
-					progress.Total = tarStream.Length;
-					progressChanged(this, new ProgressChangedEventArgs(progress, null));
+					step.Completed = tarStream.Position;
+					step.Total = tarStream.Length;
+
+					if (progressChanged != null)
+						progressChanged(this, new ProgressChangedEventArgs(progress, null));
 				}
 			}
 		}
 
-		public void Upload(ProgressChangedEventHandler progressChanged)
+		/// <summary>
+		/// Compresses the report, then uploads it to the server.
+		/// </summary>
+		/// <param name="progressChanged">The progress changed event handler that should
+		/// be called for upload progress updates.</param>
+		public void Submit(ProgressChangedEventHandler progressChanged)
 		{
+			SteppedProgressManager overallProgress = new SteppedProgressManager();
+			Compress(overallProgress, progressChanged);
+
 			using (FileStream bzipFile = new FileStream(ReportBaseName + ".tbz",
 				FileMode.Open, FileAccess.Read, FileShare.Read, 131072, FileOptions.DeleteOnClose))
 			using (Stream logFile = Report.DebugLog)
@@ -665,8 +688,11 @@ namespace Eraser.Util
 				reportRequest.Timeout = int.MaxValue;
 				using (Stream formStream = builder.Stream)
 				{
-					reportRequest.ContentLength = formStream.Length;
 					ProgressManager progress = new ProgressManager();
+					overallProgress.Steps.Add(new SteppedProgressManagerStep(
+						progress, 0.5f, "Uploading"));
+					reportRequest.ContentLength = formStream.Length;
+
 					using (Stream requestStream = reportRequest.GetRequestStream())
 					{
 						int lastRead = 0;
@@ -677,7 +703,7 @@ namespace Eraser.Util
 
 							progress.Completed = formStream.Position;
 							progress.Total = formStream.Length;
-							progressChanged(this, new ProgressChangedEventArgs(progress, null));
+							progressChanged(this, new ProgressChangedEventArgs(overallProgress, null));
 						}
 					}
 				}
