@@ -56,18 +56,23 @@ namespace Eraser.Util
 		/// <remarks>This function will also set the volume on all child controls.</remarks>
 		public static void ApplyTheme(Control control)
 		{
-			if (control is ContainerControl)
-				((ContainerControl)control).Font = SystemFonts.MessageBoxFont;
+			ContainerControl container = control as ContainerControl;
+			ButtonBase button = control as ButtonBase;
+			ListView listview = control as ListView;
+			ToolStrip toolstrip = control as ToolStrip;
+
+			if (container != null)
+				container.Font = SystemFonts.MessageBoxFont;
 			else if (control.Font != SystemFonts.MessageBoxFont)
 				control.Font = new Font(SystemFonts.MessageBoxFont.FontFamily,
 					control.Font.Size, control.Font.Style);
 
-			if (control is ButtonBase)
-				ApplyTheme((ButtonBase)control);
-			else if (control is ListView)
-				ApplyTheme((ListView)control);
-			else if (control is ToolStrip)
-				ApplyTheme((ToolStrip)control);
+			if (button != null)
+				ApplyTheme(button);
+			else if (listview != null)
+				ApplyTheme(listview);
+			else if (toolstrip != null)
+				ApplyTheme(toolstrip);
 
 			if (control.ContextMenuStrip != null)
 				ApplyTheme(control.ContextMenuStrip);
