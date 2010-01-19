@@ -189,89 +189,25 @@ namespace Eraser.Util
 	public class SteppedProgressManager : ChainedProgressManager
 	{
 		/// <summary>
-		/// Represents one step in the list of steps to complete.
-		/// </summary>
-		public class Step
-		{
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			/// <param name="progress">The <see cref="ProgressManagerBase"/> instance
-			/// which measures the progress of this step.</param>
-			/// <param name="weight">The weight of this step. The weight is a decimal
-			/// number in the range [0.0, 1.0] which represents the percentage of the
-			/// entire process this particular step is.</param>
-			public Step(ProgressManagerBase progress, float weight)
-				: this(progress, weight, null)
-			{
-			}
-
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			/// <param name="progress">The <see cref="ProgressManagerBase"/> instance
-			/// which measures the progress of this step.</param>
-			/// <param name="weight">The weight of this step. The weight is a decimal
-			/// number in the range [0.0, 1.0] which represents the percentage of the
-			/// entire process this particular step is.</param>
-			/// <param name="name">A user-specified value of the name of this step.
-			/// This value is not used by the class at all.</param>
-			public Step(ProgressManagerBase progress, float weight, string name)
-			{
-				Progress = progress;
-				Weight = weight;
-				Name = name;
-			}
-
-			/// <summary>
-			/// The <see cref="ProgressManagerBase"/> instance which measures the
-			/// progress of the step.
-			/// </summary>
-			public ProgressManagerBase Progress
-			{
-				get;
-				set;
-			}
-
-			/// <summary>
-			/// The weight associated with this step.
-			/// </summary>
-			public float Weight
-			{
-				get;
-				private set;
-			}
-
-			/// <summary>
-			/// The name of this step.
-			/// </summary>
-			public string Name
-			{
-				get;
-				set;
-			}
-		}
-
-		/// <summary>
 		/// The class which manages the steps which comprise the overall progress.
 		/// </summary>
-		public class StepsList : IList<Step>
+		private class StepsList : IList<SteppedProgressManagerStep>
 		{
 			public StepsList(SteppedProgressManager manager)
 			{
-				List = new List<Step>();
+				List = new List<SteppedProgressManagerStep>();
 				ListLock = manager.ListLock;
 			}
 
-			#region IList<Step> Members
+			#region IList<SteppedProgressManagerStep> Members
 
-			public int IndexOf(Step item)
+			public int IndexOf(SteppedProgressManagerStep item)
 			{
 				lock (ListLock)
 					return List.IndexOf(item);
 			}
 
-			public void Insert(int index, Step item)
+			public void Insert(int index, SteppedProgressManagerStep item)
 			{
 				lock (ListLock)
 				{
@@ -289,7 +225,7 @@ namespace Eraser.Util
 				}
 			}
 
-			public Step this[int index]
+			public SteppedProgressManagerStep this[int index]
 			{
 				get
 				{
@@ -309,9 +245,9 @@ namespace Eraser.Util
 
 			#endregion
 
-			#region ICollection<Step> Members
+			#region ICollection<SteppedProgressManagerStep> Members
 
-			public void Add(Step item)
+			public void Add(SteppedProgressManagerStep item)
 			{
 				lock (ListLock)
 				{
@@ -329,13 +265,13 @@ namespace Eraser.Util
 				}
 			}
 
-			public bool Contains(Step item)
+			public bool Contains(SteppedProgressManagerStep item)
 			{
 				lock (ListLock)
 					return List.Contains(item);
 			}
 
-			public void CopyTo(Step[] array, int arrayIndex)
+			public void CopyTo(SteppedProgressManagerStep[] array, int arrayIndex)
 			{
 				lock (ListLock)
 					List.CopyTo(array, arrayIndex);
@@ -355,7 +291,7 @@ namespace Eraser.Util
 				get { return false; }
 			}
 
-			public bool Remove(Step item)
+			public bool Remove(SteppedProgressManagerStep item)
 			{
 				int index = List.IndexOf(item);
 				if (index != -1)
@@ -366,9 +302,9 @@ namespace Eraser.Util
 
 			#endregion
 
-			#region IEnumerable<Step> Members
+			#region IEnumerable<SteppedProgressManagerStep> Members
 
-			public IEnumerator<Step> GetEnumerator()
+			public IEnumerator<SteppedProgressManagerStep> GetEnumerator()
 			{
 				return List.GetEnumerator();
 			}
@@ -406,7 +342,7 @@ namespace Eraser.Util
 			/// <summary>
 			/// The list storing the steps for this instance.
 			/// </summary>
-			private List<Step> List;
+			private List<SteppedProgressManagerStep> List;
 
 			/// <summary>
 			/// The lock object guarding the list against parallel writes.
@@ -434,7 +370,7 @@ namespace Eraser.Util
 			{
 				float result = 0.0f;
 				lock (ListLock)
-					foreach (Step step in Steps)
+					foreach (SteppedProgressManagerStep step in Steps)
 						result += step.Progress.Progress * step.Weight;
 
 				return result;
@@ -466,7 +402,7 @@ namespace Eraser.Util
 		/// <summary>
 		/// The list of steps involved in completion of the task.
 		/// </summary>
-		public StepsList Steps
+		public IList<SteppedProgressManagerStep> Steps
 		{
 			get;
 			private set;
@@ -476,7 +412,7 @@ namespace Eraser.Util
 		/// Gets the current step which is executing. This property is null if
 		/// no steps are executing (also when the task is complete)
 		/// </summary>
-		public Step CurrentStep
+		public SteppedProgressManagerStep CurrentStep
 		{
 			get
 			{
@@ -485,7 +421,7 @@ namespace Eraser.Util
 					if (Steps.Count == 0)
 						return null;
 
-					foreach (Step step in Steps)
+					foreach (SteppedProgressManagerStep step in Steps)
 						if (step.Progress.Progress < 1.0f)
 							return step;
 
@@ -502,6 +438,70 @@ namespace Eraser.Util
 	}
 
 	/// <summary>
+	/// Represents one step in the list of steps to complete.
+	/// </summary>
+	public class SteppedProgressManagerStep
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="progress">The <see cref="ProgressManagerBase"/> instance
+		/// which measures the progress of this step.</param>
+		/// <param name="weight">The weight of this step. The weight is a decimal
+		/// number in the range [0.0, 1.0] which represents the percentage of the
+		/// entire process this particular step is.</param>
+		public SteppedProgressManagerStep(ProgressManagerBase progress, float weight)
+			: this(progress, weight, null)
+		{
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="progress">The <see cref="ProgressManagerBase"/> instance
+		/// which measures the progress of this step.</param>
+		/// <param name="weight">The weight of this step. The weight is a decimal
+		/// number in the range [0.0, 1.0] which represents the percentage of the
+		/// entire process this particular step is.</param>
+		/// <param name="name">A user-specified value of the name of this step.
+		/// This value is not used by the class at all.</param>
+		public SteppedProgressManagerStep(ProgressManagerBase progress, float weight, string name)
+		{
+			Progress = progress;
+			Weight = weight;
+			Name = name;
+		}
+
+		/// <summary>
+		/// The <see cref="ProgressManagerBase"/> instance which measures the
+		/// progress of the step.
+		/// </summary>
+		public ProgressManagerBase Progress
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// The weight associated with this step.
+		/// </summary>
+		public float Weight
+		{
+			get;
+			private set;
+		}
+
+		/// <summary>
+		/// The name of this step.
+		/// </summary>
+		public string Name
+		{
+			get;
+			set;
+		}
+	}
+
+	/// <summary>
 	/// Manages progress based on sub-tasks, assuming each sub-task to be independent
 	/// of the rest.
 	/// </summary>
@@ -510,7 +510,7 @@ namespace Eraser.Util
 		/// <summary>
 		/// The class which manages the progress of each dependent task.
 		/// </summary>
-		public class SubTasksList : IList<ProgressManagerBase>
+		private class SubTasksList : IList<ProgressManagerBase>
 		{
 			public SubTasksList(ParallelProgressManager manager)
 			{
@@ -683,7 +683,7 @@ namespace Eraser.Util
 		/// Gets the list of tasks which must complete execution before the task
 		/// is completed.
 		/// </summary>
-		public SubTasksList Tasks
+		public IList<ProgressManagerBase> Tasks
 		{
 			get;
 			private set;
