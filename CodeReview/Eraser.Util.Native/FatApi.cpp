@@ -50,7 +50,7 @@ namespace Util {
 		LoadFat();
 	}
 
-	FatApi::FatApi(VolumeInfo^, Stream^ stream)
+	FatApi::FatApi(Stream^ stream)
 	{
 		BootSector = new FatBootSector();
 		memset(BootSector, 0, sizeof(*BootSector));
