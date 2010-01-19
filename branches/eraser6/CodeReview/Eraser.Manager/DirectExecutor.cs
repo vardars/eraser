@@ -350,7 +350,7 @@ namespace Eraser.Manager
 			}
 			
 			//If the user is under disk quotas, log a warning message
-			if (VolumeInfo.FromMountpoint(target.Drive).HasQuota)
+			if (VolumeInfo.FromMountPoint(target.Drive).HasQuota)
 				task.Log.LastSessionEntries.Add(new LogEntry(S._("The drive {0} has disk quotas " +
 					"active. This will prevent the complete erasure of unused space and may pose " +
 					"a security concern.", target.Drive), LogLevel.Warning));
@@ -360,13 +360,13 @@ namespace Eraser.Manager
 
 			//Make a folder to dump our temporary files in
 			DirectoryInfo info = new DirectoryInfo(target.Drive);
-			VolumeInfo volInfo = VolumeInfo.FromMountpoint(target.Drive);
+			VolumeInfo volInfo = VolumeInfo.FromMountPoint(target.Drive);
 			FileSystem fsManager = FileSystemManager.Get(volInfo);
 
 			//Start sampling the speed of the task.
 			SteppedProgressManager progress = new SteppedProgressManager();
 			target.Progress = progress;
-			task.Progress.Steps.Add(new SteppedProgressManager.Step(
+			task.Progress.Steps.Add(new SteppedProgressManagerStep(
 				progress, 1.0f / task.Targets.Count));
 
 			//Erase the cluster tips of every file on the drive.
@@ -374,7 +374,7 @@ namespace Eraser.Manager
 			{
 				//Define the callback handlers
 				ProgressManager tipSearch = new ProgressManager();
-				progress.Steps.Add(new SteppedProgressManager.Step(tipSearch, 
+				progress.Steps.Add(new SteppedProgressManagerStep(tipSearch, 
 					0.0f, S._("Searching for files' cluster tips...")));
 				tipSearch.Total = 1;
 				ClusterTipsSearchProgress searchProgress = delegate(string path)
@@ -388,7 +388,7 @@ namespace Eraser.Manager
 					};
 
 				ProgressManager tipProgress = new ProgressManager();
-				progress.Steps.Add(new SteppedProgressManager.Step(tipProgress, 0.1f,
+				progress.Steps.Add(new SteppedProgressManagerStep(tipProgress, 0.1f,
 					S._("Erasing cluster tips...")));
 				ClusterTipsEraseProgress eraseProgress =
 					delegate(int currentFile, int totalFiles, string currentFilePath)
@@ -405,7 +405,7 @@ namespace Eraser.Manager
 					};
 
 				//Start counting statistics
-				fsManager.EraseClusterTips(VolumeInfo.FromMountpoint(target.Drive),
+				fsManager.EraseClusterTips(VolumeInfo.FromMountPoint(target.Drive),
 					method, task.Log, searchProgress, eraseProgress);
 			}
 
@@ -419,7 +419,7 @@ namespace Eraser.Manager
 					Eraser.Util.File.SetCompression(info.FullName, false);
 
 				ProgressManager mainProgress = new ProgressManager();
-				progress.Steps.Add(new SteppedProgressManager.Step(mainProgress,
+				progress.Steps.Add(new SteppedProgressManagerStep(mainProgress,
 					target.EraseClusterTips ? 0.8f : 0.9f, S._("Erasing unused space...")));
 
 				//Continue creating files while there is free space.
@@ -476,7 +476,7 @@ namespace Eraser.Manager
 
 				//Erase old resident file system table files
 				ProgressManager residentProgress = new ProgressManager();
-				progress.Steps.Add(new SteppedProgressManager.Step(residentProgress,
+				progress.Steps.Add(new SteppedProgressManagerStep(residentProgress,
 					0.05f, S._("Old resident file system table files")));
 				fsManager.EraseOldFileSystemResidentFiles(volInfo, info, method,
 					delegate(int currentFile, int totalFiles)
@@ -498,7 +498,7 @@ namespace Eraser.Manager
 			{
 				//Remove the folder holding all our temporary files.
 				ProgressManager tempFiles = new ProgressManager();
-				progress.Steps.Add(new SteppedProgressManager.Step(tempFiles,
+				progress.Steps.Add(new SteppedProgressManagerStep(tempFiles,
 					0.0f, S._("Removing temporary files...")));
 				task.OnProgressChanged(target, new ProgressChangedEventArgs(tempFiles,
 					new TaskProgressChangedEventArgs(string.Empty, 0, 0)));
@@ -508,7 +508,7 @@ namespace Eraser.Manager
 
 			//Then clean the old file system entries
 			ProgressManager structureProgress = new ProgressManager();
-			progress.Steps.Add(new SteppedProgressManager.Step(structureProgress,
+			progress.Steps.Add(new SteppedProgressManagerStep(structureProgress,
 				0.05f, S._("Erasing unused directory structures...")));
 			fsManager.EraseDirectoryStructures(volInfo,
 				delegate(int currentFile, int totalFiles)
@@ -553,14 +553,14 @@ namespace Eraser.Manager
 			TaskEventArgs eventArgs = new TaskEventArgs(task);
 			SteppedProgressManager progress = new SteppedProgressManager();
 			target.Progress = progress;
-			task.Progress.Steps.Add(new SteppedProgressManager.Step(progress, 1.0f / task.Targets.Count));
+			task.Progress.Steps.Add(new SteppedProgressManagerStep(progress, 1.0f / task.Targets.Count));
 
 			//Iterate over every path, and erase the path.
 			for (int i = 0; i < paths.Count; ++i)
 			{
 				//Update the task progress
 				ProgressManager step = new ProgressManager();
-				progress.Steps.Add(new SteppedProgressManager.Step(step,
+				progress.Steps.Add(new SteppedProgressManagerStep(step,
 					1.0f / paths.Count, S._("Erasing files...")));
 				task.OnProgressChanged(target,
 					new ProgressChangedEventArgs(step,
@@ -569,7 +569,7 @@ namespace Eraser.Manager
 				//Get the filesystem provider to handle the secure file erasures
 				StreamInfo info = new StreamInfo(paths[i]);
 				FileSystem fsManager = FileSystemManager.Get(
-					VolumeInfo.FromMountpoint(info.DirectoryName));
+					VolumeInfo.FromMountPoint(info.DirectoryName));
 
 				//Check that the file exists - we do not want to bother erasing nonexistant files
 				if (!info.Exists)
@@ -663,12 +663,12 @@ namespace Eraser.Manager
 			if (target is FolderTarget)
 			{
 				ProgressManager step = new ProgressManager();
-				progress.Steps.Add(new SteppedProgressManager.Step(step,
+				progress.Steps.Add(new SteppedProgressManagerStep(step,
 					0.0f, S._("Removing folders...")));
 				
 				//Remove all subfolders which are empty.
 				FolderTarget fldr = (FolderTarget)target;
-				FileSystem fsManager = FileSystemManager.Get(VolumeInfo.FromMountpoint(fldr.Path));
+				FileSystem fsManager = FileSystemManager.Get(VolumeInfo.FromMountPoint(fldr.Path));
 				Action<DirectoryInfo> eraseEmptySubFolders = null;
 				eraseEmptySubFolders = delegate(DirectoryInfo info)
 				{
@@ -709,7 +709,7 @@ namespace Eraser.Manager
 			if (target is RecycleBinTarget)
 			{
 				ProgressManager step = new ProgressManager();
-				progress.Steps.Add(new SteppedProgressManager.Step(step,
+				progress.Steps.Add(new SteppedProgressManagerStep(step,
 					0.0f, S._("Emptying recycle bin...")));
 				task.OnProgressChanged(target,
 					new ProgressChangedEventArgs(step,

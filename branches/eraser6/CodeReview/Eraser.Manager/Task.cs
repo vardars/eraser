@@ -577,7 +577,7 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				VolumeInfo info = VolumeInfo.FromMountpoint(Drive);
+				VolumeInfo info = VolumeInfo.FromMountPoint(Drive);
 				return Method.CalculateEraseDataSize(null, info.AvailableFreeSpace);
 			}
 		}
