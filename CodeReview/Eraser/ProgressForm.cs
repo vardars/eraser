@@ -207,7 +207,7 @@ namespace Eraser
 			return result.ToString();
 		}
 
-		private TimeSpan RoundToSeconds(TimeSpan span)
+		private static TimeSpan RoundToSeconds(TimeSpan span)
 		{
 			return new TimeSpan(span.Ticks - span.Ticks % TimeSpan.TicksPerSecond);
 		}
