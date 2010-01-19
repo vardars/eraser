@@ -38,6 +38,7 @@ namespace Eraser.Util
     // Functions Reset<PropertyName> are added for Nullable Read/Write properties. These functions are used by VS designer in property browser to set a property to NULL.
     // Every property added to the class for WMI property has attributes set to define its behavior in Visual Studio designer and also to define a TypeConverter to be used.
     // An Early Bound class generated for the WMI class.SystemRestore
+	[global::System.CodeDom.Compiler.GeneratedCodeAttribute("mgmtclassgen", "3.5.30729.1")]
     public class SystemRestore : System.ComponentModel.Component {
         
         // Private property to hold the WMI namespace in which the class resides.
