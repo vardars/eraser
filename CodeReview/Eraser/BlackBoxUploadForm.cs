@@ -34,6 +34,9 @@ using ICSharpCode.SharpZipLib.BZip2;
 using System.Net;
 using System.Xml;
 
+using ProgressChangedEventArgs = System.ComponentModel.ProgressChangedEventArgs;
+using ProgressChangedEventHandler = System.ComponentModel.ProgressChangedEventHandler;
+
 namespace Eraser
 {
 	public partial class BlackBoxUploadForm : Form
@@ -45,7 +48,7 @@ namespace Eraser
 		public BlackBoxUploadForm(IList<BlackBoxReport> reports)
 		{
 			InitializeComponent();
-			UXThemeApi.UpdateControlTheme(this);
+			Theming.ApplyTheme(this);
 			UploadWorker.RunWorkerAsync(reports);
 		}
 

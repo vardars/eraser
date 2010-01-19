@@ -32,6 +32,7 @@ using Microsoft.Win32.SafeHandles;
 
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Collections.ObjectModel;
 using System.Globalization;
 
 namespace Eraser.Util
