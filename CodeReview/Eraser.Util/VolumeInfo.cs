@@ -51,10 +51,14 @@ namespace Eraser.Util
 				while (!NativeMethods.GetVolumePathNamesForVolumeName(VolumeId,
 					pathNamesBuffer, (uint)pathNamesBuffer.Capacity, out returnLength))
 				{
-					if (Marshal.GetLastWin32Error() == Win32ErrorCode.MoreData)
-						pathNamesBuffer.EnsureCapacity((int)returnLength);
-					else
-						throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+					int errorCode = Marshal.GetLastWin32Error();
+					switch (errorCode)
+					{
+						case Win32ErrorCode.MoreData:
+							pathNamesBuffer.EnsureCapacity((int)returnLength);
+							break;
+						default:
+							throw Win32ErrorCode.GetExceptionForWin32Error(errorCode);
 				}
 
 				if (pathNamesBuffer.Length < returnLength)
@@ -174,13 +178,11 @@ namespace Eraser.Util
 				string currentDir = mountpointDir.FullName;
 				if (currentDir.Length > 0 && currentDir[currentDir.Length - 1] != '\\')
 					currentDir += '\\';
-				if (NativeMethods.GetVolumeNameForVolumeMountPoint(currentDir, volumeID, 50))
+				if (!NativeMethods.GetVolumeNameForVolumeMountPoint(currentDir, volumeID, 50))
 				{
-					return new VolumeInfo(volumeID.ToString());
-				}
-				else
-				{
-					switch (Marshal.GetLastWin32Error())
+					int errorCode = Marshal.GetLastWin32Error();
+
+					switch (errorCode)
 					{
 						case Win32ErrorCode.InvalidFunction:
 						case Win32ErrorCode.FileNotFound:
@@ -190,6 +192,10 @@ namespace Eraser.Util
 						default:
 							throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
 					}
+				}
+				else
+				{
+					return new VolumeInfo(volumeID.ToString());
 				}
 
 				mountpointDir = mountpointDir.Parent;
