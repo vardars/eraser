@@ -279,7 +279,7 @@ Eraser Project Members:
 			g.DrawImageUnscaled(DoubleBufferBitmap, 0, 0);
 		}
 
-		private double mouseSpeed = 0.0;
+		private double mouseSpeed;
 		private DateTime mouseDownTime = DateTime.MinValue;
 		private TimeSpan mouseSpeedUpSpan = new TimeSpan(0, 0, 0, 0, 230);
 		private MouseButtons mouseBotton;

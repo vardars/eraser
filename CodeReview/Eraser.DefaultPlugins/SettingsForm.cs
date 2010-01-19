@@ -193,7 +193,7 @@ namespace Eraser.DefaultPlugins
 		/// Updates the UI which represents the given custom erasure method.
 		/// </summary>
 		/// <param name="item">The method to update.</param>
-		private void UpdateMethod(ListViewItem item)
+		private static void UpdateMethod(ListViewItem item)
 		{
 			CustomErasureMethod method = (CustomErasureMethod)item.Tag;
 			item.Text = method.Name;
