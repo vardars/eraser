@@ -44,55 +44,6 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
-		/// Checks whether the current process is running with administrative privileges.
-		/// </summary>
-		/// <returns>Returns true if UAC is enabled under Vista. Will return false
-		/// under pre-Vista OSes</returns>
-		public static bool UacEnabled()
-		{
-			//Check whether we're on Vista
-			if (Environment.OSVersion.Platform != PlatformID.Win32NT ||
-				Environment.OSVersion.Version < new Version(6, 0))
-			{
-				//UAC doesn't exist on these platforms.
-				return false;
-			}
-
-			//Get the process token.
-			SafeTokenHandle hToken = new SafeTokenHandle();
-			bool result = NativeMethods.OpenProcessToken(
-				System.Diagnostics.Process.GetCurrentProcess().Handle,
-				NativeMethods.TOKEN_QUERY, out hToken);
-			if (!result || hToken.IsInvalid)
-				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
-
-			IntPtr pElevationType = Marshal.AllocHGlobal(Marshal.SizeOf(
-				typeof(NativeMethods.TOKEN_ELEVATION_TYPE)));
-			try
-			{
-				//Get the token information for our current process.
-				uint returnSize = 0;
-				result = NativeMethods.GetTokenInformation(hToken,
-					NativeMethods.TOKEN_INFORMATION_CLASS.TokenElevationType,
-					pElevationType, sizeof(NativeMethods.TOKEN_ELEVATION_TYPE),
-					out returnSize);
-
-				//Check the return code
-				if (!result)
-					throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
-
-				NativeMethods.TOKEN_ELEVATION_TYPE elevationType =
-					(NativeMethods.TOKEN_ELEVATION_TYPE)Marshal.PtrToStructure(
-						pElevationType, typeof(NativeMethods.TOKEN_ELEVATION_TYPE));
-				return elevationType != NativeMethods.TOKEN_ELEVATION_TYPE.TokenElevationTypeDefault;
-			}
-			finally
-			{
-				Marshal.FreeHGlobal(pElevationType);
-			}
-		}
-
-		/// <summary>
 		/// Verifies the Authenticode signature in a file.
 		/// </summary>
 		/// <param name="pathToFile">The file to verify.</param>
@@ -241,21 +192,6 @@ namespace Eraser.Util
 		protected override bool ReleaseHandle()
 		{
 			NativeMethods.CryptReleaseContext(handle, 0u);
-			handle = IntPtr.Zero;
-			return true;
-		}
-	}
-
-	internal class SafeTokenHandle : SafeHandleZeroOrMinusOneIsInvalid
-	{
-		public SafeTokenHandle()
-			: base(true)
-		{
-		}
-
-		protected override bool ReleaseHandle()
-		{
-			NativeMethods.CloseHandle(handle);
 			handle = IntPtr.Zero;
 			return true;
 		}
