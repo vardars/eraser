@@ -154,7 +154,7 @@ namespace Eraser.Util
 		}
 	}
 
-	internal sealed class CryptApi
+	internal sealed class CryptApi : IDisposable
 	{
 		/// <summary>
 		/// Constructor.
@@ -187,6 +187,25 @@ namespace Eraser.Util
 
 			throw new NotSupportedException("Unable to acquire a cryptographic service provider.");
 		}
+
+		#region IDisposable Members
+		~CryptApi()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose(bool disposing)
+		{
+			if (disposing)
+				handle.Close();
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+		#endregion
 
 		/// <summary>
 		/// The GenRandom function fills a buffer with cryptographically random bytes.
