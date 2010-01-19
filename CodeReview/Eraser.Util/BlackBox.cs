@@ -35,6 +35,11 @@ using System.Drawing.Imaging;
 using System.Collections.ObjectModel;
 using System.Globalization;
 
+using ICSharpCode.SharpZipLib.Tar;
+using ICSharpCode.SharpZipLib.BZip2;
+using System.Net;
+using System.Xml;
+
 namespace Eraser.Util
 {
 	/// <summary>
@@ -517,5 +522,231 @@ namespace Eraser.Util
 		/// The backing variable for the <see cref="StackTrace"/> property.
 		/// </summary>
 		private List<string> StackTraceCache;
+	}
+
+	/// <summary>
+	/// Uploads <see cref="BlackBoxReport"/>s to the Eraser server.
+	/// </summary>
+	public class BlackBoxReportUploader
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="report">The report to upload.</param>
+		public BlackBoxReportUploader(BlackBoxReport report)
+		{
+			Report = report;
+			if (!Directory.Exists(UploadTempDir))
+				Directory.CreateDirectory(UploadTempDir);
+
+			ReportBaseName = Path.Combine(UploadTempDir, Report.Name);
+		}
+
+		/// <summary>
+		/// Verifies the stack trace against the server to see if the report is new.
+		/// </summary>
+		/// <returns>True if the report is new; false otherwise</returns>
+		public bool ReportIsNew()
+		{
+			MultipartFormDataBuilder builder = new MultipartFormDataBuilder();
+			builder.AddPart(new FormField("action", "status"));
+			AddStackTraceToRequest(Report.StackTrace, builder);
+
+			WebRequest reportRequest = HttpWebRequest.Create(BlackBoxServer);
+			reportRequest.ContentType = "multipart/form-data; boundary=" + builder.Boundary;
+			reportRequest.Method = "POST";
+			using (Stream formStream = builder.Stream)
+			{
+				reportRequest.ContentLength = formStream.Length;
+				using (Stream requestStream = reportRequest.GetRequestStream())
+				{
+					int lastRead = 0;
+					byte[] buffer = new byte[32768];
+					while ((lastRead = formStream.Read(buffer, 0, buffer.Length)) != 0)
+						requestStream.Write(buffer, 0, lastRead);
+				}
+			}
+
+			try
+			{
+				HttpWebResponse response = reportRequest.GetResponse() as HttpWebResponse;
+				using (Stream responseStream = response.GetResponseStream())
+				{
+					XmlReader reader = XmlReader.Create(responseStream);
+					reader.ReadToFollowing("crashReport");
+					string reportStatus = reader.GetAttribute("status");
+					switch (reportStatus)
+					{
+						case "exists":
+							Report.Submitted = true;
+							return false;
+
+						case "new":
+							return true;
+
+						default:
+							throw new InvalidDataException(S._("Unknown crash report server response."));
+					}
+				}
+			}
+			catch (WebException e)
+			{
+				using (Stream responseStream = e.Response.GetResponseStream())
+				{
+					try
+					{
+						XmlReader reader = XmlReader.Create(responseStream);
+						reader.ReadToFollowing("error");
+						throw new InvalidDataException(S._("The server encountered a problem " +
+							"while processing the request: {0}", reader.ReadString()));
+					}
+					catch (XmlException)
+					{
+					}
+				}
+
+				throw new InvalidDataException(((HttpWebResponse)e.Response).StatusDescription);
+			}
+		}
+
+		public void Compress(ProgressChangedEventHandler progressChanged)
+		{
+			using (FileStream archiveStream = new FileStream(ReportBaseName + ".tar",
+					FileMode.Create, FileAccess.Write))
+			{
+				//Add the report into a tar file
+				TarArchive archive = TarArchive.CreateOutputTarArchive(archiveStream);
+				foreach (FileInfo file in Report.Files)
+				{
+					TarEntry entry = TarEntry.CreateEntryFromFile(file.FullName);
+					entry.Name = Path.GetFileName(entry.Name);
+					archive.WriteEntry(entry, false);
+				}
+				archive.Close();
+			}
+
+			ProgressManager progress = new ProgressManager();
+			using (FileStream bzipFile = new FileStream(ReportBaseName + ".tbz",
+				FileMode.Create))
+			using (FileStream tarStream = new FileStream(ReportBaseName + ".tar",
+				FileMode.Open, FileAccess.Read, FileShare.Read, 262144, FileOptions.DeleteOnClose))
+			using (BZip2OutputStream bzipStream = new BZip2OutputStream(bzipFile, 262144))
+			{
+				//Compress the tar file
+				int lastRead = 0;
+				byte[] buffer = new byte[524288];
+				while ((lastRead = tarStream.Read(buffer, 0, buffer.Length)) != 0)
+				{
+					bzipStream.Write(buffer, 0, lastRead);
+					progress.Completed = tarStream.Position;
+					progress.Total = tarStream.Length;
+					progressChanged(this, new ProgressChangedEventArgs(progress, null));
+				}
+			}
+		}
+
+		public void Upload(ProgressChangedEventHandler progressChanged)
+		{
+			using (FileStream bzipFile = new FileStream(ReportBaseName + ".tbz",
+				FileMode.Open, FileAccess.Read, FileShare.Read, 131072, FileOptions.DeleteOnClose))
+			using (Stream logFile = Report.DebugLog)
+			{
+				//Build the POST request
+				MultipartFormDataBuilder builder = new MultipartFormDataBuilder();
+				builder.AddPart(new FormField("action", "upload"));
+				builder.AddPart(new FormFileField("crashReport", "Report.tbz", bzipFile));
+				AddStackTraceToRequest(Report.StackTrace, builder);
+
+				//Upload the POST request
+				WebRequest reportRequest = HttpWebRequest.Create(BlackBoxServer);
+				reportRequest.ContentType = "multipart/form-data; boundary=" + builder.Boundary;
+				reportRequest.Method = "POST";
+				reportRequest.Timeout = int.MaxValue;
+				using (Stream formStream = builder.Stream)
+				{
+					reportRequest.ContentLength = formStream.Length;
+					ProgressManager progress = new ProgressManager();
+					using (Stream requestStream = reportRequest.GetRequestStream())
+					{
+						int lastRead = 0;
+						byte[] buffer = new byte[32768];
+						while ((lastRead = formStream.Read(buffer, 0, buffer.Length)) != 0)
+						{
+							requestStream.Write(buffer, 0, lastRead);
+
+							progress.Completed = formStream.Position;
+							progress.Total = formStream.Length;
+							progressChanged(this, new ProgressChangedEventArgs(progress, null));
+						}
+					}
+				}
+
+				try
+				{
+					reportRequest.GetResponse();
+					Report.Submitted = true;
+				}
+				catch (WebException e)
+				{
+					using (Stream responseStream = e.Response.GetResponseStream())
+					{
+						try
+						{
+							XmlReader reader = XmlReader.Create(responseStream);
+							reader.ReadToFollowing("error");
+							throw new InvalidDataException(S._("The server encountered a problem " +
+								"while processing the request: {0}", reader.ReadString()));
+						}
+						catch (XmlException)
+						{
+						}
+					}
+
+					throw new InvalidDataException(((HttpWebResponse)e.Response).StatusDescription);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Adds the stack trace to the given form request.
+		/// </summary>
+		/// <param name="stackTrace">The stack trace to add.</param>
+		/// <param name="builder">The Form request builder to add the stack trace to.</param>
+		private static void AddStackTraceToRequest(IList<BlackBoxExceptionEntry> stackTrace,
+			MultipartFormDataBuilder builder)
+		{
+			int exceptionIndex = 0;
+			foreach (BlackBoxExceptionEntry exceptionStack in stackTrace)
+			{
+				foreach (string stackFrame in exceptionStack.StackTrace)
+					builder.AddPart(new FormField(
+						string.Format("stackTrace[{0}][]", exceptionIndex), stackFrame));
+				builder.AddPart(new FormField(string.Format(
+					"stackTrace[{0}][exception]", exceptionIndex), exceptionStack.ExceptionType));
+				++exceptionIndex;
+			}
+		}
+
+		/// <summary>
+		/// The path to where the temporary files are stored before uploading.
+		/// </summary>
+		private static readonly string UploadTempDir =
+			Path.Combine(Path.GetTempPath(), "Eraser Crash Reports");
+
+		/// <summary>
+		/// The URI to the BlackBox server.
+		/// </summary>
+		private static readonly Uri BlackBoxServer =
+			new Uri("http://eraser.heidi.ie/scripts/blackbox/upload.php");
+
+		/// <summary>
+		/// The report being uploaded.
+		/// </summary>
+		private BlackBoxReport Report;
+
+		/// <summary>
+		/// The base name of the report.
+		/// </summary>
+		private readonly string ReportBaseName;
 	}
 }
