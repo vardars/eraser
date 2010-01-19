@@ -44,24 +44,24 @@ namespace Eraser.Util
 		/// </summary>
 		/// <param name="str">The string to localise.</param>
 		/// <returns>A localised string, or str if no localisation exists.</returns>
-		public static string _(string str)
+		public static string _(string text)
 		{
-			return TranslateText(str, Assembly.GetCallingAssembly());
+			return TranslateText(text, Assembly.GetCallingAssembly());
 		}
 
 		/// <summary>
-		/// Translates the localisable string to the localised string, formatting all
+		/// Translates the localisable text to the localised text, formatting all
 		/// placeholders using composite formatting. This is shorthand for
-		/// <code>string.Format(S._(str), args)</code>
+		/// <code>string.Format(S._(text), args)</code>
 		/// </summary>
-		/// <param name="str">The string to localise.</param>
+		/// <param name="text">The text to localise.</param>
 		/// <param name="args">Arguments for the composite formatting call.</param>
 		/// <returns>The formatted and localised string.</returns>
 		/// <remarks>The localised string is retrieved before formatting.</remarks>
-		public static string _(string str, params object[] args)
+		public static string _(string text, params object[] args)
 		{
 			//Get the localised version of the input string.
-			string localStr = TranslateText(str, Assembly.GetCallingAssembly());
+			string localStr = TranslateText(text, Assembly.GetCallingAssembly());
 
 			//Format the string.
 			return string.Format(CultureInfo.CurrentCulture, localStr, args);
@@ -75,7 +75,7 @@ namespace Eraser.Util
 		public static bool IsRightToLeft(Control control)
 		{
 			if (control == null)
-				return CultureInfo.CurrentCulture.TextInfo.IsRightToLeft;
+				throw new ArgumentNullException("control");
 
 			switch (control.RightToLeft)
 			{
@@ -91,15 +91,15 @@ namespace Eraser.Util
 		/// <summary>
 		/// Translates the localisable string to the set localised string.
 		/// </summary>
-		/// <param name="str">The string to localise.</param>
+		/// <param name="text">The string to localise.</param>
 		/// <param name="assembly">The assembly from which localised resource satellite
 		/// assemblies should be loaded from.</param>
 		/// <returns>A localised string, or str if no localisation exists.</returns>
-		public static string TranslateText(string str, Assembly assembly)
+		public static string TranslateText(string text, Assembly assembly)
 		{
 			//If the string is empty, forget it!
-			if (str.Length == 0)
-				return str;
+			if (text.Length == 0)
+				return text;
 
 			//First get the dictionary mapping assemblies and ResourceManagers (i.e. pick out
 			//the dictionary with ResourceManagers representing the current culture.)
@@ -131,11 +131,11 @@ namespace Eraser.Util
 			else
 				res = assemblies[assembly];
 
-			string result = res.GetString(Escape(str), Thread.CurrentThread.CurrentUICulture);
+			string result = res.GetString(Escape(text), Thread.CurrentThread.CurrentUICulture);
 #if DEBUG
-			return string.IsNullOrEmpty(result) ? str : Unescape(result);
+			return string.IsNullOrEmpty(result) ? text : Unescape(result);
 #else
-			return string.IsNullOrEmpty(result) || result == "(Untranslated)" ? str : Unescape(result);
+			return string.IsNullOrEmpty(result) || result == "(Untranslated)" ? text : Unescape(result);
 #endif
 		}
 
