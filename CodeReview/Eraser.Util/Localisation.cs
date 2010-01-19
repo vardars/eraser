@@ -37,6 +37,7 @@ namespace Eraser.Util
 	/// Internationalisation class. Instead of calling GetString on all strings, just
 	/// call S._(string) or S._(string, object) for plurals
 	/// </summary>
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "S")]
 	public static class S
 	{
 		/// <summary>
@@ -44,6 +45,8 @@ namespace Eraser.Util
 		/// </summary>
 		/// <param name="str">The string to localise.</param>
 		/// <returns>A localised string, or str if no localisation exists.</returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "_")]
 		public static string _(string text)
 		{
 			return TranslateText(text, Assembly.GetCallingAssembly());
@@ -58,6 +61,8 @@ namespace Eraser.Util
 		/// <param name="args">Arguments for the composite formatting call.</param>
 		/// <returns>The formatted and localised string.</returns>
 		/// <remarks>The localised string is retrieved before formatting.</remarks>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "_")]
 		public static string _(string text, params object[] args)
 		{
 			//Get the localised version of the input string.
