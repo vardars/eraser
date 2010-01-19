@@ -203,7 +203,6 @@ namespace Eraser
 
 			StringBuilder csvText = new StringBuilder();
 			StringBuilder rawText = new StringBuilder();
-			LogSessionDictionary logEntries = Task.Log.Entries;
 
 			DateTime sessionTime = (DateTime)filterSessionCombobox.SelectedItem;
 			csvText.AppendLine(S._("Session: {0:F}", sessionTime));
