@@ -486,38 +486,6 @@ namespace Eraser.Util
 			return result;
 		}
 
-		public class DiskPerformanceInfo
-		{
-			internal DiskPerformanceInfo(NativeMethods.DiskPerformanceInfoInternal info)
-			{
-				BytesRead = info.BytesRead;
-				BytesWritten = info.BytesWritten;
-				ReadTime = info.ReadTime;
-				WriteTime = info.WriteTime;
-				IdleTime = info.IdleTime;
-				ReadCount = info.ReadCount;
-				WriteCount = info.WriteCount;
-				QueueDepth = info.QueueDepth;
-				SplitCount = info.SplitCount;
-				QueryTime = info.QueryTime;
-				StorageDeviceNumber = info.StorageDeviceNumber;
-				StorageManagerName = info.StorageManagerName;
-			}
-
-			public long BytesRead { get; private set; }
-			public long BytesWritten { get; private set; }
-			public long ReadTime { get; private set; }
-			public long WriteTime { get; private set; }
-			public long IdleTime { get; private set; }
-			public uint ReadCount { get; private set; }
-			public uint WriteCount { get; private set; }
-			public uint QueueDepth { get; private set; }
-			public uint SplitCount { get; private set; }
-			public long QueryTime { get; private set; }
-			public uint StorageDeviceNumber { get; private set; }
-			public string StorageManagerName { get; private set; }
-		}
-
 		/// <summary>
 		/// Queries the performance information for the given disk.
 		/// </summary>
@@ -582,13 +550,12 @@ namespace Eraser.Util
 		public void Dispose()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "disposing")]
 		void Dispose(bool disposing)
 		{
-			if (disposing)
-				GC.SuppressFinalize(this);
-
 			//Flush the contents of the buffer to disk since after we unlock the volume
 			//we can no longer write to the volume.
 			Stream.Flush();
@@ -603,5 +570,37 @@ namespace Eraser.Util
 		}
 
 		private FileStream Stream;
+	}
+
+	public class DiskPerformanceInfo
+	{
+		internal DiskPerformanceInfo(NativeMethods.DiskPerformanceInfoInternal info)
+		{
+			BytesRead = info.BytesRead;
+			BytesWritten = info.BytesWritten;
+			ReadTime = info.ReadTime;
+			WriteTime = info.WriteTime;
+			IdleTime = info.IdleTime;
+			ReadCount = info.ReadCount;
+			WriteCount = info.WriteCount;
+			QueueDepth = info.QueueDepth;
+			SplitCount = info.SplitCount;
+			QueryTime = info.QueryTime;
+			StorageDeviceNumber = info.StorageDeviceNumber;
+			StorageManagerName = info.StorageManagerName;
+		}
+
+		public long BytesRead { get; private set; }
+		public long BytesWritten { get; private set; }
+		public long ReadTime { get; private set; }
+		public long WriteTime { get; private set; }
+		public long IdleTime { get; private set; }
+		public uint ReadCount { get; private set; }
+		public uint WriteCount { get; private set; }
+		public uint QueueDepth { get; private set; }
+		public uint SplitCount { get; private set; }
+		public long QueryTime { get; private set; }
+		public uint StorageDeviceNumber { get; private set; }
+		public string StorageManagerName { get; private set; }
 	}
 }
