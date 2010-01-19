@@ -271,14 +271,14 @@ namespace Eraser.Util
 			string currentCrashReport = Path.Combine(CrashReportsPath, crashName);
 			Directory.CreateDirectory(currentCrashReport);
 
-			//Write a memory dump to the folder
-			WriteMemoryDump(currentCrashReport, e);
-
 			//Then write a user-readable summary
 			WriteDebugLog(currentCrashReport, e);
 
 			//Take a screenshot
 			WriteScreenshot(currentCrashReport);
+
+			//Write a memory dump to the folder
+			WriteMemoryDump(currentCrashReport, e);
 		}
 
 		/// <summary>
