@@ -550,7 +550,6 @@ namespace Eraser.Manager
 			//dataTotal = method.CalculateEraseDataSize(paths, dataTotal);
 
 			//Set the event's current target status.
-			TaskEventArgs eventArgs = new TaskEventArgs(task);
 			SteppedProgressManager progress = new SteppedProgressManager();
 			target.Progress = progress;
 			task.Progress.Steps.Add(new SteppedProgressManagerStep(progress, 1.0f / task.Targets.Count));
