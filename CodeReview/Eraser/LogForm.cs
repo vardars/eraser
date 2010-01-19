@@ -187,7 +187,8 @@ namespace Eraser
 			//Show the message
 			MessageBox.Show(this, selectedEntry.Message,
 				selectedEntry.Timestamp.ToString("F", CultureInfo.CurrentCulture),
-				MessageBoxButtons.OK, icon);
+				MessageBoxButtons.OK, icon, MessageBoxDefaultButton.Button1,
+				S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
 		}
 
 		private void logContextMenuStrip_Opening(object sender, CancelEventArgs e)
