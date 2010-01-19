@@ -503,6 +503,9 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			Thread.CurrentThread.CurrentUICulture = new CultureInfo(settings.Language);
 			Application.SafeTopLevelCaptionFormat = S._("Eraser");
 
+			//Register the BlackBox UI handler
+			Application.Idle += OnGUIIdle;
+
 			//Load the task list
 			SettingsCompatibility.Execute();
 			try
