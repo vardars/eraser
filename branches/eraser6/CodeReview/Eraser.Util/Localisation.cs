@@ -200,7 +200,7 @@ namespace Eraser.Util
 					if (System.IO.File.Exists(assemblyPath))
 					{
 						languageID = culture.Name;
-						return Assembly.LoadFile(assemblyPath);
+						return Assembly.LoadFrom(assemblyPath);
 					}
 				}
 				culture = culture.Parent;
