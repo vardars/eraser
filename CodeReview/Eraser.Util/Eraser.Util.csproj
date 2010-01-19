@@ -49,6 +49,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dependencies\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -99,6 +103,7 @@
   <ItemGroup>
     <Compile Include="ConsoleWindow.cs" />
     <Compile Include="NativeMethods\DbgHelp.cs" />
+    <Compile Include="PostDataBuilder.cs" />
     <Compile Include="Power.cs" />
     <Compile Include="NativeMethods\Gdi.cs" />
     <Compile Include="NativeMethods\Sfc.cs" />

@@ -548,12 +548,12 @@ namespace Eraser.Util
 		/// <returns>True if the report is new; false otherwise</returns>
 		public bool ReportIsNew()
 		{
-			MultipartFormDataBuilder builder = new MultipartFormDataBuilder();
+			PostDataBuilder builder = new PostDataBuilder();
 			builder.AddPart(new FormField("action", "status"));
 			AddStackTraceToRequest(Report.StackTrace, builder);
 
 			WebRequest reportRequest = HttpWebRequest.Create(BlackBoxServer);
-			reportRequest.ContentType = "multipart/form-data; boundary=" + builder.Boundary;
+			reportRequest.ContentType = builder.ContentType;
 			reportRequest.Method = "POST";
 			using (Stream formStream = builder.Stream)
 			{
@@ -652,14 +652,14 @@ namespace Eraser.Util
 			using (Stream logFile = Report.DebugLog)
 			{
 				//Build the POST request
-				MultipartFormDataBuilder builder = new MultipartFormDataBuilder();
+				PostDataBuilder builder = new PostDataBuilder();
 				builder.AddPart(new FormField("action", "upload"));
 				builder.AddPart(new FormFileField("crashReport", "Report.tbz", bzipFile));
 				AddStackTraceToRequest(Report.StackTrace, builder);
 
 				//Upload the POST request
 				WebRequest reportRequest = HttpWebRequest.Create(BlackBoxServer);
-				reportRequest.ContentType = "multipart/form-data; boundary=" + builder.Boundary;
+				reportRequest.ContentType = builder.ContentType;
 				reportRequest.Method = "POST";
 				reportRequest.Timeout = int.MaxValue;
 				using (Stream formStream = builder.Stream)
@@ -713,7 +713,7 @@ namespace Eraser.Util
 		/// <param name="stackTrace">The stack trace to add.</param>
 		/// <param name="builder">The Form request builder to add the stack trace to.</param>
 		private static void AddStackTraceToRequest(IList<BlackBoxExceptionEntry> stackTrace,
-			MultipartFormDataBuilder builder)
+			PostDataBuilder builder)
 		{
 			int exceptionIndex = 0;
 			foreach (BlackBoxExceptionEntry exceptionStack in stackTrace)

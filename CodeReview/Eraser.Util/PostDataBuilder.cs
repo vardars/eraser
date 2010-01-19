@@ -26,9 +26,15 @@ using System.IO;
 
 namespace Eraser.Util
 {
-	class MultipartFormDataBuilder
+	/// <summary>
+	/// Constructs a multipart/form-data encoded POST request.
+	/// </summary>
+	public class PostDataBuilder
 	{
-		public MultipartFormDataBuilder()
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public PostDataBuilder()
 		{
 			FileName = Path.GetTempFileName();
 		}
@@ -92,16 +98,46 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
+		/// Gets the Content Type of this builder. This is suitable for use in a HTTP
+		/// Content-Type header.
+		/// </summary>
+		public string ContentType
+		{
+			get
+			{
+				return "multipart/form-data; boundary=" + Boundary;
+			}
+		}
+
+		/// <summary>
 		/// The Multipart/Form-Data boundary in use. If this is NULL, WritePostData will generate one
 		/// and store it here.
 		/// </summary>
 		public string Boundary
 		{
-			get;
-			set;
+			get
+			{
+				return boundary;
+			}
+			set
+			{
+				if (Stream.Length != 0)
+					throw new InvalidOperationException("The boundary cannot be set as data " +
+						"already exists in the buffer.");
+				boundary = value;
+			}
 		}
 
+		/// <summary>
+		/// Stores the temporary file we use as a buffer to store the parts before the
+		/// stream is requested to store the parts.
+		/// </summary>
 		private string FileName;
+
+		/// <summary>
+		/// The backing variable for the <see cref="Boundary"/> property.
+		/// </summary>
+		private string boundary;
 
 		/// <summary>
 		/// Characters valid for use in the multipart boundary.
