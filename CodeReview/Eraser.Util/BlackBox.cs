@@ -549,7 +549,7 @@ namespace Eraser.Util
 		public bool ReportIsNew()
 		{
 			PostDataBuilder builder = new PostDataBuilder();
-			builder.AddPart(new FormField("action", "status"));
+			builder.AddPart(new PostDataField("action", "status"));
 			AddStackTraceToRequest(Report.StackTrace, builder);
 
 			WebRequest reportRequest = HttpWebRequest.Create(BlackBoxServer);
@@ -653,8 +653,8 @@ namespace Eraser.Util
 			{
 				//Build the POST request
 				PostDataBuilder builder = new PostDataBuilder();
-				builder.AddPart(new FormField("action", "upload"));
-				builder.AddPart(new FormFileField("crashReport", "Report.tbz", bzipFile));
+				builder.AddPart(new PostDataField("action", "upload"));
+				builder.AddPart(new PostDataFileField("crashReport", "Report.tbz", bzipFile));
 				AddStackTraceToRequest(Report.StackTrace, builder);
 
 				//Upload the POST request
@@ -719,9 +719,9 @@ namespace Eraser.Util
 			foreach (BlackBoxExceptionEntry exceptionStack in stackTrace)
 			{
 				foreach (string stackFrame in exceptionStack.StackTrace)
-					builder.AddPart(new FormField(
+					builder.AddPart(new PostDataField(
 						string.Format("stackTrace[{0}][]", exceptionIndex), stackFrame));
-				builder.AddPart(new FormField(string.Format(
+				builder.AddPart(new PostDataField(string.Format(
 					"stackTrace[{0}][exception]", exceptionIndex), exceptionStack.ExceptionType));
 				++exceptionIndex;
 			}

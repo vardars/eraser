@@ -39,7 +39,7 @@ namespace Eraser.Util
 			FileName = Path.GetTempFileName();
 		}
 
-		public void AddPart(FormField field)
+		public void AddPart(PostDataField field)
 		{
 			//Generate a random part boundary
 			if (Boundary == null)
@@ -57,11 +57,11 @@ namespace Eraser.Util
 
 				StringBuilder currentBoundary = new StringBuilder();
 				currentBoundary.AppendFormat("--{0}\r\n", Boundary);
-				if (field is FormFileField)
+				if (field is PostDataFileField)
 				{
 					currentBoundary.AppendFormat(
 						"Content-Disposition: file; name=\"{0}\"; filename=\"{1}\"\r\n",
-						field.FieldName, ((FormFileField)field).FileName);
+						field.FieldName, ((PostDataFileField)field).FileName);
 					currentBoundary.AppendLine("Content-Type: application/octet-stream");
 				}
 				else
@@ -146,14 +146,14 @@ namespace Eraser.Util
 			"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	}
 
-	class FormField
+	public class PostDataField
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="fieldName">The name of the field.</param>
 		/// <param name="stream">The stream containing the field data.</param>
-		public FormField(string fieldName, Stream stream)
+		public PostDataField(string fieldName, Stream stream)
 		{
 			FieldName = fieldName;
 			Stream = stream;
@@ -164,7 +164,7 @@ namespace Eraser.Util
 		/// </summary>
 		/// <param name="fieldName">The name of the field.</param>
 		/// <param name="stream">The content of the field.</param>
-		public FormField(string fieldName, string content)
+		public PostDataField(string fieldName, string content)
 			: this(fieldName, new MemoryStream(Encoding.UTF8.GetBytes(content)))
 		{
 		}
@@ -180,7 +180,7 @@ namespace Eraser.Util
 		public Stream Stream;
 	}
 
-	class FormFileField : FormField
+	public class PostDataFileField : PostDataField
 	{
 		/// <summary>
 		/// Constructor.
@@ -188,7 +188,7 @@ namespace Eraser.Util
 		/// <param name="fieldName">The name of the form field.</param>
 		/// <param name="fileName">The name of the file.</param>
 		/// <param name="stream">The stream containing the field data.</param>
-		public FormFileField(string fieldName, string fileName, Stream stream)
+		public PostDataFileField(string fieldName, string fileName, Stream stream)
 			: base(fieldName, stream)
 		{
 			FileName = fileName;
