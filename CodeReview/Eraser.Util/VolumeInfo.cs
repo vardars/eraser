@@ -59,6 +59,7 @@ namespace Eraser.Util
 							break;
 						default:
 							throw Win32ErrorCode.GetExceptionForWin32Error(errorCode);
+					}
 				}
 
 				if (pathNamesBuffer.Length < returnLength)
