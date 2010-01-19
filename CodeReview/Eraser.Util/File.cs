@@ -41,6 +41,7 @@ namespace Eraser.Util
 		/// <param name="info">The FileInfo object with the file path etc.</param>
 		/// <returns>A list containing the names of the ADSes of each file. The
 		/// list will be empty if no ADSes exist.</returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static IList<string> GetADSes(FileInfo info)
 		{
 			List<string> result = new List<string>();
@@ -221,14 +222,14 @@ namespace Eraser.Util
 			ushort compressionStatus = 0;
 			uint bytesReturned = 0;
 
-			using (FileStream strm = new FileStream(NativeMethods.CreateFile(path,
+			using (SafeFileHandle handle = NativeMethods.CreateFile(path,
 				NativeMethods.GENERIC_READ | NativeMethods.GENERIC_WRITE,
 				0, IntPtr.Zero, NativeMethods.OPEN_EXISTING,
-				NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.Read))
+				NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero))
 			{
-				if (NativeMethods.DeviceIoControl(strm.SafeFileHandle,
-					NativeMethods.FSCTL_GET_COMPRESSION, IntPtr.Zero, 0,
-					out compressionStatus, sizeof(ushort), out bytesReturned, IntPtr.Zero))
+				if (NativeMethods.DeviceIoControl(handle, NativeMethods.FSCTL_GET_COMPRESSION,
+					IntPtr.Zero, 0, out compressionStatus, sizeof(ushort), out bytesReturned,
+					IntPtr.Zero))
 				{
 					return compressionStatus != NativeMethods.COMPRESSION_FORMAT_NONE;
 				}
@@ -249,14 +250,14 @@ namespace Eraser.Util
 				NativeMethods.COMPRESSION_FORMAT_NONE;
 			uint bytesReturned = 0;
 
-			using (FileStream strm = new FileStream(NativeMethods.CreateFile(path,
+			using (SafeFileHandle handle = NativeMethods.CreateFile(path,
 				NativeMethods.GENERIC_READ | NativeMethods.GENERIC_WRITE,
 				0, IntPtr.Zero, NativeMethods.OPEN_EXISTING,
-				NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero), FileAccess.ReadWrite))
+				NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero))
 			{
-				return NativeMethods.DeviceIoControl(strm.SafeFileHandle,
-					NativeMethods.FSCTL_SET_COMPRESSION, ref compressionStatus,
-					sizeof(ushort), IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
+				return NativeMethods.DeviceIoControl(handle, NativeMethods.FSCTL_SET_COMPRESSION,
+					ref compressionStatus, sizeof(ushort), IntPtr.Zero, 0, out bytesReturned,
+					IntPtr.Zero);
 			}
 		}
 

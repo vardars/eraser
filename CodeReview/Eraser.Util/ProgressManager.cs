@@ -37,7 +37,7 @@ namespace Eraser.Util
 		/// the estimated end time by extrapolating collected data based on the
 		/// amount of time already elapsed.
 		/// </summary>
-		public ProgressManagerBase()
+		protected ProgressManagerBase()
 		{
 			StartTime = DateTime.Now;
 		}
@@ -261,7 +261,6 @@ namespace Eraser.Util
 			{
 				List = new List<Step>();
 				ListLock = manager.ListLock;
-				Manager = manager;
 			}
 
 			#region IList<Step> Members
@@ -397,8 +396,8 @@ namespace Eraser.Util
 				set
 				{
 					if (value >= 1.1f || value < 0.0f)
-						throw new ArgumentOutOfRangeException("The total weights of all steps in " +
-							"the task must be within the range [0.0, 1.0]");
+						throw new ArgumentOutOfRangeException("value", "The total weights of " +
+							"all steps in the task must be within the range [0.0, 1.0]");
 
 					totalWeights = value;
 				}
@@ -413,11 +412,6 @@ namespace Eraser.Util
 			/// The lock object guarding the list against parallel writes.
 			/// </summary>
 			private object ListLock;
-
-			/// <summary>
-			/// The <see cref="SteppedProgressManager"/> instance which owns this list.
-			/// </summary>
-			private SteppedProgressManager Manager;
 
 			/// <summary>
 			/// The backing variable for the total weights of all the steps.

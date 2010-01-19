@@ -90,6 +90,7 @@ namespace Eraser.Util
 		/// Updates the control's theme to fit in with the latest Windows visuals.
 		/// </summary>
 		/// <param name="lv">The List View control to set the theme on.</param>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
 		public static void ApplyTheme(ListView lv)
 		{
 			try
@@ -114,7 +115,7 @@ namespace Eraser.Util
 			if (ThemeMessageFilter.Instance == null)
 			{
 				ThemeMessageFilter filter = new ThemeMessageFilter();
-				ThemeMessageFilter.Instance.ThemeChanged += OnThemeChanged;
+				filter.ThemeChanged += OnThemeChanged;
 			}
 
 			if (Environment.OSVersion.Version.Major >= 6)
@@ -254,8 +255,6 @@ namespace Eraser.Util
 		protected override void Initialize(ToolStrip toolStrip)
 		{
 			base.Initialize(toolStrip);
-
-			control = toolStrip;
 			hTheme = NativeMethods.OpenThemeData(toolStrip.Handle, "MENU");
 		}
 
@@ -276,7 +275,8 @@ namespace Eraser.Util
 
 			e.Graphics.ReleaseHdc();
 			rect.Inflate(-Margin, -Margin);
-			e.Graphics.FillRectangle(new SolidBrush(e.BackColor), rect);
+			using (SolidBrush brush = new SolidBrush(e.BackColor))
+				e.Graphics.FillRectangle(brush, rect);
 		}
 
 		protected override void OnRenderImageMargin(ToolStripRenderEventArgs e)
@@ -438,7 +438,6 @@ namespace Eraser.Util
 			}
 		}
 
-		private ToolStrip control;
 		private SafeThemeHandle hTheme;
 	}
 
