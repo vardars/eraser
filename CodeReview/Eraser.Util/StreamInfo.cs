@@ -393,7 +393,10 @@ namespace Eraser.Util
 			SafeFileHandle result = NativeMethods.CreateFile(FullName, iAccess,
 				(uint)share, IntPtr.Zero, (uint)mode, (uint)options, IntPtr.Zero);
 			if (result.IsInvalid)
+			{
+				result.Close();
 				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
+			}
 
 			//Cache the handle if we have an exclusive handle - this is used for things like
 			//file times.

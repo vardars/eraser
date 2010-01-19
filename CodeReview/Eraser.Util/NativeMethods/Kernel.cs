@@ -33,22 +33,6 @@ namespace Eraser.Util
 	internal static partial class NativeMethods
 	{
 		/// <summary>
-		/// Closes an open object handle.
-		/// </summary>
-		/// <param name="hObject">A valid handle to an open object.</param>
-		/// <returns>If the function succeeds, the return value is true. To get
-		/// extended error information, call Marshal.GetLastWin32Error().
-		/// 
-		/// If the application is running under a debugger, the function will throw
-		/// an exception if it receives either a handle value that is not valid
-		/// or a pseudo-handle value. This can happen if you close a handle twice,
-		/// or if you call CloseHandle on a handle returned by the FindFirstFile
-		/// function.</returns>
-		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern bool CloseHandle(IntPtr hObject);
-
-		/// <summary>
 		/// Deletes an existing file.
 		/// </summary>
 		/// <param name="lpFileName">The name of the file to be deleted.
