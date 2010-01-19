@@ -294,7 +294,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 					task.Schedule = Schedule.RunOnRestart;
 					break;
 				default:
-					throw new ArgumentException(string.Format(
+					throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
 						"Unknown schedule type: {0}", arguments.Schedule), "--schedule");
 			}
 
