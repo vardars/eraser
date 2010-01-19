@@ -107,6 +107,9 @@ namespace Eraser
 		[STAThread]
 		static int Main(string[] commandLine)
 		{
+			//Initialise our crash handler
+			BlackBox blackBox = BlackBox.Get();
+
 			//Immediately parse command line arguments
 			ComLib.BoolMessageItem argumentParser = Args.Parse(commandLine,
 				CommandLinePrefixes, CommandLineSeparators);
@@ -537,6 +540,26 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 
 			//Run the eraser client.
 			eraserClient.Run();
+		}
+
+		private static void OnGUIIdle(object sender, EventArgs e)
+		{
+			Application.Idle -= OnGUIIdle;
+			BlackBox blackBox = BlackBox.Get();
+
+			bool allSubmitted = true;
+			foreach (BlackBoxReport report in blackBox.GetDumps())
+				if (!report.Submitted)
+				{
+					allSubmitted = false;
+					break;
+				}
+
+			if (allSubmitted)
+				return;
+
+			BlackBoxMainForm form = new BlackBoxMainForm();
+			form.Show();
 		}
 
 		/// <summary>
