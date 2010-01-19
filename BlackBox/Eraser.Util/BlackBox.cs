@@ -267,18 +267,36 @@ namespace Eraser.Util
 				throw new ArgumentNullException("e");
 
 			//Generate a unique identifier for this report.
-			string crashName = DateTime.Now.ToString(CrashReportName, CultureInfo.InvariantCulture);
+			string crashName = DateTime.Now.ToUniversalTime().ToString(
+				CrashReportName, CultureInfo.InvariantCulture);
 			string currentCrashReport = Path.Combine(CrashReportsPath, crashName);
 			Directory.CreateDirectory(currentCrashReport);
 
-			//Then write a user-readable summary
-			WriteDebugLog(currentCrashReport, e);
+			//Store the steps which we have completed.
+			int currentStep = 0;
 
-			//Take a screenshot
-			WriteScreenshot(currentCrashReport);
+			try
+			{
+				//First, write a user-readable summary
+				WriteDebugLog(currentCrashReport, e);
+				++currentStep;
 
-			//Write a memory dump to the folder
-			WriteMemoryDump(currentCrashReport, e);
+				//Take a screenshot
+				WriteScreenshot(currentCrashReport);
+				++currentStep;
+
+				//Write a memory dump to the folder
+				WriteMemoryDump(currentCrashReport, e);
+				++currentStep;
+			}
+			catch
+			{
+				//If an exception was caught while creating the report, we should just
+				//abort as that may cause a cascade. However, we need to remove the
+				//report folder if the crash report is empty.
+				if (currentStep == 0)
+					Directory.Delete(currentCrashReport);
+			}
 		}
 
 		/// <summary>
@@ -291,7 +309,14 @@ namespace Eraser.Util
 			List<BlackBoxReport> result = new List<BlackBoxReport>();
 			if (dirInfo.Exists)
 				foreach (DirectoryInfo subDir in dirInfo.GetDirectories())
-					result.Add(new BlackBoxReport(Path.Combine(CrashReportsPath, subDir.Name)));
+					try
+					{
+						result.Add(new BlackBoxReport(Path.Combine(CrashReportsPath, subDir.Name)));
+					}
+					catch (InvalidDataException)
+					{
+						//Do nothing: invalid reports are automatically deleted.
+					}
 
 			return result.ToArray();
 		}
@@ -373,7 +398,7 @@ namespace Eraser.Util
 				//Open a stream to the Stack Trace Log file. We want to separate the stack
 				//trace do we can check against the server to see if the crash is a new one
 				using (StreamWriter stackTraceLog = new StreamWriter(
-					Path.Combine(dumpFolder, StackTraceFileName)))
+					Path.Combine(dumpFolder, BlackBoxReport.StackTraceFileName)))
 				{
 					Exception currentException = exception;
 					for (uint i = 1; currentException != null; ++i)
@@ -458,11 +483,6 @@ namespace Eraser.Util
 		/// The file name of the screenshot.
 		/// </summary>
 		internal static readonly string ScreenshotFileName = "Screenshot.png";
-
-		/// <summary>
-		/// The file name of the stack trace.
-		/// </summary>
-		internal static readonly string StackTraceFileName = "Stack Trace.log";
 	}
 
 	/// <summary>
@@ -479,12 +499,16 @@ namespace Eraser.Util
 		{
 			Path = path;
 
-			string[] stackTrace = null;
-			using (StreamReader reader = new StreamReader(
-				System.IO.Path.Combine(Path, BlackBox.StackTraceFileName)))
+			string stackTracePath = System.IO.Path.Combine(Path, StackTraceFileName);
+			if (!System.IO.File.Exists(stackTracePath))
 			{
-				stackTrace = reader.ReadToEnd().Split(new char[] { '\n' });
+				Delete();
+				throw new InvalidDataException("The BlackBox report is corrupt.");
 			}
+
+			string[] stackTrace = null;
+			using (StreamReader reader = new StreamReader(stackTracePath))
+				stackTrace = reader.ReadToEnd().Split(new char[] { '\n' });
 
 			//Parse the lines in the file.
 			StackTraceCache = new List<BlackBoxExceptionEntry>();
@@ -542,7 +566,7 @@ namespace Eraser.Util
 			get
 			{
 				return DateTime.ParseExact(Name, BlackBox.CrashReportName,
-					CultureInfo.InvariantCulture);
+					CultureInfo.InvariantCulture).ToLocalTime();
 			}
 		}
 
@@ -639,12 +663,17 @@ namespace Eraser.Util
 		private static readonly string StatusFileName = "Status.txt";
 
 		/// <summary>
+		/// The file name of the stack trace.
+		/// </summary>
+		internal static readonly string StackTraceFileName = "Stack Trace.log";
+
+		/// <summary>
 		/// The list of files internal to the report.
 		/// </summary>
 		private static readonly List<string> InternalFiles = new List<string>(
 			new string[] {
-				 BlackBox.StackTraceFileName,
-				 "Status.txt"
+				 StackTraceFileName,
+				 StatusFileName
 			}
 		);
 	}
