@@ -30,7 +30,7 @@ namespace Eraser.Util
 	/// <summary>
 	/// Stores DLL references for this class.
 	/// </summary>
-	private static partial class NativeMethods
+	internal static partial class NativeMethods
 	{
 		/// <summary>
 		/// Writes user-mode minidump information to the specified file.
