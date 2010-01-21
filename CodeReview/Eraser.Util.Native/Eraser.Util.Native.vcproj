@@ -4,7 +4,7 @@
 	Version="9.00"
 	Name="Eraser.Util.Native"
 	ProjectGUID="{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}"
-	RootNamespace="EraserUnlocker"
+	RootNamespace="Eraser"
 	Keyword="ManagedCProj"
 	TargetFrameworkVersion="196613"
 	>
