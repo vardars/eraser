@@ -31,9 +31,7 @@ using System.IO;
 using Eraser.Util;
 
 using ProgressChangedEventArgs = System.ComponentModel.ProgressChangedEventArgs;
-using ProgressChangedEventHandler = System.ComponentModel.ProgressChangedEventHandler;
 using EraserProgressChangedEventArgs = Eraser.Util.ProgressChangedEventArgs;
-using EraserProgressChangedEventHandler = Eraser.Util.ProgressChangedEventHandler;
 
 namespace Eraser
 {

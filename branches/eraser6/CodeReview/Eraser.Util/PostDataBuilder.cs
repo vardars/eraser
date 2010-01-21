@@ -121,9 +121,10 @@ namespace Eraser.Util
 			}
 			set
 			{
-				if (Stream.Length != 0)
-					throw new InvalidOperationException("The boundary cannot be set as data " +
-						"already exists in the buffer.");
+				using (Stream stream = Stream)
+					if (stream.Length != 0)
+						throw new InvalidOperationException("The boundary cannot be set as data " +
+							"already exists in the buffer.");
 				boundary = value;
 			}
 		}
