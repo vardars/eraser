@@ -82,7 +82,7 @@
     <Compile Include="Task.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Eraser.Util.Native\Eraser.Util.Unlocker.vcproj">
+    <ProjectReference Include="..\Eraser.Util.Native\Eraser.Util.Native.vcproj">
       <Project>{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}</Project>
       <Name>Eraser.Util.Native</Name>
     </ProjectReference>
