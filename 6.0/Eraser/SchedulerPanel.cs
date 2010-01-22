@@ -42,6 +42,7 @@ namespace Eraser
 		public SchedulerPanel()
 		{
 			InitializeComponent();
+			UXThemeApi.UpdateControlTheme(schedulerDefaultMenu);
 			CreateHandle();
 
 			//Populate the scheduler list-view with the current task list
