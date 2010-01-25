@@ -1,6 +1,6 @@
 /* 
  * $Id$
- * Copyright 2008-2009 The Eraser Project
+ * Copyright 2008-2010 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By:
  * 
@@ -173,6 +173,11 @@ namespace Eraser.Util
 		{
 			DirectoryInfo mountpointDir = new DirectoryInfo(mountPoint);
 			StringBuilder volumeID = new StringBuilder(50 * sizeof(char));
+
+			//Verify that the mountpoint given exists; if it doesn't we'll raise
+			//a PathNotFound exception.
+			if (!mountpointDir.Exists)
+				throw new DirectoryNotFoundException();
 
 			do
 			{

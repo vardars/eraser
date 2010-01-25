@@ -1,6 +1,6 @@
 /* 
  * $Id$
- * Copyright 2008-2009 The Eraser Project
+ * Copyright 2008-2010 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By: Kasra Nassiri <cjax@users.sourceforge.net> @17/10/2008
  * Modified By: 
@@ -234,20 +234,20 @@ namespace Eraser.Manager
 					//Set the currently executing task.
 					currentTask = task;
 
-					try
-					{
 						//Prevent the system from sleeping.
 						Power.ExecutionState = ExecutionState.Continuous |
 							ExecutionState.SystemRequired;
 
+					//Start a new log session to separate this session's events
+					//from previous ones.
+					task.Log.Entries.NewSession();
+
+					try
+					{
 						//Broadcast the task started event.
 						task.Canceled = false;
 						task.OnTaskStarted(new TaskEventArgs(task));
 						OnTaskProcessing(new TaskEventArgs(task));
-
-						//Start a new log session to separate this session's events
-						//from previous ones.
-						task.Log.Entries.NewSession();
 
 						//Run the task
 						foreach (ErasureTarget target in task.Targets)
@@ -286,6 +286,12 @@ namespace Eraser.Manager
 					catch (OperationCanceledException e)
 					{
 						task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Fatal));
+					}
+					catch (ThreadAbortException)
+					{
+						//Do nothing. The exception will be rethrown after this block
+						//is executed. This is here mainly to ensure that no BlackBox
+						//report is created for this exception.
 					}
 					catch (Exception e)
 					{
@@ -436,7 +442,8 @@ namespace Eraser.Manager
 					{
 						//Set the length of the file to be the amount of free space left
 						//or the maximum size of one of these dumps.
-						mainProgress.Total = mainProgress.Completed + volInfo.AvailableFreeSpace;
+						mainProgress.Total = mainProgress.Completed +
+							method.CalculateEraseDataSize(null, volInfo.AvailableFreeSpace);
 						long streamLength = Math.Min(ErasureMethod.FreeSpaceFileUnit,
 							mainProgress.Total);
 
@@ -548,9 +555,6 @@ namespace Eraser.Manager
 			//Get the erasure method if the user specified he wants the default.
 			ErasureMethod method = target.Method;
 
-			//Calculate the total amount of data required to finish the wipe.
-			//dataTotal = method.CalculateEraseDataSize(paths, dataTotal);
-
 			//Set the event's current target status.
 			SteppedProgressManager progress = new SteppedProgressManager();
 			target.Progress = progress;
@@ -566,19 +570,19 @@ namespace Eraser.Manager
 				task.OnProgressChanged(target,
 					new ProgressChangedEventArgs(step,
 						new TaskProgressChangedEventArgs(paths[i], 0, method.Passes)));
-				
-				//Get the filesystem provider to handle the secure file erasures
-				StreamInfo info = new StreamInfo(paths[i]);
-				FileSystem fsManager = FileSystemManager.Get(
-					VolumeInfo.FromMountPoint(info.DirectoryName));
 
 				//Check that the file exists - we do not want to bother erasing nonexistant files
+				StreamInfo info = new StreamInfo(paths[i]);
 				if (!info.Exists)
 				{
 					task.Log.LastSessionEntries.Add(new LogEntry(S._("The file {0} was not erased " +
 						"as the file does not exist.", paths[i]), LogLevel.Notice));
 					continue;
 				}
+
+				//Get the filesystem provider to handle the secure file erasures
+				FileSystem fsManager = FileSystemManager.Get(
+					VolumeInfo.FromMountpoint(info.DirectoryName));
 
 				bool isReadOnly = false;
 				
@@ -639,15 +643,21 @@ namespace Eraser.Manager
 							if (handle.Path == paths[i])
 								processes.Add(System.Diagnostics.Process.GetProcessById(handle.ProcessId));
 
+					string lockedBy = null;
+					if (processes.Count > 0)
+					{
 						StringBuilder processStr = new StringBuilder();
 						foreach (System.Diagnostics.Process process in processes)
 							processStr.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,
 								"{0}, ", process.MainModule.FileName);
 
-						task.Log.LastSessionEntries.Add(new LogEntry(S._(
-								"Could not force closure of file \"{0}\" (locked by {1})",
-								paths[i], processStr.ToString().Remove(processStr.Length - 2)),
-							LogLevel.Error));
+						lockedBy = S._("(locked by {0})", processStr.ToString().Remove(processStr.Length - 2));
+					}
+
+					task.Log.LastSessionEntries.Add(new LogEntry(S._(
+							"Could not force closure of file \"{0}\" (locked by {1})",
+							paths[i], processStr.ToString().Remove(processStr.Length - 2)),
+						LogLevel.Error));
 					}
 					else
 						throw;
@@ -661,7 +671,7 @@ namespace Eraser.Manager
 			}
 
 			//If the user requested a folder removal, do it.
-			if (target is FolderTarget)
+			if ((target is FolderTarget) && Directory.Exists(target.Path))
 			{
 				ProgressManager step = new ProgressManager();
 				progress.Steps.Add(new SteppedProgressManagerStep(step,

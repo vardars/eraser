@@ -1,6 +1,6 @@
 /* 
  * $Id$
- * Copyright 2008-2009 The Eraser Project
+ * Copyright 2008-2010 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By:
  * 
@@ -137,7 +137,10 @@ namespace Eraser.Util
 					switch (errorCode)
 					{
 						case Win32ErrorCode.FileNotFound:
+						case Win32ErrorCode.PathNotFound
 							return false;
+						case Win32ErrorCode.SharingViolation:
+							return true;
 						default:
 							throw Win32ErrorCode.GetExceptionForWin32Error(errorCode);
 					}

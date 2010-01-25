@@ -129,13 +129,16 @@
   <data name="{0} (Built: {1:F})" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="copyright © 2008-2009 The Eraser Project" xml:space="preserve">
+  <data name="copyright © 2008-2010 The Eraser Project" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Eraser is free open-source software!" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Please help us to continue developing Eraser - donate some coffee!" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Could not open the required web page. The error returned was: {0}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Checking for status of report {0}..." xml:space="preserve">

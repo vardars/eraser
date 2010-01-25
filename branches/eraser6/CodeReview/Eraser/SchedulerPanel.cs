@@ -1,6 +1,6 @@
 /* 
  * $Id$
- * Copyright 2008-2009 The Eraser Project
+ * Copyright 2008-2010 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By:
  * 
@@ -44,6 +44,7 @@ namespace Eraser
 		{
 			InitializeComponent();
 			Theming.ApplyTheme(schedulerDefaultMenu);
+			CreateHandle();
 
 			//Populate the scheduler list-view with the current task list
 			ExecutorTasksCollection tasks = Program.eraserClient.Tasks;
