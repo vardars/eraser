@@ -129,14 +129,17 @@
   <data name="{0} (Built: {1:F})" xml:space="preserve">
     <value>{0} (Compilato: {1:F})</value>
   </data>
-  <data name="copyright © 2008-2009 The Eraser Project" xml:space="preserve">
-    <value>copyright © 2008-2009 Progetto Eraser</value>
+  <data name="copyright © 2008-2010 The Eraser Project" xml:space="preserve">
+    <value>copyright © 2008-2010 Progetto Eraser</value>
   </data>
   <data name="Eraser is free open-source software!" xml:space="preserve">
     <value>Eraser è un software free e open-source!</value>
   </data>
   <data name="Please help us to continue developing Eraser - donate some coffee!" xml:space="preserve">
     <value>Aiutateci a continuare lo sviluppo di Eraser - offriteci un caffè!</value>
+  </data>
+  <data name="Could not open the required web page. The error returned was: {0}" xml:space="preserve">
+    <value>(Untranslated)</value>
   </data>
   <data name="Checking for status of report {0}..." xml:space="preserve">
     <value>(Untranslated)</value>

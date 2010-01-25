@@ -1,6 +1,6 @@
 /* 
  * $Id$
- * Copyright 2008-2009 The Eraser Project
+ * Copyright 2008-2010 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By:
  * 
@@ -77,6 +77,8 @@ namespace Eraser
 
 		private void task_NewSession(object sender, EventArgs e)
 		{
+			if (!IsHandleCreated)
+				return;
 			if (InvokeRequired)
 			{
 				Invoke((EventHandler<EventArgs>)task_NewSession, sender, e);
@@ -88,6 +90,8 @@ namespace Eraser
 
 		private void task_Logged(object sender, LogEventArgs e)
 		{
+			if (!IsHandleCreated)
+				return;
 			if (InvokeRequired)
 			{
 				Invoke((EventHandler<LogEventArgs>)task_Logged, sender, e);

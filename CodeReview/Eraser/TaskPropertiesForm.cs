@@ -1,6 +1,6 @@
 /* 
  * $Id$
- * Copyright 2008-2009 The Eraser Project
+ * Copyright 2008-2010 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By:
  * 
@@ -237,7 +237,10 @@ namespace Eraser
 				if (form.ShowDialog() == DialogResult.OK)
 				{
 					ErasureTarget target = form.Target;
-					task.Targets[item.Index] = target;
+					task.Targets.RemoveAt(item.Index);
+					task.Targets.Insert(item.Index, target);
+
+					item.Tag = target;
 					item.Text = target.UIText;
 					item.SubItems[1].Text = target.MethodDefined ? target.Method.Name : S._("(default)");
 				}

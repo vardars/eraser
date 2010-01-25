@@ -1,6 +1,6 @@
 /* 
  * $Id$
- * Copyright 2008-2009 The Eraser Project
+ * Copyright 2008-2010 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By: Kasra Nassiri <cjax@users.sourceforge.net>
  * 
@@ -417,36 +417,6 @@ namespace Eraser.Manager
 			{
 			}
 #endif
-
-			//Query performance data. Because the Win32 version of this API (through
-			//the registry) may be buggy, use the NT Native API instead.
-			//
-			//Scan the first 64 possible information types (we don't bother with increasing
-			//the buffer size as we do with the Win32 version of the performance data
-			//read, we may miss a few classes but it's no big deal).  In addition the
-			//returned size value for some classes is wrong (eg 23 and 24 return a
-			//size of 0) so we miss a few more things, but again it's no big deal. This
-			//scan typically yields around 20 pieces of data, there's nothing in the
-			//range 65...128 so chances are there won't be anything above there either.
-			uint dataWritten = 0;
-			byte[] infoBuffer = new byte[65536];
-			uint totalEntropy = 0;
-			for (uint infoType = 0; infoType < 64; ++infoType)
-			{
-				uint sysInfo = NTApi.NtQuerySystemInformation(infoType, infoBuffer,
-					(uint)infoBuffer.Length, out dataWritten);
-
-				if (sysInfo == Win32ErrorCode.Success && dataWritten > 0)
-				{
-					byte[] entropy = new byte[dataWritten];
-					Buffer.BlockCopy(infoBuffer, 0, entropy, 0, (int)dataWritten);
-					result.AddRange(entropy);
-					totalEntropy += dataWritten;
-				}
-			}
-
-			result.AddRange(StructToBuffer(totalEntropy));
-
 			//Finally, our good friend CryptGenRandom()
 			byte[] cryptGenRandom = new byte[1536];
 			if (Security.Randomise(cryptGenRandom))
