@@ -419,6 +419,8 @@ namespace Eraser
 		/// </summary>
 		private void scheduler_DragDrop(object sender, DragEventArgs e)
 		{
+			DropTargetHelper.Drop(e.Data, new Point(e.X, e.Y), e.Effect);
+
 			if (!e.Data.GetDataPresent(DataFormats.FileDrop))
 				e.Effect = DragDropEffects.None;
 			else
@@ -463,12 +465,17 @@ namespace Eraser
 						task.Targets.Add(target);
 					}
 
-					//Add the task.
-					Program.eraserClient.Tasks.Add(task);
+					//Confirm the erasure.
+					if (MessageBox.Show(S._("Are you sure you wish to erase the selected files?"),
+						S._("Eraser"), MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+						MessageBoxDefaultButton.Button2,
+						S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0) == DialogResult.Yes)
+					{
+						//Add the task.
+						Program.eraserClient.Tasks.Add(task);
+					}
 				}
 			}
-
-			DropTargetHelper.Drop(e.Data, new Point(e.X, e.Y), e.Effect);
 		}
 
 		/// <summary>
