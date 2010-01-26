@@ -225,6 +225,9 @@
   <data name="Could not import task list from {0}. The error returned was: {1}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
+  <data name="Are you sure you wish to erase the selected files?" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Could not load the setting {0}\\{1} for plugin {2}. The setting has been lost." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
