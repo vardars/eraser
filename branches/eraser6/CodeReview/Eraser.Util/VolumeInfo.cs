@@ -36,57 +36,22 @@ namespace Eraser.Util
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="volumeId">The ID of the volume, in the form "\\?\Volume{GUID}\"</param>
+		/// <param name="volumeId">The ID of the volume, either in the form
+		/// "\\?\Volume{GUID}\" or as a valid UNC path.</param>
 		public VolumeInfo(string volumeId)
 		{
-			//Set the volume Id
+			//We only accept UNC paths as well as volume identifiers.
+			if (!(volumeId.StartsWith("\\\\?\\") || volumeId.StartsWith("\\\\")))
+				throw new ArgumentException("The volumeId parameter only accepts volume GUID " +
+					"and UNC paths", "volumeId");
+
+			//Verify that the path ends with a trailing backslash
+			if (!volumeId.EndsWith("\\"))
+				throw new ArgumentException("The volumeId parameter must end with a trailing " +
+					"backslash.", "volumeId");
+
+			//Set the volume ID
 			VolumeId = volumeId;
-
-			//Get the paths of the said volume
-			string pathNames;
-			{
-				uint returnLength = 0;
-				StringBuilder pathNamesBuffer = new StringBuilder();
-				pathNamesBuffer.EnsureCapacity(NativeMethods.MaxPath);
-				while (!NativeMethods.GetVolumePathNamesForVolumeName(VolumeId,
-					pathNamesBuffer, (uint)pathNamesBuffer.Capacity, out returnLength))
-				{
-					int errorCode = Marshal.GetLastWin32Error();
-					switch (errorCode)
-					{
-						case Win32ErrorCode.MoreData:
-							pathNamesBuffer.EnsureCapacity((int)returnLength);
-							break;
-						default:
-							throw Win32ErrorCode.GetExceptionForWin32Error(errorCode);
-					}
-				}
-
-				if (pathNamesBuffer.Length < returnLength)
-					pathNamesBuffer.Length = (int)returnLength;
-				pathNames = pathNamesBuffer.ToString().Substring(0, (int)returnLength);
-			}
-
-			//OK, the marshalling is complete. Convert the pathNames string into a list
-			//of strings containing all of the volumes mountpoints; because the
-			//GetVolumePathNamesForVolumeName function returns a convoluted structure
-			//containing the path names.
-			for (int lastIndex = 0, i = 0; i != pathNames.Length; ++i)
-			{
-				if (pathNames[i] == '\0')
-				{
-					//If there are no mount points for this volume, the string will only
-					//have one NULL
-					if (i - lastIndex == 0)
-						break;
-
-					mountPoints.Add(pathNames.Substring(lastIndex, i - lastIndex));
-
-					lastIndex = i + 1;
-					if (pathNames[lastIndex] == '\0')
-						break;
-				}
-			}
 
 			//Fill up the remaining members of the structure: file system, label, etc.
 			StringBuilder volumeName = new StringBuilder(NativeMethods.MaxPath * sizeof(char)),
@@ -132,6 +97,138 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
+		/// Gets the mountpoints associated with the current volume.
+		/// </summary>
+		/// <returns>A list of volume mount points for the current volume.</returns>
+		private List<string> GetLocalVolumeMountPoints()
+		{
+			List<string> result = new List<string>();
+
+			//Get the paths of the said volume
+			string pathNames;
+			{
+				uint returnLength = 0;
+				StringBuilder pathNamesBuffer = new StringBuilder();
+				pathNamesBuffer.EnsureCapacity(NativeMethods.MaxPath);
+				while (!NativeMethods.GetVolumePathNamesForVolumeName(VolumeId,
+					pathNamesBuffer, (uint)pathNamesBuffer.Capacity, out returnLength))
+				{
+					int errorCode = Marshal.GetLastWin32Error();
+					switch (errorCode)
+					{
+						case Win32ErrorCode.MoreData:
+							pathNamesBuffer.EnsureCapacity((int)returnLength);
+							break;
+						default:
+							throw Win32ErrorCode.GetExceptionForWin32Error(errorCode);
+					}
+				}
+
+				if (pathNamesBuffer.Length < returnLength)
+					pathNamesBuffer.Length = (int)returnLength;
+				pathNames = pathNamesBuffer.ToString().Substring(0, (int)returnLength);
+			}
+
+			//OK, the marshalling is complete. Convert the pathNames string into a list
+			//of strings containing all of the volumes mountpoints; because the
+			//GetVolumePathNamesForVolumeName function returns a convoluted structure
+			//containing the path names.
+			for (int lastIndex = 0, i = 0; i != pathNames.Length; ++i)
+			{
+				if (pathNames[i] == '\0')
+				{
+					//If there are no mount points for this volume, the string will only
+					//have one NULL
+					if (i - lastIndex == 0)
+						break;
+
+					result.Add(pathNames.Substring(lastIndex, i - lastIndex));
+
+					lastIndex = i + 1;
+					if (pathNames[lastIndex] == '\0')
+						break;
+				}
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Gets the mountpoints associated with the network share.
+		/// </summary>
+		/// <returns>A list of network mount points for the given network share.</returns>
+		private List<string> GetNetworkMountPoints()
+		{
+			List<string> result = new List<string>();
+
+			//Open an enumeration handle to list mount points.
+			IntPtr enumHandle;
+			uint errorCode = NativeMethods.WNetOpenEnum(NativeMethods.RESOURCE_CONNECTED,
+				NativeMethods.RESOURCETYPE_DISK, 0, IntPtr.Zero, out enumHandle);
+			if (errorCode != Win32ErrorCode.Success)
+				throw new Win32Exception((int)errorCode);
+
+			try
+			{
+				int resultBufferCount = 32;
+				int resultBufferSize = resultBufferCount *
+					Marshal.SizeOf(typeof(NativeMethods.NETRESOURCE));
+				IntPtr resultBuffer = Marshal.AllocHGlobal(resultBufferSize);
+
+				try
+				{
+					for ( ; ; )
+					{
+						uint resultBufferStored = (uint)resultBufferCount;
+						uint resultBufferRequiredSize = (uint)resultBufferSize;
+						errorCode = NativeMethods.WNetEnumResource(enumHandle,
+							ref resultBufferStored, resultBuffer,
+							ref resultBufferRequiredSize);
+
+						if (errorCode == Win32ErrorCode.NoMoreItems)
+							break;
+						else if (errorCode != Win32ErrorCode.Success)
+							throw new Win32Exception((int)errorCode);
+
+						unsafe
+						{
+							//Marshal the memory block to managed structures.
+							byte* pointer = (byte*)resultBuffer.ToPointer();
+
+							for (uint i = 0; i < resultBufferStored;
+								++i, pointer += Marshal.SizeOf(typeof(NativeMethods.NETRESOURCE)))
+							{
+								NativeMethods.NETRESOURCE resource =
+									(NativeMethods.NETRESOURCE)Marshal.PtrToStructure(
+										(IntPtr)pointer, typeof(NativeMethods.NETRESOURCE));
+
+								//Ensure that the path in the resource structure ends with a trailing
+								//backslash as out volume ID ends with one.
+								if (string.IsNullOrEmpty(resource.lpRemoteName))
+									continue;
+								if (resource.lpRemoteName[resource.lpRemoteName.Length - 1] != '\\')
+									resource.lpRemoteName += '\\';
+
+								if (resource.lpRemoteName == VolumeId)
+									result.Add(resource.lpLocalName);
+							}
+						}
+					}
+				}
+				finally
+				{
+					Marshal.FreeHGlobal(resultBuffer);
+				}
+			}
+			finally
+			{
+				NativeMethods.WNetCloseEnum(enumHandle);
+			}
+
+			return result;
+		}
+
+		/// <summary>
 		/// Lists all the volumes in the system.
 		/// </summary>
 		/// <returns>Returns a list of volumes representing all volumes present in
@@ -171,37 +268,70 @@ namespace Eraser.Util
 		/// is thrown.</returns>
 		public static VolumeInfo FromMountPoint(string mountPoint)
 		{
-			DirectoryInfo mountpointDir = new DirectoryInfo(mountPoint);
-			StringBuilder volumeID = new StringBuilder(50 * sizeof(char));
-
 			//Verify that the mountpoint given exists; if it doesn't we'll raise
-			//a PathNotFound exception.
+			//a DirectoryNotFound exception.
+			DirectoryInfo mountpointDir = new DirectoryInfo(mountPoint);
 			if (!mountpointDir.Exists)
 				throw new DirectoryNotFoundException();
 
 			do
 			{
+				//Ensure that the current path has a trailing backslash
 				string currentDir = mountpointDir.FullName;
 				if (currentDir.Length > 0 && currentDir[currentDir.Length - 1] != '\\')
 					currentDir += '\\';
-				if (!NativeMethods.GetVolumeNameForVolumeMountPoint(currentDir, volumeID, 50))
+
+				//The path cannot be empty.
+				if (string.IsNullOrEmpty(currentDir))
+					throw new DirectoryNotFoundException();
+
+				//Get the type of the drive
+				DriveType driveType = (DriveType)NativeMethods.GetDriveType(currentDir);
+
+				//We do different things for different kinds of drives. Network drives
+				//will need us to resolve the drive to a UNC path. Local drives will
+				//be resolved to a volume GUID
+				StringBuilder volumeID = new StringBuilder(NativeMethods.MaxPath);
+				if (driveType == DriveType.Network)
 				{
-					int errorCode = Marshal.GetLastWin32Error();
+					//Resolve the mountpoint to a UNC path
+					uint bufferCapacity = (uint)volumeID.Capacity;
+					uint errorCode = NativeMethods.WNetGetConnection(
+						currentDir.Substring(0, currentDir.Length - 1),
+						volumeID, ref bufferCapacity);
 
 					switch (errorCode)
 					{
-						case Win32ErrorCode.InvalidFunction:
-						case Win32ErrorCode.FileNotFound:
-						case Win32ErrorCode.PathNotFound:
-						case Win32ErrorCode.NotAReparsePoint:
+						case Win32ErrorCode.Success:
+							return new VolumeInfo(volumeID.ToString() + '\\');
+
+						case Win32ErrorCode.BadDevice: //Path is not a network share
 							break;
+
 						default:
-							throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+							throw new Win32Exception((int)errorCode);
 					}
 				}
 				else
 				{
-					return new VolumeInfo(volumeID.ToString());
+					if (!NativeMethods.GetVolumeNameForVolumeMountPoint(currentDir, volumeID, 50))
+					{
+						int errorCode = Marshal.GetLastWin32Error();
+						switch (errorCode)
+						{
+							case Win32ErrorCode.InvalidFunction:
+							case Win32ErrorCode.FileNotFound:
+							case Win32ErrorCode.PathNotFound:
+							case Win32ErrorCode.NotAReparsePoint:
+								break;
+							default:
+								throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+						}
+					}
+					else
+					{
+						return new VolumeInfo(volumeID.ToString());
+					}
 				}
 
 				mountpointDir = mountpointDir.Parent;
@@ -396,7 +526,8 @@ namespace Eraser.Util
 		{
 			get
 			{
-				return mountPoints.AsReadOnly();
+				return (VolumeType == DriveType.Network ?
+					GetNetworkMountPoints() : GetLocalVolumeMountPoints()).AsReadOnly();
 			}
 		}
 
@@ -537,8 +668,6 @@ namespace Eraser.Util
 		{
 			return new VolumeLock(stream);
 		}
-
-		private List<string> mountPoints = new List<string>();
 	}
 
 	public class VolumeLock : IDisposable

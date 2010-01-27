@@ -401,7 +401,7 @@ namespace Eraser.Manager
 				ClusterTipsEraseProgress eraseProgress =
 					delegate(int currentFile, int totalFiles, string currentFilePath)
 					{
-						tipSearch.Completed = tipSearch.Total;
+						tipSearch.MarkComplete();
 						tipProgress.Total = totalFiles;
 						tipProgress.Completed = currentFile;
 						task.OnProgressChanged(target,
@@ -481,7 +481,7 @@ namespace Eraser.Manager
 				}
 
 				//Mark the main bulk of the progress as complete
-				mainProgress.Completed = mainProgress.Total;
+				mainProgress.MarkComplete();
 
 				//Erase old resident file system table files
 				ProgressManager residentProgress = new ProgressManager();
@@ -501,7 +501,7 @@ namespace Eraser.Manager
 					}
 				);
 
-				residentProgress.Completed = residentProgress.Total = 1;
+				residentProgress.MarkComplete();
 			}
 			finally
 			{
@@ -512,7 +512,7 @@ namespace Eraser.Manager
 				task.OnProgressChanged(target, new ProgressChangedEventArgs(tempFiles,
 					new TaskProgressChangedEventArgs(string.Empty, 0, 0)));
 				fsManager.DeleteFolder(info);
-				tempFiles.Completed = tempFiles.Total = 1;
+				tempFiles.Completed = tempFiles.Total;
 			}
 
 			//Then clean the old file system entries
@@ -536,7 +536,7 @@ namespace Eraser.Manager
 				}
 			);
 
-			structureProgress.Completed = structureProgress.Total;
+			structureProgress.MarkComplete();
 			target.Progress = null;
 		}
 
@@ -582,7 +582,7 @@ namespace Eraser.Manager
 
 				//Get the filesystem provider to handle the secure file erasures
 				FileSystem fsManager = FileSystemManager.Get(
-					VolumeInfo.FromMountpoint(info.DirectoryName));
+					VolumeInfo.FromMountPoint(info.DirectoryName));
 
 				bool isReadOnly = false;
 				
@@ -610,8 +610,8 @@ namespace Eraser.Manager
 							if (currentTask.Canceled)
 								throw new OperationCanceledException(S._("The task was cancelled."));
 
-							step.Completed += lastWritten;
 							step.Total = totalData;
+							step.Completed += lastWritten;
 							task.OnProgressChanged(target,
 								new ProgressChangedEventArgs(step,
 									new TaskProgressChangedEventArgs(info.FullName, currentPass, method.Passes)));
@@ -621,7 +621,7 @@ namespace Eraser.Manager
 					FileInfo fileInfo = info.File;
 					if (fileInfo != null)
 						fsManager.DeleteFile(fileInfo);
-					step.Completed = step.Total = 1;
+					step.MarkComplete();
 				}
 				catch (UnauthorizedAccessException)
 				{
@@ -643,21 +643,28 @@ namespace Eraser.Manager
 							if (handle.Path == paths[i])
 								processes.Add(System.Diagnostics.Process.GetProcessById(handle.ProcessId));
 
-					string lockedBy = null;
-					if (processes.Count > 0)
-					{
-						StringBuilder processStr = new StringBuilder();
-						foreach (System.Diagnostics.Process process in processes)
-							processStr.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,
-								"{0}, ", process.MainModule.FileName);
+						string lockedBy = null;
+						if (processes.Count > 0)
+						{
+							StringBuilder processStr = new StringBuilder();
+							foreach (System.Diagnostics.Process process in processes)
+							{
+								try
+								{
+									processStr.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,
+										"{0}, ", process.MainModule.FileName);
+								}
+								catch (System.ComponentModel.Win32Exception)
+								{
+								}
+							}
 
-						lockedBy = S._("(locked by {0})", processStr.ToString().Remove(processStr.Length - 2));
-					}
+							lockedBy = S._("(locked by {0})", processStr.ToString().Remove(processStr.Length - 2));
+						}
 
-					task.Log.LastSessionEntries.Add(new LogEntry(S._(
-							"Could not force closure of file \"{0}\" (locked by {1})",
-							paths[i], processStr.ToString().Remove(processStr.Length - 2)),
-						LogLevel.Error));
+						task.Log.LastSessionEntries.Add(new LogEntry(S._(
+							"Could not force closure of file \"{0}\" {1}", paths[i],
+							lockedBy == null ? string.Empty : lockedBy).Trim(), LogLevel.Error));
 					}
 					else
 						throw;
@@ -701,18 +708,7 @@ namespace Eraser.Manager
 					task.OnProgressChanged(target,
 						new ProgressChangedEventArgs(step,
 							new TaskProgressChangedEventArgs(info.FullName, 0, 0)));
-
-					//See if this is the root of a volume.
-					bool isVolumeRoot = info.Parent == null;
-					foreach (VolumeInfo volume in VolumeInfo.Volumes)
-						foreach (string mountPoint in volume.MountPoints)
-							if (info.FullName == mountPoint)
-								isVolumeRoot = true;
-
-					//If the folder is a mount point, then don't delete it. If it isn't,
-					//search for files under the folder to see if it is empty.
-					if (!isVolumeRoot && info.Exists && info.GetFiles("*", SearchOption.AllDirectories).Length == 0)
-						fsManager.DeleteFolder(info);
+					fsManager.DeleteFolder(info);
 				}
 			}
 

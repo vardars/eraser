@@ -137,8 +137,9 @@ namespace Eraser.Util
 					switch (errorCode)
 					{
 						case Win32ErrorCode.FileNotFound:
-						case Win32ErrorCode.PathNotFound
+						case Win32ErrorCode.PathNotFound:
 							return false;
+						case Win32ErrorCode.AccessDenied:
 						case Win32ErrorCode.SharingViolation:
 							return true;
 						default:

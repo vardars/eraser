@@ -116,6 +116,14 @@ namespace Eraser.DefaultPlugins
 				}
 			}
 
+			//If the user wants plausible deniability, find a random file on the same
+			//volume and write it over.
+			if (Manager.ManagerLibrary.Settings.PlausibleDeniability)
+			{
+				using (FileStream fileStream = info.OpenWrite())
+					CopyPlausibleDeniabilityFile(fileStream);
+			}
+
 			//Then delete the file.
 			for (int i = 0; i < FileNameEraseTries; ++i)
 				try

@@ -70,7 +70,9 @@ namespace Eraser.Util
 		public const int SharingViolation = 32;
 		public const int InvalidParameter = 87;
 		public const int MoreData = 234;
+		public const int NoMoreItems = 259;
 		public const int UnrecognizedVolume = 1005;
+		public const int BadDevice = 1200;
 		public const int NotAReparsePoint = 4390;
 	}
 }
