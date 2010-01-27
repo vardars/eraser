@@ -42,7 +42,8 @@ namespace Eraser.DefaultPlugins
 			//list of decoys and write it over.
 			if (Manager.ManagerLibrary.Settings.PlausibleDeniability)
 			{
-				CopyPlausibleDeniabilityFile(info.OpenWrite());
+				using (FileStream fileStream = info.OpenWrite())
+					CopyPlausibleDeniabilityFile(fileStream);
 			}
 
 			DeleteFileSystemInfo(info);
@@ -114,14 +115,6 @@ namespace Eraser.DefaultPlugins
 							throw;
 					}
 				}
-			}
-
-			//If the user wants plausible deniability, find a random file on the same
-			//volume and write it over.
-			if (Manager.ManagerLibrary.Settings.PlausibleDeniability)
-			{
-				using (FileStream fileStream = info.OpenWrite())
-					CopyPlausibleDeniabilityFile(fileStream);
 			}
 
 			//Then delete the file.
