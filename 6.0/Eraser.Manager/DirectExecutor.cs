@@ -803,8 +803,16 @@ namespace Eraser.Manager
 					{
 						StringBuilder processStr = new StringBuilder();
 						foreach (System.Diagnostics.Process process in processes)
-							processStr.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,
-								"{0}, ", process.MainModule.FileName);
+						{
+							try
+							{
+								processStr.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,
+									"{0}, ", process.MainModule.FileName);
+							}
+							catch (System.ComponentModel.Win32Exception)
+							{
+							}
+						}
 
 						lockedBy = S._("(locked by {0})", processStr.ToString().Remove(processStr.Length - 2));
 					}
