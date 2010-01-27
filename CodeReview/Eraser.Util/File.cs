@@ -162,7 +162,7 @@ namespace Eraser.Util
 			else
 				throw new IOException(string.Format(CultureInfo.CurrentCulture,
 					"Could not load file icon from {0}", path),
-					Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error()));
+					Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error()));
 		}
 
 		/// <summary>

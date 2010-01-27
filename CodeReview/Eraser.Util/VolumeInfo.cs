@@ -71,7 +71,7 @@ namespace Eraser.Util
 						break;
 
 					default:
-						throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+						throw Win32ErrorCode.GetExceptionForWin32Error(lastError);
 				}
 			}
 			else
@@ -325,7 +325,8 @@ namespace Eraser.Util
 							case Win32ErrorCode.NotAReparsePoint:
 								break;
 							default:
-								throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+								throw Win32ErrorCode.GetExceptionForWin32Error(
+									Marshal.GetLastWin32Error());
 						}
 					}
 					else
@@ -381,7 +382,7 @@ namespace Eraser.Util
 					return (int)(clusterSize * sectorSize);
 				}
 
-				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
 		}
 
@@ -399,7 +400,7 @@ namespace Eraser.Util
 					return (int)sectorSize;
 				}
 
-				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
 		}
 
@@ -422,7 +423,7 @@ namespace Eraser.Util
 					return false;
 				}
 
-				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
 		}
 
@@ -444,7 +445,7 @@ namespace Eraser.Util
 					return (long)result;
 				}
 
-				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
 		}
 		
@@ -461,7 +462,7 @@ namespace Eraser.Util
 					return (long)result;
 				}
 
-				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
 		}
 
@@ -478,7 +479,7 @@ namespace Eraser.Util
 					return (long)result;
 				}
 
-				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
 		}
 
@@ -586,7 +587,7 @@ namespace Eraser.Util
 
 			//Check that the handle is valid
 			if (handle.IsInvalid)
-				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 
 			//Return the FileStream
 			return new FileStream(handle, access);
@@ -645,7 +646,7 @@ namespace Eraser.Util
 				{
 					//Check that the handle is valid
 					if (handle.IsInvalid)
-						throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+						throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 
 					//This only works if the user has turned on the disk performance
 					//counters with 'diskperf -y'. These counters are off by default
