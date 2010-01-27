@@ -74,7 +74,7 @@ namespace Eraser.Util
 					return volumeData;
 				}
 
-				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 			}
 		}
 	}

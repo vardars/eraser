@@ -361,7 +361,7 @@ namespace Eraser.Util
 
 			//Check that the handle is valid
 			if (handle.IsInvalid)
-				throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 
 			//Return the FileStream
 			return new FileStream(handle, access);

@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.ComponentModel;
 
 namespace Eraser.Util
 {
@@ -52,11 +53,14 @@ namespace Eraser.Util
 			{
 				case NoError:			return null;
 				case SharingViolation:	return new IOException();
-
-				default:
-					int HR = GetHRForWin32Error(errorCode);
-					return Marshal.GetExceptionForHR(HR);
 			}
+
+			int HR = GetHRForWin32Error(errorCode);
+			Exception exception = Marshal.GetExceptionForHR(HR);
+			if (exception.GetType() == typeof(COMException))
+				throw new Win32Exception(errorCode);
+			else
+				throw exception;
 		}
 
 		public const int NoError = Success;
