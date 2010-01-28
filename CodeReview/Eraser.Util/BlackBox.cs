@@ -303,7 +303,7 @@ namespace Eraser.Util
 			Path = path;
 
 			string stackTracePath = System.IO.Path.Combine(Path, StackTraceFileName);
-			if (!System.IO.File.Exists(stackTracePath))
+			if (!File.Exists(stackTracePath))
 			{
 				Delete();
 				throw new InvalidDataException("The BlackBox report is corrupt.");

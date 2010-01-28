@@ -209,7 +209,7 @@ namespace Eraser.DefaultPlugins
 				}
 
 				foreach (FileInfo file in info.GetFiles())
-					if (Util.File.IsProtectedSystemFile(file.FullName))
+					if (file.IsProtectedSystemFile())
 						log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have " +
 							"its cluster tips erased, because it is a system file",
 							file.FullName), LogLevel.Information));
@@ -229,7 +229,7 @@ namespace Eraser.DefaultPlugins
 					{
 						try
 						{
-							foreach (string i in Util.File.GetADSes(file))
+							foreach (string i in file.GetADSes())
 								files.Add(file.FullName + ':' + i);
 
 							files.Add(file.FullName);

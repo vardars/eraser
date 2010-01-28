@@ -29,6 +29,7 @@ using System.Windows.Forms;
 
 using Eraser.Manager;
 using Eraser.Util;
+using Eraser.Util.ExtensionMethods;
 using System.IO;
 
 namespace Eraser
@@ -69,9 +70,11 @@ namespace Eraser
 
 					DriveItem item = new DriveItem();
 					string volumePath = volume.MountPoints[0];
+					DirectoryInfo root = new DirectoryInfo(volumePath);
+
 					item.Drive = volumePath;
-					item.Label = Eraser.Util.File.GetFileDescription(volumePath);
-					item.Icon = Eraser.Util.File.GetFileIcon(volumePath);
+					item.Label = root.GetDescription();
+					item.Icon = root.GetIcon();
 					unusedDisk.Items.Add(item);
 				}
 			}

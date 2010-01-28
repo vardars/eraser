@@ -64,7 +64,7 @@ namespace Eraser.Manager
 				result = Encoding.UTF8.GetString(resultAry);
 			}
 			while (info != null && (Directory.Exists(resultPrefix + result) ||
-				System.IO.File.Exists(resultPrefix + result)));
+				File.Exists(resultPrefix + result)));
 			return resultPrefix + result;
 		}
 
@@ -123,7 +123,7 @@ namespace Eraser.Manager
 							"replaced with random data."));
 
 					int index = prng.Next(entries.Count - 1);
-					if ((System.IO.File.GetAttributes(entries[index]) & FileAttributes.Directory) != 0)
+					if ((File.GetAttributes(entries[index]) & FileAttributes.Directory) != 0)
 					{
 						DirectoryInfo dir = new DirectoryInfo(entries[index]);
 						FileInfo[] files = dir.GetFiles("*", SearchOption.AllDirectories);

@@ -38,7 +38,6 @@ using ComLib.Arguments;
 
 using Eraser.Manager;
 using Eraser.Util;
-using File = System.IO.File;
 
 namespace Eraser
 {
@@ -521,7 +520,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			}
 			catch (SerializationException ex)
 			{
-				System.IO.File.Delete(TaskListPath);
+				File.Delete(TaskListPath);
 				MessageBox.Show(S._("Could not load task list. All task entries have " +
 					"been lost. The error returned was: {0}", ex.Message), S._("Eraser"),
 					MessageBoxButtons.OK, MessageBoxIcon.Error,
