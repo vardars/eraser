@@ -28,6 +28,7 @@ using System.Threading;
 using System.IO;
 
 using Eraser.Util;
+using Eraser.Util.ExtensionMethods;
 using System.Security.Principal;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -423,8 +424,8 @@ namespace Eraser.Manager
 			{
 				//Set the folder's compression flag off since we want to use as much
 				//space as possible
-				if (Eraser.Util.File.IsCompressed(info.FullName))
-					Eraser.Util.File.SetCompression(info.FullName, false);
+				if (info.IsCompressed())
+					info.Uncompress();
 
 				ProgressManager mainProgress = new ProgressManager();
 				progress.Steps.Add(new SteppedProgressManagerStep(mainProgress,

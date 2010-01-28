@@ -29,6 +29,7 @@ using System.Security.Permissions;
 using System.Threading;
 
 using Eraser.Util;
+using Eraser.Util.ExtensionMethods;
 
 namespace Eraser.Manager
 {
@@ -447,7 +448,7 @@ namespace Eraser.Manager
 			try
 			{
 				//Get the ADS names
-				IList<string> adses = Util.File.GetADSes(new FileInfo(file));
+				IList<string> adses = new FileInfo(file).GetADSes();
 
 				//Then prepend the path.
 				foreach (string adsName in adses)

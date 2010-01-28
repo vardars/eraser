@@ -87,7 +87,6 @@
     </Compile>
     <Compile Include="StreamInfo.cs" />
     <Compile Include="SystemInfo.cs" />
-    <Compile Include="File.cs" />
     <Compile Include="Theming.cs" />
     <Compile Include="VolumeInfo.cs" />
     <Compile Include="NetApi.cs" />
@@ -102,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleWindow.cs" />
+    <Compile Include="FileSize.cs" />
     <Compile Include="NativeMethods\DbgHelp.cs" />
     <Compile Include="NativeMethods\Mpr.cs" />
     <Compile Include="PostDataBuilder.cs" />

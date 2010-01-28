@@ -152,7 +152,7 @@ namespace Eraser.Util
 		/// <returns>True if the resource assembly for the given culture and assembly exists.</returns>
 		public static bool LocalisationExists(CultureInfo culture, Assembly assembly)
 		{
-			return System.IO.File.Exists(Path.Combine(
+			return File.Exists(Path.Combine(
 				Path.Combine(Path.GetDirectoryName(assembly.Location), culture.Name), //Directory
 				Path.GetFileNameWithoutExtension(assembly.Location) + ".resources.dll"));
 		}
@@ -193,11 +193,11 @@ namespace Eraser.Util
 			while (culture != CultureInfo.InvariantCulture)
 			{
 				path = Path.Combine(Path.GetDirectoryName(assembly.Location), culture.Name);
-				if (System.IO.Directory.Exists(path))
+				if (Directory.Exists(path))
 				{
 					string assemblyPath = Path.Combine(path,
 						Path.GetFileNameWithoutExtension(assembly.Location) + ".resources.dll");
-					if (System.IO.File.Exists(assemblyPath))
+					if (File.Exists(assemblyPath))
 					{
 						languageID = culture.Name;
 						return Assembly.LoadFrom(assemblyPath);
