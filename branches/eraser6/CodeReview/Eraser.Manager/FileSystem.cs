@@ -307,7 +307,7 @@ namespace Eraser.Manager
 						return filesystem;
 
 			throw new NotSupportedException(S._("The file system on the drive {0} is not " +
-				"supported.", volume.IsMounted ? volume.MountPoints[0] : volume.VolumeId));
+				"supported.", volume));
 		}
 
 		/// <summary>
