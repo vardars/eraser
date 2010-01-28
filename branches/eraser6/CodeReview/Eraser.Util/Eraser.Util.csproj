@@ -90,7 +90,6 @@
     <Compile Include="Theming.cs" />
     <Compile Include="VolumeInfo.cs" />
     <Compile Include="NetApi.cs" />
-    <Compile Include="NTApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserApi.cs" />
   </ItemGroup>
