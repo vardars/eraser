@@ -160,13 +160,91 @@ namespace Eraser.Util
 		private List<string> GetNetworkMountPoints()
 		{
 			List<string> result = new List<string>();
+			foreach (KeyValuePair<string, string> mountpoint in GetNetworkDrivesInternal())
+				if (mountpoint.Value == VolumeId)
+					result.Add(mountpoint.Key);
+
+			return result;
+		}
+
+		/// <summary>
+		/// Lists all the volumes in the system.
+		/// </summary>
+		/// <returns>Returns a list of volumes representing all volumes present in
+		/// the system.</returns>
+		public static IList<VolumeInfo> Volumes
+		{
+			get
+			{
+				List<VolumeInfo> result = new List<VolumeInfo>();
+				StringBuilder nextVolume = new StringBuilder(NativeMethods.LongPath * sizeof(char));
+				SafeHandle handle = NativeMethods.FindFirstVolume(nextVolume, NativeMethods.LongPath);
+				if (handle.IsInvalid)
+					return result;
+
+				try
+				{
+					//Iterate over the volume mountpoints
+					do
+						result.Add(new VolumeInfo(nextVolume.ToString()));
+					while (NativeMethods.FindNextVolume(handle, nextVolume, NativeMethods.LongPath));
+				}
+				finally
+				{
+					//Close the handle
+					NativeMethods.FindVolumeClose(handle);
+				}
+
+				return result.AsReadOnly();
+			}
+		}
+
+		/// <summary>
+		/// Lists all mounted network drives on the current computer.
+		/// </summary>
+		public static IList<VolumeInfo> NetworkDrives
+		{
+			get
+			{
+				Dictionary<string, string> localToRemote = GetNetworkDrivesInternal();
+				Dictionary<string, string> remoteToLocal = new Dictionary<string, string>();
+
+				//Flip the dictionary to be indexed by value so we can map UNC paths to
+				//drive letters/mount points.
+				foreach (KeyValuePair<string, string> mountpoint in localToRemote)
+				{
+					//If there are no UNC path for this current mount point, we just add it.
+					if (!remoteToLocal.ContainsKey(mountpoint.Value))
+						remoteToLocal.Add(mountpoint.Value, mountpoint.Key);
+
+					//Otherwise, we try to maintain the shortest path.
+					else if (remoteToLocal[mountpoint.Value].Length > mountpoint.Key.Length)
+						remoteToLocal[mountpoint.Value] = mountpoint.Key;
+				}
+
+				//Return the list of UNC paths mounted.
+				List<VolumeInfo> result = new List<VolumeInfo>();
+				foreach (string uncPath in remoteToLocal.Keys)
+					result.Add(new VolumeInfo(uncPath));
+
+				return result.AsReadOnly();
+			}
+		}
+
+		/// <summary>
+		/// Lists all mounted network drives on the current computer. The key is
+		/// the local path, the value is the remote path.
+		/// </summary>
+		private static Dictionary<string, string> GetNetworkDrivesInternal()
+		{
+			Dictionary<string, string> result = new Dictionary<string, string>();
 
 			//Open an enumeration handle to list mount points.
 			IntPtr enumHandle;
 			uint errorCode = NativeMethods.WNetOpenEnum(NativeMethods.RESOURCE_CONNECTED,
 				NativeMethods.RESOURCETYPE_DISK, 0, IntPtr.Zero, out enumHandle);
 			if (errorCode != Win32ErrorCode.Success)
-				throw new Win32Exception((int)errorCode);
+				throw Win32ErrorCode.GetExceptionForWin32Error(Marshal.GetLastWin32Error());
 
 			try
 			{
@@ -208,9 +286,7 @@ namespace Eraser.Util
 									continue;
 								if (resource.lpRemoteName[resource.lpRemoteName.Length - 1] != '\\')
 									resource.lpRemoteName += '\\';
-
-								if (resource.lpRemoteName == VolumeId)
-									result.Add(resource.lpLocalName);
+								result.Add(resource.lpLocalName, resource.lpRemoteName);
 							}
 						}
 					}
@@ -226,38 +302,6 @@ namespace Eraser.Util
 			}
 
 			return result;
-		}
-
-		/// <summary>
-		/// Lists all the volumes in the system.
-		/// </summary>
-		/// <returns>Returns a list of volumes representing all volumes present in
-		/// the system.</returns>
-		public static IList<VolumeInfo> Volumes
-		{
-			get
-			{
-				List<VolumeInfo> result = new List<VolumeInfo>();
-				StringBuilder nextVolume = new StringBuilder(NativeMethods.LongPath * sizeof(char));
-				SafeHandle handle = NativeMethods.FindFirstVolume(nextVolume, NativeMethods.LongPath);
-				if (handle.IsInvalid)
-					return result;
-
-				try
-				{
-					//Iterate over the volume mountpoints
-					do
-						result.Add(new VolumeInfo(nextVolume.ToString()));
-					while (NativeMethods.FindNextVolume(handle, nextVolume, NativeMethods.LongPath));
-				}
-				finally
-				{
-					//Close the handle
-					NativeMethods.FindVolumeClose(handle);
-				}
-
-				return result.AsReadOnly();
-			}
 		}
 
 		/// <summary>
@@ -663,6 +707,18 @@ namespace Eraser.Util
 					return null;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Gets the mount point of the volume, or the volume ID if the volume is
+		/// not currently mounted.
+		/// </summary>
+		/// <returns>A string containing the mount point of the volume or the volume
+		/// ID.</returns>
+		public override string ToString()
+		{
+			ReadOnlyCollection<string> mountPoints = MountPoints;
+			return mountPoints.Count == 0 ? VolumeId : mountPoints[0];
 		}
 
 		public VolumeLock LockVolume(FileStream stream)
