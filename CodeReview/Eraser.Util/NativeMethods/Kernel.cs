@@ -47,7 +47,6 @@ namespace Eraser.Util
 		/// error information, call Marshal.GetLastWin32Error().</returns>
 		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		[Obsolete]
 		public static extern bool DeleteFile(string lpFileName);
 
 		/// <summary>
