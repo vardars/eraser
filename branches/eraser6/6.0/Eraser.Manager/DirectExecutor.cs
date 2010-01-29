@@ -277,6 +277,9 @@ namespace Eraser.Manager
 							{
 								throw;
 							}
+							catch (ThreadAbortException)
+							{
+							}
 							catch (Exception e)
 							{
 								task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Error));
