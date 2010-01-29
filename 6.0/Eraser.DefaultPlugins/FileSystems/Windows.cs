@@ -39,9 +39,8 @@ namespace Eraser.DefaultPlugins
 		{
 			//Set the date of the file to be invalid to prevent forensic
 			//detection
-			info.CreationTime = info.LastWriteTime = info.LastAccessTime = MinTimestamp;
-			info.Attributes = FileAttributes.Normal;
 			info.Attributes = FileAttributes.NotContentIndexed;
+			info.CreationTime = info.LastWriteTime = info.LastAccessTime = MinTimestamp;
 
 			//Rename the file a few times to erase the entry from the file system
 			//table.
@@ -126,6 +125,11 @@ namespace Eraser.DefaultPlugins
 			if (!recursive && info.GetFileSystemInfos().Length != 0)
 				throw new InvalidOperationException(S._("The folder {0} cannot be deleted as it is " +
 					"not empty."));
+
+			//If the directory does not already exist, we should just return -- there's
+			//nothing to be done.
+			if (!info.Exists)
+				return;
 
 			//TODO: check for reparse points
 			foreach (DirectoryInfo dir in info.GetDirectories())
