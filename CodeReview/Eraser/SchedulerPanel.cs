@@ -44,7 +44,8 @@ namespace Eraser
 		{
 			InitializeComponent();
 			Theming.ApplyTheme(schedulerDefaultMenu);
-			CreateHandle();
+			if (!IsHandleCreated)
+				CreateHandle();
 
 			//Populate the scheduler list-view with the current task list
 			ExecutorTasksCollection tasks = Program.eraserClient.Tasks;
@@ -186,7 +187,7 @@ namespace Eraser
 		/// <param name="e">The task event object.</param>
 		void task_TaskStarted(object sender, TaskEventArgs e)
 		{
-			if (scheduler.InvokeRequired)
+			if (InvokeRequired)
 			{
 				Invoke((EventHandler<TaskEventArgs>)task_TaskStarted, sender, e);
 				return;
@@ -212,7 +213,7 @@ namespace Eraser
 		{
 			//Make sure we handle the event in the main thread as this requires
 			//GUI calls.
-			if (scheduler.InvokeRequired)
+			if (InvokeRequired)
 			{
 				Invoke((EventHandler<ProgressChangedEventArgs>)task_ProgressChanged, sender, e);
 				return;

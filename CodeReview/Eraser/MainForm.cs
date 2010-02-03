@@ -47,6 +47,8 @@ namespace Eraser
 			InitializeComponent();
 			contentPanel.Controls.Add(SchedulerPage);
 			contentPanel.Controls.Add(SettingsPage);
+			if (!IsHandleCreated)
+				CreateHandle();
 
 			Theming.ApplyTheme(this);
 			Theming.ApplyTheme(notificationMenu);

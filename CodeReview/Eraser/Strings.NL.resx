@@ -174,6 +174,9 @@
   <data name="Another instance of Eraser is already running but it is running with higher privileges than this instance of Eraser.\n\nEraser will now exit." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
+  <data name="Another instance of Eraser is already running but cannot be connected to.\n\nThe error returned was: {0}Eraser" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Total: {0,2:#0.00%}" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>

@@ -71,11 +71,14 @@ namespace Eraser.DefaultPlugins
 		/// <param name="info">The file or directory to delete.</param>
 		private void DeleteFileSystemInfo(FileSystemInfo info)
 		{
+			//If the file/directory doesn't exist, pass.
+			if (!info.Exists)
+				return;
+
 			//Set the date of the file to be invalid to prevent forensic
 			//detection
-			info.CreationTime = info.LastWriteTime = info.LastAccessTime = MinTimestamp;
-			info.Attributes = FileAttributes.Normal;
 			info.Attributes = FileAttributes.NotContentIndexed;
+			info.CreationTime = info.LastWriteTime = info.LastAccessTime = MinTimestamp;
 
 			//Rename the file a few times to erase the entry from the file system
 			//table.
