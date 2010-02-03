@@ -632,7 +632,8 @@ namespace Eraser.Manager
 					Replace("\\?", ".");
 				Regex excludePattern = new Regex(regex, RegexOptions.IgnoreCase);
 				foreach (FileInfo file in files)
-					if ((file.Attributes & FileAttributes.ReparsePoint) == 0 &&
+					if (file.Exists &&
+						(file.Attributes & FileAttributes.ReparsePoint) == 0 &&
 						excludePattern.Matches(file.FullName).Count == 0)
 					{
 						totalSize += file.Length;
@@ -643,7 +644,7 @@ namespace Eraser.Manager
 			else
 				foreach (FileInfo file in files)
 				{
-					if ((file.Attributes & FileAttributes.ReparsePoint) != 0)
+					if (!file.Exists || (file.Attributes & FileAttributes.ReparsePoint) != 0)
 						continue;
 
 					//Get the size of the file and its ADSes
