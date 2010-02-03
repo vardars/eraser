@@ -44,10 +44,11 @@ namespace Eraser
 
 		public MainForm()
 		{
-			CreateHandle();
 			InitializeComponent();
 			contentPanel.Controls.Add(SchedulerPage);
 			contentPanel.Controls.Add(SettingsPage);
+			if (!IsHandleCreated)
+				CreateHandle();
 
 			UXThemeApi.UpdateControlTheme(this);
 			UXThemeApi.UpdateControlTheme(notificationMenu);
