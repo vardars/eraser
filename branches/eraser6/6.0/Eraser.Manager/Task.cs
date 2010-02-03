@@ -408,7 +408,7 @@ namespace Eraser.Manager
 				{
 					string adsPath = file + ':' + adsName;
 					list.Add(adsPath);
-					Util.StreamInfo info = new Util.StreamInfo(adsPath);
+					StreamInfo info = new StreamInfo(adsPath);
 					totalSize += info.Length;
 				}
 			}
@@ -747,7 +747,7 @@ namespace Eraser.Manager
 					if (!dir.Exists)
 						continue;
 
-					GetRecyclerFiles(dir, ref result, ref totalSize);
+					GetRecyclerFiles(dir, result, ref totalSize);
 				}
 			}
 
@@ -760,23 +760,24 @@ namespace Eraser.Manager
 		/// <param name="info">The DirectoryInfo object representing the folder to traverse.</param>
 		/// <param name="paths">The list of files to store path information in.</param>
 		/// <param name="totalSize">Receives the total size of the files.</param>
-		private void GetRecyclerFiles(DirectoryInfo info, ref List<string> paths,
+		private void GetRecyclerFiles(DirectoryInfo info, List<string> paths,
 			ref long totalSize)
 		{
 			try
 			{
-				foreach (FileSystemInfo fsInfo in info.GetFileSystemInfos())
+				foreach (FileInfo fileInfo in info.GetFiles())
 				{
-					FileInfo fileInfo = fsInfo as FileInfo;
-					if (fileInfo != null)
-					{
-						totalSize += fileInfo.Length;
-						GetPathADSes(paths, out totalSize, fileInfo.FullName);
-						paths.Add(fileInfo.FullName);
-					}
-					else
-						GetRecyclerFiles((DirectoryInfo)fsInfo, ref paths, ref totalSize);
+					if (!fileInfo.Exists || (fileInfo.Attributes & FileAttributes.ReparsePoint) != 0)
+						continue;
+
+					totalSize += fileInfo.Length;
+					GetPathADSes(paths, out totalSize, fileInfo.FullName);
+					paths.Add(fileInfo.FullName);
 				}
+
+				foreach (DirectoryInfo directoryInfo in info.GetDirectories())
+					if ((directoryInfo.Attributes & FileAttributes.ReparsePoint) == 0)
+						GetRecyclerFiles(directoryInfo, paths, ref totalSize);
 			}
 			catch (UnauthorizedAccessException e)
 			{
