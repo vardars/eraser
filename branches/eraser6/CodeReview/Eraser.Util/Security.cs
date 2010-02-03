@@ -116,20 +116,20 @@ namespace Eraser.Util
 			const string IntelDefaultProvider = "Intel Hardware Cryptographic Service Provider";
 
 			handle = new SafeCryptHandle();
-			if (NativeMethods.CryptAcquireContext(out handle, string.Empty,
+			if (NativeMethods.CryptAcquireContext(out handle, null,
 				IntelDefaultProvider, NativeMethods.PROV_INTEL_SEC, 0))
 			{
 				return;
 			}
-			else if (NativeMethods.CryptAcquireContext(out handle, string.Empty,
-				string.Empty, NativeMethods.PROV_RSA_FULL, 0))
+			else if (NativeMethods.CryptAcquireContext(out handle, null,
+				null, NativeMethods.PROV_RSA_FULL, 0))
 			{
 				return;
 			}
 			else if (Marshal.GetLastWin32Error() == NativeMethods.NTE_BAD_KEYSET)
 			{
 				//Default keyset doesn't exist, attempt to create a new one
-				if (NativeMethods.CryptAcquireContext(out handle, string.Empty, string.Empty,
+				if (NativeMethods.CryptAcquireContext(out handle, null, null,
 					NativeMethods.PROV_RSA_FULL, NativeMethods.CRYPT_NEWKEYSET))
 				{
 					return;

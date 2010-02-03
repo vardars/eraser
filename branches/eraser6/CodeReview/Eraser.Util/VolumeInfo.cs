@@ -57,41 +57,29 @@ namespace Eraser.Util
 			StringBuilder volumeName = new StringBuilder(NativeMethods.MaxPath * sizeof(char)),
 				fileSystemName = new StringBuilder(NativeMethods.MaxPath * sizeof(char));
 			uint serialNumber, maxComponentLength, filesystemFlags;
-			if (!NativeMethods.GetVolumeInformation(volumeId, volumeName, NativeMethods.MaxPath,
+			if (NativeMethods.GetVolumeInformation(volumeId, volumeName, NativeMethods.MaxPath,
 				out serialNumber, out maxComponentLength, out filesystemFlags, fileSystemName,
 				NativeMethods.MaxPath))
 			{
-				int lastError = Marshal.GetLastWin32Error();
-				switch (lastError)
-				{
-					case Win32ErrorCode.Success:
-					case Win32ErrorCode.NotReady:
-					case Win32ErrorCode.InvalidParameter:	//when the volume given is not mounted.
-					case Win32ErrorCode.UnrecognizedVolume:
-						break;
-
-					default:
-						throw Win32ErrorCode.GetExceptionForWin32Error(lastError);
-				}
-			}
-			else
-			{
 				IsReady = true;
-				VolumeLabel = volumeName.ToString();
-				VolumeFormat = fileSystemName.ToString();
+			}
 
-				//Determine whether it is FAT12 or FAT16
-				if (VolumeFormat == "FAT")
+			//If GetVolumeInformation returns zero some of the information may
+			//have been stored, so we just try to extract it.
+			VolumeLabel = volumeName.Length == 0 ? null : volumeName.ToString();
+			VolumeFormat = fileSystemName.Length == 0 ? null : fileSystemName.ToString();
+
+			//Determine whether it is FAT12 or FAT16
+			if (VolumeFormat == "FAT")
+			{
+				uint clusterSize, sectorSize, freeClusters, totalClusters;
+				if (NativeMethods.GetDiskFreeSpace(VolumeId, out clusterSize,
+					out sectorSize, out freeClusters, out totalClusters))
 				{
-					uint clusterSize, sectorSize, freeClusters, totalClusters;
-					if (NativeMethods.GetDiskFreeSpace(VolumeId, out clusterSize,
-						out sectorSize, out freeClusters, out totalClusters))
-					{
-						if (totalClusters <= 0xFF0)
-							VolumeFormat += "12";
-						else
-							VolumeFormat += "16";
-					}
+					if (totalClusters <= 0xFF0)
+						VolumeFormat += "12";
+					else
+						VolumeFormat += "16";
 				}
 			}
 		}
