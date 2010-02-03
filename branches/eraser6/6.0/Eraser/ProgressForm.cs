@@ -60,7 +60,7 @@ namespace Eraser
 
 		private void task_ProgressChanged(object sender, TaskProgressEventArgs e)
 		{
-			if (!IsHandleCreated)
+			if (IsDisposed || !IsHandleCreated)
 				return;
 			if (InvokeRequired)
 			{
@@ -103,7 +103,7 @@ namespace Eraser
 
 		private void task_TaskFinished(object sender, TaskEventArgs e)
 		{
-			if (!IsHandleCreated)
+			if (IsDisposed || !IsHandleCreated)
 				return;
 			if (InvokeRequired)
 			{
