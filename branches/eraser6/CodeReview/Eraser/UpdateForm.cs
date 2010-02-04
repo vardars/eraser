@@ -145,9 +145,9 @@ namespace Eraser
 
 			//Get a list of translatable categories (this will change as more categories
 			//are added)
-			Dictionary<DownloadType, string> categories = new Dictionary<DownloadType, string>();
-			categories.Add(DownloadType.Update, S._("Updates"));
-			categories.Add(DownloadType.Plugin, S._("Plugins"));
+			updatesLv.Groups.Add(DownloadType.Update.ToString(), S._("Updates"));
+			updatesLv.Groups.Add(DownloadType.Plugin.ToString(), S._("Plugins"));
+			updatesLv.Groups.Add(DownloadType.Build.ToString(), S._("Nightly builds"));
 
 			//Only include those whose architecture is compatible with ours.
 			List<string> architectures = new List<string>();
@@ -175,13 +175,8 @@ namespace Eraser
 				if (architectures.IndexOf(download.Architecture) == -1)
 					continue;
 
-				//Create or retrieve the ListViewGroup object to categorise our downloads.
-				string categoryText = categories.ContainsKey(download.Type) ?
-					categories[download.Type] : download.Type.ToString();
-				int groupIndex = updatesLv.Groups.IndexOf(new ListViewGroup(categoryText));
-				if (groupIndex == -1)
-					groupIndex = updatesLv.Groups.Add(new ListViewGroup(categoryText));
-				ListViewGroup group = updatesLv.Groups[groupIndex];
+				//Get the group this download belongs to.
+				ListViewGroup group = updatesLv.Groups[download.Type.ToString()];
 
 				//Add the item to the list of downloads available.
 				ListViewItem item = new ListViewItem(download.Name);
@@ -319,14 +314,15 @@ namespace Eraser
 			}
 			else
 			{
-				if (e.Progress.Progress >= 1.0f)
+				if (overallProgress.CurrentStep.Progress.Progress >= 1.0f)
 				{
 					downloadUIInfo.ListViewItem.ImageIndex = -1;
 					downloadUIInfo.ListViewItem.SubItems[1].Text = S._("Downloaded");
 				}
 				else
 				{
-					downloadUIInfo.Downloaded = (long)(overallProgress.Progress * download.FileSize);
+					downloadUIInfo.Downloaded = (long)
+						(overallProgress.CurrentStep.Progress.Progress * download.FileSize);
 					downloadUIInfo.ListViewItem.ImageIndex = 0;
 					downloadUIInfo.ListViewItem.SubItems[1].Text = FileSize.ToString(download.FileSize -
 						downloadUIInfo.Downloaded);
@@ -396,16 +392,20 @@ namespace Eraser
 			foreach (DownloadInfo download in downloads)
 			{
 				++progress.Completed;
-				int exitCode = download.Install();
-				
-				if (exitCode == 0)
+
+				try
+				{
 					installer_ProgressChanged(download,
 						new ProgressChangedEventArgs(progress, null));
-				else
+					download.Install();
 					installer_ProgressChanged(download,
-						new ProgressChangedEventArgs(progress,
-							new ApplicationException(S._(
-								"The installer exited with an error code {0}", exitCode))));
+						new ProgressChangedEventArgs(progress, null));
+				}
+				catch (Exception ex)
+				{
+					installer_ProgressChanged(download,
+						new ProgressChangedEventArgs(progress, ex));
+				}
 			}
 
 			e.Result = e.Argument;
@@ -440,13 +440,16 @@ namespace Eraser
 			}
 			else
 			{
-				downloadUIInfo.ListViewItem.SubItems[1].Text = S._("Installed {0}", download.Name);
 				switch (downloadUIInfo.ListViewItem.ImageIndex)
 				{
 					case -1:
+						downloadUIInfo.ListViewItem.SubItems[1].Text =
+							S._("Installing {0}", download.Name);
 						downloadUIInfo.ListViewItem.ImageIndex = 1;
 						break;
 					case 1:
+						downloadUIInfo.ListViewItem.SubItems[1].Text =
+							S._("Installed {0}", download.Name);
 						downloadUIInfo.ListViewItem.ImageIndex = 2;
 						break;
 				}
@@ -524,8 +527,8 @@ namespace Eraser
 			WebRequest.DefaultCachePolicy = new HttpRequestCachePolicy(
 				HttpRequestCacheLevel.Revalidate);
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(
-				new Uri("http://eraser.heidi.ie/scripts/updates?action=listupdates&version=" +
-					Assembly.GetExecutingAssembly().GetName().Version.ToString()));
+				new Uri("http://eraser.heidi.ie/scripts/updates?action=listupdates&version=6.1.0.0" /*+
+					Assembly.GetExecutingAssembly().GetName().Version.ToString()*/));
 
 			using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
 			using (Stream responseStream = response.GetResponseStream())
@@ -560,27 +563,28 @@ namespace Eraser
 		private static List<DownloadInfo> ParseDownloadList(Stream strm)
 		{
 			//Move the XmlReader to the root node
-			XmlReader rdr = XmlReader.Create(strm);
-			rdr.ReadToFollowing("updateList");
+			XmlReader reader = XmlReader.Create(strm);
+			reader.ReadToFollowing("updateList");
 
 			//Read the descendants of the updateList node (ignoring the <mirrors> element)
 			//These are categories.
-			XmlReader categories = rdr.ReadSubtree();
-			bool cont = categories.ReadToDescendant("mirrors");
-			if (!cont)
-				throw new InvalidDataException();
-			cont = categories.Read();
+			bool cont = reader.Read();
+			while (reader.NodeType != XmlNodeType.Element)
+				cont = reader.Read();
+			if (reader.NodeType != XmlNodeType.Element)
+				return new List<DownloadInfo>();
 
 			List<DownloadInfo> result = new List<DownloadInfo>();
-			while (cont)
+			do
 			{
-				if (categories.NodeType == XmlNodeType.Element)
+				if (reader.NodeType == XmlNodeType.Element)
 				{
-					result.AddRange(ParseDownloadCategory(categories.Name, categories.ReadSubtree()));
+					result.AddRange(ParseDownloadCategory(reader.Name, reader.ReadSubtree()));
 				}
 
-				cont = categories.Read();
+				cont = reader.Read();
 			}
+			while (cont);
 
 			return result;
 		}
@@ -604,7 +608,7 @@ namespace Eraser
 					continue;
 
 				result.Add(new DownloadInfo(rdr.GetAttribute("name"),
-					(DownloadType)Convert.ChangeType(category, typeof(DownloadType)),
+					(DownloadType)Enum.Parse(typeof(DownloadType), category, true),
 					new Version(rdr.GetAttribute("version")), rdr.GetAttribute("publisher"),
 					rdr.GetAttribute("architecture"), Convert.ToInt64(rdr.GetAttribute("filesize")),
 					new Uri(rdr.ReadElementContentAsString())));
@@ -633,7 +637,12 @@ namespace Eraser
 		/// <summary>
 		/// The download is a plugin.
 		/// </summary>
-		Plugin
+		Plugin,
+
+		/// <summary>
+		/// The download is a nightly build.
+		/// </summary>
+		Build
 	}
 
 	/// <summary>
@@ -751,7 +760,7 @@ namespace Eraser
 		/// Installs the file, by calling Process.Start on the file.
 		/// </summary>
 		/// <returns>The exit code of the program.</returns>
-		public int Install()
+		public void Install()
 		{
 			if (DownloadedFile == null || !DownloadedFile.Exists || DownloadedFile.Length == 0)
 				throw new InvalidOperationException("The Install method cannot be called " +
@@ -760,11 +769,9 @@ namespace Eraser
 			ProcessStartInfo info = new ProcessStartInfo();
 			info.FileName = DownloadedFile.FullName;
 			info.UseShellExecute = true;
-			//info.Verb = "runas";
 
 			Process process = Process.Start(info);
 			process.WaitForExit(Int32.MaxValue);
-			return process.ExitCode;
 		}
 
 		/// <summary>
