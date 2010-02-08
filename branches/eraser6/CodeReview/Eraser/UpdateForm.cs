@@ -719,9 +719,10 @@ namespace Eraser
 
 					//Create the file name.
 					DownloadedFile = new FileInfo(Path.Combine(
-						TempPath.FullName, contentDisposition == null ?
-							Path.GetFileName(Link.GetComponents(UriComponents.Path, UriFormat.Unescaped)) :
-							contentDisposition.FileName));
+						TempPath.FullName, string.Format(CultureInfo.InvariantCulture,
+							"{0:00}-{1}", ++DownloadFileIndex, contentDisposition == null ?
+								Path.GetFileName(Link.GetComponents(UriComponents.Path, UriFormat.Unescaped)) :
+								contentDisposition.FileName)));
 
 					using (Stream responseStream = response.GetResponseStream())
 					using (FileStream fileStream = DownloadedFile.OpenWrite())
@@ -782,6 +783,12 @@ namespace Eraser
 		/// The temporary path we are storing our downloads in.
 		/// </summary>
 		private static DirectoryInfo TempPath;
+
+		/// <summary>
+		/// Counter to ensure that files downloaded with a similar name are not overwritten
+		/// over each other
+		/// </summary>
+		private static int DownloadFileIndex;
 
 		/// <summary>
 		/// Stores information about the temporary file which the download was stored into.
