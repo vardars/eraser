@@ -88,17 +88,18 @@ namespace Eraser
 			UpdateProgress(progress, e);
 		}
 
-		private void task_TaskFinished(object sender, TaskEventArgs e)
+		private void task_TaskFinished(object sender, EventArgs e)
 		{
 			if (IsDisposed || !IsHandleCreated)
 				return;
 			if (InvokeRequired)
 			{
-				Invoke((EventHandler<TaskEventArgs>)task_TaskFinished, sender, e);
+				Invoke((EventHandler)task_TaskFinished, sender, e);
 				return;
 			}
 
 			//Update the UI. Set everything to 100%
+			Task task = (Task)sender;
 			timeLeft.Text = item.Text = pass.Text = string.Empty;
 			overallProgressLbl.Text = S._("Total: {0,2:#0.00%}", 1.0);
 			overallProgress.Value = overallProgress.Maximum;
@@ -108,7 +109,7 @@ namespace Eraser
 
 			//Inform the user on the status of the task.
 			LogLevel highestLevel = LogLevel.Information;
-			LogEntryCollection entries = e.Task.Log.LastSessionEntries;
+			LogEntryCollection entries = task.Log.LastSessionEntries;
 			foreach (LogEntry log in entries)
 				if (log.Level > highestLevel)
 					highestLevel = log.Level;

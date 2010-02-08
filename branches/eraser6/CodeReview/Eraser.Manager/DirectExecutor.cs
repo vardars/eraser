@@ -26,13 +26,11 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Threading;
 using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
-using System.Security.Principal;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Security.Permissions;
 
 namespace Eraser.Manager
 {
@@ -151,25 +149,26 @@ namespace Eraser.Manager
 			e.Task.TaskEdited += OnTaskEdited;
 		}
 
-		private void OnTaskEdited(object sender, TaskEventArgs e)
+		private void OnTaskEdited(object sender, EventArgs e)
 		{
 			//Find all schedule entries containing the task - since the user cannot make
 			//edits to the task when it is queued (only if it is scheduled) remove
 			//all task references and add them back
+			Task task = (Task)sender;
 			lock (tasksLock)
 				for (int i = 0; i != scheduledTasks.Count; ++i)
 					for (int j = 0; j < scheduledTasks.Values[i].Count; )
 					{
 						Task currentTask = scheduledTasks.Values[i][j];
-						if (currentTask == e.Task)
+						if (currentTask == task)
 							scheduledTasks.Values[i].RemoveAt(j);
 						else
 							j++;
 					}
 
 			//Then reschedule the task
-			if (e.Task.Schedule is RecurringSchedule)
-				ScheduleTask(e.Task);
+			if (task.Schedule is RecurringSchedule)
+				ScheduleTask(task);
 		}
 
 		private void OnTaskDeleted(object sender, TaskEventArgs e)
@@ -247,8 +246,7 @@ namespace Eraser.Manager
 					{
 						//Broadcast the task started event.
 						task.Canceled = false;
-						task.OnTaskStarted(new TaskEventArgs(task));
-						OnTaskProcessing(new TaskEventArgs(task));
+						task.OnTaskStarted();
 
 						//Run the task
 						foreach (ErasureTarget target in task.Targets)
@@ -317,8 +315,7 @@ namespace Eraser.Manager
 							task.Schedule = Schedule.RunNow;
 
 						//And the task finished event.
-						task.OnTaskFinished(new TaskEventArgs(task));
-						OnTaskProcessed(new TaskEventArgs(task));
+						task.OnTaskFinished();
 
 						//Remove the actively executing task from our instance variable
 						currentTask = null;
