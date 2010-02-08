@@ -145,7 +145,7 @@ namespace Eraser.Util
 			Dispose(false);
 		}
 
-		public void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			if (disposing)
 				handle.Close();

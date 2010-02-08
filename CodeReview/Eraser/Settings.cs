@@ -39,7 +39,7 @@ namespace Eraser
 		/// <summary>
 		/// Registry-based storage backing for the Settings class.
 		/// </summary>
-		private class RegistrySettings : Manager.Settings, IDisposable
+		private sealed class RegistrySettings : Manager.Settings, IDisposable
 		{
 			/// <summary>
 			/// Constructor.

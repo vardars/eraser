@@ -715,7 +715,7 @@ namespace Eraser.Util
 		}
 	}
 
-	public class VolumeLock : IDisposable
+	public sealed class VolumeLock : IDisposable
 	{
 		internal VolumeLock(FileStream stream)
 		{
@@ -744,7 +744,7 @@ namespace Eraser.Util
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "disposing")]
-		void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			//Flush the contents of the buffer to disk since after we unlock the volume
 			//we can no longer write to the volume.
