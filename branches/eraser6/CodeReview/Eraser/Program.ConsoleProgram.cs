@@ -71,7 +71,7 @@ namespace Eraser
 				GC.SuppressFinalize(this);
 			}
 
-			public void Dispose(bool disposing)
+			protected virtual void Dispose(bool disposing)
 			{
 				//Flush the buffered output to the console
 				Console.Out.Flush();
