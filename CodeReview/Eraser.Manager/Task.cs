@@ -182,8 +182,8 @@ namespace Eraser.Manager
 			set
 			{
 				if (value.Owner != null)
-					throw new ArgumentException(S._("The schedule provided can only " +
-						"belong to one task at a time"));
+					throw new ArgumentException("The schedule provided can only " +
+						"belong to one task at a time");
 
 				if (schedule is RecurringSchedule)
 					((RecurringSchedule)schedule).Owner = null;
