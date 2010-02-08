@@ -36,7 +36,6 @@ using System.Globalization;
 
 using Eraser.Util;
 
-using ProgressChangedEventArgs = Eraser.Util.ProgressChangedEventArgs;
 using DoWorkEventArgs = System.ComponentModel.DoWorkEventArgs;
 using RunWorkerCompletedEventArgs = System.ComponentModel.RunWorkerCompletedEventArgs;
 
