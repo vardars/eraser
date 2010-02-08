@@ -73,6 +73,9 @@ namespace Eraser
 
 			protected virtual void Dispose(bool disposing)
 			{
+				if (ConsoleWindow == null)
+					return;
+
 				//Flush the buffered output to the console
 				Console.Out.Flush();
 
@@ -86,6 +89,8 @@ namespace Eraser
 					if (disposing)
 						ConsoleWindow.Dispose();
 				}
+
+				ConsoleWindow = null;
 			}
 			#endregion
 

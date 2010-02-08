@@ -147,8 +147,15 @@ namespace Eraser.Util
 
 		private void Dispose(bool disposing)
 		{
+			//If we already have run Dispose, then handle will be null.
+			if (handle == null)
+				return;
+
 			if (disposing)
 				handle.Close();
+
+			//Don't run Dispose again.
+			handle = null;
 		}
 
 		public void Dispose()

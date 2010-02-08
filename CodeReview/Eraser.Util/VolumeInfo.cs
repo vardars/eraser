@@ -746,6 +746,9 @@ namespace Eraser.Util
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "disposing")]
 		private void Dispose(bool disposing)
 		{
+			if (Stream == null)
+				return;
+
 			//Flush the contents of the buffer to disk since after we unlock the volume
 			//we can no longer write to the volume.
 			Stream.Flush();
@@ -757,6 +760,9 @@ namespace Eraser.Util
 			{
 				throw new IOException("Could not unlock volume.");
 			}
+
+			//Set the stream to null so that we won't run this function again.
+			Stream = null;
 		}
 
 		private FileStream Stream;

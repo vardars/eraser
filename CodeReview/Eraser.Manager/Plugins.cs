@@ -159,6 +159,9 @@ namespace Eraser.Manager.Plugin
 
 		protected override void Dispose(bool disposing)
 		{
+			if (plugins == null)
+				return;
+
 			if (disposing)
 			{
 				//Unload all the plugins. This will cause all the plugins to execute
@@ -167,6 +170,8 @@ namespace Eraser.Manager.Plugin
 					if (plugin.Plugin != null)
 						plugin.Plugin.Dispose();
 			}
+
+			plugins = null;
 		}
 
 		/// <summary>

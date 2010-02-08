@@ -71,8 +71,12 @@ namespace Eraser
 
 			protected virtual void Dispose(bool disposing)
 			{
+				if (GlobalMutex == null)
+					return;
+
 				if (disposing)
 					GlobalMutex.Close();
+				GlobalMutex = null;
 			}
 
 			public void Dispose()
