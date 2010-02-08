@@ -145,9 +145,10 @@ namespace Eraser
 		private void DeleteSelectedTasks()
 		{
 			if (MessageBox.Show(this, S._("Are you sure you want to delete the selected tasks?"),
-				   S._("Eraser"), MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-				   MessageBoxDefaultButton.Button1,
-				   S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0) != DialogResult.Yes)
+					S._("Eraser"), MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+					MessageBoxDefaultButton.Button1, S.IsRightToLeft(this) ?
+						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0
+				) != DialogResult.Yes)
 			{
 				return;
 			}
@@ -444,11 +445,12 @@ namespace Eraser
 							}
 							catch (SerializationException ex)
 							{
-								MessageBox.Show(S._("Could not import task list from {0}. The error " +
-									"returned was: {1}", file, ex.Message), S._("Eraser"),
+								MessageBox.Show(S._("Could not import task list from {0}. The " +
+									"error returned was: {1}", file, ex.Message), S._("Eraser"),
 									MessageBoxButtons.OK, MessageBoxIcon.Error,
 									MessageBoxDefaultButton.Button1,
-									S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
+									S.IsRightToLeft(null) ?
+										MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 							}
 						}
 				}

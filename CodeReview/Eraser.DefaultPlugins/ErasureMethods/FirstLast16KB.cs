@@ -53,7 +53,8 @@ namespace Eraser.DefaultPlugins
 					"requires another erasure method to erase the file.\n\nThis must " +
 					"be set in the Plugin Settings dialog."), Name, MessageBoxButtons.OK,
 					MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
-					S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
+					S.IsRightToLeft(null) ?
+						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 			}
 		}
 

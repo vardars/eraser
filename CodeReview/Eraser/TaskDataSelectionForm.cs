@@ -232,7 +232,8 @@ namespace Eraser
 			{
 				MessageBox.Show(this, S._("The path you selected is invalid."), S._("Eraser"),
 					MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
-					S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
+					S.IsRightToLeft(this) ?
+						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 			}
 		}
 

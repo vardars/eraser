@@ -192,7 +192,8 @@ namespace Eraser
 			MessageBox.Show(this, selectedEntry.Message,
 				selectedEntry.Timestamp.ToString("F", CultureInfo.CurrentCulture),
 				MessageBoxButtons.OK, icon, MessageBoxDefaultButton.Button1,
-				S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
+				S.IsRightToLeft(this) ?
+					MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 		}
 
 		private void logContextMenuStrip_Opening(object sender, CancelEventArgs e)

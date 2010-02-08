@@ -525,7 +525,8 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 					"been lost. The error returned was: {0}", ex.Message), S._("Eraser"),
 					MessageBoxButtons.OK, MessageBoxIcon.Error,
 					MessageBoxDefaultButton.Button1,
-					S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
+					S.IsRightToLeft(null) ?
+						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 			}
 
 			//Create the main form
