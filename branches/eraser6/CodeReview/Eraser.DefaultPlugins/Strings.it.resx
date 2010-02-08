@@ -201,9 +201,6 @@
   <data name="First/last 16KB Erasure" xml:space="preserve">
     <value>First/last 16KB Erasure</value>
   </data>
-  <data name="The amount of data erased should not be limited, since this is a self-limiting erasure method." xml:space="preserve">
-    <value>La quantità di dati da pulire non dovrebbe venire limitata poichè il metodo di pulizia ha già una auto-limitazione.</value>
-  </data>
   <data name="Russian GOST P50739-95" xml:space="preserve">
     <value>Russian GOST P50739-95</value>
   </data>

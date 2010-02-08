@@ -362,7 +362,7 @@ namespace Eraser.Manager
 				else
 				{
 					task.Log.LastSessionEntries.Add(new LogEntry(S._("The program does not have " +
-						"the required permissions to erase the unused space on disk"),
+						"the required permissions to erase the unused space on disk."),
 						LogLevel.Error));
 				}
 			}
