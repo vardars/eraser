@@ -97,7 +97,8 @@ namespace Eraser
 										pluginID.ToString()),
 									S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error,
 									MessageBoxDefaultButton.Button1,
-									S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
+									S.IsRightToLeft(null) ?
+										MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 							}
 					}
 					else

@@ -281,7 +281,7 @@ namespace Eraser
 					"install is not corrupt.\n\nThe error returned was: {0}", ex.Message),
 					S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error,
 					MessageBoxDefaultButton.Button1, S.IsRightToLeft(this) ?
-						MessageBoxOptions.RtlReading : 0);
+						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 			}
 		}
 

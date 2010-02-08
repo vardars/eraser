@@ -212,7 +212,8 @@ namespace Eraser.DefaultPlugins
 					"text because it contains invalid characters."), S._("Eraser"),
 					 MessageBoxButtons.OK, MessageBoxIcon.Information,
 					 MessageBoxDefaultButton.Button1,
-					 S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
+					 S.IsRightToLeft(this) ?
+						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 			}
 		}
 

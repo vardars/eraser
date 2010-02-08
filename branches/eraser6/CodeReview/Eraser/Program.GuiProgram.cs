@@ -151,11 +151,12 @@ namespace Eraser
 						//We can't connect to the pipe because the other instance of Eraser
 						//is running with higher privileges than this instance. Tell the
 						//user this is the case and show him how to resolve the issue.
-						MessageBox.Show(S._("Another instance of Eraser is already running but it is " +
-							"running with higher privileges than this instance of Eraser.\n\n" +
+						MessageBox.Show(S._("Another instance of Eraser is already running but it " +
+							"is running with higher privileges than this instance of Eraser.\n\n" +
 							"Eraser will now exit."), S._("Eraser"), MessageBoxButtons.OK,
 							MessageBoxIcon.Information, MessageBoxDefaultButton.Button1,
-							S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
+							S.IsRightToLeft(null) ?
+								MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 					}
 					catch (IOException ex)
 					{
@@ -163,7 +164,8 @@ namespace Eraser
 							"cannot be connected to.\n\nThe error returned was: {0}", ex.Message,
 							S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error,
 							MessageBoxDefaultButton.Button1,
-							S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0));
+							S.IsRightToLeft(null) ?
+								MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0));
 					}
 					catch (TimeoutException)
 					{
