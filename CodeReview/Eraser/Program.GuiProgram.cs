@@ -161,11 +161,11 @@ namespace Eraser
 					catch (IOException ex)
 					{
 						MessageBox.Show(S._("Another instance of Eraser is already running but " +
-							"cannot be connected to.\n\nThe error returned was: {0}", ex.Message,
+							"cannot be connected to.\n\nThe error returned was: {0}", ex.Message),
 							S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error,
 							MessageBoxDefaultButton.Button1,
 							S.IsRightToLeft(null) ?
-								MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0));
+								MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 					}
 					catch (TimeoutException)
 					{
