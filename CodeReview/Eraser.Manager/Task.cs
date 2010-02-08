@@ -225,12 +225,12 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The task has been edited.
 		/// </summary>
-		public EventHandler<TaskEventArgs> TaskEdited { get; set; }
+		public EventHandler TaskEdited { get; set; }
 
 		/// <summary>
 		/// The start of the execution of a task.
 		/// </summary>
-		public EventHandler<TaskEventArgs> TaskStarted { get; set; }
+		public EventHandler TaskStarted { get; set; }
 
 		/// <summary>
 		/// The event object holding all event handlers.
@@ -240,7 +240,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The completion of the execution of a task.
 		/// </summary>
-		public EventHandler<TaskEventArgs> TaskFinished { get; set; }
+		public EventHandler TaskFinished { get; set; }
 
 		/// <summary>
 		/// Broadcasts the task edited event.
@@ -248,17 +248,16 @@ namespace Eraser.Manager
 		internal void OnTaskEdited()
 		{
 			if (TaskEdited != null)
-				TaskEdited(this, new TaskEventArgs(this));
+				TaskEdited(this, EventArgs.Empty);
 		}
 
 		/// <summary>
 		/// Broadcasts the task execution start event.
 		/// </summary>
-		/// <param name="e"></param>
-		internal void OnTaskStarted(TaskEventArgs e)
+		internal void OnTaskStarted()
 		{
 			if (TaskStarted != null)
-				TaskStarted(this, e);
+				TaskStarted(this, EventArgs.Empty);
 			Executing = true;
 			Progress = new SteppedProgressManager();
 		}
@@ -293,11 +292,10 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Broadcasts the task execution completion event.
 		/// </summary>
-		/// <param name="e"></param>
-		internal void OnTaskFinished(TaskEventArgs e)
+		internal void OnTaskFinished()
 		{
 			if (TaskFinished != null)
-				TaskFinished(this, e);
+				TaskFinished(this, EventArgs.Empty);
 			Executing = false;
 			Progress = null;
 		}

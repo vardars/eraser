@@ -185,16 +185,17 @@ namespace Eraser
 		/// Handles the task start event.
 		/// </summary>
 		/// <param name="e">The task event object.</param>
-		void task_TaskStarted(object sender, TaskEventArgs e)
+		void task_TaskStarted(object sender, EventArgs e)
 		{
 			if (InvokeRequired)
 			{
-				Invoke((EventHandler<TaskEventArgs>)task_TaskStarted, sender, e);
+				Invoke((EventHandler)task_TaskStarted, sender, e);
 				return;
 			}
 
 			//Get the list view item
-			ListViewItem item = GetTaskItem(e.Task);
+			Task task = (Task)sender;
+			ListViewItem item = GetTaskItem(task);
 
 			//Update the status.
 			item.SubItems[1].Text = S._("Running...");
@@ -227,16 +228,17 @@ namespace Eraser
 		/// <summary>
 		/// Handles the task completion event.
 		/// </summary>
-		void task_TaskFinished(object sender, TaskEventArgs e)
+		void task_TaskFinished(object sender, EventArgs e)
 		{
 			if (InvokeRequired)
 			{
-				Invoke((EventHandler<TaskEventArgs>)task_TaskFinished, sender, e);
+				Invoke((EventHandler)task_TaskFinished, sender, e);
 				return;
 			}
 
 			//Get the list view item
-			ListViewItem item = GetTaskItem(e.Task);
+			Task task = (Task)sender;
+			ListViewItem item = GetTaskItem(task);
 			if (item == null)
 				return;
 
@@ -249,7 +251,7 @@ namespace Eraser
 
 			//Get the exit status of the task.
 			LogLevel highestLevel = LogLevel.Information;
-			LogEntryCollection logs = e.Task.Log.LastSessionEntries;
+			LogEntryCollection logs = task.Log.LastSessionEntries;
 			foreach (LogEntry log in logs)
 				if (log.Level > highestLevel)
 					highestLevel = log.Level;
@@ -268,19 +270,19 @@ namespace Eraser
 				switch (highestLevel)
 				{
 					case LogLevel.Warning:
-						message = S._("The task {0} has completed with warnings.", e.Task.UIText);
+						message = S._("The task {0} has completed with warnings.", task.UIText);
 						icon = ToolTipIcon.Warning;
 						break;
 					case LogLevel.Error:
-						message = S._("The task {0} has completed with errors.", e.Task.UIText);
+						message = S._("The task {0} has completed with errors.", task.UIText);
 						icon = ToolTipIcon.Error;
 						break;
 					case LogLevel.Fatal:
-						message = S._("The task {0} did not complete.", e.Task.UIText);
+						message = S._("The task {0} did not complete.", task.UIText);
 						icon = ToolTipIcon.Error;
 						break;
 					default:
-						message = S._("The task {0} has completed.", e.Task.UIText);
+						message = S._("The task {0} has completed.", task.UIText);
 						icon = ToolTipIcon.Info;
 						break;
 				}
@@ -291,9 +293,9 @@ namespace Eraser
 
 			//If the user requested us to remove completed one-time tasks, do so.
 			if (EraserSettings.Get().ClearCompletedTasks &&
-				(e.Task.Schedule == Schedule.RunNow) && highestLevel < LogLevel.Warning)
+				(task.Schedule == Schedule.RunNow) && highestLevel < LogLevel.Warning)
 			{
-				Program.eraserClient.Tasks.Remove(e.Task);
+				Program.eraserClient.Tasks.Remove(task);
 			}
 
 			//Otherwise update the UI
@@ -318,7 +320,7 @@ namespace Eraser
 				//Recategorize the task. Do not assume the task has maintained the
 				//category since run-on-restart tasks will be changed to immediately
 				//run tasks.
-				CategorizeTask(e.Task, item);
+				CategorizeTask(task, item);
 
 				//Update the status of the task.
 				UpdateTask(item);
