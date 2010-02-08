@@ -103,7 +103,7 @@ namespace Eraser.Manager
 		{
 			if (minValue > maxValue)
 				throw new ArgumentOutOfRangeException("minValue", minValue,
-					S._("minValue is greater than maxValue"));
+					"minValue is greater than maxValue");
 			else if (minValue == maxValue)
 				return minValue;
 			return (Next() % (maxValue - minValue)) + minValue;

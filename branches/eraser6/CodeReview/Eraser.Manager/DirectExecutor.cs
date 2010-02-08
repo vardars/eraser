@@ -262,7 +262,7 @@ namespace Eraser.Manager
 								else if (fileSystemObjectTarget != null)
 									EraseFilesystemObject(task, fileSystemObjectTarget);
 								else
-									throw new ArgumentException(S._("Unknown erasure target."));
+									throw new ArgumentException("Unknown erasure target.");
 							}
 							catch (FatalException)
 							{
@@ -340,13 +340,16 @@ namespace Eraser.Manager
 				if (Environment.OSVersion.Platform == PlatformID.Win32NT &&
 					Environment.OSVersion.Version >= new Version(6, 0))
 				{
-					throw new UnauthorizedAccessException(S._("The program does not have the " +
-						"required permissions to erase the unused space on disk. Run the program " +
-						"as an administrator and retry the operation."));
+					task.Log.LastSessionEntries.Add(new LogEntry(S._("The program does not have " +
+						"the required permissions to erase the unused space on disk. Run the " +
+						"program as an administrator and retry the operation."), LogLevel.Error));
 				}
 				else
-					throw new UnauthorizedAccessException(S._("The program does not have the " +
-						"required permissions to erase the unused space on disk."));
+				{
+					task.Log.LastSessionEntries.Add(new LogEntry(S._("The program does not have " +
+						"the required permissions to erase the unused space on disk"),
+						LogLevel.Error));
+				}
 			}
 
 			//Check whether System Restore has any available checkpoints.

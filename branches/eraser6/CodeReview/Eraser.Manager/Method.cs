@@ -377,15 +377,15 @@ namespace Eraser.Manager
 
 			public override long CalculateEraseDataSize(ICollection<string> paths, long targetSize)
 			{
-				throw new InvalidOperationException(S._("The DefaultMethod class should never " +
-					"be used and should instead be replaced before execution!"));
+				throw new InvalidOperationException("The DefaultMethod class should never " +
+					"be used and should instead be replaced before execution!");
 			}
 
 			public override void Erase(Stream strm, long erasureLength, Prng prng,
 				ErasureMethodProgressFunction callback)
 			{
-				throw new InvalidOperationException(S._("The DefaultMethod class should never " +
-					"be used and should instead be replaced before execution!"));
+				throw new InvalidOperationException("The DefaultMethod class should never " +
+					"be used and should instead be replaced before execution!");
 			}
 		}
 
@@ -472,10 +472,10 @@ namespace Eraser.Manager
 
 			//Check for a valid constructor.
 			if (ctor == null)
-				throw new ArgumentException(S._("Registered erasure methods must contain " +
+				throw new ArgumentException("Registered erasure methods must contain " +
 					"a parameterless constructor that is called whenever clients request " +
 					"for an instance of the method. If a constructor requires parameters, " +
-					"specify it in the parameters parameter."));
+					"specify it in the parameters parameter.");
 
 			//Insert the entry
 			lock (ManagerLibrary.Instance.ErasureMethodManager.methods)
@@ -497,8 +497,8 @@ namespace Eraser.Manager
 		public static void Unregister(Guid value)
 		{
 			if (!ManagerLibrary.Instance.ErasureMethodManager.methods.ContainsKey(value))
-				throw new ArgumentException(S._("The GUID of the erasure method to remove " +
-					"refers to an invalid erasure method."));
+				throw new ArgumentException("The GUID of the erasure method to remove " +
+					"refers to an invalid erasure method.");
 
 			ManagerLibrary.Instance.ErasureMethodManager.methods.Remove(value);
 			OnMethodUnregistered(new ErasureMethodRegistrationEventArgs(value));

@@ -109,8 +109,8 @@ namespace Eraser.DefaultPlugins
 			//for the size of long, since we don't want to write extra or write
 			//less.
 			if (erasureLength != long.MaxValue)
-				throw new ArgumentException(S._("The amount of data erased should not be " +
-					"limited, since this is a self-limiting erasure method."));
+				throw new ArgumentException("The amount of data erased should not be " +
+					"limited, since this is a self-limiting erasure method.");
 
 			//If the target stream is shorter than or equal to 32kb, just forward it to
 			//the default function.
