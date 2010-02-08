@@ -50,6 +50,9 @@ namespace Eraser.Manager
 
 		protected override void Dispose(bool disposing)
 		{
+			if (thread == null || schedulerInterrupt == null)
+				return;
+
 			if (disposing)
 			{
 				thread.Abort();
@@ -72,6 +75,8 @@ namespace Eraser.Manager
 				schedulerInterrupt.Close();
 			}
 
+			thread = null;
+			schedulerInterrupt = null;
 			base.Dispose(disposing);
 		}
 

@@ -56,6 +56,9 @@ namespace Eraser.Manager
 
 		protected virtual void Dispose(bool disposing)
 		{
+			if (SettingsManager == null)
+				return;
+
 			if (disposing)
 			{
 				EntropySourceManager.Poller.Abort();
