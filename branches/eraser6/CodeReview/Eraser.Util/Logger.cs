@@ -499,7 +499,14 @@ namespace Eraser.Util
 			Threads = threads.Distinct().ToArray();
 
 			foreach (Thread thread in Threads)
+			{
+				if (!Logger.Listeners.ContainsKey(thread))
+					Logger.Listeners.Add(thread, new LogThreadTargets());
 				Logger.Listeners[thread].Add(target);
+			}
+
+			Target.OnEventLogged(this, new LogEventArgs(
+				new LogEntry(/*S._*/("Session started"), LogLevel.Information)));
 		}
 
 		/// <summary>
@@ -531,6 +538,8 @@ namespace Eraser.Util
 					Logger.Listeners[thread].Remove(Target);
 			}
 
+			Target.OnEventLogged(this, new LogEventArgs(
+				new LogEntry(/*S._*/("Session ended"), LogLevel.Information)));
 			Threads = null;
 			Target = null;
 		}
@@ -560,8 +569,28 @@ namespace Eraser.Util
 	/// Collects a list of log entries into one session.
 	/// </summary>
 	/// <remarks>Instance functions of this class are thread-safe.</remarks>
-	public class LogSink : ILogTarget, IList<LogEntry>
+	[Serializable]
+	public class LogSink : ISerializable, ILogTarget, IList<LogEntry>
 	{
+		public LogSink()
+		{
+		}
+
+		#region ISerializable Members
+
+		public LogSink(SerializationInfo info, StreamingContext context)
+		{
+			List = (List<LogEntry>)info.GetValue("List", typeof(List<LogEntry>));
+		}
+
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue("List", List);
+		}
+
+		#endregion
+
 		#region ILoggerTarget Members
 
 		public void OnEventLogged(object sender, LogEventArgs e)
