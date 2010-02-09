@@ -869,25 +869,30 @@ namespace Eraser.Manager
 					if (files.Length == 0)
 						fsManager.DeleteFolder(info);
 				};
-				eraseEmptySubFolders(new DirectoryInfo(fldr.Path));
+
+				DirectoryInfo directory = new DirectoryInfo(fldr.Path);
+				foreach (DirectoryInfo subDir in directory.GetDirectories())
+					eraseEmptySubFolders(subDir);
 
 				if (fldr.DeleteIfEmpty)
 				{
-					DirectoryInfo info = new DirectoryInfo(fldr.Path);
-					progress.Event.CurrentItemName = info.FullName;
+					progress.Event.CurrentItemName = directory.FullName;
 					task.OnProgressChanged(progress.Event);
 
 					//See if this is the root of a volume.
-					bool isVolumeRoot = info.Parent == null;
+					bool isVolumeRoot = directory.Parent == null;
 					foreach (VolumeInfo volume in VolumeInfo.Volumes)
 						foreach (string mountPoint in volume.MountPoints)
-							if (info.FullName == mountPoint)
+							if (directory.FullName == mountPoint)
 								isVolumeRoot = true;
 
 					//If the folder is a mount point, then don't delete it. If it isn't,
 					//search for files under the folder to see if it is empty.
-					if (!isVolumeRoot && info.Exists && info.GetFiles("*", SearchOption.AllDirectories).Length == 0)
-						fsManager.DeleteFolder(info);
+					if (!isVolumeRoot && directory.Exists &&
+						directory.GetFiles("*", SearchOption.AllDirectories).Length == 0)
+					{
+						fsManager.DeleteFolder(directory);
+					}
 				}
 			}
 
