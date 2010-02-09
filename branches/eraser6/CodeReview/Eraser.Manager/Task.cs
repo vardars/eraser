@@ -46,7 +46,7 @@ namespace Eraser.Manager
 			Executor = context.Context as Executor;
 			Targets = (ErasureTargetsCollection)info.GetValue("Targets", typeof(ErasureTargetsCollection));
 			Targets.Owner = this;
-			Log = (Logger)info.GetValue("Log", typeof(Logger));
+			Log = (List<LogSink>)info.GetValue("Log", typeof(List<LogSink>));
 			Canceled = false;
 
 			Schedule schedule = (Schedule)info.GetValue("Schedule", typeof(Schedule));
@@ -82,7 +82,7 @@ namespace Eraser.Manager
 			Targets = new ErasureTargetsCollection(this);
 			Schedule = Schedule.RunNow;
 			Canceled = false;
-			Log = new Logger();
+			Log = new List<LogSink>();
 		}
 
 		/// <summary>
@@ -197,7 +197,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The log entries which this task has accumulated.
 		/// </summary>
-		public Logger Log { get; private set; }
+		public List<LogSink> Log { get; private set; }
 
 		/// <summary>
 		/// The progress manager object which manages the progress of this task.
@@ -480,7 +480,7 @@ namespace Eraser.Manager
 			{
 				//The system cannot read the file, assume no ADSes for lack of
 				//more information.
-				Task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Error));
+				Logger.Log(e.Message, LogLevel.Error);
 			}
 		}
 
@@ -742,8 +742,8 @@ namespace Eraser.Manager
 				}
 				catch (UnauthorizedAccessException e)
 				{
-					Task.Log.LastSessionEntries.Add(new LogEntry(S._("Could not erase files and " +
-						"subfolders in {0} because {1}", info.FullName, e.Message), LogLevel.Error));
+					Logger.Log(S._("Could not erase files and subfolders in {0} because {1}",
+						info.FullName, e.Message), LogLevel.Error);
 				}
 			}
 
@@ -839,7 +839,7 @@ namespace Eraser.Manager
 			}
 			catch (UnauthorizedAccessException e)
 			{
-				Task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Error));
+				Logger.Log(e.Message, LogLevel.Error);
 			}
 		}
 

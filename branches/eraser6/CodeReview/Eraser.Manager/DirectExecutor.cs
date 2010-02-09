@@ -254,96 +254,107 @@ namespace Eraser.Manager
 					//Set the currently executing task.
 					currentTask = task;
 
-						//Prevent the system from sleeping.
-						Power.ExecutionState = ExecutionState.Continuous |
-							ExecutionState.SystemRequired;
+					//Prevent the system from sleeping.
+					Power.ExecutionState = ExecutionState.Continuous | ExecutionState.SystemRequired;
 
 					//Start a new log session to separate this session's events
 					//from previous ones.
-					task.Log.Entries.NewSession();
-
-					try
+					LogSink sessionLog = new LogSink();
+					task.Log.Add(sessionLog);
+					using (new LogSession(sessionLog))
 					{
-						//Broadcast the task started event.
-						task.Canceled = false;
-						task.OnTaskStarted();
-
-						//Run the task
-						foreach (ErasureTarget target in task.Targets)
-							try
-							{
-								UnusedSpaceTarget unusedSpaceTarget =
-									target as UnusedSpaceTarget;
-								FileSystemObjectTarget fileSystemObjectTarget =
-									target as FileSystemObjectTarget;
-
-								if (unusedSpaceTarget != null)
-									EraseUnusedSpace(task, unusedSpaceTarget);
-								else if (fileSystemObjectTarget != null)
-									EraseFilesystemObject(task, fileSystemObjectTarget);
-								else
-									throw new ArgumentException("Unknown erasure target.");
-							}
-							catch (FatalException)
-							{
-								throw;
-							}
-							catch (OperationCanceledException)
-							{
-								throw;
-							}
-							catch (ThreadAbortException)
-							{
-							}
-							catch (Exception e)
-							{
-								task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Error));
-								BlackBox.Get().CreateReport(e);
-							}
-					}
-					catch (FatalException e)
-					{
-						task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Fatal));
-					}
-					catch (OperationCanceledException e)
-					{
-						task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Fatal));
-					}
-					catch (ThreadAbortException)
-					{
-						//Do nothing. The exception will be rethrown after this block
-						//is executed. This is here mainly to ensure that no BlackBox
-						//report is created for this exception.
-					}
-					catch (Exception e)
-					{
-						task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Error));
-						BlackBox.Get().CreateReport(e);
-					}
-					finally
-					{
-						//Allow the system to sleep again.
-						Power.ExecutionState = ExecutionState.Continuous;
-
-						//If the task is a recurring task, reschedule it since we are done.
-						if (task.Schedule is RecurringSchedule)
-							((RecurringSchedule)task.Schedule).Reschedule(DateTime.Now);
-
-						//If the task is an execute on restart task, it is only run
-						//once and can now be restored to an immediately executed task
-						if (task.Schedule == Schedule.RunOnRestart)
-							task.Schedule = Schedule.RunNow;
-
-						//And the task finished event.
-						task.OnTaskFinished();
-
-						//Remove the actively executing task from our instance variable
-						currentTask = null;
+						ExecuteTask(task);
 					}
 				}
 
 				//Wait for half a minute to check for the next scheduled task.
 				schedulerInterrupt.WaitOne(30000, false);
+			}
+		}
+
+		/// <summary>
+		/// Executes the given task.
+		/// </summary>
+		/// <param name="task">The task to execute.</param>
+		private void ExecuteTask(Task task)
+		{
+			try
+			{
+				//Broadcast the task started event.
+				task.Canceled = false;
+				task.OnTaskStarted();
+
+				//Run the task
+				foreach (ErasureTarget target in task.Targets)
+					try
+					{
+						UnusedSpaceTarget unusedSpaceTarget =
+							target as UnusedSpaceTarget;
+						FileSystemObjectTarget fileSystemObjectTarget =
+							target as FileSystemObjectTarget;
+
+						if (unusedSpaceTarget != null)
+							EraseUnusedSpace(task, unusedSpaceTarget);
+						else if (fileSystemObjectTarget != null)
+							EraseFilesystemObject(task, fileSystemObjectTarget);
+						else
+							throw new ArgumentException("Unknown erasure target.");
+					}
+					catch (FatalException)
+					{
+						throw;
+					}
+					catch (OperationCanceledException)
+					{
+						throw;
+					}
+					catch (ThreadAbortException)
+					{
+					}
+					catch (Exception e)
+					{
+						Logger.Log(e.Message, LogLevel.Error);
+						BlackBox.Get().CreateReport(e);
+					}
+			}
+			catch (FatalException e)
+			{
+				Logger.Log(e.Message, LogLevel.Fatal);
+			}
+			catch (OperationCanceledException e)
+			{
+				Logger.Log(e.Message, LogLevel.Fatal);
+			}
+			catch (ThreadAbortException)
+			{
+				//Do nothing. The exception will be rethrown after this block
+				//is executed. This is here mainly to ensure that no BlackBox
+				//report is created for this exception.
+			}
+			catch (Exception e)
+			{
+				Logger.Log(e.Message, LogLevel.Error);
+				BlackBox.Get().CreateReport(e);
+			}
+			finally
+			{
+				//Allow the system to sleep again.
+				Power.ExecutionState = ExecutionState.Continuous;
+
+				//If the task is a recurring task, reschedule it since we are done.
+				if (task.Schedule is RecurringSchedule)
+					((RecurringSchedule)task.Schedule).Reschedule(DateTime.Now);
+
+				//If the task is an execute on restart task, it is only run
+				//once and can now be restored to an immediately executed task
+				if (task.Schedule == Schedule.RunOnRestart)
+					task.Schedule = Schedule.RunNow;
+
+				//And the task finished event.
+				task.OnTaskFinished();
+
+				//Remove the actively executing task from our instance variable
+				currentTask = null;
 			}
 		}
 
@@ -360,32 +371,30 @@ namespace Eraser.Manager
 				if (Environment.OSVersion.Platform == PlatformID.Win32NT &&
 					Environment.OSVersion.Version >= new Version(6, 0))
 				{
-					task.Log.LastSessionEntries.Add(new LogEntry(S._("The program does not have " +
-						"the required permissions to erase the unused space on disk. Run the " +
-						"program as an administrator and retry the operation."), LogLevel.Error));
+					Logger.Log(S._("The program does not have the required permissions to erase " +
+						"the unused space on disk. Run the program as an administrator and retry " +
+						"the operation."), LogLevel.Error);
 				}
 				else
 				{
-					task.Log.LastSessionEntries.Add(new LogEntry(S._("The program does not have " +
-						"the required permissions to erase the unused space on disk."),
-						LogLevel.Error));
+					Logger.Log(S._("The program does not have the required permissions to erase " +
+						"the unused space on disk."), LogLevel.Error);
 				}
 			}
 
 			//Check whether System Restore has any available checkpoints.
 			if (SystemRestore.GetInstances().Count != 0)
 			{
-				task.Log.LastSessionEntries.Add(new LogEntry(S._("The drive {0} has System " +
-					"Restore or Volume Shadow Copies enabled. This may allow copies of files " +
-					"stored on the disk to be recovered and pose a security concern.",
-					target.Drive), LogLevel.Warning));
+				Logger.Log(S._("The drive {0} has System Restore or Volume Shadow Copies " +
+					"enabled. This may allow copies of files stored on the disk to be recovered " +
+					"and pose a security concern.", target.Drive), LogLevel.Warning);
 			}
 			
 			//If the user is under disk quotas, log a warning message
 			if (VolumeInfo.FromMountPoint(target.Drive).HasQuota)
-				task.Log.LastSessionEntries.Add(new LogEntry(S._("The drive {0} has disk quotas " +
-					"active. This will prevent the complete erasure of unused space and may pose " +
-					"a security concern.", target.Drive), LogLevel.Warning));
+				Logger.Log(S._("The drive {0} has disk quotas active. This will prevent the " +
+					"complete erasure of unused space and may pose a security concern.",
+					target.Drive), LogLevel.Warning);
 
 			//Get the erasure method if the user specified he wants the default.
 			ErasureMethod method = target.Method;
@@ -438,7 +447,7 @@ namespace Eraser.Manager
 
 				//Start counting statistics
 				fsManager.EraseClusterTips(VolumeInfo.FromMountPoint(target.Drive),
-					method, task.Log, searchProgress, eraseProgress);
+					method, searchProgress, eraseProgress);
 				tipProgress.MarkComplete();
 			}
 
@@ -607,8 +616,8 @@ namespace Eraser.Manager
 				StreamInfo info = new StreamInfo(paths[i]);
 				if (!info.Exists)
 				{
-					task.Log.LastSessionEntries.Add(new LogEntry(S._("The file {0} was not erased " +
-						"as the file does not exist.", paths[i]), LogLevel.Notice));
+					Logger.Log(S._("The file {0} was not erased as the file does not exist.",
+						paths[i]), LogLevel.Notice);
 					continue;
 				}
 
@@ -631,9 +640,9 @@ namespace Eraser.Manager
 						(info.Attributes & FileAttributes.SparseFile) != 0)
 					{
 						//Log the error
-						task.Log.LastSessionEntries.Add(new LogEntry(S._("The file {0} could " +
-							"not be erased because the file was either compressed, encrypted or " +
-							"a sparse file.", info.FullName), LogLevel.Error));
+						Logger.Log(S._("The file {0} could not be erased because the file was " +
+							"either compressed, encrypted or a sparse file.", info.FullName),
+							LogLevel.Error);
 						continue;
 					}
 
@@ -658,9 +667,8 @@ namespace Eraser.Manager
 				}
 				catch (UnauthorizedAccessException)
 				{
-					task.Log.LastSessionEntries.Add(new LogEntry(S._("The file {0} could not " +
-						"be erased because the file's permissions prevent access to the file.",
-						info.FullName), LogLevel.Error));
+					Logger.Log(S._("The file {0} could not be erased because the file's " +
+						"permissions prevent access to the file.", info.FullName), LogLevel.Error);
 				}
 				catch (IOException)
 				{
@@ -695,9 +703,8 @@ namespace Eraser.Manager
 							lockedBy = S._("(locked by {0})", processStr.ToString().Remove(processStr.Length - 2));
 						}
 
-						task.Log.LastSessionEntries.Add(new LogEntry(S._(
-							"Could not force closure of file \"{0}\" {1}", paths[i],
-							lockedBy == null ? string.Empty : lockedBy).Trim(), LogLevel.Error));
+						Logger.Log(S._("Could not force closure of file \"{0}\" {1}", paths[i],
+							lockedBy == null ? string.Empty : lockedBy).Trim(), LogLevel.Error);
 					}
 					else
 						throw;

@@ -21,7 +21,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Linq;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -251,18 +251,10 @@ namespace Eraser
 			}
 
 			//Get the exit status of the task.
-			LogLevel highestLevel = LogLevel.Information;
-			LogEntryCollection logs = task.Log.LastSessionEntries;
-			foreach (LogEntry log in logs)
-				if (log.Level > highestLevel)
-					highestLevel = log.Level;
+			LogLevel highestLevel = task.Log.Last().Highest;
 
 			//Show a balloon to inform the user
 			MainForm parent = (MainForm)FindForm();
-
-			//TODO: Is this still needed?
-			if (parent == null)
-				throw new InvalidOperationException();
 			if (parent.WindowState == FormWindowState.Minimized || !parent.Visible)
 			{
 				string message = null;

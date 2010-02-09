@@ -21,7 +21,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Linq;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -108,12 +108,7 @@ namespace Eraser
 			itemProgress.Value = itemProgress.Maximum;
 
 			//Inform the user on the status of the task.
-			LogLevel highestLevel = LogLevel.Information;
-			LogEntryCollection entries = task.Log.LastSessionEntries;
-			foreach (LogEntry log in entries)
-				if (log.Level > highestLevel)
-					highestLevel = log.Level;
-
+			LogLevel highestLevel = task.Log.Last().Highest;
 			switch (highestLevel)
 			{
 				case LogLevel.Warning:
