@@ -82,14 +82,18 @@ namespace Eraser.Util
 			if (control == null)
 				throw new ArgumentNullException("control");
 
-			switch (control.RightToLeft)
+			while (control != null)
 			{
-				case RightToLeft.No:
-					return false;
-				case RightToLeft.Yes:
-					return true;
-				default:
-					return IsRightToLeft(control.Parent);
+				switch (control.RightToLeft)
+				{
+					case RightToLeft.No:
+						return false;
+					case RightToLeft.Yes:
+						return true;
+					default:
+						control = control.Parent;
+						break;
+				}
 			}
 		}
 
