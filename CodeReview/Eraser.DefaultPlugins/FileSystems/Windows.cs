@@ -154,15 +154,14 @@ namespace Eraser.DefaultPlugins
 		}
 
 		public override void EraseClusterTips(VolumeInfo info, ErasureMethod method,
-			Logger log, ClusterTipsSearchProgress searchCallback,
-			ClusterTipsEraseProgress eraseCallback)
+			ClusterTipsSearchProgress searchCallback, ClusterTipsEraseProgress eraseCallback)
 		{
 			//List all the files which can be erased.
 			List<string> files = new List<string>();
 			if (!info.IsMounted)
 				throw new InvalidOperationException(S._("Could not erase cluster tips in {0} " +
 					"as the volume is not mounted.", info.VolumeId));
-			ListFiles(new DirectoryInfo(info.MountPoints[0]), files, log, searchCallback);
+			ListFiles(new DirectoryInfo(info.MountPoints[0]), files, searchCallback);
 
 			//For every file, erase the cluster tips.
 			for (int i = 0, j = files.Count; i != j; ++i)
@@ -179,25 +178,25 @@ namespace Eraser.DefaultPlugins
 				}
 				catch (UnauthorizedAccessException)
 				{
-					log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have its " +
-						"cluster tips erased because you do not have the required permissions to " +
-						"erase the file cluster tips.", files[i]), LogLevel.Information));
+					Logger.Log(S._("{0} did not have its cluster tips erased because you do not " +
+						"have the required permissions to erase the file cluster tips.", files[i]),
+						LogLevel.Information);
 				}
 				catch (IOException e)
 				{
-					log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have its " +
-						"cluster tips erased. The error returned was: {1}", files[i],
-						e.Message), LogLevel.Error));
+					Logger.Log(S._("{0} did not have its cluster tips erased. The error returned " +
+						"was: {1}", files[i], e.Message), LogLevel.Error);
 				}
 				finally
 				{
 					streamInfo.Attributes = fileAttr;
 				}
+
 				eraseCallback(i, files.Count, files[i]);
 			}
 		}
 
-		private void ListFiles(DirectoryInfo info, List<string> files, Logger log,
+		private void ListFiles(DirectoryInfo info, List<string> files,
 			ClusterTipsSearchProgress searchCallback)
 		{
 			try
@@ -205,28 +204,26 @@ namespace Eraser.DefaultPlugins
 				//Skip this directory if it is a reparse point
 				if ((info.Attributes & FileAttributes.ReparsePoint) != 0)
 				{
-					log.LastSessionEntries.Add(new LogEntry(S._("Files in {0} did " +
-						"not have their cluster tips erased because it is a hard link or " +
-						"a symbolic link.", info.FullName), LogLevel.Information));
+					Logger.Log(S._("Files in {0} did not have their cluster tips erased because " +
+						"it is a hard link or a symbolic link.", info.FullName),
+						LogLevel.Information);
 					return;
 				}
 
 				foreach (FileInfo file in info.GetFiles())
 					if (file.IsProtectedSystemFile())
-						log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have " +
-							"its cluster tips erased, because it is a system file",
-							file.FullName), LogLevel.Information));
+						Logger.Log(S._("{0} did not have its cluster tips erased, because it is " +
+							"a system file", file.FullName), LogLevel.Information);
 					else if ((file.Attributes & FileAttributes.ReparsePoint) != 0)
-						log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have " +
-							"its cluster tips erased because it is a hard link or a " +
-							"symbolic link.", file.FullName), LogLevel.Information));
+						Logger.Log(S._("{0} did not have its cluster tips erased because it is a " +
+							"hard link or a symbolic link.", file.FullName), LogLevel.Information);
 					else if ((file.Attributes & FileAttributes.Compressed) != 0 ||
 						(file.Attributes & FileAttributes.Encrypted) != 0 ||
 						(file.Attributes & FileAttributes.SparseFile) != 0)
 					{
-						log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have " +
-							"its cluster tips erased because it is compressed, encrypted " +
-							"or a sparse file.", file.FullName), LogLevel.Information));
+						Logger.Log(S._("{0} did not have its cluster tips erased because it is " +
+							"compressed, encrypted or a sparse file.", file.FullName),
+							LogLevel.Information);
 					}
 					else
 					{
@@ -239,35 +236,33 @@ namespace Eraser.DefaultPlugins
 						}
 						catch (UnauthorizedAccessException e)
 						{
-							log.LastSessionEntries.Add(new LogEntry(S._("{0} did not " +
-								"have its cluster tips erased because of the following " +
-								"error: {1}", info.FullName, e.Message), LogLevel.Error));
+							Logger.Log(S._("{0} did not have its cluster tips erased because of " +
+								"the following error: {1}", info.FullName, e.Message),
+								LogLevel.Error);
 						}
 						catch (IOException e)
 						{
-							log.LastSessionEntries.Add(new LogEntry(S._("{0} did not " +
-								"have its cluster tips erased because of the following " +
-								"error: {1}", info.FullName, e.Message), LogLevel.Error));
+							Logger.Log(S._("{0} did not have its cluster tips erased because of " +
+								"the following error: {1}", info.FullName, e.Message),
+								LogLevel.Error);
 						}
 					}
 
 				foreach (DirectoryInfo subDirInfo in info.GetDirectories())
 				{
 					searchCallback(subDirInfo.FullName);
-					ListFiles(subDirInfo, files, log, searchCallback);
+					ListFiles(subDirInfo, files, searchCallback);
 				}
 			}
 			catch (UnauthorizedAccessException e)
 			{
-				log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have its " +
-					"cluster tips erased because of the following error: {1}",
-					info.FullName, e.Message), LogLevel.Error));
+				Logger.Log(S._("{0} did not have its cluster tips erased because of the " +
+					"following error: {1}", info.FullName, e.Message), LogLevel.Error);
 			}
 			catch (IOException e)
 			{
-				log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have its " +
-					"cluster tips erased because of the following error: {1}",
-					info.FullName, e.Message), LogLevel.Error));
+				Logger.Log(S._("{0} did not have its cluster tips erased because of the " +
+					"following error: {1}", info.FullName, e.Message), LogLevel.Error);
 			}
 		}
 

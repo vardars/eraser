@@ -202,8 +202,7 @@ namespace Eraser.Manager
 		/// <param name="searchCallback">The callback function for search progress.</param>
 		/// <param name="eraseCallback">The callback function for erasure progress.</param>
 		public abstract void EraseClusterTips(VolumeInfo info, ErasureMethod method,
-			Logger log, ClusterTipsSearchProgress searchCallback,
-			ClusterTipsEraseProgress eraseCallback);
+			ClusterTipsSearchProgress searchCallback, ClusterTipsEraseProgress eraseCallback);
 
 		/// <summary>
 		/// Erases old file system table-resident files. This creates small one-byte

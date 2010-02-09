@@ -187,7 +187,7 @@ namespace Eraser.Util
 		/// renderer when we get a theme changed message.
 		/// </summary>
 		private static Dictionary<ToolStrip, UXThemeMenuRenderer> ThemedMenus =
-			new Dictionary<ToolStrip,UXThemeMenuRenderer>();
+			new Dictionary<ToolStrip, UXThemeMenuRenderer>();
 
 		/// <summary>
 		/// Filters the Application message loop for WM_THEMECHANGED messages
