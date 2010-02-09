@@ -315,6 +315,10 @@ namespace Eraser
 			if (Task == null)
 				return;
 
+			//Check if we have any session selected
+			if (filterSessionCombobox.SelectedIndex == -1)
+				return;
+
 			Application.UseWaitCursor = true;
 			LogSink sink = Task.Log[filterSessionCombobox.SelectedIndex];
 			EntryCache.Clear();
