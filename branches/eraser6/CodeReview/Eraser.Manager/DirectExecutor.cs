@@ -380,6 +380,8 @@ namespace Eraser.Manager
 					Logger.Log(S._("The program does not have the required permissions to erase " +
 						"the unused space on disk."), LogLevel.Error);
 				}
+
+				return;
 			}
 
 			//Check whether System Restore has any available checkpoints.
