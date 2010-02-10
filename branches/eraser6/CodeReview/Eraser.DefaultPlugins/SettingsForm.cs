@@ -42,7 +42,7 @@ namespace Eraser.DefaultPlugins
 
 			//Populate the list of erasure passes, except the FL16KB.
 			foreach (ErasureMethod method in ManagerLibrary.Instance.ErasureMethodRegistrar)
-				if (method.Guid != new Guid("{0C2E07BF-0207-49a3-ADE8-46F9E1499C01}"))
+				if (method.Guid != typeof(FirstLast16KB).GUID)
 					fl16MethodCmb.Items.Add(method);
 
 			//Load the settings.
@@ -59,8 +59,8 @@ namespace Eraser.DefaultPlugins
 			{
 				Guid methodGuid =
 					ManagerLibrary.Settings.DefaultFileErasureMethod;
-				if (methodGuid == new FirstLast16KB().Guid)
-					methodGuid = new Gutmann().Guid;
+				if (methodGuid == typeof(FirstLast16KB).GUID)
+					methodGuid = typeof(Gutmann).GUID;
 				
 				foreach (object item in fl16MethodCmb.Items)
 					if (((ErasureMethod)item).Guid == methodGuid)

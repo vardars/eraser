@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.InteropServices;
 
 using System.IO;
 using Eraser.Manager;
@@ -129,11 +130,12 @@ namespace Eraser.DefaultPlugins
 		protected abstract FatApi GetFatApi(VolumeInfo info, FileStream stream);
 	}
 
+	[Guid("{36C78D78-7EE4-4304-8068-10755651AF2D}")]
 	public class Fat12FileSystem : FatFileSystem
 	{
 		public override Guid Guid
 		{
-			get { return new Guid("36C78D78-7EE4-4304-8068-10755651AF2D"); }
+			get { return GetType().GUID; }
 		}
 
 		public override string Name
@@ -147,11 +149,12 @@ namespace Eraser.DefaultPlugins
 		}
 	}
 
+	[Guid("{8C9DF746-1CD6-435d-8D04-3FE40A0A1C83}")]
 	public class Fat16FileSystem : FatFileSystem
 	{
 		public override Guid Guid
 		{
-			get { return new Guid("8C9DF746-1CD6-435d-8D04-3FE40A0A1C83"); }
+			get { return GetType().GUID; }
 		}
 
 		public override string Name
@@ -165,11 +168,12 @@ namespace Eraser.DefaultPlugins
 		}
 	}
 
+	[Guid("{1FCD66DC-179D-4402-8FF8-D19F74A4C398}")]
 	public class Fat32FileSystem : FatFileSystem
 	{
 		public override Guid Guid
 		{
-			get { return new Guid("1FCD66DC-179D-4402-8FF8-D19F74A4C398"); }
+			get { return GetType().GUID; }
 		}
 
 		public override string Name

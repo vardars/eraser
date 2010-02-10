@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.InteropServices;
 
 using System.IO;
 using Eraser.Manager;
@@ -32,11 +33,12 @@ namespace Eraser.DefaultPlugins
 	/// <summary>
 	/// Provides functions to handle erasures specific to NTFS volumes.
 	/// </summary>
+	[Guid("{34399F62-0AD4-411c-8C71-5E1E6213545C}")]
 	public class NtfsFileSystem : WindowsFileSystem
 	{
 		public override Guid Guid
 		{
-			get { return new Guid("34399F62-0AD4-411c-8C71-5E1E6213545C"); }
+			get { return GetType().GUID; }
 		}
 
 		public override string Name
