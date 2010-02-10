@@ -404,7 +404,7 @@ namespace Eraser.Manager
 			//Make a folder to dump our temporary files in
 			DirectoryInfo info = new DirectoryInfo(target.Drive);
 			VolumeInfo volInfo = VolumeInfo.FromMountPoint(target.Drive);
-			FileSystem fsManager = ManagerLibrary.Instance.FileSystemManager[volInfo];
+			FileSystem fsManager = ManagerLibrary.Instance.FileSystemRegistrar[volInfo];
 
 			//Start sampling the speed of the task.
 			SteppedProgressManager progress = new SteppedProgressManager();
@@ -505,7 +505,7 @@ namespace Eraser.Manager
 
 						//Then run the erase task
 						method.Erase(stream, long.MaxValue,
-							ManagerLibrary.Instance.PRNGManager[ManagerLibrary.Settings.ActivePrng],
+							ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng],
 							delegate(long lastWritten, long totalData, int currentPass)
 							{
 								mainProgress.Completed += lastWritten;
@@ -624,7 +624,7 @@ namespace Eraser.Manager
 				}
 
 				//Get the filesystem provider to handle the secure file erasures
-				FileSystem fsManager = ManagerLibrary.Instance.FileSystemManager[
+				FileSystem fsManager = ManagerLibrary.Instance.FileSystemRegistrar[
 					VolumeInfo.FromMountPoint(info.DirectoryName)];
 
 				bool isReadOnly = false;
@@ -728,7 +728,7 @@ namespace Eraser.Manager
 				
 				//Remove all subfolders which are empty.
 				FolderTarget fldr = (FolderTarget)target;
-				FileSystem fsManager = ManagerLibrary.Instance.FileSystemManager[VolumeInfo.FromMountPoint(fldr.Path)];
+				FileSystem fsManager = ManagerLibrary.Instance.FileSystemRegistrar[VolumeInfo.FromMountPoint(fldr.Path)];
 				Action<DirectoryInfo> eraseEmptySubFolders = null;
 				eraseEmptySubFolders = delegate(DirectoryInfo info)
 				{

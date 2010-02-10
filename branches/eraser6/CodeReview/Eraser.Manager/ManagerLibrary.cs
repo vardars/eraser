@@ -41,10 +41,10 @@ namespace Eraser.Manager
 			Instance = this;
 			SettingsManager = settings;
 
-			EntropySourceManager = new EntropySourceRegistrar();
-			PRNGManager = new PrngRegistrar();
-			ErasureMethodManager = new ErasureMethodRegistrar();
-			FileSystemManager = new FileSystemRegistrar();
+			EntropySourceRegistrar = new EntropySourceRegistrar();
+			PrngRegistrar = new PrngRegistrar();
+			ErasureMethodRegistrar = new ErasureMethodRegistrar();
+			FileSystemRegistrar = new FileSystemRegistrar();
 			Host = new Plugin.DefaultHost();
 			Host.Load();
 		}
@@ -61,7 +61,7 @@ namespace Eraser.Manager
 
 			if (disposing)
 			{
-				EntropySourceManager.Poller.Abort();
+				EntropySourceRegistrar.Poller.Abort();
 				Host.Dispose();
 				SettingsManager.Save();
 			}
@@ -84,22 +84,22 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The global instance of the EntropySource Manager
 		/// </summary>
-		public EntropySourceRegistrar EntropySourceManager { get; private set; }
+		public EntropySourceRegistrar EntropySourceRegistrar { get; private set; }
 
 		/// <summary>
 		/// The global instance of the PRNG Manager.
 		/// </summary>
-		public PrngRegistrar PRNGManager { get; private set; }
+		public PrngRegistrar PrngRegistrar { get; private set; }
 
 		/// <summary>
 		/// The global instance of the Erasure method manager.
 		/// </summary>
-		public ErasureMethodRegistrar ErasureMethodManager { get; private set; }
+		public ErasureMethodRegistrar ErasureMethodRegistrar { get; private set; }
 
 		/// <summary>
 		/// The global instance of the File System manager.
 		/// </summary>
-		public FileSystemRegistrar FileSystemManager { get; private set; }
+		public FileSystemRegistrar FileSystemRegistrar { get; private set; }
 
 		/// <summary>
 		/// Global instance of the Settings manager.

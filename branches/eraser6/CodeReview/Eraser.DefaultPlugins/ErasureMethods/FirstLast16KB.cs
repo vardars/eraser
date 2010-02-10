@@ -39,13 +39,13 @@ namespace Eraser.DefaultPlugins
 			{
 				//Try to retrieve the set erasure method
 				if (DefaultPlugin.Settings.FL16Method != Guid.Empty)
-					method = ManagerLibrary.Instance.ErasureMethodManager[
+					method = ManagerLibrary.Instance.ErasureMethodRegistrar[
 						DefaultPlugin.Settings.FL16Method];
 				else if (ManagerLibrary.Settings.DefaultFileErasureMethod != Guid)
-					method = ManagerLibrary.Instance.ErasureMethodManager[
+					method = ManagerLibrary.Instance.ErasureMethodRegistrar[
 						ManagerLibrary.Settings.DefaultFileErasureMethod];
 				else
-					method = ManagerLibrary.Instance.ErasureMethodManager[new Gutmann().Guid];
+					method = ManagerLibrary.Instance.ErasureMethodRegistrar[new Gutmann().Guid];
 			}
 			catch (ErasureMethodNotFoundException)
 			{

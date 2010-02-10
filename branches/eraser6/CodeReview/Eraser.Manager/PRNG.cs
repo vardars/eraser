@@ -150,8 +150,8 @@ namespace Eraser.Manager
 		/// <param name="entropy">An array of bytes, being entropy for the PRNG.</param>
 		internal void AddEntropy(byte[] entropy)
 		{
-			lock (ManagerLibrary.Instance.PRNGManager)
-				foreach (Prng prng in ManagerLibrary.Instance.PRNGManager)
+			lock (ManagerLibrary.Instance.PrngRegistrar)
+				foreach (Prng prng in ManagerLibrary.Instance.PrngRegistrar)
 					prng.Reseed(entropy);
 		}
 
@@ -161,7 +161,7 @@ namespace Eraser.Manager
 		/// <returns>A buffer of arbitrary length containing random information.</returns>
 		internal static byte[] GetEntropy()
 		{
-			return ManagerLibrary.Instance.EntropySourceManager.Poller.GetPool();
+			return ManagerLibrary.Instance.EntropySourceRegistrar.Poller.GetPool();
 		}
 	}
 }
