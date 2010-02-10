@@ -262,8 +262,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			Console.WriteLine(new string('-', 79));
 
 			//Refresh the list of erasure methods
-			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.Items;
-			foreach (ErasureMethod method in methods.Values)
+			foreach (ErasureMethod method in ManagerLibrary.Instance.ErasureMethodManager)
 			{
 				Console.WriteLine(methodFormat, (method is UnusedSpaceErasureMethod) ?
 					"U" : "", method.Name, method.Guid.ToString());
@@ -282,8 +281,8 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			//Create the task then set the method as well as schedule
 			Task task = new Task();
 			ErasureMethod method = arguments.ErasureMethod == Guid.Empty ?
-				ErasureMethodManager.Default :
-				ErasureMethodManager.GetInstance(arguments.ErasureMethod);
+				ErasureMethodRegistrar.Default :
+				ManagerLibrary.Instance.ErasureMethodManager[arguments.ErasureMethod];
 			switch (arguments.Schedule.ToUpperInvariant())
 			{
 				case "NOW":

@@ -45,8 +45,8 @@ namespace Eraser
 
 			//For new plugins, register the callback.
 			Host.Instance.PluginLoaded += OnNewPluginLoaded;
-			ErasureMethodManager.MethodRegistered += OnMethodRegistered;
-			ErasureMethodManager.MethodUnregistered += OnMethodUnregistered;
+			ManagerLibrary.Instance.ErasureMethodManager.Registered += OnMethodRegistered;
+			ManagerLibrary.Instance.ErasureMethodManager.Unregistered += OnMethodUnregistered;
 
 			//Load the values
 			LoadPluginDependantValues();
@@ -84,25 +84,26 @@ namespace Eraser
 			pluginsManager.Items.Add(item);
 		}
 
-		private void OnMethodRegistered(object sender, ErasureMethodRegistrationEventArgs e)
+		private void OnMethodRegistered(object sender, EventArgs e)
 		{
-			ErasureMethod method = ErasureMethodManager.GetInstance(e.Guid);
+			ErasureMethod method = (ErasureMethod)sender;
 			eraseFilesMethod.Items.Add(method);
 			if (method is UnusedSpaceErasureMethod)
 				eraseUnusedMethod.Items.Add(method);
 		}
 
-		private void OnMethodUnregistered(object sender, ErasureMethodRegistrationEventArgs e)
+		private void OnMethodUnregistered(object sender, EventArgs e)
 		{
+			ErasureMethod method = (ErasureMethod)sender;
 			foreach (object obj in eraseFilesMethod.Items)
-				if (((ErasureMethod)obj).Guid == e.Guid)
+				if (((ErasureMethod)obj).Guid == method.Guid)
 				{
 					eraseFilesMethod.Items.Remove(obj);
 					break;
 				}
 
 			foreach (object obj in eraseUnusedMethod.Items)
-				if (((ErasureMethod)obj).Guid == e.Guid)
+				if (((ErasureMethod)obj).Guid == method.Guid)
 				{
 					eraseUnusedMethod.Items.Remove(obj);
 					break;
@@ -128,8 +129,7 @@ namespace Eraser
 				uiLanguage.Items.Add(culture);
 
 			//Refresh the list of erasure methods
-			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.Items;
-			foreach (ErasureMethod method in methods.Values)
+			foreach (ErasureMethod method in ManagerLibrary.Instance.ErasureMethodManager)
 			{
 				eraseFilesMethod.Items.Add(method);
 				if (method is UnusedSpaceErasureMethod)

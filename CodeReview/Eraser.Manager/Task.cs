@@ -313,9 +313,9 @@ namespace Eraser.Manager
 		{
 			Guid methodGuid = (Guid)info.GetValue("Method", typeof(Guid));
 			if (methodGuid == Guid.Empty)
-				method = ErasureMethodManager.Default;
+				method = ErasureMethodRegistrar.Default;
 			else
-				method = ErasureMethodManager.GetInstance(methodGuid);
+				method = ManagerLibrary.Instance.ErasureMethodManager[methodGuid];
 		}
 
 		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
@@ -348,7 +348,7 @@ namespace Eraser.Manager
 			set
 			{
 				method = value;
-				MethodDefined = method != ErasureMethodManager.Default;
+				MethodDefined = method != ErasureMethodRegistrar.Default;
 			}
 		}
 
@@ -423,7 +423,7 @@ namespace Eraser.Manager
 		protected FileSystemObjectTarget()
 			: base()
 		{
-			Method = ErasureMethodManager.Default;
+			Method = ErasureMethodRegistrar.Default;
 		}
 
 		/// <summary>
@@ -495,8 +495,8 @@ namespace Eraser.Manager
 			{
 				if (base.MethodDefined)
 					return base.Method;
-				return ErasureMethodManager.GetInstance(
-					ManagerLibrary.Settings.DefaultFileErasureMethod);
+				return ManagerLibrary.Instance.ErasureMethodManager[
+					ManagerLibrary.Settings.DefaultFileErasureMethod];
 			}
 			set
 			{
@@ -556,7 +556,7 @@ namespace Eraser.Manager
 		public UnusedSpaceTarget()
 			: base()
 		{
-			Method = ErasureMethodManager.Default;
+			Method = ErasureMethodRegistrar.Default;
 		}
 
 		public override sealed ErasureMethod Method
@@ -565,8 +565,8 @@ namespace Eraser.Manager
 			{
 				if (base.MethodDefined)
 					return base.Method;
-				return ErasureMethodManager.GetInstance(
-					ManagerLibrary.Settings.DefaultUnusedSpaceErasureMethod);
+				return ManagerLibrary.Instance.ErasureMethodManager[
+					ManagerLibrary.Settings.DefaultUnusedSpaceErasureMethod];
 			}
 			set
 			{
