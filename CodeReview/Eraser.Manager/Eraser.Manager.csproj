@@ -70,7 +70,6 @@
     <Compile Include="Executor.cs" />
     <Compile Include="FileSystem.cs" />
     <Compile Include="IRegistrar.cs" />
-    <Compile Include="Language.cs" />
     <Compile Include="ManagerLibrary.cs" />
     <Compile Include="Method.cs" />
     <Compile Include="Plugins.cs" />

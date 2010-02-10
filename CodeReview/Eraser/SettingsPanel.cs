@@ -124,8 +124,8 @@ namespace Eraser
 				OnNewPluginLoaded(this, new PluginLoadedEventArgs(i.Current));
 
 			//Refresh the list of languages
-			IList<Language> languages = LanguageManager.Items;
-			foreach (Language culture in languages)
+			IList<CultureInfo> languages = S.Localisations;
+			foreach (CultureInfo culture in languages)
 				uiLanguage.Items.Add(culture);
 
 			//Refresh the list of erasure methods
@@ -144,29 +144,29 @@ namespace Eraser
 		private void LoadSettings()
 		{
 			EraserSettings settings = EraserSettings.Get();
-			foreach (Object lang in uiLanguage.Items)
-				if (((Language)lang).Name == settings.Language)
+			foreach (CultureInfo lang in uiLanguage.Items)
+				if (lang.Name == settings.Language)
 				{
 					uiLanguage.SelectedItem = lang;
 					break;
 				}
 
-			foreach (Object method in eraseFilesMethod.Items)
-				if (((ErasureMethod)method).Guid == ManagerLibrary.Settings.DefaultFileErasureMethod)
+			foreach (ErasureMethod method in eraseFilesMethod.Items)
+				if (method.Guid == ManagerLibrary.Settings.DefaultFileErasureMethod)
 				{
 					eraseFilesMethod.SelectedItem = method;
 					break;
 				}
 
-			foreach (Object method in eraseUnusedMethod.Items)
-				if (((ErasureMethod)method).Guid == ManagerLibrary.Settings.DefaultUnusedSpaceErasureMethod)
+			foreach (ErasureMethod method in eraseUnusedMethod.Items)
+				if (method.Guid == ManagerLibrary.Settings.DefaultUnusedSpaceErasureMethod)
 				{
 					eraseUnusedMethod.SelectedItem = method;
 					break;
 				}
 
-			foreach (Object prng in erasePRNG.Items)
-				if (((Prng)prng).Guid == ManagerLibrary.Settings.ActivePrng)
+			foreach (Prng prng in erasePRNG.Items)
+				if (prng.Guid == ManagerLibrary.Settings.ActivePrng)
 				{
 					erasePRNG.SelectedItem = prng;
 					break;
@@ -192,8 +192,8 @@ namespace Eraser
 			//Select an intelligent default if the settings are invalid.
 			if (uiLanguage.SelectedIndex == -1)
 			{
-				foreach (Object lang in uiLanguage.Items)
-					if (((Language)lang).Name == "en")
+				foreach (CultureInfo lang in uiLanguage.Items)
+					if (lang.Name == "en")
 					{
 						uiLanguage.SelectedItem = lang;
 						break;
@@ -404,9 +404,9 @@ namespace Eraser
 				return;
 			}
 
-			if (CultureInfo.CurrentUICulture.Name != ((Language)uiLanguage.SelectedItem).Name)
+			if (CultureInfo.CurrentUICulture.Name != ((CultureInfo)uiLanguage.SelectedItem).Name)
 			{
-				settings.Language = ((Language)uiLanguage.SelectedItem).Name;
+				settings.Language = ((CultureInfo)uiLanguage.SelectedItem).Name;
 				MessageBox.Show(this, S._("The new UI language will take only effect when " +
 					"Eraser is restarted."), S._("Eraser"), MessageBoxButtons.OK,
 					MessageBoxIcon.Information, MessageBoxDefaultButton.Button1,
