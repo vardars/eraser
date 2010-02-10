@@ -31,7 +31,7 @@ using Eraser.Util;
 namespace Eraser.DefaultPlugins
 {
 	[DefaultPrng(1)]
-	[Guid("{6BF35B8E-F37F-476e-B6B2-9994A92C3B0C}")]
+	[Guid("6BF35B8E-F37F-476e-B6B2-9994A92C3B0C")]
 	public class RngCrypto : Prng
 	{
 		public override string Name

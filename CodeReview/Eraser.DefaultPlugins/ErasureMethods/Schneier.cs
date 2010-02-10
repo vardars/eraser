@@ -29,7 +29,7 @@ using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
-	[Guid("{B1BFAB4A-31D3-43a5-914C-E9892C78AFD8}")]
+	[Guid("B1BFAB4A-31D3-43a5-914C-E9892C78AFD8")]
 	sealed class Schneier : PassBasedErasureMethod
 	{
 		public override string Name

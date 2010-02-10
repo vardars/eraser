@@ -32,7 +32,7 @@ using System.Windows.Forms;
 
 namespace Eraser.DefaultPlugins
 {
-	[Guid("{0C2E07BF-0207-49a3-ADE8-46F9E1499C01}")]
+	[Guid("0C2E07BF-0207-49a3-ADE8-46F9E1499C01")]
 	sealed class FirstLast16KB : ErasureMethod
 	{
 		public FirstLast16KB()
@@ -55,7 +55,7 @@ namespace Eraser.DefaultPlugins
 					"requires another erasure method to erase the file.\n\nThis must " +
 					"be set in the Plugin Settings dialog."), Name, MessageBoxButtons.OK,
 					MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
-					S.IsRightToLeft(null) ?
+					Localisation.IsRightToLeft(null) ?
 						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 			}
 		}

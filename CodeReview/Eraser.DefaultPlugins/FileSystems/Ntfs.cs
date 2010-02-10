@@ -33,7 +33,7 @@ namespace Eraser.DefaultPlugins
 	/// <summary>
 	/// Provides functions to handle erasures specific to NTFS volumes.
 	/// </summary>
-	[Guid("{34399F62-0AD4-411c-8C71-5E1E6213545C}")]
+	[Guid("34399F62-0AD4-411c-8C71-5E1E6213545C")]
 	public class NtfsFileSystem : WindowsFileSystem
 	{
 		public override Guid Guid

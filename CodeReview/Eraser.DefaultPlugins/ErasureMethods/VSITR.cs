@@ -32,7 +32,7 @@ using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
-	[Guid("{607632B2-651B-4935-883A-BDAA74FEBB54}")]
+	[Guid("607632B2-651B-4935-883A-BDAA74FEBB54")]
 	class VSITR : PassBasedErasureMethod
 	{
 		public override string Name
