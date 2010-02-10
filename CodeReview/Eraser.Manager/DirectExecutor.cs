@@ -251,12 +251,6 @@ namespace Eraser.Manager
 
 				if (task != null)
 				{
-					//Set the currently executing task.
-					currentTask = task;
-
-					//Prevent the system from sleeping.
-					Power.ExecutionState = ExecutionState.Continuous | ExecutionState.SystemRequired;
-
 					//Start a new log session to separate this session's events
 					//from previous ones.
 					LogSink sessionLog = new LogSink();
@@ -278,6 +272,12 @@ namespace Eraser.Manager
 		/// <param name="task">The task to execute.</param>
 		private void ExecuteTask(Task task)
 		{
+			//Set the currently executing task.
+			currentTask = task;
+
+			//Prevent the system from sleeping.
+			Power.ExecutionState = ExecutionState.Continuous | ExecutionState.SystemRequired;
+
 			try
 			{
 				//Broadcast the task started event.
