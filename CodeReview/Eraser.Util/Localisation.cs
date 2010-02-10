@@ -79,9 +79,6 @@ namespace Eraser.Util
 		/// <returns>True if the control is right-to-left reading.</returns>
 		public static bool IsRightToLeft(Control control)
 		{
-			if (control == null)
-				throw new ArgumentNullException("control");
-
 			while (control != null)
 			{
 				switch (control.RightToLeft)
@@ -94,6 +91,16 @@ namespace Eraser.Util
 						control = control.Parent;
 						break;
 				}
+			}
+
+			if (Application.OpenForms.Count > 0)
+			{
+				return IsRightToLeft(Application.OpenForms[0]);
+			}
+			else
+			{
+				using (Form form = new Form())
+					return IsRightToLeft(form);
 			}
 		}
 
