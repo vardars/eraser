@@ -34,11 +34,14 @@ namespace Eraser.DefaultPlugins
 	/// </summary>
 	public class NtfsFileSystem : WindowsFileSystem
 	{
-		public override bool Supports(string fileSystemName)
+		public override Guid Guid
 		{
-			if (fileSystemName == "NTFS")
-				return true;
-			return false;
+			get { return new Guid("34399F62-0AD4-411c-8C71-5E1E6213545C"); }
+		}
+
+		public override string Name
+		{
+			get { return "NTFS"; }
 		}
 
 		public override void EraseOldFileSystemResidentFiles(VolumeInfo volume,
@@ -67,7 +70,7 @@ namespace Eraser.DefaultPlugins
 
 								//Then run the erase task
 								method.Erase(strm, long.MaxValue,
-									PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng),
+									ManagerLibrary.Instance.PRNGManager[ManagerLibrary.Settings.ActivePrng],
 									null);
 
 								//Call the callback function if one is provided. We'll provide a dummy
@@ -166,7 +169,8 @@ namespace Eraser.DefaultPlugins
 					FileShare.None))
 				{
 					method.Erase(strm, long.MaxValue,
-						PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng), null);
+						ManagerLibrary.Instance.PRNGManager[ManagerLibrary.Settings.ActivePrng],
+						null);
 				}
 			}
 
@@ -187,7 +191,7 @@ namespace Eraser.DefaultPlugins
 
 				//Then erase the file.
 				method.Erase(strm, long.MaxValue,
-					PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng),
+					ManagerLibrary.Instance.PRNGManager[ManagerLibrary.Settings.ActivePrng],
 					callback
 				);
 

@@ -42,9 +42,9 @@ namespace Eraser.Manager
 			SettingsManager = settings;
 
 			EntropySourceManager = new EntropySourceRegistrar();
-			PRNGManager = new PrngManager();
+			PRNGManager = new PrngRegistrar();
 			ErasureMethodManager = new ErasureMethodRegistrar();
-			FileSystemManager = new FileSystemManager();
+			FileSystemManager = new FileSystemRegistrar();
 			Host = new Plugin.DefaultHost();
 			Host.Load();
 		}
@@ -89,7 +89,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The global instance of the PRNG Manager.
 		/// </summary>
-		public PrngManager PRNGManager { get; private set; }
+		public PrngRegistrar PRNGManager { get; private set; }
 
 		/// <summary>
 		/// The global instance of the Erasure method manager.
@@ -99,7 +99,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The global instance of the File System manager.
 		/// </summary>
-		public FileSystemManager FileSystemManager { get; private set; }
+		public FileSystemRegistrar FileSystemManager { get; private set; }
 
 		/// <summary>
 		/// Global instance of the Settings manager.

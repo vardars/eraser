@@ -298,8 +298,9 @@ namespace Eraser.DefaultPlugins
 					stream.Seek(fileLength, SeekOrigin.Begin);
 
 					//Erase the file
-					method.Erase(stream, long.MaxValue, PrngManager.GetInstance(
-						ManagerLibrary.Settings.ActivePrng), null);
+					method.Erase(stream, long.MaxValue,
+						ManagerLibrary.Instance.PRNGManager[ManagerLibrary.Settings.ActivePrng],
+						null);
 				}
 				finally
 				{
