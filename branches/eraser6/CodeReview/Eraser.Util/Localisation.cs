@@ -169,6 +169,31 @@ namespace Eraser.Util
 		}
 
 		/// <summary>
+		/// Retrieves all present language plugins
+		/// </summary>
+		/// <returns>A list, with an instance of each Language class</returns>
+		public static IList<CultureInfo> Localisations
+		{
+			get
+			{
+				List<CultureInfo> result = new List<CultureInfo>();
+				Assembly assembly = Assembly.GetEntryAssembly();
+				foreach (CultureInfo info in CultureInfo.GetCultures(CultureTypes.AllCultures))
+				{
+					if (string.IsNullOrEmpty(info.Name))
+						continue;
+					else if (LocalisationExists(info, assembly))
+						result.Add(info);
+				}
+
+				//Last resort
+				if (result.Count == 0)
+					result.Add(CultureInfo.GetCultureInfo("EN"));
+				return result.AsReadOnly();
+			}
+		}
+
+		/// <summary>
 		/// Replaces non-printable codes used in the string to translate into translatable placeholders.
 		/// </summary>
 		/// <param name="str">The string to escape</param>
