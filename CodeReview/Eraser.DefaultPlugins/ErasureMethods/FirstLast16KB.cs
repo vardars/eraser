@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.InteropServices;
 
 using Eraser.Manager;
 using Eraser.Util;
@@ -31,6 +32,7 @@ using System.Windows.Forms;
 
 namespace Eraser.DefaultPlugins
 {
+	[Guid("{0C2E07BF-0207-49a3-ADE8-46F9E1499C01}")]
 	sealed class FirstLast16KB : ErasureMethod
 	{
 		public FirstLast16KB()
@@ -70,7 +72,7 @@ namespace Eraser.DefaultPlugins
 
 		public override Guid Guid
 		{
-			get { return new Guid("{0C2E07BF-0207-49a3-ADE8-46F9E1499C01}"); }
+			get { return GetType().GUID; }
 		}
 
 		public override long CalculateEraseDataSize(ICollection<string> paths, long targetSize)
