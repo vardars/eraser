@@ -83,9 +83,8 @@ namespace Eraser
 				unusedDisk.SelectedIndex = 0;
 
 			//And the methods list
-			Dictionary<Guid, ErasureMethod> methods = ErasureMethodManager.Items;
-			this.method.Items.Add(ErasureMethodManager.Default);
-			foreach (ErasureMethod method in methods.Values)
+			this.method.Items.Add(ErasureMethodRegistrar.Default);
+			foreach (ErasureMethod method in ManagerLibrary.Instance.ErasureMethodManager)
 				this.method.Items.Add(method);
 			if (this.method.Items.Count != 0)
 				this.method.SelectedIndex = 0;
@@ -186,7 +185,7 @@ namespace Eraser
 		private void method_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (!(method.SelectedItem is UnusedSpaceErasureMethod) &&
-				method.SelectedItem != ErasureMethodManager.Default)
+				method.SelectedItem != ErasureMethodRegistrar.Default)
 			{
 				if (unused.Checked)
 				{

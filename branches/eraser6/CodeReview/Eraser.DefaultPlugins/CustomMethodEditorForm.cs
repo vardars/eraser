@@ -32,7 +32,7 @@ using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
-	public partial class CustomMethodEditorForm : Form
+	internal partial class CustomMethodEditorForm : Form
 	{
 		public CustomMethodEditorForm()
 		{
