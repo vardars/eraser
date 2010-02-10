@@ -101,7 +101,7 @@ namespace Eraser
 										PluginID.ToString()),
 									S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error,
 									MessageBoxDefaultButton.Button1,
-									S.IsRightToLeft(null) ?
+									Localisation.IsRightToLeft(null) ?
 										MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 							}
 					}
@@ -280,13 +280,13 @@ namespace Eraser
 			System.Reflection.Assembly entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
 			CultureInfo culture = CultureInfo.CurrentUICulture;
 			while (culture.Parent != CultureInfo.InvariantCulture &&
-				!S.LocalisationExists(culture, entryAssembly))
+				!Localisation.LocalisationExists(culture, entryAssembly))
 			{
 				culture = culture.Parent;
 			}
 
 			//Default to English if any of our cultures don't exist.
-			if (!S.LocalisationExists(culture, entryAssembly))
+			if (!Localisation.LocalisationExists(culture, entryAssembly))
 				culture = new CultureInfo("en");
 
 			return culture;

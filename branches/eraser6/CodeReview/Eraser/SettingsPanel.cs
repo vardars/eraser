@@ -124,7 +124,7 @@ namespace Eraser
 				OnNewPluginLoaded(this, new PluginLoadedEventArgs(i.Current));
 
 			//Refresh the list of languages
-			IList<CultureInfo> languages = S.Localisations;
+			IList<CultureInfo> languages = Localisation.Localisations;
 			foreach (CultureInfo culture in languages)
 				uiLanguage.Items.Add(culture);
 
@@ -241,7 +241,7 @@ namespace Eraser
 					"Please check that the new settings suit your required level of security.",
 					defaults), S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Warning,
 					MessageBoxDefaultButton.Button1,
-					S.IsRightToLeft(this) ?
+					Localisation.IsRightToLeft(this) ?
 						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 				saveSettings_Click(null, null);
 			}
@@ -285,7 +285,7 @@ namespace Eraser
 			{
 				MessageBox.Show(this, S._("The path you selected is invalid."), S._("Eraser"),
 					MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
-					S.IsRightToLeft(this) ?
+					Localisation.IsRightToLeft(this) ?
 						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 			}
 		}
@@ -367,7 +367,7 @@ namespace Eraser
 				MessageBox.Show(this, S._("Plugins which have just been approved will only be loaded " +
 					"the next time Eraser is started."), S._("Eraser"), MessageBoxButtons.OK,
 					MessageBoxIcon.Information, MessageBoxDefaultButton.Button1,
-					S.IsRightToLeft(this) ?
+					Localisation.IsRightToLeft(this) ?
 						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 			}
 
@@ -410,7 +410,7 @@ namespace Eraser
 				MessageBox.Show(this, S._("The new UI language will take only effect when " +
 					"Eraser is restarted."), S._("Eraser"), MessageBoxButtons.OK,
 					MessageBoxIcon.Information, MessageBoxDefaultButton.Button1,
-					S.IsRightToLeft(this) ?
+					Localisation.IsRightToLeft(this) ?
 						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 			}
 			settings.IntegrateWithShell = uiContextMenu.Checked;
@@ -427,7 +427,7 @@ namespace Eraser
 					"the next task is run.\nCurrently running tasks will use the old source."),
 					S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Information,
 					MessageBoxDefaultButton.Button1,
-					S.IsRightToLeft(this) ?
+					Localisation.IsRightToLeft(this) ?
 						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 				managerSettings.ActivePrng = newPRNG.Guid;
 			}

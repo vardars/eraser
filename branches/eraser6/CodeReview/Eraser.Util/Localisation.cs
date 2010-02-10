@@ -33,45 +33,8 @@ using System.Threading;
 
 namespace Eraser.Util
 {
-	/// <summary>
-	/// Internationalisation class. Instead of calling GetString on all strings, just
-	/// call S._(string) or S._(string, object) for plurals
-	/// </summary>
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "S")]
-	public static class S
+	public static class Localisation
 	{
-		/// <summary>
-		/// Translates the localisable string to the set localised string.
-		/// </summary>
-		/// <param name="str">The string to localise.</param>
-		/// <returns>A localised string, or str if no localisation exists.</returns>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "_")]
-		public static string _(string text)
-		{
-			return TranslateText(text, Assembly.GetCallingAssembly());
-		}
-
-		/// <summary>
-		/// Translates the localisable text to the localised text, formatting all
-		/// placeholders using composite formatting. This is shorthand for
-		/// <code>string.Format(S._(text), args)</code>
-		/// </summary>
-		/// <param name="text">The text to localise.</param>
-		/// <param name="args">Arguments for the composite formatting call.</param>
-		/// <returns>The formatted and localised string.</returns>
-		/// <remarks>The localised string is retrieved before formatting.</remarks>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "_")]
-		public static string _(string text, params object[] args)
-		{
-			//Get the localised version of the input string.
-			string localStr = TranslateText(text, Assembly.GetCallingAssembly());
-
-			//Format the string.
-			return string.Format(CultureInfo.CurrentCulture, localStr, args);
-		}
-
 		/// <summary>
 		/// Returns true if the given control is right-to-left reading.
 		/// </summary>
@@ -247,5 +210,45 @@ namespace Eraser.Util
 
 		private static Dictionary<CultureInfo, Dictionary<Assembly, ResourceManager>> managers =
 			new Dictionary<CultureInfo, Dictionary<Assembly, ResourceManager>>();
+	}
+
+	/// <summary>
+	/// Internationalisation class. Instead of calling GetString on all strings, just
+	/// call S._(string) or S._(string, object) for plurals
+	/// </summary>
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "S")]
+	public static class S
+	{
+		/// <summary>
+		/// Translates the localisable string to the set localised string.
+		/// </summary>
+		/// <param name="str">The string to localise.</param>
+		/// <returns>A localised string, or str if no localisation exists.</returns>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "_")]
+		public static string _(string text)
+		{
+			return Localisation.TranslateText(text, Assembly.GetCallingAssembly());
+		}
+
+		/// <summary>
+		/// Translates the localisable text to the localised text, formatting all
+		/// placeholders using composite formatting. This is shorthand for
+		/// <code>string.Format(S._(text), args)</code>
+		/// </summary>
+		/// <param name="text">The text to localise.</param>
+		/// <param name="args">Arguments for the composite formatting call.</param>
+		/// <returns>The formatted and localised string.</returns>
+		/// <remarks>The localised string is retrieved before formatting.</remarks>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707:IdentifiersShouldNotContainUnderscores")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "_")]
+		public static string _(string text, params object[] args)
+		{
+			//Get the localised version of the input string.
+			string localStr = Localisation.TranslateText(text, Assembly.GetCallingAssembly());
+
+			//Format the string.
+			return string.Format(CultureInfo.CurrentCulture, localStr, args);
+		}
 	}
 }

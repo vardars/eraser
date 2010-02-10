@@ -166,7 +166,7 @@ namespace Eraser
 			MessageBox.Show(this, selectedEntry.Message,
 				selectedEntry.Timestamp.ToString("F", CultureInfo.CurrentCulture),
 				MessageBoxButtons.OK, icon, MessageBoxDefaultButton.Button1,
-				S.IsRightToLeft(this) ?
+				Localisation.IsRightToLeft(this) ?
 					MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 		}
 
