@@ -506,7 +506,6 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			Application.Idle += OnGUIIdle;
 
 			//Load the task list
-			SettingsCompatibility.Execute();
 			try
 			{
 				if (File.Exists(TaskListPath))

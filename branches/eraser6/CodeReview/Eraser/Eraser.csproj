@@ -287,7 +287,6 @@
       <DependentUpon>SchedulerPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
-    <Compile Include="SettingsCompatibility.cs" />
     <Compile Include="SettingsPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
