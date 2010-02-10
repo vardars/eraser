@@ -441,7 +441,7 @@ namespace Eraser
 									"error returned was: {1}", file, ex.Message), S._("Eraser"),
 									MessageBoxButtons.OK, MessageBoxIcon.Error,
 									MessageBoxDefaultButton.Button1,
-									S.IsRightToLeft(null) ?
+									S.IsRightToLeft(this) ?
 										MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 							}
 						}

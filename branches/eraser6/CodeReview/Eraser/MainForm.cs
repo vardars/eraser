@@ -271,7 +271,7 @@ namespace Eraser
 								"returned was: {0}", ex.Message), S._("Eraser"),
 								MessageBoxButtons.OK, MessageBoxIcon.Error,
 								MessageBoxDefaultButton.Button1,
-								S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
+								S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
 						}
 						catch (SerializationException ex)
 						{
@@ -279,7 +279,7 @@ namespace Eraser
 								"returned was: {0}", ex.Message), S._("Eraser"),
 								MessageBoxButtons.OK, MessageBoxIcon.Error,
 								MessageBoxDefaultButton.Button1,
-								S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
+								S.IsRightToLeft(this) ? MessageBoxOptions.RtlReading : 0);
 						}
 					}
 				}
