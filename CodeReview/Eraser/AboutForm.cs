@@ -206,7 +206,7 @@ Eraser Project Members:
 				MessageBox.Show(S._("Could not open the required web page. The error returned " +
 					"was: {0}", ex.Message), S._("Eraser"), MessageBoxButtons.OK,
 					MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
-					S.IsRightToLeft(this) ?
+					Localisation.IsRightToLeft(this) ?
 						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 			}
 		}

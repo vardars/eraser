@@ -128,7 +128,7 @@ namespace Eraser
 			{
 				MessageBox.Show(this, e.Error.Message,
 					S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error,
-					MessageBoxDefaultButton.Button1, S.IsRightToLeft(this) ?
+					MessageBoxDefaultButton.Button1, Localisation.IsRightToLeft(this) ?
 						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 				Close();
 			}

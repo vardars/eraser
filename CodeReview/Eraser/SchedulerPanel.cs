@@ -146,7 +146,7 @@ namespace Eraser
 		{
 			if (MessageBox.Show(this, S._("Are you sure you want to delete the selected tasks?"),
 					S._("Eraser"), MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-					MessageBoxDefaultButton.Button1, S.IsRightToLeft(this) ?
+					MessageBoxDefaultButton.Button1, Localisation.IsRightToLeft(this) ?
 						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0
 				) != DialogResult.Yes)
 			{
@@ -441,7 +441,7 @@ namespace Eraser
 									"error returned was: {1}", file, ex.Message), S._("Eraser"),
 									MessageBoxButtons.OK, MessageBoxIcon.Error,
 									MessageBoxDefaultButton.Button1,
-									S.IsRightToLeft(this) ?
+									Localisation.IsRightToLeft(this) ?
 										MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 							}
 						}
