@@ -59,7 +59,7 @@ namespace Eraser.DefaultPlugins
 				{
 					//Then erase the file.
 					method.Erase(strm, long.MaxValue,
-						ManagerLibrary.Instance.PRNGManager[ManagerLibrary.Settings.ActivePrng],
+						ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng],
 						callback
 					);
 				}

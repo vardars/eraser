@@ -41,7 +41,7 @@ namespace Eraser.DefaultPlugins
 			Theming.ApplyTheme(this);
 
 			//Populate the list of erasure passes, except the FL16KB.
-			foreach (ErasureMethod method in ManagerLibrary.Instance.ErasureMethodManager)
+			foreach (ErasureMethod method in ManagerLibrary.Instance.ErasureMethodRegistrar)
 				if (method.Guid != new Guid("{0C2E07BF-0207-49a3-ADE8-46F9E1499C01}"))
 					fl16MethodCmb.Items.Add(method);
 
@@ -160,14 +160,14 @@ namespace Eraser.DefaultPlugins
 			foreach (Guid guid in removeCustomMethods)
 			{
 				customMethods.Remove(guid);
-				ManagerLibrary.Instance.ErasureMethodManager.Remove(guid);
+				ManagerLibrary.Instance.ErasureMethodRegistrar.Remove(guid);
 			}
 
 			//Update the Erasure method manager on the methods
 			foreach (CustomErasureMethod method in addCustomMethods)
 			{
 				customMethods.Add(method.Guid, method);
-				ManagerLibrary.Instance.ErasureMethodManager.Add(new EraseCustom(method));
+				ManagerLibrary.Instance.ErasureMethodRegistrar.Add(new EraseCustom(method));
 			}
 
 			//Save the list of custom erasure methods

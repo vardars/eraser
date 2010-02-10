@@ -43,7 +43,7 @@ namespace Eraser.Manager
 		public static string GenerateRandomFileName(DirectoryInfo info, int length)
 		{
 			//Get a random file name
-			Prng prng = ManagerLibrary.Instance.PRNGManager[ManagerLibrary.Settings.ActivePrng];
+			Prng prng = ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng];
 			string resultPrefix = info == null ? string.Empty : info.FullName +
 				Path.DirectorySeparatorChar;
 			byte[] resultAry = new byte[length];
@@ -88,7 +88,7 @@ namespace Eraser.Manager
 				return string.Empty;
 
 			//Find a random entry.
-			Prng prng = ManagerLibrary.Instance.PRNGManager[ManagerLibrary.Settings.ActivePrng];
+			Prng prng = ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng];
 			string result = string.Empty;
 			while (result.Length == 0)
 			{
@@ -114,7 +114,7 @@ namespace Eraser.Manager
 				string shadowFile = null;
 				List<string> entries = new List<string>(
 					ManagerLibrary.Settings.PlausibleDeniabilityFiles);
-				Prng prng = ManagerLibrary.Instance.PRNGManager[ManagerLibrary.Settings.ActivePrng];
+				Prng prng = ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng];
 				do
 				{
 					if (entries.Count == 0)

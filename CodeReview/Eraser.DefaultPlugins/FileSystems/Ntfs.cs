@@ -70,7 +70,7 @@ namespace Eraser.DefaultPlugins
 
 								//Then run the erase task
 								method.Erase(strm, long.MaxValue,
-									ManagerLibrary.Instance.PRNGManager[ManagerLibrary.Settings.ActivePrng],
+									ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng],
 									null);
 
 								//Call the callback function if one is provided. We'll provide a dummy
@@ -169,7 +169,7 @@ namespace Eraser.DefaultPlugins
 					FileShare.None))
 				{
 					method.Erase(strm, long.MaxValue,
-						ManagerLibrary.Instance.PRNGManager[ManagerLibrary.Settings.ActivePrng],
+						ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng],
 						null);
 				}
 			}
@@ -191,7 +191,7 @@ namespace Eraser.DefaultPlugins
 
 				//Then erase the file.
 				method.Erase(strm, long.MaxValue,
-					ManagerLibrary.Instance.PRNGManager[ManagerLibrary.Settings.ActivePrng],
+					ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng],
 					callback
 				);
 

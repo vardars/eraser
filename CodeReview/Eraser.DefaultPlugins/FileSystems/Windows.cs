@@ -299,7 +299,7 @@ namespace Eraser.DefaultPlugins
 
 					//Erase the file
 					method.Erase(stream, long.MaxValue,
-						ManagerLibrary.Instance.PRNGManager[ManagerLibrary.Settings.ActivePrng],
+						ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng],
 						null);
 				}
 				finally

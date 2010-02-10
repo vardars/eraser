@@ -315,7 +315,7 @@ namespace Eraser.Manager
 			if (methodGuid == Guid.Empty)
 				method = ErasureMethodRegistrar.Default;
 			else
-				method = ManagerLibrary.Instance.ErasureMethodManager[methodGuid];
+				method = ManagerLibrary.Instance.ErasureMethodRegistrar[methodGuid];
 		}
 
 		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
@@ -495,7 +495,7 @@ namespace Eraser.Manager
 			{
 				if (base.MethodDefined)
 					return base.Method;
-				return ManagerLibrary.Instance.ErasureMethodManager[
+				return ManagerLibrary.Instance.ErasureMethodRegistrar[
 					ManagerLibrary.Settings.DefaultFileErasureMethod];
 			}
 			set
@@ -565,7 +565,7 @@ namespace Eraser.Manager
 			{
 				if (base.MethodDefined)
 					return base.Method;
-				return ManagerLibrary.Instance.ErasureMethodManager[
+				return ManagerLibrary.Instance.ErasureMethodRegistrar[
 					ManagerLibrary.Settings.DefaultUnusedSpaceErasureMethod];
 			}
 			set

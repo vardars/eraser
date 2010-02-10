@@ -84,7 +84,7 @@ namespace Eraser
 
 			//And the methods list
 			this.method.Items.Add(ErasureMethodRegistrar.Default);
-			foreach (ErasureMethod method in ManagerLibrary.Instance.ErasureMethodManager)
+			foreach (ErasureMethod method in ManagerLibrary.Instance.ErasureMethodRegistrar)
 				this.method.Items.Add(method);
 			if (this.method.Items.Count != 0)
 				this.method.SelectedIndex = 0;

@@ -45,8 +45,8 @@ namespace Eraser
 
 			//For new plugins, register the callback.
 			Host.Instance.PluginLoaded += OnNewPluginLoaded;
-			ManagerLibrary.Instance.ErasureMethodManager.Registered += OnMethodRegistered;
-			ManagerLibrary.Instance.ErasureMethodManager.Unregistered += OnMethodUnregistered;
+			ManagerLibrary.Instance.ErasureMethodRegistrar.Registered += OnMethodRegistered;
+			ManagerLibrary.Instance.ErasureMethodRegistrar.Unregistered += OnMethodUnregistered;
 
 			//Load the values
 			LoadPluginDependantValues();
@@ -129,7 +129,7 @@ namespace Eraser
 				uiLanguage.Items.Add(culture);
 
 			//Refresh the list of erasure methods
-			foreach (ErasureMethod method in ManagerLibrary.Instance.ErasureMethodManager)
+			foreach (ErasureMethod method in ManagerLibrary.Instance.ErasureMethodRegistrar)
 			{
 				eraseFilesMethod.Items.Add(method);
 				if (method is UnusedSpaceErasureMethod)
@@ -137,7 +137,7 @@ namespace Eraser
 			}
 
 			//Refresh the list of PRNGs
-			foreach (Prng prng in ManagerLibrary.Instance.PRNGManager)
+			foreach (Prng prng in ManagerLibrary.Instance.PrngRegistrar)
 				erasePRNG.Items.Add(prng);
 		}
 
