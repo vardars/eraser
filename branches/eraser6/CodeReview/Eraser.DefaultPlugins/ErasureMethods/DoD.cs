@@ -29,7 +29,7 @@ using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
 {
-	[Guid("{D1583631-702E-4dbf-A0E9-C35DBA481702}")]
+	[Guid("D1583631-702E-4dbf-A0E9-C35DBA481702")]
 	sealed class DoD_EcE : PassBasedErasureMethod
 	{
 		public override string Name
@@ -76,7 +76,7 @@ namespace Eraser.DefaultPlugins
 		}
 	}
 
-	[Guid("{ECBF4998-0B4F-445c-9A06-23627659E419}")]
+	[Guid("ECBF4998-0B4F-445c-9A06-23627659E419")]
 	sealed class DoD_E : PassBasedErasureMethod
 	{
 		public override string Name
