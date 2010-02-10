@@ -53,12 +53,12 @@ namespace Eraser.DefaultPlugins
 			EraseCustom.RegisterAll();
 			ManagerLibrary.Instance.ErasureMethodManager.Add(new FirstLast16KB());
 
-			PrngManager.Register(new RngCrypto());
+			ManagerLibrary.Instance.PRNGManager.Add(new RngCrypto());
 
-			FileSystemManager.Register(new Fat12FileSystem());
-			FileSystemManager.Register(new Fat16FileSystem());
-			FileSystemManager.Register(new Fat32FileSystem());
-			FileSystemManager.Register(new NtfsFileSystem());
+			ManagerLibrary.Instance.FileSystemManager.Add(new Fat12FileSystem());
+			ManagerLibrary.Instance.FileSystemManager.Add(new Fat16FileSystem());
+			ManagerLibrary.Instance.FileSystemManager.Add(new Fat32FileSystem());
+			ManagerLibrary.Instance.FileSystemManager.Add(new NtfsFileSystem());
 		}
 
 		public void Dispose()

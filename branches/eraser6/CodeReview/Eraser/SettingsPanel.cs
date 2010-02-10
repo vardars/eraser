@@ -137,8 +137,7 @@ namespace Eraser
 			}
 
 			//Refresh the list of PRNGs
-			Dictionary<Guid, Prng> prngs = PrngManager.Items;
-			foreach (Prng prng in prngs.Values)
+			foreach (Prng prng in ManagerLibrary.Instance.PRNGManager)
 				erasePRNG.Items.Add(prng);
 		}
 
