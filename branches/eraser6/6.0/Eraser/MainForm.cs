@@ -389,6 +389,11 @@ namespace Eraser
 			}
 		}
 
+		private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+		{
+			Application.Exit();
+		}
+
 		private void MainForm_VisibleChanged(object sender, EventArgs e)
 		{
 			if (Visible)
