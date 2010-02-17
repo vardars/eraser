@@ -205,6 +205,9 @@ namespace Eraser.DefaultPlugins
 			{
 				//Get the file attributes for restoring later
 				StreamInfo streamInfo = new StreamInfo(files[i]);
+				if (!streamInfo.Exists)
+					continue;
+
 				FileAttributes fileAttr = streamInfo.Attributes;
 
 				try
