@@ -773,9 +773,7 @@ namespace Eraser
 				{
 					//Check that the first parameter is not a \ otherwise this comma
 					//is escaped
-					if (commaPos == 0 ||									//No possibility of escaping
-						(commaPos >= 1 && param[commaPos - 1] != '\\') ||	//Second character
-						(commaPos >= 2 && param[commaPos - 2] == '\\'))		//Cannot be a \\ which is an escape
+					if (commaPos == 0 || (commaPos > 0 && CountEscapes(param, commaPos) % 2 == 0))
 					{
 						//Extract the current subparameter, and dissect the subparameter
 						//at the first =.
@@ -790,9 +788,8 @@ namespace Eraser
 								result.Add(new KeyValuePair<string, string>(
 									UnescapeCommandLine(subParam), null));
 							}
-							else if (equalPos == 0 ||								//No possibility of escaping
-								(equalPos >= 1 && subParam[equalPos - 1] != '\\') ||//Second character
-								(equalPos >= 2 && subParam[equalPos - 2] == '\\'))	//Double \\ which is an escape
+							else if (equalPos == 0 ||
+								(equalPos > 0 && CountEscapes(param, equalPos) % 2 == 0))
 							{
 								result.Add(new KeyValuePair<string, string>(
 									UnescapeCommandLine(subParam.Substring(0, equalPos)),
@@ -811,6 +808,25 @@ namespace Eraser
 				}
 
 				return result;
+			}
+
+			/// <summary>
+			/// Gets the number of escapes the current token has.
+			/// </summary>
+			/// <param name="param">The parameter.</param>
+			/// <param name="index">The index of the character escaped.</param>
+			/// <returns>The number of escapes. Multiples of two indicate backslashes, odd
+			/// numbers indicate the current character is escaped.</returns>
+			private static int CountEscapes(string param, int index)
+			{
+				if (index == 0)
+					return 0;
+
+				for (int i = 0; index != 0; ++i)
+					if (param[--index] != '\\')
+						return i;
+
+				return 0;
 			}
 
 			/// <summary>
