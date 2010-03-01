@@ -44,6 +44,7 @@ namespace Eraser.Manager
 		public static string GenerateRandomFileName(DirectoryInfo info, int length)
 		{
 			//Initialise the base name, if any.
+			Prng prng = PrngManager.GetInstance(ManagerLibrary.Settings.ActivePrng);
 			string resultPrefix = info == null ? string.Empty : info.FullName +
 				Path.DirectorySeparatorChar;
 
@@ -71,7 +72,9 @@ namespace Eraser.Manager
 			}
 			while (info != null &&
 				prohibitedFileNames.IndexOf(Path.GetFileNameWithoutExtension(result)) != -1 ||
-				(Directory.Exists(resultPrefix + result) || File.Exists(resultPrefix + result)));
+				(Directory.Exists(resultPrefix + result) ||
+					System.IO.File.Exists(resultPrefix + result))
+			);
 			return resultPrefix + result;
 		}
 
