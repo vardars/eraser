@@ -1,0 +1,34 @@
+if [ "$1" == "" ] ; then
+cat _internal/build-bash-help
+exit 1
+fi
+if [ "$3" != "" ] ; then
+echo Too many parameters specified
+echo Did you enclose parameters to be passed to the compiler in double quotes?
+exit 1
+fi
+cd out
+rm -f *
+cd ../_tmp
+rm -f *
+cd ..
+cp src/* _tmp >> log.txt 2>> log.txt
+case $1 in
+mono)
+cd _tmp
+mcs /nowarn:0162,0169,0219 /target:library /out:libalglib.dll $2 *.cs >> ../log.txt 2>> ../log.txt
+if [ $? -ne 0 ] ; then
+echo Error while compiling \(see ../log.txt for more info\)
+exit 1
+fi
+cd ..
+cp _tmp/libalglib.dll out >> log.txt 2>> log.txt
+cd _tmp
+rm -f *
+cd ..
+;;
+*)
+echo unknown compiler
+exit 1
+;;
+esac
