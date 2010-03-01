@@ -1,0 +1,17 @@
+Bash script for building ALGLIB as a static library
+For compilation with *nix compilers
+
+SYNTAX: build compiler [options]
+    compiler    compiler name (see below)
+                Windows/Bash scripts support different compilers
+    options     optional string enclosed in quotes
+                additional options to be passed to compiler
+
+COMPILERS SUPPORTED:
+        mono    Mono C# compiler
+
+EXAMPLES:
+    build csc "/debug-"
+    build mono
+
+See reference manual for more information about ALGLIB compilation

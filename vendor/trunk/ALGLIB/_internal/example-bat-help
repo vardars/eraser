@@ -1,0 +1,29 @@
+Windows batch file for execution of examples
+For compilation with Windows compilers
+
+EXECUTE EXAMPLE:  example compiler filename [options]
+    compiler    compiler name (see below)
+                Windows/Bash scripts support different compilers
+    filename    example name
+    options     optional string enclosed in quotes
+                additional options to be passed to compiler
+
+
+VIEW EXAMPLE SOURCE:  example view filename
+    filename    example name
+
+
+LIST OF EXAMPLES:  example list unitname
+    unitname    name of the unit (from /src directory)
+
+
+COMPILERS SUPPORTED:
+         csc    Microsoft C# compiler
+        mono    Mono C# compiler
+
+EXAMPLES:
+    example list
+    example csc spline1d_cubic
+    example mono spline1d_cubic "/debug-"
+
+See reference manual for more information
