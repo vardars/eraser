@@ -19,7 +19,7 @@ IF "%~1"=="mono" GOTO lbl_3_mono
 GOTO lbl_3___error
 :lbl_3_csc
 CHDIR _tmp
-csc /nowarn:0162,0169,0219 /nologo /target:library /out:libalglib.dll %~2 *.cs >> ../log.txt 2>&1
+csc /nowarn:0162,0169,0219 /nologo /target:library /out:alglib.dll %~2 *.cs >> ../log.txt 2>&1
 IF NOT ERRORLEVEL 1 GOTO lbl_4
 echo Error while compiling (see ../log.txt for more info)
 CHDIR ..
