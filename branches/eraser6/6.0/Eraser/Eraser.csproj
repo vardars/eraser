@@ -121,11 +121,17 @@
       <SubType>Designer</SubType>
       <DependentUpon>BasePanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="BasePanel.pl.resx">
+      <DependentUpon>BasePanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="BasePanel.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BasePanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LightGroup.it.resx">
+      <DependentUpon>LightGroup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LightGroup.pl.resx">
       <DependentUpon>LightGroup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LightGroup.resx">
@@ -139,6 +145,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>LogForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LogForm.pl.resx">
+      <DependentUpon>LogForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LogForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>LogForm.cs</DependentUpon>
@@ -150,6 +159,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.pl.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -159,6 +171,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ProgressForm.nl.resx">
       <SubType>Designer</SubType>
+      <DependentUpon>ProgressForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProgressForm.pl.resx">
       <DependentUpon>ProgressForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProgressForm.resx">
@@ -184,6 +199,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Strings.it.resx" />
+    <EmbeddedResource Include="Strings.pl.resx" />
     <EmbeddedResource Include="Strings.resx">
       <SubType>Designer</SubType>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
@@ -211,6 +227,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>TaskDataSelectionForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="TaskDataSelectionForm.pl.resx">
+      <DependentUpon>TaskDataSelectionForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TaskDataSelectionForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TaskDataSelectionForm.cs</DependentUpon>
@@ -222,6 +241,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>TaskPropertiesForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="TaskPropertiesForm.pl.resx">
+      <DependentUpon>TaskPropertiesForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TaskPropertiesForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TaskPropertiesForm.cs</DependentUpon>
@@ -231,6 +253,9 @@
       <DependentUpon>ToolBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UpdateForm.it.resx">
+      <DependentUpon>UpdateForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpdateForm.pl.resx">
       <DependentUpon>UpdateForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UpdateForm.resx">
@@ -362,7 +387,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
     <PreBuildEvent>call "$(SolutionDir)UpdateVersions.bat" "$(SolutionDir)\." "$(SolutionDir)Version.cs.in" "$(SolutionDir)Version.cs"
-csgettext --merge --recursive EN,NL,IT "$(ProjectDir)\." Strings
+csgettext --merge --recursive EN,NL,IT,PL "$(ProjectDir)\." Strings
 if ERRORLEVEL 0 exit 0</PreBuildEvent>
   </PropertyGroup>
 </Project>

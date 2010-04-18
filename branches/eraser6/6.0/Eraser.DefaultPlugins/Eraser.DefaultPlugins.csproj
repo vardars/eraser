@@ -102,11 +102,17 @@
     <EmbeddedResource Include="CustomMethodEditorForm.it.resx">
       <DependentUpon>CustomMethodEditorForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="CustomMethodEditorForm.pl.resx">
+      <DependentUpon>CustomMethodEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CustomMethodEditorForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CustomMethodEditorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CustomMethodPassEditor.it.resx">
+      <DependentUpon>CustomMethodPassEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomMethodPassEditor.pl.resx">
       <DependentUpon>CustomMethodPassEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CustomMethodPassEditor.resx">
@@ -116,6 +122,9 @@
     <EmbeddedResource Include="SettingsForm.it.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SettingsForm.pl.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Strings.en.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -123,6 +132,7 @@
     <EmbeddedResource Include="Strings.nl.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Strings.pl.resx" />
     <EmbeddedResource Include="Strings.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -148,7 +158,7 @@
     <PostBuildEvent>
     </PostBuildEvent>
     <PreBuildEvent>call "$(SolutionDir)UpdateVersions.bat" "$(SolutionDir)\." "$(SolutionDir)Version.cs.in" "$(SolutionDir)Version.cs"
-csgettext --merge --recursive EN,NL,IT "$(ProjectDir)\." Strings
+csgettext --merge --recursive EN,NL,IT,PL "$(ProjectDir)\." Strings
 if ERRORLEVEL 0 exit 0</PreBuildEvent>
   </PropertyGroup>
 </Project>
