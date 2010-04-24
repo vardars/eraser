@@ -586,6 +586,9 @@ namespace Eraser
 			Exited = true;
 			if (ExitInstance != null)
 				ExitInstance(sender);
+
+			if (!MainForm.Disposing)
+				MainForm.Dispose();
 		}
 
 		/// Tracks whether the Exit event has been broadcast. It should only be broadcast
