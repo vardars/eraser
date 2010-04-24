@@ -118,16 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Unknown erasure target." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Nieznany obiekt do wymazania.</value>
   </data>
   <data name="The program does not have the required permissions to erase the unused space on disk. Run the program as an administrator and retry the operation." xml:space="preserve">
     <value>Program nie wystarczających praw dostępu do wymazania nieużywanego miejsca dysku. Uruchom program jako administrator i powtórz czynność.</value>
   </data>
   <data name="The program does not have the required permissions to erase the unused space on disk" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Program nie ma wymaganych uprawnień do wymazania nieużywanego miejsca dysku</value>
   </data>
   <data name="The drive which is having its unused space erased has disk quotas active. This will prevent the complete erasure of unused space and will pose a security concern" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Napęd, który ma wymazane nieużywane miejsce, ma włączone ograniczenie zapisu (quota). Uniemożliwi to całkowite wymazanie nieużywanego miejsca, co powinno alarmować o zagrożonym bezpieczeństwie</value>
   </data>
   <data name="Searching for files' cluster tips..." xml:space="preserve">
     <value>Poszukiwanie resztek klastrów...</value>
@@ -202,16 +202,16 @@
     <value>(domyślny)</value>
   </data>
   <data name="The DefaultMethod class should never be used and should instead be replaced before execution!" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Podstawowa metoda nie powinna być używana i powinna podmieniona zanim zostanie użyta!</value>
   </data>
   <data name="Registered erasure methods must contain a parameterless constructor that is called whenever clients request for an instance of the method. If a constructor requires parameters, specify it in the parameters parameter." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Zarejestrowane metody wamazywania muszą mieć bezparametrową budowę aby mogły być swobodnie użyte w dowolnym momencie. Jeśli konstrukcja wymaga określenia parametru, wpisz go w parametrze.</value>
   </data>
   <data name="The GUID of the erasure method to remove refers to an invalid erasure method." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>GUID metody wymazywania odnosi się do niewłaściwej metody wymazywania.</value>
   </data>
   <data name="minValue is greater than maxValue" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Wartość minimalna jest większa od maksymalnej</value>
   </data>
   <data name="Running on restart" xml:space="preserve">
     <value>Uruchomienie po restarcie</value>
@@ -262,28 +262,28 @@
     <value>, w {0}</value>
   </data>
   <data name="The ScheduleUnit of the schedule does not require a frequency value, this field would contain garbage." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Ta jednosta harmonogramu nie wymaga podania częstości występowania, wartość jest nieistotna.</value>
   </data>
   <data name="The frequency of the recurrence should be greater than one" xml:space="preserve">
     <value>Częstość powtarzania się powinna być większa od jedności</value>
   </data>
   <data name="The ScheduleUnit of the schedule does not require the WeeklySchedule value, this field would contain garbage" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Ta jednosta harmonogramu nie wymaga podania częstości występowania, wartość jest nieistotna.</value>
   </data>
   <data name="The WeeklySchedule should have at least one day where the task should be run." xml:space="preserve">
     <value>Tygodniowy plan powinien mieć przynajmniej jeden dzień, w którym zadanie powinno być uruchomione.</value>
   </data>
   <data name="The ScheduleUnit of the schedule does not require the MonthlySchedule value, this field would contain garbage" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Ta jednosta harmonogramu nie wymaga podania częstości występowania, wartość jest nieistotna.</value>
   </data>
   <data name="The ScheduleUnit of the schedule does not use the WeeklySchedule value, this field would contain garbage" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Ta jednosta harmonogramu nie wymaga podania częstości występowania, wartość jest nieistotna.</value>
   </data>
   <data name="An invalid type was found when loading the task schedule" xml:space="preserve">
     <value>Podczas ładowania napotkano niewłaściwy typ harmonogramu zadań</value>
   </data>
   <data name="The schedule provided can only belong to one task at a time" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Dany harmonogram może przynależeć do jednoczenie jednego zadania</value>
   </data>
   <data name="Unused disk space ({0})" xml:space="preserve">
     <value>Nieużywane miejsce dysku ({0})</value>

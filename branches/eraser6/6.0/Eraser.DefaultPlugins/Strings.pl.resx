@@ -202,7 +202,7 @@
     <value>Wymazywanie pierwszych/ostatnich 16KB</value>
   </data>
   <data name="The amount of data erased should not be limited, since this is a self-limiting erasure method." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Ilość wymazanych danych nie powinna być ograniczona, ponieważ jest to metoda samo-ograniczająca wymazywanie.</value>
   </data>
   <data name="Russian GOST P50739-95" xml:space="preserve">
     <value>Russian GOST P50739-95</value>
