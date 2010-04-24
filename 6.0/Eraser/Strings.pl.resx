@@ -157,16 +157,16 @@
     <value>Nie można było załadować listy zadań. Wszystkie wpisy zadań zostały utracone. Wystąpił błąd: {0}</value>
   </data>
   <data name="Another instance of Eraser is already running but it is running with higher privileges than this instance of Eraser.\n\nEraser will now exit." xml:space="preserve">
-    <value>Inne wystąpienia Erasera już działa i jest z wyższymi uprawnieniami niż to wystąpienie.\n\nEraser się zamknie.</value>
+    <value>Już działa inne wystąpienie Erasera i jest z wyższymi uprawnieniami niż to wystąpienie.\n\nEraser się zamknie.</value>
   </data>
   <data name="Another instance of Eraser is already running but cannot be connected to.\n\nThe error returned was: {0}" xml:space="preserve">
-    <value>Inne wystąpienie Erasera już działa, ale nie można się z nim połączyć.\n\nWystąpił błąd: {0}</value>
+    <value>Już działa inne wystąpienie Erasera, ale nie można się z nim połączyć.\n\nWystąpił błąd: {0}</value>
   </data>
   <data name="{0} out of {1}" xml:space="preserve">
     <value>{0} z {1}</value>
   </data>
   <data name="About {0:T} left" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Zostało około {0:T}</value>
   </data>
   <data name="Unknown" xml:space="preserve">
     <value>Nieznany</value>
@@ -181,7 +181,7 @@
     <value>Ukończony z błędami</value>
   </data>
   <data name="Not completed" xml:space="preserve">
-    <value>Nie kompletny</value>
+    <value>Niekompletny</value>
   </data>
   <data name="Completed" xml:space="preserve">
     <value>Ukończony</value>
@@ -227,12 +227,13 @@
   </data>
   <data name="Erase {0}" xml:space="preserve">
     <value>Wymazywanie {0}</value>
+    <comment>Maybe "Wymaż" is more appropriate, it depends on its context.</comment>
   </data>
   <data name="Could not import task list from {0}. The error returned was: {1}" xml:space="preserve">
     <value>Nie można było zaimportować listy zadań z {0}. Wystąpił błąd: {1}</value>
   </data>
   <data name="Are you sure you wish to erase the selected files?" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Czy na pewno chcesz wymazać zaznaczone pliki?</value>
   </data>
   <data name="Could not load the setting {0}\\{1} for plugin {2}. The setting has been lost." xml:space="preserve">
     <value>Nie można było załadować ustawień {0}\\{1} dla wtyczki {2}. Ustawienia wtyczki zostały utracone.</value>
@@ -328,10 +329,10 @@
     <value>Pobieranie: {0}</value>
   </data>
   <data name="Downloaded: {0}" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Pobrano: {0}</value>
   </data>
   <data name="Error downloading {0}: {1}" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Błąd pobierania {0}: {1}</value>
   </data>
   <data name="Installing {0}" xml:space="preserve">
     <value>Instalowanie {0}</value>
@@ -340,12 +341,12 @@
     <value>Zainstalowano {0}</value>
   </data>
   <data name="Error installing {0}" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Błąd instalacji {0}</value>
   </data>
   <data name="The installer exited with an error code {0}" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Instalator zamknięty z błędem {0}</value>
   </data>
   <data name="Unknown mirror selected." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Wybrano nieznane lustro</value>
   </data>
 </root>
