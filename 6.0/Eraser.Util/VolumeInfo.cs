@@ -109,6 +109,8 @@ namespace Eraser.Util
 						currentBufferSize *= 2;
 						pathNamesBuffer = Marshal.AllocHGlobal((int)(currentBufferSize * sizeof(char)));
 					}
+					else if (Marshal.GetLastWin32Error() == 21 /*ERROR_NOT_READY*/)
+						return result;
 					else
 						throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
 				}
