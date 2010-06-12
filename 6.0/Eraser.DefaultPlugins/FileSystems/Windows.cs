@@ -284,13 +284,13 @@ namespace Eraser.DefaultPlugins
 						{
 							log.LastSessionEntries.Add(new LogEntry(S._("{0} did not " +
 								"have its cluster tips erased because of the following " +
-								"error: {1}", info.FullName, e.Message), LogLevel.Error));
+								"error: {1}", file.FullName, e.Message), LogLevel.Error));
 						}
 						catch (IOException e)
 						{
 							log.LastSessionEntries.Add(new LogEntry(S._("{0} did not " +
 								"have its cluster tips erased because of the following " +
-								"error: {1}", info.FullName, e.Message), LogLevel.Error));
+								"error: {1}", file.FullName, e.Message), LogLevel.Error));
 						}
 					}
 
@@ -302,13 +302,13 @@ namespace Eraser.DefaultPlugins
 			}
 			catch (UnauthorizedAccessException e)
 			{
-				log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have its " +
+				log.LastSessionEntries.Add(new LogEntry(S._("Files in {0} did not have its " +
 					"cluster tips erased because of the following error: {1}",
 					info.FullName, e.Message), LogLevel.Error));
 			}
 			catch (IOException e)
 			{
-				log.LastSessionEntries.Add(new LogEntry(S._("{0} did not have its " +
+				log.LastSessionEntries.Add(new LogEntry(S._("Files in {0} did not have its " +
 					"cluster tips erased because of the following error: {1}",
 					info.FullName, e.Message), LogLevel.Error));
 			}
