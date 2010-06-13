@@ -90,6 +90,10 @@ namespace Eraser.Util
 		/// <returns>A list of volume mount points for the current volume.</returns>
 		private List<string> GetLocalVolumeMountPoints()
 		{
+			if (!IsReady)
+				throw new InvalidOperationException("The volume has not been mounted or is not " +
+					"currently ready.");
+
 			List<string> result = new List<string>();
 
 			//Get the paths of the said volume
@@ -364,6 +368,9 @@ namespace Eraser.Util
 		{
 			get
 			{
+				if (!IsReady)
+					throw new InvalidOperationException("The volume has not been mounted or is not " +
+						"currently ready.");
 				return (DriveType)KernelApi.NativeMethods.GetDriveType(VolumeId);
 			}
 		}
@@ -375,6 +382,10 @@ namespace Eraser.Util
 		{
 			get
 			{
+				if (!IsReady)
+					throw new InvalidOperationException("The volume has not been mounted or is not " +
+						"currently ready.");
+
 				uint clusterSize, sectorSize, freeClusters, totalClusters;
 				if (KernelApi.NativeMethods.GetDiskFreeSpace(VolumeId, out clusterSize,
 					out sectorSize, out freeClusters, out totalClusters))
@@ -393,6 +404,10 @@ namespace Eraser.Util
 		{
 			get
 			{
+				if (!IsReady)
+					throw new InvalidOperationException("The volume has not been mounted or is not " +
+						"currently ready.");
+
 				uint clusterSize, sectorSize, freeClusters, totalClusters;
 				if (KernelApi.NativeMethods.GetDiskFreeSpace(VolumeId, out clusterSize,
 					out sectorSize, out freeClusters, out totalClusters))
@@ -411,6 +426,10 @@ namespace Eraser.Util
 		{
 			get
 			{
+				if (!IsReady)
+					throw new InvalidOperationException("The volume has not been mounted or is not " +
+						"currently ready.");
+
 				ulong freeBytesAvailable, totalNumberOfBytes, totalNumberOfFreeBytes;
 				if (KernelApi.NativeMethods.GetDiskFreeSpaceEx(VolumeId, out freeBytesAvailable,
 					out totalNumberOfBytes, out totalNumberOfFreeBytes))
@@ -439,6 +458,10 @@ namespace Eraser.Util
 		{
 			get
 			{
+				if (!IsReady)
+					throw new InvalidOperationException("The volume has not been mounted or is not " +
+						"currently ready.");
+
 				ulong result, dummy;
 				if (KernelApi.NativeMethods.GetDiskFreeSpaceEx(VolumeId, out dummy,
 					out dummy, out result))
@@ -457,6 +480,10 @@ namespace Eraser.Util
 		{
 			get
 			{
+				if (!IsReady)
+					throw new InvalidOperationException("The volume has not been mounted or is not " +
+						"currently ready.");
+
 				ulong result, dummy;
 				if (KernelApi.NativeMethods.GetDiskFreeSpaceEx(VolumeId, out dummy,
 					out result, out dummy))
@@ -475,6 +502,10 @@ namespace Eraser.Util
 		{
 			get
 			{
+				if (!IsReady)
+					throw new InvalidOperationException("The volume has not been mounted or is not " +
+						"currently ready.");
+
 				ulong result, dummy;
 				if (KernelApi.NativeMethods.GetDiskFreeSpaceEx(VolumeId, out result,
 					out dummy, out dummy))
@@ -494,6 +525,10 @@ namespace Eraser.Util
 		{
 			get
 			{
+				if (!IsReady)
+					throw new InvalidOperationException("The volume has not been mounted or is not " +
+						"currently ready.");
+
 				List<VolumeInfo> result = new List<VolumeInfo>();
 				StringBuilder nextMountpoint = new StringBuilder(
 					KernelApi.NativeMethods.LongPath * sizeof(char));
@@ -527,6 +562,10 @@ namespace Eraser.Util
 		{
 			get
 			{
+				if (!IsReady)
+					throw new InvalidOperationException("The volume has not been mounted or is not " +
+						"currently ready.");
+
 				return (VolumeType == DriveType.Network ?
 					GetNetworkMountPoints() : GetLocalVolumeMountPoints()).AsReadOnly();
 			}
@@ -537,7 +576,7 @@ namespace Eraser.Util
 		/// </summary>
 		public bool IsMounted
 		{
-			get { return MountPoints.Count != 0; }
+			get { return IsReady && MountPoints.Count != 0; }
 		}
 
 		/// <summary>
