@@ -171,6 +171,9 @@
   <data name="Removing folders..." xml:space="preserve">
     <value>Rimozione cartelle...</value>
   </data>
+  <data name="The folder {0} could not be deleted because the folder's permissions prevents the deletion of the folder." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Emptying recycle bin..." xml:space="preserve">
     <value>Pulizia del cestino...</value>
   </data>
