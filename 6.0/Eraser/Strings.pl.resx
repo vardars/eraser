@@ -227,7 +227,6 @@
   </data>
   <data name="Erase {0}" xml:space="preserve">
     <value>Wymazywanie {0}</value>
-    <comment>Maybe "Wymaż" is more appropriate, it depends on its context.</comment>
   </data>
   <data name="Could not import task list from {0}. The error returned was: {1}" xml:space="preserve">
     <value>Nie można było zaimportować listy zadań z {0}. Wystąpił błąd: {1}</value>
