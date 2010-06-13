@@ -892,9 +892,10 @@ namespace Eraser.Manager
 					//See if this is the root of a volume.
 					bool isVolumeRoot = directory.Parent == null;
 					foreach (VolumeInfo volume in VolumeInfo.Volumes)
-						foreach (string mountPoint in volume.MountPoints)
-							if (directory.FullName == mountPoint)
-								isVolumeRoot = true;
+						if (volume.IsReady)
+							foreach (string mountPoint in volume.MountPoints)
+								if (directory.FullName == mountPoint)
+									isVolumeRoot = true;
 
 					//If the folder is a mount point, then don't delete it. If it isn't,
 					//search for files under the folder to see if it is empty.
