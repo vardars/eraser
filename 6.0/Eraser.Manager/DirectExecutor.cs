@@ -867,7 +867,17 @@ namespace Eraser.Manager
 
 					FileSystemInfo[] files = info.GetFileSystemInfos();
 					if (files.Length == 0)
-						fsManager.DeleteFolder(info);
+						try
+						{
+							fsManager.DeleteFolder(info);
+						}
+						catch (UnauthorizedAccessException)
+						{
+							task.Log.LastSessionEntries.Add(new LogEntry(S._(
+								"The folder {0} could not be deleted because the folder's " +
+								"permissions prevents the deletion of the folder.", info.FullName),
+								LogLevel.Error));
+						}
 				};
 
 				DirectoryInfo directory = new DirectoryInfo(fldr.Path);
