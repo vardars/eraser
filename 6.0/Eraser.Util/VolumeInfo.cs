@@ -423,10 +423,6 @@ namespace Eraser.Util
 		{
 			get
 			{
-				if (!IsReady)
-					throw new InvalidOperationException("The volume has not been mounted or is not " +
-						"currently ready.");
-
 				ulong freeBytesAvailable, totalNumberOfBytes, totalNumberOfFreeBytes;
 				if (KernelApi.NativeMethods.GetDiskFreeSpaceEx(VolumeId, out freeBytesAvailable,
 					out totalNumberOfBytes, out totalNumberOfFreeBytes))
