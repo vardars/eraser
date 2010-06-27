@@ -218,6 +218,20 @@ namespace Eraser {
 			SelectedFiles.push_back(std::wstring(buffer, charsWritten));
 		}
 
+		//Check if the selected files is only one item long and if that item is the
+		//Start button (for Windows XP)
+		if (SelectedFiles.size() == 1)
+		{
+			wchar_t startMenuPath[MAX_PATH];
+			if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_STARTMENU, NULL,
+				SHGFP_TYPE_CURRENT, startMenuPath)))
+			{
+				if (SelectedFiles.front() == startMenuPath)
+					//Yes, it is. Don't display the Eraser context menu for this.
+					return E_INVALIDARG;
+			}
+		}
+
 		//Clean up.
 		GlobalUnlock(stg.hGlobal);
 		ReleaseStgMedium(&stg);
