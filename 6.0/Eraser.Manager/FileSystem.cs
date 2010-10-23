@@ -189,13 +189,6 @@ namespace Eraser.Manager
 		public abstract bool Supports(string fileSystemName);
 
 		/// <summary>
-		/// Resets the created, modified, accessed and last update times for the given
-		/// <paramref name="info"/>.
-		/// </summary>
-		/// <param name="info">The file to reset times.</param>
-		public abstract void ResetFileTimes(FileSystemInfo info);
-
-		/// <summary>
 		/// Securely deletes the file reference from the directory structures
 		/// as well as resetting the Date Created, Date Accessed and Date Modified
 		/// records.
