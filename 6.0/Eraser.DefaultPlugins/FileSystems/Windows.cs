@@ -35,12 +35,6 @@ namespace Eraser.DefaultPlugins
 	/// </summary>
 	public abstract class WindowsFileSystem : FileSystem
 	{
-		public override void ResetFileTimes(FileSystemInfo info)
-		{
-			//Reset the file access times: after every rename the file times may change.
-			info.SetTimes(MinTimestamp, MinTimestamp, MinTimestamp, MinTimestamp);
-		}
-
 		public override void DeleteFile(FileInfo info)
 		{
 			//Set the date of the file to be invalid to prevent forensic
@@ -56,7 +50,7 @@ namespace Eraser.DefaultPlugins
 				//process locking the file. Defer, then rename again.
 				try
 				{
-					ResetFileTimes(info);
+					info.CreationTime = info.LastWriteTime = info.LastAccessTime = MinTimestamp;
 					info.MoveTo(newPath);
 					++i;
 				}
@@ -80,7 +74,7 @@ namespace Eraser.DefaultPlugins
 							Thread.Sleep(100);
 							break;
 
-						case Win32ErrorCode.DiskFull:
+						case 112: //ERROR_DISK_FULL
 							//If the disk is full, we can't do anything except manually deleting
 							//the file, break out of this loop.
 							i = FileNameEraseTries;
@@ -371,11 +365,6 @@ namespace Eraser.DefaultPlugins
 					streamInfo.LastWriteTime = lastWrite;
 					streamInfo.CreationTime = created;
 				}
-			}
-			finally
-			{
-				//Reset the file times
-				streamInfo.SetTimes(MinTimestamp, created, lastWrite, lastAccess);
 			}
 		}
 
