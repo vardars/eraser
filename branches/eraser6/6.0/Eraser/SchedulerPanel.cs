@@ -93,7 +93,7 @@ namespace Eraser
 			}
 			else if (task.Schedule is RecurringSchedule)
 				item.SubItems[1].Text = ((task.Schedule as RecurringSchedule).NextRun.
-					ToString("F", CultureInfo.CurrentCulture));
+					ToString("f", CultureInfo.CurrentCulture));
 			else if (task.Schedule == Schedule.RunNow || task.Schedule == Schedule.RunManually)
 				item.SubItems[1].Text = S._("Not queued");
 			else
