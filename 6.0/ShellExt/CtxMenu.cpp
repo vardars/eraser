@@ -185,7 +185,7 @@ namespace Eraser {
 		//Look for CF_HDROP data in the data object.
 		FORMATETC fmt = { CF_HDROP, NULL, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
 		STGMEDIUM stg = { TYMED_HGLOBAL };
-		if (FAILED(pDataObj->GetData(&fmt, &stg)))
+		if (!pDataObj || FAILED(pDataObj->GetData(&fmt, &stg)))
 			//Nope! Return an "invalid argument" error back to Explorer.
 			return E_INVALIDARG;
 
