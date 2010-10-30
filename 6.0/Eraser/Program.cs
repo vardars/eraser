@@ -184,8 +184,7 @@ namespace Eraser
 					S.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
 			}
 
-			//Create the main form
-			program.MainForm = new MainForm();
+			//Respond to our command-line parameters.
 			bool showMainForm = true;
 			foreach (string param in program.CommandLine)
 			{
@@ -206,6 +205,9 @@ namespace Eraser
 
 			//Run the eraser client.
 			eraserClient.Run();
+
+			//Create the form.
+			program.MainForm = new MainForm();
 			return showMainForm;
 		}
 
@@ -1247,7 +1249,6 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 						//that the server process isn't running. Start an instance.
 						Process eraserInstance = Process.Start(
 							Assembly.GetExecutingAssembly().Location, "--quiet");
-						Thread.Sleep(0);
 						eraserInstance.WaitForInputIdle();
 
 						client.Run();
