@@ -58,6 +58,14 @@ namespace Eraser
 			Program.eraserClient.TaskProcessing += OnTaskProcessing;
 			Program.eraserClient.TaskProcessed += OnTaskProcessed;
 
+			//Check if we have tasks running already.
+			foreach (Task task in Program.eraserClient.Tasks)
+				if (task.Executing)
+				{
+					OnTaskProcessing(this, new TaskEventArgs(task));
+					break;
+				}
+
 			//Check the notification area context menu's minimise to tray item.
 			hideWhenMinimisedToolStripMenuItem.Checked = EraserSettings.Get().HideWhenMinimised;
 
