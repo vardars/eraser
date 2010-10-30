@@ -159,6 +159,7 @@ namespace Eraser.DefaultPlugins
 				//process locking the file. Defer, then rename again.
 				try
 				{
+					info.CreationTime = info.LastWriteTime = info.LastAccessTime = MinTimestamp;
 					info.MoveTo(newPath);
 					++i;
 				}
@@ -187,10 +188,6 @@ namespace Eraser.DefaultPlugins
 					}
 				}
 			}
-
-			//Set the date of the directory to be invalid to prevent forensic
-			//detection
-			info.CreationTime = info.LastWriteTime = info.LastAccessTime = MinTimestamp;
 
 			//Remove the folder
 			info.Delete(true);
