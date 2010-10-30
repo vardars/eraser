@@ -259,9 +259,9 @@ namespace Eraser.Manager
 		/// <param name="e"></param>
 		internal void OnTaskFinished(TaskEventArgs e)
 		{
+			Executing = false;
 			if (TaskFinished != null)
 				TaskFinished(this, e);
-			Executing = false;
 		}
 		#endregion
 	}
