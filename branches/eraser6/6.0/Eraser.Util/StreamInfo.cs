@@ -175,10 +175,18 @@ namespace Eraser.Util
 		{
 			get
 			{
-				long fileSize;
-				using (SafeFileHandle handle = fileHandle)
-					if (KernelApi.NativeMethods.GetFileSizeEx(handle, out fileSize))
-						return fileSize;
+				try
+				{
+					long fileSize;
+					using (SafeFileHandle handle = fileHandle)
+						if (KernelApi.NativeMethods.GetFileSizeEx(handle, out fileSize))
+							return fileSize;
+				}
+				catch (UnauthorizedAccessException)
+				{
+					//Swallow: we just return 0 in this situation as there's nothing we can
+					//do about this error.
+				}
 
 				return 0;
 			}
