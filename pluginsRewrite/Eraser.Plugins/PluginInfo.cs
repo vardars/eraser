@@ -112,12 +112,8 @@ namespace Eraser.Plugins
 						info.Guid = new Guid((string)attr.ConstructorArguments[0].Value);
 					else if (attr.Constructor.DeclaringType == typeof(AssemblyCompanyAttribute))
 						info.Author = (string)attr.ConstructorArguments[0].Value;
-					else if (attr.Constructor.DeclaringType == typeof(LoadingPolicyAttribute))
-					{
+					else if (attr.Constructor.DeclaringType.GUID == typeof(LoadingPolicyAttribute).GUID)
 						LoadingPolicy = (LoadingPolicy)attr.ConstructorArguments[0].Value;
-						if (LoadingPolicy == LoadingPolicy.Core)
-							LoadingPolicy = LoadingPolicy.None;
-					}
 
 				this.AssemblyInfo = info;
 			}
@@ -137,7 +133,7 @@ namespace Eraser.Plugins
 		/// Gets whether the plugin is required for the functioning of Eraser (and
 		/// therefore cannot be disabled.)
 		/// </summary>
-		public LoadingPolicy LoadingPolicy { get; private set; }
+		public LoadingPolicy LoadingPolicy { get; internal set; }
 
 		/// <summary>
 		/// Gets the IPlugin interface which the plugin exposed. This may be null
