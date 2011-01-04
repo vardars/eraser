@@ -31,8 +31,10 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 using Eraser.Util;
+using Eraser.Util.ExtensionMethods;
+using Path = System.IO.Path;
 
-namespace Eraser.Manager.Plugin
+namespace Eraser.Plugins
 {
 	/// <summary>
 	/// The plugins host interface which is used for communicating with the host
@@ -93,6 +95,12 @@ namespace Eraser.Manager.Plugin
 		public abstract void Load();
 
 		/// <summary>
+		/// The plugin load event, allowing clients to decide whether to load
+		/// the given plugin.
+		/// </summary>
+		public EventHandler<PluginLoadEventArgs> PluginLoad { get; set; }
+
+		/// <summary>
 		/// The plugin loaded event.
 		/// </summary>
 		public EventHandler<PluginLoadedEventArgs> PluginLoaded { get; set; }
@@ -115,26 +123,6 @@ namespace Eraser.Manager.Plugin
 		/// <remarks>If a plugin is loaded twice, this function should do nothing
 		/// and return True.</remarks>
 		public abstract bool LoadPlugin(string filePath);
-	}
-
-	/// <summary>
-	/// Event argument for the plugin loaded event.
-	/// </summary>
-	public class PluginLoadedEventArgs : EventArgs
-	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="instance">The plugin instance of the recently loaded plugin.</param>
-		public PluginLoadedEventArgs(PluginInstance instance)
-		{
-			Instance = instance;
-		}
-
-		/// <summary>
-		/// The <see cref="PluginInstance"/> object representing the newly loaded plugin.
-		/// </summary>
-		public PluginInstance Instance { get; private set; }
 	}
 
 	/// <summary>
@@ -307,39 +295,9 @@ namespace Eraser.Manager.Plugin
 			lock (plugins)
 				plugins.Add(instance);
 
-			//If the plugin does not have an approval or denial, check for the presence of
-			//a valid signature.
-			IDictionary<Guid, bool> approvals = ManagerLibrary.Settings.PluginApprovals;
-			if (!approvals.ContainsKey(instance.AssemblyInfo.Guid) &&
-				(reflectAssembly.GetName().GetPublicKey().Length == 0 ||
-				!Security.VerifyStrongName(filePath) ||
-				instance.AssemblyAuthenticode == null))
-			{
-				return false;
-			}
-
-			//Preliminary checks to verify whether the plugin can be loaded (safely) passes,
-			//Load the assembly fully, and then initialise it.
-			instance.Assembly = Assembly.Load(reflectAssembly.GetName());
-			
-			//The plugin either is explicitly allowed or disallowed to load, or
-			//it has an Authenticode Signature as well as a Strong Name. Get the
-			//loading policy of the plugin.
-			{
-				
-			}
-
-			bool initialisePlugin = false;
-
-			//Is there an approval or denial?
-			if (approvals.ContainsKey(instance.AssemblyInfo.Guid))
-				initialisePlugin = approvals[instance.AssemblyInfo.Guid];
-
-			//There's no approval or denial, what is the specified loading policy?
-			else
-				initialisePlugin = instance.LoadingPolicy != LoadingPolicy.DefaultOff;
-
-			if (initialisePlugin)
+			PluginLoadEventArgs e = new PluginLoadEventArgs(instance);
+			PluginLoad(this, e);
+			if (PluginLoad == null || e.Load)
 			{
 				InitialisePlugin(instance);
 				return true;
@@ -352,6 +310,7 @@ namespace Eraser.Manager.Plugin
 		/// Initialises the given plugin from the plugin's description.
 		/// </summary>
 		/// <param name="instance">The <see cref="PluginInstance"/> structure to fill.</param>
+		/// <exception cref="System.IO.FileLoadException" />
 		private void InitialisePlugin(PluginInstance instance)
 		{
 			try
@@ -372,11 +331,8 @@ namespace Eraser.Manager.Plugin
 			}
 			catch (System.Security.SecurityException e)
 			{
-				MessageBox.Show(S._("Could not load the plugin {0}.\n\nThe error returned was: {1}",
-					instance.Assembly.Location, e.Message), S._("Eraser"), MessageBoxButtons.OK,
-					MessageBoxIcon.Error, MessageBoxDefaultButton.Button1,
-					Localisation.IsRightToLeft(null) ?
-						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
+				throw new FileLoadException(S._("Could not load the plugin."),
+					instance.Assembly.Location, e);
 			}
 		}
 

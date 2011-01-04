@@ -24,8 +24,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Eraser.Util;
 using System.Globalization;
+
+using Eraser.Util;
+using Eraser.Plugins;
 
 namespace Eraser.Manager
 {
@@ -373,11 +375,11 @@ namespace Eraser.Manager
 			}
 
 			//We have not computed the value. Compute the default.
-			Plugin.Host pluginHost = ManagerLibrary.Instance.Host;
-			IList<Plugin.PluginInstance> plugins = pluginHost.Plugins;
+			Host pluginHost = Host.Instance;
+			IList<PluginInstance> plugins = pluginHost.Plugins;
 			SortedList<int, Guid> priorities = new SortedList<int, Guid>();
 
-			foreach (Plugin.PluginInstance plugin in plugins)
+			foreach (PluginInstance plugin in plugins)
 			{
 				//Check whether the plugin is signed by us.
 				byte[] pluginKey = plugin.Assembly.GetName().GetPublicKey();
