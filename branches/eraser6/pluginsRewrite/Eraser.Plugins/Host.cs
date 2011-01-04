@@ -111,7 +111,18 @@ namespace Eraser.Plugins
 		public EventHandler<PluginLoadedEventArgs> PluginLoaded { get; set; }
 
 		/// <summary>
-		/// Event callback executor for the OnPluginLoad Event
+		/// Event callback executor for the OnPluginLoad event.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		internal void OnPluginLoad(object sender, PluginLoadEventArgs e)
+		{
+			if (PluginLoad != null)
+				PluginLoad(sender, e);
+		}
+
+		/// <summary>
+		/// Event callback executor for the OnPluginLoaded vent
 		/// </summary>
 		internal void OnPluginLoaded(object sender, PluginLoadedEventArgs e)
 		{
@@ -292,7 +303,10 @@ namespace Eraser.Plugins
 			//Check that this plugin's name appears in our list of core plugins, otherwise this
 			//is a phony
 			if (CorePlugins.Count(x => x == info.Assembly.GetName().Name) == 0)
+			{
+				info.LoadingPolicy = LoadingPolicy.None;
 				return LoadNonCorePlugin(info);
+			}
 
 			//Check for the presence of a valid signature: Core plugins must have the same
 			//public key as the current assembly
@@ -317,8 +331,7 @@ namespace Eraser.Plugins
 		private bool LoadNonCorePlugin(PluginInfo info)
 		{
 			PluginLoadEventArgs e = new PluginLoadEventArgs(info);
-			if (PluginLoad != null)
-				PluginLoad(this, e);
+			OnPluginLoad(this, e);
 			
 			if (e.Load)
 				info.Load(this);
