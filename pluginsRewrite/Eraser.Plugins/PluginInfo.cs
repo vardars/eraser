@@ -66,20 +66,23 @@ namespace Eraser.Plugins
 		/// <param name="host">The host for the plugin</param>
 		internal void Load(Host host)
 		{
-			Assembly = Assembly.Load(Assembly.GetName());
+			if (Assembly.ReflectionOnly)
+				Assembly = Assembly.Load(Assembly.GetName());
 
 			try
 			{
 				//Iterate over every exported type, checking for the IPlugin implementation
 				Type typePlugin = Assembly.GetExportedTypes().First(
-					type => type.GetInterface("Eraser.Manager.Plugin.IPlugin", true) != null);
-				if (typePlugin == null)
-					throw new FileLoadException(S._("Could not load the plugin."),
-						Assembly.Location);
+					type => type.GetInterface("Eraser.Plugins.IPlugin", true) != null);
 
 				//Initialize the plugin
-				Plugin = (IPlugin)Activator.CreateInstance(Assembly.GetType(typePlugin.ToString()));
+				Plugin = (IPlugin)Activator.CreateInstance(typePlugin);
 				Plugin.Initialize(host);
+			}
+			catch (InvalidOperationException e)
+			{
+				throw new FileLoadException(S._("Could not load the plugin."),
+					Assembly.Location, e);
 			}
 			catch (System.Security.SecurityException e)
 			{
