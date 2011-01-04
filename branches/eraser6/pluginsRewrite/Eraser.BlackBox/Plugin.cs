@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 
-using Eraser.Manager.Plugin;
+using Eraser.Plugins;
 
 namespace Eraser.BlackBox
 {
