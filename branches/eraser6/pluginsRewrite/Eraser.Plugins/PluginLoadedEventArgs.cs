@@ -35,14 +35,14 @@ namespace Eraser.Plugins
 		/// Constructor.
 		/// </summary>
 		/// <param name="instance">The plugin instance of the recently loaded plugin.</param>
-		public PluginLoadedEventArgs(PluginInstance instance)
+		public PluginLoadedEventArgs(PluginInfo info)
 		{
-			Instance = instance;
+			Plugin = info;
 		}
 
 		/// <summary>
 		/// The <see cref="PluginInstance"/> object representing the newly loaded plugin.
 		/// </summary>
-		public PluginInstance Instance { get; private set; }
+		public PluginInfo Plugin { get; private set; }
 	}
 }

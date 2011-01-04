@@ -28,6 +28,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.IO;
 
 using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
@@ -37,7 +38,7 @@ namespace Eraser.Plugins
 	/// <summary>
 	/// Structure holding the instance values of the plugin like handle and path.
 	/// </summary>
-	public class PluginInstance
+	public class PluginInfo
 	{
 		/// <summary>
 		/// Constructor
@@ -45,7 +46,7 @@ namespace Eraser.Plugins
 		/// <param name="assembly">The assembly representing this plugin.</param>
 		/// <param name="path">The path to the ass</param>
 		/// <param name="plugin"></param>
-		internal PluginInstance(Assembly assembly, IPlugin plugin)
+		internal PluginInfo(Assembly assembly, IPlugin plugin)
 		{
 			Assembly = assembly;
 			Plugin = plugin;
@@ -60,6 +61,34 @@ namespace Eraser.Plugins
 		}
 
 		/// <summary>
+		/// Executes the plugin's initialisation routine.
+		/// </summary>
+		/// <param name="host">The host for the plugin</param>
+		internal void Load(Host host)
+		{
+			Assembly = Assembly.Load(Assembly.GetName());
+
+			try
+			{
+				//Iterate over every exported type, checking for the IPlugin implementation
+				Type typePlugin = Assembly.GetExportedTypes().First(
+					type => type.GetInterface("Eraser.Manager.Plugin.IPlugin", true) != null);
+				if (typePlugin == null)
+					throw new FileLoadException(S._("Could not load the plugin."),
+						Assembly.Location);
+
+				//Initialize the plugin
+				Plugin = (IPlugin)Activator.CreateInstance(Assembly.GetType(typePlugin.ToString()));
+				Plugin.Initialize(host);
+			}
+			catch (System.Security.SecurityException e)
+			{
+				throw new FileLoadException(S._("Could not load the plugin."),
+					Assembly.Location, e);
+			}
+		}
+
+		/// <summary>
 		/// Gets the Assembly this plugin instance came from.
 		/// </summary>
 		public Assembly Assembly
@@ -68,7 +97,7 @@ namespace Eraser.Plugins
 			{
 				return assembly;
 			}
-			internal set
+			private set
 			{
 				assembly = value;
 
@@ -105,13 +134,13 @@ namespace Eraser.Plugins
 		/// Gets whether the plugin is required for the functioning of Eraser (and
 		/// therefore cannot be disabled.)
 		/// </summary>
-		public LoadingPolicy LoadingPolicy { get; internal set; }
+		public LoadingPolicy LoadingPolicy { get; private set; }
 
 		/// <summary>
 		/// Gets the IPlugin interface which the plugin exposed. This may be null
 		/// if the plugin was not loaded.
 		/// </summary>
-		public IPlugin Plugin { get; internal set; }
+		public IPlugin Plugin { get; private set; }
 
 		/// <summary>
 		/// Gets whether this particular plugin is currently loaded in memory.

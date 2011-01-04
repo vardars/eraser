@@ -33,7 +33,7 @@ using System.Globalization;
 using System.Threading;
 
 using Eraser.Manager;
-using Eraser.Manager.Plugin;
+using Eraser.Plugins;
 using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
 
@@ -58,31 +58,31 @@ namespace Eraser
 		private void OnNewPluginLoaded(object sender, PluginLoadedEventArgs e)
 		{
 			ListViewItem item = new ListViewItem();
-			if (e.Instance.Plugin == null)
+			if (e.Plugin.Loaded)
 			{
-				item.Text = System.IO.Path.GetFileNameWithoutExtension(e.Instance.Assembly.Location);
-				item.SubItems.Add(e.Instance.AssemblyInfo.Author);
+				item.Text = e.Plugin.Plugin.Name;
+				item.SubItems.Add(e.Plugin.Plugin.Author);
 			}
 			else
 			{
-				item.Text = e.Instance.Plugin.Name;
-				item.SubItems.Add(e.Instance.Plugin.Author);
+				item.Text = System.IO.Path.GetFileNameWithoutExtension(e.Plugin.Assembly.Location);
+				item.SubItems.Add(e.Plugin.AssemblyInfo.Author);
 			}
-
+			
 			//The item is checked if the plugin was given the green light to load
-			item.Checked = e.Instance.Plugin != null ||
+			item.Checked = e.Plugin.Plugin != null ||
 				(Manager.ManagerLibrary.Settings.PluginApprovals.ContainsKey(
-					e.Instance.AssemblyInfo.Guid) && Manager.ManagerLibrary.
-					Settings.PluginApprovals[e.Instance.AssemblyInfo.Guid]
+					e.Plugin.AssemblyInfo.Guid) && Manager.ManagerLibrary.
+					Settings.PluginApprovals[e.Plugin.AssemblyInfo.Guid]
 				);
 
 			//Visually display the other metadata associated with the assembly
-			item.ImageIndex = e.Instance.AssemblyAuthenticode == null ? -1 : 0;
-			item.Group = e.Instance.LoadingPolicy == LoadingPolicy.Core ?
+			item.ImageIndex = e.Plugin.AssemblyAuthenticode == null ? -1 : 0;
+			item.Group = e.Plugin.LoadingPolicy == LoadingPolicy.Core ?
 				pluginsManager.Groups[0] : pluginsManager.Groups[1];
-			item.SubItems.Add(e.Instance.Assembly.GetFileVersion().ToString());
-			item.SubItems.Add(e.Instance.Assembly.Location);
-			item.Tag = e.Instance;
+			item.SubItems.Add(e.Plugin.Assembly.GetFileVersion().ToString());
+			item.SubItems.Add(e.Plugin.Assembly.Location);
+			item.Tag = e.Plugin;
 			pluginsManager.Items.Add(item);
 		}
 
@@ -121,7 +121,7 @@ namespace Eraser
 		{
 			//Load the list of plugins
 			Host instance = Host.Instance;
-			IEnumerator<PluginInstance> i = instance.Plugins.GetEnumerator();
+			IEnumerator<PluginInfo> i = instance.Plugins.GetEnumerator();
 			while (i.MoveNext())
 				OnNewPluginLoaded(this, new PluginLoadedEventArgs(i.Current));
 
@@ -308,8 +308,8 @@ namespace Eraser
 		private void pluginsManager_ItemCheck(object sender, ItemCheckEventArgs e)
 		{
 			ListViewItem item = pluginsManager.Items[e.Index];
-			PluginInstance instance = (PluginInstance)item.Tag;
-			if (instance.LoadingPolicy == LoadingPolicy.Core)
+			PluginInfo plugin = (PluginInfo)item.Tag;
+			if (plugin.LoadingPolicy == LoadingPolicy.Core)
 				e.NewValue = CheckState.Checked;
 		}
 
@@ -317,8 +317,8 @@ namespace Eraser
 		{
 			if (pluginsManager.SelectedItems.Count == 1)
 			{
-				PluginInstance instance = (PluginInstance)pluginsManager.SelectedItems[0].Tag;
-				e.Cancel = instance.Plugin == null || !instance.Plugin.Configurable;
+				PluginInfo plugin = (PluginInfo)pluginsManager.SelectedItems[0].Tag;
+				e.Cancel = !(plugin.Loaded && plugin.Plugin.Configurable);
 			}
 			else
 				e.Cancel = true;
@@ -329,8 +329,8 @@ namespace Eraser
 			if (pluginsManager.SelectedItems.Count != 1)
 				return;
 
-			PluginInstance instance = (PluginInstance)pluginsManager.SelectedItems[0].Tag;
-			instance.Plugin.DisplaySettings(this);
+			PluginInfo plugin = (PluginInfo)pluginsManager.SelectedItems[0].Tag;
+			plugin.Plugin.DisplaySettings(this);
 		}
 
 		private void saveSettings_Click(object sender, EventArgs e)
@@ -347,7 +347,7 @@ namespace Eraser
 			IDictionary<Guid, bool> pluginApprovals = managerSettings.PluginApprovals;
 			foreach (ListViewItem item in pluginsManager.Items)
 			{
-				PluginInstance plugin = (PluginInstance)item.Tag;
+				PluginInfo plugin = (PluginInfo)item.Tag;
 				Guid guid = plugin.AssemblyInfo.Guid;
 				if (!pluginApprovals.ContainsKey(guid))
 				{

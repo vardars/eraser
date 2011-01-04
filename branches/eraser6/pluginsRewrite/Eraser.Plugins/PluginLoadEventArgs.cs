@@ -37,7 +37,7 @@ namespace Eraser.Plugins
 		/// </summary>
 		/// <param name="info">The plugin information to be passed to the approving
 		/// delegate.</param>
-		internal PluginLoadEventArgs(PluginInstance info)
+		internal PluginLoadEventArgs(PluginInfo info)
 		{
 			Plugin = info;
 			Load = true;
@@ -46,7 +46,7 @@ namespace Eraser.Plugins
 		/// <summary>
 		/// Gets the plugin associated with this event.
 		/// </summary>
-		public PluginInstance Plugin { get; private set; }
+		public PluginInfo Plugin { get; private set; }
 
 		/// <summary>
 		/// Gets or Sets whether the current plugin should be loaded.
