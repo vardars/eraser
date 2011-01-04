@@ -143,6 +143,10 @@
       <Name>Eraser.Manager</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\Eraser.Plugins\Eraser.Plugins.csproj">
+      <Project>{59F7ED0F-3589-4112-B612-4A9A6588F4A0}</Project>
+      <Name>Eraser.Plugins</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Eraser.Util.Native\Eraser.Util.Native.vcproj">
       <Project>{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}</Project>
       <Name>Eraser.Util.Native</Name>

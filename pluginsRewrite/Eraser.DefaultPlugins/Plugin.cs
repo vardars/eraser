@@ -25,7 +25,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using Eraser.Manager;
-using Eraser.Manager.Plugin;
+using Eraser.Plugins;
 using Eraser.Util;
 
 namespace Eraser.DefaultPlugins
