@@ -46,8 +46,6 @@ namespace Eraser.Manager
 			ErasureMethodRegistrar = new ErasureMethodRegistrar();
 			ErasureTargetRegistrar = new ErasureTargetRegistrar();
 			FileSystemRegistrar = new FileSystemRegistrar();
-			Host = new Plugin.DefaultHost();
-			Host.Load();
 		}
 
 		~ManagerLibrary()

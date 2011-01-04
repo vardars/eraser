@@ -669,6 +669,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			Application.EnableVisualStyles();
 			using (Form dialog = new ShellConfirmationDialog(task))
 			{
+				dialog.BringToFront();
 				if (dialog.ShowDialog(parent) != DialogResult.Yes)
 					return;
 			}
