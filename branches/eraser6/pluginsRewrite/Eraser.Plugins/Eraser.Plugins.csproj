@@ -48,11 +48,15 @@
     <Compile Include="..\Version.cs">
       <Link>Version.cs</Link>
     </Compile>
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="IConfigurer.cs" />
+    <Compile Include="IPlugin.cs" />
     <Compile Include="IRegistrar.cs" />
+    <Compile Include="LoadingPolicy.cs" />
+    <Compile Include="PluginInstance.cs" />
     <Compile Include="PluginLoadedEventArgs.cs" />
     <Compile Include="PluginLoadEventArgs.cs" />
-    <Compile Include="Plugins.cs" />
+    <Compile Include="Host.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
