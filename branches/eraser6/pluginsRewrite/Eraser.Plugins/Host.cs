@@ -60,6 +60,16 @@ namespace Eraser.Plugins
 		#endregion
 
 		/// <summary>
+		/// Initialises the Plugins library. Call <see cref="Host.Load"/> when object
+		/// initialisation is complete.
+		/// </summary>
+		/// <remarks>Call <see cref="Host.Instance.Dispose"/> when exiting.</remarks>
+		public static void Initialise()
+		{
+			new DefaultHost();
+		}
+
+		/// <summary>
 		/// Constructor. Sets the global Plugin Host instance.
 		/// </summary>
 		/// <see cref="Host.Instance"/>
@@ -131,19 +141,17 @@ namespace Eraser.Plugins
 	internal class DefaultHost : Host
 	{
 		/// <summary>
-		/// Constructor. Loads all plugins in the Plugins folder.
+		/// Constructor.
 		/// </summary>
 		public DefaultHost() : base()
-		{
-			Load();
-		}
-
-		public override void Load()
 		{
 			//Specify additional places to load assemblies from
 			AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
 			AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += ResolveReflectionDependency;
+		}
 
+		public override void Load()
+		{
 			//Load all core plugins first
 			foreach (KeyValuePair<string, string> plugin in CorePlugins)
 			{
@@ -185,27 +193,6 @@ namespace Eraser.Plugins
 			plugins = null;
 		}
 
-		/// <summary>
-		/// The path to the folder containing the plugins.
-		/// </summary>
-		public readonly string PluginsFolder = Path.Combine(
-			Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), //Assembly location
-			"Plugins" //Plugins folder
-		);
-
-		/// <summary>
-		/// The list of plugins which are core, the key is the file name, the value
-		/// is the assembly name.
-		/// </summary>
-		private readonly KeyValuePair<string, string>[] CorePlugins =
-			new KeyValuePair<string, string>[]
-			{
-				new KeyValuePair<string, string>(
-					"Eraser.DefaultPlugins.dll",
-					"Eraser.DefaultPlugins"
-				)
-			};
-
 		public override IList<PluginInstance> Plugins
 		{
 			get { return plugins.AsReadOnly(); }
@@ -220,7 +207,7 @@ namespace Eraser.Plugins
 		{
 			//Iterate over every exported type, checking if it implements IPlugin
 			Type typePlugin = assembly.GetExportedTypes().FirstOrDefault(
-					type => type.GetInterface("Eraser.Manager.Plugin.IPlugin", true) != null);
+					type => type.GetInterface("Eraser.Plugins.IPlugin", true) != null);
 
 			//If the typePlugin type is empty the assembly doesn't implement IPlugin it's not
 			//a plugin.
@@ -365,248 +352,30 @@ namespace Eraser.Plugins
 			return Assembly.ReflectionOnlyLoad(args.Name);
 		}
 
+		/// <summary>
+		/// The path to the folder containing the plugins.
+		/// </summary>
+		public readonly string PluginsFolder = Path.Combine(
+			Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), //Assembly location
+			"Plugins" //Plugins folder
+		);
+
+		/// <summary>
+		/// The list of plugins which are core, the key is the file name, the value
+		/// is the assembly name.
+		/// </summary>
+		private readonly KeyValuePair<string, string>[] CorePlugins =
+			new KeyValuePair<string, string>[]
+			{
+				new KeyValuePair<string, string>(
+					"Eraser.DefaultPlugins.dll",
+					"Eraser.DefaultPlugins"
+				)
+			};
+
+		/// <summary>
+		/// Stores the list of plugins found within the Plugins folder.
+		/// </summary>
 		private List<PluginInstance> plugins = new List<PluginInstance>();
-	}
-
-	/// <summary>
-	/// Structure holding the instance values of the plugin like handle and path.
-	/// </summary>
-	public class PluginInstance
-	{
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="assembly">The assembly representing this plugin.</param>
-		/// <param name="path">The path to the ass</param>
-		/// <param name="plugin"></param>
-		internal PluginInstance(Assembly assembly, IPlugin plugin)
-		{
-			Assembly = assembly;
-			Plugin = plugin;
-
-			//Verify the certificate in the assembly.
-			if (Security.VerifyAuthenticode(assembly.Location))
-			{
-				X509Certificate2 cert = new X509Certificate2(
-					X509Certificate.CreateFromSignedFile(assembly.Location));
-				AssemblyAuthenticode = cert;
-			}
-		}
-
-		/// <summary>
-		/// Gets the Assembly this plugin instance came from.
-		/// </summary>
-		public Assembly Assembly
-		{
-			get
-			{
-				return assembly;
-			}
-			internal set
-			{
-				assembly = value;
-
-				AssemblyInfo info = new AssemblyInfo();
-				info.Version = assembly.GetFileVersion();
-				IList<CustomAttributeData> attributes = CustomAttributeData.GetCustomAttributes(assembly);
-				foreach (CustomAttributeData attr in attributes)
-					if (attr.Constructor.DeclaringType == typeof(GuidAttribute))
-						info.Guid = new Guid((string)attr.ConstructorArguments[0].Value);
-					else if (attr.Constructor.DeclaringType == typeof(AssemblyCompanyAttribute))
-						info.Author = (string)attr.ConstructorArguments[0].Value;
-					else if (attr.Constructor.DeclaringType == typeof(LoadingPolicyAttribute))
-					{
-						LoadingPolicy = (LoadingPolicy)attr.ConstructorArguments[0].Value;
-						if (LoadingPolicy == LoadingPolicy.Core)
-							LoadingPolicy = LoadingPolicy.None;
-					}
-
-				this.AssemblyInfo = info;
-			}
-		}
-
-		/// <summary>
-		/// Gets the attributes of the assembly, loading from reflection-only sources.
-		/// </summary>
-		public AssemblyInfo AssemblyInfo { get; private set; }
-
-		/// <summary>
-		/// The Authenticode signature used for signing the assembly.
-		/// </summary>
-		public X509Certificate2 AssemblyAuthenticode { get; private set; }
-
-		/// <summary>
-		/// Gets whether the plugin is required for the functioning of Eraser (and
-		/// therefore cannot be disabled.)
-		/// </summary>
-		public LoadingPolicy LoadingPolicy { get; internal set; }
-
-		/// <summary>
-		/// Gets the IPlugin interface which the plugin exposed. This may be null
-		/// if the plugin was not loaded.
-		/// </summary>
-		public IPlugin Plugin { get; internal set; }
-
-		/// <summary>
-		/// Gets whether this particular plugin is currently loaded in memory.
-		/// </summary>
-		public bool Loaded
-		{
-			get { return Plugin != null; }
-		}
-
-		private Assembly assembly;
-	}
-
-	/// <summary>
-	/// Reflection-only information retrieved from the assembly.
-	/// </summary>
-	public struct AssemblyInfo
-	{
-		/// <summary>
-		/// The GUID of the assembly.
-		/// </summary>
-		public Guid Guid { get; set; }
-
-		/// <summary>
-		/// The publisher of the assembly.
-		/// </summary>
-		public string Author { get; set; }
-
-		/// <summary>
-		/// The version of the assembly.
-		/// </summary>
-		public Version Version { get; set; }
-
-		public override bool Equals(object obj)
-		{
-			if (!(obj is AssemblyInfo))
-				return false;
-			return Equals((AssemblyInfo)obj);
-		}
-
-		public bool Equals(AssemblyInfo other)
-		{
-			return Guid == other.Guid;
-		}
-
-		public static bool operator ==(AssemblyInfo assembly1, AssemblyInfo assembly2)
-		{
-			return assembly1.Equals(assembly2);
-		}
-
-		public static bool operator !=(AssemblyInfo assembly1, AssemblyInfo assembly2)
-		{
-			return !assembly1.Equals(assembly2);
-		}
-
-		public override int GetHashCode()
-		{
-			return Guid.GetHashCode();
-		}
-	}
-
-	/// <summary>
-	/// Basic plugin interface which allows for the main program to utilize the
-	/// functions in the DLL
-	/// </summary>
-	public interface IPlugin : IDisposable
-	{
-		/// <summary>
-		/// Initializer.
-		/// </summary>
-		/// <param name="host">The host object which can be used for two-way
-		/// communication with the program.</param>
-		void Initialize(Host host);
-
-		/// <summary>
-		/// The name of the plug-in, used for descriptive purposes in the UI
-		/// </summary>
-		string Name
-		{
-			get;
-		}
-
-		/// <summary>
-		/// The author of the plug-in, used for display in the UI and for users
-		/// to contact the author about bugs. Must be in the format:
-		///		(.+) \&lt;([a-zA-Z0-9_.]+)@([a-zA-Z0-9_.]+)\.([a-zA-Z0-9]+)\&gt;
-		/// </summary>
-		/// <example>Joel Low <joel@joelsplace.sg></example>
-		string Author
-		{
-			get;
-		}
-
-		/// <summary>
-		/// Determines whether the plug-in is configurable.
-		/// </summary>
-		bool Configurable
-		{
-			get;
-		}
-
-		/// <summary>
-		/// Fulfil a request to display the settings for this plug-in.
-		/// </summary>
-		/// <param name="parent">The parent control which the settings dialog should
-		/// be parented with.</param>
-		void DisplaySettings(System.Windows.Forms.Control parent);
-	}
-
-	/// <summary>
-	/// Loading policies applicable for a given plugin.
-	/// </summary>
-	public enum LoadingPolicy
-	{
-		/// <summary>
-		/// The host decides the best policy for loading the plugin.
-		/// </summary>
-		None,
-
-		/// <summary>
-		/// The host will enable the plugin by default.
-		/// </summary>
-		DefaultOn,
-
-		/// <summary>
-		/// The host will disable the plugin by default
-		/// </summary>
-		DefaultOff,
-
-		/// <summary>
-		/// The host must always load the plugin.
-		/// </summary>
-		/// <remarks>This policy does not have an effect when declared in the
-		/// <see cref="LoadingPolicyAttribute"/> attribute and will be equivalent
-		/// to <see cref="None"/>.</remarks>
-		Core
-	}
-
-	/// <summary>
-	/// Declares the loading policy for the assembly containing the plugin. Only
-	/// plugins signed with an Authenticode signature will be trusted and have
-	/// this attribute checked at initialisation.
-	/// </summary>
-	[AttributeUsage(AttributeTargets.Assembly, Inherited = false, AllowMultiple = false)]
-	public sealed class LoadingPolicyAttribute : Attribute
-	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="policy">The policy used for loading the plugin.</param>
-		public LoadingPolicyAttribute(LoadingPolicy policy)
-		{
-			Policy = policy;
-		}
-
-		/// <summary>
-		/// The loading policy to be applied to the assembly.
-		/// </summary>
-		public LoadingPolicy Policy
-		{
-			get;
-			set;
-		}
 	}
 }

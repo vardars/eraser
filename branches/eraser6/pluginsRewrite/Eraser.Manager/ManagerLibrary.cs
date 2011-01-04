@@ -49,6 +49,8 @@ namespace Eraser.Manager
 			ErasureMethodRegistrar = new ErasureMethodRegistrar();
 			ErasureTargetRegistrar = new ErasureTargetRegistrar();
 			FileSystemRegistrar = new FileSystemRegistrar();
+			Host.Initialise();
+			Host.Instance.Load();
 		}
 
 		~ManagerLibrary()
