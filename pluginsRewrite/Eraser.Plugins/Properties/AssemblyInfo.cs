@@ -26,12 +26,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Eraser.Plugins")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Eraser Plugins")]
+[assembly: AssemblyDescription("Eraser - Secure Data Removal for Windows")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("Eraser.Plugins")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
+[assembly: AssemblyCompany("The Eraser Project")]
+[assembly: AssemblyProduct("Eraser")]
+[assembly: AssemblyCopyright("Copyright © 2008-2010 The Eraser Project")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
