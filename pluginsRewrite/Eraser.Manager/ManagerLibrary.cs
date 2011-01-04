@@ -24,6 +24,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 
+using Eraser.Plugins;
+using Eraser.Util;
+
 namespace Eraser.Manager
 {
 	/// <summary>
@@ -61,7 +64,7 @@ namespace Eraser.Manager
 			if (disposing)
 			{
 				EntropySourceRegistrar.Poller.Abort();
-				Host.Dispose();
+				Host.Instance.Dispose();
 				SettingsManager.Save();
 			}
 
@@ -73,6 +76,28 @@ namespace Eraser.Manager
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
+		}
+
+		private void OnPluginLoad(object sender, PluginLoadEventArgs e)
+		{
+			//If the plugin does not have an approval or denial, check for the presence of
+			//a valid signature.
+			IDictionary<Guid, bool> approvals = ManagerLibrary.Settings.PluginApprovals;
+			if (!approvals.ContainsKey(e.Plugin.AssemblyInfo.Guid) &&
+				(e.Plugin.Assembly.GetName().GetPublicKey().Length == 0 ||
+				!Security.VerifyStrongName(e.Plugin.Assembly.Location) ||
+				e.Plugin.AssemblyAuthenticode == null))
+			{
+				e.Load = false;
+			}
+
+			//Is there an approval or denial?
+			else if (approvals.ContainsKey(e.Plugin.AssemblyInfo.Guid))
+				e.Load = approvals[e.Plugin.AssemblyInfo.Guid];
+
+			//There's no approval or denial, what is the specified loading policy?
+			else
+				e.Load = e.Plugin.LoadingPolicy != LoadingPolicy.DefaultOff;
 		}
 
 		/// <summary>
@@ -128,10 +153,5 @@ namespace Eraser.Manager
 		/// The singleton instance for <see cref="Settings"/>.
 		/// </summary>
 		private static ManagerSettings settingsInstance;
-
-		/// <summary>
-		/// The global instance of the Plugin host.
-		/// </summary>
-		internal Plugin.DefaultHost Host;
 	}
 }
