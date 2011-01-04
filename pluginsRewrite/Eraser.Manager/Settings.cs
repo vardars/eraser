@@ -375,11 +375,10 @@ namespace Eraser.Manager
 			}
 
 			//We have not computed the value. Compute the default.
-			Host pluginHost = Host.Instance;
-			IList<PluginInstance> plugins = pluginHost.Plugins;
+			IList<PluginInfo> plugins = Host.Instance.Plugins;
 			SortedList<int, Guid> priorities = new SortedList<int, Guid>();
 
-			foreach (PluginInstance plugin in plugins)
+			foreach (PluginInfo plugin in plugins)
 			{
 				//Check whether the plugin is signed by us.
 				byte[] pluginKey = plugin.Assembly.GetName().GetPublicKey();
