@@ -69,11 +69,8 @@
     <Compile Include="Exception.cs" />
     <Compile Include="Executor.cs" />
     <Compile Include="FileSystem.cs" />
-    <Compile Include="IConfigurer.cs" />
-    <Compile Include="IRegistrar.cs" />
     <Compile Include="ManagerLibrary.cs" />
     <Compile Include="ErasureMethod.cs" />
-    <Compile Include="Plugins.cs" />
     <Compile Include="PRNG.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteExecutor.cs" />
@@ -82,6 +79,10 @@
     <Compile Include="Task.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Eraser.Plugins\Eraser.Plugins.csproj">
+      <Project>{59F7ED0F-3589-4112-B612-4A9A6588F4A0}</Project>
+      <Name>Eraser.Plugins</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Eraser.Util.Native\Eraser.Util.Native.vcproj">
       <Project>{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}</Project>
       <Name>Eraser.Util.Native</Name>

@@ -26,14 +26,11 @@ using System.Linq;
 
 using System.IO;
 using System.Reflection;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
 using Eraser.Util;
-using Eraser.Util.ExtensionMethods;
-using Path = System.IO.Path;
 
 namespace Eraser.Manager.Plugin
 {
@@ -61,11 +58,24 @@ namespace Eraser.Manager.Plugin
 		#endregion
 
 		/// <summary>
+		/// Constructor. Sets the global Plugin Host instance.
+		/// </summary>
+		/// <see cref="Host.Instance"/>
+		protected Host()
+		{
+			if (Instance != null)
+				throw new InvalidOperationException("Only one global Plugin Host instance can " +
+					"exist at any one point of time.");
+			Instance = this;
+		}
+
+		/// <summary>
 		/// Getter that retrieves the global plugin host instance.
 		/// </summary>
 		public static Host Instance
 		{
-			get { return ManagerLibrary.Instance.Host; }
+			get;
+			private set;
 		}
 
 		/// <summary>
@@ -135,8 +145,9 @@ namespace Eraser.Manager.Plugin
 		/// <summary>
 		/// Constructor. Loads all plugins in the Plugins folder.
 		/// </summary>
-		public DefaultHost()
+		public DefaultHost() : base()
 		{
+			Load();
 		}
 
 		public override void Load()
@@ -584,7 +595,7 @@ namespace Eraser.Manager.Plugin
 		/// </summary>
 		/// <param name="parent">The parent control which the settings dialog should
 		/// be parented with.</param>
-		void DisplaySettings(Control parent);
+		void DisplaySettings(System.Windows.Forms.Control parent);
 	}
 
 	/// <summary>
