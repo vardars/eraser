@@ -547,6 +547,11 @@ namespace Eraser
 					Buffer.BlockCopy(buffer, 0, tmpDest, 0, bytesRead);
 					responseBuffer.AddRange(tmpDest);
 
+					//Skip the progress report if the server did not specify how long the
+					//response is, such as when using chunked transfers
+					if (resp.ContentLength == -1)
+						continue;
+
 					float progress = responseBuffer.Count / (float)resp.ContentLength;
 					OnProgress(new ProgressEventArgs(progress, progress, null,
 						S._("{0} of {1} downloaded",
