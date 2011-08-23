@@ -3,7 +3,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0E7413FF-EB9E-4714-ACF2-BE3A6A7B2FFD}</ProjectGuid>
+    <ProjectGuid>{8FC52593-1387-4C85-9273-D1C90A2520F2}</ProjectGuid>
     <RootNamespace>ICSharpCode.SharpZipLib</RootNamespace>
     <AssemblyName>ICSharpCode.SharpZipLib</AssemblyName>
     <OutputType>Library</OutputType>
