@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DragDropLib")]
+[assembly: AssemblyTitle("WinFormsSample")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DragDropLib")]
+[assembly: AssemblyProduct("WinFormsSample")]
 [assembly: AssemblyCopyright("Copyright ©  2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("6937f787-3f6b-48be-b8d7-e8896ad56545")]
+[assembly: Guid("0eab2992-2da9-4ed5-a51a-21bd66109a64")]
 
 // Version information for an assembly consists of the following four values:
 //

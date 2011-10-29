@@ -1,7 +1,15 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DragDropLib", "DragDropLib\DragDropLib.csproj", "{98806EFF-9986-4E1F-84D3-5234C10FA69F}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfSample", "WpfSample\WpfSample.csproj", "{6BC808A3-C684-4D08-9EDD-E0ACB5DF40EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DragDropLib", "DragDropLib\DragDropLib.csproj", "{5D5438B8-0943-4802-AF43-E13BA045DD1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwfDragDropLib", "SwfDragDropLib\SwfDragDropLib.csproj", "{2069A390-3C32-490E-BD99-FA2BBD5508E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfDragDropLib", "WpfDragDropLib\WpfDragDropLib.csproj", "{2DAF1685-10C7-46B9-9C99-B38CC6143C89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwfSample", "SwfSample\SwfSample.csproj", "{D301BC85-14AD-47BF-B38F-3153F359DB9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +17,26 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{98806EFF-9986-4E1F-84D3-5234C10FA69F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{98806EFF-9986-4E1F-84D3-5234C10FA69F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{98806EFF-9986-4E1F-84D3-5234C10FA69F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{98806EFF-9986-4E1F-84D3-5234C10FA69F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BC808A3-C684-4D08-9EDD-E0ACB5DF40EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BC808A3-C684-4D08-9EDD-E0ACB5DF40EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BC808A3-C684-4D08-9EDD-E0ACB5DF40EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BC808A3-C684-4D08-9EDD-E0ACB5DF40EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D5438B8-0943-4802-AF43-E13BA045DD1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D5438B8-0943-4802-AF43-E13BA045DD1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D5438B8-0943-4802-AF43-E13BA045DD1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D5438B8-0943-4802-AF43-E13BA045DD1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2069A390-3C32-490E-BD99-FA2BBD5508E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2069A390-3C32-490E-BD99-FA2BBD5508E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2069A390-3C32-490E-BD99-FA2BBD5508E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2069A390-3C32-490E-BD99-FA2BBD5508E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DAF1685-10C7-46B9-9C99-B38CC6143C89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DAF1685-10C7-46B9-9C99-B38CC6143C89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DAF1685-10C7-46B9-9C99-B38CC6143C89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DAF1685-10C7-46B9-9C99-B38CC6143C89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D301BC85-14AD-47BF-B38F-3153F359DB9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D301BC85-14AD-47BF-B38F-3153F359DB9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D301BC85-14AD-47BF-B38F-3153F359DB9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D301BC85-14AD-47BF-B38F-3153F359DB9C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

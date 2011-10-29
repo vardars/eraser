@@ -1,0 +1,53 @@
+﻿<Window x:Class="WpfSample.DragDropSample"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="DragDropSample" Height="280" Width="450"
+    AllowDrop="True">
+    <UniformGrid Rows="2" Columns="2">
+        <Border Width="100" Height="100">
+            <Border MouseDown="Border_MouseDown">
+                <Grid>
+                    <Rectangle Stroke="Orange" RadiusX="4" RadiusY="4">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="Blue" Offset="0" />
+                                <GradientStop Color="White" Offset="1" />
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <TextBlock Foreground="White" TextAlignment="Center" Text="Drag Source" />
+                </Grid>
+            </Border>
+        </Border>
+        <Border Margin="10">
+            <TextBox
+                x:Name="textBox2"
+                Text="Drop Target [Copy]&#13;&#10;(Sets DropDescription)&#13;&#10;Accepts: FileDrop&#13;&#10;"
+                AllowDrop="True"
+                PreviewDragEnter="textBox2_DragEnter"
+                PreviewDragOver="textBox2_DragOver"
+                PreviewDragLeave="textBox2_DragLeave"
+                PreviewDrop="textBox2_Drop" />
+        </Border>
+        <Border Margin="10">
+            <TextBox
+                x:Name="textBox1"
+                Text="Drop Target [Copy]&#13;&#10;(Does not set DropDescription)&#13;&#10;Accepts: Text&#13;&#10;"
+                AllowDrop="True"
+                PreviewDragEnter="textBox1_DragEnter"
+                PreviewDragOver="textBox1_DragOver"
+                PreviewDragLeave="textBox1_DragLeave"
+                PreviewDrop="textBox1_Drop" />
+        </Border>
+        <Border Margin="10">
+            <TextBox
+                x:Name="textBox3"
+                Text="Drop Target [Link]&#13;&#10;(Does not set DropDescription)&#13;&#10;(Does not call IDropTargetHelper)&#13;&#10;Accepts: Html&#13;&#10;"
+                AllowDrop="True"
+                PreviewDragEnter="textBox3_DragEnter"
+                PreviewDragOver="textBox3_DragOver"
+                PreviewDragLeave="textBox3_DragLeave"
+                PreviewDrop="textBox3_Drop" />
+        </Border>
+    </UniformGrid>
+</Window>

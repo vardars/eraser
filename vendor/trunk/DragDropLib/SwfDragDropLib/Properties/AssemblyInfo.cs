@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DragDropLib")]
+[assembly: AssemblyTitle("SwfDataObjectExtensions")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DragDropLib")]
+[assembly: AssemblyProduct("SwfDataObjectExtensions")]
 [assembly: AssemblyCopyright("Copyright ©  2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("6937f787-3f6b-48be-b8d7-e8896ad56545")]
+[assembly: Guid("8f7c13b1-b6c8-4a7f-9589-50767d6ab384")]
 
 // Version information for an assembly consists of the following four values:
 //
