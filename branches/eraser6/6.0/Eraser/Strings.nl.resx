@@ -219,7 +219,7 @@
   <data name="The task {0} has completed." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="Task executed" xml:space="preserve">
+  <data name="Task completed" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Import tasks from {0}" xml:space="preserve">
