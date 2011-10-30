@@ -156,17 +156,8 @@
   <data name="The file {0} was not erased as the file does not exist." xml:space="preserve">
     <value>Plik {0} nie został wymazany, bo nie istnieje.</value>
   </data>
-  <data name="The file {0} could not be erased because the file was either compressed, encrypted or a sparse file." xml:space="preserve">
-    <value>Plik {0} nie mógł być wymazany, bo był skompresowany, zaszyfrowany lub rozrzedzony.</value>
-  </data>
   <data name="The file {0} could not be erased because the file's permissions prevent access to the file." xml:space="preserve">
     <value>Plik {0} nie mógł być wymazany z powodu ograniczonego prawa dostępu do pliku.</value>
-  </data>
-  <data name="(locked by {0})" xml:space="preserve">
-    <value>(zablokowane przez {0})</value>
-  </data>
-  <data name="Could not force closure of file \&quot;{0}\&quot; {1}" xml:space="preserve">
-    <value>Nie można wymusić zamknięcia pliku \"{0}\" {1}</value>
   </data>
   <data name="Removing folders..." xml:space="preserve">
     <value>Usuwanie katalogów...</value>
@@ -176,6 +167,15 @@
   </data>
   <data name="Emptying recycle bin..." xml:space="preserve">
     <value>Opróżnianie kosza...</value>
+  </data>
+  <data name="The file {0} could not be erased because the file was either compressed, encrypted or a sparse file." xml:space="preserve">
+    <value>Plik {0} nie mógł być wymazany, bo był skompresowany, zaszyfrowany lub rozrzedzony.</value>
+  </data>
+  <data name="(locked by {0})" xml:space="preserve">
+    <value>(zablokowane przez {0})</value>
+  </data>
+  <data name="Could not force closure of file \&quot;{0}\&quot; {1}" xml:space="preserve">
+    <value>Nie można wymusić zamknięcia pliku \"{0}\" {1}</value>
   </data>
   <data name="EntropySource GUID not found: {0}" xml:space="preserve">
     <value>Nie znaleziono źródła entropii GUID: {0}</value>
