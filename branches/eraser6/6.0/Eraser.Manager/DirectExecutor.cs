@@ -767,21 +767,8 @@ namespace Eraser.Manager
 					if (isReadOnly = info.IsReadOnly)
 						info.IsReadOnly = false;
 
-					//Make sure the file does not have any attributes which may affect
-					//the erasure process
-					if ((info.Attributes & FileAttributes.Compressed) != 0 || 
-						(info.Attributes & FileAttributes.Encrypted) != 0 ||
-						(info.Attributes & FileAttributes.SparseFile) != 0)
-					{
-						//Log the error
-						task.Log.LastSessionEntries.Add(new LogEntry(S._("The file {0} could " +
-							"not be erased because the file was either compressed, encrypted or " +
-							"a sparse file.", info.FullName), LogLevel.Error));
-						continue;
-					}
-
 					long itemWritten = 0;
-					fsManager.EraseFileSystemObject(info, method,
+					TryEraseFilesystemObject(task, method, info, fsManager, 
 						delegate(long lastWritten, long totalData, int currentPass)
 						{
 							dataTotal -= lastWritten;
@@ -810,38 +797,9 @@ namespace Eraser.Manager
 						"be erased because the file's permissions prevent access to the file.",
 						info.FullName), LogLevel.Error));
 				}
-				catch (FileLoadException)
+				catch (FileLoadException e)
 				{
-					if (!ManagerLibrary.Settings.ForceUnlockLockedFiles)
-						throw;
-
-					List<System.Diagnostics.Process> processes = new List<System.Diagnostics.Process>();
-					foreach (OpenHandle handle in OpenHandle.Items)
-						if (handle.Path == paths[i])
-							processes.Add(System.Diagnostics.Process.GetProcessById(handle.ProcessId));
-
-					string lockedBy = null;
-					if (processes.Count > 0)
-					{
-						StringBuilder processStr = new StringBuilder();
-						foreach (System.Diagnostics.Process process in processes)
-						{
-							try
-							{
-								processStr.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,
-									"{0}, ", process.MainModule.FileName);
-							}
-							catch (System.ComponentModel.Win32Exception)
-							{
-							}
-						}
-
-						lockedBy = S._("(locked by {0})", processStr.ToString().Remove(processStr.Length - 2));
-					}
-
-					task.Log.LastSessionEntries.Add(new LogEntry(S._(
-						"Could not force closure of file \"{0}\" {1}", paths[i],
-						lockedBy == null ? string.Empty : lockedBy).Trim(), LogLevel.Error));
+					task.Log.LastSessionEntries.Add(new LogEntry(e.Message, LogLevel.Error));
 				}
 				finally
 				{
@@ -918,6 +876,76 @@ namespace Eraser.Manager
 
 				ShellApi.EmptyRecycleBin(EmptyRecycleBinOptions.NoConfirmation |
 					EmptyRecycleBinOptions.NoProgressUI | EmptyRecycleBinOptions.NoSound);
+			}
+		}
+
+		private void TryEraseFilesystemObject(Task task, ErasureMethod method, StreamInfo info,
+			FileSystem fsManager, ErasureMethodProgressFunction progressCallback)
+		{
+			for (int i = 0; ; ++i)
+			{
+				try
+				{
+					//Make sure the file does not have any attributes which may affect
+					//the erasure process
+					if ((info.Attributes & FileAttributes.Compressed) != 0 ||
+						(info.Attributes & FileAttributes.Encrypted) != 0 ||
+						(info.Attributes & FileAttributes.SparseFile) != 0)
+					{
+						//Log the error
+						task.Log.LastSessionEntries.Add(new LogEntry(S._("The file {0} could " +
+							"not be erased because the file was either compressed, encrypted or " +
+							"a sparse file.", info.FullName), LogLevel.Error));
+						return;
+					}
+
+					fsManager.EraseFileSystemObject(info, method, progressCallback);
+					return;
+				}
+				catch (FileLoadException e)
+				{
+					if (!ManagerLibrary.Settings.ForceUnlockLockedFiles)
+						throw;
+
+					//Try closing all open handles. If it succeeds, we can run the erase again.
+					List<System.Diagnostics.Process> processes = new List<System.Diagnostics.Process>();
+					bool closed = true;
+					foreach (OpenHandle handle in OpenHandle.Items)
+						if (handle.Path == info.File.FullName)
+						{
+							processes.Add(System.Diagnostics.Process.GetProcessById(handle.ProcessId));
+							closed = closed && handle.Close();
+						}
+
+					//To prevent Eraser from deadlocking, we will only attempt this once. Some
+					//programs may be aggressive and keep a handle open in a tight loop.
+					if (!closed || i >= 1)
+					{
+						string lockedBy = null;
+						if (processes.Count > 0)
+						{
+							StringBuilder processStr = new StringBuilder();
+							foreach (System.Diagnostics.Process process in processes)
+							{
+								try
+								{
+									processStr.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,
+										"{0}, ", process.MainModule.FileName);
+								}
+								catch (System.ComponentModel.Win32Exception)
+								{
+								}
+							}
+
+							lockedBy = S._("(locked by {0})", processStr.ToString().Remove(processStr.Length - 2));
+						}
+
+						throw new FileLoadException(S._(
+							"Could not force closure of file \"{0}\" {1}", info.File.FullName,
+							lockedBy == null ? string.Empty : lockedBy).Trim(), info.File.FullName,
+							e);
+					}
+				}
 			}
 		}
 
