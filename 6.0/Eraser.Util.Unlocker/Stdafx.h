@@ -25,9 +25,11 @@
 #include <iomanip>
 #include <string>
 #include <list>
+#include <vector>
 
 #include <process.h>
 
+#define _WIN32_WINNT 0x0500
 #define _NTSYSTEM_
 #define WIN32_NO_STATUS 1
 #include <windows.h>
