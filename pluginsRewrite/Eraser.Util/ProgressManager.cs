@@ -120,7 +120,7 @@ namespace Eraser.Util
 				}
 
 				Speeds.Add(speed);
-				PredictedSpeed = Speeds.Predict(0.95);
+				PredictedSpeed = Speeds.Predict(0.50);
 			}
 		}
 
@@ -202,6 +202,9 @@ namespace Eraser.Util
 					throw new ArgumentOutOfRangeException("value", value, "The Total property " +
 						"of the Progress Manager must be greater than or equal to the completed " +
 						"work units for the task.");
+				if (value < 0)
+					throw new ArgumentOutOfRangeException("value", value, "The Total property " +
+						"of the Progress Manager must be a positive integer");
 
 				total = value;
 			}
@@ -693,8 +696,8 @@ namespace Eraser.Util
 		public SteppedProgressManagerStep(ProgressManagerBase progress, float weight, string name)
 		{
 			if (float.IsInfinity(weight) || float.IsNaN(weight))
-				throw new ArgumentException(S._("The weight of a progress manager step must be " +
-					"a valid floatint-point value."));
+				throw new ArgumentException("The weight of a progress manager step must be " +
+					"a valid floating-point value.");
 
 			Progress = progress;
 			Weight = weight;
