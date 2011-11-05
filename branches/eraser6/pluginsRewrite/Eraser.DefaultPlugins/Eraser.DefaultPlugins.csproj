@@ -14,6 +14,8 @@
     <AssemblyOriginatorKeyFile>..\Strong Name.snk</AssemblyOriginatorKeyFile>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -26,10 +28,8 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -146,6 +146,10 @@
       <Project>{C1AC3255-0939-499D-A69D-725E3DD4F574}</Project>
       <Name>Eraser.Manager</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Eraser.Plugins\Eraser.Plugins.csproj">
+      <Project>{59F7ED0F-3589-4112-B612-4A9A6588F4A0}</Project>
+      <Name>Eraser.Plugins</Name>
     </ProjectReference>
     <ProjectReference Include="..\Eraser.Util.Native\Eraser.Util.Native.vcxproj">
       <Project>{BCFE7D20-FC82-4BBE-BFE4-7B635D70D238}</Project>
