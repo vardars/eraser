@@ -86,7 +86,19 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Strings.en.resx" />
+    <EmbeddedResource Include="Strings.it.resx" />
+    <EmbeddedResource Include="Strings.nl.resx" />
+    <EmbeddedResource Include="Strings.pl.resx" />
+    <EmbeddedResource Include="Strings.resx" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>call "$(SolutionDir)UpdateVersions.bat" "$(SolutionDir)\." "$(SolutionDir)Version.cs.in" "$(SolutionDir)Version.cs"
+csgettext --merge --recursive EN,NL,IT,PL "$(ProjectDir)\." Strings
+if ERRORLEVEL 0 exit 0</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
