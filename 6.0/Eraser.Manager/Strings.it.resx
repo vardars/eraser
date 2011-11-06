@@ -163,7 +163,7 @@
     <value>Rimozione cartelle...</value>
   </data>
   <data name="The folder {0} could not be deleted because the folder's permissions prevents the deletion of the folder." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>La cartella {0} non può essere cancellata perchè i permessi sulla cartella lo impediscono.</value>
   </data>
   <data name="Emptying recycle bin..." xml:space="preserve">
     <value>Pulizia del cestino...</value>
@@ -172,10 +172,10 @@
     <value>Il file {0} non può essere pulito perchè è compresso, crittato o distribuito.</value>
   </data>
   <data name="(locked by {0})" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>(bloccato da {0})</value>
   </data>
   <data name="Could not force closure of file \&quot;{0}\&quot; {1}" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Impossibile forzare la chiusura del file \"{0}\" {1}</value>
   </data>
   <data name="EntropySource GUID not found: {0}" xml:space="preserve">
     <value>EntropySource GUID non trovato: {0}</value>
@@ -184,10 +184,10 @@
     <value>Metodo di pulizia non trovato: {0}</value>
   </data>
   <data name="PRNG not found: {0}" xml:space="preserve">
-    <value>PRNG not found: {0}</value>
+    <value>PRNG non trovato: {0}</value>
   </data>
   <data name="Plausible deniability was selected, but no decoy files were found. The current file has been only replaced with random data." xml:space="preserve">
-    <value>E' stata selezionata una "Plausible deniability", but no decoy files were found. The current file has been only replaced with random data.</value>
+    <value>E' stata selezionata una "Plausible deniability", ma nessun file per la ricopertura è stato trovato. Il file corrente è stato ricoperto con dati random.</value>
   </data>
   <data name="The file system on the drive {0} is not supported." xml:space="preserve">
     <value>Il tipo di file system sul disco {0} non è supportato.</value>
@@ -292,7 +292,7 @@
     <value>Spazio disco inutilizzato ({0})</value>
   </data>
   <data name="Could not erase files and subfolders in {0} because {1}" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Impossibile pulire file e cartelle in {0} a causa di {1}</value>
   </data>
   <data name="Recycle Bin" xml:space="preserve">
     <value>Cestino</value>
