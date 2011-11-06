@@ -126,4 +126,19 @@
   <data name="Could not load the plugin." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
+  <data name="{0} (1 pass)" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="{0} ({1} passes)" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Random" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="The selected erasure method is not supported for this erasure target." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Plausible deniability was selected, but no decoy files were found. The current file has been only replaced with random data." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
 </root>
