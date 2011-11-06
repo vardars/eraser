@@ -117,19 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="{0} (1 pass)" xml:space="preserve">
-    <value>{0} (1 passo)</value>
-  </data>
-  <data name="{0} ({1} passes)" xml:space="preserve">
-    <value>{0} ({1} passi)</value>
-  </data>
-  <data name="Random" xml:space="preserve">
-    <value>Casuale</value>
-  </data>
   <data name="(default)" xml:space="preserve">
-    <value>(Untranslated)</value>
-  </data>
-  <data name="The selected erasure method is not supported for this erasure target." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="EntropySource GUID not found: {0}" xml:space="preserve">
@@ -140,9 +128,6 @@
   </data>
   <data name="PRNG not found: {0}" xml:space="preserve">
     <value>PRNG not found: {0}</value>
-  </data>
-  <data name="Plausible deniability was selected, but no decoy files were found. The current file has been only replaced with random data." xml:space="preserve">
-    <value>E' stata selezionata una "Plausible deniability", but no decoy files were found. The current file has been only replaced with random data.</value>
   </data>
   <data name="The file system on the drive {0} is not supported." xml:space="preserve">
     <value>Il tipo di file system sul disco {0} non è supportato.</value>
