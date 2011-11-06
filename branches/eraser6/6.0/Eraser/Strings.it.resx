@@ -139,13 +139,13 @@
     <value>Aiutateci a continuare lo sviluppo di Eraser - offriteci un caffè!</value>
   </data>
   <data name="Could not open the required web page. The error returned was: {0}" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Impossibile aprile la pagina web richiesta. L'errore ritornato è stato: {0}</value>
   </data>
   <data name="Session: {0:F}" xml:space="preserve">
     <value>Sessione: {0:F}</value>
   </data>
   <data name="The task list could not be imported. The error returned was: {0}" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>La lista delle operazioni non può essere importata. L'errore ritornato è stato: {0}</value>
   </data>
   <data name="The Eraser documentation file could not be opened. Check that Adobe Reader installed and that your Eraser install is not corrupt.\n\nThe error returned was: {0}" xml:space="preserve">
     <value>La documentazione di Eraser non può essere aperta. Verificare che Adobe Acrobat Reader sia installato e che la vostra installazione di Eraser non sia corrotta.\n\nL'errore è stato: {0}</value>
@@ -160,7 +160,7 @@
     <value>Un'altra occorrenza di Eraser è già in esecuzione, ma con privilegi più elevati di questa.\n\nEraser adesso si chiuderà.</value>
   </data>
   <data name="Another instance of Eraser is already running but cannot be connected to.\n\nThe error returned was: {0}" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Un'altra instanza di Eraser è già in esecuzione, ma non è possibile connetterla.\n\nL'errore ritornato è stato: {0}</value>
   </data>
   <data name="{0} out of {1}" xml:space="preserve">
     <value>{0} di {1}</value>
@@ -220,7 +220,7 @@
     <value>L'operazione {0} è stata completata.</value>
   </data>
   <data name="Task completed" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Operazione completata</value>
   </data>
   <data name="Import tasks from {0}" xml:space="preserve">
     <value>Importazione operazioni da {0}</value>
@@ -232,10 +232,10 @@
     <value>Importazione della lista di operazioni da {0} non riuscita. L'errore è stato: {1}</value>
   </data>
   <data name="Are you sure you wish to erase the selected files?" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Confermi di voler cancellare i files selezionati?</value>
   </data>
   <data name="Could not load the setting {0}\\{1} for plugin {2}. The setting has been lost." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Impossibile caricare le impostazioni {0}\\{1} per il plugin {2}. Le impostazioni sono state perse.</value>
   </data>
   <data name="Default file erasure method" xml:space="preserve">
     <value>Metodo di pulizia di default </value>
@@ -268,7 +268,7 @@
     <value>E' stata scelta una sorgente dati casuale non valida.</value>
   </data>
   <data name="Erasures with plausible deniability was selected, but no files were selected to be used as decoys." xml:space="preserve">
-    <value>Erasures with plausible deniability was selected, but no files were selected to be used as decoys.</value>
+    <value>E' stata selezionata la pulizia con "plausible deniability", ma non è stato selezionato il file per la relativa ricopertura.</value>
   </data>
   <data name="The new UI language will take only effect when Eraser is restarted." xml:space="preserve">
     <value>Il nuovo linguaggio sarà usato al prossimo avvio di Eraser.</value>
