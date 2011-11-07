@@ -95,7 +95,7 @@ namespace Eraser.Manager
 
 				// Send entropy to the PRNGs for new seeds.
 				if (DateTime.Now - lastAddedEntropy > managerEntropySpan)
-					ManagerLibrary.Instance.PrngRegistrar.AddEntropy(GetPool());
+					Host.Instance.Prngs.AddEntropy(GetPool());
 			}
 		}
 
