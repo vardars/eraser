@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Eraser.Util;
 using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.Plugins.Registrars

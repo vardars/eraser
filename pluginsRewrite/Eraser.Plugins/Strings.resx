@@ -126,6 +126,12 @@
   <data name="Could not load the plugin." xml:space="preserve">
     <value>Could not load the plugin.</value>
   </data>
+  <data name="(default)" xml:space="preserve">
+    <value>(default)</value>
+  </data>
+  <data name="The file system on the drive {0} is not supported." xml:space="preserve">
+    <value>The file system on the drive {0} is not supported.</value>
+  </data>
   <data name="{0} (1 pass)" xml:space="preserve">
     <value>{0} (1 pass)</value>
   </data>
