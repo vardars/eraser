@@ -107,7 +107,7 @@ namespace Eraser.Manager
 				return;
 
 			DateTime executionTime = (schedule.MissedPreviousSchedule &&
-				ManagerLibrary.Settings.ExecuteMissedTasksImmediately) ?
+				ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately) ?
 					DateTime.Now : schedule.NextRun;
 
 			lock (tasksLock)
