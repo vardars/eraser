@@ -29,6 +29,8 @@ using System.Windows.Forms;
 using System.Globalization;
 
 using Eraser.Util;
+using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.DefaultPlugins
 {
@@ -40,7 +42,7 @@ namespace Eraser.DefaultPlugins
 			Theming.ApplyTheme(this);
 
 			//Populate the list of erasure passes, except the FL16KB.
-			foreach (ErasureMethod method in ManagerLibrary.Instance.ErasureMethodRegistrar)
+			foreach (ErasureMethod method in Host.Instance.ErasureMethods)
 				if (method.Guid != typeof(FirstLast16KB).GUID)
 					fl16MethodCmb.Items.Add(method);
 
@@ -57,7 +59,7 @@ namespace Eraser.DefaultPlugins
 			if (fl16MethodCmb.SelectedIndex == -1)
 			{
 				Guid methodGuid =
-					ManagerLibrary.Settings.DefaultFileErasureMethod;
+					DefaultPlugin.Settings.DefaultFileErasureMethod;
 				if (methodGuid == typeof(FirstLast16KB).GUID)
 					methodGuid = typeof(Gutmann).GUID;
 				
