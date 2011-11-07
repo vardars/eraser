@@ -2,7 +2,6 @@
  * $Id: PRNG.cs 1802 2010-02-10 09:08:32Z lowjoel $
  * Copyright 2008-2010 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
- * Modified By: Kasra Nassiri <cjax@users.sourceforge.net>
  * Modified By:
  * 
  * This file is part of Eraser.

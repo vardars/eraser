@@ -34,10 +34,6 @@ using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.Manager
 {
-	public class ErasureTargetRegistrar : FactoryRegistrar<ErasureTarget>
-	{
-	}
-
 	/// <summary>
 	/// Maintains a collection of erasure targets.
 	/// </summary>

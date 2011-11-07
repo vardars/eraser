@@ -1,6 +1,6 @@
-/* 
+﻿/* 
  * $Id$
- * Copyright 2008-2010 The Eraser Project
+ * Copyright 2008-2011 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By:
  * 
@@ -21,16 +21,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-using System.Reflection;
-using System.IO;
-
 using Eraser.Util;
-using Eraser.Plugins;
 using Eraser.Plugins.ExtensionPoints;
 
-namespace Eraser.Manager
+namespace Eraser.Plugins.Registrars
 {
 	/// <summary>
 	/// Class managing all the erasure methods. This class pairs GUIDs with constructor
@@ -84,23 +81,5 @@ namespace Eraser.Manager
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
 		public static readonly ErasureMethod Default = new DefaultMethod();
 		#endregion
-	}
-
-	public class ErasureMethodRegistrationEventArgs : EventArgs
-	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="value">The GUID of the newly registered/unregistered
-		/// erasure method.</param>
-		public ErasureMethodRegistrationEventArgs(Guid value)
-		{
-			Guid = value;
-		}
-
-		/// <summary>
-		/// The GUID of the newly registsered/unregistered erasure method.
-		/// </summary>
-		public Guid Guid { get; private set; }
 	}
 }
