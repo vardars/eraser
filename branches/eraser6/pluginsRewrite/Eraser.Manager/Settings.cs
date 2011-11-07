@@ -28,6 +28,7 @@ using System.Globalization;
 
 using Eraser.Util;
 using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.Manager
 {
