@@ -56,10 +56,10 @@ namespace Eraser.Plugins.Registrars
 		/// <summary>
 		/// Sets the GUID of the active PRNG.
 		/// </summary>
-		private Guid ActivePrngGuid
+		internal Guid ActivePrngGuid
 		{
-			get;
-			internal set;
+			private get;
+			set;
 		}
 
 		/// <summary>
