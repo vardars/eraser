@@ -40,82 +40,10 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="settings">The Settings object which is the data store for
-		/// this object.</param>
-		public ManagerSettings()
+		/// <param name="settings">The Persistent Store for this object.</param>
+		public ManagerSettings(PersistentStore store)
 		{
-			settings = ManagerLibrary.Instance.SettingsManager.ModuleSettings;
-		}
-
-		/// <summary>
-		/// The default file erasure method. This is a GUID since methods are
-		/// implemented through plugins and plugins may not be loaded and missing
-		/// references may follow.
-		/// </summary>
-		public Guid DefaultFileErasureMethod
-		{
-			get
-			{
-				//If the user did not define anything for this field, check all plugins
-				//and use the method which was declared by us to be the highest
-				//priority default
-				Guid result = settings.GetValue<Guid>("DefaultFileErasureMethod");
-				if (result == Guid.Empty)
-					result = FindHighestPriorityDefault(typeof(ErasureMethod),
-						typeof(DefaultFileErasureAttribute));
-				if (result == Guid.Empty)
-					result = new Guid("{1407FC4E-FEFF-4375-B4FB-D7EFBB7E9922}");
-
-				return result;
-			}
-			set
-			{
-				settings.SetValue("DefaultFileErasureMethod", value);
-			}
-		}
-
-		/// <summary>
-		/// The default unused space erasure method. This is a GUID since methods
-		/// are implemented through plugins and plugins may not be loaded and
-		/// missing references may follow.
-		/// </summary>
-		public Guid DefaultUnusedSpaceErasureMethod
-		{
-			get
-			{
-				Guid result = settings.GetValue<Guid>("DefaultUnusedSpaceErasureMethod");
-				if (result == Guid.Empty)
-					result = FindHighestPriorityDefault(typeof(UnusedSpaceErasureMethod),
-						typeof(DefaultUnusedSpaceErasureAttribute));
-				if (result == Guid.Empty)
-					result = new Guid("{BF8BA267-231A-4085-9BF9-204DE65A6641}");
-				return result;
-			}
-			set
-			{
-				settings.SetValue("DefaultUnusedSpaceErasureMethod", value);
-			}
-		}
-
-		/// <summary>
-		/// The PRNG used. This is a GUID since PRNGs are implemented through
-		/// plugins and plugins may not be loaded and missing references may follow.
-		/// </summary>
-		public Guid ActivePrng
-		{
-			get
-			{
-				Guid result = settings.GetValue<Guid>("ActivePRNG");
-				if (result == Guid.Empty)
-					result = FindHighestPriorityDefault(typeof(Prng), typeof(DefaultPrngAttribute));
-				if (result == Guid.Empty)
-					result = new Guid("{6BF35B8E-F37F-476e-B6B2-9994A92C3B0C}");
-				return result;
-			}
-			set
-			{
-				settings.SetValue("ActivePRNG", value);
-			}
+			Store = store;
 		}
 
 		/// <summary>
@@ -126,11 +54,11 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return settings.GetValue("ForceUnlockLockedFiles", true);
+				return Store.GetValue("ForceUnlockLockedFiles", true);
 			}
 			set
 			{
-				settings.SetValue("ForceUnlockLockedFiles", value);
+				Store.SetValue("ForceUnlockLockedFiles", value);
 			}
 		}
 
@@ -141,11 +69,11 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return settings.GetValue("ExecuteMissedTasksImmediately", true);
+				return Store.GetValue("ExecuteMissedTasksImmediately", true);
 			}
 			set
 			{
-				settings.SetValue("ExecuteMissedTasksImmediately", value);
+				Store.SetValue("ExecuteMissedTasksImmediately", value);
 			}
 		}
 
@@ -159,11 +87,11 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return settings.GetValue("PlausibleDeniability", false);
+				return Store.GetValue("PlausibleDeniability", false);
 			}
 			set
 			{
-				settings.SetValue("PlausibleDeniability", value);
+				Store.SetValue("PlausibleDeniability", value);
 			}
 		}
 
@@ -174,7 +102,7 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return new SettingsList<string>(settings, "PlausibleDeniabilityFiles");
+				return Store.GetValue("PlausibleDeniabilityFiles", new List<string>());
 			}
 		}
 
@@ -186,13 +114,13 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return new SettingsDictionary<Guid, bool>(settings, "ApprovedPlugins");
+				return Store.GetValue("ApprovedPlugins", new Dictionary<Guid, bool>());
 			}
 		}
 
 		/// <summary>
-		/// The Settings object which is the data store of this object.
+		/// The Persistent Store behind all these settings.
 		/// </summary>
-		private Settings settings;
+		private PersistentStore Store;
 	}
 }
