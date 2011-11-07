@@ -228,7 +228,7 @@ namespace Eraser.Plugins
 			foreach (string fileName in Directory.GetFiles(PluginsFolder))
 			{
 				FileInfo file = new FileInfo(fileName);
-				if (file.Extension.Equals(".dll"))
+				if (file.Extension == ".dll")
 					try
 					{
 						Assembly assembly = Assembly.ReflectionOnlyLoadFrom(file.FullName);
