@@ -337,8 +337,7 @@ namespace Eraser.DefaultPlugins
 						}
 
 					//Then run the erase task
-					method.Erase(stream, long.MaxValue,
-						Host.Instance.Prngs[DefaultPlugin.Settings.ActivePrng],
+					method.Erase(stream, long.MaxValue, Host.Instance.Prngs.ActivePrng,
 						delegate(long lastWritten, long totalData, int currentPass)
 						{
 							mainProgress.Completed += lastWritten;
