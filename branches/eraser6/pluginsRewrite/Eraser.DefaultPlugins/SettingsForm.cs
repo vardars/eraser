@@ -161,14 +161,14 @@ namespace Eraser.DefaultPlugins
 			foreach (Guid guid in removeCustomMethods)
 			{
 				customMethods.Remove(guid);
-				ManagerLibrary.Instance.ErasureMethodRegistrar.Remove(guid);
+				Host.Instance.ErasureMethods.Remove(guid);
 			}
 
 			//Update the Erasure method manager on the methods
 			foreach (CustomErasureMethod method in addCustomMethods)
 			{
 				customMethods.Add(method.Guid, method);
-				ManagerLibrary.Instance.ErasureMethodRegistrar.Add(new EraseCustom(method));
+				Host.Instance.ErasureMethods.Add(new EraseCustom(method));
 			}
 
 			//Save the list of custom erasure methods

@@ -356,8 +356,7 @@ namespace Eraser.DefaultPlugins
 					stream.Seek(fileLength, SeekOrigin.Begin);
 
 					//Erase the file
-					method.Erase(stream, long.MaxValue, ManagerLibrary.Instance.PrngRegistrar[
-							ManagerLibrary.Settings.ActivePrng], null);
+					method.Erase(stream, long.MaxValue, Host.Instance.Prngs.ActivePrng, null);
 				}
 				finally
 				{
