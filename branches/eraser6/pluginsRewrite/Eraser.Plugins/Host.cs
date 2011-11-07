@@ -42,6 +42,10 @@ namespace Eraser.Plugins
 		#region IDisposable members
 		protected virtual void Dispose(bool disposing)
 		{
+			if (disposing)
+			{
+				Instance = null;
+			}
 		}
 
 		/// <summary>
@@ -100,6 +104,16 @@ namespace Eraser.Plugins
 		public abstract void Load();
 
 		/// <summary>
+		/// Loads a plugin.
+		/// </summary>
+		/// <param name="filePath">The absolute or relative file path to the
+		/// DLL.</param>
+		/// <returns>True if the plugin is loaded, false otherwise.</returns>
+		/// <remarks>If a plugin is loaded twice, this function should do nothing
+		/// and return True.</remarks>
+		public abstract bool LoadPlugin(string filePath);
+
+		/// <summary>
 		/// The plugin load event, allowing clients to decide whether to load
 		/// the given plugin.
 		/// </summary>
@@ -129,16 +143,6 @@ namespace Eraser.Plugins
 			if (PluginLoaded != null)
 				PluginLoaded(sender, e);
 		}
-
-		/// <summary>
-		/// Loads a plugin.
-		/// </summary>
-		/// <param name="filePath">The absolute or relative file path to the
-		/// DLL.</param>
-		/// <returns>True if the plugin is loaded, false otherwise.</returns>
-		/// <remarks>If a plugin is loaded twice, this function should do nothing
-		/// and return True.</remarks>
-		public abstract bool LoadPlugin(string filePath);
 	}
 
 	/// <summary>
