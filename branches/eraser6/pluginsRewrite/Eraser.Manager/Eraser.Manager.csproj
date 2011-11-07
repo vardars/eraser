@@ -69,7 +69,7 @@
     </Compile>
     <Compile Include="DirectExecutor.cs" />
     <Compile Include="EntropyPoller.cs" />
-    <Compile Include="ErasureTarget.cs" />
+    <Compile Include="ErasureTargetCollection.cs" />
     <Compile Include="Exception.cs" />
     <Compile Include="Executor.cs" />
     <Compile Include="ManagerLibrary.cs" />

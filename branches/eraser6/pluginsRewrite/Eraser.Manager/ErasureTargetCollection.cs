@@ -144,8 +144,6 @@ namespace Eraser.Manager
 
 		public void Insert(int index, ErasureTarget item)
 		{
-			item.Task = owner;
-			item.OnProgressChanged = owner.OnProgressChanged;
 			list.Insert(index, item);
 		}
 
@@ -172,19 +170,8 @@ namespace Eraser.Manager
 		/// </summary>
 		public Task Owner
 		{
-			get
-			{
-				return owner;
-			}
-			internal set
-			{
-				owner = value;
-				foreach (ErasureTarget target in list)
-				{
-					target.Task = owner;
-					target.OnProgressChanged = owner.OnProgressChanged;
-				}
-			}
+			get;
+			internal set;
 		}
 
 		/// <summary>
