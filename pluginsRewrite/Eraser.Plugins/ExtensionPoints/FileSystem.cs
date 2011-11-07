@@ -46,7 +46,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		public static string GenerateRandomFileName(DirectoryInfo info, int length)
 		{
 			//Get the PRNG we are going to use
-			Prng prng = Host.Instance.Prngs[ManagerLibrary.Settings.ActivePrng];
+			Prng prng = Host.Instance.Prngs.ActivePrng;
 
 			//Initialsie the base name, if any.
 			string resultPrefix = info == null ? string.Empty : info.FullName +
@@ -109,7 +109,7 @@ namespace Eraser.Plugins.ExtensionPoints
 				return string.Empty;
 
 			//Find a random entry.
-			Prng prng = Host.Instance.Prngs[ManagerLibrary.Settings.ActivePrng];
+			Prng prng = Host.Instance.Prngs.ActivePrng;
 			string result = string.Empty;
 			while (result.Length == 0)
 			{
@@ -135,7 +135,7 @@ namespace Eraser.Plugins.ExtensionPoints
 				string shadowFile = null;
 				List<string> entries = new List<string>(
 					ManagerLibrary.Settings.PlausibleDeniabilityFiles);
-				Prng prng = Host.Instance.Prngs[ManagerLibrary.Settings.ActivePrng];
+				Prng prng = Host.Instance.Prngs.ActivePrng;
 				do
 				{
 					if (entries.Count == 0)

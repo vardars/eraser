@@ -41,23 +41,36 @@ namespace Eraser.Plugins.Registrars
 		}
 
 		/// <summary>
+		/// Gets the PRNG that is active.
+		/// </summary>
+		/// <remarks>Client code should set the <see cref="ActivePrngGuid"/>
+		/// member.</remarks>
+		public Prng ActivePrng
+		{
+			get
+			{
+				return this[ActivePrngGuid];
+			}
+		}
+
+		/// <summary>
+		/// Sets the GUID of the active PRNG.
+		/// </summary>
+		private Guid ActivePrngGuid
+		{
+			get;
+			internal set;
+		}
+
+		/// <summary>
 		/// Allows the EntropyThread to get entropy to the PRNG functions as seeds.
 		/// </summary>
 		/// <param name="entropy">An array of bytes, being entropy for the PRNG.</param>
 		internal void AddEntropy(byte[] entropy)
 		{
-			lock (ManagerLibrary.Instance.PrngRegistrar)
-				foreach (Prng prng in ManagerLibrary.Instance.PrngRegistrar)
+			lock (Host.Instance.Prngs)
+				foreach (Prng prng in Host.Instance.Prngs)
 					prng.Reseed(entropy);
-		}
-
-		/// <summary>
-		/// Gets entropy from the EntropyThread.
-		/// </summary>
-		/// <returns>A buffer of arbitrary length containing random information.</returns>
-		internal static byte[] GetEntropy()
-		{
-			return ManagerLibrary.Instance.EntropySourceRegistrar.Poller.GetPool();
 		}
 	}
 }
