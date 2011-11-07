@@ -109,7 +109,7 @@ namespace Eraser.Plugins.ExtensionPoints
 				return string.Empty;
 
 			//Find a random entry.
-			Prng prng = ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng];
+			Prng prng = Host.Instance.Prngs[ManagerLibrary.Settings.ActivePrng];
 			string result = string.Empty;
 			while (result.Length == 0)
 			{

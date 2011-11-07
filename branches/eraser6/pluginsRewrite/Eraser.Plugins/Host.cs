@@ -29,6 +29,7 @@ using System.Reflection;
 
 using Eraser.Util;
 using Eraser.Plugins.ExtensionPoints;
+using Eraser.Plugins.Registrars;
 
 namespace Eraser.Plugins
 {
@@ -66,45 +67,28 @@ namespace Eraser.Plugins
 		/// Call <see cref="Host.Load"/> when object
 		/// initialisation is complete.
 		/// </summary>
-		/// <param name="entropySources">The Entropy Source registrar to use.</param>
-		/// <param name="prngs">The PRNG registrar to use.</param>
-		/// <param name="erasureMethods">The Erasure Methods registrar to use.</param>
-		/// <param name="erasureTargetFactories">The Erasure Target Factories registrar to use.</param>
-		/// <param name="fileSystems">The File System registrar to use.</param>
 		/// <remarks>Call <see cref="Host.Instance.Dispose"/> when exiting.</remarks>
-		public static void Initialise(Registrar<EntropySource> entropySources,
-			Registrar<Prng> prngs, Registrar<ErasureMethod> erasureMethods,
-			FactoryRegistrar<ErasureTarget> erasureTargetFactories,
-			Registrar<FileSystem> fileSystems)
+		public static void Initialise()
 		{
-			new DefaultHost(entropySources, prngs, erasureMethods, erasureTargetFactories,
-				fileSystems);
+			new DefaultHost();
 		}
 
 		/// <summary>
 		/// Constructor. Sets the global Plugin Host instance.
 		/// </summary>
-		/// <param name="entropySources">The Entropy Source registrar to use.</param>
-		/// <param name="prngs">The PRNG registrar to use.</param>
-		/// <param name="erasureMethods">The Erasure Methods registrar to use.</param>
-		/// <param name="erasureTargetFactories">The Erasure Target Factories registrar to use.</param>
-		/// <param name="fileSystems">The File System registrar to use.</param>
 		/// <see cref="Host.Instance"/>
-		protected Host(Registrar<EntropySource> entropySources,
-			Registrar<Prng> prngs, Registrar<ErasureMethod> erasureMethods,
-			FactoryRegistrar<ErasureTarget> erasureTargetFactories,
-			Registrar<FileSystem> fileSystems)
+		protected Host()
 		{
 			if (Instance != null)
 				throw new InvalidOperationException("Only one global Plugin Host instance can " +
 					"exist at any one point of time.");
 			Instance = this;
 
-			EntropySources = entropySources;
-			Prngs = prngs;
-			ErasureMethods = erasureMethods;
-			ErasureTargetFactories = erasureTargetFactories;
-			FileSystems = fileSystems;
+			EntropySources = new EntropySourceRegistrar();
+			Prngs = new PrngRegistrar();
+			ErasureMethods = new ErasureMethodRegistrar();
+			ErasureTargetFactories = new ErasureTargetFactoryRegistrar();
+			FileSystems = new FileSystemRegistrar();
 		}
 
 		/// <summary>
@@ -180,7 +164,7 @@ namespace Eraser.Plugins
 		/// <summary>
 		/// The global instance of the EntropySource Manager
 		/// </summary>
-		public Registrar<EntropySource> EntropySources
+		public EntropySourceRegistrar EntropySources
 		{
 			get;
 			private set;
@@ -189,7 +173,7 @@ namespace Eraser.Plugins
 		/// <summary>
 		/// The global instance of the PRNG Manager.
 		/// </summary>
-		public Registrar<Prng> Prngs
+		public PrngRegistrar Prngs
 		{
 			get;
 			private set;
@@ -198,7 +182,7 @@ namespace Eraser.Plugins
 		/// <summary>
 		/// The global instance of the Erasure method Manager.
 		/// </summary>
-		public Registrar<ErasureMethod> ErasureMethods
+		public ErasureMethodRegistrar ErasureMethods
 		{
 			get;
 			private set;
@@ -207,7 +191,7 @@ namespace Eraser.Plugins
 		/// <summary>
 		/// The global instance of the Erasure target Manager.
 		/// </summary>
-		public FactoryRegistrar<ErasureTarget> ErasureTargetFactories
+		public ErasureTargetFactoryRegistrar ErasureTargetFactories
 		{
 			get;
 			private set;
@@ -216,7 +200,7 @@ namespace Eraser.Plugins
 		/// <summary>
 		/// The global instance of the File System manager.
 		/// </summary>
-		public Registrar<FileSystem> FileSystems
+		public FileSystemRegistrar FileSystems
 		{
 			get;
 			private set;
@@ -233,11 +217,8 @@ namespace Eraser.Plugins
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public DefaultHost(Registrar<EntropySource> entropySources,
-			Registrar<Prng> prngs, Registrar<ErasureMethod> erasureMethods,
-			FactoryRegistrar<ErasureTarget> erasureTargetFactories,
-			Registrar<FileSystem> fileSystems)
-			: base(entropySources, prngs, erasureMethods, erasureTargetFactories, fileSystems)
+		public DefaultHost()
+			: base()
 		{
 			//Specify additional places to load assemblies from
 			AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
