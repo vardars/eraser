@@ -117,7 +117,7 @@ namespace Eraser.DefaultPlugins
 					return base.EffectiveMethod;
 
 				return Host.Instance.ErasureMethods[
-					ManagerLibrary.Settings.DefaultUnusedSpaceErasureMethod];
+					DefaultPlugin.Settings.DefaultUnusedSpaceErasureMethod];
 			}
 		}
 

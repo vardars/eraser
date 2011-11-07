@@ -56,7 +56,7 @@ namespace Eraser.DefaultPlugins
 			foreach (Guid guid in methods.Keys)
 			{
 				CustomErasureMethod method = methods[guid];
-				ManagerLibrary.Instance.ErasureMethodRegistrar.Add(new EraseCustom(method));
+				Host.Instance.ErasureMethods.Add(new EraseCustom(method));
 			}
 		}
 
