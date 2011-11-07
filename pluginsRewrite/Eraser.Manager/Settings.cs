@@ -59,66 +59,6 @@ namespace Eraser.Manager
 		protected abstract Settings GetSettings(Guid value);
 	}
 
-	/// <summary>
-	/// Settings class. Represents settings to a given client.
-	/// </summary>
-	public abstract class Settings
-	{
-		/// <summary>
-		/// Gets the setting for the given name, coercing the object stored in the backend
-		/// to the given type <typeparamref name="T"/>.
-		/// </summary>
-		/// <typeparam name="T">The type of the setting that is currently stored in the
-		/// backend.</typeparam>
-		/// <param name="name">The name of the setting that is used to uniquely refer
-		/// to the value.</param>
-		/// <param name="defaultValue">The default to return if the no data is assocated
-		/// with the given setting.</param>
-		/// <returns>The value stored in the backend, or null if none exists.</returns>
-		public abstract T GetValue<T>(string name, T defaultValue);
-
-		/// <summary>
-		/// Overload for <see cref="GetValue"/> which returns a default for the given type.
-		/// </summary>
-		/// <typeparam name="T">The type of the setting that is currently stored in the
-		/// backend.</typeparam>
-		/// <param name="name">The name of the setting that is used to uniquely refer
-		/// to the value.</param>
-		/// <param name="defaultValue">The default to return if the no data is assocated
-		/// with the given setting.</param>
-		/// <returns>The value stored in the backend, or null if none exists.</returns>
-		public T GetValue<T>(string name)
-		{
-			return GetValue<T>(name, default(T));
-		}
-
-		/// <summary>
-		/// Sets the setting with the given name.
-		/// </summary>
-		/// <param name="name">The name of the setting.</param>
-		/// <param name="value">The value to store in the backend. This may be serialised.</param>
-		public abstract void SetValue(string name, object value);
-
-		/// <summary>
-		/// Gets or sets the given setting, without type hinting. This will not attempt to coerce
-		/// a type from an old version of the assembly to its current type.
-		/// </summary>
-		/// <param name="setting">The name of the setting.</param>
-		/// <returns>The object stored in the settings database, or null if undefined.</returns>
-		[Obsolete("Use the GetValue<T> and SetValue functions instead")]
-		public object this[string setting]
-		{
-			get
-			{
-				return GetValue<object>(setting);
-			}
-			set
-			{
-				SetValue(setting, value);
-			}
-		}
-	}
-
 	#region Default attributes
 	/// <summary>
 	/// Indicates that the marked class should be used as a default when no

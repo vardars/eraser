@@ -62,6 +62,7 @@
     <Compile Include="IPlugin.cs" />
     <Compile Include="IRegistrar.cs" />
     <Compile Include="LoadingPolicy.cs" />
+    <Compile Include="PersistentStore.cs" />
     <Compile Include="PluginInfo.cs" />
     <Compile Include="PluginLoadedEventArgs.cs" />
     <Compile Include="PluginLoadEventArgs.cs" />
