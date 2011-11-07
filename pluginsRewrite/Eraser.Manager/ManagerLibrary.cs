@@ -35,16 +35,17 @@ namespace Eraser.Manager
 	/// </summary>
 	public class ManagerLibrary : IDisposable
 	{
-		public ManagerLibrary(SettingsManager settings)
+		public ManagerLibrary(PersistentStore persistentStore)
 		{
 			if (Instance != null)
 				throw new InvalidOperationException("Only one ManagerLibrary instance can " +
 					"exist at any one time");
 
 			Instance = this;
-			SettingsManager = settings;
+			Settings = new ManagerSettings(persistentStore);
 			entropyPoller = new EntropyPoller();
-			Host.Initialise();
+			Host.Initialise(persistentStore.GetValue<PersistentStore>("Plugins"));
+			Host.Instance.PluginLoad += OnPluginLoad;
 			Host.Instance.Load();
 		}
 
@@ -55,17 +56,16 @@ namespace Eraser.Manager
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (SettingsManager == null)
+			if (Settings == null)
 				return;
 
 			if (disposing)
 			{
 				entropyPoller.Abort();
 				Host.Instance.Dispose();
-				SettingsManager.Save();
 			}
 
-			SettingsManager = null;
+			Settings = null;
 			Instance = null;
 		}
 
@@ -79,7 +79,7 @@ namespace Eraser.Manager
 		{
 			//If the plugin does not have an approval or denial, check for the presence of
 			//a valid signature.
-			IDictionary<Guid, bool> approvals = ManagerLibrary.Settings.PluginApprovals;
+			IDictionary<Guid, bool> approvals = Settings.PluginApprovals;
 			if (!approvals.ContainsKey(e.Plugin.AssemblyInfo.Guid) &&
 				(e.Plugin.Assembly.GetName().GetPublicKey().Length == 0 ||
 				!Security.VerifyStrongName(e.Plugin.Assembly.Location) ||
@@ -103,28 +103,13 @@ namespace Eraser.Manager
 		public static ManagerLibrary Instance { get; private set; }
 
 		/// <summary>
-		/// Global instance of the Settings manager.
+		/// Gets the settings object representing the settings for the Eraser Manager.
 		/// </summary>
-		public SettingsManager SettingsManager { get; set; }
-
-		/// <summary>
-		/// Gets the settings object representing the settings for the Eraser
-		/// Manager. This is just shorthand for the local classes.
-		/// </summary>
-		public static ManagerSettings Settings
+		public ManagerSettings Settings
 		{
-			get
-			{
-				if (settingsInstance == null)
-					settingsInstance = new ManagerSettings();
-				return settingsInstance;
-			}
+			get;
+			private set;
 		}
-
-		/// <summary>
-		/// The singleton instance for <see cref="Settings"/>.
-		/// </summary>
-		private static ManagerSettings settingsInstance;
 
 		/// <summary>
 		/// The entropy poller thread which will gather entropy and push it to
