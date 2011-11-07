@@ -30,7 +30,7 @@ namespace Eraser.BlackBox
 {
 	public sealed class Plugin : IPlugin
 	{
-		public void Initialize(Host host)
+		public void Initialize(PluginInfo info)
 		{
 			//Initialise our crash handler
 			BlackBox blackBox = BlackBox.Get();
