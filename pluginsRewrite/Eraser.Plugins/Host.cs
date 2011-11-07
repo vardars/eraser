@@ -160,6 +160,24 @@ namespace Eraser.Plugins
 			AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += ResolveReflectionDependency;
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			if (plugins == null)
+				return;
+
+			if (disposing)
+			{
+				//Unload all the plugins. This will cause all the plugins to execute
+				//the cleanup code.
+				foreach (PluginInfo plugin in plugins)
+					if (plugin.Plugin != null)
+						plugin.Plugin.Dispose();
+			}
+
+			plugins = null;
+			base.Dispose(disposing);
+		}
+
 		public override void Load()
 		{
 			//Load all core plugins first
@@ -188,34 +206,12 @@ namespace Eraser.Plugins
 			}
 		}
 
-		protected override void Dispose(bool disposing)
-		{
-			if (plugins == null)
-				return;
-
-			if (disposing)
-			{
-				//Unload all the plugins. This will cause all the plugins to execute
-				//the cleanup code.
-				foreach (PluginInfo plugin in plugins)
-					if (plugin.Plugin != null)
-						plugin.Plugin.Dispose();
-			}
-
-			plugins = null;
-		}
-
-		public override IList<PluginInfo> Plugins
-		{
-			get { return plugins.AsReadOnly(); }
-		}
-
 		/// <summary>
 		/// Verifies whether the provided assembly is a plugin.
 		/// </summary>
 		/// <param name="assembly">The assembly to verify.</param>
 		/// <returns>True if the assembly provided is a plugin, false otherwise.</returns>
-		private bool IsPlugin(Assembly assembly)
+		private static bool IsPlugin(Assembly assembly)
 		{
 			//Iterate over every exported type, checking if it implements IPlugin
 			Type typePlugin = assembly.GetExportedTypes().FirstOrDefault(
@@ -387,6 +383,16 @@ namespace Eraser.Plugins
 			return Assembly.ReflectionOnlyLoad(args.Name);
 		}
 
+		public override IList<PluginInfo> Plugins
+		{
+			get { return plugins.AsReadOnly(); }
+		}
+
+		/// <summary>
+		/// Stores the list of plugins found within the Plugins folder.
+		/// </summary>
+		private List<PluginInfo> plugins = new List<PluginInfo>();
+
 		/// <summary>
 		/// The path to the folder containing the plugins.
 		/// </summary>
@@ -402,10 +408,5 @@ namespace Eraser.Plugins
 		private readonly string[] CorePlugins = new string[] {
 			"Eraser.DefaultPlugins"
 		};
-
-		/// <summary>
-		/// Stores the list of plugins found within the Plugins folder.
-		/// </summary>
-		private List<PluginInfo> plugins = new List<PluginInfo>();
 	}
 }
