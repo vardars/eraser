@@ -43,7 +43,7 @@ namespace Eraser.Manager
 		{
 			Name = (string)info.GetValue("Name", typeof(string));
 			Executor = context.Context as Executor;
-			Targets = (ErasureTargetsCollection)info.GetValue("Targets", typeof(ErasureTargetsCollection));
+			Targets = (ErasureTargetCollection)info.GetValue("Targets", typeof(ErasureTargetCollection));
 			Targets.Owner = this;
 			Log = (List<LogSink>)info.GetValue("Log", typeof(List<LogSink>));
 			Canceled = false;
@@ -78,7 +78,7 @@ namespace Eraser.Manager
 		public Task()
 		{
 			Name = string.Empty;
-			Targets = new ErasureTargetsCollection(this);
+			Targets = new ErasureTargetCollection(this);
 			Schedule = Schedule.RunNow;
 			Canceled = false;
 			Log = new List<LogSink>();
@@ -169,7 +169,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The set of data to erase when this task is executed.
 		/// </summary>
-		public ErasureTargetsCollection Targets { get; private set; }
+		public ErasureTargetCollection Targets { get; private set; }
 
 		/// <summary>
 		/// The schedule for running the task.

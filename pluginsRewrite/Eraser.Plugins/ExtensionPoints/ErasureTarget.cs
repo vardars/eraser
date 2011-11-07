@@ -137,15 +137,6 @@ namespace Eraser.Plugins.ExtensionPoints
 		}
 
 		/// <summary>
-		/// The progress of this target.
-		/// </summary>
-		public ProgressManagerBase Progress
-		{
-			get;
-			protected set;
-		}
-
-		/// <summary>
 		/// The Progress Changed event handler of the owning task.
 		/// </summary>
 		protected internal Action<ErasureTarget, ProgressChangedEventArgs> OnProgressChanged

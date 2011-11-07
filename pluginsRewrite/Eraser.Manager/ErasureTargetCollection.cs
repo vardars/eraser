@@ -38,22 +38,22 @@ namespace Eraser.Manager
 	/// Maintains a collection of erasure targets.
 	/// </summary>
 	[Serializable]
-	public class ErasureTargetsCollection : IList<ErasureTarget>, ISerializable
+	public class ErasureTargetCollection : IList<ErasureTarget>, ISerializable
 	{
 		#region Constructors
-		internal ErasureTargetsCollection(Task owner)
+		internal ErasureTargetCollection(Task owner)
 		{
 			this.list = new List<ErasureTarget>();
 			this.owner = owner;
 		}
 
-		internal ErasureTargetsCollection(Task owner, int capacity)
+		internal ErasureTargetCollection(Task owner, int capacity)
 			: this(owner)
 		{
 			list.Capacity = capacity;
 		}
 
-		internal ErasureTargetsCollection(Task owner, IEnumerable<ErasureTarget> targets)
+		internal ErasureTargetCollection(Task owner, IEnumerable<ErasureTarget> targets)
 			: this(owner)
 		{
 			list.AddRange(targets);
@@ -61,7 +61,7 @@ namespace Eraser.Manager
 		#endregion
 
 		#region Serialization Code
-		protected ErasureTargetsCollection(SerializationInfo info, StreamingContext context)
+		protected ErasureTargetCollection(SerializationInfo info, StreamingContext context)
 		{
 			list = (List<ErasureTarget>)info.GetValue("list", typeof(List<ErasureTarget>));
 		}
@@ -90,8 +90,6 @@ namespace Eraser.Manager
 		#region ICollection<ErasureTarget> Members
 		public void Add(ErasureTarget item)
 		{
-			item.Task = owner;
-			item.OnProgressChanged = owner.OnProgressChanged;
 			list.Add(item);
 		}
 
