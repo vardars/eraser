@@ -200,6 +200,167 @@ namespace Eraser
 		}
 	}
 
+	/// <summary>
+	/// Encapsulates an abstract dictionary that is used to store settings.
+	/// </summary>
+	/// <typeparam name="TKey">The key type of the dictionary.</typeparam>
+	/// <typeparam name="TValue">The value type of the dictionary.</typeparam>
+	private class SettingsDictionary<TKey, TValue> : IDictionary<TKey, TValue>
+	{
+		public SettingsDictionary(Settings settings, string settingName)
+		{
+			Settings = settings;
+			SettingName = settingName;
+			Dictionary = settings.GetValue<Dictionary<TKey, TValue>>(settingName);
+			if (Dictionary == null)
+				Dictionary = new Dictionary<TKey, TValue>();
+		}
+
+		~SettingsDictionary()
+		{
+			Save();
+		}
+
+		#region IDictionary<TKey,TValue> Members
+
+		public void Add(TKey key, TValue value)
+		{
+			Dictionary.Add(key, value);
+			Save();
+		}
+
+		public bool ContainsKey(TKey key)
+		{
+			return Dictionary.ContainsKey(key);
+		}
+
+		public ICollection<TKey> Keys
+		{
+			get { return Dictionary.Keys; }
+		}
+
+		public bool Remove(TKey key)
+		{
+			bool result = Dictionary.Remove(key);
+			Save();
+			return result;
+		}
+
+		public bool TryGetValue(TKey key, out TValue value)
+		{
+			return Dictionary.TryGetValue(key, out value);
+		}
+
+		public ICollection<TValue> Values
+		{
+			get { return Dictionary.Values; }
+		}
+
+		public TValue this[TKey key]
+		{
+			get
+			{
+				return Dictionary[key];
+			}
+			set
+			{
+				Dictionary[key] = value;
+				Save();
+			}
+		}
+
+		#endregion
+
+		#region ICollection<KeyValuePair<TKey,TValue>> Members
+
+		public void Add(KeyValuePair<TKey, TValue> item)
+		{
+			Dictionary.Add(item.Key, item.Value);
+			Save();
+		}
+
+		public void Clear()
+		{
+			Dictionary.Clear();
+			Save();
+		}
+
+		public bool Contains(KeyValuePair<TKey, TValue> item)
+		{
+			return Dictionary.ContainsKey(item.Key) && Dictionary[item.Key].Equals(item.Value);
+		}
+
+		public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+		{
+			throw new NotImplementedException();
+		}
+
+		public int Count
+		{
+			get { return Dictionary.Count; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return false; }
+		}
+
+		public bool Remove(KeyValuePair<TKey, TValue> item)
+		{
+			if (Dictionary.ContainsKey(item.Key) && Dictionary[item.Key].Equals(item.Value))
+			{
+				bool result = Dictionary.Remove(item.Key);
+				Save();
+				return result;
+			}
+
+			return false;
+		}
+
+		#endregion
+
+		#region IEnumerable<KeyValuePair<TKey,TValue>> Members
+
+		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+		{
+			return Dictionary.GetEnumerator();
+		}
+
+		#endregion
+
+		#region IEnumerable Members
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return Dictionary.GetEnumerator();
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Saves changes made to the list to the settings manager.
+		/// </summary>
+		private void Save()
+		{
+			Settings.SetValue(SettingName, Dictionary);
+		}
+
+		/// <summary>
+		/// The settings object storing the settings.
+		/// </summary>
+		private Settings Settings;
+
+		/// <summary>
+		/// The name of the setting we are encapsulating.
+		/// </summary>
+		private string SettingName;
+
+		/// <summary>
+		/// The list we are using as scratch.
+		/// </summary>
+		private Dictionary<TKey, TValue> Dictionary;
+	}
+
 	internal class EraserSettings
 	{
 		/// <summary>
