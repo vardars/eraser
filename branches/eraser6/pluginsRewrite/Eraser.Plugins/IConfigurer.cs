@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Eraser.Manager
+namespace Eraser.Plugins
 {
 	/// <summary>
 	/// Represents an object which is able to configure a given instance of
