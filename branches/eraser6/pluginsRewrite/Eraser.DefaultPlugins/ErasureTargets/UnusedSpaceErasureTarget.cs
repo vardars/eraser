@@ -29,9 +29,9 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.IO;
 
-using Eraser.Manager;
 using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
+using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.DefaultPlugins
 {

@@ -26,11 +26,13 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Runtime.Serialization;
+using System.IO;
 
-using Eraser.Manager;
 using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
-using System.IO;
+using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
+using Eraser.Plugins.Registrars;
 
 namespace Eraser.DefaultPlugins
 {
@@ -114,7 +116,7 @@ namespace Eraser.DefaultPlugins
 				if (Method != ErasureMethodRegistrar.Default)
 					return base.EffectiveMethod;
 
-				return ManagerLibrary.Instance.ErasureMethodRegistrar[
+				return Host.Instance.ErasureMethods[
 					ManagerLibrary.Settings.DefaultUnusedSpaceErasureMethod];
 			}
 		}
@@ -206,8 +208,7 @@ namespace Eraser.DefaultPlugins
 				Progress.Total = method.CalculateEraseDataSize(null, Progress.Total);
 
 				//Then run the erase task
-				method.Erase(stream, long.MaxValue,
-					ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng],
+				method.Erase(stream, long.MaxValue, Host.Instance.Prngs.ActivePrng,
 					delegate(long lastWritten, long totalData, int currentPass)
 					{
 						Progress.Completed += lastWritten;

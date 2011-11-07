@@ -9,8 +9,8 @@ using System.Windows.Forms;
 using Microsoft.VisualBasic.Devices;
 using Microsoft.Win32.SafeHandles;
 
-using Eraser.Manager;
 using Eraser.Util;
+using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.DefaultPlugins
 {

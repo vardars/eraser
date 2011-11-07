@@ -29,9 +29,11 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.IO;
 
-using Eraser.Manager;
 using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
+using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
+using Eraser.Plugins.Registrars;
 
 namespace Eraser.DefaultPlugins
 {
@@ -178,7 +180,7 @@ namespace Eraser.DefaultPlugins
 				if (Method != ErasureMethodRegistrar.Default)
 					return base.EffectiveMethod;
 
-				return ManagerLibrary.Instance.ErasureMethodRegistrar[
+				return Host.Instance.ErasureMethods[
 					ManagerLibrary.Settings.DefaultFileErasureMethod];
 			}
 		}
@@ -238,7 +240,7 @@ namespace Eraser.DefaultPlugins
 			}
 
 			//Get the filesystem provider to handle the secure file erasures
-			FileSystem fsManager = ManagerLibrary.Instance.FileSystemRegistrar[
+			FileSystem fsManager = Host.Instance.FileSystems[
 				VolumeInfo.FromMountPoint(info.DirectoryName)];
 
 			bool isReadOnly = false;
@@ -255,7 +257,7 @@ namespace Eraser.DefaultPlugins
 					info.IsReadOnly = false;
 
 				//Define the callback function for progress reporting.
-				ErasureMethodProgressFunction callback =
+				ErasureMethod.ErasureMethodProgressFunction callback =
 					delegate(long lastWritten, long totalData, int currentPass)
 					{
 						if (Task.Canceled)
@@ -301,7 +303,7 @@ namespace Eraser.DefaultPlugins
 		/// <param name="info">The stream to erase.</param>
 		/// <param name="callback">The erasure progress callback.</param>
 		private void TryEraseStream(FileSystem fsManager, ErasureMethod method, StreamInfo info,
-			ErasureMethodProgressFunction callback)
+			ErasureMethod.ErasureMethodProgressFunction callback)
 		{
 			for (int i = 0; ; ++i)
 			{

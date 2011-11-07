@@ -29,10 +29,11 @@ using System.Text;
 using System.Windows.Forms;
 
 using System.Text.RegularExpressions;
-
-using Eraser.Manager;
-using Eraser.Util;
 using System.IO;
+
+using Eraser.Util;
+using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.DefaultPlugins
 {

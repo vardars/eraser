@@ -28,7 +28,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Globalization;
 
-using Eraser.Manager;
 using Eraser.Util;
 
 namespace Eraser.DefaultPlugins

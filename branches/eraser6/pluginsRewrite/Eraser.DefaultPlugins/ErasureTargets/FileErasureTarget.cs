@@ -28,8 +28,8 @@ using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.IO;
 
-using Eraser.Manager;
 using Eraser.Util;
+using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.DefaultPlugins
 {

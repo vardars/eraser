@@ -30,8 +30,9 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.IO;
 
-using Eraser.Manager;
 using Eraser.Util;
+using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.DefaultPlugins
 {
@@ -198,7 +199,7 @@ namespace Eraser.DefaultPlugins
 				if (!isVolumeRoot && directory.Exists &&
 					directory.GetFiles("*", SearchOption.AllDirectories).Length == 0)
 				{
-					FileSystem fsManager = ManagerLibrary.Instance.FileSystemRegistrar[
+					FileSystem fsManager = Host.Instance.FileSystems[
 						VolumeInfo.FromMountPoint(Path)];
 					fsManager.DeleteFolder(directory);
 				}
@@ -226,8 +227,8 @@ namespace Eraser.DefaultPlugins
 			{
 				try
 				{
-					ManagerLibrary.Instance.FileSystemRegistrar[
-						VolumeInfo.FromMountPoint(Path)].DeleteFolder(info);
+					Host.Instance.FileSystems[VolumeInfo.FromMountPoint(Path)].
+						DeleteFolder(info);
 				}
 				catch (UnauthorizedAccessException)
 				{

@@ -24,11 +24,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-using Eraser.Manager;
-using Eraser.Util;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+
+using Eraser.Util;
+using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.DefaultPlugins
 {
