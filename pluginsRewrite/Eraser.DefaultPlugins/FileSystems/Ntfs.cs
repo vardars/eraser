@@ -25,8 +25,10 @@ using System.Text;
 using System.Runtime.InteropServices;
 
 using System.IO;
-using Eraser.Manager;
+
 using Eraser.Util;
+using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.DefaultPlugins
 {
@@ -68,8 +70,7 @@ namespace Eraser.DefaultPlugins
 						strm.SetLength(lastFileSize);
 
 						//Then run the erase task
-						method.Erase(strm, long.MaxValue, ManagerLibrary.Instance.PrngRegistrar[
-								ManagerLibrary.Settings.ActivePrng], null);
+						method.Erase(strm, long.MaxValue, Host.Instance.Prngs.ActivePrng, null);
 
 						//Call the callback function if one is provided. We'll provide a dummy
 						//value since we really have no idea how much of the MFT we can clean.
@@ -156,7 +157,7 @@ namespace Eraser.DefaultPlugins
 		}
 
 		public override void EraseFileSystemObject(StreamInfo info, ErasureMethod method,
-			ErasureMethodProgressFunction callback)
+			ErasureMethod.ErasureMethodProgressFunction callback)
 		{
 			//Check if the file fits in one cluster - if it does it may be MFT resident
 			//TODO: any more deterministic way of finding out?
@@ -167,8 +168,7 @@ namespace Eraser.DefaultPlugins
 				using (FileStream strm = info.Open(FileMode.Open, FileAccess.Write,
 					FileShare.None))
 				{
-					method.Erase(strm, long.MaxValue,
-						ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng],
+					method.Erase(strm, long.MaxValue, Host.Instance.Prngs.ActivePrng,
 						null);
 				}
 			}
@@ -189,10 +189,7 @@ namespace Eraser.DefaultPlugins
 				strm.SetLength(fileArea);
 
 				//Then erase the file.
-				method.Erase(strm, long.MaxValue,
-					ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng],
-					callback
-				);
+				method.Erase(strm, long.MaxValue, Host.Instance.Prngs.ActivePrng, callback);
 
 				//Set the length of the file to 0.
 				strm.Seek(0, SeekOrigin.Begin);

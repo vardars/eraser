@@ -261,6 +261,9 @@
   <data name="The file {0} is a hard link or a symbolic link thus the contents of the file was not erased." xml:space="preserve">
     <value>The file {0} is a hard link or a symbolic link thus the contents of the file was not erased.</value>
   </data>
+  <data name="Plausible deniability was selected, but no decoy files were found. The current file has been only replaced with random data." xml:space="preserve">
+    <value>Plausible deniability was selected, but no decoy files were found. The current file has been only replaced with random data.</value>
+  </data>
   <data name="Files in Folder" xml:space="preserve">
     <value>Files in Folder</value>
   </data>

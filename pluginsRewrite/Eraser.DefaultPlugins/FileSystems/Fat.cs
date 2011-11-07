@@ -25,8 +25,10 @@ using System.Text;
 using System.Runtime.InteropServices;
 
 using System.IO;
-using Eraser.Manager;
+
 using Eraser.Util;
+using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.DefaultPlugins
 {
@@ -43,7 +45,7 @@ namespace Eraser.DefaultPlugins
 		}
 
 		public override void EraseFileSystemObject(StreamInfo info, ErasureMethod method,
-			ErasureMethodProgressFunction callback)
+			ErasureMethod.ErasureMethodProgressFunction callback)
 		{
 			//Create the file stream, and call the erasure method to write to
 			//the stream.
@@ -59,10 +61,7 @@ namespace Eraser.DefaultPlugins
 				if (strm.Length != 0)
 				{
 					//Then erase the file.
-					method.Erase(strm, long.MaxValue,
-						ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng],
-						callback
-					);
+					method.Erase(strm, long.MaxValue, Host.Instance.Prngs.ActivePrng, callback);
 				}
 
 				//Set the length of the file to 0.

@@ -29,9 +29,10 @@ using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.IO;
 
-using Eraser.Manager;
 using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
+using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.DefaultPlugins
 {
@@ -246,7 +247,7 @@ namespace Eraser.DefaultPlugins
 				destDirectory.CopyTimes(subDirectory);
 
 				//Then delete the source directory.
-				FileSystem fsManager = ManagerLibrary.Instance.FileSystemRegistrar[
+				FileSystem fsManager = Host.Instance.FileSystems[
 					VolumeInfo.FromMountPoint(Path)];
 				fsManager.DeleteFolder(subDirectory);
 			};

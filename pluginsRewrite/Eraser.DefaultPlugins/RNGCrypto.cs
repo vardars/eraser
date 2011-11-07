@@ -22,11 +22,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Runtime.InteropServices;
 
-using Eraser.Manager;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+
 using Eraser.Util;
+using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.DefaultPlugins
 {
