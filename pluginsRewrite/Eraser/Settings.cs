@@ -201,11 +201,152 @@ namespace Eraser
 	}
 
 	/// <summary>
+	/// Encapsulates an abstract list that is used to store settings.
+	/// </summary>
+	/// <typeparam name="T">The type of the list element.</typeparam>
+	class SettingsList<T> : IList<T>
+	{
+		public SettingsList(Settings settings, string settingName)
+		{
+			Settings = settings;
+			SettingName = settingName;
+			List = new List<T>();
+
+			T[] values = settings.GetValue<T[]>(settingName);
+			if (values != null)
+				List.AddRange(values);
+		}
+
+		~SettingsList()
+		{
+			Save();
+		}
+
+		#region IList<T> Members
+
+		public int IndexOf(T item)
+		{
+			return List.IndexOf(item);
+		}
+
+		public void Insert(int index, T item)
+		{
+			List.Insert(index, item);
+			Save();
+		}
+
+		public void RemoveAt(int index)
+		{
+			List.RemoveAt(index);
+			Save();
+		}
+
+		public T this[int index]
+		{
+			get
+			{
+				return List[index];
+			}
+			set
+			{
+				List[index] = value;
+				Save();
+			}
+		}
+
+		#endregion
+
+		#region ICollection<T> Members
+
+		public void Add(T item)
+		{
+			List.Add(item);
+			Save();
+		}
+
+		public void Clear()
+		{
+			List.Clear();
+			Save();
+		}
+
+		public bool Contains(T item)
+		{
+			return List.Contains(item);
+		}
+
+		public void CopyTo(T[] array, int arrayIndex)
+		{
+			List.CopyTo(array, arrayIndex);
+		}
+
+		public int Count
+		{
+			get { return List.Count; }
+		}
+
+		public bool IsReadOnly
+		{
+			get { return false; }
+		}
+
+		public bool Remove(T item)
+		{
+			bool result = List.Remove(item);
+			Save();
+			return result;
+		}
+
+		#endregion
+
+		#region IEnumerable<T> Members
+
+		public IEnumerator<T> GetEnumerator()
+		{
+			return List.GetEnumerator();
+		}
+
+		#endregion
+
+		#region IEnumerable Members
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return List.GetEnumerator();
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Saves changes made to the list to the settings manager.
+		/// </summary>
+		private void Save()
+		{
+			Settings.SetValue(SettingName, List);
+		}
+
+		/// <summary>
+		/// The settings object storing the settings.
+		/// </summary>
+		private Settings Settings;
+
+		/// <summary>
+		/// The name of the setting we are encapsulating.
+		/// </summary>
+		private string SettingName;
+
+		/// <summary>
+		/// The list we are using as scratch.
+		/// </summary>
+		private List<T> List;
+	}
+
+	/// <summary>
 	/// Encapsulates an abstract dictionary that is used to store settings.
 	/// </summary>
 	/// <typeparam name="TKey">The key type of the dictionary.</typeparam>
 	/// <typeparam name="TValue">The value type of the dictionary.</typeparam>
-	private class SettingsDictionary<TKey, TValue> : IDictionary<TKey, TValue>
+	class SettingsDictionary<TKey, TValue> : IDictionary<TKey, TValue>
 	{
 		public SettingsDictionary(Settings settings, string settingName)
 		{
