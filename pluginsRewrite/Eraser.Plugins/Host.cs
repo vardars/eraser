@@ -67,22 +67,25 @@ namespace Eraser.Plugins
 		/// Call <see cref="Host.Load"/> when object
 		/// initialisation is complete.
 		/// </summary>
+		/// <param name="store">The root persistent store for all plugins.</param>
 		/// <remarks>Call <see cref="Host.Instance.Dispose"/> when exiting.</remarks>
-		public static void Initialise()
+		public static void Initialise(PersistentStore store)
 		{
-			new DefaultHost();
+			new DefaultHost(store);
 		}
 
 		/// <summary>
 		/// Constructor. Sets the global Plugin Host instance.
 		/// </summary>
+		/// <param name="store">The root persistent store for all plugins.</param>
 		/// <see cref="Host.Instance"/>
-		protected Host()
+		protected Host(PersistentStore store)
 		{
 			if (Instance != null)
 				throw new InvalidOperationException("Only one global Plugin Host instance can " +
 					"exist at any one point of time.");
 			Instance = this;
+			PersistentStore = store;
 
 			EntropySources = new EntropySourceRegistrar();
 			Prngs = new PrngRegistrar();
@@ -95,6 +98,15 @@ namespace Eraser.Plugins
 		/// Getter that retrieves the global plugin host instance.
 		/// </summary>
 		public static Host Instance
+		{
+			get;
+			private set;
+		}
+
+		/// <summary>
+		/// The root persistent store for all plugins.
+		/// </summary>
+		public PersistentStore PersistentStore
 		{
 			get;
 			private set;
@@ -217,8 +229,8 @@ namespace Eraser.Plugins
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public DefaultHost()
-			: base()
+		public DefaultHost(PersistentStore store)
+			: base(store)
 		{
 			//Specify additional places to load assemblies from
 			AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;

@@ -58,6 +58,11 @@ namespace Eraser.Plugins
 					X509Certificate.CreateFromSignedFile(assembly.Location));
 				AssemblyAuthenticode = cert;
 			}
+
+			//Get the persistent store for this assembly
+			PersistentStore = Host.PersistentStore.GetSettings<PersistentStore>(
+				new Guid(((GuidAttribute)Assembly.GetCallingAssembly().
+					GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value).ToString());
 		}
 
 		/// <summary>
