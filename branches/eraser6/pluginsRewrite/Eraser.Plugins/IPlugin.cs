@@ -36,9 +36,9 @@ namespace Eraser.Plugins
 		/// <summary>
 		/// Initializer.
 		/// </summary>
-		/// <param name="host">The host object which can be used for two-way
-		/// communication with the program.</param>
-		void Initialize(Host host);
+		/// <param name="info">The Plugin Information structure describing the
+		/// current plugin.</param>
+		void Initialize(PluginInfo info);
 
 		/// <summary>
 		/// The name of the plug-in, used for descriptive purposes in the UI

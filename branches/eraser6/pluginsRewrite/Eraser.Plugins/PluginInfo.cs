@@ -63,7 +63,6 @@ namespace Eraser.Plugins
 		/// <summary>
 		/// Executes the plugin's initialisation routine.
 		/// </summary>
-		/// <param name="host">The host for the plugin</param>
 		internal void Load(Host host)
 		{
 			if (Assembly.ReflectionOnly)
@@ -77,7 +76,7 @@ namespace Eraser.Plugins
 
 				//Initialize the plugin
 				Plugin = (IPlugin)Activator.CreateInstance(typePlugin);
-				Plugin.Initialize(host);
+				Plugin.Initialize(this);
 			}
 			catch (InvalidOperationException e)
 			{
@@ -140,6 +139,11 @@ namespace Eraser.Plugins
 		/// if the plugin was not loaded.
 		/// </summary>
 		public IPlugin Plugin { get; private set; }
+
+		/// <summary>
+		/// Gets the Persistent Data Store for this plugin.
+		/// </summary>
+		public PersistentStore PersistentStore { get; private set; }
 
 		/// <summary>
 		/// Gets whether this particular plugin is currently loaded in memory.
