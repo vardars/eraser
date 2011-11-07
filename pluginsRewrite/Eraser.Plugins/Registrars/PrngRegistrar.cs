@@ -56,7 +56,7 @@ namespace Eraser.Plugins.Registrars
 		/// <summary>
 		/// Sets the GUID of the active PRNG.
 		/// </summary>
-		internal Guid ActivePrngGuid
+		public Guid ActivePrngGuid
 		{
 			private get;
 			set;
@@ -66,9 +66,9 @@ namespace Eraser.Plugins.Registrars
 		/// Allows the EntropyThread to get entropy to the PRNG functions as seeds.
 		/// </summary>
 		/// <param name="entropy">An array of bytes, being entropy for the PRNG.</param>
-		internal void AddEntropy(byte[] entropy)
+		public void AddEntropy(byte[] entropy)
 		{
-			lock (Host.Instance.Prngs)
+			lock (this)
 				foreach (Prng prng in Host.Instance.Prngs)
 					prng.Reseed(entropy);
 		}
