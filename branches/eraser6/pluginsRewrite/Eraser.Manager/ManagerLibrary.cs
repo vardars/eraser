@@ -43,13 +43,8 @@ namespace Eraser.Manager
 
 			Instance = this;
 			SettingsManager = settings;
-			Host.Initialise(
-				entropySources:			new EntropySourceRegistrar(),
-				prngs:					new PrngRegistrar(),
-				erasureMethods:			new ErasureMethodRegistrar(),
-				erasureTargetFactories:	new FactoryRegistrar<Plugins.ExtensionPoints.ErasureTarget>(),
-				fileSystems:			new FileSystemRegistrar()
-			);
+			entropyPoller = new EntropyPoller();
+			Host.Initialise();
 			Host.Instance.Load();
 		}
 
@@ -65,7 +60,7 @@ namespace Eraser.Manager
 
 			if (disposing)
 			{
-				((EntropySourceRegistrar)Host.Instance.EntropySources).Poller.Abort();
+				entropyPoller.Abort();
 				Host.Instance.Dispose();
 				SettingsManager.Save();
 			}
@@ -130,5 +125,11 @@ namespace Eraser.Manager
 		/// The singleton instance for <see cref="Settings"/>.
 		/// </summary>
 		private static ManagerSettings settingsInstance;
+
+		/// <summary>
+		/// The entropy poller thread which will gather entropy and push it to
+		/// the PRNGs.
+		/// </summary>
+		private EntropyPoller entropyPoller;
 	}
 }
