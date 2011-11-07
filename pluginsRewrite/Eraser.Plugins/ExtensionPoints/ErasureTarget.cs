@@ -28,7 +28,6 @@ using System.Runtime.Serialization;
 using System.Security.Permissions;
 
 using Eraser.Util;
-using Eraser.Manager;
 
 namespace Eraser.Plugins.ExtensionPoints
 {
@@ -45,7 +44,7 @@ namespace Eraser.Plugins.ExtensionPoints
 			if (methodGuid == Guid.Empty)
 				Method = ErasureMethodRegistrar.Default;
 			else
-				Method = ManagerLibrary.Instance.ErasureMethodRegistrar[methodGuid];
+				Method = Host.Instance.ErasureMethods[methodGuid];
 		}
 
 		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
@@ -71,11 +70,6 @@ namespace Eraser.Plugins.ExtensionPoints
 		{
 			Method = ErasureMethodRegistrar.Default;
 		}
-
-		/// <summary>
-		/// The task which owns this target.
-		/// </summary>
-		public Task Task { get; internal set; }
 
 		/// <summary>
 		/// The name of the type of the Erasure target.

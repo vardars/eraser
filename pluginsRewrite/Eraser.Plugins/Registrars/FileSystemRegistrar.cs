@@ -1,6 +1,6 @@
 ﻿/* 
  * $Id$
- * Copyright 2008-2010 The Eraser Project
+ * Copyright 2008-2011 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
  * Modified By: 
  * 
@@ -21,13 +21,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-using Eraser.Util;
-using Eraser.Plugins;
 using Eraser.Plugins.ExtensionPoints;
 
-namespace Eraser.Manager
+namespace Eraser.Plugins.Registrars
 {
 	public class FileSystemRegistrar : Registrar<FileSystem>
 	{

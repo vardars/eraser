@@ -1,8 +1,7 @@
-/* 
+﻿/* 
  * $Id$
- * Copyright 2008-2010 The Eraser Project
+ * Copyright 2008-2011 The Eraser Project
  * Original Author: Joel Low <lowjoel@users.sourceforge.net>
- * Modified By: Kasra Nassiri <cjax@users.sourceforge.net>
  * Modified By:
  * 
  * This file is part of Eraser.
@@ -22,21 +21,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-using System.Threading;
-using System.Security.Cryptography;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.Reflection;
-using System.IO;
-using Microsoft.Win32.SafeHandles;
-
-using Eraser.Util;
-using Eraser.Plugins;
 using Eraser.Plugins.ExtensionPoints;
 
-namespace Eraser.Manager
+namespace Eraser.Plugins.Registrars
 {
 	/// <summary>
 	/// Class managing all the PRNG algorithms.

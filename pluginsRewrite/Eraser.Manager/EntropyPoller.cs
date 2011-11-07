@@ -35,31 +35,6 @@ using Eraser.Plugins.ExtensionPoints;
 namespace Eraser.Manager
 {
 	/// <summary>
-	/// A class which manages all of the instances of the EntropySources
-	/// available. Plugins could register their entropy sources via this class.
-	/// </summary>
-	public class EntropySourceRegistrar : Registrar<EntropySource>
-	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		internal EntropySourceRegistrar()
-		{
-			Poller = new EntropyPoller();
-		}
-
-		/// <summary>
-		/// Gets the entropy poller instance associated with this manager.
-		/// </summary>
-		public EntropyPoller Poller { get; private set; }
-		
-		/// <summary>
-		/// The list of currently registered Entropy Sources.
-		/// </summary>
-		private Dictionary<Guid, EntropySource> sources = new Dictionary<Guid, EntropySource>();
-	};
-
-	/// <summary>
 	/// A class which uses EntropyPoll class to fetch system data as a source of
 	/// randomness at "regular" but "random" intervals
 	/// </summary>

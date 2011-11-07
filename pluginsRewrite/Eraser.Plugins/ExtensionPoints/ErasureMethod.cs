@@ -127,7 +127,7 @@ namespace Eraser.Plugins.ExtensionPoints
 			passes.CopyTo(result, 0);
 
 			//Randomize.
-			Prng rand = ManagerLibrary.Instance.PrngRegistrar[ManagerLibrary.Settings.ActivePrng];
+			Prng rand = Host.Instance.Prngs[ManagerLibrary.Settings.ActivePrng];
 			for (int i = 0; i < result.Length; ++i)
 			{
 				int val = rand.Next(result.Length - 1);

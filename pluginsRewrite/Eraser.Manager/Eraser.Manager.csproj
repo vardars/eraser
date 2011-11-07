@@ -68,14 +68,11 @@
       <Link>Version.cs</Link>
     </Compile>
     <Compile Include="DirectExecutor.cs" />
-    <Compile Include="EntropySource.cs" />
+    <Compile Include="EntropyPoller.cs" />
     <Compile Include="ErasureTarget.cs" />
     <Compile Include="Exception.cs" />
     <Compile Include="Executor.cs" />
-    <Compile Include="FileSystem.cs" />
     <Compile Include="ManagerLibrary.cs" />
-    <Compile Include="ErasureMethod.cs" />
-    <Compile Include="PRNG.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteExecutor.cs" />
     <Compile Include="Schedule.cs" />

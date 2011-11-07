@@ -43,13 +43,13 @@ namespace Eraser.Manager
 
 			Instance = this;
 			SettingsManager = settings;
-
-			EntropySourceRegistrar = new EntropySourceRegistrar();
-			PrngRegistrar = new PrngRegistrar();
-			ErasureMethodRegistrar = new ErasureMethodRegistrar();
-			ErasureTargetRegistrar = new ErasureTargetRegistrar();
-			FileSystemRegistrar = new FileSystemRegistrar();
-			Host.Initialise();
+			Host.Initialise(
+				entropySources:			new EntropySourceRegistrar(),
+				prngs:					new PrngRegistrar(),
+				erasureMethods:			new ErasureMethodRegistrar(),
+				erasureTargetFactories:	new FactoryRegistrar<Plugins.ExtensionPoints.ErasureTarget>(),
+				fileSystems:			new FileSystemRegistrar()
+			);
 			Host.Instance.Load();
 		}
 
@@ -65,7 +65,7 @@ namespace Eraser.Manager
 
 			if (disposing)
 			{
-				EntropySourceRegistrar.Poller.Abort();
+				((EntropySourceRegistrar)Host.Instance.EntropySources).Poller.Abort();
 				Host.Instance.Dispose();
 				SettingsManager.Save();
 			}
@@ -106,31 +106,6 @@ namespace Eraser.Manager
 		/// The global library instance.
 		/// </summary>
 		public static ManagerLibrary Instance { get; private set; }
-
-		/// <summary>
-		/// The global instance of the EntropySource Manager
-		/// </summary>
-		public EntropySourceRegistrar EntropySourceRegistrar { get; private set; }
-
-		/// <summary>
-		/// The global instance of the PRNG Manager.
-		/// </summary>
-		public PrngRegistrar PrngRegistrar { get; private set; }
-
-		/// <summary>
-		/// The global instance of the Erasure method Manager.
-		/// </summary>
-		public ErasureMethodRegistrar ErasureMethodRegistrar { get; private set; }
-
-		/// <summary>
-		/// The global instance of the Erasure target Manager.
-		/// </summary>
-		public ErasureTargetRegistrar ErasureTargetRegistrar { get; private set; }
-
-		/// <summary>
-		/// The global instance of the File System manager.
-		/// </summary>
-		public FileSystemRegistrar FileSystemRegistrar { get; private set; }
 
 		/// <summary>
 		/// Global instance of the Settings manager.
