@@ -31,41 +31,41 @@ namespace Eraser.DefaultPlugins
 {
 	public sealed class DefaultPlugin : IPlugin
 	{
-		public void Initialize(Host host)
+		public void Initialize(PluginInfo info)
 		{
-			Settings = new DefaultPluginSettings();
+			Settings = new DefaultPluginSettings(info.PersistentStore);
 
 			//Then register the erasure methods et al.
-			host.ErasureMethods.Add(new Gutmann());				//35 passes
-			host.ErasureMethods.Add(new DoD_EcE());				//7 passes
-			host.ErasureMethods.Add(new RCMP_TSSIT_OPS_II());	//7 passes
-			host.ErasureMethods.Add(new Schneier());				//7 passes
-			host.ErasureMethods.Add(new VSITR());				//7 passes
-			host.ErasureMethods.Add(new DoD_E());				//3 passes
-			host.ErasureMethods.Add(new HMGIS5Enhanced());		//3 passes
-			host.ErasureMethods.Add(new USAF5020());				//3 passes
-			host.ErasureMethods.Add(new USArmyAR380_19());		//3 passes
-			host.ErasureMethods.Add(new GOSTP50739());			//2 passes
-			host.ErasureMethods.Add(new HMGIS5Baseline());		//1 pass
-			host.ErasureMethods.Add(new Pseudorandom());			//1 pass
+			Host.Instance.ErasureMethods.Add(new Gutmann());			//35 passes
+			Host.Instance.ErasureMethods.Add(new DoD_EcE());			//7 passes
+			Host.Instance.ErasureMethods.Add(new RCMP_TSSIT_OPS_II());	//7 passes
+			Host.Instance.ErasureMethods.Add(new Schneier());			//7 passes
+			Host.Instance.ErasureMethods.Add(new VSITR());				//7 passes
+			Host.Instance.ErasureMethods.Add(new DoD_E());				//3 passes
+			Host.Instance.ErasureMethods.Add(new HMGIS5Enhanced());		//3 passes
+			Host.Instance.ErasureMethods.Add(new USAF5020());			//3 passes
+			Host.Instance.ErasureMethods.Add(new USArmyAR380_19());		//3 passes
+			Host.Instance.ErasureMethods.Add(new GOSTP50739());			//2 passes
+			Host.Instance.ErasureMethods.Add(new HMGIS5Baseline());		//1 pass
+			Host.Instance.ErasureMethods.Add(new Pseudorandom());		//1 pass
 			EraseCustom.RegisterAll();
-			host.ErasureMethods.Add(new FirstLast16KB());
+			Host.Instance.ErasureMethods.Add(new FirstLast16KB());
 
-			host.Prngs.Add(new RngCrypto());
+			Host.Instance.Prngs.Add(new RngCrypto());
 
-			host.EntropySources.Add(new KernelEntropySource());
+			Host.Instance.EntropySources.Add(new KernelEntropySource());
 
-			host.FileSystems.Add(new Fat12FileSystem());
-			host.FileSystems.Add(new Fat16FileSystem());
-			host.FileSystems.Add(new Fat32FileSystem());
-			host.FileSystems.Add(new NtfsFileSystem());
+			Host.Instance.FileSystems.Add(new Fat12FileSystem());
+			Host.Instance.FileSystems.Add(new Fat16FileSystem());
+			Host.Instance.FileSystems.Add(new Fat32FileSystem());
+			Host.Instance.FileSystems.Add(new NtfsFileSystem());
 
-			host.ErasureTargetFactories.Add(new FileErasureTarget());
-			host.ErasureTargetFactories.Add(new FolderErasureTarget());
-			host.ErasureTargetFactories.Add(new RecycleBinErasureTarget());
-			host.ErasureTargetFactories.Add(new UnusedSpaceErasureTarget());
-			host.ErasureTargetFactories.Add(new SecureMoveErasureTarget());
-			host.ErasureTargetFactories.Add(new DriveErasureTarget());
+			Host.Instance.ErasureTargetFactories.Add(new FileErasureTarget());
+			Host.Instance.ErasureTargetFactories.Add(new FolderErasureTarget());
+			Host.Instance.ErasureTargetFactories.Add(new RecycleBinErasureTarget());
+			Host.Instance.ErasureTargetFactories.Add(new UnusedSpaceErasureTarget());
+			Host.Instance.ErasureTargetFactories.Add(new SecureMoveErasureTarget());
+			Host.Instance.ErasureTargetFactories.Add(new DriveErasureTarget());
 		}
 
 		public void Dispose()
@@ -105,9 +105,9 @@ namespace Eraser.DefaultPlugins
 	/// </summary>
 	internal class DefaultPluginSettings
 	{
-		public DefaultPluginSettings()
+		public DefaultPluginSettings(PersistentStore store)
 		{
-			settings = Manager.ManagerLibrary.Instance.SettingsManager.ModuleSettings;
+			Store = store;
 		}
 
 		/// <summary>
@@ -117,11 +117,11 @@ namespace Eraser.DefaultPlugins
 		{
 			get
 			{
-				return settings.GetValue<Guid>("FL16Method");
+				return Store.GetValue<Guid>("FL16Method");
 			}
 			set
 			{
-				settings.SetValue("FL16Method", value);
+				Store.SetValue("FL16Method", value);
 			}
 		}
 
@@ -132,17 +132,17 @@ namespace Eraser.DefaultPlugins
 		{
 			get
 			{
-				return settings.GetValue<Dictionary<Guid, CustomErasureMethod>>("EraseCustom");
+				return Store.GetValue<Dictionary<Guid, CustomErasureMethod>>("EraseCustom");
 			}
 			set
 			{
-				settings.SetValue("EraseCustom", value);
+				Store.SetValue("EraseCustom", value);
 			}
 		}
 
 		/// <summary>
 		/// The data store for our settings.
 		/// </summary>
-		Settings settings;
+		PersistentStore Store;
 	}
 }
