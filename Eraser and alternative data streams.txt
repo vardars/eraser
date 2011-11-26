@@ -1,0 +1,89 @@
+From: Sami Tolvanen [sami@tolvanen.com]
+Sent: 24 July 2003 15:48
+To: gtrant@heidi.ie
+Subject: Eraser, and alternative data streams
+
+Hello Garrett,
+
+I managed to find the time to play with Eraser a bit today, and looked
+into the problems I earlier experienced with alternative data streams:
+
+  http://www.tolvanen.com/eraser/known_problems.txt
+
+After some experimenting, I noticed that, for some strange reason, the
+program doesn't successfully erase named data streams if the unnamed
+(default) data stream has already been erased.
+
+When I changed the code in File.cpp (as shown in the patch below) to
+process the default data stream last, the program was able to overwrite
+the named data streams successfully.
+
+However, NTFS being a journaling file system, I could still recover the
+small test strings I used from the NTFS transaction log (using WinHex):
+
+  http://linux-ntfs.sourceforge.net/ntfs/files/logfile.html
+
+I am not aware of any way to prevent data getting into the transaction
+log, which makes secure data removal from NTFS partitions somewhat
+problematic. It is quite possible that only smaller data fragments are
+stored in the transaction log, but I didn't have the time to test this
+further.
+
+I also noticed that the "prevVcn" variable used in NTFS.cpp is not
+needed, and can be removed.
+
+--
+Sami Tolvanen, http://www.tolvanen.com/sami/
+
+
+
+--- File.cpp    2002-04-04 01:49:27.000000000 +0300
++++ File.cpp.new   2003-07-24 16:04:06.000000000 +0300
+@@ -239,14 +239,14 @@
+             // if file was not really compressed, erase normally
+         }
+
+-        // add the default (unnamed) data stream
+-        streams.Add(defaultStream);
+-
+         // search for alternate data streams (NTFS only)
+         if (isWindowsNT && bitSet(context->m_lsSettings.m_uItems, fileAlternateStreams)) {
+             findAlternateDataStreams(context, defaultStream.m_strName, streams);
+         }
+
++        // add the default (unnamed) data stream
++        streams.Add(defaultStream);
++
+         if (wipeDataStreams(context, streams)) {
+             return eraserOK(eraserRemoveFile((LPVOID)(LPCTSTR)defaultStream.m_strName,
+                                              (E_UINT16)defaultStream.m_strName.GetLength()));
+
+
+--- NTFS.cpp    2002-04-04 01:49:27.000000000 +0300
++++ NTFS.cpp.new   2003-07-24 12:02:10.000000000 +0300
+@@ -87,7 +87,7 @@
+     NTSTATUS                  status = STATUS_INVALID_PARAMETER;
+     E_INT32                   i;
+     IO_STATUS_BLOCK           ioStatus;
+-    E_UINT64                  startVcn, prevVcn;
++    E_UINT64                  startVcn;
+     PGET_RETRIEVAL_DESCRIPTOR fileMappings;
+     E_UINT64                  fileMap[FILEMAPSIZE];
+     HANDLE                    hFile;
+@@ -126,7 +126,6 @@
+         context->m_uProgressSize = 0;
+
+         startVcn = fileMappings->StartVcn;
+-        prevVcn  = fileMappings->StartVcn;
+
+         for (i = 0; i < (E_UINT64) fileMappings->NumberOfPairs; i++) {
+             if (fileMappings->Pair[i].Lcn != LLINVALID) {
+@@ -141,7 +140,6 @@
+
+         // loop through the buffer of number/cluster pairs, printing them out.
+         startVcn = fileMappings->StartVcn;
+-        prevVcn  = fileMappings->StartVcn;
+
+         for (i = 0; i < (E_UINT64)fileMappings->NumberOfPairs; i++) {
+             // On NT 4.0, a compressed virtual run (0-filled) is
+

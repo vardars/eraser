@@ -1,0 +1,13 @@
+
+As of 08-Apr-2007 any official version of eraser will carry out the following actions:
+
+After Erasing it will set the created and modified dats to "January 1st, 1980 0:00"
+
+
+When erasing freespace eraser will create in the root of the drive a directory called "~ERAFSWD.TMP"
+It will then proceed to fill this directory with files. For example if the drive is say 500G the files will be 
+42270720K in size each. Once the drive is full eraser will proceed to wipe each file in accordance with 
+the users settings.  For the avoidance of doubt,It is important to note that the structure created in the
+"~ERAFSWD.TMP" directory is of a single level i.e no subdirectories are created.
+
+
