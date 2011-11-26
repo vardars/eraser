@@ -1,0 +1,100 @@
+:BASE Eraser.hlp
+1 Introduction
+2 Overview=what_overview@Eraser.hlp
+2 Why to Use It?=what_why@Eraser.hlp
+2 Program Information
+3 Legal=info_license@Eraser.hlp
+3 System Requirements=info_systemreqs@Eraser.hlp
+3 Installed Components=info_components@Eraser.hlp
+1 Using Eraser
+2 Step-by-Step
+3 Step-by-Step=use_steps@Eraser.hlp
+3 Erasing Data
+4 Step 1: Choose User Interface=steps_erase_1@Eraser.hlp
+4 Step 2: Select Data=steps_erase_2@Eraser.hlp
+4 Step 3: Choose Method=steps_erase_3@Eraser.hlp
+4 Step 4: Confirm and Erase=steps_erase_4@Eraser.hlp
+2 Configuration
+3 Erasing=config_erasing@Eraser.hlp
+3 General=config_general@Eraser.hlp
+2 User Interfaces
+3 User Interfaces=ui_ui@Eraser.hlp
+3 Eraser
+4 Basics=eraser_basics@Eraser.hlp
+4 On-Demand
+5 Basics=ondemand_basics@Eraser.hlp
+5 Entering Data=ondemand_data@Eraser.hlp
+5 Erasing=ondemand_erasing@Eraser.hlp
+5 Step-by-Step=ondemand_steps@Eraser.hlp
+4 Scheduler
+5 Basics=scheduler_basics@Eraser.hlp
+5 Entering Data=scheduler_data@Eraser.hlp
+5 Running Tasks=scheduler_run@Eraser.hlp
+5 Viewing Results=scheduler_results@Eraser.hlp
+5 Step-by-Step=scheduler_steps@Eraser.hlp
+4 Explorer
+5 Basics=explorer_basics@Eraser.hlp
+5 Drag and Drop=explorer_dragdrop@Eraser.hlp
+5 Shell Extension=explorer_shellext@Eraser.hlp
+4 Menu Reference
+5 File Menu=menu_file@Eraser.hlp
+5 Edit Menu=menu_edit@Eraser.hlp
+5 Process Menu=menu_process@Eraser.hlp
+5 View Menu=menu_view@Eraser.hlp
+5 Help Menu=menu_help@Eraser.hlp
+3 Shell Extension
+4 Basics=shellext_basics@Eraser.hlp
+4 Selecting Data=shellext_data@Eraser.hlp
+4 Erasing=shellext_erasing@Eraser.hlp
+4 Secure Move=shellext_move@Eraser.hlp
+4 Step-by-Step=shellext_steps@Eraser.hlp
+3 Launcher
+4 Basics=launcher_basics@Eraser.hlp
+4 Erasing=launcher_erasing@Eraser.hlp
+4 Step-by-Step=launcher_steps@Eraser.hlp
+2 How To...
+3 Tips and Tricks=tips_tricks@Eraser.hlp
+3 Erasing Browser Cache and Email=tips_cache@Eraser.hlp
+3 Erasing Recycle Bin=tips_recycled@Eraser.hlp
+3 Erasing Paging (Swap) File=tips_swap@Eraser.hlp
+3 Erasing All Data on Drive=tips_drive@Eraser.hlp
+3 Boot Erasing All Drives=BootErasingAllDrives@Eraser.hlp
+3 Erasing in DOS=ErasinginDOS@Eraser.hlp
+2 What Does It Do?
+3 When Erasing Files=do_files@Eraser.hlp
+3 When Erasing Unused Disk Space=do_unused@Eraser.hlp
+2 When to Use It?
+3 When to Use It?=when_when@Eraser.hlp
+3 Special Cases=when_special@Eraser.hlp
+3 Common Security Problems=when_problems@Eraser.hlp
+1 Advanced Topics
+2 Advanced Topics=advanced_topics@Eraser.hlp
+2 What Does All This Mean?
+3 Terms Used=mean_terms@Eraser.hlp
+2 Abstract
+3 Deleting Files=advanced_deleting@Eraser.hlp
+3 Overwriting Properly=advanced_overwriting@Eraser.hlp
+3 Government Regulations=advanced_government@Eraser.hlp
+2 Overwriting Methods in Detail
+3 Gutmann=methods_default@Eraser.hlp
+3 US DoD 5220-22.M=methods_faster@Eraser.hlp
+3 Pseudorandom Data=methods_random@Eraser.hlp
+2 Secure Deletion of Data from Magnetic and Solid-State Memory
+3 Abstract=securedel_0@Eraser.hlp
+3 Introduction=securedel_1@Eraser.hlp
+3 Methods of Recovery for Data stored on Magnetic Media=securedel_2@Eraser.hlp
+3 Erasure of Data stored on Magnetic Media=securedel_3@Eraser.hlp
+3 Other Methods of Erasing Magnetic Media=securedel_4@Eraser.hlp
+3 Further Problems with Magnetic Media=securedel_5@Eraser.hlp
+3 Sidestepping the Problem=securedel_6@Eraser.hlp
+3 Methods of Recovery for Data stored in Random-Access Memory=securedel_7@Eraser.hlp
+3 Erasure of Data stored in Random-Access Memory=securedel_8@Eraser.hlp
+3 Conclusion=securedel_9@Eraser.hlp
+3 Acknowledgments=securedel_10@Eraser.hlp
+3 References=securedel_11@Eraser.hlp
+1 Frequently Asked Questions
+2 Frequently Asked Questions=support_faq@Eraser.hlp
+1 Support
+2 Problems?=support_problems@Eraser.hlp
+2 Upgrading=support_upgrading@Eraser.hlp
+2 Author=support_author@Eraser.hlp

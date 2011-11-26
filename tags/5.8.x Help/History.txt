@@ -1,0 +1,125 @@
+07-Aug-2006
+============
+V5.8
+    Release of 5.8 full version. 
+V5.8
+     The Win64 version.	
+V5.7a
+     Thanks to Gerard Molnar fixed a problem with the installer on Win95	
+V5.7
+    Fixed icon issue.
+    Upgraded DBAN To 1.0.1
+    Improvements to alternative datastreams submitted by Sami
+    Minor Typo errors in help files files.
+
+V5.6a 19-Jan-2003 Very minor upgrade - Just reinstall
+    Many thanks to Steven Michael for the cool new icons. Much
+    appreciated.
+    DBAN is now wrapped in a winimage self extractor. This will make
+    things
+    easier for those who prefer GUI apps.
+    To use this option:
+           1. Place a floppy in your a: drive.
+           2. Click on the Start button and then choose Programs->
+           Eraser->
+           Create Boot Nuke Disk.
+           3. Ensure 'Writing on Floppy' is ticked.
+           Tick 'Formatting' if your floppy needs to be formatted.
+           4. Click OK.
+           Result: Your Boot Nuke Disk has now been created.
+           5. Boot up your PC with the floppy still remaining in your a:
+           drive.
+           Result: All drives will now be erased.
+           IMPORTANT: USE WITH EXTREME CAUTION
+    Fixed a few typos in the installer
+V5.6 16-Dec-2002
+        1. Eraser now includes 'Darik's Boot and Nuke' disk. There is a
+        new
+        directory under Eraser called 'boot'.
+        For a summary:
+        'Darik's Boot and Nuke ("DBAN") is a self-contained boot floppy
+        that
+        securely wipes the hard disks of most computers. DBAN will
+        automatically and completely delete the contents of any hard
+        disk
+        that
+        it can detect, which makes it an appropriate utility for bulk or
+        emergency data destruction.'
+V5.541 24-Nov-2002 (Final)
+    1. Fixed issue with Verify.exe not picking up files.
+    2. Fixed issue with installing to long pathnames.
+       Eraser giving (null) when clicking on recycle bin was due to it
+       not finding eraser in long installed pathnames.
+    3. In this release all exe's including the installer.
+       (except Eraserd.exe - Dos app which cannot be signed)
+       and dll's have been digitally signed.
+       In explorer right click and select properties.
+       A tab with digital signatures will appear. It should verify as
+       OK.
+       If not there is a problem.
+V5.54 05-Nov-2002 (*BETA*)
+    1. Fixes for XP freespace erase. Note: those who found they has
+    100's
+       of random files left in their root dir after a crash can now
+       delete them
+       by
+       'del eraser*.*' as they will be called e.g eraser345987f.6fd
+    2. system now confirms the overwrite of your scheduler file on
+    install.
+V5.53 30-Aug-2002
+    1. Complete rewrite of installer. Now using the Free Innosetup
+       by jrsoftware.
+    2. Registery entries not uninstalled by previous version now fixed.
+    3. Problems with being unable to uninstall should be fixed.
+V5.52 29-July-2002
+    1. Fixed some dialog problems as
+       per
+       http://support.microsoft.com/default.aspx?scid=kb;EN-US;q320479
+           This will need to be fixed to allow selection of files in
+           hidden
+           directories.
+    2. (Beta) Eraser can now delete files on reboot - Under schedule
+    task
+       set the day to 'Reboot' This is a new feature and will be altered
+       and redesigned according to feedback.
+V5.51
+    1. Fixed corrupted eraserd. Now tested with FreeDOS.
+    2. Fixed issue where eraser was not pointing to correct registry
+       entries.
+V5.5 08-Dec-2002
+        This version addresses all of the upgrade issues we had with
+        converting to C7
+        1. Installer
+                After testing with the windows installer we concluded
+                that
+                1. There are still too many users without the windows
+                installer.
+                2. Installing the installer runtime is a major download.
+                3. Many users did not know what to do with an .msi file
+        2. Import/export/save dialogs no longer worked with C++7. Fixed
+        3. EraserD was compiled with VC8 which we did not have so after
+           scouring the net the digital mars compiler was found. See
+           www.digitalmars.com this is a great product works with WIN32
+           as
+           well. I was amazed that we could recompile with little
+           effort.For
+           the dos version many users have asked for the ability to
+           bootup
+           a machine and erase it from the floppy.
+           We are experimenting with creating a FAT32 boot disk using
+           FreeDOS see http://www.freedos.com this would allow you to
+           erase > 2gig partitions.
+        4. Fixed the Delphi example
+        5. Beta version of the boot erase option.
+V5.4.1
+    This version fixed problems with the VC7 MFC libraries and we
+    created
+    a new installer.
+V5.4
+        This is the first release since we took on maintaining eraser
+        from
+        Sami
+        Tolvanen
+        Changes: Updated to work with windows XP.
+        Program now compiled with Visual C++.NET.
+
