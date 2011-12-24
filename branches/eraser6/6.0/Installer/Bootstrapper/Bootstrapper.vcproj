@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib LzmaLib.lib"
+				AdditionalDependencies="comctl32.lib 7zLib.lib"
 				OutputFile="$(OutDir)\Bootstrapper.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
@@ -136,7 +136,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib LzmaLib.lib"
+				AdditionalDependencies="comctl32.lib 7zLib.lib"
 				OutputFile="$(OutDir)\Bootstrapper.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
