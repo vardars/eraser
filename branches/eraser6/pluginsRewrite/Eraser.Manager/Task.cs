@@ -29,6 +29,7 @@ using System.Threading;
 
 using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
+using Eraser.Plugins;
 using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.Manager

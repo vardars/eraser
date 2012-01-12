@@ -29,6 +29,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 
 using Eraser.Util;
+using Eraser.Plugins;
 using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.DefaultPlugins
