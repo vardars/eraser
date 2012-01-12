@@ -24,7 +24,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Eraser.Util
+using Eraser.Util;
+
+namespace Eraser.Plugins
 {
 	/// <summary>
 	/// Manages the progress for any operation.

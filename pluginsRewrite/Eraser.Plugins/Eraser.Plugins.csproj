@@ -67,6 +67,7 @@
     <Compile Include="PluginLoadedEventArgs.cs" />
     <Compile Include="PluginLoadEventArgs.cs" />
     <Compile Include="Host.cs" />
+    <Compile Include="ProgressManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registrars\EntropySourceRegistrar.cs" />
     <Compile Include="Registrars\ErasureMethodRegistrar.cs" />
