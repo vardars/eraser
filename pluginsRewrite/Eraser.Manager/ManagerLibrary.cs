@@ -94,7 +94,7 @@ namespace Eraser.Manager
 
 			//There's no approval or denial, what is the specified loading policy?
 			else
-				e.Load = e.Plugin.LoadingPolicy != LoadingPolicy.DefaultOff;
+				e.Load = e.Plugin.LoadingPolicy != PluginLoadingPolicy.DefaultOff;
 		}
 
 		/// <summary>

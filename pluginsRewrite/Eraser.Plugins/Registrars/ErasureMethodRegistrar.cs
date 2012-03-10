@@ -37,10 +37,10 @@ namespace Eraser.Plugins.Registrars
 	/// instance is created. This is unique to erasure methods since the other managers
 	/// do not have run-time equivalents; they all are compile-time.
 	/// </summary>
-	public class ErasureMethodRegistrar : Registrar<ErasureMethod>
+	public class ErasureMethodRegistrar : Registrar<IErasureMethod>
 	{
 		#region Default Erasure method
-		private class DefaultMethod : ErasureMethod
+		private class DefaultMethod : IErasureMethod
 		{
 			public DefaultMethod()
 			{
@@ -67,8 +67,8 @@ namespace Eraser.Plugins.Registrars
 					"be used and should instead be replaced before execution!");
 			}
 
-			public override void Erase(Stream strm, long erasureLength, Prng prng,
-				ErasureMethod.ErasureMethodProgressFunction callback)
+			public override void Erase(Stream strm, long erasureLength, IPrng prng,
+				IErasureMethod.ErasureMethodProgressFunction callback)
 			{
 				throw new InvalidOperationException("The DefaultMethod class should never " +
 					"be used and should instead be replaced before execution!");
@@ -81,7 +81,7 @@ namespace Eraser.Plugins.Registrars
 		/// this is just a placeholder and will throw a InvalidOperationException.
 		/// </summary>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
-		public static readonly ErasureMethod Default = new DefaultMethod();
+		public static readonly IErasureMethod Default = new DefaultMethod();
 		#endregion
 	}
 }

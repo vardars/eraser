@@ -124,7 +124,7 @@ namespace Eraser.Manager
 				else if (Targets.Count < 5)
 				{
 					//Simpler case, small set of data.
-					foreach (ErasureTarget tgt in Targets)
+					foreach (IErasureTarget tgt in Targets)
 						result += S._("{0}, ", tgt.UIText);
 
 					return result.Remove(result.Length - 2);
@@ -271,13 +271,13 @@ namespace Eraser.Manager
 		/// about the progress which is stored as a TaskProgressChangedEventArgs
 		/// object.
 		/// </summary>
-		/// <param name="sender">The <see cref="ErasureTarget"/> which is reporting
+		/// <param name="sender">The <see cref="IErasureTarget"/> which is reporting
 		/// progress.</param>
 		/// <param name="e">The new progress value.</param>
 		/// <exception cref="ArgumentException">e.UserState must be of the type
 		/// <see cref="TaskProgressEventargs"/></exception>
 		/// <exception cref="ArgumentNullException">Both sender and e cannot be null.</exception>
-		internal void OnProgressChanged(ErasureTarget sender, ProgressChangedEventArgs e)
+		internal void OnProgressChanged(IErasureTarget sender, ProgressChangedEventArgs e)
 		{
 			if (sender == null)
 				throw new ArgumentNullException("sender");

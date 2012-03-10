@@ -38,12 +38,12 @@ namespace Eraser.Manager
 	/// Maintains a collection of erasure targets.
 	/// </summary>
 	[Serializable]
-	public class ErasureTargetCollection : IList<ErasureTarget>, ISerializable
+	public class ErasureTargetCollection : IList<IErasureTarget>, ISerializable
 	{
 		#region Constructors
 		internal ErasureTargetCollection(Task owner)
 		{
-			this.list = new List<ErasureTarget>();
+			this.list = new List<IErasureTarget>();
 			this.owner = owner;
 		}
 
@@ -53,7 +53,7 @@ namespace Eraser.Manager
 			list.Capacity = capacity;
 		}
 
-		internal ErasureTargetCollection(Task owner, IEnumerable<ErasureTarget> targets)
+		internal ErasureTargetCollection(Task owner, IEnumerable<IErasureTarget> targets)
 			: this(owner)
 		{
 			list.AddRange(targets);
@@ -63,7 +63,7 @@ namespace Eraser.Manager
 		#region Serialization Code
 		protected ErasureTargetCollection(SerializationInfo info, StreamingContext context)
 		{
-			list = (List<ErasureTarget>)info.GetValue("list", typeof(List<ErasureTarget>));
+			list = (List<IErasureTarget>)info.GetValue("list", typeof(List<IErasureTarget>));
 		}
 
 		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
@@ -74,7 +74,7 @@ namespace Eraser.Manager
 		#endregion
 
 		#region IEnumerable<ErasureTarget> Members
-		public IEnumerator<ErasureTarget> GetEnumerator()
+		public IEnumerator<IErasureTarget> GetEnumerator()
 		{
 			return list.GetEnumerator();
 		}
@@ -88,23 +88,23 @@ namespace Eraser.Manager
 		#endregion
 
 		#region ICollection<ErasureTarget> Members
-		public void Add(ErasureTarget item)
+		public void Add(IErasureTarget item)
 		{
 			list.Add(item);
 		}
 
 		public void Clear()
 		{
-			foreach (ErasureTarget item in list)
+			foreach (IErasureTarget item in list)
 				Remove(item);
 		}
 
-		public bool Contains(ErasureTarget item)
+		public bool Contains(IErasureTarget item)
 		{
 			return list.Contains(item);
 		}
 
-		public void CopyTo(ErasureTarget[] array, int arrayIndex)
+		public void CopyTo(IErasureTarget[] array, int arrayIndex)
 		{
 			list.CopyTo(array, arrayIndex);
 		}
@@ -125,7 +125,7 @@ namespace Eraser.Manager
 			}
 		}
 
-		public bool Remove(ErasureTarget item)
+		public bool Remove(IErasureTarget item)
 		{
 			int index = list.IndexOf(item);
 			if (index < 0)
@@ -137,12 +137,12 @@ namespace Eraser.Manager
 		#endregion
 
 		#region IList<ErasureTarget> Members
-		public int IndexOf(ErasureTarget item)
+		public int IndexOf(IErasureTarget item)
 		{
 			return list.IndexOf(item);
 		}
 
-		public void Insert(int index, ErasureTarget item)
+		public void Insert(int index, IErasureTarget item)
 		{
 			list.Insert(index, item);
 		}
@@ -152,7 +152,7 @@ namespace Eraser.Manager
 			list.RemoveAt(index);
 		}
 
-		public ErasureTarget this[int index]
+		public IErasureTarget this[int index]
 		{
 			get
 			{
@@ -183,6 +183,6 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The list bring the data store behind this object.
 		/// </summary>
-		private List<ErasureTarget> list;
+		private List<IErasureTarget> list;
 	}
 }
