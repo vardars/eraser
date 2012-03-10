@@ -1,7 +1,0 @@
-# Disable directory browsing
-Options All -Indexes
- 
-# Enable the following of symlinks
-Options +FollowSymLinks
-
-Redirect /updates /scripts/updates
