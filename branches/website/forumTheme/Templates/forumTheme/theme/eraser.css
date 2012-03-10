@@ -87,6 +87,20 @@ h4 {
 	background-position: top center;
 }
 
+	#header {
+		height: 115px;
+	}
+	
+	#header-nav a:link {
+		color: #BD3738;
+	}
+	
+	#search-box {
+		float: none;
+		margin: 0;
+		font-size: 75%;
+	}
+
 	.banner_img {
 		border: 0;
 	}
@@ -111,7 +125,6 @@ h4 {
 #content {
 	padding: 0 20px 0 20px;
 	font-size: .9em;
-	line-height: 1.7em;
 	text-align: justify;
 }
 
