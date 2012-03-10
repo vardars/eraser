@@ -53,10 +53,10 @@
       <Link>Version.cs</Link>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="ExtensionPoints\EntropySource.cs" />
-    <Compile Include="ExtensionPoints\ErasureMethod.cs" />
-    <Compile Include="ExtensionPoints\ErasureTarget.cs" />
-    <Compile Include="ExtensionPoints\FileSystem.cs" />
+    <Compile Include="ExtensionPoints\IEntropySource.cs" />
+    <Compile Include="ExtensionPoints\IErasureMethod.cs" />
+    <Compile Include="ExtensionPoints\IErasureTarget.cs" />
+    <Compile Include="ExtensionPoints\IFileSystem.cs" />
     <Compile Include="ExtensionPoints\Prng.cs" />
     <Compile Include="IConfigurer.cs" />
     <Compile Include="IPlugin.cs" />

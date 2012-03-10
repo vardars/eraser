@@ -28,7 +28,7 @@ using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.Plugins.Registrars
 {
-	public class ErasureTargetFactoryRegistrar : FactoryRegistrar<ErasureTarget>
+	public class ErasureTargetFactoryRegistrar : FactoryRegistrar<IErasureTarget>
 	{
 	}
 }

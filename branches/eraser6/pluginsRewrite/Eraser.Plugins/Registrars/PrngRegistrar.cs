@@ -31,7 +31,7 @@ namespace Eraser.Plugins.Registrars
 	/// <summary>
 	/// Class managing all the PRNG algorithms.
 	/// </summary>
-	public class PrngRegistrar : Registrar<Prng>
+	public class PrngRegistrar : Registrar<IPrng>
 	{
 		/// <summary>
 		/// Constructor.
@@ -45,7 +45,7 @@ namespace Eraser.Plugins.Registrars
 		/// </summary>
 		/// <remarks>Client code should set the <see cref="ActivePrngGuid"/>
 		/// member.</remarks>
-		public Prng ActivePrng
+		public IPrng ActivePrng
 		{
 			get
 			{
@@ -69,7 +69,7 @@ namespace Eraser.Plugins.Registrars
 		public void AddEntropy(byte[] entropy)
 		{
 			lock (this)
-				foreach (Prng prng in Host.Instance.Prngs)
+				foreach (IPrng prng in Host.Instance.Prngs)
 					prng.Reseed(entropy);
 		}
 	}

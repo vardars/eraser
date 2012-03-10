@@ -286,7 +286,7 @@ namespace Eraser.Manager
 				task.OnTaskStarted();
 
 				//Run the task
-				foreach (ErasureTarget target in task.Targets)
+				foreach (IErasureTarget target in task.Targets)
 					try
 					{
 						target.Execute();

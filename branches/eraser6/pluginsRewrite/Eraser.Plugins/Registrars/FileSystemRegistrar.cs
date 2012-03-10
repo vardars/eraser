@@ -29,7 +29,7 @@ using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.Plugins.Registrars
 {
-	public class FileSystemRegistrar : Registrar<FileSystem>
+	public class FileSystemRegistrar : Registrar<IFileSystem>
 	{
 		/// <summary>
 		/// Gets the FileSystem object that implements the FileSystem interface
@@ -40,11 +40,11 @@ namespace Eraser.Plugins.Registrars
 		/// given volume.</returns>
 		/// <exception cref="NotSupportedException">Thrown when an unimplemented
 		/// file system is requested.</exception>
-		public FileSystem this[VolumeInfo volume]
+		public IFileSystem this[VolumeInfo volume]
 		{
 			get
 			{
-				foreach (FileSystem filesystem in this)
+				foreach (IFileSystem filesystem in this)
 					if (filesystem.Name.ToUpperInvariant() ==
 						volume.VolumeFormat.ToUpperInvariant())
 					{
