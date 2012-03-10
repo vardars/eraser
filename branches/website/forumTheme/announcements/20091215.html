@@ -1,0 +1,457 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><!-- InstanceBegin template="/Templates/Eraser.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<!-- InstanceBeginEditable name="Title" -->
+<title>Eraser :: Announcements :: December 15, 2009</title>
+<!-- InstanceEndEditable -->
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<link href="../style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../scripts.js"></script>
+<!-- InstanceBeginEditable name="head" -->
+<style type="text/css">
+table.changelog td {
+	vertical-align: top;
+}
+
+td.author {
+	padding-left: 1.0em;
+	text-align: right;
+}
+
+code.hash {
+	background-color: #F0F0F0;
+	font-family: Consolas, "Courier New", Courier, mono;
+	font-size: 1.0em;
+	
+	display: block;
+}
+</style>
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="ArticlePoster" type="boolean" value="true" -->
+</head>
+
+<body onload="MM_preloadImages('../images/btn_home_hov.gif', '../images/btn_download_hov.gif', '../images/btn_forum_hov.gif', '../images/btn_trac_hov.gif')">
+<div id="wrap">
+	<div id="banner">
+		<a href="../index.php"><img src="../images/header.jpg" class="banner_img" alt="Eraser v6" /></a>
+	</div>
+	<div id="content">
+		<div class="left">
+			<!-- InstanceBeginRepeat name="LeftContent" --><!-- InstanceBeginRepeatEntry -->
+			<div class="article">
+				<div class="article_head">
+					<div class="title">
+						<h2><!-- InstanceBeginEditable name="LeftContentEditTitle" -->Eraser 6 Stable released!<!-- InstanceEndEditable --></h2>
+						<div class="posted"><!-- InstanceBeginEditable name="LeftContentEditPoster" -->Posted by: Joel, 15<sup>th</sup> December 2009, 10:15 am +800GMT<!-- InstanceEndEditable --></div>
+					</div>
+				</div>
+
+				<!-- InstanceBeginEditable name="LeftContentEdit" -->
+				<p>Eraser 6 stable has been released after being for  2 years in development. Eraser 6 sports a completely revamped user interface, and Windows XP/Vista/7 support out of the box. Eraser 6 now allows users to use the context menu in Windows Explorer to erase Unused Space on drives with UAC on under Windows Vista and 7. The On-Demand and Scheduler panes in Eraser 5 has been replaced with the integrated Task Scheduler in Eraser 6 which allows for simplified management of tasks. The biggest and most significant change since rc5 is the addition of FAT directory cleaning&nbsp;and various usability improvements.</p>
+				<h3>Changelog</h3>
+				<table class="changelog">
+					<tr>
+						<th>Revision</th>
+						<th>Description</th>
+						<th>Author</th>
+					</tr>
+					<tr>
+						<th>1130</th>
+						<td>Progress dialog improvements</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1131</th>
+						<td>Deal with cluster tip erasure failures more robustly<br />
+						When a user does a folder erasure, delete all empty subfolders of the target if they are empty after the erase regardless of whether the folder should be deleted when empty</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1132</th>
+						<td>Fixed the crash which appears after Erase has been running for a while</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1133</th>
+						<td>Create a Hide button for the progress dialog<br />
+Relabelled tab order&nbsp;for the progress dialog</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1136</th>
+						<td>Friendlier error message  used when access is denied erasing a file cluster tip.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1137</th>
+						<td>Moved the task list to a file in the Local Application Data folder (%LOCALAPPDATA%\Eraser 6)</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1138</th>
+						<td>Allow users to filter log messages by severity</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1139</th>
+						<td>Fixed crash when &quot;unformatted&quot; drives are&nbsp;installed on the computer. Thanks to Xanashi for reporting the&nbsp;bug.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1140, 1145</th>
+						<td>Clean up files meant for cleaning up the MFT after we are done with it. Thanks to mcmaster76 for reporting the bug.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1143, 1147</th>
+						<td>Log viewer performance optimisations</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1144</th>
+						<td>Specify the minimum size of the log viewer so that the dialog will remain useable.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1148</th>
+						<td>Fixed a crash when right-clicking a drive in the Computer folder. Thanks to mcmaster76 for reporting the bug.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1154</th>
+						<td>Fixed restart-run tasks.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1158</th>
+						<td>Made the forced closure of&nbsp;file handles optional</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1159</th>
+						<td>Added first draft of the Eraser documentation</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1163, 1164</th>
+						<td>Allow eraser to be called from the Run dialog</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1165,&nbsp;1166</th>
+						<td>Created a new type of task - Manual tasks which run only on demand. The distinction between manual and run-once tasks are that tasks meant to run only once will be run and if it completes successfully the task will be deleted. Manually run tasks will never be automatically deleted.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1185</th>
+						<td>Fixed crash when erasing FAT file systems.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1186</th>
+						<td>Certain file names which could not be erased from the context menu previously can now be erased.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1187</th>
+						<td>Allow computers without network adapters to run Eraser</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1188</th>
+						<td>Disk performance counters can now be used as an entropy source</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1193</th>
+						<td>Cleaner NTFS MFT erasure.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1195</th>
+						<td>When deleting folders reset all the access modified and creation times.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1206, 1207, 1211, 1214, 1215, 1219-1222, 1225-1236, 1239, 1242</th>
+						<td>Implemented FAT cleaning</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1243</th>
+						<td>Implemented delete key in the Scheduler. Thanks to Xanashi for suggesting!</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1247</th>
+						<td>Updated the Visual C++ runtime to the latest one (2008SP1 with ATL security fix) This fixes hangs when using the Eraser context menu.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1278</th>
+						<td>Installer bootstrapper improvements</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1285</th>
+						<td>Do not stop running a task if one target does not exist.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1287, 1288</th>
+						<td>NTFS MFT Cleaning improvements.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1296</th>
+						<td>Allow many files to be dragged into the Eraser Window.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1297</th>
+						<td>Erase MFT resident files before expanding the file to clear the cluster. This makes sure MFT resident files do not move around the MFT.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1299</th>
+						<td>When selecting too many files to erase from the Eraser context menu in Windows Explorer display a helpful error message&nbsp;instead of failing without any reason.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1304</th>
+						<td>Fixed Eraser being unable to exit when started at logon.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1317</th>
+						<td>Allow an elevated instance of Eraser to be controlled remotely by the same user. This allows the user to use the context menu extension even when Eraser is running as an Administrator.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1318</th>
+						<td>Fixed crash when deleting multiple tasks</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1320</th>
+						<td>Added Italian localisation support</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1321</th>
+						<td>Compile Warning fixes</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1323</th>
+						<td>Don't check the SFC filelist if the given path name is longer than 255 characters</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1324-1341</th>
+						<td>Implemented Italian localisation</td>
+						<td>Andrea</td>
+					</tr>
+					<tr>
+						<th>1342, 1348, 1350 </th>
+						<td>Fixed build process for developers without code signing certificates</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1343</th>
+						<td>Rearranged the Italian settings panel to fit longer strings</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1344-1347</th>
+						<td>More Italian localisation work</td>
+						<td>Andrea</td>
+					</tr>
+					<tr>
+						<th>1353</th>
+						<td>Display&nbsp;the language name in the .NET framework language for all Eraser translations for uniformity</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1354</th>
+						<td>Display untranslated strings in debug builds as &quot;untranslated&quot; but use the English string in release builds</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1355</th>
+						<td>Fixed updater crash</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1365-1368, 1373</th>
+						<td>More Italian localisation work; added support for Shell Extension translations</td>
+						<td>Andrea</td>
+					</tr>
+					<tr>
+						<th>1369-1372</th>
+						<td>Implemented Shell Extension translation switching (controlled from the Eraser Settings page)</td>
+						<td>Joel</td>
+					</tr>
+				</table>
+				<h3>Retirement of Eraser 5</h3>
+				<p>This release of Eraser brings about sad news for some - Eraser 5 support will end after the release of Eraser 6.0.7. Technically, since this Eraser build is the 6th release of the version 6 this is Eraser 6.0.6. Thus, the next release of Eraser will see the end of Eraser 5 support. This is mainly to ensure that critical bugs within Eraser 6 are fixed before Eraser 5 is retired.</p>
+				<p>The reason for not supporting the old code is that the old code was not designed to run on the operating systems of today and functions do not work as expected. Eraser 6 was redesigned to ensure that it will match the coding standards and fit into the software ecosystem&nbsp;like any other &quot;modern&quot; application.</p>
+				<h3>Download/Hashes				</h3>
+				<p>Download Eraser 6 from <a href="http://sourceforge.net/projects/eraser/files/Eraser%206/Eraser%206.0.6.1376.exe/download">SourceForge</a></p>
+				<ul>
+					<li>MD5:		<code class="hash">fb7e0c9fe972d840f440b927ead1c181</code></li>
+					<li>SHA-1:		<code class="hash">226ba6e58773fd5c1350dd8cc3c3cbe1f44bfa49</code></li>
+					<li>RIPEMD-160:	<code class="hash">5d13acbcdbc1a2b898f80f4e1f0752f5e1590964</code></li>
+					<li>SHA-256:	<code class="hash">8f449759c1082d49f80517ef8462e0e71b69af711dfc63d80fc48ff98<br />
+23881e7</code></li>
+					<li>SHA-512:	<code class="hash">40d9b1233302dd54cda1103aefaffd6e0afd5ff99fe54459e45343c02<br />
+058c08dfd4d42069547d85282387df43dcd72da36c72d6f410fe4957c<br />
+8ef5595a3e267f</code></li>
+					<li>Whirlpool:	<code class="hash">f375ec1ff8c9a6010b00dcd0fa36e5957f9dcf6261f5ff0a3b0cae387<br />
+7ec794ef5f6280ec71f30bb689cd1202d1060201ec51a7998fd35a712<br />
+338cb23833166a</code></li>
+				</ul>
+				<!-- InstanceEndEditable -->
+			</div>
+			<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry -->
+			<div class="article">
+				<div class="article_head">
+					<div class="title">
+						<h2><!-- InstanceBeginEditable name="LeftContentEditTitle" --><a href="../index.php">Eraser</a> 5.8.8 released<!-- InstanceEndEditable --></h2>
+						<div class="posted"><!-- InstanceBeginEditable name="LeftContentEditPoster" -->Posted by: Joel, 15<sup>th</sup> December 2009, 10:15 am +800GMT<!-- InstanceEndEditable --></div>
+					</div>
+				</div>
+
+				<!-- InstanceBeginEditable name="LeftContentEdit" -->
+				<p>Eraser 5.8.8 is released. This release is mainly meant to fix the disk corruption which results from running a first/last 2KB erase on a sparse file as well as&nbsp;to fix the context menu causing Explorer to hang when&nbsp;installed with certain software which also inserts a context menu item.</p>
+				<p><strong>Do note that the Eraser 5.x series will be retired&nbsp;(i.e. unmaintained) after the release of Eraser 6.0.7. See complete details in the Eraser 6 announcement.</strong></p>
+				<h3>Changelog</h3>
+				<table class="changelog">
+					<tr>
+						<th>Revision</th>
+						<th>Description</th>
+						<th>Author</th>
+					</tr>
+					<tr>
+						<th>1149</th>
+						<td>Do not erase sparse, compressed or encrypted files when FL2KB erasure is selected to prevent disk corruption.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1150</th>
+						<td>Fix Win32 Eraser builds to be truly Unicode builds.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1169</th>
+						<td>A few 64-bit fixes.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1168</th>
+						<td>Ensure that Eraser uses the latest runtimes packaged with the installer. This should fix hangs when using the Context menu.</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1184</th>
+						<td>Fixed the About dialog after migrating to Unicode</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1279</th>
+						<td>Sign all binaries packaged with the installer</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1292</th>
+						<td>Allow erasing UNC paths</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1293</th>
+						<td>Fixed memory exhaustion when doing a free space erase for FAT drives</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1294</th>
+						<td>Migrate non-Unicode custom erasure methods to the Unicode methods so that old custom erasure methods are preserved upon upgrade</td>
+						<td>Joel</td>
+					</tr>
+					<tr>
+						<th>1305</th>
+						<td>Ensure that Eraser is not running when the Eraser setup is run</td>
+						<td>Joel</td>
+					</tr>
+				</table>
+				<h3>Download/Hashes</h3>
+				<p><strong>Update</strong>: The previously uploaded version packaged an incorrect C++ runtime version. The new version with the correct runtime has been re-released on 16th December 2009 at 8.20PM +800GMT and the file hashes are updated below. The standalone version is unaffected. In addition, the standalone involved a corrupted Licence.txt and a new copy has been uploaded</p>
+				<ul>
+					<li><a href="http://sourceforge.net/projects/eraser/files/Eraser%205/5.8.8/Eraser%205.8.8.exe/download">Eraser 5.8.8 Installer</a></li>
+					<ul>
+						<li>MD5: <code class="hash">9d84e8184413495257abeeba44cccd81</code></li>
+						<li>SHA-1: <code class="hash">c83260be472af4cdf18a31de293f9b0cd1494548</code></li>
+						<li>RIPEMD-160: <code class="hash">772f72acfd807407ba36bc275a40fcd0684f3022</code></li>
+						<li>SHA-256: <code class="hash">a03578a6b28aff267f20a87755696a91a1d5b923e815b2989e4afcc89<br />15cc357</code></li>
+						<li>SHA-512: <code class="hash">12f3a76886d8217d47d51926247ec12a58d1ff66a7d76f0496297850a<br />171d5f22be89cf421d6d63c3f01ae9fc30e31857fa5b344bbcc783e1c<br />
+							2b5e83a7e052cb</code></li>
+						<li>Whirlpool: <code class="hash">997962f5a454f3a8e1c439569b90170eaf8c824a2e6a63c594290d57f<br />
+						5947cb013e9215ed7bf58c695f898e63f6f3a6e3b6aad17ca452d1f8c<br />
+						9afc6c40509eb1</code></li>
+					</ul>
+					<li><a href="http://sourceforge.net/projects/eraser/files/Eraser%205/5.8.8/Eraser%205.8.8%20Portable.zip/download">Eraser 5.8.8 Portable</a></li>
+					<ul>
+						<li>MD5: <code class="hash">28de51839323c419cb2523398a4421de</code></li>
+						<li>SHA-1: <code class="hash">f14f820cf7345d013d0c6a781088bb16d09df582</code></li>
+						<li>RIPEMD-160: <code class="hash">2776e28da1d377abd0aabb88cdedfe6ab3c9cf9e</code></li>
+						<li>SHA-256: <code class="hash">4253e5cb73e29e75c0c4bff006f45f554ebd7846c86e83e93b2e059c7<br />
+							f34b03f</code></li>
+						<li>SHA-512: <code class="hash">554a8375e3c94176cb174d8db66521a93beb5ee52a302300b9f86dbc3<br />
+						5cba87785cb0143885fd38f765b786de9a52fef3f482c42e6da30df75<br />
+						672acd9dafe529</code></li>
+						<li>Whirlpool: <code class="hash">af04f01d0da1441fc0ebd0f301833cef4e98b01ae310e2ed9b3d3fb75<br />
+						263e9da8ddf1e5f3d1f9fd0366c5b13da5c49178d6c0b039a252613e9<br />
+						b100892d30d0fd</code></li>
+					</ul>
+				</ul>
+				<!-- InstanceEndEditable -->
+			</div>
+			<!-- InstanceEndRepeatEntry --><!-- InstanceEndRepeat -->
+		</div>
+		<div class="right">
+			<div class="right_nav">
+				<div class="right_nav_bg">
+					<a href="../index.php"><img src="../images/btn_home.gif" id="nav1" alt="Home" onmouseover="MM_swapImage('nav1','','../images/btn_home_hov.gif',1)" onmouseout="MM_swapImgRestore()" /></a><a href="../download.php"><img src="../images/btn_download.gif" id="nav2" alt="Download" onmouseover="MM_swapImage('nav2', '', '../images/btn_download_hov.gif', 1)" onmouseout="MM_swapImgRestore()" /></a><a href="/forum/viewforum.php?f=30"><img src="../images/btn_forum.gif" id="nav3" alt="Forum" onmouseover="MM_swapImage('nav3', '', '../images/btn_forum_hov.gif', 1)" onmouseout="MM_swapImgRestore()" /></a><a href="/trac"><img src="../images/btn_trac.gif" id="nav4" alt="Trac" onmouseover="MM_swapImage('nav4', '', '../images/btn_trac_hov.gif', 1)" onmouseout="MM_swapImgRestore()" /></a>
+				</div>
+			</div>
+			
+			<div class="right_news">
+				<h3>Latest News</h3>
+				<div class="right_news_bg">
+					<h2>Eraser 6.0.9 released!</h2>
+					<div class="posted">Posted by: Joel, 6<sup>th</sup> November 2011, 1:30 pm +800GMT</div>
+					<p>It has been one year since the last release of Eraser, and we are happy to announce the release of Eraser 6.0.9. Eraser 6.0.9 only contains bug fixes and is the most stable release of the Eraser 6.0 series; users are encouraged to upgrade to this version as soon as possible. <a href="20111106.html">Read the full announcement.</a></p>
+				</div>
+			</div>
+
+			<!-- InstanceBeginRepeat name="RightContent" --><!-- InstanceEndRepeat -->
+		</div>
+	</div>
+	<div id="footer">
+		<div class="footer">
+			<div class="footer_l">
+				<p>2008-2012 &copy; Eraser</p>
+			</div>
+			<div class="footer_r">
+				<p>
+					Original Design by <a href="http://eatlon.com" target="_blank">Olle Axelsson</a><br />
+					Modified for Eraser by <a href="http://lemarquis.deviantart.com" target="_blank">Dennis van Lith</a><br />
+					HTML edits by <a href="http://joelsplace.sg" target="_blank">Joel Low</a>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="ffscrollbarfix"></div>
+</body>
+<!-- InstanceEnd --></html>
