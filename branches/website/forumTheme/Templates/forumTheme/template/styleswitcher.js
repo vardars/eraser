@@ -113,12 +113,14 @@ function setActiveStyleSheet(title)
 
 function getActiveStyleSheet()
 {
+	var links = document.getElementsByTagName('link');
 	var i, a;
 
-	for (i = 0; (a = document.getElementsByTagName('link')[i]); i++)
+	for (i = 0; (a = links[i]) != null; i++)
 	{
-		if (a.getAttribute('rel').indexOf('style') != -1 && a.getAttribute('title') && !a.disabled)
+		if (a.getAttribute('rel').indexOf('style') != -1 && a.getAttribute('title') && a.className == 'fontsize-switcher' && !a.disabled)
 		{
+			alert('answer: ' + a.getAttribute('title'))
 			return a.getAttribute('title');
 		}
 	}
@@ -144,7 +146,7 @@ function createCookie(name, value, days)
 		expires = '';
 	}
 
-	document.cookie = name + '=' + value + expires + style_cookie_settings;
+	document.cookie = name + '=' + value + expires;
 }
 
 function readCookie(name)
