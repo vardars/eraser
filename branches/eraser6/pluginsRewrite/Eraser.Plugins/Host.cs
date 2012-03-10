@@ -358,7 +358,7 @@ namespace Eraser.Plugins
 				plugins.Add(instance);
 
 			//Load the plugin, depending on type
-			bool result = instance.LoadingPolicy == LoadingPolicy.Core ?
+			bool result = instance.LoadingPolicy == PluginLoadingPolicy.Core ?
 				LoadCorePlugin(instance) : LoadNonCorePlugin(instance);
 			if (result)
 			{
@@ -381,7 +381,7 @@ namespace Eraser.Plugins
 			//is a phony
 			if (CorePlugins.Count(x => x == info.Assembly.GetName().Name) == 0)
 			{
-				info.LoadingPolicy = LoadingPolicy.None;
+				info.LoadingPolicy = PluginLoadingPolicy.None;
 				return LoadNonCorePlugin(info);
 			}
 

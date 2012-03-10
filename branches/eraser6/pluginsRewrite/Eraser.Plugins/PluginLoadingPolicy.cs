@@ -29,7 +29,7 @@ namespace Eraser.Plugins
 	/// <summary>
 	/// Loading policies applicable for a given plugin.
 	/// </summary>
-	public enum LoadingPolicy
+	public enum PluginLoadingPolicy
 	{
 		/// <summary>
 		/// The host decides the best policy for loading the plugin.
@@ -50,7 +50,7 @@ namespace Eraser.Plugins
 		/// The host must always load the plugin.
 		/// </summary>
 		/// <remarks>This policy does not have an effect when declared in the
-		/// <see cref="LoadingPolicyAttribute"/> attribute and will be equivalent
+		/// <see cref="PluginLoadingPolicyAttribute"/> attribute and will be equivalent
 		/// to <see cref="None"/>.</remarks>
 		Core
 	}
@@ -61,13 +61,13 @@ namespace Eraser.Plugins
 	/// this attribute checked at initialisation.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Assembly, Inherited = false, AllowMultiple = false)]
-	public sealed class LoadingPolicyAttribute : Attribute
+	public sealed class PluginLoadingPolicyAttribute : Attribute
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="policy">The policy used for loading the plugin.</param>
-		public LoadingPolicyAttribute(LoadingPolicy policy)
+		public PluginLoadingPolicyAttribute(PluginLoadingPolicy policy)
 		{
 			Policy = policy;
 		}
@@ -75,7 +75,7 @@ namespace Eraser.Plugins
 		/// <summary>
 		/// The loading policy to be applied to the assembly.
 		/// </summary>
-		public LoadingPolicy Policy
+		public PluginLoadingPolicy Policy
 		{
 			get;
 			set;
