@@ -120,7 +120,6 @@ function getActiveStyleSheet()
 	{
 		if (a.getAttribute('rel').indexOf('style') != -1 && a.getAttribute('title') && a.className == 'fontsize-switcher' && !a.disabled)
 		{
-			alert('answer: ' + a.getAttribute('title'))
 			return a.getAttribute('title');
 		}
 	}
