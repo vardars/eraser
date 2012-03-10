@@ -55,7 +55,7 @@ h3 {
 	margin: 0;
 }
 
-.postbody h3 {
+.postbody h3, #postingbox h3 {
 	height: auto;
 	background: none;
 	font-family: inherit;
@@ -101,8 +101,10 @@ h4 {
 		height: 115px;
 	}
 	
-	#header-nav a:link {
-		color: #BD3738;
+	#header-navbar a:link, #header-navbar a:visited {
+		border-bottom: 1px dotted #BBBBBB;
+		color: #BB0000;
+		text-decoration: none;
 	}
 	
 	#search-box {
