@@ -30,7 +30,7 @@ namespace Eraser.Plugins.ExtensionPoints
 	/// An interface class for all pseudorandom number generators used for the
 	/// random data erase passes.
 	/// </summary>
-	public abstract class Prng : IRegisterable
+	public abstract class IPrng : IRegisterable
 	{
 		public override string ToString()
 		{

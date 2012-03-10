@@ -34,7 +34,7 @@ namespace Eraser.Plugins.ExtensionPoints
 	/// inherit this class, then the method can only be used to erase abstract
 	/// streams, not unused drive space.
 	/// </summary>
-	public abstract class ErasureMethod : IRegisterable
+	public abstract class IErasureMethod : IRegisterable
 	{
 		public override string ToString()
 		{
@@ -99,7 +99,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// value for long, the function will take the minimum.</param>
 		/// <param name="prng">The PRNG source for random data.</param>
 		/// <param name="callback">The progress callback function.</param>
-		public abstract void Erase(Stream stream, long erasureLength, Prng prng,
+		public abstract void Erase(Stream stream, long erasureLength, IPrng prng,
 			ErasureMethodProgressFunction callback);
 
 		/// <summary>
@@ -127,7 +127,7 @@ namespace Eraser.Plugins.ExtensionPoints
 			passes.CopyTo(result, 0);
 
 			//Randomize.
-			Prng rand = Host.Instance.Prngs.ActivePrng;
+			IPrng rand = Host.Instance.Prngs.ActivePrng;
 			for (int i = 0; i < result.Length; ++i)
 			{
 				int val = rand.Next(result.Length - 1);
@@ -147,7 +147,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// <param name="prng">The PRNG used.</param>
 		public static void WriteRandom(byte[] buffer, object value)
 		{
-			((Prng)value).NextBytes(buffer);
+			((IPrng)value).NextBytes(buffer);
 		}
 
 		/// <summary>
@@ -181,7 +181,7 @@ namespace Eraser.Plugins.ExtensionPoints
 	/// This class adds functionality to the ErasureMethod class to erase
 	/// unused drive space.
 	/// </summary>
-	public abstract class UnusedSpaceErasureMethod : ErasureMethod
+	public abstract class UnusedSpaceErasureMethod : IErasureMethod
 	{
 		/// <summary>
 		/// This function will allow clients to erase a file in a set of files
@@ -196,7 +196,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// <param name="strm">The stream which needs to be erased.</param>
 		/// <param name="prng">The PRNG source for random data.</param>
 		/// <param name="callback">The progress callback function.</param>
-		public virtual void EraseUnusedSpace(Stream stream, Prng prng, ErasureMethodProgressFunction callback)
+		public virtual void EraseUnusedSpace(Stream stream, IPrng prng, ErasureMethodProgressFunction callback)
 		{
 			Erase(stream, long.MaxValue, prng, callback);
 		}
@@ -241,7 +241,7 @@ namespace Eraser.Plugins.ExtensionPoints
 			return targetSize * Passes;
 		}
 
-		public override void Erase(Stream stream, long erasureLength, Prng prng,
+		public override void Erase(Stream stream, long erasureLength, IPrng prng,
 			ErasureMethodProgressFunction callback)
 		{
 			//Randomize the order of the passes
@@ -323,7 +323,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// </summary>
 		/// <param name="buffer">The buffer to populate with the data to write.</param>
 		/// <param name="prng">The PRNG used for random passes.</param>
-		public void Execute(byte[] buffer, Prng prng)
+		public void Execute(byte[] buffer, IPrng prng)
 		{
 			Function(buffer, OpaqueValue == null ? prng : OpaqueValue);
 		}

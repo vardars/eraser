@@ -36,10 +36,10 @@ namespace Eraser.Plugins.ExtensionPoints
 	/// Represents a generic target of erasure
 	/// </summary>
 	[Serializable]
-	public abstract class ErasureTarget : ISerializable, IRegisterable
+	public abstract class IErasureTarget : ISerializable, IRegisterable
 	{
 		#region Serialization code
-		protected ErasureTarget(SerializationInfo info, StreamingContext context)
+		protected IErasureTarget(SerializationInfo info, StreamingContext context)
 		{
 			Guid methodGuid = (Guid)info.GetValue("Method", typeof(Guid));
 			if (methodGuid == Guid.Empty)
@@ -67,7 +67,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		protected ErasureTarget()
+		protected IErasureTarget()
 		{
 			Method = ErasureMethodRegistrar.Default;
 		}
@@ -83,7 +83,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// <summary>
 		/// The method used for erasing the file.
 		/// </summary>
-		public ErasureMethod Method
+		public IErasureMethod Method
 		{
 			get
 			{
@@ -105,7 +105,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// </summary>
 		/// <returns>The Erasure method which the target should be erased with.
 		/// This function will never return <see cref="ErasureMethodRegistrar.Default"/></returns>
-		public virtual ErasureMethod EffectiveMethod
+		public virtual IErasureMethod EffectiveMethod
 		{
 			get
 			{
@@ -123,7 +123,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// </summary>
 		/// <param name="method">The erasure method to check.</param>
 		/// <returns>True if the erasure method is supported, false otherwise.</returns>
-		public virtual bool SupportsMethod(ErasureMethod method)
+		public virtual bool SupportsMethod(IErasureMethod method)
 		{
 			return true;
 		}
@@ -139,7 +139,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// <summary>
 		/// The Progress Changed event handler of the owning task.
 		/// </summary>
-		protected internal Action<ErasureTarget, ProgressChangedEventArgs> OnProgressChanged
+		protected internal Action<IErasureTarget, ProgressChangedEventArgs> OnProgressChanged
 		{
 			get;
 			internal set;
@@ -165,14 +165,14 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// <summary>
 		/// The backing variable for the <see cref="Method"/> property.
 		/// </summary>
-		private ErasureMethod method;
+		private IErasureMethod method;
 	}
 
 	/// <summary>
 	/// Represents an interface for an abstract erasure target configuration
 	/// object.
 	/// </summary>
-	public interface IErasureTargetConfigurer : ICliConfigurer<ErasureTarget>
+	public interface IErasureTargetConfigurer : ICliConfigurer<IErasureTarget>
 	{
 	}
 }
