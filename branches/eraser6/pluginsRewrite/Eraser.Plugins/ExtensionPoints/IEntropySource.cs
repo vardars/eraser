@@ -31,7 +31,7 @@ namespace Eraser.Plugins.ExtensionPoints
 	/// Provides an abstract interface to allow multiple sources of entropy into
 	/// the EntropyPoller class.
 	/// </summary>
-	public abstract class EntropySource : IRegisterable
+	public interface IEntropySource : IRegisterable
 	{
 		/// <summary>
 		/// Constructor.

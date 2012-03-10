@@ -33,7 +33,7 @@ namespace Eraser.Plugins.ExtensionPoints
 	/// <summary>
 	/// Provides functions to handle erasures specfic to file systems.
 	/// </summary>
-	public abstract class FileSystem : IRegisterable
+	public abstract class IFileSystem : IRegisterable
 	{
 		/// <summary>
 		/// Generates a random file name with the given length.
@@ -46,7 +46,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		public static string GenerateRandomFileName(DirectoryInfo info, int length)
 		{
 			//Get the PRNG we are going to use
-			Prng prng = Host.Instance.Prngs.ActivePrng;
+			IPrng prng = Host.Instance.Prngs.ActivePrng;
 
 			//Initialsie the base name, if any.
 			string resultPrefix = info == null ? string.Empty : info.FullName +
@@ -109,7 +109,7 @@ namespace Eraser.Plugins.ExtensionPoints
 				return string.Empty;
 
 			//Find a random entry.
-			Prng prng = Host.Instance.Prngs.ActivePrng;
+			IPrng prng = Host.Instance.Prngs.ActivePrng;
 			string result = string.Empty;
 			while (result.Length == 0)
 			{
@@ -204,7 +204,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// <param name="log">The log manager instance that tracks log messages.</param>
 		/// <param name="searchCallback">The callback function for search progress.</param>
 		/// <param name="eraseCallback">The callback function for erasure progress.</param>
-		public abstract void EraseClusterTips(VolumeInfo info, ErasureMethod method,
+		public abstract void EraseClusterTips(VolumeInfo info, IErasureMethod method,
 			ClusterTipsSearchProgress searchCallback, ClusterTipsEraseProgress eraseCallback);
 
 		/// <summary>
@@ -219,7 +219,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// to store temporary files used for resident file cleaning.</param>
 		/// <param name="method">The method used to erase the files.</param>
 		public abstract void EraseOldFileSystemResidentFiles(VolumeInfo volume,
-			DirectoryInfo tempDirectory, ErasureMethod method,
+			DirectoryInfo tempDirectory, IErasureMethod method,
 			FileSystemEntriesEraseProgress callback);
 
 		/// <summary>
@@ -240,8 +240,8 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// Erases the file system object from the drive.
 		/// </summary>
 		/// <param name="info"></param>
-		public abstract void EraseFileSystemObject(StreamInfo info, ErasureMethod method,
-			ErasureMethod.ErasureMethodProgressFunction callback);
+		public abstract void EraseFileSystemObject(StreamInfo info, IErasureMethod method,
+			IErasureMethod.ErasureMethodProgressFunction callback);
 
 		//TODO: This is supposed to be in VolumeInfo!
 		/// <summary>
