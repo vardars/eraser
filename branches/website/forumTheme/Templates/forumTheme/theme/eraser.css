@@ -55,6 +55,17 @@ h3 {
 	margin: 0;
 }
 
+.postbody h3 {
+	height: auto;
+	background: none;
+	font-family: inherit;
+	font-size: auto;
+	font-weight: auto;
+	color: auto;
+	padding: auto;
+	margin: auto;
+}
+
 h4 {
 	font-size: 1.0em;
 	font-weight: bold;
