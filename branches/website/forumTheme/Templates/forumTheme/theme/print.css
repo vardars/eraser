@@ -25,11 +25,6 @@ img, .noprint, #sub-header, #sub-footer, .navbar, .box1, .divider, .signature { 
 	display: inline;
 }
 
-/* Container for the main body */
-#wrap {
-	margin: 0 2em;
-}
-
 p { font-size: 85%; }
 .copyright { font-size: 75%; }
 .page-number { float:right; width: auto; text-align: right; font-size: 75%; }
