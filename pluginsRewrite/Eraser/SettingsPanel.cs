@@ -73,8 +73,8 @@ namespace Eraser
 			
 			//The item is checked if the plugin was given the green light to load
 			item.Checked = e.Plugin.Plugin != null ||
-				(Manager.ManagerLibrary.Settings.PluginApprovals.ContainsKey(
-					e.Plugin.AssemblyInfo.Guid) && Manager.ManagerLibrary.
+				(ManagerLibrary.Instance.Settings.PluginApprovals.ContainsKey(
+					e.Plugin.AssemblyInfo.Guid) && ManagerLibrary.Instance.
 					Settings.PluginApprovals[e.Plugin.AssemblyInfo.Guid]
 				);
 
@@ -156,38 +156,38 @@ namespace Eraser
 				}
 
 			foreach (IErasureMethod method in eraseFilesMethod.Items)
-				if (method.Guid == ManagerLibrary.Settings.DefaultFileErasureMethod)
+				if (method.Guid == ManagerLibrary.Instance.Settings.DefaultFileErasureMethod)
 				{
 					eraseFilesMethod.SelectedItem = method;
 					break;
 				}
 
 			foreach (IErasureMethod method in eraseUnusedMethod.Items)
-				if (method.Guid == ManagerLibrary.Settings.DefaultUnusedSpaceErasureMethod)
+				if (method.Guid == ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod)
 				{
 					eraseUnusedMethod.SelectedItem = method;
 					break;
 				}
 
 			foreach (IPrng prng in erasePRNG.Items)
-				if (prng.Guid == ManagerLibrary.Settings.ActivePrng)
+				if (prng.Guid == Host.Instance.Prngs.ActivePrng.Guid)
 				{
 					erasePRNG.SelectedItem = prng;
 					break;
 				}
 
-			foreach (string path in ManagerLibrary.Settings.PlausibleDeniabilityFiles)
+			foreach (string path in ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles)
 				plausibleDeniabilityFiles.Items.Add(path);
 
 			uiContextMenu.Checked = settings.IntegrateWithShell;
 			lockedForceUnlock.Checked =
-				ManagerLibrary.Settings.ForceUnlockLockedFiles;
+				ManagerLibrary.Instance.Settings.ForceUnlockLockedFiles;
 			schedulerMissedImmediate.Checked =
-				ManagerLibrary.Settings.ExecuteMissedTasksImmediately;
+				ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately;
 			schedulerMissedIgnore.Checked =
-				!ManagerLibrary.Settings.ExecuteMissedTasksImmediately;
+				!ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately;
 			plausibleDeniability.Checked =
-				ManagerLibrary.Settings.PlausibleDeniability;
+				ManagerLibrary.Instance.Settings.PlausibleDeniability;
 			plausibleDeniability_CheckedChanged(plausibleDeniability, new EventArgs());
 			schedulerClearCompleted.Checked = settings.ClearCompletedTasks;
 
@@ -208,7 +208,7 @@ namespace Eraser
 				if (eraseFilesMethod.Items.Count > 0)
 				{
 					eraseFilesMethod.SelectedIndex = 0;
-					ManagerLibrary.Settings.DefaultFileErasureMethod =
+					ManagerLibrary.Instance.Settings.DefaultFileErasureMethod =
 						((IErasureMethod)eraseFilesMethod.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Default file erasure method"));
@@ -218,7 +218,7 @@ namespace Eraser
 				if (eraseUnusedMethod.Items.Count > 0)
 				{
 					eraseUnusedMethod.SelectedIndex = 0;
-					ManagerLibrary.Settings.DefaultUnusedSpaceErasureMethod =
+					ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod =
 						((IErasureMethod)eraseUnusedMethod.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Default unused space erasure method"));
@@ -228,7 +228,7 @@ namespace Eraser
 				if (erasePRNG.Items.Count > 0)
 				{
 					erasePRNG.SelectedIndex = 0;
-					ManagerLibrary.Settings.ActivePrng =
+					Host.Instance.Prngs.ActivePrngGuid =
 						((IPrng)erasePRNG.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Randomness data source"));
@@ -338,7 +338,7 @@ namespace Eraser
 		private void saveSettings_Click(object sender, EventArgs e)
 		{
 			EraserSettings settings = EraserSettings.Get();
-			ManagerSettings managerSettings = ManagerLibrary.Settings;
+			ManagerSettings managerSettings = ManagerLibrary.Instance.Settings;
 
 			//Save the settings that don't fail first.
 			managerSettings.ForceUnlockLockedFiles = lockedForceUnlock.Checked;
@@ -425,7 +425,7 @@ namespace Eraser
 				((IErasureMethod)eraseUnusedMethod.SelectedItem).Guid;
 
 			IPrng newPRNG = (IPrng)erasePRNG.SelectedItem;
-			if (newPRNG.Guid != managerSettings.ActivePrng)
+			if (newPRNG.Guid != Host.Instance.Prngs.ActivePrng.Guid)
 			{
 				MessageBox.Show(this, S._("The new randomness data source will only be used when " +
 					"the next task is run.\nCurrently running tasks will use the old source."),
@@ -433,7 +433,7 @@ namespace Eraser
 					MessageBoxDefaultButton.Button1,
 					Localisation.IsRightToLeft(this) ?
 						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
-				managerSettings.ActivePrng = newPRNG.Guid;
+				Host.Instance.Prngs.ActivePrngGuid = newPRNG.Guid;
 			}
 			
 			managerSettings.PlausibleDeniability = plausibleDeniability.Checked;
