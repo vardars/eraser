@@ -470,7 +470,7 @@ namespace Eraser
 			{
 				//Create a task with the default settings
 				Task task = new Task();
-				foreach (IErasureTarget target in TaskDragDropHelper.GetTargets(paths, recycleBin))
+				foreach (IErasureTarget target in TaskDragDropHelper.GetTargets(e))
 					task.Targets.Add(target);
 
 				//If the task has no targets, we should not go on.

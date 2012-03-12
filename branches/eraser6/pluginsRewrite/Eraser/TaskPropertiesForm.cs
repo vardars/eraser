@@ -304,12 +304,8 @@ namespace Eraser
 			if (e.Effect == DragDropEffects.None)
 				return;
 
-			//Determine our action.
-			bool recycleBin = false;
-			List<string> paths = new List<string>(TaskDragDropHelper.GetFiles(e, out recycleBin));
-
 			//Add the targets
-			foreach (IErasureTarget target in TaskDragDropHelper.GetTargets(paths, recycleBin))
+			foreach (IErasureTarget target in TaskDragDropHelper.GetTargets(e))
 			{
 				task.Targets.Add(target);
 				++data.VirtualListSize;
