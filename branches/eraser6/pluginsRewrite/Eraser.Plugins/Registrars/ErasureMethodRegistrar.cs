@@ -46,29 +46,34 @@ namespace Eraser.Plugins.Registrars
 			{
 			}
 
-			public override string Name
+			public override string ToString()
+			{
+				return Name;
+			}
+
+			public string Name
 			{
 				get { return S._("(default)"); }
 			}
 
-			public override int Passes
+			public int Passes
 			{
 				get { return 0; }
 			}
 
-			public override Guid Guid
+			public Guid Guid
 			{
 				get { return Guid.Empty; }
 			}
 
-			public override long CalculateEraseDataSize(ICollection<StreamInfo> paths, long targetSize)
+			public long CalculateEraseDataSize(ICollection<StreamInfo> paths, long targetSize)
 			{
 				throw new InvalidOperationException("The DefaultMethod class should never " +
 					"be used and should instead be replaced before execution!");
 			}
 
-			public override void Erase(Stream strm, long erasureLength, IPrng prng,
-				IErasureMethod.ErasureMethodProgressFunction callback)
+			public void Erase(Stream strm, long erasureLength, IPrng prng,
+				ErasureMethodProgressFunction callback)
 			{
 				throw new InvalidOperationException("The DefaultMethod class should never " +
 					"be used and should instead be replaced before execution!");

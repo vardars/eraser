@@ -34,5 +34,5 @@ namespace Eraser.Plugins.Registrars
 	/// </summary>
 	public class EntropySourceRegistrar : Registrar<IEntropySource>
 	{
-	};
+	}
 }
