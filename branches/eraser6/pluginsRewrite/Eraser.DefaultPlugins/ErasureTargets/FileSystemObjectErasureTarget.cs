@@ -41,7 +41,7 @@ namespace Eraser.DefaultPlugins
 	/// Class representing a tangible object (file/folder) to be erased.
 	/// </summary>
 	[Serializable]
-	public abstract class FileSystemObjectErasureTarget : ErasureTarget
+	public abstract class FileSystemObjectErasureTarget : IErasureTarget
 	{
 		#region Serialization code
 		protected FileSystemObjectErasureTarget(SerializationInfo info, StreamingContext context)
@@ -173,7 +173,7 @@ namespace Eraser.DefaultPlugins
 		/// </summary>
 		public string Path { get; set; }
 
-		public sealed override ErasureMethod EffectiveMethod
+		public sealed override IErasureMethod EffectiveMethod
 		{
 			get
 			{
@@ -240,7 +240,7 @@ namespace Eraser.DefaultPlugins
 			}
 
 			//Get the filesystem provider to handle the secure file erasures
-			FileSystem fsManager = Host.Instance.FileSystems[
+			IFileSystem fsManager = Host.Instance.FileSystems[
 				VolumeInfo.FromMountPoint(info.DirectoryName)];
 
 			bool isReadOnly = false;
@@ -248,7 +248,7 @@ namespace Eraser.DefaultPlugins
 			try
 			{
 				//Update the task progress
-				ErasureMethod method = EffectiveMethod;
+				IErasureMethod method = EffectiveMethod;
 				OnProgressChanged(this, new ProgressChangedEventArgs(progress,
 					new TaskProgressChangedEventArgs(info.FullName, 0, method.Passes)));
 
@@ -257,7 +257,7 @@ namespace Eraser.DefaultPlugins
 					info.IsReadOnly = false;
 
 				//Define the callback function for progress reporting.
-				ErasureMethod.ErasureMethodProgressFunction callback =
+				IErasureMethod.ErasureMethodProgressFunction callback =
 					delegate(long lastWritten, long totalData, int currentPass)
 					{
 						if (Task.Canceled)
@@ -302,8 +302,8 @@ namespace Eraser.DefaultPlugins
 		/// <param name="method">The erasure method to use to erase the stream.</param>
 		/// <param name="info">The stream to erase.</param>
 		/// <param name="callback">The erasure progress callback.</param>
-		private void TryEraseStream(FileSystem fsManager, ErasureMethod method, StreamInfo info,
-			ErasureMethod.ErasureMethodProgressFunction callback)
+		private void TryEraseStream(IFileSystem fsManager, IErasureMethod method, StreamInfo info,
+			IErasureMethod.ErasureMethodProgressFunction callback)
 		{
 			for (int i = 0; ; ++i)
 			{
@@ -383,7 +383,7 @@ namespace Eraser.DefaultPlugins
 				string shadowFile = null;
 				List<string> entries = new List<string>(
 					ManagerLibrary.Settings.PlausibleDeniabilityFiles);
-				Prng prng = Host.Instance.Prngs.ActivePrng;
+				IPrng prng = Host.Instance.Prngs.ActivePrng;
 				do
 				{
 					if (entries.Count == 0)
