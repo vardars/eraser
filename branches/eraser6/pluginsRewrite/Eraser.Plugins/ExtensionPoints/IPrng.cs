@@ -30,25 +30,19 @@ namespace Eraser.Plugins.ExtensionPoints
 	/// An interface class for all pseudorandom number generators used for the
 	/// random data erase passes.
 	/// </summary>
-	public abstract class IPrng : IRegisterable
+	public interface IPrng : IRegisterable
 	{
-		public override string ToString()
-		{
-			return Name;
-		}
+		/// <summary>
+		/// Returns a string that represents the current IPrng. The suggsted return
+		/// value is the Name of the IPrng.
+		/// </summary>
+		/// <returns>The string that represents the current IPrng.</returns>
+		string ToString();
 
 		/// <summary>
 		/// The name of this erase pass, used for display in the UI
 		/// </summary>
-		public abstract string Name
-		{
-			get;
-		}
-
-		/// <summary>
-		/// The GUID for this PRNG.
-		/// </summary>
-		public abstract Guid Guid
+		string Name
 		{
 			get;
 		}
@@ -61,7 +55,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// </summary>
 		/// <param name="seed">An arbitrary length of information that will be
 		/// used to reseed the PRNG</param>
-		protected internal abstract void Reseed(byte[] seed);
+		void Reseed(byte[] seed);
 
 		#region Random members
 		/// <summary>
@@ -73,12 +67,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// less than maxValue; that is, the range of return values ordinarily
 		/// includes zero but not maxValue. However, if maxValue equals zero,
 		/// maxValue is returned.</returns>
-		public int Next(int maxValue)
-		{
-			if (maxValue == 0)
-				return 0;
-			return Next() % maxValue;
-		}
+		int Next(int maxValue);
 
 		/// <summary>
 		/// Returns a random number within a specified range.
@@ -90,37 +79,27 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// <returns>A 32-bit signed integer greater than or equal to minValue and
 		/// less than maxValue; that is, the range of return values includes minValue
 		/// but not maxValue. If minValue equals maxValue, minValue is returned.</returns>
-		public int Next(int minValue, int maxValue)
-		{
-			if (minValue > maxValue)
-				throw new ArgumentOutOfRangeException("minValue", minValue,
-					"minValue is greater than maxValue");
-			else if (minValue == maxValue)
-				return minValue;
-			return (Next() % (maxValue - minValue)) + minValue;
-		}
+		int Next(int minValue, int maxValue);
 
 		/// <summary>
 		/// Returns a nonnegative random number.
 		/// </summary>
 		/// <returns>A 32-bit signed integer greater than or equal to zero and less
 		/// than System.Int32.MaxValue.</returns>
-		public int Next()
-		{
-			//Get the random-valued bytes to fill the int.
-			byte[] rand = new byte[sizeof(int)];
-			NextBytes(rand);
+		int Next();
 
-			//Then return the integral representation of the buffer.
-			return Math.Abs(BitConverter.ToInt32(rand, 0));
-		}
+		/// <summary>
+		/// Returns a random number between 0.0 and 1.0.
+		/// </summary>
+		/// <returns>A double-precision floating point number greater than or equal to 0.0,
+		/// and less than 1.0.</returns>
+		double NextDouble();
 
 		/// <summary>
 		/// Fills the elements of a specified array of bytes with random numbers.
 		/// </summary>
 		/// <param name="buffer">An array of bytes to contain random numbers.</param>
-		public abstract void NextBytes(byte[] buffer);
+		void NextBytes(byte[] buffer);
 		#endregion
 	}
-
 }

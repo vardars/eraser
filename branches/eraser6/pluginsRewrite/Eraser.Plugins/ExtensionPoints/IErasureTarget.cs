@@ -35,47 +35,17 @@ namespace Eraser.Plugins.ExtensionPoints
 	/// <summary>
 	/// Represents a generic target of erasure
 	/// </summary>
-	[Serializable]
-	public abstract class IErasureTarget : ISerializable, IRegisterable
+	public interface IErasureTarget : ISerializable, IRegisterable
 	{
-		#region Serialization code
-		protected IErasureTarget(SerializationInfo info, StreamingContext context)
-		{
-			Guid methodGuid = (Guid)info.GetValue("Method", typeof(Guid));
-			if (methodGuid == Guid.Empty)
-				Method = ErasureMethodRegistrar.Default;
-			else
-				Method = Host.Instance.ErasureMethods[methodGuid];
-		}
-
-		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
-		{
-			info.AddValue("Method", Method.Guid);
-		}
-		#endregion
-
-		#region IRegisterable Members
-
-		public abstract Guid Guid
-		{
-			get;
-		}
-
-		#endregion
-
 		/// <summary>
-		/// Constructor.
+		/// Retrieves the text to display representing this target.
 		/// </summary>
-		protected IErasureTarget()
-		{
-			Method = ErasureMethodRegistrar.Default;
-		}
+		string ToString();
 
 		/// <summary>
 		/// The name of the type of the Erasure target.
 		/// </summary>
-		public abstract string Name
+		string Name
 		{
 			get;
 		}
@@ -83,38 +53,10 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// <summary>
 		/// The method used for erasing the file.
 		/// </summary>
-		public IErasureMethod Method
+		IErasureMethod Method
 		{
-			get
-			{
-				return method;
-			}
-			set
-			{
-				if (!SupportsMethod(value))
-					throw new ArgumentException(S._("The selected erasure method is not " +
-						"supported for this erasure target."));
-				method = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets the effective erasure method for the current target (i.e., returns
-		/// the correct erasure method for cases where the <see cref="Method"/>
-		/// property is <see cref="ErasureMethodRegistrar.Default"/>
-		/// </summary>
-		/// <returns>The Erasure method which the target should be erased with.
-		/// This function will never return <see cref="ErasureMethodRegistrar.Default"/></returns>
-		public virtual IErasureMethod EffectiveMethod
-		{
-			get
-			{
-				if (Method != ErasureMethodRegistrar.Default)
-					return Method;
-
-				throw new InvalidOperationException("The effective method of the erasure " +
-					"target cannot be ErasureMethodRegistrar.Default");
-			}
+			get;
+			set;
 		}
 
 		/// <summary>
@@ -123,27 +65,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// </summary>
 		/// <param name="method">The erasure method to check.</param>
 		/// <returns>True if the erasure method is supported, false otherwise.</returns>
-		public virtual bool SupportsMethod(IErasureMethod method)
-		{
-			return true;
-		}
-
-		/// <summary>
-		/// Retrieves the text to display representing this target.
-		/// </summary>
-		public abstract string UIText
-		{
-			get;
-		}
-
-		/// <summary>
-		/// The Progress Changed event handler of the owning task.
-		/// </summary>
-		protected internal Action<IErasureTarget, ProgressChangedEventArgs> OnProgressChanged
-		{
-			get;
-			internal set;
-		}
+		bool SupportsMethod(IErasureMethod method);
 
 		/// <summary>
 		/// Gets an <see cref="IErasureTargetConfigurer"/> which contains settings for
@@ -152,7 +74,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// <remarks>The result should be able to be passed to the <see cref="Configure"/>
 		/// function, and settings for this task will be according to the returned
 		/// control.</remarks>
-		public abstract IErasureTargetConfigurer Configurer
+		IErasureTargetConfigurer Configurer
 		{
 			get;
 		}
@@ -160,12 +82,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// <summary>
 		/// Executes the given target.
 		/// </summary>
-		public abstract void Execute();
-
-		/// <summary>
-		/// The backing variable for the <see cref="Method"/> property.
-		/// </summary>
-		private IErasureMethod method;
+		void Execute();
 	}
 
 	/// <summary>

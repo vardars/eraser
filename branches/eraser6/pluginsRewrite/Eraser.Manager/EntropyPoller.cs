@@ -82,7 +82,7 @@ namespace Eraser.Manager
 			{
 				st.Start();
 				lock (EntropySources)
-					foreach (EntropySource src in EntropySources)
+					foreach (IEntropySource src in EntropySources)
 					{
 						byte[] entropy = src.GetEntropy();
 						AddEntropy(entropy);
@@ -111,7 +111,7 @@ namespace Eraser.Manager
 		/// Adds a new Entropy Source to the Poller.
 		/// </summary>
 		/// <param name="source">The EntropySource object to add.</param>
-		public void AddEntropySource(EntropySource source)
+		public void AddEntropySource(IEntropySource source)
 		{
 			lock (EntropySources)
 				EntropySources.Add(source);
@@ -323,6 +323,6 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The list of entropy sources registered with the Poller.
 		/// </summary>
-		private List<EntropySource> EntropySources = new List<EntropySource>();
+		private List<IEntropySource> EntropySources = new List<IEntropySource>();
 	}
 }

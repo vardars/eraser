@@ -132,16 +132,4 @@
   <data name="The file system on the drive {0} is not supported." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="{0} (1 pass)" xml:space="preserve">
-    <value>(Untranslated)</value>
-  </data>
-  <data name="{0} ({1} passes)" xml:space="preserve">
-    <value>(Untranslated)</value>
-  </data>
-  <data name="Random" xml:space="preserve">
-    <value>(Untranslated)</value>
-  </data>
-  <data name="The selected erasure method is not supported for this erasure target." xml:space="preserve">
-    <value>(Untranslated)</value>
-  </data>
 </root>

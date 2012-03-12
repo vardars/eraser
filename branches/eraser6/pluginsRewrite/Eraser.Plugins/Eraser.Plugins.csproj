@@ -57,7 +57,7 @@
     <Compile Include="ExtensionPoints\IErasureMethod.cs" />
     <Compile Include="ExtensionPoints\IErasureTarget.cs" />
     <Compile Include="ExtensionPoints\IFileSystem.cs" />
-    <Compile Include="ExtensionPoints\Prng.cs" />
+    <Compile Include="ExtensionPoints\IPrng.cs" />
     <Compile Include="IConfigurer.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="IRegistrar.cs" />
