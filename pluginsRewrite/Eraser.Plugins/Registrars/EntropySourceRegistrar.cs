@@ -32,7 +32,7 @@ namespace Eraser.Plugins.Registrars
 	/// A class which manages all of the instances of the EntropySources
 	/// available. Plugins could register their entropy sources via this class.
 	/// </summary>
-	public class EntropySourceRegistrar : Registrar<EntropySource>
+	public class EntropySourceRegistrar : Registrar<IEntropySource>
 	{
 	};
 }

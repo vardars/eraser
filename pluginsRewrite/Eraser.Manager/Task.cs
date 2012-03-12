@@ -125,16 +125,16 @@ namespace Eraser.Manager
 				{
 					//Simpler case, small set of data.
 					foreach (IErasureTarget tgt in Targets)
-						result += S._("{0}, ", tgt.UIText);
+						result += S._("{0}, ", tgt);
 
 					return result.Remove(result.Length - 2);
 				}
 				else
 				{
 					//Ok, we've quite a few entries, get the first, the mid and the end.
-					result = S._("{0}, ", Targets[0].UIText);
-					result += S._("{0}, ", Targets[Targets.Count / 2].UIText);
-					result += Targets[Targets.Count - 1].UIText;
+					result = S._("{0}, ", Targets[0]);
+					result += S._("{0}, ", Targets[Targets.Count / 2]);
+					result += Targets[Targets.Count - 1];
 
 					return S._("{0} and {1} other targets", result, Targets.Count - 3);
 				}
