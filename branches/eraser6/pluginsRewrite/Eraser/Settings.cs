@@ -27,20 +27,23 @@ using System.Linq;
 
 using System.IO;
 using System.Globalization;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Win32;
 
 using Eraser.Util;
+using Eraser.Plugins;
 
 namespace Eraser
 {
-	internal class Settings : Manager.SettingsManager
+	internal class Settings
 	{
 		/// <summary>
 		/// Registry-based storage backing for the Settings class.
 		/// </summary>
-		private sealed class RegistrySettings : Manager.Settings, IDisposable
+		private sealed class RegistrySettings : PersistentStore, IDisposable
 		{
 			/// <summary>
 			/// Constructor.
@@ -168,35 +171,6 @@ namespace Eraser
 			/// The registry key where the data is stored.
 			/// </summary>
 			private RegistryKey Key;
-		}
-
-		public override void Save()
-		{
-		}
-
-		protected override Manager.Settings GetSettings(Guid guid)
-		{
-			RegistryKey eraserKey = null;
-
-			try
-			{
-				//Open the registry key containing the settings
-				eraserKey = Registry.CurrentUser.OpenSubKey(Program.SettingsPath, true);
-				if (eraserKey == null)
-					eraserKey = Registry.CurrentUser.CreateSubKey(Program.SettingsPath);
-
-				RegistryKey pluginsKey = eraserKey.OpenSubKey(guid.ToString(), true);
-				if (pluginsKey == null)
-					pluginsKey = eraserKey.CreateSubKey(guid.ToString());
-
-				//Return the Settings object.
-				return new RegistrySettings(guid, pluginsKey);
-			}
-			finally
-			{
-				if (eraserKey != null)
-					eraserKey.Close();
-			}
 		}
 	}
 
@@ -509,7 +483,9 @@ namespace Eraser
 		/// </summary>
 		private EraserSettings()
 		{
-			settings = Manager.ManagerLibrary.Instance.SettingsManager.ModuleSettings;
+			settings = Host.Instance.PersistentStore.GetValue<PersistentStore>(
+				new Guid(((GuidAttribute)Assembly.GetCallingAssembly().
+					GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value).ToString());
 		}
 
 		/// <summary>
@@ -610,7 +586,7 @@ namespace Eraser
 		/// <summary>
 		/// The data store behind the object.
 		/// </summary>
-		private Manager.Settings settings;
+		private PersistentStore settings;
 
 		/// <summary>
 		/// The global instance of the settings class.

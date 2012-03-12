@@ -49,8 +49,8 @@ namespace Eraser
 
 			//For new plugins, register the callback.
 			Host.Instance.PluginLoaded += OnNewPluginLoaded;
-			ErasureMethodRegistrar.Registered += OnMethodRegistered;
-			ErasureMethodRegistrar.Unregistered += OnMethodUnregistered;
+			Host.Instance.ErasureMethods.Registered += OnMethodRegistered;
+			Host.Instance.ErasureMethods.Unregistered += OnMethodUnregistered;
 
 			//Load the values
 			LoadPluginDependantValues();
@@ -133,15 +133,15 @@ namespace Eraser
 				uiLanguage.Items.Add(culture);
 
 			//Refresh the list of erasure methods
-			foreach (ErasureMethod method in ErasureMethodRegistrar)
+			foreach (IErasureMethod method in Host.Instance.ErasureMethods)
 			{
 				eraseFilesMethod.Items.Add(method);
-				if (method is UnusedSpaceErasureMethod)
+				if (method is IUnusedSpaceErasureMethod)
 					eraseUnusedMethod.Items.Add(method);
 			}
 
 			//Refresh the list of PRNGs
-			foreach (Prng prng in PrngRegistrar)
+			foreach (IPrng prng in Host.Instance.Prngs)
 				erasePRNG.Items.Add(prng);
 		}
 
@@ -209,7 +209,7 @@ namespace Eraser
 				{
 					eraseFilesMethod.SelectedIndex = 0;
 					ManagerLibrary.Settings.DefaultFileErasureMethod =
-						((ErasureMethod)eraseFilesMethod.SelectedItem).Guid;
+						((IErasureMethod)eraseFilesMethod.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Default file erasure method"));
 			}
@@ -219,7 +219,7 @@ namespace Eraser
 				{
 					eraseUnusedMethod.SelectedIndex = 0;
 					ManagerLibrary.Settings.DefaultUnusedSpaceErasureMethod =
-						((ErasureMethod)eraseUnusedMethod.SelectedItem).Guid;
+						((IErasureMethod)eraseUnusedMethod.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Default unused space erasure method"));
 			}
@@ -229,7 +229,7 @@ namespace Eraser
 				{
 					erasePRNG.SelectedIndex = 0;
 					ManagerLibrary.Settings.ActivePrng =
-						((Prng)erasePRNG.SelectedItem).Guid;
+						((IPrng)erasePRNG.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Randomness data source"));
 			}
@@ -420,11 +420,11 @@ namespace Eraser
 			settings.IntegrateWithShell = uiContextMenu.Checked;
 
 			managerSettings.DefaultFileErasureMethod =
-				((ErasureMethod)eraseFilesMethod.SelectedItem).Guid;
+				((IErasureMethod)eraseFilesMethod.SelectedItem).Guid;
 			managerSettings.DefaultUnusedSpaceErasureMethod =
-				((ErasureMethod)eraseUnusedMethod.SelectedItem).Guid;
+				((IErasureMethod)eraseUnusedMethod.SelectedItem).Guid;
 
-			Prng newPRNG = (Prng)erasePRNG.SelectedItem;
+			IPrng newPRNG = (IPrng)erasePRNG.SelectedItem;
 			if (newPRNG.Guid != managerSettings.ActivePrng)
 			{
 				MessageBox.Show(this, S._("The new randomness data source will only be used when " +

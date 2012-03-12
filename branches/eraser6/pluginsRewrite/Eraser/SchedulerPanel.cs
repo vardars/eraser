@@ -33,7 +33,9 @@ using System.ComponentModel;
 using Eraser.Manager;
 using Eraser.Util;
 using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
 using Microsoft.Samples;
+
 using ProgressChangedEventArgs = Eraser.Plugins.ProgressChangedEventArgs;
 
 namespace Eraser
@@ -228,7 +230,7 @@ namespace Eraser
 			}
 
 			//Update the progress bar
-			ErasureTarget target = (ErasureTarget)sender;
+			IErasureTarget target = (IErasureTarget)sender;
 			SteppedProgressManager progress = target.Task.Progress;
 			schedulerProgress.Style = progress.ProgressIndeterminate ?
 				ProgressBarStyle.Marquee : ProgressBarStyle.Continuous;
@@ -468,7 +470,7 @@ namespace Eraser
 			{
 				//Create a task with the default settings
 				Task task = new Task();
-				foreach (ErasureTarget target in TaskDragDropHelper.GetTargets(paths, recycleBin))
+				foreach (IErasureTarget target in TaskDragDropHelper.GetTargets(paths, recycleBin))
 					task.Targets.Add(target);
 
 				//If the task has no targets, we should not go on.

@@ -33,7 +33,9 @@ using System.IO;
 using Eraser.Manager;
 using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
+using Eraser.Plugins;
 using Eraser.Plugins.ExtensionPoints;
+using Eraser.Plugins.Registrars;
 
 namespace Eraser
 {
@@ -66,14 +68,14 @@ namespace Eraser
 			Theming.ApplyTheme(this);
 
 			//Insert the types of erasure targets
-			foreach (IErasureTarget target in ManagerLibrary.Instance.ErasureTargetRegistrar)
+			foreach (IErasureTarget target in Host.Instance.ErasureTargetFactories)
 				typeCmb.Items.Add(new ErasureType(target));
 			if (typeCmb.Items.Count != 0) 
 				typeCmb.SelectedIndex = 0;
 
 			//And the methods list
 			methodCmb.Items.Add(ErasureMethodRegistrar.Default);
-			foreach (IErasureMethod method in ManagerLibrary.Instance.ErasureMethodRegistrar)
+			foreach (IErasureMethod method in Host.Instance.ErasureTargetFactories)
 				methodCmb.Items.Add(method);
 			if (methodCmb.Items.Count != 0)
 				methodCmb.SelectedIndex = 0;
