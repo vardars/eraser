@@ -33,6 +33,9 @@ using System.Globalization;
 using Eraser.Manager;
 using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
+using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
+using Eraser.Plugins.Registrars;
 
 namespace Eraser
 {
@@ -205,10 +208,10 @@ namespace Eraser
 		/// <param name="e">Event argument.</param>
 		private void data_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
 		{
-			ErasureTarget target = task.Targets[e.ItemIndex];
-			FileInfo info = new FileInfo(target.UIText);
+			IErasureTarget target = task.Targets[e.ItemIndex];
+			FileInfo info = new FileInfo(target.ToString());
 			e.Item = new ListViewItem(info.GetCompactPath(data.Columns[0].Width, data.Font));
-			e.Item.ToolTipText = target.UIText;
+			e.Item.ToolTipText = target.ToString();
 
 			e.Item.SubItems.Add(target.Method == ErasureMethodRegistrar.Default ?
 				S._("(default)") : target.Method.Name);
@@ -225,7 +228,7 @@ namespace Eraser
 			{
 				if (form.ShowDialog() == DialogResult.OK)
 				{
-					ErasureTarget target = form.Target;
+					IErasureTarget target = form.Target;
 					task.Targets.Add(target);
 					errorProvider.Clear();
 
@@ -247,7 +250,7 @@ namespace Eraser
 
 				if (form.ShowDialog() == DialogResult.OK)
 				{
-					ErasureTarget target = form.Target;
+					IErasureTarget target = form.Target;
 					task.Targets.RemoveAt(data.SelectedIndices[0]);
 					task.Targets.Insert(data.SelectedIndices[0], target);
 				}
@@ -306,7 +309,7 @@ namespace Eraser
 			List<string> paths = new List<string>(TaskDragDropHelper.GetFiles(e, out recycleBin));
 
 			//Add the targets
-			foreach (ErasureTarget target in TaskDragDropHelper.GetTargets(paths, recycleBin))
+			foreach (IErasureTarget target in TaskDragDropHelper.GetTargets(paths, recycleBin))
 			{
 				task.Targets.Add(target);
 				++data.VirtualListSize;

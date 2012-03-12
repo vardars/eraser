@@ -40,7 +40,6 @@ using ComLib.Arguments;
 using Eraser.Manager;
 using Eraser.Util;
 using Eraser.Plugins;
-using Eraser.Plugins.Registrars;
 using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser
@@ -363,7 +362,7 @@ namespace Eraser
 		{
 			//Get the command-line help for every erasure target
 			StringBuilder targets = new StringBuilder();
-			foreach (IErasureTarget target in ErasureTargetRegistrar)
+			foreach (IErasureTarget target in Host.Instance.ErasureTargetFactories)
 			{
 				//Replace all \r\n with \n, and split into lines
 				string[] helpText = target.Configurer.Help().Replace("\r\n", "\n").Split('\r', '\n');
@@ -380,9 +379,9 @@ namespace Eraser
 			methods.AppendLine("    " + new string('-', 75));
 
 			//Generate the list of erasure methods.
-			foreach (ErasureMethod method in ErasureMethodRegistrar)
+			foreach (IErasureMethod method in Host.Instance.ErasureTargetFactories)
 			{
-				methods.AppendFormat(methodFormat, (method is UnusedSpaceErasureMethod) ?
+				methods.AppendFormat(methodFormat, (method is IUnusedSpaceErasureMethod) ?
 					"U" : "", method.Name, method.Guid);
 			}
 
@@ -508,7 +507,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 				IErasureTarget selectedTarget = null;
 
 				//Iterate over every defined erasure target
-				foreach (IErasureTarget target in ErasureTargetRegistrar)
+				foreach (IErasureTarget target in Host.Instance.ErasureTargetFactories)
 				{
 					//See if this argument can be handled by the target's configurer
 					IErasureTargetConfigurer configurer = target.Configurer;
@@ -555,14 +554,14 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		{
 			try
 			{
-				return ErasureMethodRegistrar[new Guid(param)];
+				return Host.Instance.ErasureMethods[new Guid(param)];
 			}
 			catch (FormatException)
 			{
 				//Invalid GUID. Check every registered erasure method for the name
 				string upperParam = param.ToUpperInvariant();
 				IErasureMethod result = null;
-				foreach (ErasureMethod method in ErasureMethodRegistrar)
+				foreach (ErasureMethod method in Host.Instance.ErasureMethods)
 				{
 					if (method.Name.ToUpperInvariant() == upperParam)
 						if (result == null)
@@ -853,6 +852,8 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// Path to the Eraser settings key (relative to HKCU)
 		/// </summary>
 		public const string SettingsPath = @"SOFTWARE\Eraser\Eraser 6";
+
+		public static IEnumerable<IErasureTarget> ErasureTargetRegistrar { get; set; }
 	}
 
 	class Win32Window : IWin32Window
