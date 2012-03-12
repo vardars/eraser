@@ -24,6 +24,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using System.Windows.Forms;
+
 namespace Eraser.Plugins
 {
 	/// <summary>
@@ -67,5 +69,21 @@ namespace Eraser.Plugins
 		/// <param name="argument">The argument on the command line.</param>
 		/// <returns>True if the argument is accepted by the configurer.</returns>
 		bool ProcessArgument(string argument);
+	}
+
+	/// <summary>
+	/// Represents an object which is able to configure a given instance of
+	/// <typeparamref name="T"/> from a Drag-and-Drop operation.
+	/// </summary>
+	/// <typeparam name="T">The type to configure</typeparam>
+	public interface IDragAndDropConfigurer<T> : IConfigurer<T>
+	{
+		/// <summary>
+		/// Sets the configuration of the current configurer from the provided
+		/// Drag-and-Drop event argument.
+		/// </summary>
+		/// <param name="e">The event argument.</param>
+		/// <returns>A collection of T based on the drag-and-drop event.</returns>
+		ICollection<T> ProcessArgument(DragEventArgs e);
 	}
 }
