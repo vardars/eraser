@@ -30,7 +30,7 @@ using System.Drawing;
 
 using Eraser.Util;
 using Eraser.Manager;
-using Eraser.DefaultPlugins;
+using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser
 {
@@ -81,9 +81,9 @@ namespace Eraser
 			return files;
 		}
 
-		public static ICollection<ErasureTarget> GetTargets(ICollection<string> paths, bool recycleBin)
+		public static ICollection<IErasureTarget> GetTargets(ICollection<string> paths, bool recycleBin)
 		{
-			ICollection<ErasureTarget> result = new List<ErasureTarget>();
+			ICollection<IErasureTarget> result = new List<IErasureTarget>();
 			foreach (string path in paths)
 			{
 				//If the path doesn't exist, skip the file

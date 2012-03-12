@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
+using System.Text;
 
 using System.Reflection;
 using System.Diagnostics;
@@ -38,8 +39,9 @@ using ComLib.Arguments;
 
 using Eraser.Manager;
 using Eraser.Util;
-using Eraser.DefaultPlugins;
-using System.Text;
+using Eraser.Plugins;
+using Eraser.Plugins.Registrars;
+using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser
 {
@@ -361,7 +363,7 @@ namespace Eraser
 		{
 			//Get the command-line help for every erasure target
 			StringBuilder targets = new StringBuilder();
-			foreach (ErasureTarget target in ManagerLibrary.Instance.ErasureTargetRegistrar)
+			foreach (IErasureTarget target in ErasureTargetRegistrar)
 			{
 				//Replace all \r\n with \n, and split into lines
 				string[] helpText = target.Configurer.Help().Replace("\r\n", "\n").Split('\r', '\n');
@@ -378,7 +380,7 @@ namespace Eraser
 			methods.AppendLine("    " + new string('-', 75));
 
 			//Generate the list of erasure methods.
-			foreach (ErasureMethod method in ManagerLibrary.Instance.ErasureMethodRegistrar)
+			foreach (ErasureMethod method in ErasureMethodRegistrar)
 			{
 				methods.AppendFormat(methodFormat, (method is UnusedSpaceErasureMethod) ?
 					"U" : "", method.Name, method.Guid);
@@ -478,7 +480,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			Task task = new Task();
 
 			//Get the erasure method the user wants to use
-			ErasureMethod method = string.IsNullOrEmpty(arguments.ErasureMethod) ?
+			IErasureMethod method = string.IsNullOrEmpty(arguments.ErasureMethod) ?
 				ErasureMethodRegistrar.Default :
 				ErasureMethodFromNameOrGuid(arguments.ErasureMethod);
 
@@ -503,10 +505,10 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			//Parse the rest of the command line parameters as target expressions.
 			foreach (string argument in arguments.PositionalArguments)
 			{
-				ErasureTarget selectedTarget = null;
+				IErasureTarget selectedTarget = null;
 
 				//Iterate over every defined erasure target
-				foreach (ErasureTarget target in ManagerLibrary.Instance.ErasureTargetRegistrar)
+				foreach (IErasureTarget target in ErasureTargetRegistrar)
 				{
 					//See if this argument can be handled by the target's configurer
 					IErasureTargetConfigurer configurer = target.Configurer;
@@ -549,18 +551,18 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 				eraserClient.Tasks.Add(task);
 		}
 
-		private static ErasureMethod ErasureMethodFromNameOrGuid(string param)
+		private static IErasureMethod ErasureMethodFromNameOrGuid(string param)
 		{
 			try
 			{
-				return ManagerLibrary.Instance.ErasureMethodRegistrar[new Guid(param)];
+				return ErasureMethodRegistrar[new Guid(param)];
 			}
 			catch (FormatException)
 			{
 				//Invalid GUID. Check every registered erasure method for the name
 				string upperParam = param.ToUpperInvariant();
-				ErasureMethod result = null;
-				foreach (ErasureMethod method in ManagerLibrary.Instance.ErasureMethodRegistrar)
+				IErasureMethod result = null;
+				foreach (ErasureMethod method in ErasureMethodRegistrar)
 				{
 					if (method.Name.ToUpperInvariant() == upperParam)
 						if (result == null)
