@@ -27,6 +27,8 @@ using System.Text;
 using System.Windows.Forms;
 
 using Eraser.Manager;
+using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
 using Eraser.Util;
 using System.Globalization;
 
@@ -77,7 +79,7 @@ namespace Eraser
 				return;
 			}
 
-			ErasureTarget target = sender as ErasureTarget;
+			IErasureTarget target = sender as IErasureTarget;
 			if (target == null)
 				return;
 

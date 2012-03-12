@@ -32,9 +32,9 @@ using System.ComponentModel;
 
 using Eraser.Manager;
 using Eraser.Util;
-using Eraser.DefaultPlugins;
+using Eraser.Plugins;
 using Microsoft.Samples;
-using ProgressChangedEventArgs = Eraser.Util.ProgressChangedEventArgs;
+using ProgressChangedEventArgs = Eraser.Plugins.ProgressChangedEventArgs;
 
 namespace Eraser
 {

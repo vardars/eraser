@@ -33,9 +33,11 @@ using System.Globalization;
 using System.Threading;
 
 using Eraser.Manager;
-using Eraser.Plugins;
 using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
+using Eraser.Plugins;
+using Eraser.Plugins.ExtensionPoints;
+using Eraser.Plugins.Registrars;
 
 namespace Eraser
 {
@@ -47,8 +49,8 @@ namespace Eraser
 
 			//For new plugins, register the callback.
 			Host.Instance.PluginLoaded += OnNewPluginLoaded;
-			ManagerLibrary.Instance.ErasureMethodRegistrar.Registered += OnMethodRegistered;
-			ManagerLibrary.Instance.ErasureMethodRegistrar.Unregistered += OnMethodUnregistered;
+			ErasureMethodRegistrar.Registered += OnMethodRegistered;
+			ErasureMethodRegistrar.Unregistered += OnMethodUnregistered;
 
 			//Load the values
 			LoadPluginDependantValues();
@@ -88,24 +90,24 @@ namespace Eraser
 
 		private void OnMethodRegistered(object sender, EventArgs e)
 		{
-			ErasureMethod method = (ErasureMethod)sender;
+			IErasureMethod method = (IErasureMethod)sender;
 			eraseFilesMethod.Items.Add(method);
-			if (method is UnusedSpaceErasureMethod)
+			if (method is IUnusedSpaceErasureMethod)
 				eraseUnusedMethod.Items.Add(method);
 		}
 
 		private void OnMethodUnregistered(object sender, EventArgs e)
 		{
-			ErasureMethod method = (ErasureMethod)sender;
-			foreach (object obj in eraseFilesMethod.Items)
-				if (((ErasureMethod)obj).Guid == method.Guid)
+			IErasureMethod method = (IErasureMethod)sender;
+			foreach (IErasureMethod obj in eraseFilesMethod.Items)
+				if (obj.Guid == method.Guid)
 				{
 					eraseFilesMethod.Items.Remove(obj);
 					break;
 				}
 
-			foreach (object obj in eraseUnusedMethod.Items)
-				if (((ErasureMethod)obj).Guid == method.Guid)
+			foreach (IErasureMethod obj in eraseUnusedMethod.Items)
+				if (obj.Guid == method.Guid)
 				{
 					eraseUnusedMethod.Items.Remove(obj);
 					break;
@@ -131,7 +133,7 @@ namespace Eraser
 				uiLanguage.Items.Add(culture);
 
 			//Refresh the list of erasure methods
-			foreach (ErasureMethod method in ManagerLibrary.Instance.ErasureMethodRegistrar)
+			foreach (ErasureMethod method in ErasureMethodRegistrar)
 			{
 				eraseFilesMethod.Items.Add(method);
 				if (method is UnusedSpaceErasureMethod)
@@ -139,7 +141,7 @@ namespace Eraser
 			}
 
 			//Refresh the list of PRNGs
-			foreach (Prng prng in ManagerLibrary.Instance.PrngRegistrar)
+			foreach (Prng prng in PrngRegistrar)
 				erasePRNG.Items.Add(prng);
 		}
 
@@ -153,21 +155,21 @@ namespace Eraser
 					break;
 				}
 
-			foreach (ErasureMethod method in eraseFilesMethod.Items)
+			foreach (IErasureMethod method in eraseFilesMethod.Items)
 				if (method.Guid == ManagerLibrary.Settings.DefaultFileErasureMethod)
 				{
 					eraseFilesMethod.SelectedItem = method;
 					break;
 				}
 
-			foreach (ErasureMethod method in eraseUnusedMethod.Items)
+			foreach (IErasureMethod method in eraseUnusedMethod.Items)
 				if (method.Guid == ManagerLibrary.Settings.DefaultUnusedSpaceErasureMethod)
 				{
 					eraseUnusedMethod.SelectedItem = method;
 					break;
 				}
 
-			foreach (Prng prng in erasePRNG.Items)
+			foreach (IPrng prng in erasePRNG.Items)
 				if (prng.Guid == ManagerLibrary.Settings.ActivePrng)
 				{
 					erasePRNG.SelectedItem = prng;

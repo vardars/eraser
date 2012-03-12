@@ -35,8 +35,10 @@ using System.Net.Mime;
 using System.Globalization;
 
 using Eraser.Util;
+using Eraser.Plugins;
 
 using DoWorkEventArgs = System.ComponentModel.DoWorkEventArgs;
+using ProgressChangedEventHandler = Eraser.Plugins.ProgressChangedEventHandler;
 using RunWorkerCompletedEventArgs = System.ComponentModel.RunWorkerCompletedEventArgs;
 
 namespace Eraser
@@ -524,7 +526,7 @@ namespace Eraser
 	/// </summary>
 	public static class DownloadManager
 	{
-		public static IList<DownloadInfo> GetDownloads(Eraser.Util.ProgressChangedEventHandler handler)
+		public static IList<DownloadInfo> GetDownloads(ProgressChangedEventHandler handler)
 		{
 			WebRequest.DefaultCachePolicy = new HttpRequestCachePolicy(
 				HttpRequestCacheLevel.Revalidate);
@@ -690,7 +692,7 @@ namespace Eraser
 		/// <summary>
 		/// Downloads the file to disk, storing the path into the DownloadedFile field.
 		/// </summary>
-		public void Download(Eraser.Util.ProgressChangedEventHandler handler)
+		public void Download(ProgressChangedEventHandler handler)
 		{
 			if (DownloadedFile != null && DownloadedFile.Length > 0)
 				throw new InvalidOperationException("The Download method cannot be called " +
