@@ -47,6 +47,69 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// The default file erasure method. This is a GUID since methods are
+		/// implemented through plugins and plugins may not be loaded and missing
+		/// references may follow.
+		/// </summary>
+		public Guid DefaultFileErasureMethod
+		{
+			get
+			{
+				//If the user did not define anything for this field, check all plugins
+				//and use the method which was declared by us to be the highest
+				//priority default
+				Guid result = Store.GetValue<Guid>("DefaultFileErasureMethod");
+				if (result == Guid.Empty)
+					result = new Guid("{1407FC4E-FEFF-4375-B4FB-D7EFBB7E9922}");
+
+				return result;
+			}
+			set
+			{
+				Store.SetValue("DefaultFileErasureMethod", value);
+			}
+		}
+
+		/// <summary>
+		/// The default unused space erasure method. This is a GUID since methods
+		/// are implemented through plugins and plugins may not be loaded and
+		/// missing references may follow.
+		/// </summary>
+		public Guid DefaultUnusedSpaceErasureMethod
+		{
+			get
+			{
+				Guid result = Store.GetValue<Guid>("DefaultUnusedSpaceErasureMethod");
+				if (result == Guid.Empty)
+					result = new Guid("{BF8BA267-231A-4085-9BF9-204DE65A6641}");
+				return result;
+			}
+			set
+			{
+				Store.SetValue("DefaultUnusedSpaceErasureMethod", value);
+			}
+		}
+
+		/// <summary>
+		/// The PRNG used. This is a GUID since PRNGs are implemented through
+		/// plugins and plugins may not be loaded and missing references may follow.
+		/// </summary>
+		public Guid ActivePrng
+		{
+			get
+			{
+				Guid result = Store.GetValue<Guid>("ActivePRNG");
+				if (result == Guid.Empty)
+					result = new Guid("{6BF35B8E-F37F-476e-B6B2-9994A92C3B0C}");
+				return result;
+			}
+			set
+			{
+				Store.SetValue("ActivePRNG", value);
+			}
+		}
+
+		/// <summary>
 		/// Whether files which are locked when being erased should be forcibly
 		/// unlocked for erasure.
 		/// </summary>
