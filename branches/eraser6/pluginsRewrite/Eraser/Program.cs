@@ -41,6 +41,7 @@ using Eraser.Manager;
 using Eraser.Util;
 using Eraser.Plugins;
 using Eraser.Plugins.ExtensionPoints;
+using Eraser.Plugins.Registrars;
 
 namespace Eraser
 {
@@ -561,7 +562,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 				//Invalid GUID. Check every registered erasure method for the name
 				string upperParam = param.ToUpperInvariant();
 				IErasureMethod result = null;
-				foreach (ErasureMethod method in Host.Instance.ErasureMethods)
+				foreach (IErasureMethod method in Host.Instance.ErasureMethods)
 				{
 					if (method.Name.ToUpperInvariant() == upperParam)
 						if (result == null)

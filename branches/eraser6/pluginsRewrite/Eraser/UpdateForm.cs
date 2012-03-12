@@ -538,7 +538,7 @@ namespace Eraser
 			using (Stream responseStream = response.GetResponseStream())
 			using (MemoryStream memoryStream = new MemoryStream())
 			{
-				Util.ProgressManager progress = new Util.ProgressManager();
+				ProgressManager progress = new ProgressManager();
 				if (response.ContentLength == -1)
 					progress.MarkIndeterminate();
 				else
@@ -554,7 +554,7 @@ namespace Eraser
 						progress.Completed = memoryStream.Position;
 					
 					if (handler != null)
-						handler(null, new Eraser.Util.ProgressChangedEventArgs(progress,
+						handler(null, new ProgressChangedEventArgs(progress,
 							S._("{0} of {1} downloaded", FileSize.ToString(progress.Completed),
 								FileSize.ToString(progress.Total))));
 				}
