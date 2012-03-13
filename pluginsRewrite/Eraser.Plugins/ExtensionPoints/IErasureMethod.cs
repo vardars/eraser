@@ -94,6 +94,7 @@ namespace Eraser.Plugins.ExtensionPoints
 			ErasureMethodProgressFunction callback);
 	}
 
+	/// <summary>
 	/// A simple callback for clients to retrieve progress information from
 	/// the erase method.
 	/// </summary>
