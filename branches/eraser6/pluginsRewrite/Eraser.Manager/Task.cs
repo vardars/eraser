@@ -38,7 +38,7 @@ namespace Eraser.Manager
 	/// Deals with an erase task.
 	/// </summary>
 	[Serializable]
-	public class Task : ISerializable
+	public class Task : ITask, ISerializable
 	{
 		#region Serialization code
 		protected Task(SerializationInfo info, StreamingContext context)
@@ -172,6 +172,14 @@ namespace Eraser.Manager
 		/// The set of data to erase when this task is executed.
 		/// </summary>
 		public ErasureTargetCollection Targets { get; private set; }
+
+		/// <summary>
+		/// <see cref="Targets"/>
+		/// </summary>
+		ICollection<IErasureTarget> ITask.Targets
+		{
+			get { return Targets; }
+		}
 
 		/// <summary>
 		/// The schedule for running the task.

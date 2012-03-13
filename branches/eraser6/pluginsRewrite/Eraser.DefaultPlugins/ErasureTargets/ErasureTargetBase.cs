@@ -42,6 +42,12 @@ namespace Eraser.DefaultPlugins
 			get;
 		}
 
+		public ITask Task
+		{
+			get;
+			set;
+		}
+
 		public virtual bool SupportsMethod(IErasureMethod method)
 		{
 			return true;

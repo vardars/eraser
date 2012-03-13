@@ -32,6 +32,13 @@ namespace Eraser.Plugins
 	public abstract class PersistentStore
 	{
 		/// <summary>
+		/// Gets a subsection Persistent Store to hold one group of settings.
+		/// </summary>
+		/// <param name="subsectionName"></param>
+		/// <returns></returns>
+		public abstract PersistentStore GetSubsection(string subsectionName);
+
+		/// <summary>
 		/// Gets the setting for the given name, coercing the object stored in the backend
 		/// to the given type <typeparamref name="T"/>.
 		/// </summary>
