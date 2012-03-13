@@ -84,14 +84,56 @@ namespace Eraser
 
 			public override T GetValue<T>(string name, T defaultValue)
 			{
-				//Determine whether the default value is suitable. Collections
-				//of strings should return an empty SettingsList.
-				if (typeof(T).GetInterfaces().Any(x => x == typeof(IEnumerable<string>)) &&
-					(object)defaultValue == (object)default(T))
+				//Determine the type of T. If it is an IEnumerable or IDictionary, use our
+				//concrete types.
+				Type typeOfT = typeof(T);
+				if (typeOfT.IsInterface)
 				{
-					defaultValue = (T)(IEnumerable<string>)new SettingsList<string>(this, name, null);
+					//Is it a dictionary?
+					if (typeOfT.Name == "IDictionary`2")
+					{
+						//This is a System.Collections.Generic.IDictionary
+						Type[] keyValueType = typeOfT.GetGenericArguments();
+
+						Type settingsDictionary = typeof(SettingsDictionary<,>);
+						Type typeOfResult = settingsDictionary.MakeGenericType(keyValueType);
+
+						ConstructorInfo ctor = typeOfResult.GetConstructor(new Type[] {
+							typeof(PersistentStore), typeof(string) });
+						return (T)ctor.Invoke(new object[] { this, name });
+					}
+
+					//Or an IEnumerable?
+					else if (typeOfT.Name == "IEnumerable`1")
+					{
+						//This is a System.Collections.Generic.IEnumerable
+						Type[] keyValueType = typeOfT.GetGenericArguments();
+						return (T)GetList<T>(name, keyValueType[0]);
+					}
+
+					//Or an IList<T>, ICollection<T>
+					else
+					{
+						foreach (Type type in typeOfT.GetInterfaces())
+							if (type.IsGenericType)
+							{
+								if (type.GetInterfaces().Any(
+										x => x == typeof(System.Collections.IEnumerable)) &&
+									type.Name == "IEnumerable`1")
+								{
+									//This is a System.Collections.Generic.IEnumerable
+									Type[] keyValueType = typeOfT.GetGenericArguments();
+									return (T)GetList<T>(name, keyValueType[0]);
+								}
+							}
+					}
 				}
 
+				return (T)GetScalar(name, defaultValue);
+			}
+
+			private object GetScalar<T>(string name, T defaultValue)
+			{
 				//Get the raw registry value
 				object rawResult = Key.GetValue(name, null);
 				if (rawResult == null)
@@ -121,22 +163,57 @@ namespace Eraser
 				}
 				else if (typeof(T) == typeof(Guid))
 				{
-					return (T)(object)new Guid((string)rawResult);
+					return new Guid((string)rawResult);
 				}
 				else if (typeof(T).GetInterfaces().Any(x => x == typeof(IConvertible)))
 				{
-					return (T)Convert.ChangeType(rawResult, typeof(T));
-				}
-				else if (typeof(T).GetInterfaces().Any(x => x == typeof(IEnumerable<string>)))
-				{
-					return (T)(object)new SettingsList<string>(this, name, (IEnumerable<string>)rawResult);
+					return Convert.ChangeType(rawResult, typeof(T));
 				}
 				else
 				{
-					return (T)rawResult;
+					return rawResult;
 				}
 
 				return defaultValue;
+			}
+
+			private object GetList<T>(string name, Type type)
+			{
+				//Make sure that type is either a string or the type can be converted from a
+				//string (via IConvertible)
+				if (type != typeof(string) && !type.GetInterfaces().Any(x => x == typeof(IConvertible)))
+				{
+					return GetScalar<T>(name, default(T));
+				}
+				
+				Type settingsList = typeof(SettingsList<>);
+				Type typeOfResult = settingsList.MakeGenericType(type);
+
+				//Get the constructor.
+				Type typeOfTArray = typeof(ICollection<>).MakeGenericType(type);
+				ConstructorInfo ctor = typeOfResult.GetConstructor(new Type[] {
+					typeof(PersistentStore), typeof(string), typeOfTArray });
+
+				//Get the values currently in the registry
+				string[] values = (string[])GetScalar<string[]>(name, null);
+
+				//Convert the values from a string array to the type expected
+				object array = null;
+				if (type == typeof(string))
+				{
+					array = values;
+				}
+				else
+				{
+					array = typeof(List<>).MakeGenericType(type).GetConstructor(new Type[0]).
+						Invoke(new object[0]);
+					foreach (string item in values)
+					{
+						((System.Collections.IList)array).Add(Convert.ChangeType(item, type));
+					}
+				}
+				
+				return ctor.Invoke(new object[] { this, name, array });
 			}
 
 			public override void SetValue(string name, object value)
@@ -147,6 +224,43 @@ namespace Eraser
 				}
 				else
 				{
+					//Determine the type of T. If it is an IEnumerable, store it as a string array
+					Type typeOfT = value.GetType();
+					foreach (Type type in typeOfT.GetInterfaces())
+						if (type.IsGenericType &&
+							type.Name == "IEnumerable`1" &&
+							type.GetInterfaces().Any(
+								x => x == typeof(System.Collections.IEnumerable)))
+						{
+							//Check that we know how to convert the item type
+							Type itemType = type.GetGenericArguments()[0];
+							string[] registryValue = null;
+							if (typeOfT == typeof(string[]))
+							{
+								registryValue = (string[])value;
+							}
+							else if (itemType == typeof(string))
+							{
+								registryValue = new List<string>((IEnumerable<string>)value).
+									ToArray();
+							}
+							else if (itemType.GetInterfaces().Any(x => x == typeof(IConvertible)))
+							{
+								List<string> collection = new List<string>();
+								foreach (object item in (System.Collections.IEnumerable)value)
+									collection.Add((string)
+										Convert.ChangeType(item, typeof(string)));
+
+								registryValue = collection.ToArray();
+							}
+
+							if (registryValue != null)
+							{
+								Key.SetValue(name, registryValue, RegistryValueKind.MultiString);
+								return;
+							}
+						}
+
 					if (value is bool)
 						Key.SetValue(name, value, RegistryValueKind.DWord);
 					else if ((value is int) || (value is uint))
@@ -155,13 +269,6 @@ namespace Eraser
 						Key.SetValue(name, value, RegistryValueKind.QWord);
 					else if ((value is string) || (value is Guid))
 						Key.SetValue(name, value, RegistryValueKind.String);
-					else if (value is ICollection<string>)
-					{
-						ICollection<string> collection = (ICollection<string>)value;
-						string[] temp = new string[collection.Count];
-						collection.CopyTo(temp, 0);
-						Key.SetValue(name, temp, RegistryValueKind.MultiString);
-					}
 					else
 						using (MemoryStream stream = new MemoryStream())
 						{
@@ -199,7 +306,7 @@ namespace Eraser
 			private RegistryKey Key;
 		}
 
-		public Settings()
+		private Settings()
 		{
 			RegistryKey eraserKey = null;
 
@@ -221,6 +328,17 @@ namespace Eraser
 			}
 		}
 
+		public static Settings Get()
+		{
+			Instance.SetValue("Test", new int[5] { 1, 7, 9, 5, 1 });
+			object test = Instance.GetValue<ICollection<int>>("Test");
+			Instance.SetValue("Test", new string[5] { "A", "b", "C", "d", "E" });
+			test = Instance.GetValue<ICollection<string>>("Test");
+			Instance.SetValue("Test", new List<string>(new string[5] { "A", "b", "C", "d", "E" }));
+			test = Instance.GetValue<ICollection<string>>("Test");
+			return Instance;
+		}
+
 		public override PersistentStore GetSubsection(string subsectionName)
 		{
 			return registry.GetSubsection(subsectionName);
@@ -237,6 +355,11 @@ namespace Eraser
 		}
 
 		private RegistrySettings registry;
+
+		/// <summary>
+		/// The global Settings instance.
+		/// </summary>
+		private static Settings Instance = new Settings();
 	}
 
 	/// <summary>
@@ -245,6 +368,11 @@ namespace Eraser
 	/// <typeparam name="T">The type of the list element.</typeparam>
 	class SettingsList<T> : IList<T>
 	{
+		public SettingsList(PersistentStore store, string settingName)
+			: this(store, settingName, null)
+		{
+		}
+
 		public SettingsList(PersistentStore store, string settingName, IEnumerable<T> values)
 		{
 			Store = store;
@@ -386,65 +514,56 @@ namespace Eraser
 	/// <typeparam name="TValue">The value type of the dictionary.</typeparam>
 	class SettingsDictionary<TKey, TValue> : IDictionary<TKey, TValue>
 	{
-		public SettingsDictionary(Settings settings, string settingName)
+		public SettingsDictionary(PersistentStore store, string settingName)
 		{
-			Settings = settings;
+			Store = store;
 			SettingName = settingName;
-			Dictionary = settings.GetValue<Dictionary<TKey, TValue>>(settingName);
-			if (Dictionary == null)
-				Dictionary = new Dictionary<TKey, TValue>();
-		}
-
-		~SettingsDictionary()
-		{
-			Save();
 		}
 
 		#region IDictionary<TKey,TValue> Members
 
 		public void Add(TKey key, TValue value)
 		{
-			Dictionary.Add(key, value);
-			Save();
+			KeyStore.SetValue(key.ToString(), value);
 		}
 
 		public bool ContainsKey(TKey key)
 		{
-			return Dictionary.ContainsKey(key);
+			TValue outValue;
+			return TryGetValue(key, out outValue);
 		}
 
 		public ICollection<TKey> Keys
 		{
-			get { return Dictionary.Keys; }
+			get { throw new NotSupportedException(); }
 		}
 
 		public bool Remove(TKey key)
 		{
-			bool result = Dictionary.Remove(key);
-			Save();
-			return result;
+			KeyStore.SetValue(key.ToString(), null);
+			return true;
 		}
 
 		public bool TryGetValue(TKey key, out TValue value)
 		{
-			return Dictionary.TryGetValue(key, out value);
+			value = KeyStore.GetValue<TValue>(key.ToString());
+			return !value.Equals(default(TValue));
 		}
 
 		public ICollection<TValue> Values
 		{
-			get { return Dictionary.Values; }
+			get { throw new NotSupportedException(); }
 		}
 
 		public TValue this[TKey key]
 		{
 			get
 			{
-				return Dictionary[key];
+				return KeyStore.GetValue<TValue>(key.ToString());
 			}
 			set
 			{
-				Dictionary[key] = value;
-				Save();
+				KeyStore.SetValue(key.ToString(), value);
 			}
 		}
 
@@ -454,29 +573,31 @@ namespace Eraser
 
 		public void Add(KeyValuePair<TKey, TValue> item)
 		{
-			Dictionary.Add(item.Key, item.Value);
-			Save();
+			Add(item.Key, item.Value);
 		}
 
 		public void Clear()
 		{
-			Dictionary.Clear();
-			Save();
+			throw new NotSupportedException();
 		}
 
 		public bool Contains(KeyValuePair<TKey, TValue> item)
 		{
-			return Dictionary.ContainsKey(item.Key) && Dictionary[item.Key].Equals(item.Value);
+			TValue outValue;
+			if (TryGetValue(item.Key, out outValue) && item.Equals(outValue))
+				return true;
+
+			return false;
 		}
 
 		public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public int Count
 		{
-			get { return Dictionary.Count; }
+			get { throw new NotSupportedException(); }
 		}
 
 		public bool IsReadOnly
@@ -486,11 +607,10 @@ namespace Eraser
 
 		public bool Remove(KeyValuePair<TKey, TValue> item)
 		{
-			if (Dictionary.ContainsKey(item.Key) && Dictionary[item.Key].Equals(item.Value))
+			if (Contains(item))
 			{
-				bool result = Dictionary.Remove(item.Key);
-				Save();
-				return result;
+				this[item.Key] = default(TValue);
+				return true;
 			}
 
 			return false;
@@ -502,7 +622,7 @@ namespace Eraser
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
 		{
-			return Dictionary.GetEnumerator();
+			throw new NotSupportedException();
 		}
 
 		#endregion
@@ -511,33 +631,31 @@ namespace Eraser
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
-			return Dictionary.GetEnumerator();
+			throw new NotSupportedException();
 		}
 
 		#endregion
 
 		/// <summary>
-		/// Saves changes made to the list to the settings manager.
+		/// Gets the Persistent Store for this dictionary.
 		/// </summary>
-		private void Save()
+		private PersistentStore KeyStore
 		{
-			Settings.SetValue(SettingName, Dictionary);
+			get
+			{
+				return Store.GetSubsection(SettingName);
+			}
 		}
 
 		/// <summary>
 		/// The settings object storing the settings.
 		/// </summary>
-		private Settings Settings;
+		private PersistentStore Store;
 
 		/// <summary>
 		/// The name of the setting we are encapsulating.
 		/// </summary>
 		private string SettingName;
-
-		/// <summary>
-		/// The list we are using as scratch.
-		/// </summary>
-		private Dictionary<TKey, TValue> Dictionary;
 	}
 
 	internal class EraserSettings
@@ -547,7 +665,7 @@ namespace Eraser
 		/// </summary>
 		private EraserSettings()
 		{
-			settings = Host.Instance.PersistentStore.GetSubsection("Eraser");
+			settings = Settings.Get();
 		}
 
 		/// <summary>

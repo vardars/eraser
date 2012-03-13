@@ -69,7 +69,7 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return Store.GetValue("ApprovedPlugins", new Dictionary<Guid, bool>());
+				return Store.GetValue<IDictionary<Guid, bool>>("ApprovedPlugins");
 			}
 		}
 
