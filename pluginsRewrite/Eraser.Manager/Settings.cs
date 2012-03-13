@@ -47,22 +47,6 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// Whether files which are locked when being erased should be forcibly
-		/// unlocked for erasure.
-		/// </summary>
-		public bool ForceUnlockLockedFiles
-		{
-			get
-			{
-				return Store.GetValue("ForceUnlockLockedFiles", true);
-			}
-			set
-			{
-				Store.SetValue("ForceUnlockLockedFiles", value);
-			}
-		}
-
-		/// <summary>
 		/// Whether missed tasks should be run when the program next starts.
 		/// </summary>
 		public bool ExecuteMissedTasksImmediately
