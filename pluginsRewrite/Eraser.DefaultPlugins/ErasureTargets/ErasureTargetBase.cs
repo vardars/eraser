@@ -60,7 +60,7 @@ namespace Eraser.DefaultPlugins
 
 		public abstract void Execute();
 
-		public ProgressManagerBase Progress
+		public SteppedProgressManager Progress
 		{
 			get;
 			protected set;
