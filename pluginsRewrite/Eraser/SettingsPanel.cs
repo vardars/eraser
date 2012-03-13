@@ -156,14 +156,14 @@ namespace Eraser
 				}
 
 			foreach (IErasureMethod method in eraseFilesMethod.Items)
-				if (method.Guid == ManagerLibrary.Instance.Settings.DefaultFileErasureMethod)
+				if (method.Guid == Host.Instance.Settings.DefaultFileErasureMethod)
 				{
 					eraseFilesMethod.SelectedItem = method;
 					break;
 				}
 
 			foreach (IErasureMethod method in eraseUnusedMethod.Items)
-				if (method.Guid == ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod)
+				if (method.Guid == Host.Instance.Settings.DefaultUnusedSpaceErasureMethod)
 				{
 					eraseUnusedMethod.SelectedItem = method;
 					break;
@@ -176,7 +176,7 @@ namespace Eraser
 					break;
 				}
 
-			foreach (string path in ManagerLibrary.Instance.Settings.PlausibleDeniabilityFiles)
+			foreach (string path in Host.Instance.Settings.PlausibleDeniabilityFiles)
 				plausibleDeniabilityFiles.Items.Add(path);
 
 			uiContextMenu.Checked = settings.IntegrateWithShell;
@@ -187,7 +187,7 @@ namespace Eraser
 			schedulerMissedIgnore.Checked =
 				!ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately;
 			plausibleDeniability.Checked =
-				ManagerLibrary.Instance.Settings.PlausibleDeniability;
+				Host.Instance.Settings.PlausibleDeniability;
 			plausibleDeniability_CheckedChanged(plausibleDeniability, new EventArgs());
 			schedulerClearCompleted.Checked = settings.ClearCompletedTasks;
 
@@ -208,7 +208,7 @@ namespace Eraser
 				if (eraseFilesMethod.Items.Count > 0)
 				{
 					eraseFilesMethod.SelectedIndex = 0;
-					ManagerLibrary.Instance.Settings.DefaultFileErasureMethod =
+					Host.Instance.Settings.DefaultFileErasureMethod =
 						((IErasureMethod)eraseFilesMethod.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Default file erasure method"));
@@ -218,7 +218,7 @@ namespace Eraser
 				if (eraseUnusedMethod.Items.Count > 0)
 				{
 					eraseUnusedMethod.SelectedIndex = 0;
-					ManagerLibrary.Instance.Settings.DefaultUnusedSpaceErasureMethod =
+					Host.Instance.Settings.DefaultUnusedSpaceErasureMethod =
 						((IErasureMethod)eraseUnusedMethod.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Default unused space erasure method"));
@@ -419,9 +419,9 @@ namespace Eraser
 			}
 			settings.IntegrateWithShell = uiContextMenu.Checked;
 
-			managerSettings.DefaultFileErasureMethod =
+			Host.Instance.Settings.DefaultFileErasureMethod =
 				((IErasureMethod)eraseFilesMethod.SelectedItem).Guid;
-			managerSettings.DefaultUnusedSpaceErasureMethod =
+			Host.Instance.Settings.DefaultUnusedSpaceErasureMethod =
 				((IErasureMethod)eraseUnusedMethod.SelectedItem).Guid;
 
 			IPrng newPRNG = (IPrng)erasePRNG.SelectedItem;
@@ -435,9 +435,9 @@ namespace Eraser
 						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 				Host.Instance.Prngs.ActivePrngGuid = newPRNG.Guid;
 			}
-			
-			managerSettings.PlausibleDeniability = plausibleDeniability.Checked;
-			IList<string> plausibleDeniabilityFilesList = managerSettings.PlausibleDeniabilityFiles;
+
+			Host.Instance.Settings.PlausibleDeniability = plausibleDeniability.Checked;
+			IList<string> plausibleDeniabilityFilesList = Host.Instance.Settings.PlausibleDeniabilityFiles;
 			plausibleDeniabilityFilesList.Clear();
 			foreach (string str in this.plausibleDeniabilityFiles.Items)
 				plausibleDeniabilityFilesList.Add(str);
