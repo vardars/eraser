@@ -34,6 +34,7 @@ namespace Eraser.Plugins
 		/// <param name="store">The persistent store holding the settings.</param>
 		internal Settings(PersistentStore store)
 		{
+			Store = store;
 		}
 
 		/// <summary>

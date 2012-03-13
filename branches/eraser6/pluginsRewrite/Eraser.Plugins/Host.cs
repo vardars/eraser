@@ -30,6 +30,7 @@ using System.Reflection;
 using Eraser.Util;
 using Eraser.Plugins.ExtensionPoints;
 using Eraser.Plugins.Registrars;
+using System.Runtime.InteropServices;
 
 namespace Eraser.Plugins
 {
@@ -86,6 +87,7 @@ namespace Eraser.Plugins
 					"exist at any one point of time.");
 			Instance = this;
 			PersistentStore = store;
+			Settings = new Settings(PersistentStore.GetSubsection("Eraser.Erase"));
 
 			EntropySources = new EntropySourceRegistrar();
 			Prngs = new PrngRegistrar();
