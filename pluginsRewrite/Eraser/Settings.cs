@@ -170,7 +170,9 @@ namespace Eraser
 					if (subKey == null)
 						subKey = Key.CreateSubKey(subsectionName);
 
-					return new RegistrySettings(subKey);
+					PersistentStore result = new RegistrySettings(subKey);
+					subKey = null;
+					return result;
 				}
 				finally
 				{
@@ -198,6 +200,7 @@ namespace Eraser
 
 				//Return the Settings object.
 				registry = new RegistrySettings(eraserKey);
+				eraserKey = null;
 			}
 			finally
 			{
@@ -533,9 +536,7 @@ namespace Eraser
 		/// </summary>
 		private EraserSettings()
 		{
-			settings = Host.Instance.PersistentStore.GetValue<PersistentStore>(
-				new Guid(((GuidAttribute)Assembly.GetCallingAssembly().
-					GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value).ToString());
+			settings = Host.Instance.PersistentStore.GetSubsection("Eraser");
 		}
 
 		/// <summary>
