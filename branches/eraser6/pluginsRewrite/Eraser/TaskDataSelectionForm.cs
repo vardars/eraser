@@ -75,7 +75,7 @@ namespace Eraser
 
 			//And the methods list
 			methodCmb.Items.Add(ErasureMethodRegistrar.Default);
-			foreach (IErasureMethod method in Host.Instance.ErasureTargetFactories)
+			foreach (IErasureMethod method in Host.Instance.ErasureMethods)
 				methodCmb.Items.Add(method);
 			if (methodCmb.Items.Count != 0)
 				methodCmb.SelectedIndex = 0;
