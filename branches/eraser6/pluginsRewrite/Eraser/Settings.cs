@@ -84,6 +84,14 @@ namespace Eraser
 
 			public override T GetValue<T>(string name, T defaultValue)
 			{
+				//Determine whether the default value is suitable. Collections
+				//of strings should return an empty SettingsList.
+				if (typeof(T).GetInterfaces().Any(x => x == typeof(IEnumerable<string>)) &&
+					(object)defaultValue == (object)default(T))
+				{
+					defaultValue = (T)(IEnumerable<string>)new SettingsList<string>(this, name, null);
+				}
+
 				//Get the raw registry value
 				object rawResult = Key.GetValue(name, null);
 				if (rawResult == null)
@@ -118,6 +126,10 @@ namespace Eraser
 				else if (typeof(T).GetInterfaces().Any(x => x == typeof(IConvertible)))
 				{
 					return (T)Convert.ChangeType(rawResult, typeof(T));
+				}
+				else if (typeof(T).GetInterfaces().Any(x => x == typeof(IEnumerable<string>)))
+				{
+					return (T)(object)new SettingsList<string>(this, name, (IEnumerable<string>)rawResult);
 				}
 				else
 				{
@@ -233,13 +245,12 @@ namespace Eraser
 	/// <typeparam name="T">The type of the list element.</typeparam>
 	class SettingsList<T> : IList<T>
 	{
-		public SettingsList(Settings settings, string settingName)
+		public SettingsList(PersistentStore store, string settingName, IEnumerable<T> values)
 		{
-			Settings = settings;
+			Store = store;
 			SettingName = settingName;
 			List = new List<T>();
 
-			T[] values = settings.GetValue<T[]>(settingName);
 			if (values != null)
 				List.AddRange(values);
 		}
@@ -349,13 +360,13 @@ namespace Eraser
 		/// </summary>
 		private void Save()
 		{
-			Settings.SetValue(SettingName, List);
+			Store.SetValue(SettingName, List);
 		}
 
 		/// <summary>
 		/// The settings object storing the settings.
 		/// </summary>
-		private Settings Settings;
+		private PersistentStore Store;
 
 		/// <summary>
 		/// The name of the setting we are encapsulating.

@@ -125,7 +125,7 @@ namespace Eraser.Plugins
 		{
 			get
 			{
-				return Store.GetValue("PlausibleDeniabilityFiles", new List<string>());
+				return Store.GetValue<IList<string>>("PlausibleDeniabilityFiles");
 			}
 		}
 
