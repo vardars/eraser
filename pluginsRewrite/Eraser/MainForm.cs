@@ -364,7 +364,7 @@ namespace Eraser
 			}
 
 			Task task = (Task)sender;
-			string iconText = S._("Eraser") + " - " + S._("Processing:") + ' ' + task.UIText;
+			string iconText = S._("Eraser") + " - " + S._("Processing:") + ' ' + task.ToString();
 			if (iconText.Length >= 64)
 				iconText = iconText.Remove(60) + "...";
 

@@ -125,7 +125,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The name of the task, used for display in UI elements.
 		/// </summary>
-		public string ToString()
+		public override string ToString()
 		{
 			//Simple case, the task name was given by the user.
 			if (!string.IsNullOrEmpty(Name))
