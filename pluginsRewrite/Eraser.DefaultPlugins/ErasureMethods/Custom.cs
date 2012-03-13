@@ -133,12 +133,12 @@ namespace Eraser.DefaultPlugins
 		{
 			public PassData(ErasureMethodPass pass)
 			{
-				if (pass.Function == IErasureMethod.WriteConstant)
+				if (pass.Function == PassBasedErasureMethod.WriteConstant)
 				{
 					Random = false;
 					OpaqueValue = pass.OpaqueValue;
 				}
-				else if (pass.Function == IErasureMethod.WriteRandom)
+				else if (pass.Function == PassBasedErasureMethod.WriteRandom)
 				{
 					Random = true;
 				}
@@ -150,8 +150,8 @@ namespace Eraser.DefaultPlugins
 			public static implicit operator ErasureMethodPass(PassData pass)
 			{
 				return new ErasureMethodPass(pass.Random ?
-					new ErasureMethodPassFunction(IErasureMethod.WriteRandom) :
-						new ErasureMethodPassFunction(IErasureMethod.WriteConstant),
+					new ErasureMethodPass.ErasureMethodPassFunction(PassBasedErasureMethod.WriteRandom) :
+						new ErasureMethodPass.ErasureMethodPassFunction(PassBasedErasureMethod.WriteConstant),
 					pass.OpaqueValue);
 			}
 

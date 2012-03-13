@@ -210,7 +210,7 @@ namespace Eraser.DefaultPlugins
 					{
 						Progress.Completed += lastWritten;
 						OnProgressChanged(this, new ProgressChangedEventArgs(Progress,
-							new TaskProgressChangedEventArgs(UIText, currentPass, method.Passes)));
+							new TaskProgressChangedEventArgs(ToString(), currentPass, method.Passes)));
 
 						if (Task.Canceled)
 							throw new OperationCanceledException(S._("The task was cancelled."));

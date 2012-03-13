@@ -42,7 +42,10 @@ namespace Eraser.DefaultPlugins
 			get;
 		}
 
-		public abstract bool SupportsMethod(IErasureMethod method);
+		public virtual bool SupportsMethod(IErasureMethod method)
+		{
+			return true;
+		}
 
 		public abstract IErasureTargetConfigurer Configurer
 		{
