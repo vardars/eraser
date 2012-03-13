@@ -195,8 +195,10 @@ namespace Eraser.DefaultPlugins
 					if (Task.Canceled)
 						throw new OperationCanceledException(S._("The task was cancelled."));
 
-					OnProgressChanged(this, new ProgressChangedEventArgs(tipSearch,
-						new TaskProgressChangedEventArgs(path, 0, 0)));
+					//TODO: create a means to inform the parent on the progress of the current
+					//file we found
+					/*OnProgressChanged(this, new ProgressChangedEventArgs(tipSearch,
+						new TaskProgressChangedEventArgs(path, 0, 0)));*/
 				};
 
 				ProgressManager tipProgress = new ProgressManager();
@@ -208,8 +210,8 @@ namespace Eraser.DefaultPlugins
 						tipSearch.MarkComplete();
 						tipProgress.Total = totalFiles;
 						tipProgress.Completed = currentFile;
-						OnProgressChanged(this, new ProgressChangedEventArgs(tipProgress,
-							new TaskProgressChangedEventArgs(currentFilePath, 0, 0)));
+						/*OnProgressChanged(this, new ProgressChangedEventArgs(tipProgress,
+							new TaskProgressChangedEventArgs(currentFilePath, 0, 0)));*/
 
 						if (Task.Canceled)
 							throw new OperationCanceledException(S._("The task was cancelled."));
@@ -246,8 +248,8 @@ namespace Eraser.DefaultPlugins
 					{
 						residentProgress.Completed = currentFile;
 						residentProgress.Total = totalFiles;
-						OnProgressChanged(this, new ProgressChangedEventArgs(residentProgress,
-							new TaskProgressChangedEventArgs(string.Empty, 0, 0)));
+						/*OnProgressChanged(this, new ProgressChangedEventArgs(residentProgress,
+							new TaskProgressChangedEventArgs(string.Empty, 0, 0)));*/
 
 						if (Task.Canceled)
 							throw new OperationCanceledException(S._("The task was cancelled."));
@@ -262,8 +264,8 @@ namespace Eraser.DefaultPlugins
 				ProgressManager tempFiles = new ProgressManager();
 				Progress.Steps.Add(new SteppedProgressManagerStep(tempFiles,
 					0.0f, S._("Removing temporary files...")));
-				OnProgressChanged(this, new ProgressChangedEventArgs(tempFiles,
-					new TaskProgressChangedEventArgs(string.Empty, 0, 0)));
+				/*OnProgressChanged(this, new ProgressChangedEventArgs(tempFiles,
+					new TaskProgressChangedEventArgs(string.Empty, 0, 0)));*/
 				info.Delete(true);
 				tempFiles.MarkComplete();
 
@@ -286,8 +288,8 @@ namespace Eraser.DefaultPlugins
 					structureProgress.Completed = currentFile;
 
 					//Set the event parameters, then broadcast the progress event.
-					OnProgressChanged(this, new ProgressChangedEventArgs(structureProgress,
-						new TaskProgressChangedEventArgs(string.Empty, 0, 0)));
+					/*OnProgressChanged(this, new ProgressChangedEventArgs(structureProgress,
+						new TaskProgressChangedEventArgs(string.Empty, 0, 0)));*/
 				}
 			);
 
@@ -341,8 +343,8 @@ namespace Eraser.DefaultPlugins
 						delegate(long lastWritten, long totalData, int currentPass)
 						{
 							mainProgress.Completed += lastWritten;
-							OnProgressChanged(this, new ProgressChangedEventArgs(mainProgress,
-								new TaskProgressChangedEventArgs(Drive, currentPass, method.Passes)));
+							/*OnProgressChanged(this, new ProgressChangedEventArgs(mainProgress,
+								new TaskProgressChangedEventArgs(Drive, currentPass, method.Passes)));*/
 
 							if (Task.Canceled)
 								throw new OperationCanceledException(S._("The task was cancelled."));

@@ -92,6 +92,14 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// Executes the given target.
 		/// </summary>
 		void Execute();
+
+		/// <summary>
+		/// Gets the progress manager for this Erasure Target.
+		/// </summary>
+		ProgressManagerBase Progress
+		{
+			get;
+		}
 	}
 
 	/// <summary>

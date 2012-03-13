@@ -246,8 +246,8 @@ namespace Eraser.DefaultPlugins
 			{
 				//Update the task progress
 				IErasureMethod method = EffectiveMethod;
-				OnProgressChanged(this, new ProgressChangedEventArgs(progress,
-					new TaskProgressChangedEventArgs(info.FullName, 0, method.Passes)));
+				/*OnProgressChanged(this, new ProgressChangedEventArgs(progress,
+					new TaskProgressChangedEventArgs(info.FullName, 0, method.Passes)));*/
 
 				//Remove the read-only flag, if it is set.
 				if (isReadOnly = info.IsReadOnly)
@@ -262,8 +262,8 @@ namespace Eraser.DefaultPlugins
 
 						progress.Total = totalData;
 						progress.Completed += lastWritten;
-						OnProgressChanged(this, new ProgressChangedEventArgs(progress,
-							new TaskProgressChangedEventArgs(info.FullName, currentPass, method.Passes)));
+						/*OnProgressChanged(this, new ProgressChangedEventArgs(progress,
+							new TaskProgressChangedEventArgs(info.FullName, currentPass, method.Passes)));*/
 					};
 
 				TryEraseStream(fsManager, method, info, callback);
