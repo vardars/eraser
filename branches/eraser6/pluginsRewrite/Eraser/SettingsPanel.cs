@@ -181,7 +181,7 @@ namespace Eraser
 
 			uiContextMenu.Checked = settings.IntegrateWithShell;
 			lockedForceUnlock.Checked =
-				ManagerLibrary.Instance.Settings.ForceUnlockLockedFiles;
+				Host.Instance.Settings.ForceUnlockLockedFiles;
 			schedulerMissedImmediate.Checked =
 				ManagerLibrary.Instance.Settings.ExecuteMissedTasksImmediately;
 			schedulerMissedIgnore.Checked =
@@ -341,7 +341,7 @@ namespace Eraser
 			ManagerSettings managerSettings = ManagerLibrary.Instance.Settings;
 
 			//Save the settings that don't fail first.
-			managerSettings.ForceUnlockLockedFiles = lockedForceUnlock.Checked;
+			Host.Instance.Settings.ForceUnlockLockedFiles = lockedForceUnlock.Checked;
 			managerSettings.ExecuteMissedTasksImmediately = schedulerMissedImmediate.Checked;
 			settings.ClearCompletedTasks = schedulerClearCompleted.Checked;
 

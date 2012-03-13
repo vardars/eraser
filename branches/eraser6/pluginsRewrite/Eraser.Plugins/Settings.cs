@@ -129,6 +129,22 @@ namespace Eraser.Plugins
 		}
 
 		/// <summary>
+		/// Whether files which are locked when being erased should be forcibly
+		/// unlocked for erasure.
+		/// </summary>
+		public bool ForceUnlockLockedFiles
+		{
+			get
+			{
+				return Store.GetValue("ForceUnlockLockedFiles", true);
+			}
+			set
+			{
+				Store.SetValue("ForceUnlockLockedFiles", value);
+			}
+		}
+
+		/// <summary>
 		/// The persistent store for this object.
 		/// </summary>
 		private PersistentStore Store;
