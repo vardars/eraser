@@ -51,6 +51,15 @@ namespace Eraser.Plugins.ExtensionPoints
 		}
 
 		/// <summary>
+		/// The task owning this Erasure Target.
+		/// </summary>
+		ITask Task
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
 		/// The method used for erasing the file.
 		/// </summary>
 		IErasureMethod Method
