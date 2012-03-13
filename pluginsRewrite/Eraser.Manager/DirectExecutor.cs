@@ -31,6 +31,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
+using Eraser.Plugins;
 using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.Manager
