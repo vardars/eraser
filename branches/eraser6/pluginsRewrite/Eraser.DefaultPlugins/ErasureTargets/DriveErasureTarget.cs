@@ -209,8 +209,8 @@ namespace Eraser.DefaultPlugins
 					delegate(long lastWritten, long totalData, int currentPass)
 					{
 						Progress.Completed += lastWritten;
-						OnProgressChanged(this, new ProgressChangedEventArgs(Progress,
-							new TaskProgressChangedEventArgs(ToString(), currentPass, method.Passes)));
+						/*OnProgressChanged(this, new ProgressChangedEventArgs(Progress,
+							new TaskProgressChangedEventArgs(ToString(), currentPass, method.Passes)));*/
 
 						if (Task.Canceled)
 							throw new OperationCanceledException(S._("The task was cancelled."));

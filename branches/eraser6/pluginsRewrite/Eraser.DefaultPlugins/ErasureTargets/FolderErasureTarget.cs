@@ -218,8 +218,8 @@ namespace Eraser.DefaultPlugins
 				EraseFolder(subDir, progress);
 
 			//Public progress updates.
-			OnProgressChanged(this, new ProgressChangedEventArgs(progress,
-				new TaskProgressChangedEventArgs(info.FullName, 0, 0)));
+			/*OnProgressChanged(this, new ProgressChangedEventArgs(progress,
+				new TaskProgressChangedEventArgs(info.FullName, 0, 0)));*/
 
 			//Ensure that the current directory is empty before deleting.
 			FileSystemInfo[] files = info.GetFileSystemInfos();

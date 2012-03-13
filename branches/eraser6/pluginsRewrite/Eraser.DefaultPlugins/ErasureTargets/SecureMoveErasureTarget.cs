@@ -235,8 +235,8 @@ namespace Eraser.DefaultPlugins
 					CopyTimesAndDelete(child);
 
 				//Update progress.
-				OnProgressChanged(this, new ProgressChangedEventArgs(folderDeleteProgress,
-					new TaskProgressChangedEventArgs(subDirectory.FullName, 1, 1)));
+				/*OnProgressChanged(this, new ProgressChangedEventArgs(folderDeleteProgress,
+					new TaskProgressChangedEventArgs(subDirectory.FullName, 1, 1)));*/
 
 				//Get the directory which we copied to and copy the file times to the
 				//destination directory
@@ -341,8 +341,8 @@ namespace Eraser.DefaultPlugins
 		{
 			progress.Completed = TotalBytesTransferred;
 			progress.Total = TotalFileSize;
-			OnProgressChanged(this, new ProgressChangedEventArgs(Progress,
-				new TaskProgressChangedEventArgs(file.FullName, 1, 1)));
+			/*OnProgressChanged(this, new ProgressChangedEventArgs(Progress,
+				new TaskProgressChangedEventArgs(file.FullName, 1, 1)));*/
 
 			if (Task.Canceled)
 				return Methods.CopyProgressFunctionResult.Stop;

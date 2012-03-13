@@ -129,8 +129,8 @@ namespace Eraser.DefaultPlugins
 			ProgressManager progress = new ProgressManager();
 			Progress.Steps.Add(new SteppedProgressManagerStep(progress,
 				0.0f, S._("Emptying recycle bin...")));
-			OnProgressChanged(this, new ProgressChangedEventArgs(progress,
-				new TaskProgressChangedEventArgs(string.Empty, 0, 0)));
+			/*OnProgressChanged(this, new ProgressChangedEventArgs(progress,
+				new TaskProgressChangedEventArgs(string.Empty, 0, 0)));*/
 
 			RecycleBin.Empty(EmptyRecycleBinOptions.NoConfirmation |
 				EmptyRecycleBinOptions.NoProgressUI | EmptyRecycleBinOptions.NoSound);

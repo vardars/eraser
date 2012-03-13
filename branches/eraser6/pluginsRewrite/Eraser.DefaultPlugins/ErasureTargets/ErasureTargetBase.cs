@@ -60,6 +60,11 @@ namespace Eraser.DefaultPlugins
 
 		public abstract void Execute();
 
+		public ProgressManagerBase Progress
+		{
+			get;
+			protected set;
+		}
 		#endregion
 
 		#region Serialization code
@@ -128,7 +133,6 @@ namespace Eraser.DefaultPlugins
 					"target cannot be ErasureMethodRegistrar.Default");
 			}
 		}
-		
 		
 		/// <summary>
 		/// The backing variable for the <see cref="Method"/> property.
