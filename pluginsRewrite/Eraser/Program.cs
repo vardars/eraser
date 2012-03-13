@@ -230,7 +230,7 @@ namespace Eraser
 			Args parsedArguments = (Args)argumentParser.Item;
 
 			//Load the Eraser.Manager library
-			using (ManagerLibrary library = new ManagerLibrary(new Settings()))
+			using (ManagerLibrary library = new ManagerLibrary(Settings.Get()))
 			{
 				//Set our UI language
 				EraserSettings settings = EraserSettings.Get();
