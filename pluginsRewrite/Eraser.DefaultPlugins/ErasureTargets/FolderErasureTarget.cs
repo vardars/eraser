@@ -41,7 +41,7 @@ namespace Eraser.DefaultPlugins
 	/// </summary>
 	[Serializable]
 	[Guid("F50B0A44-3AB1-4cab-B81E-1713AC3D28C9")]
-	public class FolderErasureTarget : FileSystemObjectErasureTarget
+	class FolderErasureTarget : FileSystemObjectErasureTarget
 	{
 		#region Serialization code
 		protected FolderErasureTarget(SerializationInfo info, StreamingContext context)
@@ -199,7 +199,7 @@ namespace Eraser.DefaultPlugins
 				if (!isVolumeRoot && directory.Exists &&
 					directory.GetFiles("*", SearchOption.AllDirectories).Length == 0)
 				{
-					FileSystem fsManager = Host.Instance.FileSystems[
+					IFileSystem fsManager = Host.Instance.FileSystems[
 						VolumeInfo.FromMountPoint(Path)];
 					fsManager.DeleteFolder(directory);
 				}

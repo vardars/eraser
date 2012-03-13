@@ -96,7 +96,7 @@ namespace Eraser.DefaultPlugins
 			ListViewItem item = new ListViewItem((passesLv.Items.Count + 1).ToString(
 				CultureInfo.CurrentCulture));
 			item.Tag = pass;
-			if (pass.Function == ErasureMethod.WriteRandom)
+			if (pass.Function == IErasureMethod.WriteRandom)
 				item.SubItems.Add(S._("Random Data"));
 			else
 				item.SubItems.Add(S._("Constant ({0} bytes)", ((byte[])pass.OpaqueValue).Length));
@@ -113,13 +113,13 @@ namespace Eraser.DefaultPlugins
 			ErasureMethodPass pass = (ErasureMethodPass)item.Tag;
 			if (passEditor.PassType == CustomMethodPassEditorPassType.Random)
 			{
-				pass.Function = ErasureMethod.WriteRandom;
+				pass.Function = IErasureMethod.WriteRandom;
 				pass.OpaqueValue = null;
 				item.SubItems[1].Text = S._("Random Data");
 			}
 			else
 			{
-				pass.Function = ErasureMethod.WriteConstant;
+				pass.Function = IErasureMethod.WriteConstant;
 				pass.OpaqueValue = passEditor.PassData;
 				item.SubItems[1].Text = S._("Constant ({0} bytes)", passEditor.PassData.Length);
 			}
@@ -134,7 +134,7 @@ namespace Eraser.DefaultPlugins
 			currentPass = item;
 			ErasureMethodPass pass = (ErasureMethodPass)item.Tag;
 			passEditor.PassData = (byte[])pass.OpaqueValue;
-			passEditor.PassType = pass.Function == ErasureMethod.WriteRandom ?
+			passEditor.PassType = pass.Function == IErasureMethod.WriteRandom ?
 				CustomMethodPassEditorPassType.Random :
 				CustomMethodPassEditorPassType.Text;
 		}
@@ -164,7 +164,7 @@ namespace Eraser.DefaultPlugins
 				SavePass(currentPass);
 
 			//Then create a new, random pass, adding it to the list
-			ErasureMethodPass pass = new ErasureMethodPass(ErasureMethod.WriteRandom, null);
+			ErasureMethodPass pass = new ErasureMethodPass(IErasureMethod.WriteRandom, null);
 			ListViewItem item = AddPass(pass);
 
 			//If a pass is currently selected, insert the pass after the currently selected one.

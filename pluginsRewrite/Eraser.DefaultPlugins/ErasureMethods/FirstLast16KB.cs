@@ -35,7 +35,7 @@ using Eraser.Plugins.ExtensionPoints;
 namespace Eraser.DefaultPlugins
 {
 	[Guid("0C2E07BF-0207-49a3-ADE8-46F9E1499C01")]
-	sealed class FirstLast16KB : ErasureMethod
+	sealed class FirstLast16KB : IErasureMethod
 	{
 		public FirstLast16KB()
 		{
@@ -100,7 +100,7 @@ namespace Eraser.DefaultPlugins
 			return amountToWrite * method.Passes;
 		}
 
-		public override void Erase(Stream strm, long erasureLength, Prng prng,
+		public override void Erase(Stream strm, long erasureLength, IPrng prng,
 			ErasureMethodProgressFunction callback)
 		{
 			//If we have no default or we are the default then throw an exception
@@ -147,6 +147,6 @@ namespace Eraser.DefaultPlugins
 		/// </summary>
 		private const long DataSize = 16 * 1024;
 
-		private ErasureMethod method;
+		private IErasureMethod method;
 	}
 }

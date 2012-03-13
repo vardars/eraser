@@ -41,7 +41,7 @@ namespace Eraser.DefaultPlugins
 	/// </summary>
 	[Serializable]
 	[Guid("12CA079F-0B7A-48fa-B221-73AA217C1781")]
-	class DriveErasureTarget : ErasureTarget
+	class DriveErasureTarget : ErasureTargetBase
 	{
 		public DriveErasureTarget()
 		{
@@ -109,7 +109,7 @@ namespace Eraser.DefaultPlugins
 			get { return new DriveErasureTargetConfigurer(); }
 		}
 
-		public sealed override ErasureMethod EffectiveMethod
+		public sealed override IErasureMethod EffectiveMethod
 		{
 			get
 			{
@@ -188,7 +188,7 @@ namespace Eraser.DefaultPlugins
 			try
 			{
 				//Overwrite the entire drive
-				ErasureMethod method = EffectiveMethod;
+				IErasureMethod method = EffectiveMethod;
 				if (Volume != null)
 				{
 					Progress.Total = Volume.TotalSize;

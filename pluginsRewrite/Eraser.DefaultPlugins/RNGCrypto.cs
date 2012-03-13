@@ -33,7 +33,7 @@ using Eraser.Plugins.ExtensionPoints;
 namespace Eraser.DefaultPlugins
 {
 	[Guid("6BF35B8E-F37F-476e-B6B2-9994A92C3B0C")]
-	public class RngCrypto : Prng
+	public class RngCrypto : IPrng
 	{
 		public override string Name
 		{

@@ -46,7 +46,7 @@ namespace Eraser.DefaultPlugins
 
 		#region IConfigurer<ErasureTarget> Members
 
-		public void LoadFrom(ErasureTarget target)
+		public void LoadFrom(IErasureTarget target)
 		{
 			SecureMoveErasureTarget secureMove = target as SecureMoveErasureTarget;
 			if (secureMove == null)
@@ -61,7 +61,7 @@ namespace Eraser.DefaultPlugins
 				(File.GetAttributes(secureMove.Path) & FileAttributes.Directory) != 0;
 		}
 
-		public bool SaveTo(ErasureTarget target)
+		public bool SaveTo(IErasureTarget target)
 		{
 			SecureMoveErasureTarget secureMove = target as SecureMoveErasureTarget;
 			if (secureMove == null)
