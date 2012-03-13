@@ -49,17 +49,8 @@ namespace Eraser.Plugins.Registrars
 		{
 			get
 			{
-				return this[ActivePrngGuid];
+				return this[Host.Instance.Settings.ActivePrng];
 			}
-		}
-
-		/// <summary>
-		/// Sets the GUID of the active PRNG.
-		/// </summary>
-		public Guid ActivePrngGuid
-		{
-			private get;
-			set;
 		}
 
 		/// <summary>

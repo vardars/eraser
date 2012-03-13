@@ -170,7 +170,7 @@ namespace Eraser
 				}
 
 			foreach (IPrng prng in erasePRNG.Items)
-				if (prng.Guid == Host.Instance.Prngs.ActivePrng.Guid)
+				if (prng.Guid == Host.Instance.Settings.ActivePrng)
 				{
 					erasePRNG.SelectedItem = prng;
 					break;
@@ -228,7 +228,7 @@ namespace Eraser
 				if (erasePRNG.Items.Count > 0)
 				{
 					erasePRNG.SelectedIndex = 0;
-					Host.Instance.Prngs.ActivePrngGuid =
+					Host.Instance.Settings.ActivePrng =
 						((IPrng)erasePRNG.SelectedItem).Guid;
 				}
 				defaultsList.Add(S._("Randomness data source"));
@@ -433,7 +433,7 @@ namespace Eraser
 					MessageBoxDefaultButton.Button1,
 					Localisation.IsRightToLeft(this) ?
 						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
-				Host.Instance.Prngs.ActivePrngGuid = newPRNG.Guid;
+				Host.Instance.Settings.ActivePrng = newPRNG.Guid;
 			}
 
 			Host.Instance.Settings.PlausibleDeniability = plausibleDeniability.Checked;
