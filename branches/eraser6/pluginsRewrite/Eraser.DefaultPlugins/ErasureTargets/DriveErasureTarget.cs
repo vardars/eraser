@@ -81,27 +81,24 @@ namespace Eraser.DefaultPlugins
 			get { return S._("Drive/Partition"); }
 		}
 
-		public override string UIText
+		public override string ToString()
 		{
-			get
+			if (PhysicalDrive != null)
 			{
-				if (PhysicalDrive != null)
-				{
-					return S._("Hard disk {0}", PhysicalDrive.Index);
-				}
-				else if (Volume != null)
-				{
-					if (Volume.IsReady && Volume.IsMounted)
-						return S._("Partition: {0}", Volume.MountPoints[0].GetDescription());
-					else if (Volume.IsReady && Volume.PhysicalDrive != null)
-						return S._("Hard disk {0} Partition {1}", Volume.PhysicalDrive.Index,
-							Volume.PhysicalDrive.Volumes.IndexOf(Volume) + 1);
-					else
-						return S._("Partition");
-				}
-				else
-					return null;
+				return S._("Hard disk {0}", PhysicalDrive.Index);
 			}
+			else if (Volume != null)
+			{
+				if (Volume.IsReady && Volume.IsMounted)
+					return S._("Partition: {0}", Volume.MountPoints[0].GetDescription());
+				else if (Volume.IsReady && Volume.PhysicalDrive != null)
+					return S._("Hard disk {0} Partition {1}", Volume.PhysicalDrive.Index,
+						Volume.PhysicalDrive.Volumes.IndexOf(Volume) + 1);
+				else
+					return S._("Partition");
+			}
+			else
+				return null;
 		}
 
 		public override IErasureTargetConfigurer Configurer
@@ -117,7 +114,7 @@ namespace Eraser.DefaultPlugins
 					return base.EffectiveMethod;
 
 				return Host.Instance.ErasureMethods[
-					DefaultPlugin.Settings.DefaultUnusedSpaceErasureMethod];
+					Host.Instance.Settings.DefaultUnusedSpaceErasureMethod];
 			}
 		}
 

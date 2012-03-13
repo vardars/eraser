@@ -62,12 +62,9 @@ namespace Eraser.DefaultPlugins
 		/// <summary>
 		/// Retrieves the text to display representing this task.
 		/// </summary>
-		public override string UIText
+		public override string ToString()
 		{
-			get
-			{
-				return S._("Recycle Bin");
-			}
+			return S._("Recycle Bin");
 		}
 
 		public override IErasureTargetConfigurer Configurer

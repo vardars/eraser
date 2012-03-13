@@ -72,9 +72,9 @@ namespace Eraser.DefaultPlugins
 			get { return S._("Secure move"); }
 		}
 
-		public override string UIText
+		public override string ToString()
 		{
-			get { return S._("Securely move {0}", Path); }
+			return S._("Securely move {0}", Path);
 		}
 
 		/// <summary>
@@ -249,7 +249,7 @@ namespace Eraser.DefaultPlugins
 				//Then delete the source directory.
 				IFileSystem fsManager = Host.Instance.FileSystems[
 					VolumeInfo.FromMountPoint(Path)];
-				fsManager.DeleteFolder(subDirectory);
+				fsManager.DeleteFolder(subDirectory, true);
 			};
 			CopyTimesAndDelete(info);
 		}

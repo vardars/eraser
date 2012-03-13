@@ -74,6 +74,11 @@ namespace Eraser.DefaultPlugins
 			get { return GetType().GUID; }
 		}
 
+		public override string ToString()
+		{
+			return S._("Unused disk space ({0})", Drive);
+		}
+
 		public override string Name
 		{
 			get { return S._("Unused disk space"); }
@@ -87,14 +92,14 @@ namespace Eraser.DefaultPlugins
 					return base.EffectiveMethod;
 
 				return Host.Instance.ErasureMethods[
-					DefaultPlugin.Settings.DefaultUnusedSpaceErasureMethod];
+					Host.Instance.Settings.DefaultUnusedSpaceErasureMethod];
 			}
 		}
 
 		public override bool SupportsMethod(IErasureMethod method)
 		{
 			return method == ErasureMethodRegistrar.Default ||
-				method is UnusedSpaceErasureMethod;
+				method is IUnusedSpaceErasureMethod;
 		}
 
 		/// <summary>
@@ -110,11 +115,6 @@ namespace Eraser.DefaultPlugins
 			{
 				base.Progress = value;
 			}
-		}
-
-		public override string UIText
-		{
-			get { return S._("Unused disk space ({0})", Drive); }
 		}
 
 		public override IErasureTargetConfigurer Configurer
@@ -223,7 +223,7 @@ namespace Eraser.DefaultPlugins
 
 			bool lowDiskSpaceNotifications = Shell.LowDiskSpaceNotificationsEnabled;
 			info = info.CreateSubdirectory(Path.GetFileName(
-				IFileSystem.GenerateRandomFileName(info, 18)));
+				FileSystemBase.GenerateRandomFileName(info, 18)));
 			try
 			{
 				//Set the folder's compression flag off since we want to use as much
@@ -306,7 +306,7 @@ namespace Eraser.DefaultPlugins
 			while (volInfo.AvailableFreeSpace > 0)
 			{
 				//Generate a non-existant file name
-				string currFile = IFileSystem.GenerateRandomFileName(info, 18);
+				string currFile = FileSystemBase.GenerateRandomFileName(info, 18);
 
 				//Create the stream
 				FileStream stream = new FileStream(currFile, FileMode.CreateNew,
@@ -317,7 +317,7 @@ namespace Eraser.DefaultPlugins
 					//or the maximum size of one of these dumps.
 					mainProgress.Total = mainProgress.Completed +
 						method.CalculateEraseDataSize(null, volInfo.AvailableFreeSpace);
-					long streamLength = Math.Min(IErasureMethod.FreeSpaceFileUnit,
+					long streamLength = Math.Min(PassBasedErasureMethod.FreeSpaceFileUnit,
 						volInfo.AvailableFreeSpace);
 
 					//Handle IO exceptions gracefully, because the filesystem

@@ -133,7 +133,7 @@ namespace Eraser.DefaultPlugins
 			catch (SharingViolationException)
 			{
 				//The system cannot open the file, try to force the file handle to close.
-				if (!ManagerLibrary.Settings.ForceUnlockLockedFiles)
+				if (!Host.Instance.Settings.ForceUnlockLockedFiles)
 					throw;
 
 				StringBuilder processStr = new StringBuilder();
@@ -181,16 +181,13 @@ namespace Eraser.DefaultPlugins
 					return base.EffectiveMethod;
 
 				return Host.Instance.ErasureMethods[
-					Manager.Settings.DefaultFileErasureMethod];
+					Host.Instance.Settings.DefaultFileErasureMethod];
 			}
 		}
 
-		public override string UIText
+		public override string ToString()
 		{
-			get
-			{
-				return Path;
-			}
+			return Path;
 		}
 
 		/// <summary>

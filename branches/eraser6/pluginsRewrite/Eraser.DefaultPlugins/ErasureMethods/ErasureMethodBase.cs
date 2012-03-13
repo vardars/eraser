@@ -97,7 +97,8 @@ namespace Eraser.DefaultPlugins
 
 	abstract class UnusedSpaceErasureMethodBase : ErasureMethodBase, IUnusedSpaceErasureMethod
 	{
-		void EraseUnusedSpace(Stream stream, IPrng prng, ErasureMethodProgressFunction callback)
+		public virtual void EraseUnusedSpace(Stream stream, IPrng prng,
+			ErasureMethodProgressFunction callback)
 		{
 			Erase(stream, long.MaxValue, prng, callback);
 		}
