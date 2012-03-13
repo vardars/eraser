@@ -115,7 +115,7 @@ private:
 	size_t BufferSize;
 	size_t CurrentOffset;
 
-	static SRes LZMemStreamLook(void* object, void** buf, size_t* size)
+	static SRes LZMemStreamLook(void* object, const void** buf, size_t* size)
 	{
 		if (*size == 0)
 			return SZ_OK;
@@ -237,7 +237,7 @@ void ExtractTempFiles(std::wstring pathToExtract)
 		//Create the output file
 		size_t convertedChars = 0;
 		wchar_t fileName[MAX_PATH];
-		mbstowcs_s(&convertedChars, fileName, file->Name, sizeof(fileName) / sizeof(fileName[0]));
+		SzArEx_GetFileNameUtf16(&db, i, reinterpret_cast<UInt16*>(fileName));
 		
 		//Split the path to get the file name only.
 		wchar_t baseFileName[MAX_PATH];
@@ -258,7 +258,7 @@ void ExtractTempFiles(std::wstring pathToExtract)
 		//Extract the file
 		while (result == SZ_OK && destFileSize)
 		{
-			result = SzAr_Extract(&db, &stream.InStream, i, &blockIndex,
+			result = SzArEx_Extract(&db, &stream.InStream, i, &blockIndex,
 				&outBuffer, &outBufferSize, &offset, &processedSize, &allocImp,
 				&allocTempImp);
 			if (result != SZ_OK)
@@ -278,19 +278,19 @@ void ExtractTempFiles(std::wstring pathToExtract)
 
 bool HasNetFramework()
 {
-	const std::wstring versionKey(L"v3.5");
+	const std::wstring versionKey(L"v4");
 
 	//Open the key for reading
 	Handle<HKEY> key;
 	DWORD result = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-		(L"SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\" + versionKey).c_str(),
+		(L"SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\" + versionKey + L"\\Full").c_str(),
 		0, KEY_READ, key);
 
 	//Retry for 64-bit WoW
 	if (result == ERROR_FILE_NOT_FOUND)
 	{
 		result = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-			(L"SOFTWARE\\Wow6432Node\\Microsoft\\NET Framework Setup\\NDP\\" + versionKey).c_str(),
+			(L"SOFTWARE\\Wow6432Node\\Microsoft\\NET Framework Setup\\NDP\\" + versionKey + L"\\Full").c_str(),
 			0, KEY_READ, key);
 
 		if (result == ERROR_FILE_NOT_FOUND)
@@ -339,7 +339,7 @@ bool HasNetFramework()
 		previousDot = nextDot;
 	}
 
-	return versionComponents[0] == 3 && versionComponents[1] == 5 && versionComponents[2] >= 30729;
+	return versionComponents[0] == 4 && versionComponents[1] >= 0 && versionComponents[2] >= 30319;
 }
 
 int CreateProcessAndWait(const std::wstring& commandLine, const std::wstring& appName)
@@ -392,9 +392,9 @@ bool InstallNetFramework(std::wstring tempDir, bool quiet)
 	if (std::wstring(L"\\/").find(tempDir[tempDir.length() - 1]) == std::wstring::npos)
 		tempDir += L"\\";
 	std::wstring commandLine(L'"' + tempDir);
-	commandLine += L"dotnetfx35.exe\" /norestart";
+	commandLine += L"dotNetFx40_Full_setup.exe\" /norestart";
 
-	//If the user wants it quiet then pass the /q:a switch
+	//If the user wants it quiet then pass the /q switch
 	if (quiet)
 		commandLine += L" /q";
 
