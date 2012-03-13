@@ -141,29 +141,17 @@
   <data name="The input text is invalid for the current data type. Valid hexadecimal characters are the digits 0-9 and letters A-F" xml:space="preserve">
     <value>The input text is invalid for the current data type. Valid hexadecimal characters are the digits 0-9 and letters A-F</value>
   </data>
-  <data name="{0} (1 pass)" xml:space="preserve">
-    <value>(Untranslated)</value>
-  </data>
-  <data name="{0} ({1} passes)" xml:space="preserve">
-    <value>(Untranslated)</value>
-  </data>
-  <data name="Random" xml:space="preserve">
-    <value>(Untranslated)</value>
-  </data>
-  <data name="The selected erasure method is not supported for this erasure target." xml:space="preserve">
-    <value>(Untranslated)</value>
-  </data>
   <data name="Default Erasure Methods and PRNGs" xml:space="preserve">
     <value>Default Erasure Methods and PRNGs</value>
   </data>
   <data name="The Eraser Project &lt;eraser-development@lists.sourceforge.net&gt;" xml:space="preserve">
     <value>The Eraser Project &lt;eraser-development@lists.sourceforge.net&gt;</value>
   </data>
-  <data name="RNGCryptoServiceProvider" xml:space="preserve">
-    <value>RNGCryptoServiceProvider</value>
-  </data>
   <data name="An invalid erasure method was selected." xml:space="preserve">
     <value>An invalid erasure method was selected.</value>
+  </data>
+  <data name="RNGCryptoServiceProvider" xml:space="preserve">
+    <value>RNGCryptoServiceProvider</value>
   </data>
   <data name="Could not erase directory entries on the volume {0} because the volume is currently in use." xml:space="preserve">
     <value>Could not erase directory entries on the volume {0} because the volume is currently in use.</value>
@@ -248,6 +236,9 @@
   </data>
   <data name="drive               Erases partitions, volumes or drives\r\n  arguments:\r\n    drive=\Device\Harddisk&lt;index&gt;\r\n    drive=\\.\PhysicalDrive&lt;index&gt;\r\n    drive=\\?\Volume&lt;guid&gt;" xml:space="preserve">
     <value>drive               Erases partitions, volumes or drives\r\n  arguments:\r\n    drive=\Device\Harddisk&lt;index&gt;\r\n    drive=\\.\PhysicalDrive&lt;index&gt;\r\n    drive=\\?\Volume&lt;guid&gt;</value>
+  </data>
+  <data name="The selected erasure method is not supported for this erasure target." xml:space="preserve">
+    <value>(Untranslated)</value>
   </data>
   <data name="File" xml:space="preserve">
     <value>File</value>
@@ -339,11 +330,11 @@
   <data name="Save Source file to" xml:space="preserve">
     <value>Save Source file to</value>
   </data>
-  <data name="Unused disk space" xml:space="preserve">
-    <value>Unused disk space</value>
-  </data>
   <data name="Unused disk space ({0})" xml:space="preserve">
     <value>Unused disk space ({0})</value>
+  </data>
+  <data name="Unused disk space" xml:space="preserve">
+    <value>Unused disk space</value>
   </data>
   <data name="This computer has had System Restore or Volume Shadow Copies enabled. This may allow copies of files stored on the disk to be recovered and pose a security concern." xml:space="preserve">
     <value>This computer has had System Restore or Volume Shadow Copies enabled. This may allow copies of files stored on the disk to be recovered and pose a security concern.</value>
@@ -380,6 +371,15 @@
   </data>
   <data name="US DoD 5220.22-M (8-306./E)" xml:space="preserve">
     <value>US DoD 5220.22-M (8-306./E)</value>
+  </data>
+  <data name="{0} (1 pass)" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="{0} ({1} passes)" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Random" xml:space="preserve">
+    <value>(Untranslated)</value>
   </data>
   <data name="The First/last 16KB erasure method requires another erasure method to erase the file.\n\nThis must be set in the Plugin Settings dialog." xml:space="preserve">
     <value>The First/last 16KB erasure method requires another erasure method to erase the file.\n\nThis must be set in the Plugin Settings dialog.</value>

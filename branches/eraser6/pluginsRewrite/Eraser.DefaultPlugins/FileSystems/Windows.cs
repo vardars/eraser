@@ -49,7 +49,7 @@ namespace Eraser.DefaultPlugins
 		{
 			//If the user wants plausible deniability, find a random file from the
 			//list of decoys and write it over.
-			if (Manager.ManagerLibrary.Settings.PlausibleDeniability)
+			if (Host.Instance.Settings.PlausibleDeniability)
 			{
 				using (FileStream fileStream = info.OpenWrite())
 					CopyPlausibleDeniabilityFile(fileStream);
@@ -67,7 +67,7 @@ namespace Eraser.DefaultPlugins
 			if ((info.Attributes & FileAttributes.ReparsePoint) == 0)
 			{
 				foreach (DirectoryInfo dir in info.GetDirectories())
-					DeleteFolder(dir);
+					DeleteFolder(dir, true);
 				foreach (FileInfo file in info.GetFiles())
 					DeleteFile(file);
 			}
@@ -132,7 +132,7 @@ namespace Eraser.DefaultPlugins
 							{
 								//Try to force the handle closed.
 								if (tries > FileNameEraseTries + 1 ||
-									!ManagerLibrary.Settings.ForceUnlockLockedFiles)
+									!Host.Instance.Settings.ForceUnlockLockedFiles)
 								{
 									throw new IOException(S._("The file {0} is currently in use " +
 										"and cannot be removed.", info.FullName), e);

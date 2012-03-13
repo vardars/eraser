@@ -379,7 +379,7 @@ namespace Eraser.DefaultPlugins
 			{
 				string shadowFile = null;
 				List<string> entries = new List<string>(
-					ManagerLibrary.Settings.PlausibleDeniabilityFiles);
+					Host.Instance.Settings.PlausibleDeniabilityFiles);
 				IPrng prng = Host.Instance.Prngs.ActivePrng;
 				do
 				{

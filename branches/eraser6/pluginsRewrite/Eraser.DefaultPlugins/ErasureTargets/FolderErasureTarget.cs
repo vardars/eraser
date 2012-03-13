@@ -201,7 +201,7 @@ namespace Eraser.DefaultPlugins
 				{
 					IFileSystem fsManager = Host.Instance.FileSystems[
 						VolumeInfo.FromMountPoint(Path)];
-					fsManager.DeleteFolder(directory);
+					fsManager.DeleteFolder(directory, true);
 				}
 			}
 		}
@@ -228,7 +228,7 @@ namespace Eraser.DefaultPlugins
 				try
 				{
 					Host.Instance.FileSystems[VolumeInfo.FromMountPoint(Path)].
-						DeleteFolder(info);
+						DeleteFolder(info, true);
 				}
 				catch (UnauthorizedAccessException)
 				{

@@ -152,7 +152,7 @@ namespace Eraser.DefaultPlugins
 					files[i].Delete();
 				}
 
-				DeleteFolder(tempDir);
+				DeleteFolder(tempDir, true);
 			}
 		}
 
