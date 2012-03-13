@@ -257,7 +257,7 @@ namespace Eraser.DefaultPlugins
 					info.IsReadOnly = false;
 
 				//Define the callback function for progress reporting.
-				IErasureMethod.ErasureMethodProgressFunction callback =
+				ErasureMethodProgressFunction callback =
 					delegate(long lastWritten, long totalData, int currentPass)
 					{
 						if (Task.Canceled)
