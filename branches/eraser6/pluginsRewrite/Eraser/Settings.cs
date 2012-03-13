@@ -38,7 +38,7 @@ using Eraser.Plugins;
 
 namespace Eraser
 {
-	internal class Settings
+	internal class Settings : PersistentStore
 	{
 		/// <summary>
 		/// Registry-based storage backing for the Settings class.
@@ -48,14 +48,12 @@ namespace Eraser
 			/// <summary>
 			/// Constructor.
 			/// </summary>
-			/// <param name="pluginId">The GUID of the plugin for which settings are stored.</param>
 			/// <param name="key">The registry key to look for the settings in.</param>
-			public RegistrySettings(Guid pluginId, RegistryKey key)
+			public RegistrySettings(RegistryKey key)
 			{
 				if (key == null)
 					throw new ArgumentNullException("key");
 
-				PluginID = pluginId;
 				Key = key;
 			}
 
@@ -106,9 +104,8 @@ namespace Eraser
 						catch (InvalidCastException)
 						{
 							Key.DeleteValue(name);
-							MessageBox.Show(S._("Could not load the setting {0}\\{1} for " +
-									"plugin {2}. The setting has been lost.", Key, name,
-									PluginID.ToString()),
+							MessageBox.Show(S._("Could not load the setting {0}\\{1}. The " +
+								"setting has been lost.", Key, name),
 								S._("Eraser"), MessageBoxButtons.OK, MessageBoxIcon.Error,
 								MessageBoxDefaultButton.Button1,
 								Localisation.IsRightToLeft(null) ? MessageBoxOptions.RtlReading : 0);
@@ -162,16 +159,69 @@ namespace Eraser
 				}
 			}
 
-			/// <summary>
-			/// The GUID of the plugin whose settings this object is storing.
-			/// </summary>
-			private Guid PluginID;
+			public override PersistentStore GetSubsection(string subsectionName)
+			{
+				RegistryKey subKey = null;
+
+				try
+				{
+					//Open the registry key containing the settings
+					subKey = Key.OpenSubKey(subsectionName, true);
+					if (subKey == null)
+						subKey = Key.CreateSubKey(subsectionName);
+
+					return new RegistrySettings(subKey);
+				}
+				finally
+				{
+					if (subKey != null)
+						subKey.Close();
+				}
+			}
 
 			/// <summary>
 			/// The registry key where the data is stored.
 			/// </summary>
 			private RegistryKey Key;
 		}
+
+		public Settings()
+		{
+			RegistryKey eraserKey = null;
+
+			try
+			{
+				//Open the registry key containing the settings
+				eraserKey = Registry.CurrentUser.OpenSubKey(Program.SettingsPath, true);
+				if (eraserKey == null)
+					eraserKey = Registry.CurrentUser.CreateSubKey(Program.SettingsPath);
+
+				//Return the Settings object.
+				registry = new RegistrySettings(eraserKey);
+			}
+			finally
+			{
+				if (eraserKey != null)
+					eraserKey.Close();
+			}
+		}
+
+		public override PersistentStore GetSubsection(string subsectionName)
+		{
+			return registry.GetSubsection(subsectionName);
+		}
+
+		public override T GetValue<T>(string name, T defaultValue)
+		{
+			return registry.GetValue<T>(name, defaultValue);
+		}
+
+		public override void SetValue(string name, object value)
+		{
+			registry.SetValue(name, value);
+		}
+
+		private RegistrySettings registry;
 	}
 
 	/// <summary>
