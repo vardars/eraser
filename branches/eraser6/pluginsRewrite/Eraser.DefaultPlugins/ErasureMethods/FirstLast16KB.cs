@@ -35,7 +35,7 @@ using Eraser.Plugins.ExtensionPoints;
 namespace Eraser.DefaultPlugins
 {
 	[Guid("0C2E07BF-0207-49a3-ADE8-46F9E1499C01")]
-	sealed class FirstLast16KB : IErasureMethod
+	sealed class FirstLast16KB : ErasureMethodBase
 	{
 		public FirstLast16KB()
 		{
