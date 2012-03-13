@@ -60,9 +60,9 @@ namespace Eraser.Plugins
 			}
 
 			//Get the persistent store for this assembly
-			PersistentStore = Host.Instance.PersistentStore.GetSubsection(
-				new Guid(((GuidAttribute)Assembly.GetCallingAssembly().
-					GetCustomAttributes(typeof(GuidAttribute), false)[0]).Value).ToString());
+			if (AssemblyInfo.Guid != Guid.Empty)
+				PersistentStore = Host.Instance.PersistentStore.GetSubsection(
+					AssemblyInfo.Guid.ToString());
 		}
 
 		/// <summary>
