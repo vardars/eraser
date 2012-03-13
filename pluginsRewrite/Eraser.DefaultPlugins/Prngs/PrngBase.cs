@@ -31,15 +31,12 @@ namespace Eraser.DefaultPlugins
 	{
 		#region IPrng Members
 
-		public string Name
+		public abstract string Name
 		{
-			get { throw new NotImplementedException(); }
+			get;
 		}
 
-		public void Reseed(byte[] seed)
-		{
-			throw new NotImplementedException();
-		}
+		public abstract void Reseed(byte[] seed);
 
 		/// <summary>
 		/// Returns a nonnegative random number less than the specified maximum.

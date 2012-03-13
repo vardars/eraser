@@ -107,14 +107,6 @@ namespace Eraser.DefaultPlugins
 			return result;
 		}
 
-
-		/// <seealso cref="DeleteFolder"/>
-		/// <param name="info">The folder to delete.</param>
-		public void DeleteFolder(DirectoryInfo info)
-		{
-			DeleteFolder(info, true);
-		}
-
 		/// <summary>
 		/// Generates a random file name with the given length.
 		/// </summary>
