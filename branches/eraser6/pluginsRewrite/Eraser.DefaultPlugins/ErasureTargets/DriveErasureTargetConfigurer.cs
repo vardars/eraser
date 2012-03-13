@@ -234,7 +234,7 @@ namespace Eraser.DefaultPlugins
 
 		#region IConfigurer<ErasureTarget> Members
 
-		public void LoadFrom(ErasureTarget target)
+		public void LoadFrom(IErasureTarget target)
 		{
 			DriveErasureTarget partition = target as DriveErasureTarget;
 			if (partition == null)
@@ -251,7 +251,7 @@ namespace Eraser.DefaultPlugins
 				}
 		}
 
-		public bool SaveTo(ErasureTarget target)
+		public bool SaveTo(IErasureTarget target)
 		{
 			DriveErasureTarget partition = target as DriveErasureTarget;
 			if (partition == null)

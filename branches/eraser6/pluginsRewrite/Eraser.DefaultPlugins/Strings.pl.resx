@@ -141,6 +141,18 @@
   <data name="The input text is invalid for the current data type. Valid hexadecimal characters are the digits 0-9 and letters A-F" xml:space="preserve">
     <value>Wprowadzony tekst jest niewłaściwy dla wymaganego typu danych. Użyj symboli szesnastkowych: cyfry 0-9 i litery A-F</value>
   </data>
+  <data name="{0} (1 pass)" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="{0} ({1} passes)" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Random" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="The selected erasure method is not supported for this erasure target." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Default Erasure Methods and PRNGs" xml:space="preserve">
     <value>Domyślna metoda wymazywania i generatora liczb pseudolosowych (PRNG)</value>
   </data>

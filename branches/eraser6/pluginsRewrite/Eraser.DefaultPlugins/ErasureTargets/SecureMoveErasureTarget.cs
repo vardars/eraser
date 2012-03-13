@@ -41,7 +41,7 @@ namespace Eraser.DefaultPlugins
 	/// </summary>
 	[Serializable]
 	[Guid("18FB3523-4012-4718-8B9A-BADAA9084214")]
-	public class SecureMoveErasureTarget : FileSystemObjectErasureTarget
+	class SecureMoveErasureTarget : FileSystemObjectErasureTarget
 	{
 		#region Serialization code
 		protected SecureMoveErasureTarget(SerializationInfo info, StreamingContext context)
@@ -247,7 +247,7 @@ namespace Eraser.DefaultPlugins
 				destDirectory.CopyTimes(subDirectory);
 
 				//Then delete the source directory.
-				FileSystem fsManager = Host.Instance.FileSystems[
+				IFileSystem fsManager = Host.Instance.FileSystems[
 					VolumeInfo.FromMountPoint(Path)];
 				fsManager.DeleteFolder(subDirectory);
 			};

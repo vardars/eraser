@@ -11,6 +11,7 @@ using Microsoft.Win32.SafeHandles;
 
 using Eraser.Util;
 using Eraser.Plugins.ExtensionPoints;
+using System.Runtime.InteropServices;
 
 namespace Eraser.DefaultPlugins
 {
@@ -21,7 +22,7 @@ namespace Eraser.DefaultPlugins
 	/// instance of such behaviour within our system. The other classes could be
 	/// implemented as plugins, managed by EntropySourceManager.
 	/// </summary>
-	public class KernelEntropySource : EntropySource
+	public class KernelEntropySource : IEntropySource
 	{
 		public override byte[] GetPrimer()
 		{
@@ -172,6 +173,32 @@ namespace Eraser.DefaultPlugins
 			}
 
 			return result.ToArray();
+		}
+
+		/// <summary>
+		/// Converts value types into a byte array. This is a helper function to allow
+		/// inherited classes to convert value types into byte arrays which can be
+		/// returned to the EntropyPoller class.
+		/// </summary>
+		/// <typeparam name="T">Any value type</typeparam>
+		/// <param name="entropy">A value which will be XORed with pool contents.</param>
+		private static byte[] StructToBuffer<T>(T entropy) where T : struct
+		{
+			int sizeofObject = Marshal.SizeOf(entropy);
+			IntPtr memory = Marshal.AllocHGlobal(sizeofObject);
+			try
+			{
+				Marshal.StructureToPtr(entropy, memory, false);
+				byte[] dest = new byte[sizeofObject];
+
+				//Copy the memory
+				Marshal.Copy(memory, dest, 0, sizeofObject);
+				return dest;
+			}
+			finally
+			{
+				Marshal.FreeHGlobal(memory);
+			}
 		}
 	}
 }

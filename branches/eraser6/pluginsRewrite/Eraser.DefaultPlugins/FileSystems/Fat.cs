@@ -38,14 +38,14 @@ namespace Eraser.DefaultPlugins
 	public abstract class FatFileSystem : WindowsFileSystem
 	{
 		public override void EraseOldFileSystemResidentFiles(VolumeInfo volume,
-			DirectoryInfo tempDirectory, ErasureMethod method,
+			DirectoryInfo tempDirectory, IErasureMethod method,
 			FileSystemEntriesEraseProgress callback)
 		{
 			//Nothing to be done here. FAT doesn't store files in its FAT.
 		}
 
-		public override void EraseFileSystemObject(StreamInfo info, ErasureMethod method,
-			ErasureMethod.ErasureMethodProgressFunction callback)
+		public override void EraseFileSystemObject(StreamInfo info, IErasureMethod method,
+			ErasureMethodProgressFunction callback)
 		{
 			//Create the file stream, and call the erasure method to write to
 			//the stream.

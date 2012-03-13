@@ -49,7 +49,7 @@ namespace Eraser.DefaultPlugins
 		}
 
 		public override void EraseOldFileSystemResidentFiles(VolumeInfo volume,
-			DirectoryInfo tempDirectory, ErasureMethod method,
+			DirectoryInfo tempDirectory, IErasureMethod method,
 			FileSystemEntriesEraseProgress callback)
 		{
 			//Squeeze files smaller than one MFT record until the volume and the MFT is full.
@@ -102,7 +102,7 @@ namespace Eraser.DefaultPlugins
 			FileSystemEntriesEraseProgress callback)
 		{
 			//Create a directory to hold all the temporary files
-			DirectoryInfo tempDir = new DirectoryInfo(FileSystem.GenerateRandomFileName(
+			DirectoryInfo tempDir = new DirectoryInfo(IFileSystem.GenerateRandomFileName(
 				info.MountPoints[0], 32));
 			tempDir.Create();
 
@@ -156,8 +156,8 @@ namespace Eraser.DefaultPlugins
 			}
 		}
 
-		public override void EraseFileSystemObject(StreamInfo info, ErasureMethod method,
-			ErasureMethod.ErasureMethodProgressFunction callback)
+		public override void EraseFileSystemObject(StreamInfo info, IErasureMethod method,
+			ErasureMethodProgressFunction callback)
 		{
 			//Check if the file fits in one cluster - if it does it may be MFT resident
 			//TODO: any more deterministic way of finding out?

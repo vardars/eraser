@@ -41,7 +41,7 @@ namespace Eraser.DefaultPlugins
 	/// Class representing a tangible object (file/folder) to be erased.
 	/// </summary>
 	[Serializable]
-	public abstract class FileSystemObjectErasureTarget : IErasureTarget
+	abstract class FileSystemObjectErasureTarget : ErasureTargetBase
 	{
 		#region Serialization code
 		protected FileSystemObjectErasureTarget(SerializationInfo info, StreamingContext context)
@@ -181,7 +181,7 @@ namespace Eraser.DefaultPlugins
 					return base.EffectiveMethod;
 
 				return Host.Instance.ErasureMethods[
-					DefaultPlugin.Settings.DefaultFileErasureMethod];
+					Manager.Settings.DefaultFileErasureMethod];
 			}
 		}
 
@@ -303,7 +303,7 @@ namespace Eraser.DefaultPlugins
 		/// <param name="info">The stream to erase.</param>
 		/// <param name="callback">The erasure progress callback.</param>
 		private void TryEraseStream(IFileSystem fsManager, IErasureMethod method, StreamInfo info,
-			IErasureMethod.ErasureMethodProgressFunction callback)
+			ErasureMethodProgressFunction callback)
 		{
 			for (int i = 0; ; ++i)
 			{

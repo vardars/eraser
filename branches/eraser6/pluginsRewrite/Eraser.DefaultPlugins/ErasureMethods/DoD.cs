@@ -53,7 +53,7 @@ namespace Eraser.DefaultPlugins
 			get
 			{
 				//Set passes 1, 4 and 5 to be a random value
-				Prng prng = Host.Instance.Prngs.ActivePrng;
+				IPrng prng = Host.Instance.Prngs.ActivePrng;
 				int rand = prng.Next();
 
 				ErasureMethodPass[] result = new ErasureMethodPass[]

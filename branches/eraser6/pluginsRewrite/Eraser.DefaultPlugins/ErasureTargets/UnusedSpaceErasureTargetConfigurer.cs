@@ -99,7 +99,7 @@ namespace Eraser.DefaultPlugins
 
 		#region IConfigurer<ErasureTarget> Members
 
-		public void LoadFrom(ErasureTarget target)
+		public void LoadFrom(IErasureTarget target)
 		{
 			UnusedSpaceErasureTarget unused = target as UnusedSpaceErasureTarget;
 			if (unused == null)
@@ -112,7 +112,7 @@ namespace Eraser.DefaultPlugins
 			unusedClusterTips.Checked = unused.EraseClusterTips;
 		}
 
-		public bool SaveTo(ErasureTarget target)
+		public bool SaveTo(IErasureTarget target)
 		{
 			UnusedSpaceErasureTarget unused = target as UnusedSpaceErasureTarget;
 			if (unused == null)

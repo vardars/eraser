@@ -36,7 +36,7 @@ namespace Eraser.DefaultPlugins
 {
 	[Serializable]
 	[Guid("A1FA7354-0258-4903-88E9-0D31FC5F8D51")]
-	public class RecycleBinErasureTarget : FileSystemObjectErasureTarget
+	class RecycleBinErasureTarget : FileSystemObjectErasureTarget
 	{
 		#region Serialization code
 		protected RecycleBinErasureTarget(SerializationInfo info, StreamingContext context)

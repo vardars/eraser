@@ -37,7 +37,7 @@ namespace Eraser.DefaultPlugins
 	/// <summary>
 	/// Base class for all Windows filesystems.
 	/// </summary>
-	public abstract class WindowsFileSystem : FileSystem
+	public abstract class WindowsFileSystem : IFileSystem
 	{
 		public override void ResetFileTimes(FileSystemInfo info)
 		{
@@ -211,7 +211,7 @@ namespace Eraser.DefaultPlugins
 				}
 		}
 
-		public override void EraseClusterTips(VolumeInfo info, ErasureMethod method,
+		public override void EraseClusterTips(VolumeInfo info, IErasureMethod method,
 			ClusterTipsSearchProgress searchCallback, ClusterTipsEraseProgress eraseCallback)
 		{
 			//List all the files which can be erased.
@@ -324,7 +324,7 @@ namespace Eraser.DefaultPlugins
 		/// </summary>
 		/// <param name="stream">The stream to erase.</param>
 		/// <param name="method">The erasure method to use.</param>
-		private void EraseFileClusterTips(StreamInfo streamInfo, ErasureMethod method)
+		private void EraseFileClusterTips(StreamInfo streamInfo, IErasureMethod method)
 		{
 			//Get the file access times
 			DateTime lastAccess = streamInfo.LastAccessTime;
