@@ -40,6 +40,40 @@ namespace Eraser.Manager
 	[Serializable]
 	public class Task : ITask, ISerializable
 	{
+		#region ErasureTargetProgressManagerStep
+		/// <summary>
+		/// Returns the progress of an erasure target, since that comprises the
+		/// steps of the Task Progress.
+		/// </summary>
+		private class ErasureTargetProgressManagerStep : SteppedProgressManagerStepBase
+		{
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="target">The erasure target represented by this object.</param>
+			/// <param name="steps">The number of targets in the task.</param>
+			public ErasureTargetProgressManagerStep(IErasureTarget target, int targets)
+				: base(1.0f / targets)
+			{
+				Target = target;
+			}
+
+			public override ProgressManagerBase Progress
+			{
+				get
+				{
+					return Target.Progress;
+				}
+				set
+				{
+					throw new InvalidOperationException();
+				}
+			}
+
+			private IErasureTarget Target;
+		}
+		#endregion
+
 		#region Serialization code
 		protected Task(SerializationInfo info, StreamingContext context)
 		{
@@ -84,16 +118,6 @@ namespace Eraser.Manager
 			Schedule = Schedule.RunNow;
 			Canceled = false;
 			Log = new List<LogSink>();
-		}
-
-		/// <summary>
-		/// Cancels the task from running, or, if the task is queued for running,
-		/// removes the task from the queue.
-		/// </summary>
-		public void Cancel()
-		{
-			Executor.UnqueueTask(this);
-			Canceled = true;
 		}
 
 		/// <summary>
@@ -151,33 +175,6 @@ namespace Eraser.Manager
 
 				return S._("{0} and {1} other targets", result, Targets.Count - 3);
 			}
-		}
-
-		/// <summary>
-		/// Gets the status of the task - whether it is being executed.
-		/// </summary>
-		public bool Executing { get; private set; }
-
-		/// <summary>
-		/// Gets whether this task is currently queued to run. This is true only
-		/// if the queue it is in is an explicit request, i.e will run when the
-		/// executor is idle.
-		/// </summary>
-		public bool Queued
-		{
-			get
-			{
-				return Executor.IsTaskQueued(this);
-			}
-		}
-
-		/// <summary>
-		/// Gets whether the task has been cancelled from execution.
-		/// </summary>
-		public bool Canceled
-		{
-			get;
-			internal set;
 		}
 
 		/// <summary>
@@ -241,6 +238,108 @@ namespace Eraser.Manager
 			}
 		}
 
+		/// <summary>
+		/// Gets the status of the task - whether it is being executed.
+		/// </summary>
+		public bool Executing { get; private set; }
+
+		/// <summary>
+		/// Gets whether this task is currently queued to run. This is true only
+		/// if the queue it is in is an explicit request, i.e will run when the
+		/// executor is idle.
+		/// </summary>
+		public bool Queued
+		{
+			get
+			{
+				if (Executor == null)
+					throw new InvalidOperationException();
+
+				return Executor.IsTaskQueued(this);
+			}
+		}
+
+		/// <summary>
+		/// Gets whether the task has been cancelled from execution.
+		/// </summary>
+		public bool Canceled
+		{
+			get;
+			private set;
+		}
+
+		/// <summary>
+		/// Cancels the task from running, or, if the task is queued for running,
+		/// removes the task from the queue.
+		/// </summary>
+		public void Cancel()
+		{
+			Executor.UnqueueTask(this);
+			Canceled = true;
+		}
+
+		/// <summary>
+		/// Executes the task in the context of the calling thread.
+		/// </summary>
+		public void Execute()
+		{
+			OnTaskStarted();
+			Executing = true;
+			Canceled = false;
+			Progress = new SteppedProgressManager();
+
+			try
+			{
+				//Run the task
+				foreach (IErasureTarget target in Targets)
+					try
+					{
+						Progress.Steps.Add(new ErasureTargetProgressManagerStep(
+							target, Targets.Count));
+						target.Execute();
+					}
+					catch (FatalException)
+					{
+						throw;
+					}
+					catch (OperationCanceledException)
+					{
+						throw;
+					}
+					catch (SharingViolationException)
+					{
+					}
+			}
+			catch (FatalException e)
+			{
+				Logger.Log(e.Message, LogLevel.Fatal);
+			}
+			catch (OperationCanceledException e)
+			{
+				Logger.Log(e.Message, LogLevel.Fatal);
+			}
+			catch (SharingViolationException)
+			{
+			}
+			finally
+			{
+				//If the task is a recurring task, reschedule it since we are done.
+				if (Schedule is RecurringSchedule)
+				{
+					((RecurringSchedule)Schedule).Reschedule(DateTime.Now);
+				}
+
+				//If the task is an execute on restart task or run immediately task, it is
+				//only run once and can now be restored to a manually run task
+				if (Schedule == Schedule.RunOnRestart || Schedule == Schedule.RunNow)
+					Schedule = Schedule.RunManually;
+
+				Progress = null;
+				Executing = false;
+				OnTaskFinished();
+			}
+		}
+
 		private Executor executor;
 		private Schedule schedule;
 		private SteppedProgressManager progress;
@@ -273,21 +372,17 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Broadcasts the task execution start event.
 		/// </summary>
-		internal void OnTaskStarted()
+		private void OnTaskStarted()
 		{
 			if (TaskStarted != null)
 				TaskStarted(this, EventArgs.Empty);
-			Executing = true;
-			Progress = new SteppedProgressManager();
 		}
 
 		/// <summary>
 		/// Broadcasts the task execution completion event.
 		/// </summary>
-		internal void OnTaskFinished()
+		private void OnTaskFinished()
 		{
-			Progress = null;
-			Executing = false;
 			if (TaskFinished != null)
 				TaskFinished(this, EventArgs.Empty);
 		}
