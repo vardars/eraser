@@ -112,6 +112,15 @@ namespace Eraser.Plugins
 			private set;
 		}
 
+		/// <summary>
+		/// Global settings for all plugins.
+		/// </summary>
+		public Settings Settings
+		{
+			get;
+			private set;
+		}
+
 		#region Plugin Loading and Management
 
 		/// <summary>
