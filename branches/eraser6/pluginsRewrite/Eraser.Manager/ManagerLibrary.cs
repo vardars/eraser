@@ -44,7 +44,7 @@ namespace Eraser.Manager
 			Instance = this;
 			Settings = new ManagerSettings(persistentStore);
 			entropyPoller = new EntropyPoller();
-			Host.Initialise(persistentStore.GetSubsection("Plugins"));
+			Host.Initialise(persistentStore);
 			Host.Instance.PluginLoad += OnPluginLoad;
 			Host.Instance.Load();
 		}

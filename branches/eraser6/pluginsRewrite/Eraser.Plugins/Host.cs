@@ -87,7 +87,7 @@ namespace Eraser.Plugins
 					"exist at any one point of time.");
 			Instance = this;
 			PersistentStore = store;
-			Settings = new Settings(PersistentStore.GetSubsection("Eraser.Erase"));
+			Settings = new Settings(PersistentStore);
 
 			EntropySources = new EntropySourceRegistrar();
 			Prngs = new PrngRegistrar();
