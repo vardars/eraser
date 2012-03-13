@@ -33,24 +33,24 @@ using Eraser.Plugins.ExtensionPoints;
 namespace Eraser.DefaultPlugins
 {
 	[Guid("6BF35B8E-F37F-476e-B6B2-9994A92C3B0C")]
-	public class RngCrypto : PrngBase
+	class RngCrypto : PrngBase
 	{
-		public string Name
+		public override string Name
 		{
 			get { return S._("RNGCryptoServiceProvider"); }
 		}
 
-		public Guid Guid
+		public override Guid Guid
 		{
 			get { return GetType().GUID; }
 		}
 
-		public void NextBytes(byte[] buffer)
+		public override void NextBytes(byte[] buffer)
 		{
 			rand.GetBytes(buffer);
 		}
 
-		protected void Reseed(byte[] seed)
+		protected override void Reseed(byte[] seed)
 		{
 			//No-op. RNGCryptoServiceProviders can't be reseeded.
 		}
