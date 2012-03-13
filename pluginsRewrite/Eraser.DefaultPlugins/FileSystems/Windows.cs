@@ -37,7 +37,7 @@ namespace Eraser.DefaultPlugins
 	/// <summary>
 	/// Base class for all Windows filesystems.
 	/// </summary>
-	public abstract class WindowsFileSystem : IFileSystem
+	abstract class WindowsFileSystem : FileSystemBase
 	{
 		public override void ResetFileTimes(FileSystemInfo info)
 		{

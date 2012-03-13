@@ -24,7 +24,7 @@ namespace Eraser.DefaultPlugins
 	/// </summary>
 	public class KernelEntropySource : IEntropySource
 	{
-		public override byte[] GetPrimer()
+		public byte[] GetPrimer()
 		{
 			List<byte> result = new List<byte>();
 
@@ -37,7 +37,7 @@ namespace Eraser.DefaultPlugins
 			return result.ToArray();
 		}
 
-		public override Guid Guid
+		public Guid Guid
 		{
 			get
 			{
@@ -45,7 +45,7 @@ namespace Eraser.DefaultPlugins
 			}
 		}
 
-		public override string Name
+		public string Name
 		{
 			get
 			{
@@ -53,7 +53,7 @@ namespace Eraser.DefaultPlugins
 			}
 		}
 
-		public override byte[] GetEntropy()
+		public byte[] GetEntropy()
 		{
 			List<byte> result = new List<byte>();
 			result.AddRange(GetFastEntropy());
@@ -65,7 +65,7 @@ namespace Eraser.DefaultPlugins
 		/// <summary>
 		/// Retrieves entropy from quick sources.
 		/// </summary>
-		public override byte[] GetFastEntropy()
+		public byte[] GetFastEntropy()
 		{
 			List<byte> result = new List<byte>();
 
@@ -145,7 +145,7 @@ namespace Eraser.DefaultPlugins
 		/// Retrieves entropy from sources which are relatively slower than those from
 		/// the FastAddEntropy function.
 		/// </summary>
-		public override byte[] GetSlowEntropy()
+		public byte[] GetSlowEntropy()
 		{
 			List<byte> result = new List<byte>();
 

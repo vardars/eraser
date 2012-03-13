@@ -36,7 +36,7 @@ namespace Eraser.DefaultPlugins
 	/// Provides functions to handle erasures specific to NTFS volumes.
 	/// </summary>
 	[Guid("34399F62-0AD4-411c-8C71-5E1E6213545C")]
-	public class NtfsFileSystem : WindowsFileSystem
+	class NtfsFileSystem : WindowsFileSystem
 	{
 		public override Guid Guid
 		{
@@ -102,7 +102,7 @@ namespace Eraser.DefaultPlugins
 			FileSystemEntriesEraseProgress callback)
 		{
 			//Create a directory to hold all the temporary files
-			DirectoryInfo tempDir = new DirectoryInfo(IFileSystem.GenerateRandomFileName(
+			DirectoryInfo tempDir = new DirectoryInfo(GenerateRandomFileName(
 				info.MountPoints[0], 32));
 			tempDir.Create();
 
