@@ -46,7 +46,7 @@ namespace Eraser.DefaultPlugins
 					method = Host.Instance.ErasureMethods[DefaultPlugin.Settings.FL16Method];
 				else if (Host.Instance.Settings.DefaultFileErasureMethod != Guid)
 					method = Host.Instance.ErasureMethods[
-						Host.Instance.DefaultFileErasureMethod];
+						Host.Instance.Settings.DefaultFileErasureMethod];
 				else
 					method = Host.Instance.ErasureMethods[new Gutmann().Guid];
 			}

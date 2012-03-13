@@ -59,7 +59,7 @@ namespace Eraser.DefaultPlugins
 			if (fl16MethodCmb.SelectedIndex == -1)
 			{
 				Guid methodGuid =
-					Host.Instance.DefaultFileErasureMethod;
+					Host.Instance.Settings.DefaultFileErasureMethod;
 				if (methodGuid == typeof(FirstLast16KB).GUID)
 					methodGuid = typeof(Gutmann).GUID;
 				
