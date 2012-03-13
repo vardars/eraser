@@ -168,6 +168,9 @@
   <data name="Could not force closure of file \&quot;{0}\&quot; {1}(locked by {0})" xml:space="preserve">
     <value>Impossibile forzare la chiusura del file \"{0}\" {1}(in uso da {0})</value>
   </data>
+  <data name="Plausible deniability was selected, but no decoy files were found. The current file has been only replaced with random data." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Could not erase cluster tips in {0} as the volume is not mounted." xml:space="preserve">
     <value>Non sono stati puliti i cluster tips in {0} perchè il volumen non è montato.</value>
   </data>
@@ -262,9 +265,6 @@
     <value>(Untranslated)</value>
   </data>
   <data name="The file {0} is a hard link or a symbolic link thus the contents of the file was not erased." xml:space="preserve">
-    <value>(Untranslated)</value>
-  </data>
-  <data name="Plausible deniability was selected, but no decoy files were found. The current file has been only replaced with random data." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
   <data name="Files in Folder" xml:space="preserve">
