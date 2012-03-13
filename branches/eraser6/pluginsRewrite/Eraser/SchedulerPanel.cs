@@ -64,7 +64,7 @@ namespace Eraser
 		private void CreateTask(Task task)
 		{
 			//Add the item to the list view
-			ListViewItem item = scheduler.Items.Add(task.UIText);
+			ListViewItem item = scheduler.Items.Add(task.ToString());
 			item.SubItems.Add(string.Empty);
 			item.SubItems.Add(string.Empty);
 
@@ -91,7 +91,7 @@ namespace Eraser
 			Task task = (Task)item.Tag;
 
 			//Set the task name
-			item.Text = task.UIText;
+			item.Text = task.ToString();
 
 			//Set the next run time of the task
 			if (task.Queued)
@@ -143,7 +143,7 @@ namespace Eraser
 			if (parent != null && (parent.WindowState == FormWindowState.Minimized || !parent.Visible))
 			{
 				parent.ShowNotificationBalloon(S._("New task added"), S._("{0} " +
-					"has just been added to the list of tasks.", e.Task.UIText),
+					"has just been added to the list of tasks.", e.Task.ToString()),
 					ToolTipIcon.Info);
 			}
 
@@ -276,19 +276,19 @@ namespace Eraser
 				switch (highestLevel)
 				{
 					case LogLevel.Warning:
-						message = S._("The task {0} has completed with warnings.", task.UIText);
+						message = S._("The task {0} has completed with warnings.", task);
 						icon = ToolTipIcon.Warning;
 						break;
 					case LogLevel.Error:
-						message = S._("The task {0} has completed with errors.", task.UIText);
+						message = S._("The task {0} has completed with errors.", task);
 						icon = ToolTipIcon.Error;
 						break;
 					case LogLevel.Fatal:
-						message = S._("The task {0} did not complete.", task.UIText);
+						message = S._("The task {0} did not complete.", task);
 						icon = ToolTipIcon.Error;
 						break;
 					default:
-						message = S._("The task {0} has completed.", task.UIText);
+						message = S._("The task {0} has completed.", task);
 						icon = ToolTipIcon.Info;
 						break;
 				}

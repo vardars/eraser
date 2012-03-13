@@ -48,7 +48,7 @@ namespace Eraser
 			this.ActiveControl = hide;
 
 			//Register the event handlers
-			jobTitle.Text = task.UIText;
+			jobTitle.Text = task.ToString();
 			task.ProgressChanged += task_ProgressChanged;
 			task.TaskFinished += task_TaskFinished;
 
