@@ -123,9 +123,7 @@ namespace Eraser.DefaultPlugins
 
 			//Create the progress manager.
 			Progress = new SteppedProgressManager();
-			Task.Progress.Steps.Add(new SteppedProgressManagerStep(Progress,
-				1.0f / Task.Targets.Count));
-
+			
 			try
 			{
 				//Depending on whether the path is a file or directory, execute the
@@ -235,8 +233,7 @@ namespace Eraser.DefaultPlugins
 					CopyTimesAndDelete(child);
 
 				//Update progress.
-				/*OnProgressChanged(this, new ProgressChangedEventArgs(folderDeleteProgress,
-					new TaskProgressChangedEventArgs(subDirectory.FullName, 1, 1)));*/
+				folderDeleteProgress.Tag = subDirectory.FullName;
 
 				//Get the directory which we copied to and copy the file times to the
 				//destination directory
@@ -341,8 +338,7 @@ namespace Eraser.DefaultPlugins
 		{
 			progress.Completed = TotalBytesTransferred;
 			progress.Total = TotalFileSize;
-			/*OnProgressChanged(this, new ProgressChangedEventArgs(Progress,
-				new TaskProgressChangedEventArgs(file.FullName, 1, 1)));*/
+			progress.Tag = file.FullName;
 
 			if (Task.Canceled)
 				return Methods.CopyProgressFunctionResult.Stop;

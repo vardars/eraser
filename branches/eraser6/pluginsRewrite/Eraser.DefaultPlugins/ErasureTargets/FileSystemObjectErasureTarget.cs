@@ -204,18 +204,16 @@ namespace Eraser.DefaultPlugins
 			//Set the event's current target status.
 			if (Progress == null)
 				throw new InvalidOperationException("The Progress property must not be null.");
-			Task.Progress.Steps.Add(new SteppedProgressManagerStep(Progress,
-				1.0f / Task.Targets.Count));
 
 			//Iterate over every path, and erase the path.
 			for (int i = 0; i < paths.Count; ++i)
 			{
+				//Create a new progress manager for the file.
 				ProgressManager step = new ProgressManager();
 				Progress.Steps.Add(new SteppedProgressManagerStep(step,
 					dataTotal == 0 ? 0.0f : paths[i].Length / (float)dataTotal,
-					S._("Erasing files...")));
+					paths[i].FullName));
 				EraseStream(paths[i], step);
-				step.MarkComplete();
 			}
 		}
 
@@ -246,9 +244,7 @@ namespace Eraser.DefaultPlugins
 			{
 				//Update the task progress
 				IErasureMethod method = EffectiveMethod;
-				/*OnProgressChanged(this, new ProgressChangedEventArgs(progress,
-					new TaskProgressChangedEventArgs(info.FullName, 0, method.Passes)));*/
-
+				
 				//Remove the read-only flag, if it is set.
 				if (isReadOnly = info.IsReadOnly)
 					info.IsReadOnly = false;
@@ -260,10 +256,9 @@ namespace Eraser.DefaultPlugins
 						if (Task.Canceled)
 							throw new OperationCanceledException(S._("The task was cancelled."));
 
+						progress.Tag = new object[2] { currentPass, method.Passes };
 						progress.Total = totalData;
 						progress.Completed += lastWritten;
-						/*OnProgressChanged(this, new ProgressChangedEventArgs(progress,
-							new TaskProgressChangedEventArgs(info.FullName, currentPass, method.Passes)));*/
 					};
 
 				TryEraseStream(fsManager, method, info, callback);

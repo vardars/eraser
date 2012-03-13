@@ -96,7 +96,7 @@ namespace Eraser.Plugins.ExtensionPoints
 		/// <summary>
 		/// Gets the progress manager for this Erasure Target.
 		/// </summary>
-		ProgressManagerBase Progress
+		SteppedProgressManager Progress
 		{
 			get;
 		}

@@ -177,9 +177,10 @@ namespace Eraser.DefaultPlugins
 				return;
 			}
 
-			Progress = new ProgressManager();
-			Task.Progress.Steps.Add(new SteppedProgressManagerStep(Progress,
-				1.0f / Task.Targets.Count));
+			Progress = new SteppedProgressManager();
+			ProgressManager stepProgress = new ProgressManager();
+			SteppedProgressManagerStep step = new SteppedProgressManagerStep(stepProgress, 1.0f,
+				ToString());
 			FileStream stream = null;
 
 			try
@@ -188,12 +189,12 @@ namespace Eraser.DefaultPlugins
 				IErasureMethod method = EffectiveMethod;
 				if (Volume != null)
 				{
-					Progress.Total = Volume.TotalSize;
+					stepProgress.Total = Volume.TotalSize;
 					stream = Volume.Open(FileAccess.ReadWrite, FileShare.ReadWrite);
 				}
 				else if (PhysicalDrive != null)
 				{
-					Progress.Total = PhysicalDrive.Size;
+					stepProgress.Total = PhysicalDrive.Size;
 					PhysicalDrive.DeleteDriveLayout();
 					stream = PhysicalDrive.Open(FileAccess.ReadWrite, FileShare.ReadWrite);
 				}
@@ -202,15 +203,14 @@ namespace Eraser.DefaultPlugins
 						"volume or physical drive selected for erasure."));
 
 				//Calculate the size of the erasure
-				Progress.Total = method.CalculateEraseDataSize(null, Progress.Total);
+				stepProgress.Total = method.CalculateEraseDataSize(null, stepProgress.Total);
 
 				//Then run the erase task
 				method.Erase(stream, long.MaxValue, Host.Instance.Prngs.ActivePrng,
 					delegate(long lastWritten, long totalData, int currentPass)
 					{
-						Progress.Completed += lastWritten;
-						/*OnProgressChanged(this, new ProgressChangedEventArgs(Progress,
-							new TaskProgressChangedEventArgs(ToString(), currentPass, method.Passes)));*/
+						stepProgress.Completed += lastWritten;
+						stepProgress.Tag = new object[] { currentPass, method.Passes };
 
 						if (Task.Canceled)
 							throw new OperationCanceledException(S._("The task was cancelled."));
@@ -221,21 +221,6 @@ namespace Eraser.DefaultPlugins
 			{
 				Progress = null;
 				stream.Close();
-			}
-		}
-
-		/// <summary>
-		/// The Progress manager for this target.
-		/// </summary>
-		private new ProgressManager Progress
-		{
-			get
-			{
-				return (ProgressManager)base.Progress;
-			}
-			set
-			{
-				base.Progress = value;
 			}
 		}
 	}

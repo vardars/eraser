@@ -102,6 +102,15 @@ namespace Eraser.Plugins
 		}
 
 		/// <summary>
+		/// State information associated with the Progress Manager.
+		/// </summary>
+		public object Tag
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
 		/// Samples the current speed of the task.
 		/// </summary>
 		/// <param name="speed">The speed of the task.</param>
