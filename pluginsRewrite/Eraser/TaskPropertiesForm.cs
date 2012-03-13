@@ -209,7 +209,7 @@ namespace Eraser
 		private void data_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
 		{
 			IErasureTarget target = task.Targets[e.ItemIndex];
-			e.Item = new ListViewItem(PathUtil.GetCompactPath(target.UIText,
+			e.Item = new ListViewItem(PathUtil.GetCompactPath(target.ToString(),
 				data.Columns[0].Width, data.Font));
 			e.Item.ToolTipText = target.ToString();
 
