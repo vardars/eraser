@@ -31,7 +31,7 @@ namespace Eraser.Plugins.ExtensionPoints
 	/// Provides an abstract interface to allow plugins to register their menu
 	/// items within the Eraser Tools menu.
 	/// </summary>
-	class IClientTool : IRegisterable
+	public interface IClientTool : IRegisterable
 	{
 		/// <summary>
 		/// Called when the client requests for tools to be displayed. Plugins
