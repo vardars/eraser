@@ -49,9 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Version.cs">
-      <Link>Version.cs</Link>
-    </Compile>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Exception.cs" />
     <Compile Include="ExtensionPoints\IEntropySource.cs" />
@@ -77,6 +74,7 @@
     <Compile Include="Registrars\FileSystemRegistrar.cs" />
     <Compile Include="Registrars\PrngRegistrar.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Version.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Eraser.Util\Eraser.Util.csproj">
@@ -108,9 +106,12 @@
     <EmbeddedResource Include="Strings.pl.resx" />
     <EmbeddedResource Include="Strings.resx" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Version.cs.in" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>call "$(SolutionDir)UpdateVersions.bat" "$(SolutionDir)\." "$(SolutionDir)Version.cs.in" "$(SolutionDir)Version.cs"
+    <PreBuildEvent>call "$(SolutionDir)UpdateVersions.bat" "$(SolutionDir)\." "$(ProjectDir)Version.cs.in" "$(ProjectDir)Version.cs"
 csgettext --merge --recursive EN,NL,IT,PL "$(ProjectDir)\." Strings
 if ERRORLEVEL 0 exit 0</PreBuildEvent>
   </PropertyGroup>
