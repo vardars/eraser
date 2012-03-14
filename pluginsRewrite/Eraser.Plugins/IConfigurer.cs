@@ -72,15 +72,15 @@ namespace Eraser.Plugins
 	}
 
 	/// <summary>
-	/// Represents an object which is able to configure a given instance of
-	/// <typeparamref name="T"/> from a Drag-and-Drop operation.
+	/// Represents an object which is able to transform the contents of
+	/// a drag-and-drop operation into program logic.
 	/// </summary>
 	/// <typeparam name="T">The type to configure</typeparam>
-	public interface IDragAndDropConfigurer<T> : IConfigurer<T>
+	public interface IDragAndDropConfigurerFactory<T>
 	{
 		/// <summary>
-		/// Sets the configuration of the current configurer from the provided
-		/// Drag-and-Drop event argument.
+		/// Retrieves the transformed collection of objects based on the
+		/// contents of the provided drag-and-drop operation.
 		/// </summary>
 		/// <param name="e">The event argument.</param>
 		/// <returns>A collection of T based on the drag-and-drop event.</returns>
