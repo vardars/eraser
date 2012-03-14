@@ -91,6 +91,10 @@ namespace Eraser.Manager
 		public void Add(IErasureTarget item)
 		{
 			list.Add(item);
+			if (item.Task != null)
+				throw new ArgumentException("Erasure targets can only belong " +
+					"to one Task at any one time.");
+			item.Task = Owner;
 		}
 
 		public void Clear()
@@ -145,6 +149,10 @@ namespace Eraser.Manager
 		public void Insert(int index, IErasureTarget item)
 		{
 			list.Insert(index, item);
+			if (item.Task != null)
+				throw new ArgumentException("Erasure targets can only belong " +
+					"to one Task at any one time.");
+			item.Task = Owner;
 		}
 
 		public void RemoveAt(int index)
@@ -170,8 +178,21 @@ namespace Eraser.Manager
 		/// </summary>
 		public Task Owner
 		{
-			get;
-			internal set;
+			get
+			{
+				return owner;
+			}
+			internal set
+			{
+				owner = value;
+				foreach (IErasureTarget item in list)
+				{
+					if (item.Task != null)
+						throw new ArgumentException("Erasure targets can only belong " +
+							"to one Task at any one time.");
+					item.Task = owner;
+				}
+			}
 		}
 
 		/// <summary>
