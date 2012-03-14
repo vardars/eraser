@@ -40,40 +40,6 @@ namespace Eraser.Manager
 	[Serializable]
 	public class Task : ITask, ISerializable
 	{
-		#region ErasureTargetProgressManagerStep
-		/// <summary>
-		/// Returns the progress of an erasure target, since that comprises the
-		/// steps of the Task Progress.
-		/// </summary>
-		private class ErasureTargetProgressManagerStep : SteppedProgressManagerStepBase
-		{
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			/// <param name="target">The erasure target represented by this object.</param>
-			/// <param name="steps">The number of targets in the task.</param>
-			public ErasureTargetProgressManagerStep(IErasureTarget target, int targets)
-				: base(1.0f / targets)
-			{
-				Target = target;
-			}
-
-			public override ProgressManagerBase Progress
-			{
-				get
-				{
-					return Target.Progress;
-				}
-				set
-				{
-					throw new InvalidOperationException();
-				}
-			}
-
-			private IErasureTarget Target;
-		}
-		#endregion
-
 		#region Serialization code
 		protected Task(SerializationInfo info, StreamingContext context)
 		{
@@ -387,6 +353,45 @@ namespace Eraser.Manager
 				TaskFinished(this, EventArgs.Empty);
 		}
 		#endregion
+	}
+
+	/// <summary>
+	/// Returns the progress of an erasure target, since that comprises the
+	/// steps of the Task Progress.
+	/// </summary>
+	public class ErasureTargetProgressManagerStep : SteppedProgressManagerStepBase
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="target">The erasure target represented by this object.</param>
+		/// <param name="steps">The number of targets in the task.</param>
+		public ErasureTargetProgressManagerStep(IErasureTarget target, int targets)
+			: base(1.0f / targets)
+		{
+			Target = target;
+		}
+
+		public override ProgressManagerBase Progress
+		{
+			get
+			{
+				return Target.Progress;
+			}
+			set
+			{
+				throw new InvalidOperationException();
+			}
+		}
+
+		/// <summary>
+		/// The erasure target represented by this step.
+		/// </summary>
+		public IErasureTarget Target
+		{
+			get;
+			private set;
+		}
 	}
 
 	/// <summary>
