@@ -329,7 +329,7 @@ namespace Eraser.DefaultPlugins
 						delegate(long lastWritten, long totalData, int currentPass)
 						{
 							mainProgress.Completed += lastWritten;
-							mainProgress.Tag = new object[] { currentPass, method.Passes };
+							mainProgress.Tag = new int[] { currentPass, method.Passes };
 
 							if (Task.Canceled)
 								throw new OperationCanceledException(S._("The task was cancelled."));
