@@ -77,6 +77,7 @@ namespace Eraser
 			this.aboutEraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.eraserLogo = new System.Windows.Forms.PictureBox();
+			this.tbToolsMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.notificationMenu.SuspendLayout();
 			this.ToolBar.SuspendLayout();
 			this.tbScheduleMenu.SuspendLayout();
@@ -176,7 +177,6 @@ namespace Eraser
             this.exportTaskListToolStripMenuItem,
             this.importTaskListToolStripMenuItem});
 			this.tbScheduleMenu.Name = "tbScheduleMenu";
-			this.tbScheduleMenu.OwnerItem = this.tbScheduleDropDown;
 			resources.ApplyResources(this.tbScheduleMenu, "tbScheduleMenu");
 			// 
 			// newTaskToolStripMenuItem
@@ -210,6 +210,7 @@ namespace Eraser
 			// tbToolsDropDown
 			// 
 			this.tbToolsDropDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tbToolsDropDown.DropDown = this.tbToolsMenu;
 			this.tbToolsDropDown.Image = global::Eraser.Properties.Resources.ToolbarArrow;
 			resources.ApplyResources(this.tbToolsDropDown, "tbToolsDropDown");
 			this.tbToolsDropDown.Margin = new System.Windows.Forms.Padding(0, 0, 10, 0);
@@ -247,7 +248,6 @@ namespace Eraser
             this.checkForUpdatesToolStripMenuItem1,
             this.aboutEraserToolStripMenuItem});
 			this.tbHelpMenu.Name = "tbHelpMenu";
-			this.tbHelpMenu.OwnerItem = this.tbHelpDropDown;
 			resources.ApplyResources(this.tbHelpMenu, "tbHelpMenu");
 			// 
 			// checkForUpdatesToolStripMenuItem1
@@ -277,6 +277,11 @@ namespace Eraser
 			this.eraserLogo.Name = "eraserLogo";
 			this.eraserLogo.TabStop = false;
 			this.eraserLogo.Click += new System.EventHandler(this.eraserLogo_Click);
+			// 
+			// tbToolsMenu
+			// 
+			this.tbToolsMenu.Name = "tbToolsMenu";
+			resources.ApplyResources(this.tbToolsMenu, "tbToolsMenu");
 			// 
 			// MainForm
 			// 
@@ -333,5 +338,6 @@ namespace Eraser
 		private System.Windows.Forms.PictureBox eraserLogo;
 		private System.Windows.Forms.ToolStripMenuItem tbTools;
 		private System.Windows.Forms.ToolStripMenuItem tbToolsDropDown;
+		private System.Windows.Forms.ContextMenuStrip tbToolsMenu;
 	}
 }
