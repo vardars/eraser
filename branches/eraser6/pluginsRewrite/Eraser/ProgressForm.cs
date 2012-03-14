@@ -75,6 +75,9 @@ namespace Eraser
 				return;
 			}
 
+			//Stop the progress timer
+			progressTimer.Stop();
+
 			//Update the UI. Set everything to 100%
 			Task task = (Task)sender;
 			timeLeft.Text = item.Text = pass.Text = string.Empty;
@@ -122,6 +125,12 @@ namespace Eraser
 
 		private void UpdateProgress()
 		{
+			if (!task.Executing)
+			{
+				//The task is done! Bail out and let the completion handler reset the UI
+				return;
+			}
+
 			//Get the name of the current erasure target to display the overall status
 			ErasureTargetProgressManagerStep taskStep =
 				(ErasureTargetProgressManagerStep)task.Progress.CurrentStep;
