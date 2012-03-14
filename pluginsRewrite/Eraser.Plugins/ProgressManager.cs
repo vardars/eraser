@@ -528,7 +528,7 @@ namespace Eraser.Plugins
 			get
 			{
 				lock (ListLock)
-					return Steps.Sum(step => step.Progress.Progress * step.Weight);
+					return Steps.Sum(step => step.Progress == null ? 0 : step.Progress.Progress * step.Weight);
 			}
 		}
 
@@ -537,7 +537,7 @@ namespace Eraser.Plugins
 			get
 			{
 				lock (ListLock)
-					return Steps.Any(x => x.Progress.ProgressIndeterminate);
+					return Steps.Any(x => x.Progress == null || x.Progress.ProgressIndeterminate);
 			}
 		}
 
@@ -640,7 +640,9 @@ namespace Eraser.Plugins
 						return null;
 
 					foreach (SteppedProgressManagerStepBase step in Steps)
-						if (step.Progress.Progress < 1.0f)
+						if (step.Progress == null)
+							return null;
+						else if (step.Progress.Progress < 1.0f)
 							return step;
 
 					//Return the last step since we don't have any
