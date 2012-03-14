@@ -97,9 +97,7 @@ namespace Eraser.Manager
 			}
 			internal set
 			{
-				if (value == null)
-					throw new ArgumentNullException("Task.Executor cannot be null");
-				if (executor != null)
+				if (executor != null && value != null)
 					throw new InvalidOperationException("A task can only belong to one " +
 						"executor at any one time");
 
