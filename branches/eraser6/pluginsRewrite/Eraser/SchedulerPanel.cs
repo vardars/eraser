@@ -74,7 +74,6 @@ namespace Eraser
 
 			//Add our event handlers to the task
 			task.TaskStarted += TaskStarted;
-			task.ProgressChanged += TaskProgressChanged;
 			task.TaskFinished += TaskFinished;
 
 			//Show the fields on the list view
@@ -219,22 +218,16 @@ namespace Eraser
 		/// <summary>
 		/// Handles the progress event by the task.
 		/// </summary>
-		void TaskProgressChanged(object sender, ProgressChangedEventArgs e)
+		private void progressTimer_Tick(object sender, EventArgs e)
 		{
-			//Make sure we handle the event in the main thread as this requires
-			//GUI calls.
-			if (InvokeRequired)
-			{
-				Invoke((EventHandler<ProgressChangedEventArgs>)TaskProgressChanged, sender, e);
-				return;
-			}
+			ListViewItem item = (ListViewItem)schedulerProgress.Tag;
+			Task task = (Task)item.Tag;
 
 			//Update the progress bar
-			IErasureTarget target = (IErasureTarget)sender;
-			SteppedProgressManager progress = target.Task.Progress;
+			SteppedProgressManager progress = task.Progress;
 			schedulerProgress.Style = progress.ProgressIndeterminate ?
 				ProgressBarStyle.Marquee : ProgressBarStyle.Continuous;
-			
+
 			if (!progress.ProgressIndeterminate)
 				schedulerProgress.Value = (int)(progress.Progress * 1000.0);
 		}
