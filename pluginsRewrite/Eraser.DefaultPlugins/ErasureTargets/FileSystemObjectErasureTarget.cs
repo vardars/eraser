@@ -256,7 +256,7 @@ namespace Eraser.DefaultPlugins
 						if (Task.Canceled)
 							throw new OperationCanceledException(S._("The task was cancelled."));
 
-						progress.Tag = new object[2] { currentPass, method.Passes };
+						progress.Tag = new int[] { currentPass, method.Passes };
 						progress.Total = totalData;
 						progress.Completed += lastWritten;
 					};
