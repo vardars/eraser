@@ -1,4 +1,4 @@
-@echo off
+rem @echo off
 IF NOT "%~1"=="" GOTO lbl_1_end
 type _internal\build-bat-help
 EXIT /B 1
@@ -13,7 +13,7 @@ IF EXIST * DEL /F /Q *
 CHDIR ..\_tmp
 IF EXIST * DEL /F /Q *
 CHDIR ..
-COPY src\* _tmp > NUL 2> NUL
+COPY src\* _tmp
 IF "%~1"=="csc" GOTO lbl_3_csc
 IF "%~1"=="mono" GOTO lbl_3_mono
 GOTO lbl_3___error
@@ -26,7 +26,7 @@ CHDIR ..
 EXIT /B 1
 :lbl_4
 CHDIR ..
-COPY _tmp\libalglib.dll out > NUL 2> NUL
+COPY _tmp\alglib.* out > NUL 2> NUL
 CHDIR _tmp
 IF EXIST * DEL /F /Q *
 CHDIR ..
