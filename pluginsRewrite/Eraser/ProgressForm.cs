@@ -156,7 +156,10 @@ namespace Eraser
 			{
 				object tag = targetStepProgress.Tag;
 				if (tag == null)
-					item.Text = string.Empty;
+				{
+					if (string.IsNullOrEmpty(targetStep.Name))
+						item.Text = string.Empty;
+				}
 				else if (tag.GetType() == typeof(string))
 					item.Text = (string)tag;
 				else if (tag.GetType() == typeof(int[]))
