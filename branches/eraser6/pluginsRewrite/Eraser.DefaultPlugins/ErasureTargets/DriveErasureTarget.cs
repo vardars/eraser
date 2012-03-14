@@ -179,8 +179,8 @@ namespace Eraser.DefaultPlugins
 
 			Progress = new SteppedProgressManager();
 			ProgressManager stepProgress = new ProgressManager();
-			SteppedProgressManagerStep step = new SteppedProgressManagerStep(stepProgress, 1.0f,
-				ToString());
+			Progress.Steps.Add(new SteppedProgressManagerStep(stepProgress, 1.0f,
+				ToString()));
 			FileStream stream = null;
 
 			try
