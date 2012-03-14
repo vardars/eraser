@@ -94,6 +94,7 @@ namespace Eraser.Plugins
 			ErasureMethods = new ErasureMethodRegistrar();
 			ErasureTargetFactories = new ErasureTargetFactoryRegistrar();
 			FileSystems = new FileSystemRegistrar();
+			ClientTools = new ClientToolRegistrar();
 		}
 
 		/// <summary>
@@ -229,6 +230,14 @@ namespace Eraser.Plugins
 			private set;
 		}
 
+		/// <summary>
+		/// The global instance of the Client Tools
+		/// </summary>
+		public ClientToolRegistrar ClientTools
+		{
+			get;
+			private set;
+		}
 		#endregion
 	}
 
