@@ -213,6 +213,9 @@ namespace Eraser
 			schedulerProgress.Visible = true;
 			schedulerProgress.Value = 0;
 			PositionProgressBar();
+
+			//Start the timer for progress updates
+			progressTimer.Start();
 		}
 
 		/// <summary>
@@ -221,6 +224,8 @@ namespace Eraser
 		private void progressTimer_Tick(object sender, EventArgs e)
 		{
 			ListViewItem item = (ListViewItem)schedulerProgress.Tag;
+			if (item == null)
+				return;
 			Task task = (Task)item.Tag;
 
 			//Update the progress bar
@@ -242,6 +247,9 @@ namespace Eraser
 				Invoke((EventHandler)TaskFinished, sender, e);
 				return;
 			}
+
+			//Stop the timer for progress updates
+			progressTimer.Stop();
 
 			//Get the list view item
 			Task task = (Task)sender;
