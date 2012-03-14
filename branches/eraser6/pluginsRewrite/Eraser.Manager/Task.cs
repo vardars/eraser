@@ -377,7 +377,11 @@ namespace Eraser.Manager
 		{
 			get
 			{
-				return Target.Progress;
+				ProgressManagerBase targetProgress = Target.Progress;
+				if (targetProgress != null)
+					TargetProgress = targetProgress;
+
+				return TargetProgress;
 			}
 			set
 			{
@@ -393,6 +397,13 @@ namespace Eraser.Manager
 			get;
 			private set;
 		}
+
+		/// <summary>
+		/// Caches a copy of the progress object for the Target. This is so that
+		/// for as long we our object is alive we can give valid information
+		/// (as required by the SteppedProgressManager class)
+		/// </summary>
+		private ProgressManagerBase TargetProgress;
 	}
 
 	/// <summary>
