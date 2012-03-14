@@ -132,8 +132,9 @@ namespace Eraser
 			}
 
 			//Get the name of the current erasure target to display the overall status
+			SteppedProgressManager taskProgress = task.Progress;
 			ErasureTargetProgressManagerStep taskStep =
-				(ErasureTargetProgressManagerStep)task.Progress.CurrentStep;
+				(ErasureTargetProgressManagerStep)taskProgress.CurrentStep;
 			if (taskStep == null)
 				return;
 			else if (!string.IsNullOrEmpty(taskStep.Name))
@@ -154,7 +155,9 @@ namespace Eraser
 			ProgressManagerBase targetStepProgress = targetStep.Progress;
 			{
 				object tag = targetStepProgress.Tag;
-				if (tag.GetType() == typeof(string))
+				if (tag == null)
+					item.Text = string.Empty;
+				else if (tag.GetType() == typeof(string))
 					item.Text = (string)tag;
 				else if (tag.GetType() == typeof(int[]))
 					pass.Text = S._("{0} out of {1}", ((int[])tag)[0], ((int[])tag)[1]);
@@ -178,11 +181,11 @@ namespace Eraser
 				itemProgressLbl.Text = string.Empty;
 			}
 
-			if (!task.Progress.ProgressIndeterminate)
+			if (!taskProgress.ProgressIndeterminate)
 			{
 				overallProgress.Style = ProgressBarStyle.Continuous;
-				overallProgress.Value = (int)(task.Progress.Progress * 1000);
-				overallProgressLbl.Text = S._("Total: {0,2:#0.00%}", task.Progress.Progress);
+				overallProgress.Value = (int)(taskProgress.Progress * 1000);
+				overallProgressLbl.Text = S._("Total: {0,2:#0.00%}", taskProgress.Progress);
 			}
 			else
 			{
