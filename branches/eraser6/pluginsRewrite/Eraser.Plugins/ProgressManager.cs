@@ -297,7 +297,7 @@ namespace Eraser.Plugins
 			get
 			{
 				float speed = Speed;
-				if (speed == 0.0)
+				if (speed == 0.0 || float.IsNaN(speed))
 					return TimeSpan.MinValue;
 
 				return TimeSpan.FromSeconds((1.0f - Progress) / speed);
