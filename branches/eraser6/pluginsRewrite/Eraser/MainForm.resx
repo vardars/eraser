@@ -145,7 +145,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;contentPanel.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="tbSchedule.Size" type="System.Drawing.Size, System.Drawing">
     <value>113, 28</value>
@@ -154,10 +154,10 @@
     <value>Erase Schedule</value>
   </data>
   <metadata name="notificationIcon.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>374, 17</value>
+    <value>498, 17</value>
   </metadata>
   <metadata name="notificationMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>677, 17</value>
+    <value>801, 17</value>
   </metadata>
   <data name="openEraserToolStripMenuItem.Font" type="System.Drawing.Font, System.Drawing">
     <value>Microsoft Sans Serif, 9pt, style=Bold</value>
@@ -1759,10 +1759,10 @@
     <value>True</value>
   </data>
   <metadata name="notificationIconTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>510, 17</value>
+    <value>634, 17</value>
   </metadata>
   <metadata name="ToolBar.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>10, 27</value>
+    <value>17, 17</value>
   </metadata>
   <data name="ToolBar.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>None</value>
@@ -1770,30 +1770,6 @@
   <metadata name="tbScheduleMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>110, 17</value>
   </metadata>
-  <data name="newTaskToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+N</value>
-  </data>
-  <data name="newTaskToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>168, 22</value>
-  </data>
-  <data name="newTaskToolStripMenuItem.Text" xml:space="preserve">
-    <value>New Task</value>
-  </data>
-  <data name="toolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>165, 6</value>
-  </data>
-  <data name="exportTaskListToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>168, 22</value>
-  </data>
-  <data name="exportTaskListToolStripMenuItem.Text" xml:space="preserve">
-    <value>Export Task List</value>
-  </data>
-  <data name="importTaskListToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>168, 22</value>
-  </data>
-  <data name="importTaskListToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import Task List</value>
-  </data>
   <data name="tbScheduleMenu.Size" type="System.Drawing.Size, System.Drawing">
     <value>169, 76</value>
   </data>
@@ -1821,6 +1797,18 @@
   <data name="tbTools.Text" xml:space="preserve">
     <value>Tools</value>
   </data>
+  <metadata name="tbToolsMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>254, 17</value>
+  </metadata>
+  <data name="tbToolsMenu.Size" type="System.Drawing.Size, System.Drawing">
+    <value>61, 4</value>
+  </data>
+  <data name="&gt;&gt;tbToolsMenu.Name" xml:space="preserve">
+    <value>tbToolsMenu</value>
+  </data>
+  <data name="&gt;&gt;tbToolsMenu.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="tbToolsDropDown.ImageAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleLeft</value>
   </data>
@@ -1846,7 +1834,7 @@
     <value>Help</value>
   </data>
   <metadata name="tbHelpMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>254, 17</value>
+    <value>378, 17</value>
   </metadata>
   <data name="checkForUpdatesToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>171, 22</value>
@@ -1885,7 +1873,7 @@
     <value>10, 27</value>
   </data>
   <data name="ToolBar.Size" type="System.Drawing.Size, System.Drawing">
-    <value>484, 32</value>
+    <value>392, 32</value>
   </data>
   <data name="ToolBar.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1903,7 +1891,31 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;ToolBar.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
+  </data>
+  <data name="newTaskToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+N</value>
+  </data>
+  <data name="newTaskToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>168, 22</value>
+  </data>
+  <data name="newTaskToolStripMenuItem.Text" xml:space="preserve">
+    <value>New Task</value>
+  </data>
+  <data name="toolStripMenuItem2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>165, 6</value>
+  </data>
+  <data name="exportTaskListToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>168, 22</value>
+  </data>
+  <data name="exportTaskListToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export Task List</value>
+  </data>
+  <data name="importTaskListToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>168, 22</value>
+  </data>
+  <data name="importTaskListToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import Task List</value>
   </data>
   <data name="checkForUpdatesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>171, 22</value>
@@ -1936,7 +1948,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;eraserLogo.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
