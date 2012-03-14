@@ -125,7 +125,9 @@ namespace Eraser
 			//Get the name of the current erasure target to display the overall status
 			ErasureTargetProgressManagerStep taskStep =
 				(ErasureTargetProgressManagerStep)task.Progress.CurrentStep;
-			if (taskStep != null && !string.IsNullOrEmpty(taskStep.Name))
+			if (taskStep == null)
+				return;
+			else if (!string.IsNullOrEmpty(taskStep.Name))
 				status.Text = taskStep.Name;
 			else
 				status.Text = S._("Erasing...");
@@ -133,7 +135,9 @@ namespace Eraser
 			//The get the current step of the target to set the current item name
 			SteppedProgressManagerStepBase targetStep =
 				(SteppedProgressManagerStepBase)taskStep.Target.Progress.CurrentStep;
-			if (!string.IsNullOrEmpty(targetStep.Name))
+			if (targetStep == null)
+				return;
+			else if (!string.IsNullOrEmpty(targetStep.Name))
 				item.Text = WrapItemName(targetStep.Name);
 
 			//Determine if the tag information of the step's progress manager is an
