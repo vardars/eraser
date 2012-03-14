@@ -208,6 +208,10 @@ namespace Eraser.DefaultPlugins
 			//Iterate over every path, and erase the path.
 			for (int i = 0; i < paths.Count; ++i)
 			{
+				//Does the file still exist after our enumeration?
+				if (!paths[i].Exists)
+					continue;
+
 				//Create a new progress manager for the file.
 				ProgressManager step = new ProgressManager();
 				Progress.Steps.Add(new SteppedProgressManagerStep(step,
