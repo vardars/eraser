@@ -88,11 +88,11 @@ namespace Eraser
 			foreach (IErasureTarget target in Host.Instance.ErasureTargetFactories)
 			{
 				//Skip targets not supporting IDragAndDropConfigurer
-				if (!(target.Configurer is IDragAndDropConfigurer<IErasureTarget>))
+				if (!(target.Configurer is IDragAndDropConfigurerFactory<IErasureTarget>))
 					continue;
 
-				IDragAndDropConfigurer<IErasureTarget> configurer =
-					(IDragAndDropConfigurer<IErasureTarget>)target.Configurer;
+				IDragAndDropConfigurerFactory<IErasureTarget> configurer =
+					(IDragAndDropConfigurerFactory<IErasureTarget>)target.Configurer;
 				foreach (IErasureTarget newTarget in configurer.ProcessArgument(e))
 					result.Add(newTarget);
 			}

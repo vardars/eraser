@@ -33,7 +33,7 @@ using Eraser.Plugins.ExtensionPoints;
 namespace Eraser.DefaultPlugins
 {
 	class RecycleBinErasureTargetConfigurer : IErasureTargetConfigurer,
-		IDragAndDropConfigurer<IErasureTarget>
+		IDragAndDropConfigurerFactory<IErasureTarget>
 	{
 		#region IConfigurer<ErasureTarget> Members
 
