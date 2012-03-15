@@ -734,22 +734,26 @@ namespace Eraser.Manager
 			List<string> result = new List<string>();
 			string[] rootDirectory = new string[] {
 					"$RECYCLE.BIN",
-					"RECYCLER"
+					"RECYCLER",
+					"RECYCLED"
 				};
+			string userSid = System.Security.Principal.WindowsIdentity.GetCurrent().
+				User.ToString();
 
 			foreach (DriveInfo drive in DriveInfo.GetDrives())
 			{
 				foreach (string rootDir in rootDirectory)
 				{
-					DirectoryInfo dir = new DirectoryInfo(
-						System.IO.Path.Combine(
-							System.IO.Path.Combine(drive.Name, rootDir),
-							System.Security.Principal.WindowsIdentity.GetCurrent().
-								User.ToString()));
-					if (!dir.Exists)
+					//First get the global recycle bin for the current drive
+					string recycleBinPath = System.IO.Path.Combine(
+						drive.Name, rootDir);
+					if (!Directory.Exists(recycleBinPath))
 						continue;
 
-					GetRecyclerFiles(dir, result, ref totalSize);
+					//Try to see if we can get the user's own recycle bin
+					if (Directory.Exists(System.IO.Path.Combine(recycleBinPath, userSid)))
+						recycleBinPath = System.IO.Path.Combine(recycleBinPath, userSid);
+					GetRecyclerFiles(new DirectoryInfo(recycleBinPath), result, ref totalSize);
 				}
 			}
 
