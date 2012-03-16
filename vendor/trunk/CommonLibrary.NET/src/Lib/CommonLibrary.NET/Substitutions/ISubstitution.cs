@@ -18,10 +18,32 @@ using System.Collections.Generic;
 
 namespace ComLib.Subs
 {
+    /// <summary>
+    /// This interface must be implemented by classes
+    /// that want to provide a substitution service.
+    /// </summary>
     public interface ISubstitutionService
     {
+        /// <summary>
+        /// Register a custom substitution for a group.
+        /// </summary>
+        /// <param name="group">Substitution group.</param>
+        /// <param name="interpretedVals">Substitution to register.</param>
         void Register(string group, IDictionary<string, Func<string, string>> interpretedVals);
+
+
+        /// <summary>
+        /// Performs substitutions on all strings contained in the list.
+        /// </summary>
+        /// <param name="names">List with strings for substitution.</param>
         void Substitute(List<string> names);
+
+
+        /// <summary>
+        /// Get the interpreted value of the function call.
+        /// </summary>
+        /// <param name="funcCall">Function call to use.</param>
+        /// <returns>Interpreted value.</returns>
         string this[string funcCall] { get; }
     }
 }

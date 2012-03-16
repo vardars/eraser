@@ -53,7 +53,8 @@ namespace ComLib.Cryptography
         /// Basically a digital fingerprint
         /// </summary>
         /// <param name="hashAlgorithm">e.g. new MD5CryptoServiceProvider();</param>
-        /// <param name="dataToHash">text to hash</param>
+        /// <param name="hashedText"></param>
+        /// <param name="unhashedText"></param>
         /// <returns>Unique hash representing string</returns>
         public static bool IsHashMatch(HashAlgorithm hashAlgorithm, string hashedText, string unhashedText)
         {
@@ -65,6 +66,7 @@ namespace ComLib.Cryptography
         /// <summary>
         /// Encrypts text with Triple DES encryption using the supplied key
         /// </summary>
+        /// <param name="algorithm"></param>
         /// <param name="plaintext">The text to encrypt</param>
         /// <param name="key">Key to use for encryption</param>
         /// <returns>The encrypted string represented as base 64 text</returns>

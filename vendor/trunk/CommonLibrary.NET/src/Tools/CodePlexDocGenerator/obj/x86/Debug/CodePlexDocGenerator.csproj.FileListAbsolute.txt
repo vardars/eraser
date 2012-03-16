@@ -1,0 +1,6 @@
+C:\Dev\business\CommonLibrary.NET\CommonLibraryNet_LATEST\src\Tools\CodePlexDocGenerator\bin\Debug\CodePlexDocGenerator.exe.config
+C:\Dev\business\CommonLibrary.NET\CommonLibraryNet_LATEST\src\Tools\CodePlexDocGenerator\bin\Debug\CodePlexDocGenerator.exe
+C:\Dev\business\CommonLibrary.NET\CommonLibraryNet_LATEST\src\Tools\CodePlexDocGenerator\bin\Debug\CodePlexDocGenerator.pdb
+C:\Dev\business\CommonLibrary.NET\CommonLibraryNet_LATEST\src\Tools\CodePlexDocGenerator\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Dev\business\CommonLibrary.NET\CommonLibraryNet_LATEST\src\Tools\CodePlexDocGenerator\obj\x86\Debug\CodePlexDocGenerator.exe
+C:\Dev\business\CommonLibrary.NET\CommonLibraryNet_LATEST\src\Tools\CodePlexDocGenerator\obj\x86\Debug\CodePlexDocGenerator.pdb

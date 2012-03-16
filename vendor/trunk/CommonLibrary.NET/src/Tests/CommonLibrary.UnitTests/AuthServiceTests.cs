@@ -15,22 +15,37 @@ namespace CommonLibrary.Tests
     [TestFixture]
     public class AuthTests
     {
-        [TestFixtureSetUp]
-        public void Setup()
+        [Test]
+        public void CanUseWindowsAuth()
         {
-            // TO_DO: Need to allow the windows auth service to do this automatically.
             Auth.Init(new AuthWin());
+            Assert.IsTrue(Auth.IsAuthenticated());
+            Assert.IsTrue(!Auth.IsGuest());
+            Assert.AreEqual(Auth.UserShortName, Environment.UserName);
         }
 
 
         [Test]
-        public void CanAuth()
+        public void CanUseCustomAuth()
         {
+            Auth.Init(new AuthWin("admin", new UserPrincipal(1, "kishore", "admin;power", "custom", true)));
+            Assert.IsTrue(Auth.IsAdmin());
             Assert.IsTrue(Auth.IsAuthenticated());
-            Assert.IsTrue(!Auth.IsGuest());
-            int ndx = Auth.UserName.IndexOf("\\");
-            string username = ndx == -1 ? Auth.UserName : Auth.UserName.Substring(ndx + 1);
-            Assert.IsTrue(username == Environment.UserName);
+            Assert.IsTrue(Auth.IsUser("kishore"));
+            Assert.IsTrue(Auth.IsUserInRoles("admin;power"));
+            Assert.IsTrue(Auth.IsUserOrAdmin("kishore"));
+        }
+
+
+        [Test]
+        public void CanUseCustomAuthNegative()
+        {
+            Auth.Init(new AuthWin("admin", new UserPrincipal(1, "sheela", "moderator", "custom", false)));
+            Assert.IsFalse(Auth.IsAdmin());
+            Assert.IsFalse(Auth.IsAuthenticated());
+            Assert.IsFalse(Auth.IsUser("kishore"));
+            Assert.IsFalse(Auth.IsUserInRoles("admin;power"));
+            Assert.IsFalse(Auth.IsUserOrAdmin("kishore"));
         }
     }
 }

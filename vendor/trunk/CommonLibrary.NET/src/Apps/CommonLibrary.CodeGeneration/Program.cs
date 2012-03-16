@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Data;
 
 using ComLib;
+using ComLib.Data;
+using ComLib.Entities;
+using ComLib.Extensions;
 using ComLib.Application;
 using ComLib.Arguments;
 using ComLib.Logging;
@@ -14,8 +18,8 @@ using ComLib.IO;
 using ComLib.CodeGeneration;
 using ComLib.Models;
 using ComLib.LocationSupport;
-using CommonLibrary.WebModules.Events;
-
+//using ComLib.WebModules.Products;
+//using ComLib.WebModules.Events;
 
 namespace CommonLibrary.CodeGeneration
 {
@@ -37,76 +41,20 @@ namespace CommonLibrary.CodeGeneration
         }
 
 
-
-        /// <summary>
-        /// Execute the application.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
         public override BoolMessageItem Execute(object context)
         {
-            Log.Info("starting the code generation tests.");
+            ConnectionInfo conn = new ConnectionInfo("Server=kishore_pc1;Database=testdb1;User=testuser1;Password=password;", "System.Data.SqlClient");
+            SampleModels models = new SampleModels(conn);
+            var ctx = models.GetModelContext();
 
-            // Step 1. Generate the code
-            ModelContainer models = SampleModels.GetModelContainer();
-            ModelContext ctx = new ModelContext() { AllModels = models };
-            IList<ICodeBuilder> builders = new List<ICodeBuilder>()
-            {
-                // This generates the Database tables in SQL - Server.
-                // You connection string in ModelBuilderSettings.Connection must be set.
-                new CodeBuilderDb(ctx.AllModels.Settings.Connection),
-                new CodeBuilderDomain(),              
-            };
-            BoolMessage message = CodeBuilder.Process(ctx, builders);
-            Console.WriteLine("Code generation Sucess : {0} - {1}", message.Success, message.Message);
-            Log.Info("finishing the code generation.");
+            // 1. MAKE SURE TO SET THE FOLDER PATHS IN THE SAMPLE MODELS.            
+            // This only builds all the code, sql install scripts, repository for Model "Event" in the sample models.
+            ComLib.CodeGeneration.CodeBuilder.CreateAll(ctx, "Event");
 
-            /*
-            // Step 2 : Init the Events active record.
-            EventRepository repo = new EventRepository(ctx.AllModels.Settings.Connection);            
-            Events.Init(new EventService(repo, new EventValidator(), new EventSettings() { EnableAuthentication = true, EnableValidation = true }));
+            // This builds all the code, sql install scripts, repository for ALL MODELS in the Sample Models.
+            //ComLib.CodeGeneration.CodeBuilder.CreateAll(ctx);
             
-            // Step 3: Run the code to create / update / get Events using activerecord.     
-            CreateEvents(20);
-            UpdateEvents();
-            PagedList<Event> items1 = Events.GetRecent(1, 4).Item;
-            PagedList<Event> items2 = Events.Get(2, 4).Item;
-            Event ev = Events.Get(4).Item;
-            */
             return BoolMessageItem.True;
         }
-
-
-
-        /*
-        public void CreateEvents(int max)
-        {
-            for (int count = 0; count < max; count++)
-            {
-                Event ev = new Event();
-                ev.Title = "friends party " + count.ToString();
-                ev.Description = "end of month social No. ";
-                ev.Address = new Address("105-20 66th road.", "queens", "new york", "ny", "11375");
-                ev.Email = "kishore.pr4@gmail.com";
-                ev.Phone = "123-456-7890";
-                ev.StartDate = DateTime.Today.AddDays(5);
-                ev.EndDate = DateTime.Today.AddDays(5);
-                ev.Url = "http://www.kprnewyears.com";
-                Events.Save(ev);
-            }
-            
-        }
-
-
-        public void UpdateEvents()
-        {
-            PagedList<Event> all = Events.Get(1, 30).Item;
-            foreach (Event ev in all)
-            {
-                ev.Title += " updated.";
-                Events.Save(ev);
-            }
-        }
-        */
     }
 }

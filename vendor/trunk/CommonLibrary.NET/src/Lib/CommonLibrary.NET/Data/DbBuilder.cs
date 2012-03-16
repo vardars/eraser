@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 
 
-namespace ComLib.Database
+namespace ComLib.Data
 {    
     /// <summary>
     /// Class containing various helper methods for accessing data.
@@ -37,11 +37,10 @@ namespace ComLib.Database
         /// <summary>
         /// Builds a command object with a multiple parameters.
         /// </summary>
+        /// <param name="dbHelper"></param>
         /// <param name="commandText"></param>
         /// <param name="commandType"></param>
-        /// <param name="paramName"></param>
-        /// <param name="paramType"></param>
-        /// <param name="paramValue"></param>
+        /// <param name="parameters"></param>
         /// <returns></returns>
         public static DbCommand BuildCommand(this IDBHelper dbHelper, string commandText, CommandType commandType, DbParameter[] parameters)
         {
@@ -59,6 +58,7 @@ namespace ComLib.Database
         /// <summary>
         /// Builds a command object with a single parameter.
         /// </summary>
+        /// <param name="dbHelper"></param>
         /// <param name="commandText"></param>
         /// <param name="commandType"></param>
         /// <param name="paramName"></param>

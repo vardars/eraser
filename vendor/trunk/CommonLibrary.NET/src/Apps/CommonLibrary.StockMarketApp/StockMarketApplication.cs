@@ -41,7 +41,7 @@ namespace CommonLibrary.StockMarketApp
         /// </summary>
         /// <remarks>This can also be inherited.
         /// e.g. prod,qa,dev. ( Prod inherits from Qa inherits from Dev ).</remarks>
-        [Arg("env", "Environment to run in", typeof(string), true, "dev", "dev", "dev | qa | prod | prod,qa,dev")]
+        [Arg("env", "", "Environment to run in", typeof(string), true, "dev", "dev", "dev | qa | prod | prod,qa,dev")]
         public string Envrionment { get; set; }
 
 
@@ -50,7 +50,7 @@ namespace CommonLibrary.StockMarketApp
         /// 1. Load single config: prod.config
         /// 2. Load config inheritance: prod.config,qa.config,dev.config.
         /// </summary>
-        [Arg("config", "Config file for environment", typeof(string), true, @"config\prod.config", @"config\dev.config", "dev.config | qa.config | prod.config")]
+        [Arg("config", "c", "Config file for environment", typeof(string), true, @"config\prod.config", @"config\dev.config", "dev.config | qa.config | prod.config")]
         public string Config { get; set; }
 
 
@@ -59,14 +59,14 @@ namespace CommonLibrary.StockMarketApp
         /// file will be defaulted to {environment}.log.
         /// e.g. dev.log qa.log where "dev" and "qa" is the environment name above.
         /// </summary>
-        [Arg("log", "Log file to write to", typeof(string), false, "{env}.log", "app.log", "app.log | myapp.log")]
+        [Arg("log", "l", "Log file to write to", typeof(string), false, "{env}.log", "app.log", "app.log | myapp.log")]
         public string LogFile { get; set; }
 
 
         /// <summary>
         /// The business date to get stock market data for.
         /// </summary>
-        [Arg("date", "The business date", typeof(int), true, "${today}", "${today}", "${today} | 05/12/2009", true, false, false)]
+        [Arg("date", "d", "The business date", typeof(int), true, "${today}", "${today}", "${today} | 05/12/2009", true, false, false)]
         public DateTime BusinessDate { get; set; }
 
 
@@ -74,7 +74,7 @@ namespace CommonLibrary.StockMarketApp
         /// Whether or not to store the stock market data into internal business systems.
         /// This effectively is useful for testing purposes.
         /// </summary>
-        [Arg("dryrun", "Flag to store", typeof(bool), false, false, "false", "true | false")]
+        [Arg("dryrun", "dr", "Flag to store", typeof(bool), false, false, "false", "true | false")]
         public bool DryRun { get; set; }
 
 
@@ -82,7 +82,7 @@ namespace CommonLibrary.StockMarketApp
         /// Indicates where to get the market data from.
         /// Either "Bloomberg" or "Reuters"
         /// </summary>
-        [Arg("source", "Data source to get market data from.", typeof(string), false, "Bloomberg", "Bloomberg", "Bloomberg | Reuters")]
+        [Arg("source", "s", "Data source to get market data from.", typeof(string), false, "Bloomberg", "Bloomberg", "Bloomberg | Reuters")]
         public string DataSource { get; set; }
 
 
@@ -108,6 +108,7 @@ namespace CommonLibrary.StockMarketApp
         /// e.g. -env:Prod,Dev -date:${today-1} -config:config\prod.config,config\dev.config -source:Reuters 10</param>
         static int Main(string[] args)
         {
+            Args.InitServices((textargs) => ComLib.LexArgs.ParseList(textargs), (arg) => ComLib.Subs.Substitutor.Substitute(arg));
             int result = Run(new StockMarketApplication(), args, "log,diagnostics,email").AsExitCode();
             return result;
         }
@@ -133,12 +134,13 @@ namespace CommonLibrary.StockMarketApp
         /// </summary>
         public override void Init()
         {
-            // base.Init(). Does everything, this is just to show how to setup everything.
-            //base.Init();
+            // base.Init(). Does everything below.
+            base.Init();
             
-            string env = _argsParsed.Get("env", "dev");
-            string log = _argsParsed.Get("log", "%name%-%yyyy%-%MM%-%dd%-%env%-%user%.log");
-            string config = _argsParsed.Get("config", string.Format(@"config\{0}.config", env));
+            /*
+            string env = _args.Get("env", "dev");
+            string log = _args.Get("log", "%name%-%yyyy%-%MM%-%dd%-%env%-%user%.log");
+            string config = _args.Get("config", string.Format(@"config\{0}.config", env));
 
             // 1. Initialize the environment
             Envs.Set(env, "prod,uat,qa,dev", config);
@@ -152,7 +154,8 @@ namespace CommonLibrary.StockMarketApp
             // 4. Set the config, logger, emailer instances on the application.
             _config = Config.Current;
             _log = Logger.Default;
-            _emailer = new EmailService(_config, "EmailServiceSettings");            
+            _emailer = new EmailService(_config, "EmailServiceSettings"); 
+            */
         }
 
 
@@ -166,6 +169,7 @@ namespace CommonLibrary.StockMarketApp
         public override void Display(bool isStart, IDictionary summaryInfo)
         {
             // The base method displays important information such as starttime, endtime, duration, etc.
+            // This just show to to add extra summary information.
             summaryInfo["RunType"] = "batch_mode";
             base.Display(isStart, summaryInfo);
         }
@@ -176,7 +180,7 @@ namespace CommonLibrary.StockMarketApp
         /// </summary>
         /// <remarks>Note this does not need to be inside of a try-catch 
         /// if using the ApplicationDecorator.</remarks>
-        public override BoolMessageItem Execute()
+        public override BoolMessageItem  Execute()
         {
             Log.Info("Executing application : " + Conf.Get<string>("Global", "ApplicationName"), null, null);                        
             _result = BoolMessageItem.True;            

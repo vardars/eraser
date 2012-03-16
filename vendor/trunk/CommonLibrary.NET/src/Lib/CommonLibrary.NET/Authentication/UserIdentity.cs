@@ -24,7 +24,7 @@ namespace ComLib.Authentication
 {
 
     /// <summary>
-    /// Custom Identity class used for Unit Testing.
+    /// Custom Identity class
     /// </summary>
     public class UserIdentity : IIdentity
     {
@@ -44,6 +44,7 @@ namespace ComLib.Authentication
         /// <summary>
         /// Create new instance using supplied values.
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="userName"></param>
         /// <param name="authenticationType"></param>
         /// <param name="isAuthenticated"></param>
@@ -87,7 +88,7 @@ namespace ComLib.Authentication
         /// <summary>
         /// Get the user id.
         /// </summary>
-        public int Id
+        public int UserId
         {
             get { return _id; }
         }

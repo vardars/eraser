@@ -22,7 +22,10 @@ using System.Net.Mail;
 namespace ComLib.EmailSupport
 {
 
-    public class EmailServiceSettings
+    /// <summary>
+    /// Email Settings
+    /// </summary>
+    public class EmailServiceSettings : IEmailSettings
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EmailServiceSettings"/> class.
@@ -95,7 +98,6 @@ namespace ComLib.EmailSupport
         /// </summary>
         /// <value>The port.</value>
         public int Port { get; set; }
-
         #endregion
     }
 }

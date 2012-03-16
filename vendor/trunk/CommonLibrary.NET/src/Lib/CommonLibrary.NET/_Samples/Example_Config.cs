@@ -6,25 +6,27 @@ using System.IO;
 using System.Data;
 using System.Data.Common;
 using System.Security.Cryptography;
+
+//<doc:using>
 using ComLib;
-using ComLib.Application;
 using ComLib.Configuration;
+//</doc:using>
+using ComLib.Application;
 using ComLib.IO;
 using ComLib.Entities;
-using ComLib.Membership;
+using ComLib.Account;
 
 
 namespace ComLib.Samples
 {
     /// <summary>
-    /// Example of ActiveRecord Initialization/Configuration.
+    /// Example for the Configuration namespace.
     /// </summary>
     public class Example_Config : App
     {
         /// <summary>
         /// Initialize.
         /// </summary>
-        /// <param name="args"></param>
         public Example_Config()
         {
         }
@@ -45,6 +47,7 @@ namespace ComLib.Samples
         }
 
 
+		//<doc:example>		
         /// <summary>
         /// Using a single file for configuration.
         /// </summary>
@@ -96,7 +99,8 @@ namespace ComLib.Samples
             Console.WriteLine("DB.port               :  " + Config.Current["DB", "port"]);
             Console.WriteLine("DB.desc               :  " + Config.Current["DB", "desc"]);
         }
-
+		//</doc:example>
+		
 
         private string GetSampleContents(string env)
         {

@@ -15,13 +15,13 @@ namespace CommonLibrary.Tests
         [SetUp]
         public void Init()
         {
-            NotificationService.Init(new EmailService(new EmailServiceSettings()), new NotificationSettings());
-            NotificationService.Settings["website.name"] = "KnowledgeDrink.com";
-            NotificationService.Settings["website.url"] = "http://www.KnowledgeDrink.com";
-            NotificationService.Settings["website.urls.contactus"] = "http://www.KnowledgeDrink.com/contactus.aspx";
-            NotificationService.Settings.EnableNotifications = false;
-            NotificationService.Settings.DebugOutputMessageToFile = true;
-            NotificationService.Settings.DebugOutputMessageFolderPath = @"F:\dev\Workshops\knowledgedrink\src\Tests\GenericCode.Tests\email.tests";
+            Notifier.Init(new EmailService(new EmailServiceSettings()), new NotificationSettings());
+            Notifier.Settings["website.name"] = "KnowledgeDrink.com";
+            Notifier.Settings["website.url"] = "http://www.KnowledgeDrink.com";
+            Notifier.Settings["website.urls.contactus"] = "http://www.KnowledgeDrink.com/contactus.aspx";
+            Notifier.Settings.EnableNotifications = false;
+            Notifier.Settings.DebugOutputMessageToFile = true;
+            Notifier.Settings.DebugOutputMessageFolderPath = @"c:\dev\tests\email.tests";
         }
 
 
@@ -34,8 +34,8 @@ namespace CommonLibrary.Tests
             values["password"] = "password";
             values["message.subject"] = "welcome to knowledgedrink.com";
             values["message.to"] = "kishore@k.com";
-            NotificationService.AccountService.WelcomeNewUser(new NotificationContext(values));
-            NotificationService.Queue.Process();
+            Notifier.AccountService.WelcomeNewUser(new NotificationContext(values));
+            Notifier.Queue.Process();
         }
 
 
@@ -48,8 +48,8 @@ namespace CommonLibrary.Tests
             values["password"] = "password";
             values["message.subject"] = "Password reminder from knowledgedrink.com";
             values["message.to"] = "kishore@k.com";
-            NotificationService.AccountService.RemindUserPassword(new NotificationContext(values));
-            NotificationService.Queue.Process();
+            Notifier.AccountService.RemindUserPassword(new NotificationContext(values));
+            Notifier.Process();
         }
 
 
@@ -62,8 +62,8 @@ namespace CommonLibrary.Tests
             values["message.briefmessage"] = "check out this site.";
             values["message.subject"] = "welcome to knowledgedrink.com";
             values["message.to"] = "kishore@k.com";
-            NotificationService.MessageService.SendToFriend(new NotificationContext(values));
-            NotificationService.Queue.Process();
+            Notifier.MessageService.SendToFriend(new NotificationContext(values));
+            Notifier.Process();
         }
 
 
@@ -78,8 +78,8 @@ namespace CommonLibrary.Tests
             values["message.briefmessage"] = "check out this site.";
             values["message.subject"] = "welcome to knowledgedrink.com";
             values["message.to"] = "kishore@k.com";
-            NotificationService.MessageService.SendToFriendPost(new NotificationContext(values));
-            NotificationService.Queue.Process();
+            Notifier.MessageService.SendToFriendPost(new NotificationContext(values));
+            Notifier.Process();
         }
     }
 }

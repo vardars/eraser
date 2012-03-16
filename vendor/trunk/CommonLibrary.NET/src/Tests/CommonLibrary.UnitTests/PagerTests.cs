@@ -18,7 +18,7 @@ namespace CommonLibrary.Tests
         [Test]
         public void IsNotMultiplePages()
         {
-            PagerData pager = new PagerData(1, 1);
+            Pager pager = new Pager(1, 1);
             Assert.IsFalse(pager.IsMultiplePages);
             CheckNavigation(pager, false, false, false, false);
             CheckPages(pager, 1, 1, 1, 1, 1);
@@ -28,7 +28,7 @@ namespace CommonLibrary.Tests
         [Test]
         public void IsMultiplePages()
         {
-            PagerData pager = new PagerData(1, 4);
+            Pager pager = new Pager(1, 4);
             Assert.IsTrue(pager.IsMultiplePages);
             CheckNavigation(pager, false, false, false, false);
             CheckPages(pager, 1, 1, 1, 4, 2);
@@ -38,7 +38,7 @@ namespace CommonLibrary.Tests
         [Test]
         public void CanMoveToNextPage_SingleRange()
         {
-            PagerData pager = new PagerData(1, 4);
+            Pager pager = new Pager(1, 4);
             CheckPages(pager, 1, 1, 1, 4, 2);
             CheckNavigation(pager, false, false, false, false);
 
@@ -51,7 +51,7 @@ namespace CommonLibrary.Tests
         [Test]
         public void CanMoveToNextPage_ManyRanges()
         {
-            PagerData pager = new PagerData(1, 18, new PagerSettings() { NumberPagesToDisplay = 5 });
+            Pager pager = new Pager(1, 18, new PagerSettings() { NumberPagesToDisplay = 5 });
             CheckPages(pager, 1, 1, 1, 5, 2);
             CheckNavigation(pager, false, false, true, true);
 
@@ -64,7 +64,7 @@ namespace CommonLibrary.Tests
         [Test]
         public void CanMoveToNextRange_2Ranges()
         {
-            PagerData pager = new PagerData(1, 10, new PagerSettings() { NumberPagesToDisplay = 5 });
+            Pager pager = new Pager(1, 10, new PagerSettings() { NumberPagesToDisplay = 5 });
             CheckPages(pager, 1, 1, 1, 5, 2);
             CheckNavigation(pager, false, false, true, true);
 
@@ -84,7 +84,7 @@ namespace CommonLibrary.Tests
         [Test]
         public void CanMoveTo2ndRange_3Ranges()
         {
-            PagerData pager = new PagerData(1, 15, new PagerSettings() { NumberPagesToDisplay = 5 });
+            Pager pager = new Pager(1, 15, new PagerSettings() { NumberPagesToDisplay = 5 });
             CheckPages(pager, 1, 1, 1, 5, 2);
             CheckNavigation(pager, false, false, true, true);
 
@@ -104,7 +104,7 @@ namespace CommonLibrary.Tests
         [Test]
         public void CanMoveTo3rdRange_3Ranges()
         {
-            PagerData pager = new PagerData(1, 13, new PagerSettings() { NumberPagesToDisplay = 5 });
+            Pager pager = new Pager(1, 13, new PagerSettings() { NumberPagesToDisplay = 5 });
             CheckPages(pager, 1, 1, 1, 5, 2);
             CheckNavigation(pager, false, false, true, true);
 
@@ -136,7 +136,7 @@ namespace CommonLibrary.Tests
         }
 
 
-        private void CheckPages(PagerData pager, int current, int previous, int starting, int ending, int next)
+        private void CheckPages(Pager pager, int current, int previous, int starting, int ending, int next)
         {
             Assert.AreEqual(pager.CurrentPage, current);
             Assert.AreEqual(pager.PreviousPage, previous);
@@ -146,7 +146,7 @@ namespace CommonLibrary.Tests
         }
 
 
-        private void CheckNavigation(PagerData pager, bool showFirst, bool showPrevious, bool showNext, bool showLast)
+        private void CheckNavigation(Pager pager, bool showFirst, bool showPrevious, bool showNext, bool showLast)
         {
             Assert.AreEqual(pager.CanShowFirst, showFirst);
             Assert.AreEqual(pager.CanShowPrevious, showPrevious);

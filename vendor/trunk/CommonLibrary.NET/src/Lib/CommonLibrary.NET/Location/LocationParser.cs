@@ -32,18 +32,15 @@ namespace ComLib.LocationSupport
         /// <param name="countryLookUp">The country look up component</param>        
         /// <param name="cityname">The city name.</param>
         /// <returns></returns>
-        public static LocationLookUpResult ParseCity(CityLookUp cityLookUp, StatesLookUp stateLookUp, CountryLookUp countryLookUp, string cityname)
+        public static LocationLookUpResult ParseCity(CityLookUp cityLookUp, StateLookUp stateLookUp, CountryLookUp countryLookUp, string cityname)
         {
             City city = cityLookUp[cityname];
             LocationLookUpResult result = null;
 
             // Empty city ?
             if (city == null)
-            {
-                result = new LocationLookUpResult(LocationLookUpType.City, false, "Unknown city supplied");
-                result.City = cityname;
-                return result;
-            }
+                return new LocationLookUpResult(LocationLookUpType.City, false, "Unknown city supplied") { City = cityname };
+            
 
             // Set the city, state, country information.
             result = ParseStateById(LocationLookUpType.City, true, string.Empty, stateLookUp, countryLookUp, city.StateId, city.CountryId);
@@ -60,18 +57,14 @@ namespace ComLib.LocationSupport
         /// <param name="countryLookUp">The country look up component</param>        
         /// <param name="stateFullNameOrAbbr"></param>
         /// <returns></returns>
-        public static LocationLookUpResult ParseState(StatesLookUp stateLookUp, CountryLookUp countryLookUp, string stateFullNameOrAbbr)
+        public static LocationLookUpResult ParseState(StateLookUp stateLookUp, CountryLookUp countryLookUp, string stateFullNameOrAbbr)
         {
             State state = stateLookUp[stateFullNameOrAbbr];
             LocationLookUpResult result = null;
 
             // Empty state return state.
-            if (state == null)
-            {
-                result = new LocationLookUpResult(LocationLookUpType.State, false, "Unknown state supplied");
-                result.State = stateFullNameOrAbbr;
-                return result;
-            }
+            if (state == null)            
+                return new LocationLookUpResult(LocationLookUpType.State, false, "Unknown state supplied") { State = stateFullNameOrAbbr };            
 
             // Build up the location data.
             result = ParseStateById(LocationLookUpType.State, true, string.Empty, stateLookUp, countryLookUp, state.Id, state.CountryId);
@@ -91,11 +84,7 @@ namespace ComLib.LocationSupport
             LocationLookUpResult result = null;
 
             if (country == null)
-            {
-                result = new LocationLookUpResult(LocationLookUpType.Country, false, "Unknown country supplied.");
-                result.Country = countryText;
-                return result;
-            }
+                return new LocationLookUpResult(LocationLookUpType.Country, false, "Unknown country supplied.") { Country = countryText };            
 
             // Set the city, state, country information.
             result = new LocationLookUpResult(LocationLookUpType.Country, true, string.Empty);
@@ -107,22 +96,23 @@ namespace ComLib.LocationSupport
 
         /// <summary>
         /// Parse 'city','state' | 'country'.
+        /// e.g. Georgetown, Texas or GeorgeTown, Guyana
         /// </summary>
         /// <remarks>The area after the comma can be either the state or country.
         /// We store a list of valid states/regions, and countries</remarks>
         /// <param name="cityLookUp">The city look up component</param>
         /// <param name="stateLookUp">The state look up component</param>
         /// <param name="countryLookUp">The country look up component</param>
-        /// <param name="cityAndState">The city/state/country names.</param>
+        /// <param name="smallLarge"></param>
         /// <returns></returns>
-        public static LocationLookUpResult ParseCityWithStateOrCountry(CityLookUp cityLookUp, StatesLookUp stateLookUp, CountryLookUp countryLookUp, string smallLarge)
+        public static LocationLookUpResult ParseCityWithStateOrCountry(CityLookUp cityLookUp, StateLookUp stateLookUp, CountryLookUp countryLookUp, string smallLarge)
         {
             // Validate.
             if (string.IsNullOrEmpty(smallLarge)) { return LocationLookUpResult.Empty; }
 
             string[] tokens = smallLarge.Split(',');
 
-            // Validate. Only 2 tokens. city, state or city, country id.
+            // Validate. Only 2 tokens. city, state or city, country.
             if ( tokens.Length != 2)
             {
                 return new LocationLookUpResult(LocationLookUpType.CityState, false, "Invalid city,state/country.");
@@ -192,9 +182,10 @@ namespace ComLib.LocationSupport
         /// <param name="city">The city that was found in our system, entered by the user.</param>
         /// <param name="stateLookUp">The state lookup component.</param>
         /// <param name="countryLookUp">The country lookup component.</param>
+        /// <param name="lookUpResult"></param>
         /// <returns></returns>
         private static bool IsCityMatchedWithStateCountry(string stateOrCountryTrimmed,
-            City city, StatesLookUp stateLookUp, CountryLookUp countryLookUp, ref LocationLookUpResult lookUpResult)
+            City city, StateLookUp stateLookUp, CountryLookUp countryLookUp, ref LocationLookUpResult lookUpResult)
         {
             // Require that the city is not null.
             if (city == null) { return false; }
@@ -272,7 +263,7 @@ namespace ComLib.LocationSupport
 
 
         private static LocationLookUpResult ParseStateById(LocationLookUpType lookupType, bool isValid, string message,
-            StatesLookUp stateLookUp, CountryLookUp countryLookUp, int stateId, int countryId)
+            StateLookUp stateLookUp, CountryLookUp countryLookUp, int stateId, int countryId)
         {
             State state = stateLookUp[stateId];
 

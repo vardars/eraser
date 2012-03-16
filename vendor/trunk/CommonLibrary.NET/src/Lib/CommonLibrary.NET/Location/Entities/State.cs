@@ -24,7 +24,7 @@ namespace ComLib.LocationSupport
     /// <summary>
     /// State 
     /// </summary>
-    public class State : LocationDataCountryBase
+    public class State : LocationCountryBase
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="State"/> class.
@@ -37,42 +37,17 @@ namespace ComLib.LocationSupport
         /// <summary>
         /// Initializes a new instance of the <see cref="State"/> class.
         /// </summary>
-        /// <param name="id">The id.</param>
         /// <param name="name">The name.</param>
         /// <param name="countryId">The country id.</param>
         /// <param name="countryName">Name of the country.</param>
         /// <param name="stateAbbr">The state abbr.</param>
-        public State(int id, string name, int countryId, string countryName, string stateAbbr)
+        public State(string name, int countryId, string countryName, string stateAbbr)
         {
-            this.Id = id;
             this.Name = name;
             this.Abbreviation = stateAbbr;
             this.CountryId = countryId;
             this.CountryName = countryName;
             this.IsActive = true;
-        }
-
-
-        /// <summary>
-        /// Gets or sets the name of the country.
-        /// </summary>
-        /// <value>The name of the country.</value>
-        public string CountryName { get; set; }       
-    }
-
-
-
-    /// <summary>
-    /// Class to lookup the states
-    /// </summary>
-    public class StatesLookUp : LocationLookUpWithCountry<State>
-    {
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="allStates"></param>
-        public StatesLookUp(IList<State> allStates) : base( allStates )
-        {
-        }
+        } 
     }
 }

@@ -37,7 +37,16 @@ namespace ComLib.LocationSupport
         private static LocationLookUpResult _empty;
         
         private LocationLookUpType _lookupType;
+
+        /// <summary>
+        /// True if the location is valid/
+        /// </summary>
         protected bool _isValid;
+
+
+        /// <summary>
+        /// Validation error.
+        /// </summary>
         protected string _error;
         
         
@@ -210,91 +219,5 @@ namespace ComLib.LocationSupport
         /// Zip code
         /// </summary>
         public string Zip;
-    }
-
-
-    
-    /// <summary>
-    /// Result from attempting to search by zipcode.
-    /// </summary>
-    public class ZipCodeLookUpResult
-    {
-        protected bool _isValid;
-        protected string _error;
-        protected IList<ZipCodeEntry> _zipCodes;
-        protected static List<ZipCodeEntry> _emptyZipCodes = new List<ZipCodeEntry>();
-
-        public string Zip;
-
-
-        public ZipCodeLookUpResult() { }
-
-        /// <summary>
-        /// Initialize all properties.
-        /// </summary>
-        /// <param name="zip"></param>
-        /// <param name="isValid"></param>
-        /// <param name="error"></param>
-        /// <param name="zipCodes"></param>
-        public ZipCodeLookUpResult(string zip, bool isValid, string error, IList<ZipCodeEntry> zipCodes)
-        {
-            _isValid = isValid;
-            _error = error;
-            if (zipCodes != null && zipCodes.Count > 0)
-            {
-                _zipCodes = zipCodes;
-            }
-            else
-            {
-                _zipCodes = _emptyZipCodes;
-            }        
-        }
-
-
-        /// <summary>
-        /// Valid zip code?
-        /// </summary>
-        public bool IsValid
-        {
-            get { return _isValid; }
-        }
-
-
-        /// <summary>
-        /// Error if invalid.
-        /// </summary>
-        public string Error
-        {
-            get { return _error; }
-        }
-
-
-        /// <summary>
-        /// List of zipcodes if valid.
-        /// </summary>
-        public IList<ZipCodeEntry> ZipCodes
-        {
-            get { return _zipCodes; }
-        }
-    }
-
-
-
-    public class ZipCodeEntry
-    {
-        public string ZipCode;
-        public string CityName;
-        public string StateName;
-        public string StateAbbr;
-
-
-        public ZipCodeEntry(string zip, string cityName, string stateName, string stateAbbr)
-        {
-            ZipCode = zip;
-            CityName = cityName;
-            StateName = stateName;
-            StateAbbr = stateAbbr;
-        }
-    }
-    
+    }    
 }

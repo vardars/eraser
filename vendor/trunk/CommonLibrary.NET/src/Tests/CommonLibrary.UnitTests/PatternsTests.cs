@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
+using System.Linq;
+using System.Linq.Expressions;
 
 using ComLib.Patterns;
 

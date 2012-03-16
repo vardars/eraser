@@ -32,10 +32,12 @@ namespace ComLib.Logging
         /// Construct the logevent using the values supplied.
         /// Fills in other data values in the log event.
         /// </summary>
+        /// <param name="logType">The type the logger is associated with.</param>
         /// <param name="level">The log level</param>
         /// <param name="message">Message to log</param>
         /// <param name="ex">Exception to log</param>
         /// <param name="args">Additional args.</param>
+        /// <returns>Created log event.</returns>
         public static LogEvent BuildLogEvent(Type logType, LogLevel level, object message, System.Exception ex, object[] args)
         {
             LogEvent logevent = new LogEvent();
@@ -54,11 +56,10 @@ namespace ComLib.Logging
 
 
         /// <summary>
-        /// Build the log file name.
+        /// Builds a log level from a string.
         /// </summary>
-        /// <param name="loglevel">Log level : "critical | error | warning | info | debug"</param>
-        /// Name of logfile containing substituions. </param>
-        /// <returns></returns>
+        /// <param name="loglevel">Log level : "critical | error | warning | info | debug".</param>
+        /// <returns>Parsed log level.</returns>
         public static LogLevel GetLogLevel(string loglevel)
         {
             LogLevel level = (LogLevel)Enum.Parse(typeof(LogLevel), loglevel, true);
@@ -74,7 +75,7 @@ namespace ComLib.Logging
         /// <param name="env">Environment name. E.g. "DEV", "PROD".</param>
         /// <param name="logFileName">E.g. "%name%-%yyyy%-%MM%-%dd%-%env%-%user%.log".
         /// Name of logfile containing substituions. </param>
-        /// <returns></returns>
+        /// <returns>Log file name.</returns>
         public static string BuildLogFileName( string logFileName, string appName, DateTime date, string env)
         {
             if(string.IsNullOrEmpty(env)) env = string.Empty;
@@ -123,8 +124,9 @@ namespace ComLib.Logging
         /// <summary>
         /// Quick formatter that toggles between delimited and xml.
         /// </summary>
-        /// <param name="formatter"></param>
-        /// <param name="logEvent"></param>
+        /// <param name="formatter">Formatter to use (empty or "xml").</param>
+        /// <param name="logEvent">Event to log.</param>
+        /// <returns>Formatted string with event.</returns>
         public static string Format(string formatter, LogEvent logEvent)
         {
             if (string.IsNullOrEmpty(formatter))
@@ -140,13 +142,12 @@ namespace ComLib.Logging
         /// <summary>
         /// Builds the log message using message and arguments.
         /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="args">The args.</param>
-        /// <returns></returns>
+        /// <param name="logEvent">The log event object.</param>
+        /// <returns>Formatted string with event.</returns>
         public static string Format(LogEvent logEvent)
         {
-            string msg = StringHelpers.ConvertToString(logEvent.Args);
-            string message = logEvent.Message.ToString();
+            string msg = StringHelper.ConvertToString(logEvent.Args);
+            string message = logEvent.Message == null ? string.Empty : logEvent.Message.ToString();
             msg = string.IsNullOrEmpty(msg) ? message.ToString() : message.ToString() + " - " + msg;
 
             // Build a delimited string
@@ -164,12 +165,11 @@ namespace ComLib.Logging
         /// <summary>
         /// Builds the log message using message and arguments.
         /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="args">The args.</param>
-        /// <returns></returns>
+        /// <param name="logEvent">The log event object</param>
+        /// <returns>Formatted string with event.</returns>
         public static string FormatXml(LogEvent logEvent)
         {
-            string msg = StringHelpers.ConvertToString(logEvent.Args);
+            string msg = StringHelper.ConvertToString(logEvent.Args);
             string message = logEvent.Message.ToString();
             msg = string.IsNullOrEmpty(msg) ? message.ToString() : message.ToString() + " - " + msg;
 

@@ -48,6 +48,7 @@ namespace ComLib.Caching
         /// </summary>
         /// <param name="key"></param>
         /// <param name="type"></param>
+        /// <param name="serializedData"></param>
         public CacheItemDescriptor(string key, string type, string serializedData)
         {
             _key = key;

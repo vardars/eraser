@@ -27,29 +27,36 @@ namespace ComLib.Logging
         /// <summary>
         /// Get a logger by it's name.
         /// </summary>
-        /// <param name="logger"></param>
+        /// <param name="loggerName">Name of logger to retrieve.</param>
         ILog this[string loggerName] { get; }
 
 
         /// <summary>
         /// Get a logger by it's index position.
         /// </summary>
-        /// <param name="logger"></param>
+        /// <param name="index">Index of logger to retrieve.</param>
         ILog this[int index] { get; }
 
 
         /// <summary>
         /// Append another logger to the chain of loggers.
         /// </summary>
-        /// <param name="logger"></param>
+        /// <param name="logger">Instance of logger to append.</param>
         void Append(ILog logger);
+
+        
+        /// <summary>
+        /// Replaces all the existing loggers w/ the supplied logger.
+        /// </summary>
+        /// <param name="logger">Instance of logger to use.</param>
+        void Replace(ILog logger);
 
 
         /// <summary>
         /// Clear all the chained loggers.
         /// </summary>
         void Clear();
-
+                
 
         /// <summary>
         /// Get the number of loggers that are in here.
@@ -232,10 +239,37 @@ namespace ComLib.Logging
 
 
         /// <summary>
+        /// Logs a Message.
+        /// </summary>
+        /// <param name="level">Logging level of message.</param>
+        /// <param name="message">The message.</param>
+        void Log(LogLevel level, object message);
+
+
+        /// <summary>
+        /// Logs a Message with exception.
+        /// </summary>
+        /// <param name="level">Logging level of message.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="exception">The exception.</param>
+        void Log(LogLevel level, object message, Exception exception);
+
+
+        /// <summary>
+        /// Messages should always get logged.
+        /// </summary>
+        /// <param name="level">Logging level of message.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="ex">The exception.</param>
+        /// <param name="args">The args.</param>        
+        void Log(LogLevel level, object message, System.Exception ex, object[] args);
+
+
+        /// <summary>
         /// Is the level enabled.
         /// </summary>
-        /// <param name="level"></param>
-        /// <returns></returns>
+        /// <param name="level">Logging level to check for.</param>
+        /// <returns>True if specified logging level is enabled.</returns>
         bool IsEnabled(LogLevel level);
 
 
@@ -287,11 +321,11 @@ namespace ComLib.Logging
         /// <summary>
         /// Builds a log event from the parameters supplied.
         /// </summary>
-        /// <param name="level"></param>
-        /// <param name="message"></param>
-        /// <param name="ex"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <param name="level">Level of message.</param>
+        /// <param name="message">Message to log.</param>
+        /// <param name="ex">Exception to log.</param>
+        /// <param name="args">Arguments to use.</param>
+        /// <returns>Created log event.</returns>
         LogEvent BuildLogEvent(LogLevel level, object message, System.Exception ex, object[] args);
 
 

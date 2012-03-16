@@ -25,12 +25,45 @@ namespace ComLib.EmailSupport
     /// </summary>
     public class NotificationMessage
     {
+        /// <summary>
+        /// Who the message is to
+        /// </summary>
         public string To;
+
+
+        /// <summary>
+        /// Who the message is from.
+        /// </summary>
         public string From;
+
+
+        /// <summary>
+        /// Subject of the message
+        /// </summary>
         public string Subject;
+
+
+        /// <summary>
+        /// Body of the message
+        /// </summary>
         public string Body;
+
+
+        /// <summary>
+        /// Template id to link the message to the template for the message
+        /// </summary>
         public string MessageTemplateId;
+
+
+        /// <summary>
+        /// Whether or not this message body contains html.
+        /// </summary>
         public bool IsHtml = true;
+
+
+        /// <summary>
+        /// String of values to supply to the message.
+        /// </summary>
         public IDictionary<string, string> Values;
         
 
@@ -79,5 +112,11 @@ namespace ComLib.EmailSupport
         /// Body of email.
         /// </summary>
         public string Body { get; set; }
+
+
+        /// <summary>
+        /// Whether or not the body message contains html.
+        /// </summary>
+        public bool IsHtml { get; set; }
     }
 }

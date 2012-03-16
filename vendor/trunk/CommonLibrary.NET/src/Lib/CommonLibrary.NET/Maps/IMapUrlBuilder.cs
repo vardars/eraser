@@ -22,7 +22,7 @@ using System.Xml;
 using ComLib.LocationSupport;
 
 
-namespace ComLib.GeoMap
+namespace ComLib.Maps
 {
     /// <summary>
     /// Interface for building an url to link to a mapping system.
@@ -30,7 +30,17 @@ namespace ComLib.GeoMap
     /// </summary>
     public interface IMapUrlBuilder
     {
+        /// <summary>
+        /// Get/set the url prefix to the map service.
+        /// </summary>
         string UrlPrefix { get; set; }
+
+
+        /// <summary>
+        /// Builds a url with a map to the specified address.
+        /// </summary>
+        /// <param name="address">Targeted address.</param>
+        /// <returns>Map url.</returns>
         string Build(Address address);
     }
 }

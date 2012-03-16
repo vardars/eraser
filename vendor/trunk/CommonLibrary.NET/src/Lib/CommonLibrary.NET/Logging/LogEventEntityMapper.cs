@@ -14,7 +14,8 @@ namespace ComLib.Logging
             entity.Computer = mapFrom.Computer;
             entity.Exception = mapFrom.Ex == null ? "" : mapFrom.Ex.Message;
             entity.LogLevel = mapFrom.Level;
-
+            entity.CreateDate = mapFrom.CreateTime;
+            entity.UpdateDate = mapFrom.CreateTime;
             return entity;                       
         }
     }

@@ -36,7 +36,7 @@ namespace CommonLibrary.Tests
             DateTime busDay = Calendar.NextBusinessDate(new DateTime(DateTime.Today.Year, 1, 1));
 
             Assert.AreEqual(Calendar.CalendarCode, "usa-bronx-holidays");
-            Assert.AreEqual(busDay, new DateTime(DateTime.Today.Year, 1, 2));
+            Assert.AreEqual(busDay, new DateTime(DateTime.Today.Year, 1, 3));
         }
 
 
@@ -45,7 +45,7 @@ namespace CommonLibrary.Tests
         {
             DateTime busDay = Calendar.FirstBusinessDateOfYear(DateTime.Today.Year);
 
-            Assert.AreEqual(busDay, new DateTime(DateTime.Today.Year, 1, 2));
+            Assert.AreEqual(busDay, new DateTime(DateTime.Today.Year, 1, 3));
         }
 
 
@@ -54,7 +54,7 @@ namespace CommonLibrary.Tests
         {
             DateTime busDay = Calendar.FirstBusinessDateOfMonth(1, DateTime.Today.Year);
 
-            Assert.AreEqual(busDay, new DateTime(DateTime.Today.Year, 1, 2));
+            Assert.AreEqual(busDay, new DateTime(DateTime.Today.Year, 1, 3));
         }
     }
 }

@@ -28,19 +28,27 @@ namespace ComLib.Notifications
     /// </summary>
     public class NotificationServiceBase
     {
+        /// <summary>
+        /// The queue the stores the notification messages.
+        /// </summary>
         protected QueueProcessor<NotificationMessage> _queue = null;
+
+
+        /// <summary>
+        /// The notification settings.
+        /// </summary>
         protected NotificationSettings _settings;
 
 
         /// <summary>
         /// Initialize.
         /// </summary>
-        /// <param name="queue"></param>
-        /// <param name="settings"></param>
+        /// <param name="queue">Instance of queue processor for notification messages.</param>
+        /// <param name="settings">Notification settings.</param>
         public NotificationServiceBase(QueueProcessor<NotificationMessage> queue, NotificationSettings settings)
         {
             _settings = settings;
-            _queue = queue;
+            _queue = queue; 
         }
 
 
@@ -68,7 +76,7 @@ namespace ComLib.Notifications
         /// Queue the notification.
         /// Don't just send it directly.
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Notification message to put to queue.</param>
         protected void Notify(NotificationMessage message)
         {
             _queue.Enqueue(message);
@@ -82,6 +90,11 @@ namespace ComLib.Notifications
     /// </summary>
     public class NotificationAccountService : NotificationServiceBase, INotificationAccountService
     {
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        /// <param name="queue">Instance of queue processor for notification messages.</param>
+        /// <param name="settings">Notification settings.</param>
         public NotificationAccountService(QueueProcessor<NotificationMessage> queue, NotificationSettings settings)
             : base(queue, settings)
         {
@@ -96,19 +109,19 @@ namespace ComLib.Notifications
         /// ${message.subject}
         /// ${message.briefmessage}
         /// </summary>
-        /// <param name="sendToFriendData"></param>
-        /// <summary>
-        /// Welcome a new user.
-        /// </summary>
-        /// <param name="ctx"></param>
+        /// <param name="firstname">first name</param>
+        /// <param name="password">Password</param>
+        /// <param name="subject">Subject of the message.</param>
+        /// <param name="to">The email address to send to</param>
+        /// <param name="username">User name</param>
         public void WelcomeNewUser(string to, string subject, string firstname, string username, string password)
         {
             NotificationContext ctx = new NotificationContext();
             ctx.Values["message.to"] = to;
             ctx.Values["message.subject"] = subject;
-            ctx.Values["firstname"] = "kishore";
-            ctx.Values["username"] = "kuser1";
-            ctx.Values["password"] = "password";
+            ctx.Values["firstname"] = firstname;
+            ctx.Values["username"] = username;
+            ctx.Values["password"] = password;
             WelcomeNewUser(ctx);
         }
 
@@ -116,7 +129,7 @@ namespace ComLib.Notifications
         /// <summary>
         /// Welcome new user using Notification context.
         /// </summary>
-        /// <param name="ctx"></param>
+        /// <param name="ctx">Instance of notification context.</param>
         public void WelcomeNewUser(NotificationContext ctx)
         {
             Notify(new NotificationMessage(ctx.Values, ctx.Values["message.to"], string.Empty, 
@@ -127,19 +140,19 @@ namespace ComLib.Notifications
         /// <summary>
         /// Send remind account/password email to user.
         /// </summary>
-        /// <param name="to"></param>
-        /// <param name="subject"></param>
-        /// <param name="firstname"></param>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
+        /// <param name="firstname">first name</param>
+        /// <param name="password">Password</param>
+        /// <param name="subject">Subject of the message.</param>
+        /// <param name="to">The email address to send to</param>
+        /// <param name="username">User name</param>
         public void RemindUserPassword(string to, string subject, string firstname, string username, string password)
         {
             NotificationContext ctx = new NotificationContext();
             ctx.Values["message.to"] = to;
             ctx.Values["message.subject"] = subject;
-            ctx.Values["firstname"] = "kishore";
-            ctx.Values["username"] = "kuser1";
-            ctx.Values["password"] = "password";
+            ctx.Values["firstname"] = firstname;
+            ctx.Values["username"] = username;
+            ctx.Values["password"] = password;
             RemindUserPassword(ctx);
         }
 
@@ -155,8 +168,7 @@ namespace ComLib.Notifications
         /// ${friend.name}
         /// ${friend.email}
         /// </summary>
-        /// <param name="feedBack"></param>
-        /// <summary>
+        /// <param name="ctx">Instance of notification context.</param>
         public void RemindUserPassword(NotificationContext ctx)
         {
             Notify(new NotificationMessage(ctx.Values, ctx.Values["message.to"], string.Empty,
@@ -172,6 +184,11 @@ namespace ComLib.Notifications
     /// </summary>
     public class NotificationMessagingService : NotificationServiceBase, INotificationMessagingService
     {
+        /// <summary>
+        /// Initialization.
+        /// </summary>
+        /// <param name="queue">Instance of queue processor for notification messages.</param>
+        /// <param name="settings">Notification settings.</param>
         public NotificationMessagingService(QueueProcessor<NotificationMessage> queue, NotificationSettings settings ) 
             : base(queue, settings)
         {
@@ -182,11 +199,11 @@ namespace ComLib.Notifications
         /// <summary>
         /// Send the website url to a friend.
         /// </summary>
-        /// <param name="toEmail"></param>
-        /// <param name="subject"></param>
-        /// <param name="friendName"></param>
-        /// <param name="fromName"></param>
-        /// <param name="messageFromFriend"></param>
+        /// <param name="toEmail">E-mail to.</param>
+        /// <param name="subject">E-mail subject.</param>
+        /// <param name="friendName">Friend's name.</param>
+        /// <param name="fromName">From name.</param>
+        /// <param name="messageFromFriend">Message text.</param>
         public void SendToFriend(string toEmail, string subject, string friendName, string fromName, string messageFromFriend)
         {
             NotificationContext ctx = new NotificationContext();
@@ -211,7 +228,7 @@ namespace ComLib.Notifications
         /// ${friend.name}
         /// ${friend.email}
         /// </summary>
-        /// <param name="sendToFriendData"></param>
+        /// <param name="ctx">Instance of notification context.</param>
         public void SendToFriend(NotificationContext ctx)
         {
             Notify(new NotificationMessage(
@@ -232,7 +249,7 @@ namespace ComLib.Notifications
         /// ${friend.name}
         /// ${friend.email}
         /// </summary>
-        /// <param name="feedBack"></param>
+        /// <param name="ctx">Instance of notification context.</param>
         public void SubmitFeedBack(NotificationContext ctx)
         {
             Notify(new NotificationMessage(
@@ -244,13 +261,13 @@ namespace ComLib.Notifications
         /// <summary>
         /// Send an email to a friend with a link to a post on the page.
         /// </summary>
-        /// <param name="toEmail"></param>
-        /// <param name="subject"></param>
-        /// <param name="toFirstname"></param>
-        /// <param name="fromName"></param>
-        /// <param name="messageToFriend"></param>
-        /// <param name="postTitle"></param>
-        /// <param name="postUrl"></param>
+        /// <param name="toEmail">E-mail to.</param>
+        /// <param name="subject">E-mail subject.</param>
+        /// <param name="toFirstname">Name of recipient.</param>
+        /// <param name="fromName">Name of sender.</param>
+        /// <param name="messageToFriend">Message text.</param>
+        /// <param name="postTitle">Title of post.</param>
+        /// <param name="postUrl">Title of url.</param>
         public void SendToFriendPost(string toEmail, string subject, string toFirstname,
             string fromName, string messageToFriend, string postTitle, string postUrl)
         {
@@ -278,8 +295,7 @@ namespace ComLib.Notifications
         /// ${friend.name}
         /// ${friend.email}
         /// </summary>
-        /// <param name="placeHolderValues">Dictionary of keys representing the names of the 
-        /// placeholders to replace in the content file.</param>
+        /// <param name="ctx">Instance of notification context.</param>
         public void SendToFriendPost(NotificationContext ctx)
         {
             Notify(new NotificationMessage(

@@ -1,0 +1,46 @@
+
+||Component || Examples || Description||
+|*Account* | [Example|Examples#Account] | Account component for Users/Groups/Roles. (With easily pluggable repository)|
+|*ActiveRecord* | [Example|Examples#ActiveRecord] | Light-weight ActiveRecord pattern supporting CRUD/Find methods. Single entity-table relationships only|
+|*Application* | [Example|Examples#Application] | A template base class for any application, providing environment selection(Dev,Qa,Prod), logging, error handling, configuration and exit codes support.|
+|*Arguments* | [Example|Examples#Arguments] | Command line arguments parser: supports named/positional args, and several other features|
+|*Authentication* | [Example|Examples#Authentication] | An pluggable authentication API. Used for web/windows, wraps HttpContext.Current.User and/or Windows Prinicial.|
+|*Automation* | [Example|Examples#Automation] | A light-weight automation runner using xml/command line for running tasks associated with c# classes.|
+|*BenchMark* | [Example|Examples#BenchMark] | Light-weight class to provide benchmarking support to measure time used to run code.|
+|*BootStrapper* | [Example|Examples#BootStrapper] | Runs tasks on startup and shutdown of an application.|
+|*Cache* | [Example|Examples#Cache] | Cache w/ default implementation using HttpRuntime. Can prefix keys and inspect/describe elements in cache.|
+|*Captcha* | N/A | Service for generating Captcha images. |
+|*Category*| N/A | Node based category/sub-category service.|
+|*CodeGenerator* | [Example|Examples#CodeGenerator] | Fluent based entity generator for CommonLibrary entities|
+|*Collections* | N/A | Contains all sorts of Dictionaries ( MultiValue, Bi-Directional, Ordered, DictionarySet ), Hybrid Enumerator and more|
+|*Config* | [Example|Examples#Config] | Provides inheritance based configuration data from files or databases|
+|*Cryptography* | [Example|Examples#Cryptography] | Cryptographic services for encrypting, decrypting, hashing|
+|*Csv* | [Example|Examples#Csv] | Csv parser to parse .csv ( delimited files ) and a light-weight Csv writer|
+|*Database* | [Example|Examples#Database] | Provides simplified access to multiple database related operations|
+|*Diagnostics* | [Example|Examples#Diagnostics] | Provides information on environment variables, processes, loaded modules etc |
+|*Entity* | [Example|Examples#Entity] | Domain-Driven-Design based entity classes used for persistance|
+|*Environments* | [Example|Examples#Environments] | Object representation of environments such as "DEV", "QA", "UAT", "PROD"|
+|*Errors* | [Example|Examples#Errors] | Collection class combining both list and key/value based string error messages.|
+|*Exceptions* | N/A | Exception / Error handler class.|
+|*Extensions* | [Example|Examples#Extensions] | Provides plugin-type functionality to dynamically load specific classes/types from an assembly|
+|*Extensions_Macros* | [Example|Examples#Extensions_Macros] | Similar to wordpress shortcodes. Parses text for macros and replace the macro in text with value returned by macro|
+|*Feeds* | N/A | Service to support RSS, Atom, Xml Serialization|
+|*HolidayCalendar* | [Example|Examples#HolidayCalendar] | Gets holidays or business days for different calendars ( U.S / England/ France )|
+|*ImportExport* | [Example|Examples#ImportExport] | Provides API for import/export operations on any abitrary datastore of objects|
+|*Information* | N/A | Plugin components used for generating simple reports/informational text.|
+|*IocContainer* | N/A | Generic wrapper around any Inversion Of Control container to avoid hard references to SpringIoC, Unity, CastleWindsor. |
+|*Location* | [Example|Examples#Location] | Provides City, State, Country search features. e.g. "Brooklyn, Ny" is parsed into a City/State/Country object|
+|*Logging* | [Example|Examples#Logging] | Logger that's light-weight, extensible, and provides a clear/fluent API to logging.|
+|*Maps* | N/A | Service to build urls for google/yahoo maps.|
+|*NamedQuery* | N/A | Save and name sql queries for easy re-use. e.g. "Top 10 Recent Posts" = "select top 10 * from ..".|
+|*Notifications* | [Example|Examples#Notifications] | Generates templated messages for email|
+|*Paging* | [Example|Examples#Paging] | Independent and reusable pager for paging through data|
+|*Query* | N/A | A light-weight criteria pattern( similar to LINQ ) to programmatically build a query such as Query<Person>().Where( p => p.Name).Is("kishore").|
+|*QueueProcessor* | [Example|Examples#QueueProcessor] | A flexible queue to allow placing items into a queue for processing|
+|*Repository* | [Example|Examples#Repository] | Repository implementation supporting CRUD/Find methods and sql-like aggregates(Min,Max,Count,Avg,Sum)|
+|*Scheduler* | [Example|Examples#Scheduler] | Light-weight task scheduling service|
+|*Scripts* | [Example|Examples#Scripts] | Used to register css/javascript files into "placeholders" such as head or footer section.|
+|*ToDo* | [Example|Examples#ToDo] | Typed marker (like visual studio "TODO" ) to mark code|
+|*Validation* | [Example|Examples#Validation] | Provides several validation methods for email, phone, string length etc.|
+|*Web* | N/A | Several web related helper classes and methods|
+|*Xml* | N/A | Various xml helper classes / methods |

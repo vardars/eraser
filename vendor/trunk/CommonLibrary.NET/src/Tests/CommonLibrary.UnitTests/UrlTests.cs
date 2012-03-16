@@ -15,18 +15,21 @@ namespace CommonLibrary.Tests
         public void CanBuildValidUrlWithOutAnyInvalidChars()
         {
             string title = "This is a post about optimizing a title";
-            string url = UrlSeoUtils.GenerateTitle(title);
+            string url = UrlSeoUtils.BuildValidUrl(title);
             string expected = "this-is-a-post-about-optimizing-a-title";
 
             Assert.AreEqual(expected, url);
         }
 
 
+        
+
+
         [Test]
         public void CanBuildValidUrlWithInvalidChars()
         {
             string title = "Really~1@# Bad-*7s;:Title";
-            string url = UrlSeoUtils.GenerateTitle(title);
+            string url = UrlSeoUtils.BuildValidUrl(title);
             string expected = "really1-bad-7stitle";
 
             Assert.AreEqual(expected, url);
@@ -37,7 +40,7 @@ namespace CommonLibrary.Tests
         public void CanBuildValidUrlWithSequentialSpaces()
         {
             string title = "Too    many    spaces";
-            string url = UrlSeoUtils.GenerateTitle(title);
+            string url = UrlSeoUtils.BuildValidUrl(title);
             string expected = "too-many-spaces";
 
             Assert.AreEqual(expected, url);
@@ -48,7 +51,7 @@ namespace CommonLibrary.Tests
         public void CanBuildValidUrlWithSequentialDashes()
         {
             string title = "Too---many---dashes";
-            string url = UrlSeoUtils.GenerateTitle(title);
+            string url = UrlSeoUtils.BuildValidUrl(title);
             string expected = "too-many-dashes";
 
             Assert.AreEqual(expected, url);
@@ -59,7 +62,7 @@ namespace CommonLibrary.Tests
         public void CanBuildValidUrlWithInvalidCharsBetweenSpaces()
         {
             string title = "Too ^&* many ;'\"[]\\_+= invalidChars";
-            string url = UrlSeoUtils.GenerateTitle(title);
+            string url = UrlSeoUtils.BuildValidUrl(title);
             string expected = "too-many-invalidchars";
 
             Assert.AreEqual(expected, url);

@@ -1,15 +1,30 @@
-﻿using System;
+﻿/*
+ * Author: Kishore Reddy
+ * Url: http://commonlibrarynet.codeplex.com/
+ * Title: CommonLibrary.NET
+ * Copyright: � 2009 Kishore Reddy
+ * License: LGPL License
+ * LicenseUrl: http://commonlibrarynet.codeplex.com/license
+ * Description: A C# based .NET 3.5 Open-Source collection of reusable components.
+ * Usage: Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections;
 using System.Text;
 using System.Data;
 using System.Data.Common;
+using System.Linq.Expressions;
+
 using ComLib;
 using ComLib.Entities;
-using ComLib.Database;
+using ComLib.Data;
 
-using ComLib.Entities;
 
 
 namespace ComLib.Entities
@@ -18,72 +33,68 @@ namespace ComLib.Entities
     /// Repository for a relational database, base class.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class RepositorySql<T> : RepositoryBase<T>, IEntityRepository<T> where T : IEntity
-    {
-        private string _tableName;
-
-
+    public class RepositorySql<T> : RepositoryBase<T> where T : class, IEntity
+    {        
         /// <summary>
-        /// Initialize
+        /// Initialize.
         /// </summary>
         public RepositorySql()
         {
-            Init(null, null);
+            Init(ConnectionInfo.Empty, new Database());
         }
 
 
         /// <summary>
-        /// Initialize
+        /// Initialize.
         /// </summary>
-        /// <param name="connectionInfo"></param>
-        /// <param name="helper"></param>
+        /// <param name="connectionString">Initialization connection string.</param>
+        public RepositorySql(string connectionString) : this(new ConnectionInfo(connectionString))
+        {            
+        }
+
+
+        /// <summary>
+        /// Initialize.
+        /// </summary>
+        /// <param name="connectionInfo">Initialization connection information.</param>
         public RepositorySql(ConnectionInfo connectionInfo)
         {
-            DBHelper helper = new DBHelper(connectionInfo);
-            Init(connectionInfo, helper);
+            var db = new Database(connectionInfo);
+            Init(connectionInfo, db);
         }
 
 
         /// <summary>
-        /// Initialize
+        /// Initialize.
         /// </summary>
-        /// <param name="connectionInfo"></param>
-        /// <param name="helper"></param>
-        public RepositorySql(ConnectionInfo connectionInfo, IDBHelper helper)
+        /// <param name="connectionInfo">Connection information.</param>
+        /// <param name="db">Database.</param>
+        public RepositorySql(ConnectionInfo connectionInfo, IDatabase db)
         {
-            Init(connectionInfo, helper);
+            Init(connectionInfo, db);
         }
 
 
         /// <summary>
-        /// Initialize
+        /// Initialize.
         /// </summary>
-        /// <param name="connectionInfo"></param>
-        /// <param name="helper"></param>
-        public virtual void Init(ConnectionInfo connectionInfo, IDBHelper helper)
+        /// <param name="connectionInfo">Connection information.</param>
+        /// <param name="db">Database.</param>
+        public virtual void Init(ConnectionInfo connectionInfo, IDatabase db)
         {
             _connectionInfo = connectionInfo;
-            _db = helper;
+            _db = db == null ? new Database(_connectionInfo) : db;
+            _db.Connection = _connectionInfo;
             _tableName = typeof(T).Name + "s";
-        }
+        }        
 
 
-        /// <summary>
-        /// Get / Set the table name.
-        /// </summary>
-        public string TableName
-        {
-            get { return _tableName; }
-            set { _tableName = value; }
-        }
-
-
-        #region IDaoWithKey<int,T> Members
+        #region Crud
         /// <summary>
         /// Create the entity in the datastore.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
+        /// <param name="entity">Entity to create.</param>
+        /// <returns>Created entity.</returns>
         public override T Create(T entity)
         {
             return entity;
@@ -93,176 +104,67 @@ namespace ComLib.Entities
         /// <summary>
         /// Update the entity in the datastore.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
+        /// <param name="entity">Entity to create/update.</param>
+        /// <returns>Created/updated entity.</returns>
         public override T Update(T entity)
         {
             return entity;
         }
+        #endregion
 
 
-        /// <summary>
-        /// Get item by id.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public virtual T Get(int id)
-        {
-            string sql = string.Format("select * from {0} where Id = {1}", TableName, id);
-            IList<T> result = _db.QueryNoParams<T>(sql, CommandType.Text, RowMapper);
-            if (result == null || result.Count == 0)
-                return default(T);
-
-            return result[0];
-        }
-
-
-        /// <summary>
-        /// Get all the entities from the datastore.
-        /// </summary>
-        /// <returns></returns>
-        public virtual IList<T> GetAll()
-        {
-            string sql = string.Format("select * from {0} ", TableName);
-            IList<T> result = _db.QueryNoParams<T>(sql, CommandType.Text, RowMapper);
-            return result;
-        }
-
-
-        /// <summary>
-        /// Get all the items.
-        /// </summary>
-        /// <returns></returns>
-        public virtual System.Collections.IList GetAllItems()
-        {
-            ArrayList list = new ArrayList();
-            IList<T> allItems = GetAll();
-            foreach (T item in allItems)
-                list.Add(item);
-
-            return list;
-        }
-
-
+        #region Find 
         /// <summary>
         /// Get page of records using filter.
         /// </summary>
-        /// <param name="filter"></param>
-        /// <param name="table"></param>
-        /// <param name="pageNumber"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="totalRecords"></param>
-        /// <returns></returns>
-        public virtual IList<T> GetByFilter(string filter, string table, int pageNumber, int pageSize, ref int totalRecords)
+        /// <param name="filter">Filter to apply.</param>
+        /// <param name="pageNumber">Page number.</param>
+        /// <param name="pageSize">Page size.</param>
+        /// <returns>Paged list with matching entities.</returns>
+        public override PagedList<T> Find(string filter, int pageNumber, int pageSize)
         {
-            string procName = table + "_GetByFilter";
+            string procName = TableName + "_GetByFilter";
             List<DbParameter> dbParams = new List<DbParameter>();
-            dbParams.Add(DbHelper.BuildInParam("@Filter", System.Data.DbType.String, filter));
-            dbParams.Add(DbHelper.BuildInParam("@PageIndex", System.Data.DbType.Int32, pageNumber));
-            dbParams.Add(DbHelper.BuildInParam("@PageSize", System.Data.DbType.Int32, pageSize));
-            dbParams.Add(DbHelper.BuildOutParam("@TotalRows", System.Data.DbType.Int32));
+            dbParams.Add(_db.BuildInParam("Filter", System.Data.DbType.String, filter));
+            dbParams.Add(_db.BuildInParam("PageIndex", System.Data.DbType.Int32, pageNumber));
+            dbParams.Add(_db.BuildInParam("PageSize", System.Data.DbType.Int32, pageSize));
+            dbParams.Add(_db.BuildOutParam("TotalRows", System.Data.DbType.Int32));
 
-            Tuple2<IList<T>, IDictionary<string, object>> result = DbHelper.Query<T>(
+            Tuple2<IList<T>, IDictionary<string, object>> result = _db.Query<T>(
                 procName, System.Data.CommandType.StoredProcedure, dbParams.ToArray(), _rowMapper, new string[] { "@TotalRows" });
 
             // Set the total records.
-            totalRecords = (int)result.Second["@TotalRows"];
-            return result.First;
+            int totalRecords = (int)result.Second["@TotalRows"];
+            PagedList<T> pagedList = new PagedList<T>(pageNumber, pageSize, totalRecords, result.First);
+            OnRowsMapped(result.First);
+            return pagedList;
         }
 
 
         /// <summary>
-        /// Get recents posts by page
+        /// Get recents posts by page.
         /// </summary>
-        /// <param name="table"></param>
-        /// <param name="pageNumber"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="totalRecords"></param>
-        /// <returns></returns>
-        public virtual IList<T> GetRecent(string table, int pageNumber, int pageSize, ref int totalRecords)
+        /// <param name="pageNumber">Page number.</param>
+        /// <param name="pageSize">Page size.</param>
+        /// <returns>Paged list with matched entities.</returns>
+        public override PagedList<T> FindRecent(int pageNumber, int pageSize)
         {
-            string procName = table + "_GetRecent";
+            string procName = TableName + "_GetRecent";
             List<DbParameter> dbParams = new List<DbParameter>();
 
             // Build input params to procedure.
-            dbParams.Add(DbHelper.BuildInParam("@PageIndex", System.Data.DbType.Int32, pageNumber));
-            dbParams.Add(DbHelper.BuildInParam("@PageSize", System.Data.DbType.Int32, pageSize));
-            dbParams.Add(DbHelper.BuildOutParam("@TotalRows", System.Data.DbType.Int32));
+            dbParams.Add(_db.BuildInParam("PageIndex", System.Data.DbType.Int32, pageNumber));
+            dbParams.Add(_db.BuildInParam("PageSize", System.Data.DbType.Int32, pageSize));
+            dbParams.Add(_db.BuildOutParam("TotalRows", System.Data.DbType.Int32));
 
-            Tuple2<IList<T>, IDictionary<string, object>> result = DbHelper.Query<T>(
+            Tuple2<IList<T>, IDictionary<string, object>> result = _db.Query<T>(
                 procName, System.Data.CommandType.StoredProcedure, dbParams.ToArray(), _rowMapper, new string[] { "@TotalRows" });
 
             // Set the total records.
-            totalRecords = (int)result.Second["@TotalRows"];
-            return result.First;
-        }
-
-
-        /// <summary>
-        /// Find all records matching the query string.
-        /// </summary>
-        /// <param name="queryString"></param>
-        /// <returns></returns>
-        public virtual IList<T> Find(string queryString)
-        {
-            return FindByQuery(queryString, true);
-        }
-
-
-        /// <summary>
-        /// Find by the sql using the single parameter value.
-        /// </summary>
-        /// <param name="queryString"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public virtual IList<T> Find(string queryString, object value)
-        {
-            string filter = string.Format(queryString, value);
-            return FindByQuery(filter, true);
-        }
-
-
-        /// <summary>
-        /// Find by sql text using the parameters supplied.
-        /// </summary>
-        /// <param name="queryString"></param>
-        /// <param name="values"></param>
-        /// <returns></returns>
-        public virtual IList<T> Find(string queryString, object[] values)
-        {
-            string filter = string.Format(queryString, values);
-            return FindByQuery(filter, true);
-        }
-
-
-        /// <summary>
-        /// Find by filter.
-        /// </summary>
-        /// <param name="queryString">The query, this can be either just a filter
-        /// after the where clause or the entire sql</param>
-        /// <returns></returns>
-        public virtual IList<T> FindByQuery(string queryString, bool isFullSql)
-        {
-            string sql = queryString;
-            if (!isFullSql)
-            {
-                string tableName = this.TableName;
-                queryString = string.IsNullOrEmpty(queryString) ? string.Empty : " where " + queryString;
-                sql = "select * from " + tableName + " " + queryString;
-            }
-            IList<T> results = _db.QueryNoParams<T>(sql, CommandType.Text, RowMapper);
-            return results;
-        }
-
-
-        /// <summary>
-        /// Delete by the entity id.
-        /// </summary>
-        /// <param name="id"></param>
-        public override void Delete(int id)
-        {
-            string sql = string.Format("delete from {0} where Id = {1}", TableName, id);
-            _db.ExecuteNonQueryText(sql, null);
+            int totalRecords = (int)result.Second["@TotalRows"];
+            PagedList<T> pagedList = new PagedList<T>(pageNumber, pageSize, totalRecords, result.First);
+            OnRowsMapped(result.First);
+            return pagedList;
         }
         #endregion
     }

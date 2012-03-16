@@ -28,7 +28,16 @@ namespace ComLib.Collections
     /// <typeparam name="TNumericKey"></typeparam>
     public interface IIndexedComponent<TNumericKey>
     {
+        /// <summary>
+        /// Get the key id.
+        /// </summary>
         TNumericKey Id { get; }
+
+
+        /// <summary>
+        /// Creates a string key based on the id.
+        /// </summary>
+        /// <returns>String key.</returns>
         string BuildKey();
     }
 
@@ -41,10 +50,28 @@ namespace ComLib.Collections
     /// based on it's hashcode.
     /// </summary>
     /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TNumericKey"></typeparam>
     public interface IIndexedLookUp<TNumericKey, T> where T : IIndexedComponent<TNumericKey>
     {
+        /// <summary>
+        /// Gets an object based on its id.
+        /// </summary>
+        /// <param name="id">Id of object.</param>
+        /// <returns>Object corresponding to id.</returns>
         T this[TNumericKey id] { get; }
+
+
+        /// <summary>
+        /// Gets an object based on its name.
+        /// </summary>
+        /// <param name="name">Name of object.</param>
+        /// <returns>Object corresponding to name.</returns>
         T this[string name] { get; }
+
+
+        /// <summary>
+        /// Gets the number of items stored in the collection.
+        /// </summary>
         int Count { get; }
     }
 
@@ -54,11 +81,25 @@ namespace ComLib.Collections
     /// Indexed lookup class for storing objects of type T which can
     /// be retrieved by either an id or name.
     /// </summary>
+    /// <typeparam name="TNumericKey"></typeparam>
     /// <typeparam name="T"></typeparam>
     public class IndexedLookUp<TNumericKey, T> : IIndexedLookUp<TNumericKey, T> where T : class, IIndexedComponent<TNumericKey>
     {
+        /// <summary>
+        /// Dictionary with all items ordered by id.
+        /// </summary>
         protected IDictionary<TNumericKey, T> _allItemsById;
+
+
+        /// <summary>
+        /// Dictionary with all items order by name.
+        /// </summary>
         protected IDictionary<string, T> _allItemsByName;
+
+
+        /// <summary>
+        /// List with all items.
+        /// </summary>
         protected IList<T> _allItems;
 
         
@@ -96,7 +137,7 @@ namespace ComLib.Collections
         /// <summary>
         /// Returns the location item given the full name ("New York") or abbr ( "NY" )
         /// </summary>
-        /// <param name="abbreviationOrName"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
         public virtual T this[string name]
         {

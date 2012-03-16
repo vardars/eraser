@@ -64,5 +64,27 @@ namespace ComLib
         {
             return _container.GetObject<T>(objName);
         }
+
+
+        /// <summary>
+        /// Get the object using just the type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static T GetObject<T>()
+        {
+            return _container.GetObject<T>();
+        }
+
+
+        /// <summary>
+        /// Determine if the container contains the specified type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static bool Contains<T>()
+        {
+            return _container.Contains<T>();
+        }
     }
 }

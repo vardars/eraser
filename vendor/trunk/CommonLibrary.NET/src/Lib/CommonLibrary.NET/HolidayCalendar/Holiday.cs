@@ -19,15 +19,43 @@ using System.Text;
 namespace ComLib.Calendars
 {    
     /// <summary>
-    /// Initialize.
+    /// Represents a single holiday.
     /// </summary>
     public class Holiday
     {
+        /// <summary>
+        /// Month of the holiday.
+        /// </summary>
         public int Month;
+
+
+        /// <summary>
+        /// Day of the holiday.
+        /// </summary>
         public int Day;
+
+
+        /// <summary>
+        /// Whether or not this holiday always lands on a specific day e.g. Jan 1st. or July 4th. As opposed to thanksgiving ( 3rd thursday )
+        /// </summary>
         public bool IsHardDay;
+
+
+        /// <summary>
+        /// The day in the week of this holiday. Used for relative(non-hard day) holidays. e.g. Thursday for Thanksgiving.
+        /// </summary>
         public DayOfWeek DayOfTheWeek;
+
+
+        /// <summary>
+        /// The week of this holiday. Eg. 3 for Thanksgiving.
+        /// </summary>
         public int WeekOfMonth;
+
+
+        /// <summary>
+        /// Description for the holiday
+        /// </summary>
         public string Description;
 
 
@@ -39,6 +67,7 @@ namespace ComLib.Calendars
         /// <param name="isHardDay"></param>
         /// <param name="dayOfWeek"></param>
         /// <param name="weekOfMonth"></param>
+        /// <param name="holidayDescription"></param>
         public Holiday(int month, int day, bool isHardDay, DayOfWeek dayOfWeek, int weekOfMonth, string holidayDescription)
         {
             Month = month;

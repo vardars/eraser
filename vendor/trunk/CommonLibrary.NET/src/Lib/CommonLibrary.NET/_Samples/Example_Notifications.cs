@@ -7,10 +7,8 @@ using System.Data;
 using System.Data.Common;
 using System.Security.Cryptography;
 using ComLib;
-using ComLib.Entities;
-using ComLib.Membership;
-using ComLib.Application;
 using ComLib.Logging;
+using ComLib.Application;
 using ComLib.EmailSupport;
 using ComLib.Notifications;
 
@@ -18,19 +16,10 @@ using ComLib.Notifications;
 namespace ComLib.Samples
 {
     /// <summary>
-    /// Example of ActiveRecord Initialization/Configuration.
+    /// Example for the Notifications namespace.
     /// </summary>
     public class Example_Notifications : App
     {
-        /// <summary>
-        /// Initialize.
-        /// </summary>
-        /// <param name="args"></param>
-        public Example_Notifications()
-        {
-        }
-
-
         /// <summary>
         /// Run the application.
         /// </summary>
@@ -40,23 +29,23 @@ namespace ComLib.Samples
             // Since emailing is disabled, the EmailServiceSettings are not configured.
             // The emails are not sent as "EnableNotifications" = false above.
             // Debugging is turned on so you can see the emails in the folder "Notifications.Tests".
-            NotificationService.Init(new EmailService(new EmailServiceSettings()), new NotificationSettings());
-            NotificationService.Settings["website.name"] = "KnowledgeDrink.com";
-            NotificationService.Settings["website.url"] = "http://www.KnowledgeDrink.com";
-            NotificationService.Settings["website.urls.contactus"] = "http://www.KnowledgeDrink.com/contactus.aspx";
-            NotificationService.Settings.EnableNotifications = false;
-            NotificationService.Settings.DebugOutputMessageToFile = true;
-            NotificationService.Settings.DebugOutputMessageFolderPath = @"Notifications.Tests";
+            Notifier.Init(new EmailService(new EmailServiceSettings()), new NotificationSettings());
+            Notifier.Settings["website.name"] = "KnowledgeDrink.com";
+            Notifier.Settings["website.url"] = "http://www.KnowledgeDrink.com";
+            Notifier.Settings["website.urls.contactus"] = "http://www.KnowledgeDrink.com/contactus.aspx";
+            Notifier.Settings.EnableNotifications = false;
+            Notifier.Settings.DebugOutputMessageToFile = true;
+            Notifier.Settings.DebugOutputMessageFolderPath = @"Notifications.Tests";
 
             Logger.Info("====================================================");
             Logger.Info("NOTIFICATION EMAILS ");
-            Logger.Info("Emails are generated to folder : " + NotificationService.Settings.DebugOutputMessageFolderPath);
-            NotificationService.AccountService.WelcomeNewUser("user1@mydomain.com", "Welcome to www.knowledgedrink.com", "batman", "user1", "password");
-            NotificationService.AccountService.RemindUserPassword("user1@mydomain.com", "Welcome to www.knowledgedrink.com", "batman", "user1", "password");
-            NotificationService.MessageService.SendToFriend("batman@mydomain.com", "Check out www.knowledgedrink.com", "superman", "bruce", "Learn to fight.");
-            NotificationService.MessageService.SendToFriendPost("superman@mydomain.com", "Check out class at www.knowledgedrink.com", "batman", "clark", "Punk, learn to fly.",
+            Logger.Info("Emails are generated to folder : " + Notifier.Settings.DebugOutputMessageFolderPath);
+            Notifier.WelcomeNewUser("user1@mydomain.com", "Welcome to www.knowledgedrink.com", "batman", "user1", "password");
+            Notifier.RemindUserPassword("user1@mydomain.com", "Welcome to www.knowledgedrink.com", "batman", "user1", "password");
+            Notifier.SendToFriend("batman@mydomain.com", "Check out www.knowledgedrink.com", "superman", "bruce", "Learn to fight.");
+            Notifier.SendToFriendPost("superman@mydomain.com", "Check out class at www.knowledgedrink.com", "batman", "clark", "Punk, learn to fly.",
                 "Learn to fly", "http://www.knowledgedrink.com/classes/learn-to-fly.aspx");
-            NotificationService.Queue.Process();
+            Notifier.Process();
             return BoolMessageItem.True;
         }
     }

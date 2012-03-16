@@ -59,6 +59,13 @@ namespace ComLib.Caching
 
 
         /// <summary>
+        /// Retrieves an item from the cache of the specified type and key and 
+        /// inserts by getting it using the lamda it if isn't there
+        /// </summary>
+        T GetOrInsert<T>(object key, int timeToLiveInSeconds, bool slidingExpiration, Func<T> fetcher);
+
+        
+        /// <summary>
         /// Removes an item from the cache.
         /// </summary>
         void Remove(object key);
@@ -92,5 +99,12 @@ namespace ComLib.Caching
         /// Inserts an item into the cache.
         /// </summary>
         void Insert(object key, object value, int timeToLive, bool slidingExpiration, CacheItemPriority priority);
+
+
+        /// <summary>
+        /// Get description of the cache entries.
+        /// </summary>
+        /// <returns></returns>
+        IList<CacheItemDescriptor> GetDescriptors();
     }
 }

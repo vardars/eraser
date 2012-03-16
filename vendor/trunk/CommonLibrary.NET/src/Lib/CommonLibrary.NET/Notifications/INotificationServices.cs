@@ -58,36 +58,36 @@ namespace ComLib.Notifications
         /// <summary>
         /// Send welcome email to new user.
         /// </summary>
-        /// <param name="ctx"></param>
+        /// <param name="ctx">Instance of notification context.</param>
         void WelcomeNewUser(NotificationContext ctx);
 
 
         /// <summary>
         /// Send welcome email to new user.
         /// </summary>
-        /// <param name="to"></param>
-        /// <param name="subject"></param>
-        /// <param name="firstname"></param>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
+        /// <param name="to">E-mail to.</param>
+        /// <param name="subject">E-mail subject.</param>
+        /// <param name="firstname">First name of user.</param>
+        /// <param name="username">Username of user.</param>
+        /// <param name="password">Password of user.</param>
         void WelcomeNewUser(string to, string subject, string firstname, string username, string password);
 
 
         /// <summary>
         /// Send message to remind user of password.
         /// </summary>
-        /// <param name="ctx"></param>
+        /// <param name="ctx">Instance of notification context.</param>
         void RemindUserPassword(NotificationContext ctx);
 
 
         /// <summary>
         /// Send remind account/password email to user.
         /// </summary>
-        /// <param name="to"></param>
-        /// <param name="subject"></param>
-        /// <param name="firstname"></param>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
+        /// <param name="to">E-mail to.</param>
+        /// <param name="subject">E-mail subject.</param>
+        /// <param name="firstname">First name of user.</param>
+        /// <param name="username">Username of user.</param>
+        /// <param name="password">Password of user.</param>
         void RemindUserPassword(string to, string subject, string firstname, string username, string password);
     }
 
@@ -107,45 +107,45 @@ namespace ComLib.Notifications
         /// <summary>
         /// Send the website url to a friend.
         /// </summary>
-        /// <param name="ctx"></param>
+        /// <param name="ctx">Instance of notification context.</param>
         void SendToFriend(NotificationContext ctx);
 
 
         /// <summary>
         /// Send the website url to a friend. 
         /// </summary>
-        /// <param name="toEmail"></param>
-        /// <param name="subject"></param>
-        /// <param name="friendName"></param>
-        /// <param name="fromName"></param>
-        /// <param name="messageFromFriend"></param>
+        /// <param name="toEmail">E-mail to.</param>
+        /// <param name="subject">E-mail subject.</param>
+        /// <param name="friendName">Friend's name.</param>
+        /// <param name="fromName">From name.</param>
+        /// <param name="messageFromFriend">Message text.</param>
         void SendToFriend(string toEmail, string subject, string friendName, string fromName, string messageFromFriend);
 
 
         /// <summary>
         /// Send a post to a friend.
         /// </summary>
-        /// <param name="ctx"></param>
+        /// <param name="ctx">Instance of notification context.</param>
         void SendToFriendPost(NotificationContext ctx);
 
 
         /// <summary>
         /// Send a post to a friend.
         /// </summary>
-        /// <param name="toEmail"></param>
-        /// <param name="subject"></param>
-        /// <param name="toFirstname"></param>
-        /// <param name="fromName"></param>
-        /// <param name="messageToFriend"></param>
-        /// <param name="postTitle"></param>
-        /// <param name="postUrl"></param>
+        /// <param name="toEmail">E-mail to.</param>
+        /// <param name="subject">E-mail subject.</param>
+        /// <param name="toFirstname">Name of recipient.</param>
+        /// <param name="fromName">Name of sender.</param>
+        /// <param name="messageToFriend">Message text.</param>
+        /// <param name="postTitle">Title of post.</param>
+        /// <param name="postUrl">Title of url.</param>
         void SendToFriendPost(string toEmail, string subject, string toFirstname, string fromName, string messageToFriend, string postTitle, string postUrl);
 
 
         /// <summary>
         /// User feedback.
         /// </summary>
-        /// <param name="ctx"></param>
+        /// <param name="ctx">Instance of notification context.</param>
         void SubmitFeedBack(NotificationContext ctx);
     }
 }

@@ -97,6 +97,12 @@ namespace ComLib.Logging
         public LogEvent() { }
 
 
+        /// <summary>
+        /// Initalize log event using loglevel, message and exception
+        /// </summary>
+        /// <param name="level">Event log level.</param>
+        /// <param name="message">Log message.</param>
+        /// <param name="ex">Exception to log.</param>
         public LogEvent(LogLevel level, string message, Exception ex)
         {
             Level = level;
@@ -112,6 +118,12 @@ namespace ComLib.Logging
     /// </summary>
     public enum LogLevel
     {
+        /// <summary>
+        /// Used to always log a message regardless of loglevel
+        /// </summary>
+        Message,
+
+
         /// <summary>
         /// Debug level
         /// </summary>
@@ -140,12 +152,6 @@ namespace ComLib.Logging
         /// Fatal level
         /// </summary>
         Fatal,
-
-
-        /// <summary>
-        /// Used to always log a message regardless of loglevel
-        /// </summary>
-        Message
     };
 
 
@@ -158,7 +164,13 @@ namespace ComLib.Logging
         /// <summary>
         /// Current log level.
         /// </summary>
-        public LogLevel Level;        
+        public LogLevel Level;
+
+
+        /// <summary>
+        /// Application associated w/ logger.
+        /// </summary>
+        public string AppName;
     }
 
 
@@ -170,9 +182,27 @@ namespace ComLib.Logging
     public abstract class LogBase : ILog
     {
         #region Protected Data
+        /// <summary>
+        /// The parent owner of this logger.
+        /// </summary>
         protected ILog _parent;
+
+
+        /// <summary>
+        /// Lock when iterating through / flushing loggers.
+        /// </summary>
         protected ReaderWriterLock _readwriteLock = new ReaderWriterLock();
+
+
+        /// <summary>
+        /// Amount of time supplied to acquiring read lock
+        /// </summary>
         protected int _lockMilliSecondsForRead = 1000;
+
+
+        /// <summary>
+        /// Amount of time supplied to acquiring write lock
+        /// </summary>
         protected int _lockMilliSecondsForWrite = 1000;
         #endregion
 
@@ -187,6 +217,7 @@ namespace ComLib.Logging
         /// <summary>
         /// Initialize logger with default settings.
         /// </summary>
+        /// <param name="type">Type whose full name to use for the logger.</param>
         public LogBase(Type type)
         {            
             this.Name = type.FullName;
@@ -198,6 +229,7 @@ namespace ComLib.Logging
         /// <summary>
         /// Initialize logger with default settings.
         /// </summary>
+        /// <param name="name">Name to use for the logger.</param>
         public LogBase(string name)
         {
             this.Name = name;
@@ -286,7 +318,8 @@ namespace ComLib.Logging
         /// <summary>
         /// Get a logger by it's name.
         /// </summary>
-        /// <param name="logger"></param>
+        /// <param name="loggerName">Name of logger.</param>
+        /// <rereturns>This instance.</rereturns>
         public virtual ILog this[string loggerName]
         {
             get { return this; }
@@ -298,8 +331,8 @@ namespace ComLib.Logging
         /// This is a single logger and this call will always return 
         /// referece to self.
         /// </summary>
-        /// <param name="logIndex"></param>
-        /// <returns></returns>
+        /// <param name="logIndex">Index of logger.</param>
+        /// <returns>This instance.</returns>
         public virtual ILog this[int logIndex]
         {
             get { return this; }
@@ -309,8 +342,8 @@ namespace ComLib.Logging
         /// <summary>
         /// Whether or not the level specified is enabled.
         /// </summary>
-        /// <param name="level"></param>
-        /// <returns></returns>
+        /// <param name="level">Log level to check.</param>
+        /// <returns>True if the supplied logging level is enabled.</returns>
         public virtual bool IsEnabled(LogLevel level)
         {
             return level >= Settings.Level;
@@ -436,7 +469,6 @@ namespace ComLib.Logging
         /// Logs as Fatal.
         /// </summary>
         /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
         public virtual void Fatal(object message)
         {
             if (IsEnabled(LogLevel.Fatal)) InternalLog(LogLevel.Fatal, message, null, null);
@@ -470,7 +502,6 @@ namespace ComLib.Logging
         /// Logs as info.
         /// </summary>
         /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
         public virtual void Info(object message)
         {
             if (IsEnabled(LogLevel.Info)) InternalLog(LogLevel.Info, message, null, null);
@@ -534,11 +565,48 @@ namespace ComLib.Logging
 
 
         /// <summary>
-        /// 
+        /// Logs with specified level.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="ex"></param>
-        /// <param name="args"></param>
+        /// <param name="level">Logging level.</param>
+        /// <param name="message">The message.</param>
+        public virtual void Log(LogLevel level, object message)
+        {
+            if (IsEnabled(level)) InternalLog(level, message, null, null);
+        }
+
+
+        /// <summary>
+        /// Logs with specified level.
+        /// </summary>
+        /// <param name="level">Logging level.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="exception">The exception.</param>
+        public virtual void Log(LogLevel level, object message, System.Exception exception)
+        {
+            if (IsEnabled(level)) InternalLog(level, message, exception, null);
+        }
+
+
+        /// <summary>
+        /// Logs with specified level.
+        /// </summary>
+        /// <param name="level">Logging level.</param>
+        /// <param name="message">The message.</param>
+        /// <param name="ex">The ex.</param>
+        /// <param name="args">The args.</param>
+        public virtual void Log(LogLevel level, object message, System.Exception ex, object[] args)
+        {
+            if (IsEnabled(level)) InternalLog(level, message, ex, args);
+        }
+
+
+        /// <summary>
+        /// Logs with supplied parameters.
+        /// </summary>
+        /// <param name="level">Logging level.</param>
+        /// <param name="message">Message to log.</param>
+        /// <param name="ex">Exception to log.</param>
+        /// <param name="args">Arguments.</param>
         public virtual void InternalLog(LogLevel level, object message, System.Exception ex, object[] args)
         {
             LogEvent logevent = BuildLogEvent(level, message, ex, args);
@@ -561,10 +629,10 @@ namespace ComLib.Logging
         /// Construct the logevent using the values supplied.
         /// Fills in other data values in the log event.
         /// </summary>
-        /// <param name="level"></param>
-        /// <param name="message"></param>
-        /// <param name="ex"></param>
-        /// <param name="args"></param>
+        /// <param name="level">Logging level.</param>
+        /// <param name="message">Event message.</param>
+        /// <param name="ex">Event exception</param>
+        /// <param name="args">Event arguments.</param>
         public virtual LogEvent BuildLogEvent(LogLevel level, object message, System.Exception ex, object[] args)
         {
             return LogHelper.BuildLogEvent(this.GetType(), level, message, ex, args);
@@ -574,9 +642,8 @@ namespace ComLib.Logging
         /// <summary>
         /// Builds the log message using message and arguments.
         /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="args">The args.</param>
-        /// <returns></returns>
+        /// <param name="logEvent">Logging level.</param>
+        /// <returns>String with message to log.</returns>
         protected virtual string BuildMessage(LogEvent logEvent)
         {
             return LogFormatter.Format("", logEvent);
@@ -589,8 +656,8 @@ namespace ComLib.Logging
         /// Exectutes the action under a read operation after
         /// aquiring the reader lock.
         /// </summary>
-        /// <param name="executor"></param>
-        protected void ExecuteRead(ActionVoid executor)
+        /// <param name="executor">Action to call.</param>
+        protected void ExecuteRead(Action executor)
         {
             AcquireReaderLock();
             try
@@ -599,6 +666,7 @@ namespace ComLib.Logging
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Unable to perform read operation for logging: " + ex.Message + ", " + ex.StackTrace);
             }
             finally
             {
@@ -611,8 +679,8 @@ namespace ComLib.Logging
         /// Exectutes the action under a write operation after
         /// aquiring the writer lock.
         /// </summary>
-        /// <param name="executor"></param>
-        protected void ExecuteWrite(ActionVoid executor)
+        /// <param name="executor">Action to call.</param>
+        protected void ExecuteWrite(Action executor)
         {
             AcquireWriterLock();
             try
@@ -621,6 +689,7 @@ namespace ComLib.Logging
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Unable to execute write operation: " + ex.Message + ", " + ex.StackTrace);
             }
             finally
             {

@@ -23,7 +23,7 @@ namespace ComLib.Queue
     /// <summary>
     /// Interface for a persistance queue repository.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Type of items to store in repository.</typeparam>
     public interface IQueueRepository<T>
     {
         /// <summary>
@@ -36,14 +36,14 @@ namespace ComLib.Queue
         /// <summary>
         /// Loads all.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List of all items.</returns>
         IList<T> LoadAll();
 
         
         /// <summary>
         /// Loads the batch.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List of all items.</returns>
         IList<T> LoadBatch();
     }
 }

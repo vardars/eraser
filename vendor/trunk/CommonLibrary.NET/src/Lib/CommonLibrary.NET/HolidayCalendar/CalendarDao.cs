@@ -48,7 +48,7 @@ namespace ComLib.Calendars
         /// Interpret the holidays.
         /// </summary>
         /// <param name="calendarCode"></param>
-        /// <param name="?"></param>
+        /// <param name="holidays"></param>
         public void Load(string calendarCode, List<Holiday> holidays)
         {
             _holidaysByCalendarCode[calendarCode] = holidays;

@@ -27,8 +27,18 @@ namespace ComLib.NamedQueries
     /// <summary>
     /// NamedQuery entity.
     /// </summary>
-    public partial class NamedQuery : DomainObject<NamedQuery>
+    public partial class NamedQuery : ActiveRecordBaseEntity<NamedQuery>
     {
+        /// <summary>
+        /// Returns a new instance of this class.
+        /// </summary>
+        /// <returns>Instance of NamedQuery.</returns>
+        public static NamedQuery New()
+        {
+            return new NamedQuery();
+        }
+
+
 		/// <summary>
 		/// Get/Set Name
 		/// </summary>

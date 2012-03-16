@@ -38,7 +38,6 @@ namespace ComLib.Collections
         /// <summary>
         /// Constructor requiring the generic dictionary being wrapped.
         /// </summary>
-        /// <param name="item"></param>
         public DictionaryMultiValue()
         {
             _dict = new Dictionary<TKey, IList<TValue>>();
@@ -48,7 +47,7 @@ namespace ComLib.Collections
         /// <summary>
         /// Constructor requiring the generic dictionary being wrapped.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="dict"></param>
         public DictionaryMultiValue(IDictionary<TKey, IList<TValue>> dict)
         {
             _dict = dict;

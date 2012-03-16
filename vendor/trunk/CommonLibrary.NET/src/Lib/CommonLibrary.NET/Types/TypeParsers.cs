@@ -18,14 +18,18 @@ using System.Text;
 
 namespace ComLib.Types
 {
+    /// <summary>
+    /// This class contains type parser methods
+    /// that also provide default values.
+    /// </summary>
     public class TypeParsers
     {
         /// <summary>
         /// Parse the string as an int.
         /// </summary>
-        /// <param name="val"></param>
-        /// <param name="defaultVal"></param>
-        /// <returns></returns>
+        /// <param name="val">String representation of integer.</param>
+        /// <param name="defaultVal">Default value if string is null or empty.</param>
+        /// <returns>Parsed integer.</returns>
         public static int ParseInt(string val, int defaultVal)
         {
             if (string.IsNullOrEmpty(val)) return defaultVal;
@@ -36,57 +40,6 @@ namespace ComLib.Types
                 convertedVal = defaultVal;
 
             return convertedVal;
-        }
-
-                
-        /// <summary>
-        /// Convert to correct type.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        public static object Convert<T>(object input)
-        {
-            if (typeof(T) == typeof(int))
-                return System.Convert.ToInt32(input);
-            else if (typeof(T) == typeof(long))
-                return System.Convert.ToInt64(input);
-            else if (typeof(T) == typeof(string))
-                return System.Convert.ToString(input);
-            else if (typeof(T) == typeof(bool))
-                return System.Convert.ToBoolean(input);
-            else if (typeof(T) == typeof(double))
-                return System.Convert.ToDouble(input);
-            else if ( typeof(T) == typeof(DateTime))
-                return System.Convert.ToDateTime(input);                
-            
-            return default(T);
-        }
-
-
-        /// <summary>
-        /// Convert to correct type.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        public static T ConvertTo<T>(object input)
-        {
-            object result = default(T);
-            if (typeof(T) == typeof(int))
-                result = System.Convert.ToInt32(input);
-            else if (typeof(T) == typeof(long))
-                result = System.Convert.ToInt64(input);
-            else if (typeof(T) == typeof(string))
-                result = System.Convert.ToString(input);
-            else if (typeof(T) == typeof(bool))
-                result = System.Convert.ToBoolean(input);
-            else if (typeof(T) == typeof(double))
-                result = System.Convert.ToDouble(input);
-            else if (typeof(T) == typeof(DateTime))
-                result = System.Convert.ToDateTime(input);
-
-            return (T)result;
         }
     }
 }

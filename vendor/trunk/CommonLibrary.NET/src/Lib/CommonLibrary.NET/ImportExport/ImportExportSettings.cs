@@ -21,5 +21,17 @@ namespace ComLib.ImportExport
 {
     public class ImportExportSettings
     {
+        /// <summary>
+        /// Gets or sets the size of the export batch.
+        /// </summary>
+        /// <value>The size of the export batch.</value>
+        public int ExportBatchSize { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the size of the export batch.
+        /// </summary>
+        /// <value>The size of the export batch.</value>
+        public int ImportBatchSize { get; set; }
     }
 }

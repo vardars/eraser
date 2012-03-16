@@ -23,16 +23,26 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 
 using ComLib;
-using ComLib.Subs;
-using ComLib.Reflection;
 
 namespace ComLib.Arguments
 {
     /// <summary>
-    /// Main API for validating/accepting arguments supplied on the command line.
+    /// Helper class for argument parsing.
     /// </summary>
     public class ArgsHelper
     {
+        private static Func<string, string> _substitutor;
+
+
+        /// <summary>
+        /// Initialize the string parser. e.g. Args.InitParser( (textargs) => LexArgs.ParseList(text) );
+        /// </summary>
+        /// <param name="substitutor">The substitutor lamda</param>
+        public static void InitServices(Func<string, string> substitutor)
+        {
+            _substitutor = substitutor;
+        }
+
 
         /// <summary>
         /// Gets a list of all the argument definitions that are applied
@@ -43,7 +53,7 @@ namespace ComLib.Arguments
         public static List<ArgAttribute> GetArgsFromReciever(object argsReciever)
         {
             // Get all the properties that have arg attributes.
-            List<KeyValuePair<ArgAttribute, PropertyInfo>> args = AttributeHelper.GetPropsWithAttributesList<ArgAttribute>(argsReciever);
+            List<KeyValuePair<ArgAttribute, PropertyInfo>> args = Attributes.GetPropsWithAttributesList<ArgAttribute>(argsReciever);
             List<ArgAttribute> argsList = new List<ArgAttribute>();
             args.ForEach((pair) => argsList.Add(pair.Key));
             return argsList;
@@ -67,13 +77,14 @@ namespace ComLib.Arguments
         /// Get the all argument names / values from the object that recievers the arguments.
         /// </summary>
         /// <param name="argsReciever"></param>
+        /// <param name="argsValueMap"></param>
         /// <returns></returns>
         public static void GetArgValues(IDictionary argsValueMap, object argsReciever)
         {
-            var args = AttributeHelper.GetPropsWithAttributesList<ArgAttribute>(argsReciever);
+            var args = Attributes.GetPropsWithAttributesList<ArgAttribute>(argsReciever);
             args.ForEach(argPair =>
             {
-                object val = ReflectionUtils.GetPropertyValueSafely(argsReciever, argPair.Value);
+                object val = ReflectionHelper.GetPropertyValueSafely(argsReciever, argPair.Value);
                 argsValueMap[argPair.Value.Name] = val;
             });
         }
@@ -87,7 +98,7 @@ namespace ComLib.Arguments
         /// <param name="errors"></param>
         public static void CheckAndApplyArgs(Args parsedArgs, object argReciever, IList<string> errors)
         {
-            List<KeyValuePair<ArgAttribute, PropertyInfo>> mappings = AttributeHelper.GetPropsWithAttributesList<ArgAttribute>(argReciever);
+            List<KeyValuePair<ArgAttribute, PropertyInfo>> mappings = Attributes.GetPropsWithAttributesList<ArgAttribute>(argReciever);
             List<ArgAttribute> argSpecs = new List<ArgAttribute>();
             mappings.ForEach((pair) => argSpecs.Add(pair.Key));
 
@@ -114,9 +125,68 @@ namespace ComLib.Arguments
             string argValue = rawArgValue;
             if (argAttr.Interpret)
             {
-                argValue = Substitutor.Substitute(argValue);
+                argValue = Substitute(argValue);
             }
-            ReflectionUtils.SetProperty(argReciever, val.Value, argValue);
+            ReflectionHelper.SetProperty(argReciever, val.Value, argValue);
+        }
+
+
+        /// <summary>
+        /// Set the argument value from command line on the property of the object
+        /// recieving the value.
+        /// </summary>
+        /// <param name="args"></param>
+        public static void InterpretValues(Args args)
+        {
+            if (args.Schema.IsEmpty) return;
+
+            foreach (var arg in args.Schema.Items)
+            {
+                if (arg.Interpret && arg.IsNamed)
+                {
+                    string rawval = string.Empty;
+                    string argName = string.Empty;
+                    if (args.Contains(arg.Name))
+                    {
+                        rawval = args.Named[arg.Name];
+                        argName = arg.Name;
+                    }
+                    else if (args.Contains(arg.Alias))
+                    {
+                        rawval = args.Named[arg.Alias];
+                        argName = arg.Alias;
+                    }
+                    else if (args.Contains(arg.NameLowered))
+                    {
+                        rawval = args.Named[arg.NameLowered];
+                        argName = arg.NameLowered;
+                    }
+                    else if (args.Contains(arg.AliasLowered))
+                    {
+                        rawval = args.Named[arg.AliasLowered];
+                        argName = arg.AliasLowered;
+                    }
+                    if (!string.IsNullOrEmpty(argName))
+                    {
+                        string interpreted = Substitute(rawval);
+                        args.Named[argName] = interpreted;
+                    }
+                }
+                else if (arg.Interpret && !arg.IsNamed && args.Positional != null && arg.IndexPosition < args.Positional.Count)
+                {
+                    string rawval = args.Positional[arg.IndexPosition];
+                    string interpreted = Substitute(rawval);
+                    args.Positional[arg.IndexPosition] = interpreted;
+                }
+            }
+        }
+
+
+        private static string Substitute(string original)
+        {
+            if (_substitutor == null) return original;
+            string converted = _substitutor(original);
+            return converted;
         }
     }
 }

@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 
 
-namespace ComLib.Database
+namespace ComLib.Data
 {    
     /// <summary>
     /// TO_DO:
@@ -36,7 +36,7 @@ namespace ComLib.Database
     /// 3. Find stored procedures
     /// 4. Find Views
     /// </summary>
-    public class DBSchema : DBHelper
+    public class DBSchema : Database
     {
         /// <summary>
         /// Default construction
@@ -60,19 +60,51 @@ namespace ComLib.Database
         /// <param name="tableName"></param>
         public void DropTable(string tableName)
         {
+            string checkDelete = GetDropTable(tableName, false);
+            this.ExecuteNonQuery(checkDelete, CommandType.Text, null);
+        }
+
+
+        /// <summary>
+        /// Creates a DROP TABLE statement preceeded
+        /// by an optional corresponding IF EXISTS statement.
+        /// </summary>
+        /// <param name="tableName">Name of table to use.</param>
+        /// <param name="includeGo">True to generate IF EXISTS statement.</param>
+        /// <returns>Generated string.</returns>
+        public string GetDropTable(string tableName, bool includeGo)
+        {
             // IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Categories]') AND type in (N'U'))
             // DROP TABLE [dbo].[Categories]
             string checkDelete = "IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[" + tableName + "]') AND type in (N'U'))";
             checkDelete += Environment.NewLine + "DROP TABLE [dbo].[" + tableName + "]";
-            this.ExecuteNonQuery(checkDelete, CommandType.Text, null);
+            if( includeGo)
+                checkDelete += Environment.NewLine + "go";
+            return checkDelete;
+        }
+
+
+        /// <summary>
+        /// Get the drop command for the procedure giving the table name and procedure name.
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <param name="procName"></param>
+        /// <returns></returns>
+        public string GetDropProc(string tableName, string procName)
+        {
+            // IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Categories]') AND type in (N'U'))
+            // DROP TABLE [dbo].[Categories]
+            string dropCommand = "IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[" + tableName +"_" + procName + "]') AND type in (N'P', N'PC'))" + Environment.NewLine
+                    + "DROP PROCEDURE [dbo].[" + tableName + "_" + procName + "]";
+
+            return dropCommand;
         }
        
 
-        public void CreateTable(DataTable table)
-        {
-        }
 
-
+        /// <summary>
+        /// Outputs all schemas to a file.
+        /// </summary>
         public void GetTables()
         {
             WriteSchema("all", "", null);

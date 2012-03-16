@@ -27,7 +27,7 @@ using ComLib;
 
 
 
-namespace ComLib.Database
+namespace ComLib.Data
 {    
     /// <summary>
     /// Class containing various helper methods for accessing data.
@@ -40,6 +40,7 @@ namespace ComLib.Database
         /// Executes the rowmapper with a single input parameter.
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="dbHelper"></param>
         /// <param name="commandText">Store procedure name. E.g. "Posts_GetPostsByUser</param>
         /// <param name="commandType">StoredProcedure</param>
         /// <param name="rowMapper">The mapper that maps a record to an object.</param>
@@ -58,12 +59,10 @@ namespace ComLib.Database
         /// Executes the rowmapper with a single input parameter.
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="dbHelper">Database helper</param>
         /// <param name="commandText">Store procedure name. E.g. "Posts_GetPostsByUser</param>
         /// <param name="commandType">StoredProcedure</param>
         /// <param name="rowMapper">The mapper that maps a record to an object.</param>
-        /// <param name="paramName">E.g. "userName"</param>
-        /// <param name="paramType">string</param>
-        /// <param name="paramValue">user001</param>
         /// <returns></returns>
         public static IList<T> QueryNoParams<T>(this IDBHelper dbHelper, string commandText, CommandType commandType, IRowMapper<IDataReader, T> rowMapper)
         {            
@@ -75,6 +74,7 @@ namespace ComLib.Database
         /// Executes the rowmappers
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="dbHelper">Database helper</param>
         /// <param name="commandText">Store procedure name. E.g. "Posts_GetPostsByUser</param>
         /// <param name="commandType">StoredProcedure</param>       
         /// <param name="rowMapper">The mapper that maps a record to an object.</param>
@@ -105,6 +105,8 @@ namespace ComLib.Database
         /// Executes the rowmapper and get a single output parameter result.
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TOutputParam"></typeparam>
+        /// <param name="dbHelper">Database helper</param>
         /// <param name="commandText">Store procedure name. E.g. "Posts_GetPostsByUser</param>
         /// <param name="commandType">StoredProcedure</param>
         /// <param name="rowMapper">The mapper that maps a record to an object.</param>
@@ -123,6 +125,7 @@ namespace ComLib.Database
         /// Executes the rowmapper and get multiple output parameter results.
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="dbHelper"></param>
         /// <param name="commandText">Store procedure name. E.g. "Posts_GetPostsByUser</param>
         /// <param name="commandType">StoredProcedure</param>
         /// <param name="rowMapper">The mapper that maps a record to an object.</param>
@@ -149,10 +152,13 @@ namespace ComLib.Database
                 reader.Close();
 
                 // Now get all the output parameters.
-                foreach (string outputParamName in outputParamNames)
+                if(outputParamNames != null && outputParamNames.Length > 0)
                 {
-                    object paramResult = command.Parameters[outputParamName].Value;
-                    paramResults[outputParamName] = paramResult;
+                    foreach (string outputParamName in outputParamNames)
+                    {
+                        object paramResult = command.Parameters[outputParamName].Value;
+                        paramResults[outputParamName] = paramResult;
+                    }
                 }
                 command.Dispose();
             }

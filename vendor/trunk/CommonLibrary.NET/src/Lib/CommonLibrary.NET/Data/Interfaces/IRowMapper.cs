@@ -18,16 +18,21 @@ using System.Text;
 using System.Data;
 
 
-namespace ComLib.Database
+namespace ComLib.Data
 {
     /// <summary>
     /// Base class for RowMapping.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="TSourceData"></typeparam>
-    /// <typeparam name="TSourceRow"></typeparam>
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
     public interface IRowMapper<TSource, TResult>
     {
+        /// <summary>
+        /// Whether or not the callback for after rows mapped is enabled.
+        /// </summary>
+        bool IsCallbackEnabledForAfterRowsMapped { get; set; }
+
+
         /// <summary>
         /// Maps all the rows in TSource to list objects of type T.
         /// </summary>
@@ -39,8 +44,16 @@ namespace ComLib.Database
         /// <summary>
         /// Maps a specific row to an item of type TResult
         /// </summary>
-        /// <param name="row"></param>
+        /// <param name="dataSource"></param>
+        /// <param name="rowId"></param>
         /// <returns></returns>
         TResult MapRow(TSource dataSource, int rowId);
+
+
+        /// <summary>
+        /// Call back for on after rows have been mapped.
+        /// </summary>
+        /// <param name="items"></param>
+        void OnAfterRowsMapped(IList<TResult> items);
     }
 }

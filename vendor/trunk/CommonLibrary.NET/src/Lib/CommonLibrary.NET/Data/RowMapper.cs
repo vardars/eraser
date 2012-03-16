@@ -20,13 +20,13 @@ using ComLib;
 
 
 
-namespace ComLib.Database
+namespace ComLib.Data
 {
     /// <summary>
     /// Abstract class for mapping a DataTable.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class RowMapperTableBased<T> : RowMapperBase<DataTable, T, int>, IRowMapper<DataTable, T>
+    public abstract class RowMapperTableBased<T> : RowMapperBaseWithCallBacks<DataTable, T, int>, IRowMapper<DataTable, T>
     {
         /// <summary>
         /// Maps all the rows using DataTable.
@@ -41,6 +41,9 @@ namespace ComLib.Database
                 T record = MapRow(table, ndx);
                 records.Add(record);
             }
+            if (IsCallbackEnabledForAfterRowsMapped)
+                OnAfterRowsMapped(records);
+
             return records;
         }
     }
@@ -51,7 +54,7 @@ namespace ComLib.Database
     /// Abstract class for mapping a row from a DataReader.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class RowMapperReaderBased<T> : RowMapperBase<IDataReader, T, int>, IRowMapper<IDataReader, T>
+    public abstract class RowMapperReaderBased<T> : RowMapperBaseWithCallBacks<IDataReader, T, int>, IRowMapper<IDataReader, T>
     {
         /// <summary>
         /// Map all the rows to IList of objects T using DataReader
@@ -68,6 +71,9 @@ namespace ComLib.Database
                 records.Add(record);
                 ndx++;
             }
+            if (IsCallbackEnabledForAfterRowsMapped)
+                OnAfterRowsMapped(records);
+
             return records;
         }
     }
@@ -113,6 +119,32 @@ namespace ComLib.Database
     /// </summary>
     /// <typeparam name="TSource"></typeparam>
     /// <typeparam name="TResult"></typeparam>
+    /// <typeparam name="TRowId"></typeparam>
+    public abstract class RowMapperBaseWithCallBacks<TSource, TResult, TRowId> : RowMapperBase<TSource, TResult, TRowId>
+    {
+        /// <summary>
+        /// Whether or not the callback for after rows have been mapped is enabeld.
+        /// </summary>
+        public bool IsCallbackEnabledForAfterRowsMapped { get; set; }
+
+
+        /// <summary>
+        /// Callback after rows have been mapped to items.
+        /// </summary>
+        /// <param name="items"></param>
+        public virtual void OnAfterRowsMapped(IList<TResult> items)
+        {
+        }
+    }
+
+
+
+    /// <summary>
+    /// Abstract class for row mapping.
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    /// <typeparam name="TRowId"></typeparam>
     public abstract class RowMapperBase<TSource, TResult, TRowId>
     {
         /// <summary>
@@ -145,10 +177,120 @@ namespace ComLib.Database
         /// <summary>
         /// Map row with more extensive error capturing.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="rowId"></param>
-        /// <param name="?"></param>
+        /// <param name="ctx"></param>
         /// <returns></returns>
         public abstract BoolMessageItem<TResult> MapRow(RowMappingContext<TSource, TResult, TRowId> ctx);
+    }
+
+
+
+    /// <summary>
+    /// Helper class for row mapping.
+    /// </summary>
+    public class RowMapperHelper
+    {
+        /// <summary>
+        /// Maps all the rows using DataTable.
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="sql"></param>
+        /// <param name="rowmapper"></param>
+        /// <param name="onAfterRowsMapped"></param>
+        /// <returns></returns>
+        public static IList<T> MapRows<T>(string connection, string sql, Func<DataTable, int, T> rowmapper, Action<IList<T>> onAfterRowsMapped = null)
+        {
+            Data.Database db = new Data.Database(connection);
+            DataTable table = db.ExecuteDataTableText(sql);
+            if (table == null || table.Rows == null || table.Rows.Count == 0)
+                return new List<T>();
+
+            IList<T> records = new List<T>();
+            for (int ndx = 0; ndx < table.Rows.Count; ndx++)
+            {
+                T record = rowmapper(table, ndx);
+                records.Add(record);
+            }
+            if (onAfterRowsMapped != null)
+                onAfterRowsMapped(records);
+
+            return records;
+        }
+
+
+        /// <summary>
+        /// Maps all the rows using DataTable.
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="rowmapper"></param>
+        /// <param name="onAfterRowsMapped"></param>
+        /// <returns></returns>
+        public static IList<T> MapRows<T>(DataTable table, Func<DataTable, int, T> rowmapper, Action<IList<T>> onAfterRowsMapped = null)
+        {
+            IList<T> records = new List<T>();
+            for (int ndx = 0; ndx < table.Rows.Count; ndx++)
+            {
+                T record = rowmapper(table, ndx);
+                records.Add(record);
+            }
+            if (onAfterRowsMapped != null)
+                onAfterRowsMapped(records);
+
+            return records;
+        }
+
+
+        /// <summary>
+        /// Map all the rows to IList of objects T using DataReader
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="rowmapper"></param>
+        /// <param name="onAfterRowsMapped"></param>
+        /// <returns></returns>
+        public static IList<T> MapRows<T>(IDataReader reader, Func<IDataReader, int, T> rowmapper, Action<IList<T>> onAfterRowsMapped = null)
+        {
+            IList<T> records = new List<T>();
+            int ndx = 0;
+            while (reader.Read())
+            {
+                T record = rowmapper(reader, ndx);
+                records.Add(record);
+                ndx++;
+            }
+            if (onAfterRowsMapped != null)
+                onAfterRowsMapped(records);
+
+            return records;
+        }
+
+
+        /// <summary>
+        /// Map all the rows to IList of objects T using DataReader
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="sql"></param>
+        /// <param name="rowmapper"></param>
+        /// <param name="onAfterRowsMapped"></param>
+        /// <returns></returns>
+        public static IList<T> MapRows<T>(string connection, string sql, Func<IDataReader, int, T> rowmapper, Action<IList<T>> onAfterRowsMapped = null)
+        {
+            Data.Database db = new Data.Database(connection);
+            IList<T> records = new List<T>();
+                
+            db.ExecuteReaderText(sql, reader =>
+            {
+                int ndx = 0;
+                while (reader.Read())
+                {
+                    T record = rowmapper(reader, ndx);
+                    records.Add(record);
+                    ndx++;
+                }
+                if (onAfterRowsMapped != null)
+                    onAfterRowsMapped(records);
+
+            }, null);
+            
+            return records;
+        }
     }
 }

@@ -18,6 +18,10 @@ using System.Text;
 
 namespace ComLib.Calendars
 {
+    /// <summary>
+    /// The standard interface to be implemented by a class that
+    /// will provide holidays, business days and related information.
+    /// </summary>
     public interface ICalendar
     {
         /// <summary>

@@ -17,21 +17,26 @@ using ComLib.EmailSupport;
 using ComLib.Notifications;
 using ComLib.Reflection;
 using ComLib.Collections;
-
+using ComLib.Extensions;
 
 namespace ComLib.Application
 {
     /// <summary>
-    /// Base class for the Batch application.
+    /// <para>
+    /// A template driven base class for any application. This provides out-of the box functionality containing:
+    /// 1. Environment selection.
+    /// 2. Argument parsing
+    /// 3. Configuration file loading ( with inheritance )
+    /// 4. Logging
+    /// 5. Email notification on completion
+    /// 6. Error handling
+    /// 7. 0/1 Exit codes on completion
+    /// </para>
     /// </summary>
     public class App : IApp, IDisposable
     {
         /// <summary>
-        /// Boiler plate code to run an application.
-        /// 1. Accept / validate command line arguments.
-        /// 2. Initialize the application
-        /// 3. Execute the application.
-        /// 4. Shutdown the application.
+        /// Runs the application provided.
         /// </summary>
         /// <param name="app">The application to run.</param>
         /// <param name="args">Command line arguments.</param>
@@ -42,11 +47,7 @@ namespace ComLib.Application
 
 
         /// <summary>
-        /// Boiler plate code to run an application.
-        /// 1. Accept / validate command line arguments.
-        /// 2. Initialize the application
-        /// 3. Execute the application.
-        /// 4. Shutdown the application.
+        /// Runs the application provided.
         /// </summary>
         /// <param name="app">The application to run.</param>
         /// <param name="args">Command line arguments.</param>
@@ -58,14 +59,11 @@ namespace ComLib.Application
 
 
         /// <summary>
-        /// Boiler plate code to run an application.
-        /// 1. Accept / validate command line arguments.
-        /// 2. Initialize the application
-        /// 3. Execute the application.
-        /// 4. Shutdown the application.
+        /// Runs the application provided.
         /// </summary>
         /// <param name="app">The application to run.</param>
         /// <param name="args">Command line arguments.</param>
+        /// <param name="requireConfigFiles">Whether or not to throw error if the config files are not available.</param>
         /// <param name="decorations">Decorations around the application. e.g. "diagnostics,statusupdates"</param>
         public static BoolMessageItem Run(IApp app, string[] args, bool requireConfigFiles, string decorations)
         {
@@ -99,7 +97,7 @@ namespace ComLib.Application
             }
             catch (Exception ex)
             {
-                ExecuteHelper.HandleException(ex);
+                Try.HandleException(ex);
             }
             finally
             {            
@@ -111,14 +109,28 @@ namespace ComLib.Application
 
         #region Constructors
         /// <summary>
-        /// Default construction.
+        /// <para>
+        /// Default construction. Populates the arguments schema with some basic arguments to support this template.
+        /// This includes the following:
+        ///    _args.Schema.AddNamed(bool)("pause", false, false, "Pause the application to attach debugger.", "true", "true|false", false, false, "common", true);            
+        ///    _args.Schema.AddNamed(string)("env", false, "dev", "Environment to run in.", "dev", "dev | qa | uat | prod", false, false, "common", false);
+        ///    _args.Schema.AddNamed(string)("config", false, "dev", "Configuration file to use. If not supplied, default to env selected", "dev.config", "dev.config | qa.config", false, false, "common", false);
+        ///    _args.Schema.AddNamed(string)("log", false, @"%name%-%yyyy%-%MM%-%dd%-%env%-%user%.log", "Log file name", "myapp.log", @"myapp.log | %name%-%yyyy%-%MM%-%dd%-%env%-%user%.log", false, false, "common", true);
+        ///    _args.Schema.AddNamed(bool)("email", false, false, "Whether or not to send an email on completion.", "true", "true|false", false, false, "common", true);
+        ///    _args.Schema.AddNamed(bool)("emailOnlyOnFailure", false, false, "Whether or not to send an email only if application fails.", "true", "true|false", false, false, "common", true);
+        ///</para>
         /// </summary>
         public App()
         {
             Settings = new AppConfig();
             _startTime = DateTime.Now;
-            _argsParsed = new Args(null);
-            _argsSupported.Add(new ArgAttribute("pause", "Pause the application to attach debugger", typeof(bool), false, false, "true|false", false, false, true));            
+            _args = new Args("-", ":");
+            _args.Schema.AddNamed<bool>("pause", "pause", false, false, "Pause the application to attach debugger.", "true", "true|false", false, false, "common", true);            
+            _args.Schema.AddNamed<string>("env", "env", false, "dev", "Environment to run in.", "dev", "dev | qa | uat | prod", false, false, "common", false);
+            _args.Schema.AddNamed<string>("config", "config", false, "dev", "Configuration file to use. If not supplied, default to env selected", "dev.config", "dev.config | qa.config", false, false, "common", false);
+            _args.Schema.AddNamed<string>("log", "log", false, @"%name%-%yyyy%-%MM%-%dd%-%env%-%user%.log", "Log file name", "myapp.log", @"myapp.log | %name%-%yyyy%-%MM%-%dd%-%env%-%user%.log", false, false, "common", true);
+            _args.Schema.AddNamed<bool>("email", "email", false, false, "Whether or not to send an email on completion.", "true", "true|false", false, false, "common", true);
+            _args.Schema.AddNamed<bool>("emailOnlyOnFailure", "emailOnlyOnFailure", false, false, "Whether or not to send an email only if application fails.", "true", "true|false", false, false, "common", true);
         }
         #endregion
 
@@ -209,7 +221,7 @@ namespace ComLib.Application
                 if (Settings.ArgsRequired && Settings.ArgsReciever != null)                
                     return ArgsHelper.GetArgsFromReciever(Settings.ArgsReciever);
 
-                return _argsSupported;
+                return _args.Schema.Items;
             }
         }
 
@@ -246,7 +258,7 @@ namespace ComLib.Application
         /// <summary>
         /// Determine if the arguments can be accepted.
         /// </summary>
-        /// <param name="args">e.g. -env:Prod -batchsize:100</param>
+        /// <param name="rawArgs">Arguments from commandline.</param>
         /// <param name="prefix">-</param>
         /// <param name="separator">:</param>
         /// <returns>True if success. False otherwise.</returns>        
@@ -254,6 +266,11 @@ namespace ComLib.Application
         {
             Settings.ArgsPrefix = prefix;
             Settings.ArgsSeparator = separator;
+
+            // If there is an argument reciever, then reset the _args.Schema 
+            // using the arg attributes in the reciever.
+            if( IsArgumentRecieverApplicable)
+                _args.Schema.Items = ArgsHelper.GetArgsFromReciever(Settings.ArgsReciever);
 
             Args args = new Args(rawArgs, Options);
 
@@ -268,13 +285,16 @@ namespace ComLib.Application
 
             // Validate/Parse args.
             BoolMessageItem<Args> result = Args.Accept(rawArgs, prefix, separator, 1, Options, OptionsExamples);
-            
-            // Store the parsed args.
-            _argsParsed = result.Item;
-
+                        
             // Successful ? Apply args to object reciever
-            if (result.Success && IsArgumentRecieverApplicable )
-                Args.Accept(rawArgs, prefix, separator, Settings.ArgsReciever);
+            if (result.Success)
+            {
+                // Store the parsed args.
+                _args = result.Item;
+
+                if (IsArgumentRecieverApplicable)
+                    Args.Accept(rawArgs, prefix, separator, Settings.ArgsReciever);
+            }
             
             // Errors ? Show them.
             if (!result.Success)
@@ -310,12 +330,13 @@ namespace ComLib.Application
         /// <param name="context"></param>
         public virtual void Init(object context)
         {
-            string env = _argsParsed.Get("env", "dev");
-            string log = _argsParsed.Get("log", "%name%-%yyyy%-%MM%-%dd%-%env%-%user%.log");
-            string config = _argsParsed.Get("config", string.Format(@"config\{0}.config", env));
+            string env = _args.Get("env", "dev");
+            string log = _args.Get("log", "%name%-%yyyy%-%MM%-%dd%-%env%-%user%.log");
+            string config = _args.Get("config", string.Format(@"config\{0}.config", env));
 
             // 1. Initialize the environment. prod, prod.config
             Envs.Set(env, "prod,uat,qa,dev", config);
+            Env.Get(env).RefPath = config;
 
             // 2. Append the file based logger.
             Logger.Default.Append(new LogFile(this.GetType().Name, log, DateTime.Now, env));
@@ -415,11 +436,11 @@ namespace ComLib.Application
         {            
             string successFailMsg = _result.Success ? Name + " Successful" : Name + " Failed";
             
-            bool sendEmailCommandLine = _argsParsed.Get<bool>("email", false);
+            bool sendEmailCommandLine = _args.Get<bool>("email", false);
             bool sendEmailConfig = Conf.GetDefault<bool>("EmailSettings", "enableEmails", false);
             bool sendEmail = sendEmailCommandLine ? true : sendEmailConfig;
 
-            bool sendEmailOnlyOnFailureCommandLine = _argsParsed.Get<bool>("emailOnlyOnFailure", true);
+            bool sendEmailOnlyOnFailureCommandLine = _args.Get<bool>("emailOnlyOnFailure", true);
             bool sendEmailOnlyOnFailureConfig = Conf.GetDefault<bool>("EmailSettings", "enableEmailsOnlyOnFailures", true);
             bool sendEmailOnlyOnFailure = sendEmailOnlyOnFailureCommandLine ? true : sendEmailOnlyOnFailureConfig;
 
@@ -519,12 +540,39 @@ namespace ComLib.Application
 
 
         #region Private Data
+        /// <summary>
+        /// The logger for the app.
+        /// </summary>
         protected ILogMulti _log;
+
+
+        /// <summary>
+        /// The configuration source.
+        /// </summary>
         protected IConfigSource _config;        
+
+
+        /// <summary>
+        /// The email service to send emails after completion.
+        /// </summary>
         protected IEmailService _emailer;
+
+
+        /// <summary>
+        /// The result of the execution.
+        /// </summary>
         protected BoolMessageItem _result = BoolMessageItem.False;
-        protected Args _argsParsed;
-        protected List<ArgAttribute> _argsSupported = new List<ArgAttribute>();
+
+
+        /// <summary>
+        /// Arguments supplied to the application.
+        /// </summary>
+        protected Args _args;
+
+
+        /// <summary>
+        /// The starttime of the application.
+        /// </summary>
         protected DateTime _startTime;
         #endregion
     }

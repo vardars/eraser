@@ -8,34 +8,28 @@ using System.Data.Common;
 using System.Security.Cryptography;
 using System.Security.Principal;
 
-using ComLib.Entities;
-using ComLib.Membership;
+//<doc:using>
 using ComLib;
-using ComLib.Application;
 using ComLib.Authentication;
+//</doc:using>
+using ComLib.Entities;
+using ComLib.Account;
+using ComLib.Application;
 
 
 namespace ComLib.Samples
 {
     /// <summary>
-    /// Example of ActiveRecord Initialization/Configuration.
+    /// Example for the Authentication namespace.
     /// </summary>
     public class Example_Authentication : App
     {
-        /// <summary>
-        /// Initialize.
-        /// </summary>
-        /// <param name="args"></param>
-        public Example_Authentication()
-        {
-        }
-
-
-        /// <summary>
+		/// <summary>
         /// Run the application.
         /// </summary>
         public override BoolMessageItem Execute()
         {            
+			//<doc:example>        
             // 1. Using default authentication ( WINDOWS )
             // NOTE: Known bug, need to figure out how to determine if admin on windows.
             Console.WriteLine("====================================================");
@@ -64,9 +58,11 @@ namespace ComLib.Samples
 
             // Reset to windows.
             Auth.Init(new AuthWin());
+			
+			//</doc:example>        
             return BoolMessageItem.True;
         }
-
+		
 
         /// <summary>
         /// Get user data given the username.

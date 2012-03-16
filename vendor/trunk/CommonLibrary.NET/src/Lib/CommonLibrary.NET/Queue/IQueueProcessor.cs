@@ -20,12 +20,10 @@ using System.Threading;
 
 namespace ComLib.Queue
 {
-
     /// <summary>
     /// Queue processing interface.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface IQueueProcessor<T>
+    public interface IQueueProcessor
     {
         /// <summary>
         /// Gets the number of items in the queue.
@@ -58,6 +56,35 @@ namespace ComLib.Queue
 
 
         /// <summary>
+        /// Processes this instance.
+        /// </summary>
+        void Process();
+
+
+        /// <summary>
+        /// Gets the state.
+        /// </summary>
+        /// <value>The state.</value>
+        QueueProcessState State { get; }
+
+
+        /// <summary>
+        /// Gets information about the current state.
+        /// </summary>
+        /// <returns></returns>
+        QueueStatus GetStatus();
+    }
+
+
+
+    /// <summary>
+    /// Queue processing interface w/ specific type.
+    /// </summary>
+    /// <typeparam name="T">Type of items to store in queue.</typeparam>
+    public interface IQueueProcessor<T> : IQueueProcessor
+    {
+
+        /// <summary>
         /// Enqueues the specified item.
         /// </summary>
         /// <param name="item">The item.</param>
@@ -75,21 +102,8 @@ namespace ComLib.Queue
         /// Dequeues the specified number to dequeue.
         /// </summary>
         /// <param name="numberToDequeue">The number to dequeue.</param>
-        /// <returns></returns>
+        /// <returns>List of dequeued items.</returns>
         IList<T> Dequeue(int numberToDequeue);
-
-
-        /// <summary>
-        /// Processes this instance.
-        /// </summary>
-        void Process();
-
-
-        /// <summary>
-        /// Gets the state.
-        /// </summary>
-        /// <value>The state.</value>
-        QueueProcessState State { get; }
 
 
         /// <summary>

@@ -20,7 +20,7 @@ using ComLib.Locale;
 
 
 
-namespace ComLib.Errors
+namespace ComLib.Exceptions
 {
     /// <summary>
     /// Interface for an exception manager.
@@ -30,7 +30,7 @@ namespace ComLib.Errors
         /// <summary>
         /// Handles the specified error.
         /// </summary>
-        /// <param name="message">The message.</param>
+        /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
         void Handle(object error, Exception exception);
         
@@ -38,7 +38,7 @@ namespace ComLib.Errors
         /// <summary>
         /// Handles the specified error.
         /// </summary>
-        /// <param name="message">The message.</param>
+        /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
         /// <param name="arguments">The arguments.</param>
         void Handle(object error, Exception exception, object[] arguments);
@@ -49,8 +49,8 @@ namespace ComLib.Errors
         /// </summary>
         /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
-        /// <param name="errorResults">The error results.</param>
-        void Handle(object error, Exception exception, IStatusResults errorResults);
+        /// <param name="errors">The error results.</param>
+        void Handle(object error, Exception exception, IErrors errors);
 
 
         /// <summary>
@@ -58,9 +58,9 @@ namespace ComLib.Errors
         /// </summary>
         /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
-        /// <param name="errorResults">The error results.</param>
+        /// <param name="errors">The error results.</param>
         /// <param name="arguments">The arguments.</param>
-        void Handle(object error, Exception exception, IStatusResults errorResults, object[] arguments);
+        void Handle(object error, Exception exception, IErrors errors, object[] arguments);
     }
 
 
@@ -86,22 +86,22 @@ namespace ComLib.Errors
         /// Handles the exception by getting the error description from the <paramref name="resources"/> using
         /// the key specified by <paramref name="errorDescriptorKey"/>. Adds the error to <paramref name="errors"/>.
         /// </summary>
-        /// <param name="errorDescriptor">The name of key to use to get the localized errors from resources. </param>
+        /// <param name="errorDescriptorKey">The name of key to use to get the localized errors from resources. </param>
         /// <param name="resources">The localized resources that contains the error string.</param>
         /// <param name="errors">The list of errors to add to the error string to.</param>
         /// <param name="ex">The exception to handle.</param>
-        void Handle(string errorDescriptorKey, ILocalizationResourceProvider resources, IStatusResults errors, Exception ex);
+        void Handle(string errorDescriptorKey, ILocalizationResourceProvider resources, IErrors errors, Exception ex);
         
 
         /// <summary>
         /// Handles the exception by getting the error description from the <paramref name="resources"/> using
         /// the key specified by <paramref name="errorDescriptorKey"/>. Adds the error to <paramref name="errors"/>.
         /// </summary>
-        /// <param name="errorDescriptor">The name of key to use to get the localized errors from resources. </param>
+        /// <param name="errorDescriptorKey">The name of key to use to get the localized errors from resources. </param>
         /// <param name="resources">The localized resources that contains the error string.</param>
         /// <param name="errors">The list of errors to add to the error string to.</param>
         /// <param name="ex">The exception to handle.</param>
         /// <param name="args">Array of strings to report in the error.</param>
-        void Handle(string errorDescriptorKey, ILocalizationResourceProvider resources, IStatusResults errors, Exception ex, string[] args);
+        void Handle(string errorDescriptorKey, ILocalizationResourceProvider resources, IErrors errors, Exception ex, string[] args);
     }
 }

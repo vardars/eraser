@@ -12,13 +12,22 @@ using ComLib.Application;
 
 namespace ComLib.IO
 {
+    /// <summary>
+    /// Stores command line arguments for LicenseApplier
+    /// </summary>
     public class LicenseArgs : FileCleanArgs
     {
-        [Arg("licensefile", "license.txt - Name of the file to get text to append to next one.", typeof(string), true, "license.txt", "license.txt")]
+        /// <summary>
+        /// Path to the license file
+        /// </summary>
+        [Arg("licensefile", "l", "license.txt - Name of the file to get text to append to next one.", typeof(string), true, "license.txt", "license.txt")]
         public string LicenseFile { get; set; }
         
         
-        [Arg("checklicense", "Check for existing license before applying.", typeof(string), true, true, "true|false")]
+        /// <summary>
+        /// Whether or not the check files for existing license
+        /// </summary>
+        [Arg("checklicense", "l", "Check for existing license before applying.", typeof(string), true, true, "true", "true|false")]
         public bool CheckLicenseFirst { get; set; }
     }
 
@@ -29,7 +38,7 @@ namespace ComLib.IO
     /// </summary>
     public class LicenseApplier : FileAppBase
     {
-        private LicenseArgs _args;
+        private LicenseArgs _args = null;
         private string _license;
         private StringBuilder _buffer = new StringBuilder();
 
@@ -52,7 +61,7 @@ namespace ComLib.IO
         /// Doesn't actually delete anything but generates a file
         /// containing the commands.
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
         public override BoolMessageItem  Execute(object context)
         {
@@ -92,79 +101,6 @@ namespace ComLib.IO
         {
             _buffer.Append(Environment.NewLine + " Writing to file : " + file.FullName);
             //FileUtils.PrependText(_license, file);
-        }
-    }
-
-
-
-    /// <summary>
-    /// File utils.
-    /// </summary>
-    public class FileUtils
-    {
-        /// <summary>
-        /// Prepend the text.
-        /// </summary>
-        /// <param name="text"></param>
-        /// <param name="file"></param>
-        public static void PrependText(string text, FileInfo file)
-        {
-            string content = File.ReadAllText(file.FullName);
-            content = text + content;
-            File.WriteAllText(file.FullName, content);
-        }
-
-
-        /// <summary>
-        /// Get the file version information.
-        /// </summary>
-        /// <param name="filePath"></param>
-        public static string GetVersion(string filePath)
-        {
-            if (!File.Exists(filePath))
-                return string.Empty;
-
-            // Get the file version for the notepad.
-            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(filePath);
-            return versionInfo.FileVersion;
-        }
-
-
-        /// <summary>
-        /// Get file size in bytes.
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        public static int GetSizeInBytes(string filePath)
-        {
-            FileInfo f = new FileInfo(filePath);
-            return (int)f.Length;
-        }
-
-
-        /// <summary>
-        /// Get file size in kilobytes.
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        public static int GetSizeInKilo(string filePath)
-        {
-            FileInfo f = new FileInfo(filePath);
-            float size = f.Length / 1000;
-            return (int)size;
-        }
-
-
-        /// <summary>
-        /// Get file size in megs.
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <returns></returns>
-        public static int GetSizeInMegs(string filePath)
-        {
-            FileInfo f = new FileInfo(filePath);
-            float size = f.Length / 1000000;
-            return (int)size;
         }
     }
 }

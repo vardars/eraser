@@ -24,7 +24,7 @@ namespace ComLib.LocationSupport
     /// <summary>
     /// City
     /// </summary>
-    public class City : LocationDataCountryBase
+    public class City : LocationCountryBase
     {
         /// <summary>
         /// Default constructor
@@ -37,14 +37,12 @@ namespace ComLib.LocationSupport
         /// <summary>
         /// City constructor.
         /// </summary>
-        /// <param name="id"></param>
         /// <param name="name"></param>
         /// <param name="abbr"></param>
         /// <param name="stateId"></param>
         /// <param name="countryId"></param>
-        public City(int id, string name, string abbr, int stateId, int countryId)
+        public City(string name, string abbr, int stateId, int countryId)
         {
-            Id = id;
             Name = name;
             Abbreviation = abbr;
             StateId = stateId;
@@ -57,47 +55,26 @@ namespace ComLib.LocationSupport
         /// <summary>
         /// State id
         /// </summary>
-        public int StateId { get; set; }
+        public virtual int StateId { get; set; }
 
 
         /// <summary>
         /// Parent id can be used to associate an area with it's city/county.
         /// e.g. Bronx = city, parent id = NYC
         /// </summary>
-        public int ParentId { get; set; }
+        public virtual int ParentId { get; set; }
 
 
         /// <summary>
         /// Is major / popular city.
         /// </summary>
-        public bool IsPopular { get; set; }
-    }
+        public virtual bool IsPopular { get; set; }
 
 
-
-    /// <summary>
-    /// Class to provide fast lookup for cities.
-    /// The base class provides lookup by 
-    /// 1. City id.
-    /// 2. City name.
-    /// 
-    /// This class extends the lookup by also being able to lookup
-    /// a city by country id.
-    /// </summary>
-    /// <remarks>
-    /// Instead of storing another set of indexes for cityname, countryId
-    /// This only stores the cityname, countryId
-    /// for duplicate city names.
-    /// </remarks>
-    public class CityLookUp : LocationLookUpWithCountry<City>
-    {
         /// <summary>
-        /// Constructor
+        /// Gets or sets the name of the state.
         /// </summary>
-        /// <param name="allStates"></param>
-        public CityLookUp(IList<City> cities)
-            : base(cities)
-        {            
-        }
+        /// <value>The name of the country.</value>
+        public virtual string StateName { get; set; }   
     }
 }

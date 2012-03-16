@@ -21,17 +21,20 @@ using System.Text;
 
 namespace ComLib.CsvParse
 {
+    /// <summary>
+    /// Csv static class for parsing csv files.
+    /// </summary>
     public class Csv
     {
         /// <summary>
         /// Parse the csv text.
         /// </summary>
         /// <param name="text">The csv formatted text string.</param>
-        /// <param name="parseHeaders">Whether or not the csv text has headers.</param>
+        /// <param name="hasHeaders">Whether or not the csv text has headers.</param>
         /// <returns>A CsvDoc</returns>
         public static CsvDoc Load(string text, bool hasHeaders)
         {
-            return Load(text, hasHeaders, false, ",");
+            return Load(text, hasHeaders, false, ',');
         }
 
 
@@ -44,7 +47,7 @@ namespace ComLib.CsvParse
         /// <returns>A CsvDoc</returns>
         public static CsvDoc Load(string text, bool hasHeaders, bool isReadOnly)
         {
-            return Load(text, hasHeaders, isReadOnly, ",");
+            return Load(text, hasHeaders, isReadOnly, ',');
         }
 
 
@@ -56,7 +59,7 @@ namespace ComLib.CsvParse
         /// <param name="isReadOnly">Whether or not to make the parsed doc readonly.</param>
         /// <param name="delimeter">Dellimeter to use for separate values.</param>
         /// <returns>A CsvDoc</returns>
-        public static CsvDoc Load(string text, bool hasHeaders, bool isReadOnly, string delimeter)
+        public static CsvDoc Load(string text, bool hasHeaders, bool isReadOnly, char delimeter)
         {
             var settings = new CsvConfig() { ContainsHeaders = hasHeaders, Separator = delimeter, IsReadOnly = isReadOnly };
             CsvDoc doc = new CsvDoc(text, true, settings, true);
@@ -70,14 +73,14 @@ namespace ComLib.CsvParse
         /// <param name="text">The csv formatted text string.</param>
         /// <param name="hasHeaders">Whether or not the csv text has headers.</param>
         /// <param name="isReadOnly">Whether or not to make the parsed doc readonly.</param>
-        /// <param name="parseMap">Whether or not to parse the data as a list of dictionaries.</param>
+        /// <param name="delimeter">The delimeter in the text</param>
         /// <returns>A CsvDoc</returns>
-        public static BoolMessageItem<CsvDoc> CanLoad(string text, bool hasHeaders, bool isReadOnly, string delimeter)
+        public static BoolMessageItem<CsvDoc> CanLoad(string text, bool hasHeaders, bool isReadOnly, char delimeter)
         {
             CsvDoc doc = null;
             bool loaded = true;
             string message = string.Empty;
-            ExecuteHelper.TryCatch(() => doc = Load(text, hasHeaders, isReadOnly, delimeter), (ex) =>
+            Try.Catch(() => doc = Load(text, hasHeaders, isReadOnly, delimeter), (ex) =>
             {
                 loaded = false;
                 message = ex.Message;
@@ -94,7 +97,7 @@ namespace ComLib.CsvParse
         /// <returns>A CsvDoc</returns>
         public static CsvDoc LoadText(string text, bool hasHeaders)
         {
-            return LoadText(text, hasHeaders, false, ",");
+            return LoadText(text, hasHeaders, false, ',');
         }
 
 
@@ -107,7 +110,7 @@ namespace ComLib.CsvParse
         /// <returns>A CsvDoc</returns>
         public static CsvDoc LoadText(string text, bool hasHeaders, bool isReadOnly)
         {
-            return LoadText(text, hasHeaders, isReadOnly, ",");
+            return LoadText(text, hasHeaders, isReadOnly, ',');
         }
 
 
@@ -118,9 +121,8 @@ namespace ComLib.CsvParse
         /// <param name="hasHeaders">Whether or not the csv text has headers.</param>
         /// <param name="isReadOnly">Whether or not to make the parsed doc readonly.</param>
         /// <param name="delimeter">Dellimeter to use for separate values.</param>
-        /// <param name="quote">Quote character for enclosed strings. single(') or double(")</param>
         /// <returns>A CsvDoc</returns>
-        public static CsvDoc LoadText(string text, bool hasHeaders, bool isReadOnly, string delimeter)
+        public static CsvDoc LoadText(string text, bool hasHeaders, bool isReadOnly, char delimeter)
         {
             var settings = new CsvConfig() {  ContainsHeaders = hasHeaders, Separator = delimeter, IsReadOnly = isReadOnly };
             CsvDoc doc = new CsvDoc(text, false, settings, true);
@@ -133,7 +135,8 @@ namespace ComLib.CsvParse
         /// </summary>
         /// <param name="fileName">The file name to write the csv data to.</param>
         /// <param name="data">The csv data.</param>
-        public static void Write(string fileName, List<List<string>> data, bool firstRowInDataAreColumns)
+        /// <param name="firstRowInDataAreColumns"></param>
+        public static void Write(string fileName, List<List<object>> data, bool firstRowInDataAreColumns)
         {
             Write(fileName, data, ",", null, firstRowInDataAreColumns, false, "\"", Environment.NewLine, false);
         }
@@ -144,8 +147,9 @@ namespace ComLib.CsvParse
         /// </summary>
         /// <param name="fileName">The file name to write the csv data to.</param>
         /// <param name="data">The csv data.</param>
+        /// <param name="firstRowInDataAreColumns"></param>
         /// <param name="delimeter">The delimeter to use.</param>
-        public static void Write(string fileName, List<List<string>> data, bool firstRowInDataAreColumns, string delimeter)
+        public static void Write(string fileName, List<List<object>> data, bool firstRowInDataAreColumns, string delimeter)
         {
             Write(fileName, data, delimeter, null, firstRowInDataAreColumns, false, "\"", Environment.NewLine, false);
         }
@@ -158,7 +162,7 @@ namespace ComLib.CsvParse
         /// <param name="data">The csv data.</param>
         /// <param name="delimeter">The delimeter to use.</param>
         /// <param name="columns">The header columns.</param>
-        public static void Write(string fileName, List<List<string>> data, string delimeter, List<string> columns)
+        public static void Write(string fileName, List<List<object>> data, string delimeter, List<string> columns)
         {
             Write(fileName, data, ",", columns, false, false, "\"", Environment.NewLine, false);
         }
@@ -176,7 +180,7 @@ namespace ComLib.CsvParse
         /// <param name="quoteChar">The quote char to use to enclose values.</param>
         /// <param name="newLine">New Line to use</param>
         /// <param name="append">Whether or not to append to file.</param>
-        public static void Write(string fileName, List<List<string>> data, string delimeter, List<string> columns, bool firstRowInDataAreColumns, bool quoteAll, string quoteChar, string newLine, bool append)
+        public static void Write(string fileName, List<List<object>> data, string delimeter, List<string> columns, bool firstRowInDataAreColumns, bool quoteAll, string quoteChar, string newLine, bool append)
         {
             using (var writer = new CsvWriter(fileName, data, delimeter, columns, firstRowInDataAreColumns, quoteAll, quoteChar, newLine, append))
             {

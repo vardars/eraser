@@ -35,9 +35,9 @@ namespace ComLib.Xml
         /// <summary>
         /// Serialize the object to xml.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="item"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Type of object to serialize.</typeparam>
+        /// <param name="item">Object to serialize.</param>
+        /// <returns>XML contents representing the serialized object.</returns>
         public static string XmlSerialize<T>(T item)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(T));
@@ -53,9 +53,8 @@ namespace ComLib.Xml
         /// <summary>
         /// Serialize the object to xml.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="item"></param>
-        /// <returns></returns>
+        /// <param name="item">Object to serialize.</param>
+        /// <returns>XML contents representing the serialized object.</returns>
         public static string XmlSerialize(object item)
         {
             Type type = item.GetType();
@@ -72,9 +71,9 @@ namespace ComLib.Xml
         /// <summary>
         /// Deserialize from xml to the appropriate typed object.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="xmlData"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Type of object to deserialize.</typeparam>
+        /// <param name="xmlData">XML contents with serialized object.</param>
+        /// <returns>Deserialized object.</returns>
         public static T XmlDeserialize<T>(string xmlData)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(T));

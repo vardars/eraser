@@ -26,7 +26,7 @@ namespace ComLib.Patterns
     /// <summary>
     /// Compositie object with id and name.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Type of object.</typeparam>
     public class CompositeWithIdAndName<T> : Composite<T> where T : CompositeWithIdAndName<T>
     {
         private Dictionary<string, T> _childrenByName = new Dictionary<string, T>();
@@ -74,7 +74,7 @@ namespace ComLib.Patterns
         /// <summary>
         /// Add node.
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="node">Node to add.</param>
         public override void Add(T node)
         {
             base.Add(node);
@@ -99,7 +99,7 @@ namespace ComLib.Patterns
         /// <summary>
         /// Remove at the specific index.
         /// </summary>
-        /// <param name="ndx"></param>
+        /// <param name="ndx">Node index.</param>
         public override void RemoveAt(int ndx)
         {
             Guard.IsTrue(ndx <= _childrenList.Count - 1, "Index : " + ndx + " is out of range.");
@@ -123,8 +123,8 @@ namespace ComLib.Patterns
         /// <summary>
         /// Return node by name.
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <param name="name">Node name.</param>
+        /// <returns>Node designated by the name.</returns>
         public T this[string name]
         {
             get
@@ -137,8 +137,8 @@ namespace ComLib.Patterns
         /// <summary>
         /// Return by id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Node index.</param>
+        /// <returns>Node designated by the index.</returns>
         public T this[int id]
         {
             get
@@ -151,7 +151,7 @@ namespace ComLib.Patterns
         /// <summary>
         /// Remove from lookups.
         /// </summary>
-        /// <param name="ndx"></param>
+        /// <param name="ndx">Node index.</param>
         private void InternalRemove(int ndx)
         {
             // Get node and remove from lookups.
@@ -164,19 +164,35 @@ namespace ComLib.Patterns
         }
     }
 
-
-
+    
     /// <summary>
     /// Composite object.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Type of object.</typeparam>
     public class Composite<T> where T : Composite<T>
     {
+        /// <summary>
+        /// Id of root parent.
+        /// </summary>
         public const int RootCategoryParentCategoryId = 0;
+
+
+        /// <summary>
+        /// List with children elements.
+        /// </summary>
         protected List<T> _childrenList;
+
+
+        /// <summary>
+        /// Parent element.
+        /// </summary>
         protected Composite<T> _parent;
 
 
+        /// <summary>
+        /// Creates a new instance of this class
+        /// with an empty list of children.
+        /// </summary>
         public Composite()
         {
             _childrenList = new List<T>();
@@ -186,7 +202,7 @@ namespace ComLib.Patterns
         /// <summary>
         /// Add a child node.
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="node">Child node to add.</param>
         public virtual void Add(T node)
         {
             node.Parent = this;
@@ -218,7 +234,7 @@ namespace ComLib.Patterns
         /// <summary>
         /// Remove at the specific index.
         /// </summary>
-        /// <param name="ndx"></param>
+        /// <param name="ndx">Node index.</param>
         public virtual void RemoveAt(int ndx)
         {
             _childrenList.RemoveAt(ndx);
@@ -269,6 +285,7 @@ namespace ComLib.Patterns
     /// Category look up class.
     /// This contains all the categories / subcategories available.
     /// </summary>
+    /// <typeparam name="T">Type of object.</typeparam>
     public class CompositeLookup<T> where T : CompositeWithIdAndName<T>
     {
         private string _separator = ",";
@@ -281,7 +298,7 @@ namespace ComLib.Patterns
         /// <summary>
         /// Initialzie the lookup
         /// </summary>
-        /// <param name="allCategories"></param>
+        /// <param name="allCategories">List with all categories.</param>
         public CompositeLookup(IList<T> allCategories)
         {
             _nodesById = new Dictionary<int, T>();
@@ -293,8 +310,8 @@ namespace ComLib.Patterns
         /// <summary>
         /// Returns the category associated with the id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Category id.</param>
+        /// <returns>Category designated by id.</returns>
         public T this[int id]
         {
             get
@@ -311,8 +328,8 @@ namespace ComLib.Patterns
         /// Get by fully qualified name.
         /// e.g. "Art.Painting.WaterColor"
         /// </summary>
-        /// <param name="fullyQualifiedName"></param>
-        /// <returns></returns>
+        /// <param name="fullyQualifiedName">Qualified name.</param>
+        /// <returns>Node designated by name.</returns>
         public T this[string fullyQualifiedName]
         {
             get
@@ -329,9 +346,9 @@ namespace ComLib.Patterns
         /// <summary>
         /// Get category by parent,child name.
         /// </summary>
-        /// <param name="categoryName"></param>
-        /// <param name="subCategoryName"></param>
-        /// <returns></returns>
+        /// <param name="parentName">Name of parent.</param>
+        /// <param name="childName">Name of child.</param>
+        /// <returns>Found node.</returns>
         public T GetByName(string parentName, string childName)
         {
             // Validate
@@ -356,8 +373,8 @@ namespace ComLib.Patterns
         /// <summary>
         /// Get children given the parent id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Id of parent.</param>
+        /// <returns>Collection of parent's children.</returns>
         public ReadOnlyCollection<T> Children(int id)
         {
             T category = this[id];
@@ -371,7 +388,7 @@ namespace ComLib.Patterns
         /// <summary>
         /// Store the categories appropriately.
         /// </summary>
-        /// <param name="allCategories"></param>
+        /// <param name="allNodes">List with all nodes.</param>
         private void Initilaize(IList<T> allNodes)
         {
             IList<T> rootNodes = new List<T>();
@@ -413,7 +430,7 @@ namespace ComLib.Patterns
         /// Store by the id.
         /// [2] = Painting
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="node">Node to store.</param>
         private void StoreById(T node)
         {
             // Store each category.
@@ -426,7 +443,7 @@ namespace ComLib.Patterns
         /// Parent.Child.GrandChild etc.
         /// Art.Painting.Watercolor
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="node">Node to store.</param>
         private void StoreByName(T node)
         {
             string key = _isCaseSensitive ? node.Name : node.Name.Trim().ToLower();
@@ -462,8 +479,8 @@ namespace ComLib.Patterns
         /// <summary>
         /// Build category key.
         /// </summary>
-        /// <param name="categoryName"></param>
-        /// <param name="subCategoryName"></param>
+        /// <param name="parent"></param>
+        /// <param name="child"></param>
         /// <returns></returns>
         private string BuildKey(string parent, string child)
         {

@@ -1,34 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Data;
-using System.Data.Common;
-using System.Security.Cryptography;
 
+using ComLib;
 using ComLib.Calendars;
 using ComLib.Entities;
-using ComLib.Membership;
-using ComLib;
+using ComLib.Account;
 using ComLib.Application;
 
 
 namespace ComLib.Samples
 {
     /// <summary>
-    /// Example of ActiveRecord Initialization/Configuration.
+    /// Example for the Calendars namespace.
     /// </summary>
     public class Example_HolidayCalendar : App
     {
-        /// <summary>
-        /// Initialize.
-        /// </summary>
-        /// <param name="args"></param>
-        public Example_HolidayCalendar()
-        {
-        }
-
 
         /// <summary>
         /// Run the application.

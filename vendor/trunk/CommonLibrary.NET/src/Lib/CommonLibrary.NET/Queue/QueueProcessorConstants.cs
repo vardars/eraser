@@ -23,5 +23,21 @@ namespace ComLib.Queue
     /// <summary>
     /// State of the Queue Processor
     /// </summary>
-    public enum QueueProcessState { Idle, Busy, Stopped };
+    public enum QueueProcessState { 
+        /// <summary>
+        /// Queue processor is idle.
+        /// </summary>
+        Idle, 
+        
+        
+        /// <summary>
+        /// Queue processor is busy.
+        /// </summary>
+        Busy, 
+        
+        
+        /// <summary>
+        /// Queue processor is stopped.
+        /// </summary>
+        Stopped };
 }

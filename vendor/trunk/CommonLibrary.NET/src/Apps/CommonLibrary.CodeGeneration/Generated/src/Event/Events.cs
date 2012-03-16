@@ -27,7 +27,7 @@ namespace CommonLibrary.WebModules.Events
     /// <summary>
     /// Active record functionality for Event
     /// </summary>
-    public partial class Events : ActiveRecord<Event> 
+    public partial class Events : ActiveRecordBase<Event> 
     { 
         /// <summary>
         /// Creates a new instance of BlogPost and 
@@ -37,8 +37,6 @@ namespace CommonLibrary.WebModules.Events
         public static Event New()
         {
             Event entity = new Event();
-            entity.Validator = new EventValidator();
-            entity.Settings = new EventSettings();
             return entity;
         }
     }

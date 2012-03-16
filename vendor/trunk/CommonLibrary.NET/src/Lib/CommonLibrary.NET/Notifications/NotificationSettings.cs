@@ -47,9 +47,9 @@ namespace ComLib.Notifications
         /// <summary>
         /// initialize using supplied settings.
         /// </summary>
-        /// <param name="enableNotifications"></param>
-        /// <param name="from"></param>
-        /// <param name="intervalSchedule"></param>
+        /// <param name="enableNotifications">True to enable notifications.</param>
+        /// <param name="from">Sender.</param>
+        /// <param name="intervalSchedule">Process interval.</param>
         public NotificationSettings(bool enableNotifications, string from, int intervalSchedule)
         {
             EnableNotifications = enableNotifications;
@@ -62,8 +62,8 @@ namespace ComLib.Notifications
         /// <summary>
         /// Get/set additional values.
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="key">Key to settings item.</param>
+        /// <returns>Value of settings item.</returns>
         public string this[string key]
         {
             get { return _settings[key]; }
@@ -78,6 +78,12 @@ namespace ComLib.Notifications
         {
             get { return new DictionaryReadOnly<string, string>(_settings); }
         }
+
+
+        /// <summary>
+        /// The folder location for the templates.
+        /// </summary>
+        public string TemplateFolderPath { get; set;  }
 
 
         /// <summary>

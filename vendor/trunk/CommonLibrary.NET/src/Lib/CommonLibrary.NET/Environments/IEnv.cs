@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace ComLib.Environments
 {
+    /// <summary>
+    /// Represents functionality for an Environment ( dev, qa, uat, prod etc )
+    /// </summary>
     public interface IEnv
     {
         /// <summary>
@@ -86,6 +89,14 @@ namespace ComLib.Environments
         /// <param name="name"></param>
         /// <returns></returns>
         EnvItem Get(string name);
+
+
+        /// <summary>
+        /// Get the environment item at the specified index.
+        /// </summary>
+        /// <param name="ndx"></param>
+        /// <returns></returns>
+        EnvItem Get(int ndx);
 
 
         /// <summary>

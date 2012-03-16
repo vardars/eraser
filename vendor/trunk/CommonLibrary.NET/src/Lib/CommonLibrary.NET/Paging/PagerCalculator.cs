@@ -31,9 +31,9 @@ namespace ComLib.Paging
         /// <summary>
         /// Calculate pages
         /// </summary>
-        /// <param name="pagerData"></param>
-        /// <param name="settings"></param>
-        void Calculate(PagerData pagerData, PagerSettings settings);
+        /// <param name="pager">Instance of pager.</param>
+        /// <param name="settings">Pager settings.</param>
+        void Calculate(Pager pager, PagerSettings settings);
     }
 
 
@@ -47,10 +47,15 @@ namespace ComLib.Paging
     /// 4. If current page = last ( links last and next are not applicable )
     /// 5. The number of pages in the middle is cycled.
     /// </summary>
-    public class PagerCalculatorDefault : IPagerCalculator
+    public class PagerCalculator : IPagerCalculator
     {
         #region IPagerCalculator Members
-        public void Calculate(PagerData pagerData, PagerSettings pagerSettings)
+        /// <summary>
+        /// Calculate the pager properties such as starting, ending, next, previous pages.
+        /// </summary>
+        /// <param name="pagerData">Pager data.</param>
+        /// <param name="pagerSettings">Pager settings.</param>
+        public void Calculate(Pager pagerData, PagerSettings pagerSettings)
         {
             // Check bounds.
             if (pagerData.CurrentPage < 0) pagerData.CurrentPage = 1;
@@ -78,7 +83,7 @@ namespace ComLib.Paging
 
 
         #region Private methods
-        private static int GetStartingPage(PagerData pagerData, PagerSettings settings)
+        private static int GetStartingPage(Pager pagerData, PagerSettings settings)
         {
             // Total pages = 5 = number of pages to display.. so starting page is 1;
             if (pagerData.CurrentPage <= settings.NumberPagesToDisplay)
@@ -107,7 +112,7 @@ namespace ComLib.Paging
         }
 
 
-        private static int GetEndingPage(PagerData pagerData, PagerSettings settings)
+        private static int GetEndingPage(Pager pagerData, PagerSettings settings)
         {
             // Total pages = 5 = Number to display 1 - 5
             if (pagerData.TotalPages <= settings.NumberPagesToDisplay)
@@ -132,7 +137,7 @@ namespace ComLib.Paging
         /// Get the total number of ranges.
         /// </summary>
         /// <param name="totalPages"></param>
-        /// <param name="settings"></param>
+        /// <param name="numberPagesToDisplay"></param>
         /// <returns></returns>
         private static int GetTotalRanges(int totalPages, int numberPagesToDisplay)
         {
@@ -178,46 +183,5 @@ namespace ComLib.Paging
             return range;
         }
         #endregion
-    }
-
-
-
-    /// <summary>
-    /// Paging calculator.
-    /// </summary>
-    public class PagerCalculator
-    {
-        private static IPagerCalculator _instance;
-        private static readonly object _syncRoot = new object();
-
-
-        /// <summary>
-        /// Initialize with default paging calculator.
-        /// </summary>
-        /// <returns></returns>
-        static PagerCalculator()
-        {
-           if (_instance == null)
-            {
-                lock (_syncRoot)
-                {
-                    if (_instance == null)
-                    {
-                        _instance = new PagerCalculatorDefault();
-                    }
-                }
-            }
-        }
-
-
-        /// <summary>
-        /// Calculate the starting page and ending page.
-        /// </summary>
-        /// <param name="pagerData"></param>
-        /// <param name="pagerSettings"></param>
-        public static void Calculate(PagerData pagerData, PagerSettings pagerSettings)
-        {
-            _instance.Calculate(pagerData, pagerSettings);
-        }
     }
 }

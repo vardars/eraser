@@ -19,9 +19,23 @@ using ComLib;
 
 namespace ComLib.Categories
 {
+    /// <summary>
+    /// Service for serializing the categories to xml
+    /// </summary>
     public interface ICategoryServiceXml
     {
+        /// <summary>
+        /// Gets the root categories that do not have a parent category.
+        /// </summary>
+        /// <returns></returns>
         BoolMessage GetRootCategories();
+
+
+        /// <summary>
+        /// Gets the categories associated with the parentId supplied.
+        /// </summary>
+        /// <param name="parentId">Id of the partent</param>
+        /// <returns></returns>
         BoolMessage GetCategoryiesByParent(string parentId);
     }
 }

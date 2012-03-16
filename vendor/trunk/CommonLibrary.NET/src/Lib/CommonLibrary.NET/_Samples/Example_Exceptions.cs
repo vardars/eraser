@@ -8,23 +8,22 @@ using System.Data.Common;
 using System.Security.Cryptography;
 
 using ComLib.Entities;
-using ComLib.Membership;
+using ComLib.Account;
 using ComLib;
 using ComLib.Application;
-using ComLib.Errors;
+using ComLib.Exceptions;
 
 
 namespace ComLib.Samples
 {
     /// <summary>
-    /// Example of ActiveRecord Initialization/Configuration.
+    /// Example for the Exceptions namespace.
     /// </summary>
     public class Example_Exceptions : App
     {
         /// <summary>
         /// Initialize.
         /// </summary>
-        /// <param name="args"></param>
         public Example_Exceptions()
         {
         }
@@ -53,6 +52,22 @@ namespace ComLib.Samples
             }
             Console.WriteLine(Environment.NewLine);
             return BoolMessageItem.True;
+        }
+
+
+        class CustomExceptionHandler : ErrorManagerBase
+        {
+            public CustomExceptionHandler(string name)
+            {
+                _name = name;
+            }
+
+
+            protected override void InternalHandle(object error, Exception exception, IErrors errors, object[] arguments)
+            {
+                Logging.Logger.Error("Custom exception handler");
+                Logging.Logger.Error(error, exception, arguments);   
+            }
         }
     }
 }

@@ -19,10 +19,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
 
 using ComLib.Entities;
-using ComLib.Database;
+using ComLib.Data;
 using ComLib.LocationSupport;
+<%= model.ReferencedNameSpaces %>
 
 
 namespace <%= model.NameSpace %>
@@ -36,6 +38,15 @@ namespace <%= model.NameSpace %>
         /// Initializes a new instance of the <see cref="NamedQueryRepository"/> class.
         /// </summary>
         public <%= model.Name %>Repository() { }
+
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Repository&lt;TId, T&gt;"/> class.
+        /// </summary>
+        /// <param name="connectionInfo">The connection string.</param>
+        public  <%= model.Name %>Repository(string connectionString) : base(connectionString)
+        {
+        }
 
 
         /// <summary>
@@ -53,8 +64,8 @@ namespace <%= model.NameSpace %>
         /// </summary>
         /// <param name="connectionInfo">The connection info.</param>
         /// <param name="helper">The helper.</param>
-        public <%= model.Name %>Repository(ConnectionInfo connectionInfo, IDBHelper helper)
-            : base(connectionInfo, helper)
+        public <%= model.Name %>Repository(ConnectionInfo connectionInfo, IDatabase db)
+            : base(connectionInfo, db)
         {
         }
 
@@ -62,9 +73,9 @@ namespace <%= model.NameSpace %>
         /// <summary>
         /// Initialize the rowmapper
         /// </summary>
-        public override void Init(ConnectionInfo connectionInfo, IDBHelper helper)
+        public override void Init(ConnectionInfo connectionInfo, IDatabase db)
         {
-            base.Init(connectionInfo, helper);
+            base.Init(connectionInfo, db);
             this.RowMapper = new <%= model.Name %>RowMapper();
         }
 
@@ -76,8 +87,9 @@ namespace <%= model.NameSpace %>
         /// <returns></returns>
         public override <%= model.Name %> Create(<%= model.Name %> entity)
         {
-            string sql = <%= model.SqlInsert %>;
-            object result = _db.ExecuteScalarText(sql, null);
+            string sql = <%= model.SqlDbParamsCreate %>;
+            var dbparams = BuildParams(entity);            
+            object result = _db.ExecuteScalarText(sql, dbparams);
             entity.Id = Convert.ToInt32(result);
             return entity;
         }
@@ -90,10 +102,36 @@ namespace <%= model.NameSpace %>
         /// <returns></returns>
         public override <%= model.Name %> Update(<%= model.Name %> entity)
         {
-            string sql = <%= model.SqlUpdate %>;
-            _db.ExecuteNonQueryText(sql, null);
+            string sql = <%= model.SqlDbParamsUpdate %>;
+            var dbparams = BuildParams(entity); 
+            _db.ExecuteNonQueryText(sql, dbparams);
             return entity;
         }
+
+
+        public override <%= model.Name %> Get(int id)
+        {
+            <%= model.Name %> entity = base.Get(id);
+            <%= model.GetRelations %>
+            return entity;
+        }
+
+
+        protected virtual DbParameter[] BuildParams(<%= model.Name %> entity)
+        {
+            var dbparams = new List<DbParameter>();
+            <%= model.SqlDbParams %>
+            return dbparams.ToArray();
+        }
+
+
+        protected virtual DbParameter BuildParam(string name, SqlDbType dbType, object val)
+        {
+            var param = new SqlParameter(name, dbType);
+            param.Value = val;
+            return param;
+        }
+
     }
 
 
@@ -106,7 +144,7 @@ namespace <%= model.NameSpace %>
     {
         public override <%= model.Name %> MapRow(IDataReader reader, int rowNumber)
         {
-            <%= model.Name %> entity = <%= model.Name %>s.New();
+            <%= model.Name %> entity =  _entityFactoryMethod == null ? <%= model.Name %>.New() : _entityFactoryMethod(reader);
             <%= model.RowMappingCode %>
             return entity;
         }

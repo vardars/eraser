@@ -30,33 +30,57 @@ namespace ComLib.IO
     /// </summary>
     public class FileCleanArgs
     {
-        [Arg("recurse", "Recurse into subdirectories", typeof(bool), false, false, "true|false")]
+        /// <summary>
+        /// Get/set directory recurse flag.
+        /// </summary>
+        [Arg("recurse", "r", "Recurse into subdirectories", typeof(bool), false, false, "true", "true|false")]
         public bool Recurse { get; set; }
 
 
-        [Arg("pattern", "Only process files with name matching pattern", typeof(string), false, ".svn", ".svn|.obj")]
+        /// <summary>
+        /// Get/set the file matching pattern.
+        /// </summary>
+        [Arg("pattern", "p", "Only process files with name matching pattern", typeof(string), false, ".svn", ".svn", ".svn|.obj")]
         public string Pattern { get; set; }
 
 
-        [Arg("filetype", "Indicate whether to handle only files/directories or both", typeof(string), false, "dir", "dir|file|all")]
+        /// <summary>
+        /// Get/set the type of entities to handle.
+        /// </summary>
+        [Arg("filetype", "f", "Indicate whether to handle only files/directories or both", typeof(string), false, "dir", "dir", "dir|file|all")]
         public string FileType { get; set; }
 
 
-        [Arg("dryrun", "Indicate only showing what will happen without running.", typeof(bool), false, false, "true|false")]
+        /// <summary>
+        /// Get/set whether execution will happen.
+        /// </summary>
+        [Arg("dryrun", "d", "Indicate only showing what will happen without running.", typeof(bool), false, false, "true", "true|false")]
         public bool DryRun { get; set; }
 
 
-        [Arg("rootdir", "c:\\temp\" -Starting directory where cleaning should happen. If not specified, current directory is assumed.", typeof(string), false, ".", @".|..\|c:\temp")]
+        /// <summary>
+        /// Get/set the root directory.
+        /// </summary>
+        [Arg("rootdir", "rd", "c:\\temp\" -Starting directory where cleaning should happen. If not specified, current directory is assumed.", typeof(string), false, ".", ".", @".|..\|c:\temp")]
         public string RootDir { get; set; }
 
 
-        [Arg("outfile", "fileclean.txt - Name of the file to write the output to.", typeof(string), false, "FileClean.txt", @"fileClean.txt|c:\temp\fileclean.txt")]
+        /// <summary>
+        /// Get/set the output file.
+        /// </summary>
+        [Arg("outfile", "o", "fileclean.txt - Name of the file to write the output to.", typeof(string), false, "FileClean.txt", "FileClean.txt", @"fileClean.txt|c:\temp\fileclean.txt")]
         public string OutputFile { get; set; }
     }
 
 
+    /// <summary>
+    /// Abstract class for file-based applications.
+    /// </summary>
     public abstract class FileAppBase : App
     {
+        /// <summary>
+        /// Root directory.
+        /// </summary>
         protected DirectoryInfo _rootDirectory;
 
         /// <summary>
@@ -103,7 +127,7 @@ namespace ComLib.IO
         /// Doesn't actually delete anything but generates a file
         /// containing the commands.
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="context"></param>
         /// <returns></returns>
         public override BoolMessageItem  Execute(object context)
         {

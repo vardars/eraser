@@ -31,7 +31,28 @@ namespace ComLib.EmailSupport
         /// <summary>
         /// Configuration information needed for sending emails.
         /// </summary>
-        EmailServiceSettings Settings { get; set; }
+        IEmailSettings Settings { get; set; }
+
+
+        /// <summary>
+        /// Emails the message using default values from Settings.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        bool Send(EmailMessage message);
+
+
+        /// <summary>
+        /// Emails the message using the connection strings supplied.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="useCredentials"></param>
+        /// <param name="credentialsUser"></param>
+        /// <param name="credentialsPassword"></param>
+        /// <param name="host"></param>
+        /// <param name="port"></param>
+        /// <returns></returns>
+        BoolMessageEx Send(EmailMessage message, bool useCredentials, string credentialsUser, string credentialsPassword, string host, int port);
 
 
         /// <summary>
@@ -64,10 +85,82 @@ namespace ComLib.EmailSupport
 
 
         /// <summary>
+        /// Mail the message using the native MailMessage class.
+        /// </summary>
+        /// <param name="from">Who the email is from.</param>
+        /// <param name="to">Who the email is being sent to.</param>
+        /// <param name="subject">Subject of email.</param>
+        /// <param name="body">Email body.</param>
+        /// <param name="useCredentials">Whether or not to use credentials for security when sending emails.</param>
+        /// <param name="credentialsUser">User name when using credentials.</param>
+        /// <param name="credentialsPassword">Password when using credentials.</param>
+        /// <returns></returns>        
+        bool Send(string from, string to, string subject, string body, bool useCredentials, string credentialsUser, string credentialsPassword);
+
+
+        /// <summary>
         /// Mail the message using the native MailMessage class and the credentials from the current configuration.
         /// </summary>
-        /// <param name="message">The mail message</param>
+        /// <param name="mailMessage">The mail message</param>
         /// <returns></returns>
         bool Send(MailMessage mailMessage);
+    }
+
+
+
+    /// <summary>
+    /// Interface for email settings.
+    /// </summary>
+    public interface IEmailSettings
+    {
+        /// <summary>
+        /// Gets or sets the SMPT server.
+        /// </summary>
+        /// <value>The SMPT server.</value>
+        string SmptServer { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets from.
+        /// </summary>
+        /// <value>From.</value>
+        string From { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [use port].
+        /// </summary>
+        /// <value><c>true</c> if [use port]; otherwise, <c>false</c>.</value>
+        bool UsePort { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the name of the authentication user.
+        /// </summary>
+        /// <value>The name of the authentication user.</value>
+        string AuthenticationUserName { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the authentication password.
+        /// </summary>
+        /// <value>The authentication password.</value>
+        string AuthenticationPassword { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is authentication required.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is authentication required; otherwise, <c>false</c>.
+        /// </value>
+        bool IsAuthenticationRequired { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the port.
+        /// </summary>
+        /// <value>The port.</value>
+        int Port { get; set; }
     }
 }

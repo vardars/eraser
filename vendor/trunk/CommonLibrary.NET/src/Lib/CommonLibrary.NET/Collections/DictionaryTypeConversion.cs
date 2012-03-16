@@ -36,7 +36,6 @@ namespace ComLib.Collections
         /// <summary>
         /// Constructor requiring the generic dictionary being wrapped.
         /// </summary>
-        /// <param name="item"></param>
         public DictionaryTypeConversion()
         {
             _map = new Dictionary<TKey, string>();

@@ -36,10 +36,9 @@ namespace ComLib.Caching
         /// <summary>
         /// Initialize with spring cache.
         /// </summary>
-        /// <param name="springCache"></param>
         public CacheAspNet()
         {
-            _cache = HttpRuntime.Cache;
+            Init(new CacheSettings());
         }
 
 
@@ -49,8 +48,7 @@ namespace ComLib.Caching
         /// <param name="settings"></param>
         public CacheAspNet(CacheSettings settings)
         {
-            _cache = HttpRuntime.Cache;
-            _settings = settings;            
+            Init(settings);                      
         }
 
 
@@ -159,6 +157,23 @@ namespace ComLib.Caching
 
 
         /// <summary>
+        /// Retrieves an item from the cache of the specified type.
+        /// </summary>
+        public T GetOrInsert<T>(object key, int timeToLiveInSeconds, bool slidingExpiration, Func<T> fetcher)
+        {
+            object obj = Get(key);
+            if (obj == null)
+            {
+                T result = fetcher();
+                Insert(key, result, timeToLiveInSeconds, slidingExpiration);
+                return result;
+            }
+
+            return (T)obj;
+        }
+
+
+        /// <summary>
         /// Remove from cache.
         /// </summary>
         /// <param name="key"></param>
@@ -225,7 +240,7 @@ namespace ComLib.Caching
         /// Insert an item into the cache with the specified time to live, 
         /// sliding expiration and priority.
         /// </summary>
-        /// <param name="key">The cache key</param>
+        /// <param name="keyName">The cache key</param>
         /// <param name="value">The cache value</param>
         /// <param name="timeToLive">How long in seconds the object should be cached.</param>
         /// <param name="slidingExpiration">Whether or not to reset the time to live if the object is touched.</param>
@@ -255,13 +270,51 @@ namespace ComLib.Caching
                 _cache.Insert(key, value, null, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, aspNetPriority, null);
             }
         }
+
+
+        /// <summary>
+        /// Returns descriptors for all items in the cache.
+        /// </summary>
+        /// <returns></returns>
+        public IList<CacheItemDescriptor> GetDescriptors()
+        {
+            IList<CacheItemDescriptor> descriptorList = new List<CacheItemDescriptor>();
+            ICollection keys = Keys;
+            IEnumerator enumerator = keys.GetEnumerator();
+
+            while (enumerator.MoveNext())
+            {
+                string key = enumerator.Current as string;
+                object cacheItem = Get(key);
+                descriptorList.Add(new CacheItemDescriptor(key, cacheItem.GetType().FullName));
+            }
+
+            // Sort the cache items by their name
+            ((List<CacheItemDescriptor>)descriptorList).Sort(
+              delegate(CacheItemDescriptor c1, CacheItemDescriptor c2)
+              {
+                  return c1.Key.CompareTo(c2.Key);
+              });
+            return descriptorList;
+        }
         #endregion
+
+
+        /// <summary>
+        /// Initialize.
+        /// </summary>
+        /// <param name="settings"></param>
+        private void Init(CacheSettings settings)
+        {
+            _cache = HttpRuntime.Cache;
+            _settings = settings;  
+        }
 
 
         private string BuildKey(object key)
         {
             if(_settings.UsePrefix )
-                return _settings.PrefixForCacheKeys + "." + key.GetHashCode().ToString();
+                return _settings.PrefixForCacheKeys + "." + key.ToString();
 
             return key.ToString();
         }

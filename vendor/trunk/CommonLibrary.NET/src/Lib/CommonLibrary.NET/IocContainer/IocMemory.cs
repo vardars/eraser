@@ -52,8 +52,7 @@ namespace ComLib
             /// This is to support different implementations of specific interface
             /// for example.
             /// </summary>
-            /// <param name="t"></param>
-            /// <param name="instanceName"><see cref="ServiceNames"/></param>
+            /// <param name="key"></param>
             /// <param name="obj"></param>
             public void AddObject(string key, object obj)
             {
@@ -64,8 +63,8 @@ namespace ComLib
             /// <summary>
             /// Gets a specific service with name provided.
             /// </summary>
-            /// <param name="t"></param>
-            /// <param name="serviceName"><see cref="ServiceNames"/></param>
+            /// <typeparam name="T">The type of the object to get</typeparam>
+            /// <param name="serviceName">A specific key associated with the instance to get. e.g. Used with different instances/configurations for a specific type.</param>
             /// <returns></returns>
             public T GetObject<T>(string serviceName)
             {
@@ -75,6 +74,28 @@ namespace ComLib
                 }
                 object obj = _objects[serviceName];                
                 return (T)obj;
+            }
+
+
+            /// <summary>
+            /// Get object using just the type.
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <returns></returns>
+            public T GetObject<T>()
+            {
+                return GetObject<T>(typeof(T).FullName);
+            }
+
+
+            /// <summary>
+            /// Determine if the container contains the specified type.
+            /// </summary>
+            /// <typeparam name="T"></typeparam>
+            /// <returns></returns>
+            public bool Contains<T>()
+            {
+                return _objects.ContainsKey(typeof(T).FullName);
             }
             #endregion
         }

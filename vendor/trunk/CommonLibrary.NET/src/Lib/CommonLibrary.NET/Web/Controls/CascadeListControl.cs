@@ -25,6 +25,9 @@ using System.Collections.Specialized;
 
 namespace ComLib.Web.UI.Controls
 {
+    /// <summary>
+    /// This class implements a cascaded drop down list control.
+    /// </summary>
     [DefaultProperty("Text"), ToolboxData("<{0}:CascadeListControl runat=\"server\"> </{0}:CascadeListControl>")]
     public class CascadeDropDownListControl : WebControl, INamingContainer, IPostBackDataHandler
     {
@@ -210,28 +213,15 @@ namespace ComLib.Web.UI.Controls
         }
 
 
+        /// <summary>
+        /// OnInit event handler.
+        /// </summary>
+        /// <param name="e">Event arguments.</param>
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
             Page.RegisterRequiresPostBack(this);
         }
-
-
-        //protected override void LoadViewState(object savedState)
-        //{
-        //    base.LoadViewState(savedState);
-        //    if (ViewState["hdnSelectedId"] != null)
-        //    {
-        //        _selectedValue = (string)ViewState["hdnSelectedId"];
-        //    }
-        //}
-
-
-        //protected override object SaveViewState()
-        //{
-        //    ViewState["hdnSelectedId"] = _selectedValue;
-        //    return base.SaveViewState();
-        //}
 
 
         private string GetSelectedId()
@@ -243,7 +233,7 @@ namespace ComLib.Web.UI.Controls
         /// <summary>
         /// Render the contents of the control.
         /// </summary>
-        /// <param name="writer"></param>
+        /// <param name="writer">Rendering target.</param>
         protected override void RenderContents(HtmlTextWriter writer)
         {            
             base.RenderContents(writer);
@@ -253,7 +243,7 @@ namespace ComLib.Web.UI.Controls
 
 
         /// <summary>
-        /// kdcat1.ListControlId = "<%=lstC.ClientID %>";
+        /// kdcat1.ListControlId = "&lt;%=lstC.ClientID %&gt;";
         /// kdcat1.RetrieveAllService = "AjaxServer.aspx";
         /// kdcat1.ResultTagName = "country";
         /// kdcat1.DependentCat = "kdcat2";
@@ -261,6 +251,7 @@ namespace ComLib.Web.UI.Controls
         /// kdcat1.UseIdForFilterValue = true;           
         /// kdcat1.Init(); 
         /// </summary>
+        /// <returns>String with client side java script.</returns>
         protected string BuildClientSideJavascript()
         {
             StringBuilder buffer = new StringBuilder();
@@ -305,6 +296,10 @@ namespace ComLib.Web.UI.Controls
             return true;
         }
 
+
+        /// <summary>
+        /// Raises the data changed event.
+        /// </summary>
         public void RaisePostDataChangedEvent()
         {            
         }

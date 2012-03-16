@@ -28,7 +28,7 @@ namespace ComLib.Logging
     /// Light weight logging class.
     /// </summary>
     /// <remarks>
-    /// The provider is initialize to an instance of <see cref="LoggerConsole"/>
+    /// The provider is initialize to an instance of <see cref="LogConsole"/>
     /// so it's ready be used immediately.
     /// </remarks>
     public class Logger
@@ -99,10 +99,9 @@ namespace ComLib.Logging
 
         #region Log Warnings
         /// <summary>
-        /// Logs as info.
+        /// Logs as warning.
         /// </summary>
         /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
         public static void Warn(object message)
         {
             Log(LogLevel.Warn, message, null, null);
@@ -110,7 +109,7 @@ namespace ComLib.Logging
 
 
         /// <summary>
-        /// Logs as info.
+        /// Logs as warning.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="exception">The exception.</param>
@@ -135,10 +134,9 @@ namespace ComLib.Logging
 
         #region Log Errors
         /// <summary>
-        /// Logs as info.
+        /// Logs as error.
         /// </summary>
         /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
         public static void Error(object message)
         {
             Log(LogLevel.Error, message, null, null);
@@ -146,7 +144,7 @@ namespace ComLib.Logging
 
 
         /// <summary>
-        /// Logs as info.
+        /// Logs as error.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="exception">The exception.</param>
@@ -171,10 +169,9 @@ namespace ComLib.Logging
 
         #region Log Debug
         /// <summary>
-        /// Logs as info.
+        /// Logs as debug.
         /// </summary>
         /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
         public static void Debug(object message)
         {
             Log(LogLevel.Debug, message, null, null);
@@ -182,7 +179,7 @@ namespace ComLib.Logging
 
 
         /// <summary>
-        /// Logs as info.
+        /// Logs as debug.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="exception">The exception.</param>
@@ -207,10 +204,9 @@ namespace ComLib.Logging
 
         #region Log Fatal
         /// <summary>
-        /// Logs as info.
+        /// Logs as fatal.
         /// </summary>
         /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
         public static void Fatal(object message)
         {
             Log(LogLevel.Fatal, message, null, null);
@@ -218,7 +214,7 @@ namespace ComLib.Logging
 
 
         /// <summary>
-        /// Logs as info.
+        /// Logs as fatal.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="exception">The exception.</param>
@@ -246,7 +242,6 @@ namespace ComLib.Logging
         /// Logs as info.
         /// </summary>
         /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
         public static void Info(object message)
         {
             Log(LogLevel.Info, message, null, null);
@@ -279,10 +274,9 @@ namespace ComLib.Logging
 
         #region Log Message
         /// <summary>
-        /// Logs as info.
+        /// Logs as message.
         /// </summary>
         /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
         public static void Message(object message)
         {            
             Log(LogLevel.Message, message, null, null);
@@ -290,7 +284,7 @@ namespace ComLib.Logging
 
 
         /// <summary>
-        /// Logs as info.
+        /// Logs as message.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="exception">The exception.</param>
@@ -319,7 +313,7 @@ namespace ComLib.Logging
         /// </summary>
         /// <param name="loggerName">The name of the logger to check loglevel for.</param>
         /// <param name="logLevel">The log level.</param>
-        /// <returns></returns>
+        /// <returns>True if the supplied log level is enabled.</returns>
         public static bool IsEnabled(string loggerName, LogLevel logLevel)
         {
             ILog logger = null;
@@ -397,8 +391,8 @@ namespace ComLib.Logging
         /// <summary>
         /// Get a logger. 
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
+        /// <typeparam name="T">Type of logger.</typeparam>
+        /// <returns>Instance of logger.</returns>
         public static ILog GetNew<T>()
         {
             return GetNew<T>("default");
@@ -408,9 +402,9 @@ namespace ComLib.Logging
         /// <summary>
         /// Get a new logger and associate with the type specified.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="logger"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">Type of logger.</typeparam>
+        /// <param name="loggerName">Name of application.</param>
+        /// <returns>Instance of logger.</returns>
         public static ILog GetNew<T>(string loggerName)
         {
             ILog logger = new LogInstance(loggerName, typeof(T));
@@ -421,8 +415,7 @@ namespace ComLib.Logging
         /// <summary>
         /// Add a named logger.
         /// </summary>
-        /// <param name="loggerName"></param>
-        /// <param name="logger"></param>
+        /// <param name="logger">Named logger to add.</param>
         public static void Add(ILogMulti logger)
         {
             // Add new logger.
@@ -470,8 +463,8 @@ namespace ComLib.Logging
         /// <summary>
         /// Get the named logger using the string indexer.
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <param name="name">Name of logger.</param>
+        /// <returns>Logger with supplied name.</returns>
         public static ILogMulti Get(string name)
         {
             ILogMulti logger = null;
@@ -490,8 +483,8 @@ namespace ComLib.Logging
         /// <summary>
         /// Get the named logger using the string indexer.
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <param name="index">Index of logger.</param>
+        /// <returns>Logger with supplied index.</returns>
         public static ILogMulti Get(int index)
         {
             ILogMulti logger = null;
@@ -512,7 +505,7 @@ namespace ComLib.Logging
         /// <summary>
         /// Initialize the default logger.
         /// </summary>
-        /// <param name="logger"></param>
+        /// <param name="logger">Instance of logger to initialise.</param>
         public static void Init(ILogMulti logger)
         {
             ExecuteWrite(() => 
@@ -546,7 +539,7 @@ namespace ComLib.Logging
         /// <summary>
         /// Get all the log files.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List with all log files.</returns>
         public static List<string> GetLogInfo()
         {
             List<string> logSummary = new List<string>();
@@ -579,8 +572,8 @@ namespace ComLib.Logging
         /// Exectutes the action under a read operation after
         /// aquiring the reader lock.
         /// </summary>
-        /// <param name="executor"></param>
-        protected static void ExecuteRead(ActionVoid executor)
+        /// <param name="executor">Action to execute.</param>
+        protected static void ExecuteRead(Action executor)
         {
             AcquireReaderLock();
             try
@@ -602,8 +595,8 @@ namespace ComLib.Logging
         /// Exectutes the action under a write operation after
         /// aquiring the writer lock.
         /// </summary>
-        /// <param name="executor"></param>
-        protected static void ExecuteWrite(ActionVoid executor)
+        /// <param name="executor">Action to execute.</param>
+        protected static void ExecuteWrite(Action executor)
         {
             AcquireWriterLock();
             try

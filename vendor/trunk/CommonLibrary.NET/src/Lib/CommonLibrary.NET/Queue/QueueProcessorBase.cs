@@ -24,21 +24,47 @@ namespace ComLib.Queue
     /// <summary>
     /// Controlls the processing of the notification tasks.
     /// </summary>
-    public abstract class QueueProcessor<T> : IQueueProcessor<T>
+    public class QueueProcessor<T> : IQueueProcessor<T>
     {
         private Queue<T> _queue;
         private object _synObject = new object();
         private QueueProcessState _state;
-        private int _numberToDequeuAtOnce;
+        private int _numberToDequeuAtOnce = 5;
+        private Action<IList<T>> _handler;
+        private DateTime _lastProcessDate = DateTime.MinValue;
+        private TimeSpan _elapsedTimeSinceLastProcessDate = TimeSpan.MinValue;
+        private int _numberOfTimesProcessed = 0;
+        private int _totalProcessed;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QueueProcessor&lt;T&gt;"/> class.
         /// </summary>
-        public QueueProcessor()
+        public QueueProcessor() : this(5, null)
+        {            
+        }
+
+
+        /// <summary>
+        /// Intialize w/ a specific handler.
+        /// </summary>
+        /// <param name="handler">Action to be called on item dequeue.</param>
+        public QueueProcessor(Action<IList<T>> handler) : this(5, handler)
+        {
+        }
+
+
+        /// <summary>
+        /// Intialize w/ a specific handler.
+        /// </summary>
+        /// <param name="numberOfItemsToProcessPerDequeue">Number of items to process per dequeue.</param>
+        /// <param name="handler">Action to be called on item dequeue.</param>
+        public QueueProcessor(int numberOfItemsToProcessPerDequeue, Action<IList<T>> handler)
         {
             _queue = new Queue<T>();
             _state = QueueProcessState.Idle;
+            _handler = handler;
+            _numberToDequeuAtOnce = numberOfItemsToProcessPerDequeue;
         }
 
 
@@ -67,7 +93,7 @@ namespace ComLib.Queue
         /// <summary>
         /// Add a message to the queue.
         /// </summary>
-        /// <param name="messageDef"></param>
+        /// <param name="item">Item to enqueue.</param>
         public void Enqueue(T item)
         {
             lock (_queue)
@@ -80,8 +106,7 @@ namespace ComLib.Queue
         /// <summary>
         /// Dequeues the specified number to dequeue.
         /// </summary>
-        /// <param name="numberToDequeue">The number to dequeue.</param>
-        /// <returns></returns>
+        /// <returns>Dequeued item.</returns>
         public T Dequeue()
         {
             IList<T> items = Dequeue(1);
@@ -96,7 +121,7 @@ namespace ComLib.Queue
         /// Dequeues the specified number to dequeue.
         /// </summary>
         /// <param name="numberToDequeue">The number to dequeue.</param>
-        /// <returns></returns>
+        /// <returns>List of dequeued items.</returns>
         public IList<T> Dequeue(int numberToDequeue)
         {
             IList<T> items = null;
@@ -213,12 +238,27 @@ namespace ComLib.Queue
                 UpdateState(QueueProcessState.Busy, false);
             }
 
+            UpdateMetaInfo(itemsToProcess.Count);
             Process(itemsToProcess);            
 
             // Update to idle.
             UpdateState(QueueProcessState.Idle, true);
         }
 
+        
+        /// <summary>
+        /// Get the state of the queue.
+        /// </summary>
+        /// <returns>Status of queue.</returns>
+        public virtual QueueStatus GetStatus()
+        {
+            QueueStatus status = null;
+            lock (SyncRoot)
+            {
+                status = new QueueStatus(_state, _queue.Count, _lastProcessDate, _numberOfTimesProcessed, _elapsedTimeSinceLastProcessDate, _totalProcessed, NumberToProcessPerDequeue);
+            }
+            return status;
+        }
         #endregion
 
 
@@ -226,14 +266,18 @@ namespace ComLib.Queue
         /// Processes the specified items to process.
         /// </summary>
         /// <param name="itemsToProcess">The items to process.</param>
-        protected abstract void Process(IList<T> itemsToProcess);
+        protected virtual void Process(IList<T> itemsToProcess)
+        {
+            if (_handler != null)
+                _handler(itemsToProcess);
+        }
 
 
         /// <summary>
         /// Dequeues the internal.
         /// </summary>
         /// <param name="numberToDequeue">The number to dequeue.</param>
-        /// <returns></returns>
+        /// <returns>List of dequeued items.</returns>
         protected IList<T> DequeueInternal(int numberToDequeue)
         {
             if (_queue.Count == 0)
@@ -273,6 +317,19 @@ namespace ComLib.Queue
             {
                 _state = newState;
             }
+        }
+
+
+        private void UpdateMetaInfo(int numberBeingProcessed)
+        {
+            DateTime now = DateTime.Now;
+            if (_lastProcessDate != DateTime.MinValue)
+            {
+                _elapsedTimeSinceLastProcessDate = now.TimeOfDay - _lastProcessDate.TimeOfDay;
+            }
+            _lastProcessDate = now;
+            Interlocked.Increment(ref _numberOfTimesProcessed);
+            _totalProcessed += numberBeingProcessed;
         }
     }
 }

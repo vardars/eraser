@@ -27,15 +27,22 @@ namespace ComLib.Collections
     
     /// <summary>
     /// Class to serve as a base class for generic lists.
-    /// This is because the Generic list <see cref="System.Collections.Generic.List<T>"/>
+    /// This is because the Generic list <see cref="System.Collections.Generic.List&lt;T&gt;"/>
     /// is not meant to be extendable."/>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class GenericListBase<T> : IList<T>
     {
-        private IList<T> _items;
+        /// <summary>
+        /// List of items.
+        /// </summary>
+        protected IList<T> _items;
 
 
+        /// <summary>
+        /// Creates a new instance of this class
+        /// with an empty list.
+        /// </summary>
         public GenericListBase()
         {
             _items = new List<T>();
@@ -43,7 +50,6 @@ namespace ComLib.Collections
    
 
         #region IList<T> Members
-
         /// <summary>
         /// Index of
         /// </summary>
@@ -60,7 +66,7 @@ namespace ComLib.Collections
         /// </summary>
         /// <param name="index"></param>
         /// <param name="item"></param>
-        public void Insert(int index, T item)
+        public virtual void Insert(int index, T item)
         {
             _items.Insert(index, item);
         }
@@ -70,7 +76,7 @@ namespace ComLib.Collections
         /// Remove at the specified index.
         /// </summary>
         /// <param name="index"></param>
-        public void RemoveAt(int index)
+        public virtual void RemoveAt(int index)
         {
             _items.RemoveAt(index);
         }
@@ -98,10 +104,25 @@ namespace ComLib.Collections
                 
         #region ICollection<T> Members
         /// <summary>
+        /// Add a list of models that should be shown in the dashboard on the sidebar.
+        /// </summary>
+        /// <param name="items"></param>
+        public virtual void Add(params T[] items)
+        {
+            if (items == null || items.Length == 0)
+                return;
+
+            // Add the default definitions
+            foreach (T item in items)
+                this.Add(item);
+        }
+
+
+        /// <summary>
         /// Add
         /// </summary>
         /// <param name="item"></param>
-        public void Add(T item)
+        public virtual void Add(T item)
         {
             _items.Add(item);
         }
@@ -110,13 +131,19 @@ namespace ComLib.Collections
         /// <summary>
         /// Clear
         /// </summary>
-        public void Clear()
+        public virtual void Clear()
         {
             _items.Clear();
         }
 
 
-        public bool Contains(T item)
+        /// <summary>
+        /// Determines whether an item is
+        /// present in the current list.
+        /// </summary>
+        /// <param name="item">Item to look for.</param>
+        /// <returns>True if item already exists.</returns>
+        public virtual bool Contains(T item)
         {
             return _items.Contains(item);
         }
@@ -127,7 +154,7 @@ namespace ComLib.Collections
         /// </summary>
         /// <param name="array"></param>
         /// <param name="arrayIndex"></param>
-        public void CopyTo(T[] array, int arrayIndex)
+        public virtual void CopyTo(T[] array, int arrayIndex)
         {
             _items.CopyTo(array, arrayIndex);
         }
@@ -156,7 +183,7 @@ namespace ComLib.Collections
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public bool Remove(T item)
+        public virtual bool Remove(T item)
         {
             return _items.Remove(item);
         }
@@ -166,6 +193,10 @@ namespace ComLib.Collections
 
         #region IEnumerable<T> Members
 
+        /// <summary>
+        /// Returns an enumerator to the list.
+        /// </summary>
+        /// <returns>List enumerator.</returns>
         public IEnumerator<T> GetEnumerator()
         {
             return _items.GetEnumerator();

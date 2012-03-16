@@ -21,13 +21,17 @@ using ComLib.Reflection;
 
 namespace ComLib.Notifications
 {
+    /// <summary>
+    /// This class provides helper methods
+    /// for the Notifications namespace.
+    /// </summary>
     public class NotificationUtils
     {
         /// <summary>
         /// Get the internal template content from the commonlibrary assembly.
         /// </summary>
         /// <param name="fileName">e.g. welcome.html</param>
-        /// <returns></returns>
+        /// <returns>String with internal templace.</returns>
         public static string GetInternalNotificationTemplate(string fileName)
         {
             return AssemblyUtils.GetInternalFileContent("CommonLibrary.Notifications.Templates.", fileName);

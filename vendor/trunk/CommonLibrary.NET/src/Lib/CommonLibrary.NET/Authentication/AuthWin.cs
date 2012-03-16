@@ -25,12 +25,10 @@ using System.Web.Security;
 namespace ComLib.Authentication
 {
     /// <summary>
-    /// Class to represnt a simple security service for 
-    /// DESKTOP based windows applications where there is just 1 user.
+    /// <see cref="IAuth"/> implementation to provide Authentication service for DESKTOP based windows applications where there is just 1 user.
     /// </summary>
-    public class AuthWin : IAuth
+    public class AuthWin : AuthBase, IAuth
     {
-        private string _adminRoleName = "Administrators";
         private IPrincipal _user = UserPrincipal.Empty;
 
 
@@ -49,6 +47,7 @@ namespace ComLib.Authentication
         /// Initialize with the admin role name.
         /// </summary>
         /// <param name="adminRoleName"></param>
+        /// <param name="user"></param>
         public AuthWin(string adminRoleName, IPrincipal user)
         {
             _adminRoleName = adminRoleName;
@@ -59,7 +58,7 @@ namespace ComLib.Authentication
         /// <summary>
         /// Get the current user.
         /// </summary>
-        public IPrincipal User
+        public override IPrincipal User
         {
             get { return _user; }
         }
@@ -68,7 +67,7 @@ namespace ComLib.Authentication
         /// <summary>
         /// The name of the current user.
         /// </summary>
-        public string UserName
+        public override string UserName
         {
             get { return _user.Identity.Name; }
         }
@@ -79,7 +78,7 @@ namespace ComLib.Authentication
         /// the domain.
         /// e.g. returns "john" if username is "mydomain\john"
         /// </summary>
-        public string UserShortName
+        public override string UserShortName
         {
             get
             {
@@ -112,32 +111,11 @@ namespace ComLib.Authentication
         /// Determine if the current user is authenticated.
         /// </summary>
         /// <returns></returns>
-        public bool IsAuthenticated()
+        public override bool IsAuthenticated()
         {
             return _user.Identity.IsAuthenticated;
         }
-
-
-        /// <summary>
-        /// Return whether or not the current user is authenticated.
-        /// </summary>
-        /// <returns></returns>
-        public bool IsGuest()
-        {
-            return !IsAuthenticated();
-        }        
-
-
-        /// <summary>
-        /// Determine if currently logged in user is an administrator.
-        /// </summary>
-        /// <returns></returns>
-        public bool IsAdmin()
-        {
-            if (IsGuest()) return false;
-
-            return IsUserInRoles("Administrators");
-        }      
+        
 
 
         /// <summary>
@@ -145,7 +123,7 @@ namespace ComLib.Authentication
         /// </summary>
         /// <param name="rolesDelimited"></param>
         /// <returns></returns>
-        public bool IsUserInRoles(string rolesDelimited)
+        public override bool IsUserInRoles(string rolesDelimited)
         {
             return RoleHelper.IsInRoles(rolesDelimited, _user);
         }
@@ -164,7 +142,7 @@ namespace ComLib.Authentication
         /// <summary>
         /// Sign the user in via username.
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="userName"></param>
         public void SignIn(string userName)
         {
             UserPrincipal user = new UserPrincipal(-1, userName, string.Empty,

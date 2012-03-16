@@ -32,7 +32,6 @@ namespace ComLib.Caching
         /// <summary>
         /// Initialize with spring cache.
         /// </summary>
-        /// <param name="springCache"></param>
         static Cacher()
         {
             _provider = new CacheAspNet();
@@ -118,6 +117,69 @@ namespace ComLib.Caching
 
 
         /// <summary>
+        /// Get the cached entry specified by the key.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key">The cache key</param>
+        /// <param name="timeInSeconds">How long to cache</param>
+        /// <param name="fetcher">The lamda to call to get the item if not in cache.</param>
+        /// <returns></returns>
+        public static T Get<T>(string key, int timeInSeconds, Func<T> fetcher)
+        {
+            return Get<T>(key, true, timeInSeconds, false, fetcher);
+        }
+
+
+        /// <summary>
+        /// Get the cached entry specified by the key.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key">The cache key</param>
+        /// <param name="timeInSeconds">How long to cache</param>
+        /// <param name="fetcher">The lamda to call to get the item if not in cache.</param>
+        /// <returns></returns>
+        public static T Get<T>(string key, TimeSpan timeInSeconds, Func<T> fetcher)
+        {
+            return Get<T>(key, true, timeInSeconds.Seconds, false, fetcher);
+        }
+
+
+        /// <summary>
+        /// Get the cached entry specified by the key.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key">The cache key</param>
+        /// <param name="useCache">Whether or not cache should be used at all.</param>
+        /// <param name="timeInSeconds">How long to cache</param>
+        /// <param name="fetcher">The lamda to call to get the item if not in cache.</param>
+        /// <returns></returns>
+        public static T Get<T>(string key, bool useCache, TimeSpan timeInSeconds, Func<T> fetcher)
+        {
+            return Get<T>(key, useCache, timeInSeconds.Seconds, false, fetcher);
+        }
+
+
+        /// <summary>
+        /// Get the cached entry specified by the key.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key">The cache key</param>
+        /// <param name="useCache">Whether or not cache should be used at all.</param>
+        /// <param name="timeInSeconds">How long to cache</param>
+        /// <param name="slidingExpiration">Whether or not to apply sliding expiration to cache.</param>
+        /// <param name="fetcher">The lamda to call to get the item if not in cache.</param>
+        /// <returns></returns>
+        public static T Get<T>(string key, bool useCache, int timeInSeconds, bool slidingExpiration, Func<T> fetcher)
+        {
+            // Enable cache at all?
+            if (!useCache) return fetcher();
+
+            T result = _provider.GetOrInsert<T>(key, timeInSeconds, slidingExpiration, fetcher);
+            return result;
+        }
+
+
+        /// <summary>
         /// Remove from cache.
         /// </summary>
         /// <param name="key"></param>
@@ -182,6 +244,16 @@ namespace ComLib.Caching
         public static void Insert(object key, object value, int timeToLive, bool slidingExpiration, CacheItemPriority priority)
         {
             _provider.Insert(key, value, timeToLive, slidingExpiration, priority);
+        }
+
+
+        /// <summary>
+        /// Get the items in the cache and their types.
+        /// </summary>
+        /// <returns></returns>
+        public static IList<CacheItemDescriptor> GetDescriptors()
+        {
+            return _provider.GetDescriptors();
         }
         #endregion
     }

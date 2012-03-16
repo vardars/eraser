@@ -5,7 +5,6 @@ using System.Text;
 using System.IO;
 using System.Threading;
 
-using ComLib.IO;
 
 
 namespace ComLib.Logging
@@ -28,7 +27,8 @@ namespace ComLib.Logging
         /// <summary>
         /// Initialize with path of the log file.
         /// </summary>
-        /// <param name="filepath"></param>
+        /// <param name="name">Name of application.</param>
+        /// <param name="filepath">File path, can contain substitutions.</param>
         public LogFile(string name, string filepath) : 
             this(name, filepath, DateTime.Now, "")
         {           
@@ -55,6 +55,8 @@ namespace ComLib.Logging
         /// <param name="filepath">File path, can contain substitutions. e.g. "%yyyy%.</param>
         /// <param name="date">Date to use in the name of the log file.</param>
         /// <param name="env">Environment name to put into the name of the log file.</param>
+        /// <param name="rollFile">True to roll file once max size is reached.</param>
+        /// <param name="maxSizeInMegs">Maximum size in megabytes.</param>
         public LogFile(string name, string filepath, DateTime date, string env, bool rollFile, int maxSizeInMegs)
             : base(name)
         {
@@ -78,7 +80,7 @@ namespace ComLib.Logging
         /// <summary>
         /// Log the event to file.
         /// </summary>
-        /// <param name="logEvent"></param>
+        /// <param name="logEvent">Event to log.</param>
         public override void Log(LogEvent logEvent)
         {
             string finalMessage = logEvent.FinalMessage;
@@ -117,7 +119,7 @@ namespace ComLib.Logging
             try
             {
                 if (_writer != null)
-                {
+                {                    
                     _writer.Flush();
                     _writer.Close();
                     _writer = null;
@@ -157,9 +159,9 @@ namespace ComLib.Logging
 
                 // This rolls the log file. e.g. Creates a new log file if the current one
                 // exceeds a logfile size.
-                if (_rollFile && FileUtils.GetSizeInMegs(_filepath) > _maxFileSizeInMegs)
+                if (_rollFile && FileHelper.GetSizeInMegs(_filepath) > _maxFileSizeInMegs)
                 {
-                    ExecuteHelper.TryCatch(() =>
+                    Try.Catch(() =>
                     {
                         string searchPath = _filepath.Substring(0, _filepath.LastIndexOf('.'));
                         FileInfo file = new FileInfo(_filepath);

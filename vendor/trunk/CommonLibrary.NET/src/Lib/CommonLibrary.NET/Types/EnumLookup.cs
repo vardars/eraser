@@ -27,23 +27,28 @@ namespace ComLib
     public static class EnumLookupExtensions
     {
         /// <summary>
+        /// Parses a string after validating it and returns 
+        /// the value of the enumeration it represents.
         /// </summary>
-        /// <param name="enumType"></param>
-        /// <param name="val"></param>
-        /// <param name="results"></param>
-        /// <returns></returns>
+        /// <param name="lookup">Enumeration lookup.</param>
+        /// <param name="enumType">Type of enumeration.</param>
+        /// <param name="val">Value of string.</param>
+        /// <param name="results">Validation results.</param>
+        /// <returns>Enumeration value.</returns>
         public static object GetValue(this EnumLookup lookup, Type enumType, string val, IValidationResults results)
         {
             return GetValue(lookup, enumType, val, results, string.Empty);
         }
 
 
-        /// <summary>
-        /// </summary>
-        /// <param name="enumType"></param>
-        /// <param name="val"></param>
-        /// <param name="results"></param>
-        /// <returns></returns>
+        /// Parses a string after validating it and returns 
+        /// the value of the enumeration it represents.
+        /// <param name="lookup">Enumeration lookup.</param>
+        /// <param name="enumType">Type of enumeration.</param>
+        /// <param name="val">Value of string.</param>
+        /// <param name="results">Validation results.</param>
+        /// <param name="defaultValue">Default value.</param>
+        /// <returns>Enumeration value.</returns>
         public static object GetValue(this EnumLookup lookup, Type enumType, string val, IValidationResults results, string defaultValue)
         {
             // Invalid enum value.
@@ -70,6 +75,9 @@ namespace ComLib
         private static IDictionary<string, Dictionary<string, string>> _enumMap;
 
 
+        /// <summary>
+        /// Static initializer.
+        /// </summary>
         static EnumLookup()
         {
             _enumMap = new Dictionary<string, Dictionary<string, string>>();
@@ -79,9 +87,8 @@ namespace ComLib
         /// <summary>
         /// Register enum mappings.
         /// </summary>
-        /// <param name="enumtype"></param>
-        /// <param name="aliasValuesDelimited"></param>
-        /// <returns></returns>
+        /// <param name="enumType">Type of enumeration.</param>
+        /// <param name="aliasValuesDelimited">String with delimited values of enumeration.</param>
         public static void Register(Type enumType, string aliasValuesDelimited)
         {
             Dictionary<string, string> enumValues = enumValues = new Dictionary<string, string>();
@@ -94,9 +101,9 @@ namespace ComLib
         /// <summary>
         /// Determines if the string based enum value is valid.
         /// </summary>
-        /// <param name="enumType"></param>
-        /// <param name="val"></param>
-        /// <returns></returns>
+        /// <param name="enumType">Type of enumeration.</param>
+        /// <param name="val">String based enum value.</param>
+        /// <returns>True if the string represents a valid value.</returns>
         public static bool IsValid(Type enumType, string val)
         {
             ConfirmRegistration(enumType);
@@ -107,7 +114,7 @@ namespace ComLib
 
 
         /// <summary>
-        /// Get the enum Value
+        /// Get the enum Value.
         /// </summary>
         /// <param name="enumType"></param>
         /// <param name="val"></param>
@@ -121,9 +128,10 @@ namespace ComLib
         /// <summary>
         /// Get the enum Value
         /// </summary>
-        /// <param name="enumType"></param>
-        /// <param name="val"></param>
-        /// <returns></returns>
+        /// <param name="enumType">Type of enumeration.</param>
+        /// <param name="val">String with value.</param>
+        /// <param name="defaultVal">Default value.</param>
+        /// <returns>Enumeration with corresponding value.</returns>
         public static object GetValue(Type enumType, string val, string defaultVal)
         {            
             if (!IsValid(enumType, val))
@@ -151,9 +159,9 @@ namespace ComLib
         /// <summary>
         /// Set the various mappings for an enum value.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="enumValues"></param>
-        /// <param name="aliasValuesDelimeted"></param>
+        /// <param name="type">Type of enumeration.</param>
+        /// <param name="enumValues">Dictionary with enumeration values.</param>
+        /// <param name="aliasValuesDelimeted">Delimited string with alias values.</param>
         private static void SetupMappings(Type type, Dictionary<string, string> enumValues, string aliasValuesDelimeted)
         {
             // Put each value of the num in the map.

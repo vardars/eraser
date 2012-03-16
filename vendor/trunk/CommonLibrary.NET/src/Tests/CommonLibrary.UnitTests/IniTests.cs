@@ -18,6 +18,19 @@ namespace CommonLibrary.Tests
     [TestFixture]
     public class IniTests
     {
+        [Test]
+        public void CanLoadEmptyDoc()
+        {
+            IniDocument doc = new IniDocument();
+            doc["globalSettings", "time"] = "all";
+            doc["globalSettings", "category"] = "Art,Drawing";
+            doc["", "pageSize"] = 20;
+
+            Assert.IsTrue(doc.Contains("globalSettings"));
+            Assert.AreEqual(doc["globalSettings", "category"], "Art,Drawing");
+            Assert.AreEqual(doc["", "pageSize"], 20);
+        }
+
 
         [Test]
         public void CanParseSingleGroupCaseSensitive()
@@ -61,6 +74,27 @@ namespace CommonLibrary.Tests
 
             Assert.AreEqual(document["post1","title"], "Build a website");
             Assert.AreEqual(document["post1","CreatedBy"], "user1");
+        }
+
+
+        [Test]
+        public void CanParseMultipleGroupsWithSameName()
+        {
+            string iniContent = "[post]" + Environment.NewLine
+                              + "title:Build a website0" + Environment.NewLine
+                              + "CreatedBy: user0" + Environment.NewLine + Environment.NewLine
+                              + "[post]" + Environment.NewLine
+                              + "title:Build a website1" + Environment.NewLine
+                              + "CreatedBy: user1";
+
+            IniDocument doc = new IniDocument(iniContent, false);
+            Assert.IsTrue(doc.Contains("post"));
+            Assert.AreEqual(doc.Count, 1);
+            Assert.AreEqual(doc.GetSection("post", 0).Get<string>("title"), "Build a website0");
+            Assert.AreEqual(doc.GetSection("post", 0).Get<string>("CreatedBy"), "user0");
+            Assert.AreEqual(doc.GetSection("post", 1).Get<string>("title"), "Build a website1");
+            Assert.AreEqual(doc.GetSection("post", 1).Get<string>("CreatedBy"), "user1");
+
         }
 
 

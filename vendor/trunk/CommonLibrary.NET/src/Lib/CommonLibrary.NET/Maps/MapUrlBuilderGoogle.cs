@@ -22,22 +22,32 @@ using System.Xml;
 using ComLib.LocationSupport;
 
 
-namespace ComLib.GeoMap
+namespace ComLib.Maps
 {
 
     /// <summary>
-    /// http://maps.google.com/maps?f=q&hl=en&q=10-11+12th+avenue,+queens+ny+12345
-    /// http://maps.google.com/maps?f=q&hl=en&q=44+Levitt+avenue,+bronx+ny+12345
+    /// This class is used to create links for Google maps.
+    /// <a href="http://maps.google.com/maps?f=q&amp;hl=en&amp;q=10-11+12th+avenue,+queens+ny+12345"></a>
+    /// <a href="http://maps.google.com/maps?f=q&amp;hl=en&amp;q=44+Levitt+avenue,+bronx+ny+12345"></a>
     /// </summary>
     public class GoogleMapUrlBuilder : IMapUrlBuilder
     {
         private string _urlPrefix;
-        
-        #region IMapUrlBuilder Members
-        
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GoogleMapUrlBuilder"/> class.
+        /// </summary>
+        public GoogleMapUrlBuilder()
+        {
+            _urlPrefix = "http://maps.google.com/maps?f=q&amp;hl=en&amp;q=";
+        }
+
+
+        #region IMapUrlBuilder Members        
         /// <summary>
         /// Set the url prefix:
-        /// http://maps.google.com/maps?f=q&hl=en&q=
+        /// <a href="http://maps.google.com/maps?f=q&amp;hl=en&amp;q="></a>
         /// </summary>
         public string UrlPrefix
         {
@@ -52,8 +62,8 @@ namespace ComLib.GeoMap
         /// Address : 439 calhoun ave. bronx, ny 10465
         /// ="439+calhoun+ave.+bronx,+ny+10465"
         /// </summary>
-        /// <param name="address"></param>
-        /// <returns></returns>
+        /// <param name="address">Address to location.</param>
+        /// <returns>Url with mapped address.</returns>
         public string Build(Address address)
         {
             StringBuilder buffer = new StringBuilder();

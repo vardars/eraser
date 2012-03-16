@@ -64,6 +64,7 @@ namespace ComLib.Locale
         /// </summary>
         /// <param name="name"></param>
         /// <param name="cultureInfo"></param>
+        /// <param name="defaultName"></param>
         /// <returns></returns>
         string GetString(string name, CultureInfo cultureInfo, string defaultName);
     }  

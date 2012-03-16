@@ -29,7 +29,7 @@ namespace ComLib.Configuration
     {
         /// <summary>
         /// Current configuration source based on the current
-        /// Environment. <see cref="Environments.Current"/>
+        /// Environment. <see cref="ComLib.Environments.Envs.Current"/>
         /// </summary>
         private static IConfigSource _current = new ConfigSource();
 
@@ -56,7 +56,6 @@ namespace ComLib.Configuration
         /// <summary>
         /// Convenience method for getting typed config value from current config provider.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <returns></returns>
         public static object Get(string key)
@@ -68,7 +67,6 @@ namespace ComLib.Configuration
         /// <summary>
         /// Convenience method for getting typed config value from current config provider.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <returns></returns>
         public static string GetString(string key)
@@ -93,7 +91,7 @@ namespace ComLib.Configuration
         /// Convenience method for getting typed config value from current config provider using index position of key
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
+        /// <param name="indexOfKey"></param>
         /// <returns></returns>
         public static T Get<T>(int indexOfKey)
         {
@@ -105,7 +103,6 @@ namespace ComLib.Configuration
         /// <summary>
         /// Convenience method for getting section/key value from current config.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="section"></param>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -118,7 +115,6 @@ namespace ComLib.Configuration
         /// <summary>
         /// Convenience method for getting section/key value from current config.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="section"></param>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -138,6 +134,20 @@ namespace ComLib.Configuration
         public static T Get<T>(string section, string key)
         {
             return _current.Get<T>(section, key);
+        }
+
+
+        /// <summary>
+        /// Convenience method for getting section/key value from current config.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="section"></param>
+        /// <param name="key"></param>
+        /// <param name="defaultValue">The default value to use if key is not available.</param>
+        /// <returns></returns>
+        public static T GetDefault<T>(string section, string key, T defaultValue)
+        {
+            return _current.GetDefault<T>(section, key, defaultValue);
         }
 
 

@@ -30,10 +30,12 @@ namespace ComLib.Environments
     public class EnvDef : IEnv
     {
         private EnvItem _selected;        
-        private List<EnvItem> _inheritedChainedEnvs;
+        private List<EnvItem> _inheritedChainedEnvs = null;
         private IList<string> _availableEnvNames;
         private List<EnvItem> _availableEnvsList;
         private IDictionary<string, EnvItem> _availableEnvs;
+        private string _inheritancePath;
+        private string _refPath;
 
 
         /// <summary>
@@ -47,15 +49,18 @@ namespace ComLib.Environments
         /// collection of the environments(Prod, Qa, Dev, etc )
         /// and the selected environment ( Qa )
         /// </summary>
-        /// <param name="ctx"></param>
         /// <param name="selectedEnvironment"></param>
-        public EnvDef(List<EnvItem> available, string selectedEnvironment)
+        /// <param name="available"></param>
+        public EnvDef(string selectedEnvironment, List<EnvItem> available)
         {
             Init(selectedEnvironment, available);
         }
                 
 
         #region Public Properties
+        /// <summary>
+        /// Name of the environment.
+        /// </summary>
         public string Name { get; set; }
 
 
@@ -117,6 +122,17 @@ namespace ComLib.Environments
 
 
         /// <summary>
+        /// Get the env entry associated with the name.
+        /// </summary>
+        /// <param name="ndx"></param>
+        /// <returns></returns>
+        public EnvItem Get(int ndx)
+        {
+            return _availableEnvsList[ndx];
+        }
+
+
+        /// <summary>
         /// Get the number of available envs.
         /// </summary>
         public int Count
@@ -139,7 +155,7 @@ namespace ComLib.Environments
         /// </summary>
         public string Inherits
         {
-            get { return EnvUtils.ConvertNestedToFlatInheritance(_selected, _availableEnvs); }
+            get { return _inheritancePath; }
         }
 
 
@@ -148,7 +164,7 @@ namespace ComLib.Environments
         /// </summary>
         public string RefPath
         {
-            get { return _selected.RefPath; }
+            get { return _refPath; }
         }
 
 
@@ -197,12 +213,28 @@ namespace ComLib.Environments
             envName = envName.ToLower().Trim();
             if (!_availableEnvs.ContainsKey(envName)) throw new ArgumentException("Environment " + envName + " does not exist.");
 
-            // Set the current environment and Name.
+            // 1: Set the current environment and Name.
             _selected = _availableEnvs[envName];
             Name = envName;
 
-            // Get list of all available environment names.
+            // 2. Get list of all available environment names.
             _availableEnvNames = (from env in _availableEnvsList select env.Name).ToList<string>();
+
+            // 3. Get the inheritance chain if applicable.
+            //    e.g. if prod inherits from qa. List containing Prod,Qa
+            _inheritancePath = EnvUtils.ConvertNestedToFlatInheritance(_selected, _availableEnvs);
+
+            // 4. Get the ref path.
+            //    If inherited, then combine all the ref paths.
+            //    e.g. if prod(prod.config) inherits qa(qa.config) inherits dev(dev.config)
+            //         refPath = "prod.config,qa.config,dev.config".
+            if (string.IsNullOrEmpty(_selected.Inherits))
+                _refPath = _selected.RefPath;
+            else
+            {
+                List<EnvItem> inheritanceChain = EnvUtils.LoadInheritance(_selected, _availableEnvs);
+                _refPath = EnvUtils.CollectEnvironmentProps(inheritanceChain, ",", env => env.RefPath);                
+            }
 
             // Notify.
             if (OnEnvironmentChange != null)

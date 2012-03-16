@@ -20,7 +20,7 @@ using ComLib;
 using ComLib.Logging;
 using ComLib.Locale;
 
-namespace ComLib.Errors
+namespace ComLib.Exceptions
 {
     /// <summary>
     /// Localized error manager.
@@ -33,7 +33,8 @@ namespace ComLib.Errors
         /// <param name="errorDescriptor"></param>
         /// <param name="resources"></param>
         /// <param name="errors"></param>
-        public void Handle(string errorDescriptor, ILocalizationResourceProvider resources, IStatusResults errors, Exception ex)
+        /// <param name="ex"></param>
+        public void Handle(string errorDescriptor, ILocalizationResourceProvider resources, IErrors errors, Exception ex)
         {
             string error = resources.GetString(errorDescriptor);
             
@@ -57,7 +58,7 @@ namespace ComLib.Errors
         /// <param name="errors"></param>
         /// <param name="ex"></param>
         /// <param name="args"></param>
-        public void Handle(string errorDescriptor, ILocalizationResourceProvider resources, IStatusResults errors, Exception ex, string[] args)
+        public void Handle(string errorDescriptor, ILocalizationResourceProvider resources, IErrors errors, Exception ex, string[] args)
         {
             string error = resources.GetString(errorDescriptor);
             string errorDetails = error;
@@ -86,7 +87,8 @@ namespace ComLib.Errors
         /// </summary>
         /// <param name="errorDescriptor"></param>
         /// <param name="resources"></param>
-        /// <param name="errors"></param>
+        /// <param name="ex"></param>
+        /// <param name="args"></param>
         public void Handle(string errorDescriptor, ILocalizationResourceProvider resources, Exception ex, string[] args)
         {
             string error = resources.GetString(errorDescriptor);

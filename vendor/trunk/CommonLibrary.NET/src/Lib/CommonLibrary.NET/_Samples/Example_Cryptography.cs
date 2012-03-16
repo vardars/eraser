@@ -7,35 +7,28 @@ using System.Data;
 using System.Data.Common;
 using System.Security.Cryptography;
 
-using ComLib.Entities;
-using ComLib.Membership;
+//<doc:using>
 using ComLib;
 using ComLib.Cryptography;
+using ComLib.Cryptography.DES;
+//</doc:using>
 using ComLib.Application;
 
 
 namespace ComLib.Samples
-{
+{	
     /// <summary>
-    /// Example of ActiveRecord Initialization/Configuration.
+    /// Example for the Cryptography namespace.
     /// </summary>
     public class Example_Cryptography : App
     {
-        /// <summary>
-        /// Initialize.
-        /// </summary>
-        /// <param name="args"></param>
-        public Example_Cryptography()
-        {
-        }
-
-
-        /// <summary>
+		/// <summary>
         /// Run the application.
         /// </summary>
         public override BoolMessageItem Execute()
         {
-            // 1. Encrypt using default provider. ( Symmetric TripleDes )
+            //<doc:example>
+			// 1. Encrypt using default provider. ( Symmetric TripleDes )
             string plainText = "www.knowledgedrink.com";
             string encrypted = Crypto.Encrypt(plainText);
             string decrypted = Crypto.Decrypt(encrypted);
@@ -56,7 +49,14 @@ namespace ComLib.Samples
             Crypto.Init(crypto2);
             string encryptedWithNewKey = Crypto.Encrypt("www.knowledgedrink.com");
             Console.WriteLine(string.Format("Encrypted text : using old key - {0}, using new key - {1}", encrypted, encryptedWithNewKey));
+
+            // 4. Generate the check value of a 3DES key by encrypting 16 hexadecimal zeroes.
+            DESKey randomKey = new DESKey(DesKeyType.TripleLength);
+            string keyCheckValue = ComLib.Cryptography.DES.TripleDES.Encrypt(randomKey, "0000000000000000");
+            Console.WriteLine(string.Format("3DES key: {0} with check value {1}", randomKey.ToString(), keyCheckValue));
+			
+			//</doc:example>
             return BoolMessageItem.True;
-        }
+        }		
     }
 }

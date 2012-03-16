@@ -252,12 +252,24 @@ namespace ComLib.Collections
             return _reverseMap.ContainsKey(value);
         }
 
+        
         /// <summary>
         /// Determine whether or the reverse lookup ( value ) exists.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
         public TKey ContainsReverseLookup(TValue value)
+        {
+            return _reverseMap[value];
+        }
+
+
+        /// <summary>
+        /// Determine whether or the reverse lookup ( value ) exists.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public TKey KeyFor(TValue value)
         {
             return _reverseMap[value];
         }

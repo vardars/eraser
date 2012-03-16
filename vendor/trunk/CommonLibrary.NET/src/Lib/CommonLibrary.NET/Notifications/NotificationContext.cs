@@ -44,7 +44,7 @@ namespace ComLib.Notifications
         /// <summary>
         /// Initialize using supplied values.
         /// </summary>
-        /// <param name="values"></param>
+        /// <param name="values">Dictionary with values to use for initialization.</param>
         public NotificationContext(IDictionary<string, string> values)
         {
             Values = values;

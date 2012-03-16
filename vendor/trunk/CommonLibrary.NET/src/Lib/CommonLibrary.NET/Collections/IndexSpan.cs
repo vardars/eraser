@@ -85,7 +85,7 @@ namespace ComLib.Collections
         /// Splits the iteratons into parts(spans).
         /// </summary>
         /// <param name="totalCount"></param>
-        /// <param name="itemsPerIteration"></param>
+        /// <param name="numberOfIterations"></param>
         /// <returns></returns>
         public static List<IndexSpan> SplitIterations(int totalCount, int numberOfIterations)
         {
@@ -148,81 +148,6 @@ namespace ComLib.Collections
             }
 
             return iterationSpans;
-        }
-    }
-
-
-
-
-    /// <summary>
-    /// Collection of parsed values from delimited string.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class ParsableCollection
-    {
-        private string _delimitedValues;
-        private char _delimitingChar = ',';
-        private IDictionary<string, bool> _map;
-
-
-        /// <summary>
-        /// Collection.
-        /// </summary>
-        public ParsableCollection(char delimitingChar)
-        {
-            _map = new Dictionary<string, bool>();
-            _delimitingChar = delimitingChar;
-        }
-
-
-        /// <summary>
-        /// String representing delimited values.
-        /// user1; user2;
-        /// </summary>
-        public string DelimitedValues
-        {
-            get { return _delimitedValues; }
-            set
-            {
-                _delimitedValues = value;
-                Parse();
-            }
-        }
-
-
-        /// <summary>
-        /// Checks whether or not the value is contained in 
-        /// delimited values.
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        public bool Contains(string key)
-        {
-            if (string.IsNullOrEmpty(key)) { return false; }
-
-            string lowerCaseKey = key.ToLower();
-            return _map.ContainsKey(lowerCaseKey);
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private void Parse()
-        {
-            if (string.IsNullOrEmpty(_delimitedValues))
-            {
-                return;
-            }
-
-            _map.Clear();
-
-            string[] tokens = _delimitedValues.Split(_delimitingChar);
-            foreach (string token in tokens)
-            {
-                string lowercaseToken = token.ToLower();
-                _map.Add(lowercaseToken, true);
-            }
         }
     }
 

@@ -42,6 +42,44 @@ namespace ComLib.CodeGeneration
         }
 
 
+        /// <summary>
+        /// Get the names of all the procedures in the stored proc template folder
+        /// </summary>
+        /// <param name="codeTemplatePath"></param>
+        /// <returns></returns>
+        public static List<string> GetProcNames(string codeTemplatePath)
+        {            
+            string[] files = Directory.GetFiles(codeTemplatePath);
+            if (files == null || files.Length == 0)
+                return new List<string>();
+
+            List<FileInfo> fileInfos = new List<FileInfo>();
+            Dictionary<string, string> fileMap = new Dictionary<string, string>();
+
+            files.ForEach(f => fileInfos.Add(new FileInfo(f)));
+
+            StringBuilder buffer = new StringBuilder();
+            List<string> procNames = new List<string>();
+
+            // Get each stored proc and do substitutions.
+            foreach (FileInfo file in fileInfos)
+            {
+                string fileContent = File.ReadAllText(file.FullName);
+
+                // Determine stored proc name.
+                // 01234567890
+                //    cde_ad]
+                string nameCheck = @"CREATE PROCEDURE [dbo].[<%= model.TableName %>_";
+                int ndxProcName = fileContent.IndexOf(nameCheck);
+                ndxProcName = ndxProcName + nameCheck.Length;
+                int nextBracket = fileContent.IndexOf("]", ndxProcName);
+                string procName = fileContent.Substring(ndxProcName, (nextBracket - ndxProcName));
+                procNames.Add(procName);                
+            }
+            return procNames;
+        }
+
+
 
         /// <summary>
         /// Get all the files that are applicable for code-generation for the specified model.

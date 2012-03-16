@@ -16,13 +16,18 @@ using ComLib.Authentication;
 
 namespace ComLib.Application
 {
+    /// <summary>
+    /// Utility class with methods that provide application information.
+    /// </summary>
     public class AppHelper
     {
         /// <summary>
+        /// <para>
         /// Handle possible "meta data" options of the application.
         /// 1. -help
         /// 2. -version
         /// 3. -pause
+        /// </para>
         /// </summary>
         /// <param name="app"></param>
         /// <param name="args"></param>
@@ -31,7 +36,7 @@ namespace ComLib.Application
         {
             BoolMessageItem<Args> result = new BoolMessageItem<Args>(args, true, string.Empty);
 
-            /// Pause the execution of application to allow attaching of debugger.
+            // Pause the execution of application to allow attaching of debugger.
             if (args.IsPause)
             {
                 Console.WriteLine("Paused for debugging ....");
@@ -93,13 +98,19 @@ namespace ComLib.Application
             info["Version"] = app.Version;
             info["Description"] = app.Description;
             buffer.Append("===============================================================" + Environment.NewLine);
-            StringHelpers.DoFixedLengthPrinting(info, 4, (key, val) => buffer.Append(key + " : " + val + Environment.NewLine));
+            StringHelper.DoFixedLengthPrinting(info, 4, (key, val) => buffer.Append(key + " : " + val + Environment.NewLine));
             buffer.Append("===============================================================" + Environment.NewLine);
             string summary = buffer.ToString();
             return summary;
         }
 
 
+        /// <summary>
+        /// Creates a runtime summary for the application.
+        /// </summary>
+        /// <param name="app">Application to get summary for.</param>
+        /// <param name="isStart">True if application is starting.</param>
+        /// <param name="summaryInfo">Dictionary to use when storing runtime summary information.</param>
         public static void BuildAppRunSummary(IApp app, bool isStart, IDictionary summaryInfo)
         {
             if (summaryInfo == null) summaryInfo = new OrderedDictionary();
@@ -134,6 +145,12 @@ namespace ComLib.Application
         }
 
 
+        /// <summary>
+        /// Returns a string with the application summary information..
+        /// </summary>
+        /// <param name="isStart">True if the application is starting.</param>
+        /// <param name="summaryInfo">Dictionary with summary info.</param>
+        /// <returns>String with application summary.</returns>
         public static string GetAppRunSummaryAsString(bool isStart, IDictionary summaryInfo)
         {
             string header = isStart ? "Application Start" : "Application End";            
@@ -144,7 +161,7 @@ namespace ComLib.Application
             // - User             : kishore1\kishore
             buffer.Append("=================================================== " + Environment.NewLine);
             buffer.Append("=========== " + header + " Information ============= " + Environment.NewLine);
-            StringHelpers.DoFixedLengthPrinting(summaryInfo, 4, (key, val) => buffer.Append(" - " + key + " : " + val + Environment.NewLine));
+            StringHelper.DoFixedLengthPrinting(summaryInfo, 4, (key, val) => buffer.Append(" - " + key + " : " + val + Environment.NewLine));
             buffer.Append("=================================================== " + Environment.NewLine);
             buffer.Append("=================================================== " + Environment.NewLine);
             return buffer.ToString();

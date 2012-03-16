@@ -65,9 +65,10 @@ namespace ComLib.Subs
         /// <summary>
         /// Initialize.
         /// </summary>
-        /// <param name="group"></param>
-        /// <param name="func"></param>
-        /// <param name="args"></param>
+        /// <param name="group">Group of substitution.</param>
+        /// <param name="func">Substitution function.</param>
+        /// <param name="isValid">Valid flag.</param>
+        /// <param name="args">Substitution arguments.</param>
         public Substitution(string group, string func, bool isValid, string[] args)
         {
             Groupname = group;

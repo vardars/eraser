@@ -14,14 +14,12 @@ namespace ComLib.NamedQueries
     /// <summary>
     /// Extend the validation with validation of the query's parameters if there are any.
     /// </summary>
-    public partial class NamedQueryValidator : EntityValidator<NamedQuery>
+    public partial class NamedQueryValidator : EntityValidator
     {
         /// <summary>
         /// Validate the query parameters if there are any.
         /// </summary>
-        /// <param name="target"></param>
-        /// <param name="useTarget"></param>
-        /// <param name="results"></param>
+        /// <param name="validationEvent">Validation event to use.</param>
         /// <returns></returns>
         public override bool Validate(ValidationEvent validationEvent)
         {
@@ -47,12 +45,12 @@ namespace ComLib.NamedQueries
     /// <summary>
     /// Extend the named query by adding parameters using a structure rather than string.
     /// </summary>
-    public partial class NamedQuery : DomainObject<NamedQuery>
+    public partial class NamedQuery : ActiveRecordBaseEntity<NamedQuery>
     {
         /// <summary>
         /// Add query parameters.
         /// </summary>
-        /// <param name="list"></param>
+        /// <param name="queryParams">List of query parameters.</param>
         public void AddParameters(List<NamedQueryParam> queryParams)
         {
             string allParams = string.Empty;
@@ -70,7 +68,7 @@ namespace ComLib.NamedQueries
         /// <summary>
         /// Add query parameters.
         /// </summary>
-        /// <param name="list"></param>
+        /// <param name="queryParams">List of query parameters.</param>
         public void AddParameters(List<string> queryParams)
         {
             string allParams = string.Empty;
@@ -130,7 +128,7 @@ namespace ComLib.NamedQueries
         /// <summary>
         /// Return string representation.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>String representation of this instance.</returns>
         public override string ToString()
         {
             //@businessDate:date:1:${today};@username:string:1:''
@@ -152,6 +150,7 @@ namespace ComLib.NamedQueries
         /// <summary>
         /// Regular expression for the parameter definition.
         /// </summary>
+        // (?<name>@[\w_]+):(?<type>[\w]+):(?<required>[01]{1}):(?<defaultValue>\$?\{?[\w_'\"]+\}?);*
         public const string ParamDefinitionRegEx = @"(?<name>@[\w_]+):(?<type>[\w]+):(?<required>[01]{1}):(?<defaultValue>\$?\{?[\w_'" + "\"" + @"]+\}?);*";
 
 
@@ -198,7 +197,7 @@ namespace ComLib.NamedQueries
     /// <summary>
     /// Validator class for the named query parameters.
     /// </summary>
-    public class NamedQueryParamsValidator : EntityValidator<NamedQuery>
+    public class NamedQueryParamsValidator : EntityValidator
     {
         private static IDictionary<string, Type> _validTypes;
         private IList<NamedQueryParam> _namedQueryParams;
@@ -221,7 +220,7 @@ namespace ComLib.NamedQueries
         /// <summary>
         /// initialize list of parameters.
         /// </summary>
-        /// <param name="namedQueryParams"></param>
+        /// <param name="namedQueryParams">List of parameters.</param>
         public NamedQueryParamsValidator(IList<NamedQueryParam> namedQueryParams)
         {
             _namedQueryParams = namedQueryParams;
@@ -231,7 +230,7 @@ namespace ComLib.NamedQueries
         /// <summary>
         /// Validate all the params and collect all the errors.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if the validation passed.</returns>
         protected override bool ValidateInternal(ValidationEvent validationEvent)
         {
             object target = validationEvent.Target;
@@ -263,8 +262,8 @@ namespace ComLib.NamedQueries
         /// 2. Check the supplied value against the type.
         /// 3. supplied value is not null.
         /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
+        /// <param name="param">Query parameter.</param>
+        /// <returns>Result of validation.</returns>
         protected BoolMessage ValidateParam(NamedQueryParam param)
         {
             // Check type.

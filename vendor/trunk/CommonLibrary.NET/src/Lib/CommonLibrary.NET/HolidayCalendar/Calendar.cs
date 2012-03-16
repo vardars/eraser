@@ -20,7 +20,7 @@ namespace ComLib.Calendars
 {    
 
     /// <summary>
-    /// Holiday calendar service.
+    /// Provides static access to all the <see cref="ICalendar"/> functionality using the Holiday calendar service initialized.
     /// </summary>
     public class Calendar
     {
@@ -128,7 +128,7 @@ namespace ComLib.Calendars
         /// <summary>
         /// Get the next business date after the date supplied.
         /// </summary>
-        /// <param name="afterDate"></param>
+        /// <param name="date"></param>
         /// <returns></returns>
         public static DateTime NextBusinessDate(DateTime date)
         {

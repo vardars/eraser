@@ -21,7 +21,7 @@ namespace ComLib.Authentication
 {
 
     /// <summary>
-    /// Class for security related functionality.
+    /// Interface for Authentication.
     /// </summary>
     public interface IAuth
     {
@@ -37,6 +37,12 @@ namespace ComLib.Authentication
         /// </summary>
         /// <returns></returns>
         bool IsGuest();
+
+
+        /// <summary>
+        /// User's Id - If applicable.
+        /// </summary>
+        int UserId { get; }
 
 
         /// <summary>
@@ -83,6 +89,23 @@ namespace ComLib.Authentication
         bool IsAdmin();
 
 
+        /// <summary>
+        /// Determine if the logged in user is the same as the username supplied.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        bool IsUser(string username);
+
+
+        /// <summary>
+        /// Returns true if the logged in user is the same as the username supplied,
+        /// or if the logged in user is an admin.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        bool IsUserOrAdmin(string username);
+
+     
         /// <summary>
         /// Sign the user in.
         /// </summary>

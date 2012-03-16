@@ -28,17 +28,32 @@ namespace ComLib
         /// <summary>
         /// Get a named service  associated with the type.
         /// </summary>
-        /// <param name="t"></param>
-        /// <param name="serviceName"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="objectName"></param>
         /// <returns></returns>
         T GetObject<T>(string objectName);
 
 
         /// <summary>
+        /// Get object using just the type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        T GetObject<T>();
+
+
+        /// <summary>
+        /// Determine if the container contains the specified type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        bool Contains<T>();
+
+
+        /// <summary>
         /// Add a named service.
         /// </summary>
-        /// <param name="t"></param>
-        /// <param name="serviceName"></param>
+        /// <param name="objectName"></param>
         /// <param name="obj"></param>
         void AddObject(string objectName, object obj);
     }

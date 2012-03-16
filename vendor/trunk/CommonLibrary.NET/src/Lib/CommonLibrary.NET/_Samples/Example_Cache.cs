@@ -6,48 +6,43 @@ using System.IO;
 using System.Data;
 using System.Data.Common;
 using System.Security.Cryptography;
+
+//<doc:using>
 using ComLib;
-using ComLib.Application;
 using ComLib.Caching;
-using ComLib.Entities;
-using ComLib.Membership;
+//</doc:using>
+using ComLib.Application;
 
 
 namespace ComLib.Samples
 {
     /// <summary>
-    /// Example of ActiveRecord Initialization/Configuration.
+    /// Example of Cache component.
     /// </summary>
     public class Example_Cache : App
     {
-        /// <summary>
-        /// Initialize.
-        /// </summary>
-        /// <param name="args"></param>
-        public Example_Cache()
-        {
-        }
-
-
-        /// <summary>
+		/// <summary>
         /// Run the application.
         /// </summary>
         public override BoolMessageItem Execute()
         {
             // Using default ASP.NET Cache.
-            
-            Cacher.Insert("my_site", "http://www.knowledgedrink.com");
+            //<doc:example>        
+            Cacher.Insert("my_site", "http://www.ufc.com");
             Cacher.Insert("my_show", "ufc: ultimate fighting");
             Cacher.Insert("my_place", "bahamas", 360, true);
+            Cacher.Get<string>("my_framework", 30, () => "commonlibrary.net");
 
             Console.WriteLine("====================================================");
             Console.WriteLine("CACHE ");
             Console.WriteLine("Obtained from cache : '" + Cacher.Get<string>("my_site") + "'");
             Console.WriteLine("Contains cache for 'my_show' : " + Cacher.Contains("my_show"));
             Console.WriteLine(Environment.NewLine);
-            return BoolMessageItem.True;
-        }
-
+			
+			//</doc:example>
+			return BoolMessageItem.True;
+        }		
+		
 
         /// <summary>
         /// Clear the cache on shutdown of the application.

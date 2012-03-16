@@ -22,22 +22,33 @@ using System.Xml;
 using ComLib.LocationSupport;
 
 
-namespace ComLib.GeoMap
+namespace ComLib.Maps
 {
 
     /// <summary>
-    /// http://maps.yahoo.com/#mvt=m&q1=100%20prox%20ave.%20bronx%20ny%2011225
-    /// http://maps.yahoo.com/#mvt=m&q1=105-88%206th%20ave.%20Queens%20NY%2012375
+    /// This class is used to create links for Yahoo maps.
+    /// <a href="http://maps.yahoo.com/#mvt=m&amp;q1=100%20prox%20ave.%20bronx%20ny%2011225"></a>
+    /// <a href="http://maps.yahoo.com/#mvt=m&amp;q1=105-88%206th%20ave.%20Queens%20NY%2012375"></a>
     /// </summary>
     public class YahooMapUrlBuilder : IMapUrlBuilder
     {
         private string _urlPrefix;
 
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GoogleMapUrlBuilder"/> class.
+        /// </summary>
+        public YahooMapUrlBuilder()
+        {
+            _urlPrefix = "http://maps.yahoo.com/#mvt=m&amp;q1=";
+        }
+
+
         #region IMapUrlBuilder Members
 
         /// <summary>
         /// Set the url prefix:
-        /// http://maps.yahoo.com/#mvt=m&q1=
+        /// <a href="http://maps.yahoo.com/#mvt=m&amp;q1="></a>
         /// </summary>
         public string UrlPrefix
         {
@@ -52,8 +63,8 @@ namespace ComLib.GeoMap
         /// Address : 439 calhoun ave. bronx, ny 10465
         /// ="439+calhoun+ave.+bronx,+ny+10465"
         /// </summary>
-        /// <param name="address"></param>
-        /// <returns></returns>
+        /// <param name="address">Address to location.</param>
+        /// <returns>Url with mapped address.</returns>
         public string Build(Address address)
         {
             StringBuilder buffer = new StringBuilder();

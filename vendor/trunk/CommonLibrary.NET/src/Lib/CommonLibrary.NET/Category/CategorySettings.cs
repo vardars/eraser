@@ -17,7 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ComLib.Modules;
+//using ComLib.Modules;
 
 
 namespace ComLib.Categories
@@ -25,7 +25,7 @@ namespace ComLib.Categories
     /// <summary>
     /// Settings for the comments module.
     /// </summary>
-    public class CategorySettings : ModuleSettings
+    public class CategorySettings //: ModuleSettings
     {
         /// <summary>
         /// Whether or not the show the add/collapse image for the parent categories.
@@ -63,6 +63,9 @@ namespace ComLib.Categories
         public string LinkAction { get; set; }
 
 
+        /// <summary>
+        /// Get/set the number of categories to auto expand.
+        /// </summary>
         public int NumberOfCategoriesToAutoExpand { get; set; }
 
 

@@ -41,21 +41,22 @@ namespace ComLib.Notifications
         /// <summary>
         /// Initialize
         /// </summary>
-        /// <param name="config"></param>
-        /// <param name="emailService"></param>
-        public NotificationQueueInMemory(NotificationSettings config, IEmailService emailService, NotificationDefinitions messageDefs)            
+        /// <param name="config">Instance of notification settings.</param>
+        /// <param name="emailService">Instance of email service.</param>
+        /// <param name="messageDefs">Instance of notification definitions.</param>
+        public NotificationQueueInMemory(NotificationSettings config, IEmailService emailService, NotificationDefinitions messageDefs = null)            
         {
             _settings = config;
             _emailService = emailService;
             _notificationProcessor = new NotificationItemProcessor(config, _emailService, messageDefs);
-            NumberToProcessPerDequeue = _settings.NumberOfMessagesToProcessAtOnce;
+            NumberToProcessPerDequeue = _settings.NumberOfMessagesToProcessAtOnce;            
         }
 
 
         /// <summary>
         /// Override the process method to handle notification messages.
         /// </summary>
-        /// <param name="itemsToProcess"></param>
+        /// <param name="itemsToProcess">List of notification messages to process.</param>
         protected override void Process(IList<NotificationMessage> itemsToProcess)
         {            
             // Now send each message.
@@ -87,9 +88,10 @@ namespace ComLib.Notifications
         /// <summary>
         /// Notification processor.
         /// </summary>
-        /// <param name="config"></param>
-        /// <param name="emailService"></param>
-        public NotificationItemProcessor(NotificationSettings config, IEmailService emailService, NotificationDefinitions messageDefs)
+        /// <param name="config">Instance of notification settings.</param>
+        /// <param name="emailService">Instance of email service.</param>
+        /// <param name="messageDefs">Instance of notification definitions.</param>
+        public NotificationItemProcessor(NotificationSettings config, IEmailService emailService, NotificationDefinitions messageDefs = null)
         {
             _settings = config;
             _emailService = emailService;
@@ -101,7 +103,7 @@ namespace ComLib.Notifications
         /// Processes the notification message. Either just sends the data or transforms the
         /// data and then sends it.
         /// </summary>
-        /// <param name="currentMessage"></param>
+        /// <param name="currentMessage">Notification message to process.</param>
         public void Process(NotificationMessage currentMessage)
         {
             try
@@ -109,16 +111,13 @@ namespace ComLib.Notifications
                 string messageBody = string.Empty;
 
                 // Currently the templates are hardcoded to get the files from this assembly.
-                NotificationDef def = _messageDefs[currentMessage.MessageTemplateId];
-                if (def.IsAssemblyEmbedded && def.AssemblyName == "CommonLibrary")
-                {
-                    // Now get and replace values.                    
-                    messageBody = NotificationUtils.GetInternalNotificationTemplate(def.FileName);
-                    messageBody = StringHelpers.Substitute(currentMessage.Values, messageBody);
+                messageBody = GetMessageDef(currentMessage.MessageTemplateId);               
+                messageBody = StringHelper.Substitute(currentMessage.Values, messageBody);
                 
-                    // Now replace using the global notification substitution settings.
-                    messageBody = StringHelpers.Substitute(_settings.Settings, messageBody);
-                }
+                // Now replace using the global notification substitution settings.
+                messageBody = StringHelper.Substitute(_settings.Settings, messageBody);
+                currentMessage.Body = messageBody;
+
 
                 /*
                 if (currentMessage.PerformTransform)
@@ -170,11 +169,42 @@ namespace ComLib.Notifications
         /// <summary>
         /// Simply used for generating unique filenames for testing purposes.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Next id.</returns>
         private int GetNextId()
         {
             Interlocked.Increment(ref _debugOutputId);
             return _debugOutputId;
+        }
+
+
+        private string GetMessageDef(string templateName)
+        {
+            NotificationDef def = null;
+            if (_messageDefs != null)
+                def = _messageDefs[templateName];
+
+            string contents = string.Empty;
+            // Can use configurable template in folder.
+            if (def != null )
+            {
+                bool useEmbeddedFile = false;
+                if (!string.IsNullOrEmpty(_settings.TemplateFolderPath))
+                {
+                    string templatefilePath = Path.Combine(_settings.TemplateFolderPath, templateName);
+                    if (File.Exists(templatefilePath))
+                    {
+                        contents = File.ReadAllText(templatefilePath);
+                    }
+                    else
+                        useEmbeddedFile = true;
+                }
+                if (useEmbeddedFile)
+                {                    
+                    // Now get and replace values.                    
+                    contents = NotificationUtils.GetInternalNotificationTemplate(def.FileName);
+                }
+            }
+            return contents;
         }
 
 

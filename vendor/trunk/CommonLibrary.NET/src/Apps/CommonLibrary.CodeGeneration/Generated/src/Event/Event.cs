@@ -20,15 +20,35 @@ using System.Text;
 
 using ComLib.Entities;
 using ComLib.LocationSupport;
+using ComLib.ValidationSupport;
 
 
-namespace CommonLibrary.WebModules.Events
+
+namespace ComLib.WebModules.Events
 {
     /// <summary>
     /// Event entity.
     /// </summary>
-    public partial class Event : DomainObject<Event>
+    public partial class Event : ActiveRecordBaseEntity<Event>, IEntity
     {
+        /// <summary>
+        /// Creates a new instance of BlogPost and 
+        /// initializes it with a validator and settings.
+        /// </summary>
+        /// <returns></returns>
+        public static Event New()
+        {
+            Event entity = new Event(); 
+            return entity;
+        }       
+
+
+        		/// <summary>
+		/// Get/Set UserId
+		/// </summary>
+		public int UserId { get; set; }
+
+
 		/// <summary>
 		/// Get/Set Title
 		/// </summary>
@@ -95,21 +115,10 @@ namespace CommonLibrary.WebModules.Events
 		public string Keywords { get; set; }
 
 
-		private Address _Address = new Address();
-		/// <summary>
-		/// Get/Set Address
-		/// </summary>
-		public Address Address
-		 { 
-		 get { return _Address;  }
-		 set { _Address = value; }
-		 }
-
-
 		/// <summary>
 		/// Get/Set AverageRating
 		/// </summary>
-		public double AverageRating { get; set; }
+		public int AverageRating { get; set; }
 
 
 		/// <summary>
@@ -136,6 +145,48 @@ namespace CommonLibrary.WebModules.Events
 		public int TotalAbuseReports { get; set; }
 
 
+		private Address _address;
+		/// <summary>
+		/// Get/Set Address
+		/// </summary>
+		public Address Address
+		 { 
+		 get { return _address;  }
+		 set { _address = value; }
+		 }
 
+
+
+
+
+        protected virtual IEntityValidator GetValidatorInternal()
+        {
+            var val = new EntityValidator((validationEvent) =>
+            {
+                int initialErrorCount = validationEvent.Results.Count;
+                IValidationResults results = validationEvent.Results;            
+                Event entity = (Event)validationEvent.Target;
+				Validation.IsNumericWithinRange(entity.UserId, false, false, -1, -1, results, "UserId");
+				Validation.IsStringLengthMatch(entity.Title, false, true, true, 2, 150, results, "Title" );
+				Validation.IsStringLengthMatch(entity.Summary, true, false, true, -1, 200, results, "Summary" );
+				Validation.IsStringLengthMatch(entity.Description, false, false, false, -1, -1, results, "Description" );
+				Validation.IsDateWithinRange(entity.StartDate, false, false, DateTime.MinValue, DateTime.MaxValue, results, "StartDate" );
+				Validation.IsDateWithinRange(entity.EndDate, false, false, DateTime.MinValue, DateTime.MaxValue, results, "EndDate" );
+				Validation.IsNumericWithinRange(entity.StartTime, false, false, -1, -1, results, "StartTime");
+				Validation.IsNumericWithinRange(entity.EndTime, false, false, -1, -1, results, "EndTime");
+				Validation.IsStringRegExMatch(entity.Email, false, @"RegexPatterns.Email", results, "Email" );
+				Validation.IsStringRegExMatch(entity.Phone, false, @"RegexPatterns.PhoneUS", results, "Phone" );
+				Validation.IsStringRegExMatch(entity.Url, false, @"RegexPatterns.Url", results, "Url" );
+				Validation.IsStringRegExMatch(entity.Keywords, false, @"RegexPatterns.Url", results, "Keywords" );
+				Validation.IsNumericWithinRange(entity.AverageRating, false, false, -1, -1, results, "AverageRating");
+				Validation.IsNumericWithinRange(entity.TotalLiked, false, false, -1, -1, results, "TotalLiked");
+				Validation.IsNumericWithinRange(entity.TotalDisLiked, false, false, -1, -1, results, "TotalDisLiked");
+				Validation.IsNumericWithinRange(entity.TotalBookMarked, false, false, -1, -1, results, "TotalBookMarked");
+				Validation.IsNumericWithinRange(entity.TotalAbuseReports, false, false, -1, -1, results, "TotalAbuseReports");
+
+                return initialErrorCount == validationEvent.Results.Count;
+            });
+            return val;
+        }
     }
 }

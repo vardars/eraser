@@ -39,7 +39,7 @@ namespace CommonLibrary.WebModules.Events
         }
 
 
-        public EventService(IEntityRepository<Event> repository, EventValidator validator,
+        public EventService(IRepository<Event> repository, EventValidator validator,
                 EventSettings settings ) : base(repository, validator, settings)
         {
         }
@@ -49,7 +49,7 @@ namespace CommonLibrary.WebModules.Events
         /// Initialize model with only the repository.
         /// </summary>
         /// <param name="repository">Repository for entity.</param>
-        public EventService(IEntityRepository<Event> repository) : base(repository, null, null)
+        public EventService(IRepository<Event> repository) : base(repository, null, null)
         {
         }
 
@@ -59,7 +59,7 @@ namespace CommonLibrary.WebModules.Events
         /// </summary>
         /// <param name="repository">Repository</param>
         /// <param name="settings">Settings</param>
-        public EventService(IEntityRepository<Event> repository, IEntitySettings<Event> settings)
+        public EventService(IRepository<Event> repository, IEntitySettings settings)
             : base(repository, null, settings)
         {
         }
@@ -71,8 +71,8 @@ namespace CommonLibrary.WebModules.Events
         /// <param name="repository">Repository for the model.</param>
         /// <param name="validator">Validator for model.</param>
         /// <param name="settings">Settings for the model.</param>
-        public EventService(IEntityRepository<Event> repository, IEntityValidator<Event> validator,
-                IEntitySettings<Event> settings ) : base(repository, validator, settings)
+        public EventService(IRepository<Event> repository, IEntityValidator validator,
+                IEntitySettings settings ) : base(repository, validator, settings)
         {
         }
     }
@@ -93,7 +93,7 @@ namespace CommonLibrary.WebModules.Events
     /// Settings class for Event.
     /// </summary>
     /// <typeparam name="?"></typeparam>
-    public partial class EventSettings : EntitySettings<Event>, IEntitySettings<Event>
+    public partial class EventSettings : EntitySettings<Event>, IEntitySettings
     {
         public EventSettings()
         {            

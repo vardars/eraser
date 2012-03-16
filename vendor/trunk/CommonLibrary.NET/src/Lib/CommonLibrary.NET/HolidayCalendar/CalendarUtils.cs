@@ -19,7 +19,7 @@ using System.Text;
 namespace ComLib.Calendars
 {
     /// <summary>
-    /// Utility class for holidays.
+    /// Helper class for holidays.
     /// </summary>
     public class CalendarUtils
     {

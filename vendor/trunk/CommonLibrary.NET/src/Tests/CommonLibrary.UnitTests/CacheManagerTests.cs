@@ -119,7 +119,7 @@ namespace CommonLibrary.Tests
 
             Assert.IsTrue(keysList.ContainsKey("kishore"));
             Assert.IsTrue(keysList.ContainsKey("1"));
-            Assert.IsTrue(keysList.ContainsKey("CommonLibrary.IndexSpan"));
+            Assert.IsTrue(keysList.ContainsKey("ComLib.Collections.IndexSpan"));
         }
 
 
@@ -131,9 +131,8 @@ namespace CommonLibrary.Tests
 
             cache.Insert("kishore", "yeahbaby");
             cache.Insert("1", new IndexSpan(1, 10));
-
-            CacheManager cacheManager = new CacheManager(cache);
-            IList<CacheItemDescriptor> descriptors = cacheManager.GetDescriptors();
+            
+            IList<CacheItemDescriptor> descriptors = cache.GetDescriptors();
 
             IDictionary<string, CacheItemDescriptor> descriptorMap = new Dictionary<string, CacheItemDescriptor>();
             foreach (CacheItemDescriptor descriptor in descriptors)
@@ -143,7 +142,7 @@ namespace CommonLibrary.Tests
             Assert.IsTrue(descriptorMap.ContainsKey("kishore"));
             Assert.IsTrue(descriptorMap.ContainsKey("1"));
             Assert.AreEqual("System.String", descriptorMap["kishore"].ItemType);
-            Assert.AreEqual("CommonLibrary.IndexSpan", descriptorMap["1"].ItemType);
+            Assert.AreEqual("ComLib.Collections.IndexSpan", descriptorMap["1"].ItemType);
         }
     }
 }

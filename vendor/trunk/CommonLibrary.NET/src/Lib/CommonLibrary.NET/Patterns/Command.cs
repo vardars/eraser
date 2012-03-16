@@ -43,8 +43,8 @@ namespace ComLib.Patterns
         /// <summary>
         /// Execute with contextual information and return bool/message.
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
+        /// <param name="context">Action context.</param>
+        /// <returns>Result of the operation.</returns>
         BoolMessageItem Execute(IActionContext context);
     }
 }

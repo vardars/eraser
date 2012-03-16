@@ -21,13 +21,16 @@ using ComLib.Locale;
 using ComLib.ValidationSupport;
 
 
-namespace ComLib.Errors
+namespace ComLib.Exceptions
 {
     /// <summary>
     /// Localized error manager.
     /// </summary>
     public class ErrorManagerBase : IErrorManager
     {
+        /// <summary>
+        /// Error manager name.
+        /// </summary>
         protected string _name = string.Empty;
 
 
@@ -41,9 +44,8 @@ namespace ComLib.Errors
         /// <summary>
         /// Handles the specified error.
         /// </summary>
-        /// <param name="message">The message.</param>
+        /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
-        /// <param name="arguments">The arguments.</param>
         public virtual void Handle(object error, Exception exception)
         {
             Handle(error, exception, null, null);
@@ -67,10 +69,10 @@ namespace ComLib.Errors
         /// </summary>
         /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
-        /// <param name="errorResults">The error results.</param>
-        public virtual void Handle(object error, Exception exception, IStatusResults errorResults)
+        /// <param name="errors">The error results.</param>
+        public virtual void Handle(object error, Exception exception, IErrors errors)
         {
-            Handle(error, exception, errorResults, null);
+            Handle(error, exception, errors, null);
         }
 
 
@@ -79,11 +81,11 @@ namespace ComLib.Errors
         /// </summary>
         /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
-        /// <param name="errorResults">The error results.</param>
+        /// <param name="errors">The error results.</param>
         /// <param name="arguments">The arguments.</param>
-        public virtual void Handle(object error, Exception exception, IStatusResults errorResults, object[] arguments)
+        public virtual void Handle(object error, Exception exception, IErrors errors, object[] arguments)
         {            
-            InternalHandle(error, exception, errorResults, arguments);
+            InternalHandle(error, exception, errors, arguments);
         }
 
 
@@ -92,18 +94,17 @@ namespace ComLib.Errors
         /// </summary>
         /// <param name="error"></param>
         /// <param name="exception"></param>
-        /// <param name="handler"></param>
-        /// <param name="errorResults"></param>
+        /// <param name="errors"></param>
         /// <param name="arguments"></param>
-        protected virtual void InternalHandle(object error, Exception exception, IStatusResults errorResults, object[] arguments)
+        protected virtual void InternalHandle(object error, Exception exception, IErrors errors, object[] arguments)
         {
             string fullError = error == null ? string.Empty : error.ToString();
 
             // Add error to list and log.
-            if (errorResults != null)
+            if (errors != null)
             {
-                errorResults.Add(fullError);
-                fullError = ValidationUtils.BuildSingleErrorMessage(errorResults, Environment.NewLine);
+                errors.Add(fullError);
+                fullError = errors.Message();
             }
 
             Logger.Error(fullError, exception, arguments);

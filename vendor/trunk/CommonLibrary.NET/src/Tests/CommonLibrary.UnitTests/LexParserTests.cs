@@ -7,55 +7,10 @@ using System.Resources;
 using NUnit.Framework;
 
 
-using ComLib.Parsing;
+using ComLib;
 
 namespace CommonLibrary.Tests
 {
-
-    [TestFixture]
-    public class TokenReaderTester
-    {
-        public ITokenReader Create()
-        {
-            LexSettings settings = new LexSettings();
-            ITokenReader reader = new TokenReader("abcd1234'	a \\b   k", "\\", settings.QuotesChars, settings.WhiteSpaceChars, settings.EolChars);
-            return reader;
-        }
-
-
-        [Test]
-        public void CanParse()
-        {
-            ITokenReader reader = Create();
-            string current = reader.ReadChar();
-            Assert.AreEqual("a", current);
-            Assert.AreEqual("b", reader.PeekChar());
-            Assert.AreEqual("bc", reader.PeekChars(2));
-            Assert.AreEqual("bcd", reader.ReadChars(3));
-            Assert.AreEqual("1234", reader.ReadChars(4));
-            reader.ReadChar();
-            Assert.IsTrue(reader.IsToken());
-            Assert.AreEqual("4", reader.PreviousChar);
-            reader.ReadBackChar();
-            Assert.AreEqual("4", reader.CurrentChar);
-            reader.ReadChar();
-            reader.ReadChar();
-            Assert.IsTrue(reader.IsWhiteSpace());
-            reader.ReadChars(2);
-            Assert.IsTrue(reader.IsWhiteSpace());
-            reader.ReadChar();
-            Assert.IsTrue(reader.IsEscape());
-            reader.ConsumeWhiteSpace();
-            Assert.AreEqual(reader.CurrentChar, "\\");
-            reader.ReadChar();
-            Assert.AreEqual(reader.CurrentChar, "b");
-            reader.ConsumeWhiteSpace();
-            Assert.AreEqual(reader.CurrentChar, "b");
-            reader.ConsumeWhiteSpace(true);
-            Assert.AreEqual(reader.CurrentChar, "k");
-        }
-    }
-
 
     [TestFixture]
     public class LexArgsTests
@@ -102,7 +57,7 @@ namespace CommonLibrary.Tests
         }
 
 
-        [Test]
+        [Ignore]
         public void CanParseArgumentsWithNewLine()
         {
             IDictionary<string, string> args = LexArgs.Parse(" appid=knowledgedrink QA " + Environment.NewLine);

@@ -25,7 +25,15 @@ namespace ComLib.Cryptography
     /// </summary>
     public class CryptoHash : ICrypto
 	{
+        /// <summary>
+        /// Settings for encryption
+        /// </summary>
         protected CryptoConfig _encryptionOptions;
+
+
+        /// <summary>
+        /// Hashing algorithm
+        /// </summary>
         protected HashAlgorithm _algorithm;
 
 
@@ -41,9 +49,10 @@ namespace ComLib.Cryptography
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SymmetricCryptoService"/> class.
+        /// Initializes a new instance of this class.
         /// </summary>
-        /// <param name="options">The options.</param>
+        /// <param name="key"></param>
+        /// <param name="algorithm"></param>
         public CryptoHash(string key, HashAlgorithm algorithm)
         {
             _encryptionOptions = new CryptoConfig(true, key);
@@ -52,9 +61,10 @@ namespace ComLib.Cryptography
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SymmetricCryptoService"/> class.
+        /// Initializes a new instance of this class.
         /// </summary>
         /// <param name="options">The options.</param>
+        /// <param name="algorithm"></param>
         public CryptoHash(CryptoConfig options, HashAlgorithm algorithm)
         {
             _encryptionOptions = options;
@@ -76,7 +86,7 @@ namespace ComLib.Cryptography
         /// <summary>
         /// Set the creator for the algorithm.
         /// </summary>
-        /// <param name="algorithmCreator"></param>
+        /// <param name="algorithm"></param>
         public void SetAlgorithm(HashAlgorithm algorithm)
         {
             _algorithm = algorithm;
@@ -112,8 +122,8 @@ namespace ComLib.Cryptography
         /// <summary>
         /// Determine if encrypted text can be matched to unencrypted text.
         /// </summary>
-        /// <param name="text1"></param>
-        /// <param name="text2"></param>
+        /// <param name="encrypted"></param>
+        /// <param name="plainText"></param>
         /// <returns></returns>
         public bool IsMatch(string encrypted, string plainText)
         {

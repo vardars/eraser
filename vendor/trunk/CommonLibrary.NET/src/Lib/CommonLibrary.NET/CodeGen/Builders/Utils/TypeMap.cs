@@ -9,15 +9,48 @@ using ComLib.Models;
 
 namespace ComLib.CodeGeneration
 {
+    /// <summary>
+    /// Class to encapsulate a code file.
+    /// </summary>
     public class CodeFile
     {
+        /// <summary>
+        /// Name of file.
+        /// </summary>
         public string Name;
+
+
+        /// <summary>
+        /// File information.
+        /// </summary>
         public FileInfo File;
+
+
+        /// <summary>
+        /// Qualified (alternate) name for file.
+        /// </summary>
         public string QualifiedName;
+
+
+        /// <summary>
+        /// Folder where file resides.
+        /// </summary>
         public string Folder;
+
+
+        /// <summary>
+        /// Output folder.
+        /// </summary>
         public string OutputFolder;
 
 
+        /// <summary>
+        /// Default class constructor.
+        /// </summary>
+        /// <param name="name">Name of file.</param>
+        /// <param name="file">File information.</param>
+        /// <param name="folder">Name of folder.</param>
+        /// <param name="newName">Qualified name.</param>
         public CodeFile(string name, FileInfo file, string folder, string newName)
         {
             Name = name;
@@ -28,12 +61,17 @@ namespace ComLib.CodeGeneration
     }
 
 
+    /// <summary>
+    /// This class contains utility methods for code generation.
+    /// </summary>
     public class CodeBuilderUtils
     {
         /// <summary>
         /// Get the list of files to process.
         /// </summary>
         /// <param name="ctx"></param>
+        /// <param name="inputPattern"></param>
+        /// <param name="codeTemplateFolder"></param>
         /// <returns></returns>
         public static Dictionary<string, CodeFile> GetFiles(ModelContext ctx, string inputPattern, string codeTemplateFolder)
         {
@@ -67,11 +105,11 @@ namespace ComLib.CodeGeneration
 
 
         /// <summary>
-        /// 
+        /// Writes out generated files.
         /// </summary>
-        /// <param name="files"></param>
-        /// <param name="subs"></param>
-        /// <param name="p"></param>
+        /// <param name="templateFiles">Dictionary of files to generate.</param>
+        /// <param name="subs">List of key/value pairs of substitutions.</param>
+        /// <param name="codePath"></param>
         public static void WriteFiles(Dictionary<string, CodeFile> templateFiles, List<KeyValuePair<string, string>> subs, string codePath)
         {
             // Make the substitutions in each of the template files.
@@ -107,6 +145,9 @@ namespace ComLib.CodeGeneration
     /// </summary>
     public class TypeMap
     {
+        /// <summary>
+        /// Dictionary with static type mappings.
+        /// </summary>
         protected static IDictionary<string, IDictionary<string, object>> _typeMaps = new Dictionary<string, IDictionary<string, object>>();
 
 
@@ -114,6 +155,12 @@ namespace ComLib.CodeGeneration
         /// Key to use for getting sqlserver type map for .net types.
         /// </summary>
         public const string SqlServer = "sqlserver";
+
+
+        /// <summary>
+        /// Key to use for getting sqlclient type map.
+        /// </summary>
+        public const string SqlClient = "sqlclient";
 
 
         /// <summary>
@@ -161,6 +208,7 @@ namespace ComLib.CodeGeneration
             Dictionary<string, object> sqlServerTypes = new Dictionary<string, object>();
             sqlServerTypes[typeof(string).Name] = "nvarchar";
             sqlServerTypes[typeof(ComLib.Models.StringClob).Name] = "ntext";
+            sqlServerTypes[typeof(ComLib.Models.Image).Name] = "image";
             sqlServerTypes[typeof(DateTime).Name] = "datetime";
             sqlServerTypes[typeof(double).Name] = "decimal";
             sqlServerTypes[typeof(int).Name] = "int";
@@ -168,7 +216,21 @@ namespace ComLib.CodeGeneration
             sqlServerTypes[typeof(long).Name] = "bigint";
             sqlServerTypes[typeof(float).Name] = "float";
             sqlServerTypes[typeof(bool).Name] = "bit";
+            
             _typeMaps[SqlServer] = sqlServerTypes;
+
+            Dictionary<string, object> sqlClientTypes = new Dictionary<string, object>();
+            sqlClientTypes[typeof(string).Name] = System.Data.SqlDbType.NVarChar;
+            sqlClientTypes[typeof(ComLib.Models.StringClob).Name] = System.Data.SqlDbType.NText;
+            sqlClientTypes[typeof(ComLib.Models.Image).Name] = System.Data.SqlDbType.Image;
+            sqlClientTypes[typeof(DateTime).Name] = System.Data.SqlDbType.DateTime; 
+            sqlClientTypes[typeof(double).Name] = System.Data.SqlDbType.Decimal;
+            sqlClientTypes[typeof(int).Name] = System.Data.SqlDbType.Int;
+            sqlClientTypes[typeof(sbyte).Name] = System.Data.SqlDbType.SmallInt;
+            sqlClientTypes[typeof(long).Name] = System.Data.SqlDbType.BigInt;
+            sqlClientTypes[typeof(float).Name] = System.Data.SqlDbType.Float;
+            sqlClientTypes[typeof(bool).Name] = System.Data.SqlDbType.Bit;
+            _typeMaps[SqlClient] = sqlClientTypes;
 
             // .NET formal names to c# short names.
             Dictionary<string, object> netTypes = new Dictionary<string, object>();
@@ -181,6 +243,7 @@ namespace ComLib.CodeGeneration
             netTypes.Add(typeof(double).Name, "double");
             netTypes.Add(typeof(DateTime).Name, "DateTime");
             netTypes.Add(typeof(ComLib.Models.StringClob).Name, "string");
+            netTypes.Add(typeof(ComLib.Models.Image).Name, "byte[]");
             _typeMaps[NetFormatToCSharp] = netTypes;
 
             // .NET formal full names to Types.
@@ -193,6 +256,7 @@ namespace ComLib.CodeGeneration
             netFullNamesToTypes.Add(typeof(double).FullName, typeof(double));
             netFullNamesToTypes.Add(typeof(DateTime).FullName, typeof(DateTime));
             netFullNamesToTypes.Add(typeof(ComLib.Models.StringClob).FullName, typeof(ComLib.Models.StringClob));
+            netFullNamesToTypes.Add(typeof(ComLib.Models.Image).FullName, typeof(ComLib.Models.Image));
             _typeMaps[NetFormatToCSharpType] = netFullNamesToTypes;
         }
 

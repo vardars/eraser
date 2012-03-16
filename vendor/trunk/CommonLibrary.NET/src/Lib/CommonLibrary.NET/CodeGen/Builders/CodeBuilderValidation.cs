@@ -39,15 +39,18 @@ namespace ComLib.CodeGeneration
         /// <summary>
         /// Build the properties.
         /// </summary>
+        /// <param name="ctx"></param>
         /// <param name="model"></param>
         /// <returns></returns>
         public string BuildValidationForModel(ModelContext ctx, Model model)
         {           
             StringBuilder buffer = new StringBuilder();
             string conversionLine = string.Format("{0} entity = ({1})validationEvent.Target;", model.Name, model.Name);
+            //buffer.Append("var val = new Validator( (valEvent) =>" + Environment.NewLine);
+            //buffer.Append("{" + Environment.NewLine);
+            IncrementIndent(4);
             buffer.Append(conversionLine + Environment.NewLine);
-            IncrementIndent(3);
-            foreach (PropertyInfo prop in model.Properties)
+            foreach (PropInfo prop in model.Properties)
             {
                 if (prop.CreateCode)
                 {
@@ -61,7 +64,7 @@ namespace ComLib.CodeGeneration
                 foreach (Composition composite in model.ComposedOf)
                 {
                     Model compositeModel = ctx.AllModels.ModelMap[composite.Name];
-                    // BuildValidationForProperty(compositeModel, new PropertyInfo() { Name = compositeModel.Name }, buffer);
+                    // BuildValidationForProperty(compositeModel, new PropInfo() { Name = compositeModel.Name }, buffer);
                 }
             }
             // Now add custom validations.
@@ -75,7 +78,9 @@ namespace ComLib.CodeGeneration
                     buffer.Append(GetIndent() + objectValidationCode);
                 }
             }
-            DecrementIndent(3);
+            DecrementIndent(4);
+            //buffer.Append("});" + Environment.NewLine);
+            //buffer.Append("return val.IsValid;" + Environment.NewLine);
             string props = buffer.ToString();
             return props;
         }
@@ -86,9 +91,8 @@ namespace ComLib.CodeGeneration
         /// </summary>
         /// <param name="model"></param>
         /// <param name="prop"></param>
-        /// <param name="usePropType"></param>
         /// <param name="buffer"></param>
-        public void BuildValidationForProperty(Model model, PropertyInfo prop, StringBuilder buffer)
+        public void BuildValidationForProperty(Model model, PropInfo prop, StringBuilder buffer)
         {
             // Validate basic types, int, string, datetime, double.
             if (TypeMap.IsBasicNetType(prop.DataType))
@@ -112,9 +116,8 @@ namespace ComLib.CodeGeneration
         /// </summary>
         /// <param name="model"></param>
         /// <param name="prop"></param>
-        /// <param name="usePropType"></param>
         /// <param name="buffer"></param>
-        public void BuildValidationForStringProperty(Model model, PropertyInfo prop, StringBuilder buffer)
+        public void BuildValidationForStringProperty(Model model, PropInfo prop, StringBuilder buffer)
         {
             PropStringVals vals = new PropStringVals(model, prop) { MethodName = "IsStringLengthMatch" };
             string validationCode = "Validation.{0}({1}, {2}, {3}, {4}, {5}, {6}, {7}, {8} );" + Environment.NewLine;
@@ -129,9 +132,8 @@ namespace ComLib.CodeGeneration
         /// </summary>
         /// <param name="model"></param>
         /// <param name="prop"></param>
-        /// <param name="usePropType"></param>
         /// <param name="buffer"></param>
-        public void BuildValidationForIntProperty(Model model, PropertyInfo prop, StringBuilder buffer)
+        public void BuildValidationForIntProperty(Model model, PropInfo prop, StringBuilder buffer)
         {
             PropStringVals vals = new PropStringVals(model, prop) { MethodName = "IsNumericWithinRange" };
             string validationCode = "Validation.{0}({1}, {2}, {3}, {4}, {5}, {6}, {7});" + Environment.NewLine;
@@ -146,9 +148,8 @@ namespace ComLib.CodeGeneration
         /// </summary>
         /// <param name="model"></param>
         /// <param name="prop"></param>
-        /// <param name="usePropType"></param>
         /// <param name="buffer"></param>        
-        public void BuildValidationForDateTimeProperty(Model model, PropertyInfo prop, StringBuilder buffer)
+        public void BuildValidationForDateTimeProperty(Model model, PropInfo prop, StringBuilder buffer)
         {
             PropStringVals vals = new PropStringVals(model, prop) { MethodName = "IsDateWithinRange" };
             string validationCode = "Validation.{0}({1}, {2}, {3}, {4}, {5}, {6}, {7} );" + Environment.NewLine;
@@ -163,9 +164,8 @@ namespace ComLib.CodeGeneration
         /// </summary>
         /// <param name="model"></param>
         /// <param name="prop"></param>
-        /// <param name="usePropType"></param>
         /// <param name="buffer"></param>        
-        public void BuildValidationForStringRegExProperty(Model model, PropertyInfo prop, StringBuilder buffer)
+        public void BuildValidationForStringRegExProperty(Model model, PropInfo prop, StringBuilder buffer)
         {
             PropStringVals vals = new PropStringVals(model, prop) { AllowNull = "false", MethodName = "IsStringRegExMatch" };
             string validationCode = "Validation.{0}({1}, {2}, {3}, {4}, {5} );" + Environment.NewLine;
@@ -185,7 +185,7 @@ namespace ComLib.CodeGeneration
             public string PropName;
             public string MethodName;
 
-            public PropStringVals(Model model, PropertyInfo prop)
+            public PropStringVals(Model model, PropInfo prop)
             {
                 AllowNull = prop.IsRequired ? "false" : "true";
                 CheckMinLength = prop.CheckMinLength ? "true" : "false";

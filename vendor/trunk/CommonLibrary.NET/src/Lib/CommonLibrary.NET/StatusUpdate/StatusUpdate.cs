@@ -26,7 +26,7 @@ namespace ComLib.StatusUpdater
     /// <summary>
     /// StatusUpdate entity.
     /// </summary>
-    public partial class StatusUpdate : DomainObject<StatusUpdate>
+    public partial class StatusUpdate : Entity
     {
 		/// <summary>
 		/// Get/Set Computer

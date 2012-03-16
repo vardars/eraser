@@ -27,7 +27,7 @@ namespace CommonLibrary.WebModules.Events
     /// <summary>
     /// Validator for Event
     /// </summary>
-    public partial class EventValidator : EntityValidator<Event>
+    public partial class EventValidator : EntityValidator
     {
         /// <summary>
         /// Validation method for the entity.
@@ -38,22 +38,26 @@ namespace CommonLibrary.WebModules.Events
         /// <returns></returns>
         protected override bool ValidateInternal(ValidationEvent validationEvent)
         {
-            int initialErrorCount = validationEvent.Results.Count;
-            IValidationResults results = validationEvent.Results;            
-            Event entity = (Event)validationEvent.Target;
-			Validation.IsStringLengthMatch(entity.Title, false, true, true, 10, 150, results, "Title" );
-			Validation.IsStringLengthMatch(entity.Summary, false, false, true, -1, 200, results, "Summary" );
-			Validation.IsStringLengthMatch(entity.Description, false, false, false, -1, -1, results, "Description" );
-			Validation.IsDateWithinRange(entity.StartDate, false, false, DateTime.MinValue, DateTime.MaxValue, results, "StartDate" );
-			Validation.IsDateWithinRange(entity.EndDate, false, false, DateTime.MinValue, DateTime.MaxValue, results, "EndDate" );
-			Validation.IsNumericWithinRange(entity.StartTime, false, false, -1, -1, results, "StartTime");
-			Validation.IsNumericWithinRange(entity.EndTime, false, false, -1, -1, results, "EndTime");
-			Validation.IsStringRegExMatch(entity.Email, false, RegexPatterns.Email, results, "Email" );
-			Validation.IsStringRegExMatch(entity.Phone, false, RegexPatterns.PhoneUS, results, "Phone" );
-			Validation.IsStringRegExMatch(entity.Url, false, RegexPatterns.Url, results, "Url" );
-			Validation.IsStringLengthMatch(entity.Keywords, true, false, true, -1, 100, results, "Keywords" );
+            var val = new Validator( (valEvent) =>
+            {
+                int initialErrorCount = validationEvent.Results.Count;
+                IValidationResults results = validationEvent.Results;
+                Event entity = (Event)validationEvent.Target;
+                Validation.IsStringLengthMatch(entity.Title, false, true, true, 10, 150, results, "Title");
+                Validation.IsStringLengthMatch(entity.Summary, false, false, true, -1, 200, results, "Summary");
+                Validation.IsStringLengthMatch(entity.Description, false, false, false, -1, -1, results, "Description");
+                Validation.IsDateWithinRange(entity.StartDate, false, false, DateTime.MinValue, DateTime.MaxValue, results, "StartDate");
+                Validation.IsDateWithinRange(entity.EndDate, false, false, DateTime.MinValue, DateTime.MaxValue, results, "EndDate");
+                Validation.IsNumericWithinRange(entity.StartTime, false, false, -1, -1, results, "StartTime");
+                Validation.IsNumericWithinRange(entity.EndTime, false, false, -1, -1, results, "EndTime");
+                Validation.IsStringRegExMatch(entity.Email, false, RegexPatterns.Email, results, "Email");
+                Validation.IsStringRegExMatch(entity.Phone, false, RegexPatterns.PhoneUS, results, "Phone");
+                Validation.IsStringRegExMatch(entity.Url, false, RegexPatterns.Url, results, "Url");
+                Validation.IsStringLengthMatch(entity.Keywords, true, false, true, -1, 100, results, "Keywords");
 
-            return initialErrorCount == validationEvent.Results.Count;
+                return initialErrorCount == validationEvent.Results.Count;
+            });
+            return val.IsValid;
         }
     }
 }

@@ -35,7 +35,7 @@ namespace ComLib.Collections
         /// <summary>
         /// Initialize the list.
         /// </summary>
-        /// <param name="list"></param>
+        /// <param name="allEnumerators"></param>
         public EnumeratorMulti(IList<IEnumerator<T>> allEnumerators)
         {
             _allEnumerators = allEnumerators;

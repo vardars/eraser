@@ -47,7 +47,7 @@ namespace ComLib.Subs
         /// Performs substitutions on all the string items in the list supplied.
         /// converts: List[0] = ${today} = 03/28/2009.
         /// </summary>
-        /// <param name="names"></param>
+        /// <param name="names">List of strings for substitution.</param>
         public void Substitute(List<string> names)
         {
             for (int ndx = 0; ndx < names.Count; ndx++)
@@ -68,8 +68,8 @@ namespace ComLib.Subs
         /// 4. "${Enc.Decode('28asd42=')} will decrypt the encrypted value supplied, 
         ///                               using the provider setup in the cryptography service.
         /// </summary>
-        /// <param name="funcCall"></param>
-        /// <returns></returns>
+        /// <param name="funcCall">Function call.</param>
+        /// <returns>Interpreted value.</returns>
         public string this[string funcCall]
         {
             get
@@ -85,7 +85,8 @@ namespace ComLib.Subs
         /// <summary>
         /// Registers custom substitutions for the respective group.
         /// </summary>
-        /// <param name="interpretedVals"></param>
+        /// <param name="group">Substitution group.</param>
+        /// <param name="interpretedVals">Custom substitutions.</param>
         public void Register(string group, IDictionary<string, Func<string, string>> interpretedVals)
         {
             _groups[group] = interpretedVals;
@@ -93,9 +94,11 @@ namespace ComLib.Subs
 
 
         /// <summary>
-        /// Registers custom substitutions.
+        /// Registers custom substitution.
         /// </summary>
-        /// <param name="interpretedVals"></param>
+        /// <param name="group">Substitution group.</param>
+        /// <param name="replacement">String to substitute.</param>
+        /// <param name="interpretor">Function that calculates substitution value.</param>
         public void Register(string group, string replacement, Func<string, string> interpretor)
         {
             _groups[group][replacement] = interpretor;

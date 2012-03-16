@@ -21,6 +21,7 @@ using ComLib;
 
 namespace ComLib.Collections
 {
+    /*
     /// <summary>
     /// Extensions to Non-Generic Dictionary
     /// </summary>
@@ -87,7 +88,7 @@ namespace ComLib.Collections
         }
     }
 
-
+    */
 
     /// <summary>
     /// Extensions to Non-Generic Dictionary
@@ -99,6 +100,8 @@ namespace ComLib.Collections
         /// <summary>
         /// Get the value associated with the key as a int.
         /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="d"></param>
         /// <param name="key"></param>
         /// <returns></returns>
         public static int GetInt<TKey>(this IDictionary<TKey, string> d, TKey key)
@@ -110,6 +113,8 @@ namespace ComLib.Collections
         /// <summary>
         /// Get the value associated with the key as a bool.
         /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="d"></param>
         /// <param name="key"></param>
         /// <returns></returns>
         public static bool GetBool<TKey>(this IDictionary<TKey, string> d, TKey key)
@@ -121,6 +126,7 @@ namespace ComLib.Collections
         /// <summary>
         /// Get the value associated with the key as a string.
         /// </summary>
+        /// <param name="d"></param>
         /// <param name="key"></param>
         /// <returns></returns>
         public static string GetString<TKey>(this IDictionary<TKey, string> d, TKey key)
@@ -132,6 +138,7 @@ namespace ComLib.Collections
         /// <summary>
         /// Get the value associated with the key as a double.
         /// </summary>
+        /// <param name="d"></param>
         /// <param name="key"></param>
         /// <returns></returns>
         public static double GetDouble<TKey>(this IDictionary<TKey, string> d, TKey key)
@@ -143,6 +150,7 @@ namespace ComLib.Collections
         /// <summary>
         /// Get the value associated with the key as a datetime.
         /// </summary>
+        /// <param name="d"></param>
         /// <param name="key"></param>
         /// <returns></returns>
         public static DateTime GetDateTime<TKey>(this IDictionary<TKey, string> d, TKey key)
@@ -154,6 +162,7 @@ namespace ComLib.Collections
         /// <summary>
         /// Get the value associated with the key as a long.
         /// </summary>
+        /// <param name="d"></param>
         /// <param name="key"></param>
         /// <returns></returns>
         public static long GetLong<TKey>(this IDictionary<TKey, string> d, TKey key)

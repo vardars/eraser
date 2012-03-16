@@ -27,16 +27,14 @@ namespace ComLib.NamedQueries
     /// <summary>
     /// Validator for NamedQuery
     /// </summary>
-    public partial class NamedQueryValidator : EntityValidator<NamedQuery>
+    public partial class NamedQueryValidator : EntityValidator
     {       
 
         /// <summary>
         /// Validation method for the entity.
         /// </summary>
-        /// <param name="target">The target.</param>
-        /// <param name="useTarget">if set to <c>true</c> [use target].</param>
-        /// <param name="results">The results.</param>
-        /// <returns></returns>
+        /// <param name="validationEvent">Validator.</param>
+        /// <returns>True if the validation was successful.</returns>
         protected override bool ValidateInternal(ValidationEvent validationEvent)
         {
             object target = validationEvent.Target;

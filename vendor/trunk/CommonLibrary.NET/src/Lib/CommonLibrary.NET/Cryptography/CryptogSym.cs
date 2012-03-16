@@ -25,7 +25,15 @@ namespace ComLib.Cryptography
     /// </summary>
     public class CryptoSym : ICrypto
 	{
+        /// <summary>
+        /// Configuration settings for encryption/decryptiong.
+        /// </summary>
         protected CryptoConfig _encryptionOptions;
+
+
+        /// <summary>
+        /// The underlying symmetric algorithm to use.
+        /// </summary>
         protected SymmetricAlgorithm _algorithm;
 
 
@@ -41,9 +49,21 @@ namespace ComLib.Cryptography
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SymmetricCryptoService"/> class.
+        /// Initialize with the encryptionKey
         /// </summary>
-        /// <param name="options">The options.</param>
+        /// <param name="key"></param>
+        public CryptoSym(string key)
+        {
+            _encryptionOptions = new CryptoConfig(true, key);
+            _algorithm = CryptographyUtils.CreateSymmAlgoTripleDes();
+        }
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CryptoSym"/> class.
+        /// </summary>
+        /// <param name="key">The encryption key to use.</param>
+        /// <param name="algorithm">The crypto algorithm to use</param>
         public CryptoSym(string key, SymmetricAlgorithm algorithm)
         {
             _encryptionOptions = new CryptoConfig(true, key);
@@ -52,9 +72,10 @@ namespace ComLib.Cryptography
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SymmetricCryptoService"/> class.
+        /// Initializes a new instance of the <see cref="CryptoSym"/> class.
         /// </summary>
         /// <param name="options">The options.</param>
+        /// <param name="algorithm">The crypto algorithm to use</param>
         public CryptoSym(CryptoConfig options, SymmetricAlgorithm algorithm)
         {
             _encryptionOptions = options;
@@ -76,7 +97,7 @@ namespace ComLib.Cryptography
         /// <summary>
         /// Set the creator for the algorithm.
         /// </summary>
-        /// <param name="algorithmCreator"></param>
+        /// <param name="algorithm"></param>
         public void SetAlgorithm(SymmetricAlgorithm algorithm)
         {
             _algorithm = algorithm;
@@ -116,8 +137,8 @@ namespace ComLib.Cryptography
         /// <summary>
         /// Determine if encrypted text can be matched to unencrypted text.
         /// </summary>
-        /// <param name="text1"></param>
-        /// <param name="text2"></param>
+        /// <param name="encrypted"></param>
+        /// <param name="plainText"></param>
         /// <returns></returns>
         public bool IsMatch(string encrypted, string plainText)
         {

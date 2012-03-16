@@ -105,8 +105,8 @@ namespace ComLib.Web
         /// <summary>
         /// Configure the url-rewriting flag and set the url mapper.
         /// </summary>
-        /// <param name="isUrlRewritingEnabled"></param>
-        /// <param name="urlMapper"></param>
+        /// <param name="isUrlRewritingEnabled">True if URL rewriting is enabled.</param>
+        /// <param name="urlMapper">Instance of URL mapper.</param>
         public static void ConfigureUrlRewriting(bool isUrlRewritingEnabled, UrlMapper urlMapper)
         {
             _isRewritingEnabled = isUrlRewritingEnabled;
@@ -122,7 +122,7 @@ namespace ComLib.Web
         /// <summary>
         /// Gets the root of the website. http: or https: plus the appropriate port.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Root of the website.</returns>
         public static string GetSiteRoot()
         {
             string protocol = HttpContext.Current.Request.ServerVariables["SERVER_PORT_SECURE"];
@@ -145,9 +145,10 @@ namespace ComLib.Web
         /// <summary>
         /// Returns the name of the requested file.
         /// </summary>
+        /// <param name="rawUrl">Raw URL.</param>
         /// <param name="includeExtension">Flag indicating if extension of the file should also be 
         /// included.</param>
-        /// <returns></returns>
+        /// <returns>Requested file name.</returns>
         public static string GetRequestedFileName(string rawUrl, bool includeExtension)
         {
             string file = rawUrl.Substring(rawUrl.LastIndexOf("/") + 1);
@@ -162,9 +163,9 @@ namespace ComLib.Web
         /// <summary>
         /// These are exposed to the unit tests in CommonLibrary.Tests.
         /// </summary>
-        /// <param name="applicationPath"></param>
-        /// <param name="url"></param>
-        /// <returns></returns>
+        /// <param name="applicationPath">Application path.</param>
+        /// <param name="url">Request URL.</param>
+        /// <returns>Relative site URL.</returns>
         internal static string GetRelativeSiteUrl(string applicationPath, string url)
         {
             // Get proper application path ending with "/"
@@ -185,9 +186,9 @@ namespace ComLib.Web
         /// <summary>
         /// These are exposed to the unit tests in ServiceGoFor.CommonLibrary.Tests.
         /// </summary>
-        /// <param name="applicationPath"></param>
-        /// <param name="url"></param>
-        /// <returns></returns>
+        /// <param name="applicationPath">Application path.</param>
+        /// <param name="url">Request URL.</param>
+        /// <returns>Mapped relative site URL.</returns>
         internal static string GetMappedRelativeSiteUrl(string applicationPath, string url)
         {
             // Check if rewriting enabled.
@@ -226,7 +227,7 @@ namespace ComLib.Web
         /// <summary>
         /// Get the real url.
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="url">URL.</param>
         /// <returns>Mapped url if mapping present, original url otherwise</returns>
         public string GetUrl(string url)
         {

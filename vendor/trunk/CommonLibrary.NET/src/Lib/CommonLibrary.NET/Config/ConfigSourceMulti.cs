@@ -75,6 +75,14 @@ namespace ComLib.Configuration
 
 
         /// <summary>
+        /// Initialization after construction.
+        /// </summary>
+        public void Init()
+        {
+        }
+
+
+        /// <summary>
         /// Load settings.
         /// </summary>
         public void Load()
@@ -100,17 +108,6 @@ namespace ComLib.Configuration
         {
             get { return _sourcePath; }
         }
-
-
-        /// <summary>
-        /// Get the full name of this source.
-        /// e.g. prod.config,qa.config,dev.config.
-        /// </summary>
-        public string Name
-        {
-            get { return _fullName; }
-            set { _fullName = value; }
-        }
         #endregion
 
 
@@ -134,7 +131,8 @@ namespace ComLib.Configuration
         /// <summary>
         /// Merge with config source specified.
         /// </summary>
-        /// <param name="configSource"></param>
+        /// <param name="source"></param>
+        /// <param name="dest"></param>
         protected virtual void Merge(IConfigSection source, IConfigSection dest)
         {
             // Get all the sections.

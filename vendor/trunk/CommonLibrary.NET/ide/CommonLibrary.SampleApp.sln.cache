@@ -67,11 +67,11 @@
     <AspNetConfiguration>$(Configuration)</AspNetConfiguration>
   </PropertyGroup>
   <PropertyGroup>
-    <SolutionDir>C:\Dev\business\CommonLibrary.NET\0.9.3\ide\</SolutionDir>
+    <SolutionDir>C:\Dev\business\CommonLibrary.NET\CommonLibraryNet_LATEST\ide\</SolutionDir>
     <SolutionExt>.sln</SolutionExt>
     <SolutionFileName>CommonLibrary.SampleApp.sln</SolutionFileName>
     <SolutionName>CommonLibrary.SampleApp</SolutionName>
-    <SolutionPath>C:\Dev\business\CommonLibrary.NET\0.9.3\ide\CommonLibrary.SampleApp.sln</SolutionPath>
+    <SolutionPath>C:\Dev\business\CommonLibrary.NET\CommonLibraryNet_LATEST\ide\CommonLibrary.SampleApp.sln</SolutionPath>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == '' and '$(MSBuildToolsVersion)' == '2.0'">v2.0</TargetFrameworkVersion>

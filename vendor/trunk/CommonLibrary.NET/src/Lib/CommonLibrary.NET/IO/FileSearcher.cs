@@ -15,7 +15,7 @@ namespace ComLib.IO
     public class FileSearcher
     {
         private Action<FileInfo> _fileHandler;
-        private Action<DirectoryInfo> _directoryHandler;
+        private Action<DirectoryInfo> _directoryHandler = null;
         private string _directoryPattern = "**";
         private string _filePattern = "**";
         private string _pattern = "**/**";

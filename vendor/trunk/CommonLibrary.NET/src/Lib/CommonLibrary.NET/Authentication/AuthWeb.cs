@@ -25,12 +25,10 @@ using System.Web.Security;
 namespace ComLib.Authentication
 {
     /// <summary>
-    /// Class to provide simplified access to the web based User(principal) object
-    /// exposed in the context.Current.User object.
+    /// <see cref="IAuth"/> implementation to provide Authentication service using the web based User(principal) object exposed in the context.Current.User object.
     /// </summary>
-    public class AuthWeb : IAuth
+    public class AuthWeb : AuthBase, IAuth
     {
-        private string _adminRoleName = "Administrators";
         private Func<string, IPrincipal> _userAuthenticationService = null;
 
 
@@ -54,6 +52,7 @@ namespace ComLib.Authentication
         /// Initialize with the admin role name.
         /// </summary>
         /// <param name="adminRoleName"></param>
+        /// <param name="userAuth"></param>
         public AuthWeb(string adminRoleName, Func<string, IPrincipal> userAuth)
         {
             _adminRoleName = adminRoleName;
@@ -64,7 +63,7 @@ namespace ComLib.Authentication
         /// <summary>
         /// Get the current user.
         /// </summary>
-        public IPrincipal User
+        public override IPrincipal User
         {
             get { return HttpContext.Current.User; }
         }
@@ -90,9 +89,15 @@ namespace ComLib.Authentication
         /// <summary>
         /// The name of the current user.
         /// </summary>
-        public string UserName
+        public override string UserName
         {
-            get { return HttpContext.Current.User.Identity.Name; }
+            get 
+            {
+                if (!IsAuthenticated())
+                    return string.Empty;
+
+                return HttpContext.Current.User.Identity.Name; 
+            }
         }
 
 
@@ -101,10 +106,13 @@ namespace ComLib.Authentication
         /// the domain.
         /// e.g. returns "john" if username is "mydomain\john"
         /// </summary>
-        public string UserShortName 
+        public override string UserShortName 
         {
             get
             {
+                if (!IsAuthenticated())
+                    return string.Empty;
+
                 string fullName = HttpContext.Current.User.Identity.Name;
                 int ndxSlash = fullName.LastIndexOf(@"\");
                 if (ndxSlash == -1)
@@ -122,32 +130,27 @@ namespace ComLib.Authentication
         /// Determine if the current user is authenticated.
         /// </summary>
         /// <returns></returns>
-        public bool IsAuthenticated()
+        public override bool IsAuthenticated()
         {
+            if (HttpContext.Current == null) return false;
+            if (HttpContext.Current.User == null) return false;
+
             return HttpContext.Current.User.Identity.IsAuthenticated;
-        }
-
-
-        /// <summary>
-        /// Return whether or not the current user is authenticated.
-        /// </summary>
-        /// <returns></returns>
-        public bool IsGuest()
-        {
-            return !HttpContext.Current.User.Identity.IsAuthenticated;
-        }        
+        }      
 
 
         /// <summary>
         /// Determine if currently logged in user is an administrator.
         /// </summary>
         /// <returns></returns>
-        public bool IsAdmin()
+        public override bool IsAdmin()
         {
-            if (IsGuest()) return false;
+            if (! IsAuthenticated()) return false;
+            if (Auth.User is UserPrincipal)
+                return ((UserPrincipal)User).IsInRole(_adminRoleName);
 
-            return Roles.IsUserInRole("Administrators");
-        }      
+            return Roles.IsUserInRole(_adminRoleName);
+        }
 
 
         /// <summary>
@@ -155,9 +158,14 @@ namespace ComLib.Authentication
         /// </summary>
         /// <param name="rolesDelimited"></param>
         /// <returns></returns>
-        public bool IsUserInRoles(string rolesDelimited)
+        public override bool IsUserInRoles(string rolesDelimited)
         {
-            return RoleHelper.IsUserInRoles(rolesDelimited);
+            if (string.IsNullOrEmpty(rolesDelimited)) return true;            
+            if (!IsAuthenticated() ) return false;
+            if (Auth.User is UserPrincipal)
+                return ((UserPrincipal)User).IsInRole(rolesDelimited);
+
+            return Roles.IsUserInRole(rolesDelimited);
         }
 
 
@@ -185,6 +193,7 @@ namespace ComLib.Authentication
         /// Sign the user in via username.
         /// </summary>
         /// <param name="user"></param>
+        /// <param name="rememberUser"></param>
         public void SignIn(string user, bool rememberUser)
         {
             FormsAuthentication.SetAuthCookie(user, rememberUser);

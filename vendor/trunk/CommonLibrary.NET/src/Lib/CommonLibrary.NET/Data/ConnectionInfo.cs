@@ -20,7 +20,7 @@ using System.Data;
 using System.Data.Common;
 
 
-namespace ComLib.Database
+namespace ComLib.Data
 {
     /// <summary>
     /// Class to encapsulate a connection string.
@@ -34,7 +34,7 @@ namespace ComLib.Database
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static readonly ConnectionInfo Default2 = new ConnectionInfo(
+        public static readonly ConnectionInfo Empty = new ConnectionInfo(
             "Server=server1;Database=database1;User=user1;Password=password;", "System.Data.SqlClient");
 
 

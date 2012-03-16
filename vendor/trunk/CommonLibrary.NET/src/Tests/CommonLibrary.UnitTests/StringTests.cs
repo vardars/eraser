@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 using NUnit.Framework;
 using ComLib;
 using ComLib.Types;
 using ComLib.Collections;
-
+using ComLib.Extensions;
 
 namespace CommonLibrary.Tests
 {
@@ -17,7 +16,7 @@ namespace CommonLibrary.Tests
         public void CanParseKeyValuePairs()
         {
             string test = "city=Queens, state=Ny, zipcode=12345, Country=usa";
-            IDictionary<string, string> pairs = StringHelpers.ToMap(test, ',', '=', false, true);
+            IDictionary<string, string> pairs = StringHelper.ToMap(test, ',', '=', false, true);
 
             Assert.AreEqual(pairs["city"], "Queens");
             Assert.AreEqual(pairs["state"], "Ny");
@@ -34,7 +33,7 @@ namespace CommonLibrary.Tests
         [Test]
         public void CanParseDelimitedData()
         {
-            string[] pageNums = StringHelpers.GetDelimitedChars("search-classes-workshops-4-1-2-6",
+            string[] pageNums = StringHelper.GetDelimitedChars("search-classes-workshops-4-1-2-6",
                 "search-classes-workshops-", '-');
             Assert.AreEqual(4, pageNums.Length);
             Assert.AreEqual("4", pageNums[0]);
@@ -48,7 +47,7 @@ namespace CommonLibrary.Tests
         public void CanConvertSingleWordToSentenceCase()
         {
             string lowerCase = "newyork";
-            string sentenceCase = StringHelpers.ConvertToSentanceCase(lowerCase, ' ');
+            string sentenceCase = StringHelper.ConvertToSentanceCase(lowerCase, ' ');
 
             Assert.AreEqual("Newyork", sentenceCase);
         }
@@ -58,7 +57,7 @@ namespace CommonLibrary.Tests
         public void CanConvertMultipleWordsToSentenceCase()
         {
             string lowerCase = "AMERICAN SAMOA";
-            string sentenceCase = StringHelpers.ConvertToSentanceCase(lowerCase, ' ');
+            string sentenceCase = StringHelper.ConvertToSentanceCase(lowerCase, ' ');
 
             Assert.AreEqual("American Samoa", sentenceCase);
         }
@@ -68,11 +67,11 @@ namespace CommonLibrary.Tests
         public void CanTrucateNullOrEmpty()
         {
             string txt = null;
-            string t = StringHelpers.Truncate(txt, 10);
+            string t = StringHelper.Truncate(txt, 10);
             Assert.AreEqual(null, t);
 
             txt = string.Empty;
-            string t2 = StringHelpers.Truncate(txt, 10);
+            string t2 = StringHelper.Truncate(txt, 10);
             Assert.AreEqual(string.Empty, t2);
         }
 
@@ -81,34 +80,39 @@ namespace CommonLibrary.Tests
         public void CanTrucate()
         {
             string txt = "1234567890";
-            string t = StringHelpers.Truncate(txt, 5);
+            string t = StringHelper.Truncate(txt, 5);
             Assert.AreEqual("12345", t);
 
             txt = "1234567890";
-            string t2 = StringHelpers.Truncate(txt, 15);
+            string t2 = StringHelper.Truncate(txt, 15);
             Assert.AreEqual("1234567890", t2);
         }
-    }
 
-
-    [TestFixture]
-    public class ParsableCollectionTests
-    {
         [Test]
-        public void CanParse()
+        public void ConvertLineSeparators()
         {
-            ParsableCollection coll = new ParsableCollection(';');
-            coll.DelimitedValues = "kishore;reddy;sush;boadi";
+            var expected = "Expected text " + StringHelper.UnixLineSeparator +
+                           "Line 2 " + StringHelper.UnixLineSeparator +
+                           "Line 3";
+            var starting = "Expected text " + StringHelper.DosLineSeparator +
+                           "Line 2 " + StringHelper.DosLineSeparator +
+                           "Line 3";
+            Assert.AreEqual(expected, 
+                StringHelper.ConvertLineSeparators(starting,
+                    StringHelper.UnixLineSeparator),
+                    "Dud not correctly convert line breaks from DOS to UNIX format");
+        }
 
-            Assert.IsTrue(coll.Contains("kishore"));
-            Assert.IsTrue(coll.Contains("reddy"));
-            Assert.IsTrue(coll.Contains("sush"));
-            Assert.IsTrue(coll.Contains("boadi"));
 
-            Assert.IsFalse(coll.Contains("starbucks"));
+        [Test]
+        public void CanSubstituteValues()
+        {
+            Assert.AreEqual("@month_@year_@day", StringHelper.Substitute("${month}_${year}_${day}", (name) => "@" + name));
+            Assert.AreEqual("_@month_@year_@day_", StringHelper.Substitute("_${month}_${year}_${day}_", (name) => "@" + name));
+            Assert.AreEqual("abc_@month_@year_@day_123", StringHelper.Substitute("abc_${month}_${year}_${day}_123", (name) => "@" + name));
+            Assert.AreEqual("123_@month_a_@year_b_@day_cd", StringHelper.Substitute("123_${month}_a_${year}_b_${day}_cd", (name) => "@" + name));
         }
     }
-
 
 
     [TestFixture]

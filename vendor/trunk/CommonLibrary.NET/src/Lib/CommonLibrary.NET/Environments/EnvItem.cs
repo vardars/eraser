@@ -98,9 +98,9 @@ namespace ComLib.Environments
         /// Initialize with the supplied values.
         /// </summary>
         /// <param name="name">"prod"</param>
-        /// <param name="source">"file | db "</param>
         /// <param name="deepInherit"></param>
         /// <param name="envType">"Prod | Qa | Uat | Dev"</param>
+        /// <param name="inherits"></param>
         public EnvItem(string name, bool deepInherit, EnvType envType, string inherits)
         {
             Name = name;

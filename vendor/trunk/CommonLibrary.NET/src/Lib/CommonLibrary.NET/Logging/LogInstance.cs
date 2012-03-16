@@ -13,7 +13,7 @@ namespace ComLib.Logging
     /// This is analogous to LogManger.Get(typeof(BlogPostService)) in Log4Net.
     /// </summary>
     /// <example>
-    /// ILog logger = Logger.Get<BlogPostService>("default");
+    /// ILog logger = Logger.Get&lt;BlogPostService&gt;("default");
     /// logger.Info("testing");
     /// </example>
     public class LogInstance : LogBase, ILog
@@ -26,8 +26,8 @@ namespace ComLib.Logging
         /// Initialize with reference to the actually logger that does the logging
         /// and the calling type of the logger.
         /// </summary>
-        /// <param name="loggerName"></param>
-        /// <param name="callingType"></param>
+        /// <param name="loggerName">Name of logger.</param>
+        /// <param name="callingType">Calling type.</param>
         public LogInstance(string loggerName, Type callingType) : base(callingType.FullName)
         {
             _loggerName = loggerName;
@@ -38,7 +38,7 @@ namespace ComLib.Logging
         /// <summary>
         /// Log the event to file.
         /// </summary>
-        /// <param name="logEvent"></param>
+        /// <param name="logEvent">Event to log.</param>
         public override void Log(LogEvent logEvent)
         {
             logEvent.LogType = _loggerType;

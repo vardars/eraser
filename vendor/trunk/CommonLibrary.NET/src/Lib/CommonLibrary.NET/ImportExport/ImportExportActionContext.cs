@@ -47,10 +47,11 @@ namespace ComLib.ImportExport
         /// <param name="item"></param>
         /// <param name="errorList"></param>
         /// <param name="messages"></param>
-        public ImportExportActionContext(T item, IList<T> items, IValidationResults errors, IStatusResults messages)
-            : base(item, errors, messages)
+        public ImportExportActionContext(T item, IList<T> items, IValidationResults errors)
+            : base(item)
         {
             _items = items;
+            Errors = errors;
         }
 
 
@@ -90,7 +91,7 @@ namespace ComLib.ImportExport
         /// </summary>
         /// <value>The export total count.</value>
         public int ExportTotalCount { get; set; }
-
+        
 
         /// <summary>
         /// Gets or sets the export format.

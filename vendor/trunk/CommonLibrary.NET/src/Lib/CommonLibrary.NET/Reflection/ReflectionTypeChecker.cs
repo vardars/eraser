@@ -26,13 +26,13 @@ namespace ComLib.Reflection
     public class ReflectionTypeChecker
     {
         /// <summary>
-        /// Checks whether or not the 
+        /// Checks whether or not the supplied text can be converted
+        /// to a specific type.
         /// </summary>
-        /// <param name="propInfo">The property represnting the type to convert 
-        /// val to</param>
+        /// <typeparam name="T">Type to convert to.</typeparam>
         /// <param name="val">The value to test for conversion to the type
         /// associated with the property</param>
-        /// <returns></returns>
+        /// <returns>True if </returns>
         public static bool CanConvertTo<T>(string val)
         {
             return CanConvertTo(typeof(T), val);
@@ -40,13 +40,13 @@ namespace ComLib.Reflection
 
 
         /// <summary>
-        /// Checks whether or not the 
+        /// Checks whether or not the supplied text can be converted
+        /// to a specific type.
         /// </summary>
-        /// <param name="propInfo">The property represnting the type to convert 
-        /// val to</param>
+        /// <param name="type">The type to convert val to</param>
         /// <param name="val">The value to test for conversion to the type
         /// associated with the property</param>
-        /// <returns></returns>
+        /// <returns>True if the conversion can be performed.</returns>
         public static bool CanConvertTo(Type type, string val)
         {
             // Data could be passed as string value.
@@ -115,11 +115,11 @@ namespace ComLib.Reflection
 
 
         /// <summary>
-        /// Check to see if can convert to appropriate type
+        /// Check to see if can convert to appropriate type.
         /// </summary>
-        /// <param name="propInfo"></param>
-        /// <param name="val"></param>
-        /// <returns></returns>
+        /// <param name="propInfo">Property to check.</param>
+        /// <param name="val">Instance of object with property.</param>
+        /// <returns>True if the conversion can be performed.</returns>
         public static bool CanConvertToCorrectType(PropertyInfo propInfo, object val)
         {
             // Data could be passed as string value.
@@ -166,13 +166,14 @@ namespace ComLib.Reflection
 
 
         /// <summary>
-        /// Checks whether or not the 
+        /// Checks whether or not the supplied string can be converted
+        /// to the type designated by the supplied property.
         /// </summary>
-        /// <param name="propInfo">The property represnting the type to convert 
+        /// <param name="propInfo">The property representing the type to convert 
         /// val to</param>
         /// <param name="val">The value to test for conversion to the type
         /// associated with the property</param>
-        /// <returns></returns>
+        /// <returns>True if the conversion can be performed.</returns>
         public static bool CanConvertToCorrectType(PropertyInfo propInfo, string val)
         {
             // Data could be passed as string value.
@@ -289,9 +290,9 @@ namespace ComLib.Reflection
         /// <summary>
         /// Determine if the type of the property and the val are the same
         /// </summary>
-        /// <param name="propInfo"></param>
-        /// <param name="val"></param>
-        /// <returns></returns>
+        /// <param name="propInfo">Property whose type is to be compared.</param>
+        /// <param name="val">Object whose type is to be compared.</param>
+        /// <returns>True if the property and the object are of the same type.</returns>
         public static bool IsSameType(PropertyInfo propInfo, object val)
         {
             // Quick Validation.

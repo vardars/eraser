@@ -18,7 +18,7 @@ using System.Text;
 
 
 
-namespace ComLib.Errors
+namespace ComLib.Exceptions
 {
     /// <summary>
     /// Localized error manager.

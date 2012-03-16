@@ -21,7 +21,7 @@ using ComLib.Locale;
 using ComLib.ValidationSupport;
 
 
-namespace ComLib.Errors
+namespace ComLib.Exceptions
 {
     /// <summary>
     /// Exception manager.
@@ -63,6 +63,8 @@ namespace ComLib.Errors
         /// <summary>
         /// Initialize the provider.
         /// </summary>
+        /// <param name="name"></param>
+        /// <param name="isDefault"></param>
         /// <param name="provider"></param>
         public static void InitLocalizedManager(string name, bool isDefault, ILocalizedExceptionManager provider)
         {
@@ -103,7 +105,6 @@ namespace ComLib.Errors
         /// </summary>
         /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
-        /// <param name="arguments">The arguments.</param>
         public static void Handle(object error, Exception exception)
         {
             InternalHandle(error, exception, null, null, null);
@@ -115,7 +116,7 @@ namespace ComLib.Errors
         /// </summary>
         /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
-        /// <param name="arguments">The arguments.</param>
+        /// <param name="handler">The arguments.</param>
         public static void Handle(object error, Exception exception, string handler)
         {
             InternalHandle(error, exception, handler, null, null);
@@ -139,6 +140,7 @@ namespace ComLib.Errors
         /// </summary>
         /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
+        /// <param name="handler"></param>
         /// <param name="arguments">The arguments.</param>
         public static void Handle(object error, Exception exception, string handler, object[] arguments)
         {
@@ -151,11 +153,10 @@ namespace ComLib.Errors
         /// </summary>
         /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
-        /// <param name="errorResults">The error results.</param>
-        /// <param name="arguments">The arguments.</param>
-        public static void Handle(object error, Exception exception, IStatusResults errorResults)
+        /// <param name="errors">The error results.</param>
+        public static void Handle(object error, Exception exception, IErrors errors)
         {
-            InternalHandle(error, exception, null, errorResults, null);
+            InternalHandle(error, exception, null, errors, null);
         }
 
 
@@ -164,11 +165,11 @@ namespace ComLib.Errors
         /// </summary>
         /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
-        /// <param name="errorResults">The error results.</param>
-        /// <param name="arguments">The arguments.</param>
-        public static void Handle(object error, Exception exception, string handler, IStatusResults errorResults)
+        /// <param name="handler"></param>
+        /// <param name="errors">The error results.</param>
+        public static void Handle(object error, Exception exception, string handler, IErrors errors)
         {
-            InternalHandle(error, exception, handler, errorResults, null);
+            InternalHandle(error, exception, handler, errors, null);
         }
 
 
@@ -177,11 +178,11 @@ namespace ComLib.Errors
         /// </summary>
         /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
-        /// <param name="errorResults">The error results.</param>
+        /// <param name="errors">The error results.</param>
         /// <param name="arguments">The arguments.</param>
-        public static void Handle(object error, Exception exception, IStatusResults errorResults, object[] arguments)
+        public static void Handle(object error, Exception exception, IErrors errors, object[] arguments)
         {
-            InternalHandle(error, exception, null, errorResults, arguments);
+            InternalHandle(error, exception, null, errors, arguments);
         }
 
 
@@ -190,11 +191,12 @@ namespace ComLib.Errors
         /// </summary>
         /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
-        /// <param name="errorResults">The error results.</param>
+        /// <param name="handler"></param>
+        /// <param name="errors">The error results.</param>
         /// <param name="arguments">The arguments.</param>
-        public static void Handle(object error, Exception exception, string handler, IStatusResults errorResults, object[] arguments)
+        public static void Handle(object error, Exception exception, string handler, IErrors errors, object[] arguments)
         {
-            InternalHandle(error, exception, handler, errorResults, arguments);
+            InternalHandle(error, exception, handler, errors, arguments);
         }
 
 
@@ -203,13 +205,14 @@ namespace ComLib.Errors
         /// </summary>
         /// <param name="error">The error.</param>
         /// <param name="exception">The exception.</param>
-        /// <param name="errorResults">The error results.</param>
+        /// <param name="handler"></param>
+        /// <param name="errors">The error results.</param>
         /// <param name="arguments">The arguments.</param>
-        private static void InternalHandle(object error, Exception exception, string handler, IStatusResults errorResults, object[] arguments)
+        private static void InternalHandle(object error, Exception exception, string handler, IErrors errors, object[] arguments)
         {
             if (handler == null)
             {
-                _provider.Handle(error, exception, errorResults, arguments);
+                _provider.Handle(error, exception, errors, arguments);
                 return;
             }
 
@@ -217,7 +220,7 @@ namespace ComLib.Errors
                 throw new ArgumentException("Unknown exception handler : " + handler);
 
             IErrorManager exceptionManager = _namedHandlers[handler];
-            exceptionManager.Handle(error, exception, errorResults, arguments);
+            exceptionManager.Handle(error, exception, errors, arguments);
         }
 
 
@@ -225,11 +228,11 @@ namespace ComLib.Errors
         /// Handles the exception by getting the error description from the <paramref name="resources"/> using
         /// the key specified by <paramref name="errorDescriptorKey"/>. Adds the error to <paramref name="errors"/>.
         /// </summary>
-        /// <param name="errorDescriptor">The name of key to use to get the localized errors from resources. </param>
+        /// <param name="errorDescriptorKey">The name of key to use to get the localized errors from resources. </param>
         /// <param name="resources">The localized resources that contains the error string.</param>
         /// <param name="errors">The list of errors to add to the error string to.</param>
         /// <param name="ex">The exception to handle.</param>
-        public static void Handle(string errorDescriptorKey, ILocalizationResourceProvider resources, IStatusResults errors, Exception ex)
+        public static void Handle(string errorDescriptorKey, ILocalizationResourceProvider resources, IErrors errors, Exception ex)
         {
             _localizedProvider.Handle(errorDescriptorKey, resources, errors, ex);
         }
@@ -239,12 +242,12 @@ namespace ComLib.Errors
         /// Handles the exception by getting the error description from the <paramref name="resources"/> using
         /// the key specified by <paramref name="errorDescriptorKey"/>. Adds the error to <paramref name="errors"/>.
         /// </summary>
-        /// <param name="errorDescriptor">The name of key to use to get the localized errors from resources. </param>
+        /// <param name="errorDescriptorKey">The name of key to use to get the localized errors from resources. </param>
         /// <param name="resources">The localized resources that contains the error string.</param>
         /// <param name="errors">The list of errors to add to the error string to.</param>
         /// <param name="ex">The exception to handle.</param>
         /// <param name="args">Array of strings to report in the error.</param>
-        public static void Handle(string errorDescriptorKey, ILocalizationResourceProvider resources, IStatusResults errors, Exception ex, string[] args)
+        public static void Handle(string errorDescriptorKey, ILocalizationResourceProvider resources, IErrors errors, Exception ex, string[] args)
         {
             _localizedProvider.Handle(errorDescriptorKey, resources, errors, ex, args);
         }

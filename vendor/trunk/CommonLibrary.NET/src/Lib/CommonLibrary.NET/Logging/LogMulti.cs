@@ -32,9 +32,10 @@ namespace ComLib.Logging
 
 
         /// <summary>
-        /// Initalize multiple loggers.
+        /// Initalize a logger.
         /// </summary>
-        /// <param name="loggers"></param>
+        /// <param name="logger">Logging object.</param>
+        /// <param name="name">Name of application.</param>
         public LogMulti(string name, ILog logger) : base(typeof(LogMulti).FullName)
         {
             Init(name, new List<ILog>() { logger });
@@ -44,7 +45,8 @@ namespace ComLib.Logging
         /// <summary>
         /// Initalize multiple loggers.
         /// </summary>
-        /// <param name="loggers"></param>
+        /// <param name="name">Name of application.</param>
+        /// <param name="loggers">List of logging objects.</param>
         public LogMulti(string name, IList<ILog> loggers) : base(typeof(LogMulti).FullName)
         {
             Init(name, loggers);
@@ -54,7 +56,8 @@ namespace ComLib.Logging
         /// <summary>
         /// Initialize with loggers.
         /// </summary>
-        /// <param name="loggers"></param>
+        /// <param name="name">Name of application.</param>
+        /// <param name="loggers">List of logging objects.</param>
         public void Init(string name, IList<ILog> loggers)
         {
             this.Name = name;
@@ -67,7 +70,7 @@ namespace ComLib.Logging
         /// <summary>
         /// Log the event to each of the loggers.
         /// </summary>
-        /// <param name="logEvent"></param>
+        /// <param name="logEvent">Event to log.</param>
         public override void Log(LogEvent logEvent)
         {
             // Log using the readerlock.
@@ -78,11 +81,23 @@ namespace ComLib.Logging
         /// <summary>
         /// Append to the chain of loggers.
         /// </summary>
-        /// <param name="logger"></param>
+        /// <param name="logger">Logger.</param>
         public void Append(ILog logger)
         {
             // Add to loggers.
             ExecuteWrite(() => _loggers.Add(logger.Name, logger) );
+        }
+
+
+
+        /// <summary>
+        /// Replaces all the existing loggers w/ the supplied logger.
+        /// </summary>
+        /// <param name="logger">Logger.</param>
+        public void Replace(ILog logger)
+        {
+            Clear();
+            Append(logger);
         }
 
 
@@ -108,6 +123,7 @@ namespace ComLib.Logging
             ExecuteWrite(() =>
             {
                 _loggers.Clear();
+                _lowestLevel = LogLevel.Message;
                 _loggers.Add("console", new LogConsole());
             });
         }
@@ -116,7 +132,8 @@ namespace ComLib.Logging
         /// <summary>
         /// Get a logger by it's name.
         /// </summary>
-        /// <param name="logger"></param>
+        /// <param name="loggerName">Name of logger.</param>
+        /// <returns>Logger corresponding to supplied name.</returns>
         public override ILog this[string loggerName]
         {
             get
@@ -135,9 +152,10 @@ namespace ComLib.Logging
 
 
         /// <summary>
-        /// Get a logger by it's name.
+        /// Get a logger by it's index.
         /// </summary>
-        /// <param name="logger"></param>
+        /// <param name="logIndex">Index of logger.</param>
+        /// <returns>Logger corresponding to supplied index.</returns>
         public override ILog this[int logIndex]
         {
             get
@@ -177,8 +195,8 @@ namespace ComLib.Logging
         /// <summary>
         /// Whether or not the level specified is enabled.
         /// </summary>
-        /// <param name="level"></param>
-        /// <returns></returns>
+        /// <param name="level">Level to check.</param>
+        /// <returns>True if the supplied level is enabled.</returns>
         public override bool IsEnabled(LogLevel level)
         {
             return _lowestLevel <= level;

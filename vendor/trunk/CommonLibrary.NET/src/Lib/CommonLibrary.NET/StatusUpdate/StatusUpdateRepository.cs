@@ -21,9 +21,7 @@ using System.Data;
 using System.Data.Common;
 using ComLib;
 using ComLib.Entities;
-using ComLib.Database;
-
-using ComLib.Entities;
+using ComLib.Data;
 
 
 
@@ -35,18 +33,17 @@ namespace ComLib.StatusUpdater
     public partial class StatusUpdateRepository : RepositorySql<StatusUpdate>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="NamedQueryRepository"/> class.
+        /// Initializes a new instance of the <see cref="ComLib.NamedQueries.NamedQueryRepository"/> class.
         /// </summary>
         public StatusUpdateRepository() { }
 
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="Repository&lt;TId, T&gt;"/> class.
+        /// Initializes a new instance of the <see cref="StatusUpdateRepository"/> class.
         /// </summary>
         /// <param name="connectionInfo">The connection info.</param>
-        /// <param name="helper">The helper.</param>
-        public StatusUpdateRepository(ConnectionInfo connectionInfo, IDBHelper helper)
-            : base(connectionInfo, helper)
+        /// <param name="db">Database to use.</param>
+        public StatusUpdateRepository(ConnectionInfo connectionInfo, IDatabase db)
+            : base(connectionInfo, db)
         {
             this.RowMapper = new StatusUpdateRowMapper();
         }
@@ -55,16 +52,16 @@ namespace ComLib.StatusUpdater
         /// <summary>
         /// Create the entity using sql.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
+        /// <param name="entity">Entity to create.</param>
+        /// <returns>Entity passed to this method.</returns>
         public override StatusUpdate Create(StatusUpdate entity)
         {
-            string sql = "insert into StatusUpdates ( CreateDate, UpdateDate, CreateUser, UpdateUser, UpdateComment, Version" +
-            ", IsActive, Computer, ExecutionUser, BusinessDate, BatchName" +
+            string sql = "insert into StatusUpdates ( CreateDate, UpdateDate, CreateUser, UpdateUser, UpdateComment" +
+            ", Computer, ExecutionUser, BusinessDate, BatchName" +
             ", BatchId, BatchTime, Task, Status, StartTime" +
             ", EndTime, Ref, Comment) " +
             "VALUES (" + "'" + entity.CreateDate.ToString("yyyy-MM-dd") + "'" + "," + "'" + entity.UpdateDate.ToString("yyyy-MM-dd") + "'" + "," + "'" + entity.CreateUser + "'" + "," + "'" + entity.UpdateUser + "'" + "," + "'" + entity.UpdateComment + "'"
-             + "," + entity.Version + "," + Convert.ToSByte(entity.IsActive) + "," + "'" + entity.Computer + "'" + "," + "'" + entity.ExecutionUser + "'"
+             + "," + "'" + entity.Computer + "'" + "," + "'" + entity.ExecutionUser + "'"
              + "," + "'" + entity.BusinessDate.ToString("yyyy-MM-dd") + "'" + "," + "'" + entity.BatchName + "'" + "," + entity.BatchId + "," + "'" + entity.BatchTime.ToString("yyyy-MM-dd") + "'"
              + "," + "'" + entity.Task + "'" + "," + "'" + entity.Status + "'" + "," + "'" + entity.StartTime.ToString("yyyy-MM-dd") + "'" + "," + "'" + entity.EndTime.ToString("yyyy-MM-dd") + "'"
              + "," + "'" + entity.Ref + "'" + "," + "'" + entity.Comment + "'" + ");select scope_identity();";
@@ -77,12 +74,12 @@ namespace ComLib.StatusUpdater
         /// <summary>
         /// Update the entity using sql.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
+        /// <param name="entity">Entity to use.</param>
+        /// <returns>Entity passed to this method.</returns>
         public override StatusUpdate Update(StatusUpdate entity)
         {
-            string sql = "update StatusUpdates set CreateDate = " + "'" + entity.CreateDate.ToString("yyyy-MM-dd") + "'" + ", UpdateDate = " + "'" + entity.UpdateDate.ToString("yyyy-MM-dd") + "'" + ", CreateUser = " + "'" + entity.CreateUser + "'" + ", UpdateUser = " + "'" + entity.UpdateUser + "'" + ", UpdateComment = " + "'" + entity.UpdateComment + "'" + ", Version = " + entity.Version +
-            ", IsActive = " + Convert.ToSByte(entity.IsActive) + ", Computer = " + "'" + entity.Computer + "'" + ", ExecutionUser = " + "'" + entity.ExecutionUser + "'" + ", BusinessDate = " + "'" + entity.BusinessDate.ToString("yyyy-MM-dd") + "'" + ", BatchName = " + "'" + entity.BatchName + "'" +
+            string sql = "update StatusUpdates set CreateDate = " + "'" + entity.CreateDate.ToString("yyyy-MM-dd") + "'" + ", UpdateDate = " + "'" + entity.UpdateDate.ToString("yyyy-MM-dd") + "'" + ", CreateUser = " + "'" + entity.CreateUser + "'" + ", UpdateUser = " + "'" + entity.UpdateUser + "'" + ", UpdateComment = " + "'" + entity.UpdateComment + "'" + 
+            ", Computer = " + "'" + entity.Computer + "'" + ", ExecutionUser = " + "'" + entity.ExecutionUser + "'" + ", BusinessDate = " + "'" + entity.BusinessDate.ToString("yyyy-MM-dd") + "'" + ", BatchName = " + "'" + entity.BatchName + "'" +
             ", BatchId = " + entity.BatchId + ", BatchTime = " + "'" + entity.BatchTime.ToString("yyyy-MM-dd") + "'" + ", Task = " + "'" + entity.Task + "'" + ", Status = " + "'" + entity.Status + "'" + ", StartTime = " + "'" + entity.StartTime.ToString("yyyy-MM-dd") + "'" +
             ", EndTime = " + "'" + entity.EndTime.ToString("yyyy-MM-dd") + "'" + ", Ref = " + "'" + entity.Ref + "'" + ", Comment = " + "'" + entity.Comment + "'" + " where Id = " + entity.Id; ;
             _db.ExecuteNonQueryText(sql, null);
@@ -95,9 +92,14 @@ namespace ComLib.StatusUpdater
     /// <summary>
     /// RowMapper for StatusUpdate.
     /// </summary>
-    /// <typeparam name="?"></typeparam>
     public partial class StatusUpdateRowMapper : EntityRowMapper<StatusUpdate>, IEntityRowMapper<StatusUpdate>
     {
+        /// <summary>
+        /// Maps entity rows to data rows.
+        /// </summary>
+        /// <param name="reader">Database reader with row info and data.</param>
+        /// <param name="rowNumber">Row number.</param>
+        /// <returns>Instance of status update created from row.</returns>
         public override StatusUpdate MapRow(IDataReader reader, int rowNumber)
         {
             StatusUpdate entity = StatusUpdates.New();
@@ -107,8 +109,6 @@ namespace ComLib.StatusUpdater
             entity.CreateUser = reader["CreateUser"] == DBNull.Value ? string.Empty : reader["CreateUser"].ToString();
             entity.UpdateUser = reader["UpdateUser"] == DBNull.Value ? string.Empty : reader["UpdateUser"].ToString();
             entity.UpdateComment = reader["UpdateComment"] == DBNull.Value ? string.Empty : reader["UpdateComment"].ToString();
-            entity.Version = reader["Version"] == DBNull.Value ? 0 : (int)reader["Version"];
-            entity.IsActive = reader["IsActive"] == DBNull.Value ? false : (bool)reader["IsActive"];
             entity.Computer = reader["Computer"] == DBNull.Value ? string.Empty : reader["Computer"].ToString();
             entity.ExecutionUser = reader["ExecutionUser"] == DBNull.Value ? string.Empty : reader["ExecutionUser"].ToString();
             entity.BusinessDate = reader["BusinessDate"] == DBNull.Value ? DateTime.MinValue : (DateTime)reader["BusinessDate"];

@@ -23,7 +23,7 @@ namespace ComLib.Categories
     /// <summary> 
     /// Category validator. 
     /// </summary> 
-    public class CategoryValidator : ValidatorBase
+    public class CategoryValidator : Validator
     {
         private Category _category;
 
@@ -42,7 +42,7 @@ namespace ComLib.Categories
         /// <summary> 
         /// Validate the category. 
         /// </summary> 
-        /// <param name="entity"></param> 
+        /// <param name="validationEvent"></param>
         /// <returns></returns> 
         protected override bool ValidateInternal(ValidationEvent validationEvent)
         {
@@ -52,7 +52,7 @@ namespace ComLib.Categories
             
             int initialErrorCount = results.Count;
             Category category = useTarget ? (Category)target : _category;
-            ValidationUtils.Validate(string.IsNullOrEmpty(category.Name), results, "Title", "Category title can not be empty", category);
+            ValidationUtils.Validate(string.IsNullOrEmpty(category.Name), results, "Title", "Category title can not be empty");
             return initialErrorCount == results.Count;
         }
         #endregion

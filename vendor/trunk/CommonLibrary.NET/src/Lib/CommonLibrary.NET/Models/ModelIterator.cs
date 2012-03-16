@@ -1,4 +1,18 @@
-﻿using System;
+﻿/*
+ * Author: Kishore Reddy
+ * Url: http://commonlibrarynet.codeplex.com/
+ * Title: CommonLibrary.NET
+ * Copyright: � 2009 Kishore Reddy
+ * License: LGPL License
+ * LicenseUrl: http://commonlibrarynet.codeplex.com/license
+ * Description: A C# based .NET 3.5 Open-Source collection of reusable components.
+ * Usage: Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +41,7 @@ namespace ComLib.Models
         /// <summary>
         /// Event to fire when property should be processed for a specific model.
         /// </summary>
-        public event Func<ModelContext, Model, PropertyInfo, bool> OnPropertyProcess;
+        public event Func<ModelContext, Model, PropInfo, bool> OnPropertyProcess;
 
 
         /// <summary>
@@ -53,14 +67,53 @@ namespace ComLib.Models
         /// <summary>
         /// Property filter.
         /// </summary>
-        public Func<Model, PropertyInfo, bool> FilterOnProperty;
+        public Func<Model, PropInfo, bool> FilterOnProperty;
         #endregion
+
+
+
+        /// <summary>
+        /// Process the model using the callback lamdas.
+        /// </summary>
+        /// <param name="ctx">The full model context.</param>
+        /// <param name="model">The model to process.</param>
+        /// <param name="inheritanceChain">List with the inheritance chain.</param>
+        /// <param name="inheritanceAction">Inheritance action.</param>
+        /// <param name="includeAction">Include action.</param>
+        /// <param name="compositionAction">Composition action.</param>
+        public static void Process(ModelContext ctx, Model model, List<Model> inheritanceChain, Action<Model> inheritanceAction,
+                            Action<Model, Include> includeAction, Action<Model, Composition> compositionAction)
+        {
+            // Build property mapping for each inherited model.
+            foreach (Model inheritedModel in inheritanceChain)
+                inheritanceAction(inheritedModel);
+
+            // Build property mapping for each inherited model.
+            if (model.Includes != null && model.Includes.Count > 0)
+            {
+                foreach (Include include in model.Includes)
+                {
+                    Model includedModel = ctx.AllModels.ModelMap[include.Name];
+                    includeAction(includedModel, include);
+                }
+            }
+
+            // Build property mapping for each Composed of model.
+            if (model.ComposedOf != null && model.ComposedOf.Count > 0)
+            {
+                foreach (Composition composedModelName in model.ComposedOf)
+                {
+                    Model composedModel = ctx.AllModels.ModelMap[composedModelName.Name];
+                    compositionAction(composedModel, composedModelName);
+                }
+            }
+        }
 
 
         /// <summary>
         /// Process all the models, which pass the filter, one at a time.
         /// </summary>
-        /// <param name="ctx"></param>
+        /// <param name="ctx">The model context.</param>
         public virtual void Process(ModelContext ctx)
         {
             foreach (Model currentModel in ctx.AllModels.AllModels)
@@ -77,8 +130,8 @@ namespace ComLib.Models
         /// <summary>
         /// Process the model with the specified name.
         /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="modelName"></param>
+        /// <param name="ctx">The model context.</param>
+        /// <param name="modelName">The model name.</param>
         public virtual void Process(ModelContext ctx, string modelName)
         {
             Model current = ctx.AllModels.ModelMap[modelName];
@@ -89,8 +142,8 @@ namespace ComLib.Models
         /// <summary>
         /// Proces given model
         /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="currentModel"></param>
+        /// <param name="ctx">The mode context.</param>
+        /// <param name="currentModel">The current model.</param>
         public virtual void ProcessModel(ModelContext ctx, Model currentModel)
         {   
             // Notify.
@@ -98,7 +151,7 @@ namespace ComLib.Models
                 OnModelProcess(ctx, currentModel);
 
             // Create the database table for all the models.
-            List<Model> modelChain = ModelUtils.GetModelInheritancePath(ctx, currentModel.Name);
+            List<Model> modelChain = ModelUtils.GetModelInheritancePath(ctx.AllModels, currentModel.Name);
 
             // Sort the models to create the columns/properties in a specific order.
             // For the database, the inheritance chain doesn't really matter.
@@ -117,8 +170,8 @@ namespace ComLib.Models
         /// <summary>
         /// Build the properties.
         /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+        /// <param name="ctx">The model context.</param>
+        /// <param name="model">The model.</param>
         public virtual void ProcessModelParts(ModelContext ctx, Model model)
         {
             ProcessProperties(ctx, model);
@@ -130,12 +183,12 @@ namespace ComLib.Models
         /// <summary>
         /// Process all the properties of the model.
         /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="model"></param>
+        /// <param name="ctx">The model context.</param>
+        /// <param name="model">The model.</param>
         public virtual void ProcessProperties(ModelContext ctx, Model model)
         {
             // Handle properties of model.
-            foreach (PropertyInfo prop in model.Properties)
+            foreach (PropInfo prop in model.Properties)
             {
                 if (FilterOnProperty == null || (FilterOnProperty != null && FilterOnProperty(model, prop)))
                 {
@@ -150,8 +203,8 @@ namespace ComLib.Models
         /// <summary>
         /// Process all the compositions of the model.
         /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="model"></param>
+        /// <param name="ctx">The model context.</param>
+        /// <param name="model">The model.</param>
         public virtual void ProcessCompositions(ModelContext ctx, Model model)
         {
             // Handle compositions
@@ -172,8 +225,8 @@ namespace ComLib.Models
         /// <summary>
         /// Process all the includes of the model.
         /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="model"></param>
+        /// <param name="ctx">The model context.</param>
+        /// <param name="model">The model.</param>
         public virtual void ProcessIncludes(ModelContext ctx, Model model)
         {
             // Handle includes
@@ -194,13 +247,13 @@ namespace ComLib.Models
         /// <summary>
         /// Get all the applicable properties after running the filter.
         /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public List<PropertyInfo> GetProperties(Model model)
+        /// <param name="model">The model.</param>
+        /// <returns>List of applicable properties.</returns>
+        public List<PropInfo> GetProperties(Model model)
         {
-            List<PropertyInfo> props = new List<PropertyInfo>();
+            List<PropInfo> props = new List<PropInfo>();
             // Handle properties of model.
-            foreach (PropertyInfo prop in model.Properties)
+            foreach (PropInfo prop in model.Properties)
             {
                 if (FilterOnProperty == null || (FilterOnProperty != null && FilterOnProperty(model, prop)))
                 {

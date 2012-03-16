@@ -22,8 +22,59 @@ namespace ComLib.LocationSupport
     /// This enumeration matches up with the enumerations used in the stored procedure
     /// for searching up by location.
     /// </summary>
-    public enum LocationLookUpType { All = 0, City = 1, CityState = 2, CityCountry = 3, CityStateCountry = 4, State = 5, Country = 6, Zip = 7, None = 8 };
+    public enum LocationLookUpType { 
+        /// <summary>
+        /// Locate all.
+        /// </summary>
+        All = 0, 
 
+
+        /// <summary>
+        /// City lookup.
+        /// </summary>
+        City = 1, 
+
+
+        /// <summary>
+        /// City/state lookup.
+        /// </summary>
+        CityState = 2, 
+
+
+        /// <summary>
+        /// City/country lookup.
+        /// </summary>
+        CityCountry = 3, 
+
+
+        /// <summary>
+        /// City/state/country lookup.
+        /// </summary>
+        CityStateCountry = 4, 
+
+
+        /// <summary>
+        /// State lookup.
+        /// </summary>
+        State = 5, 
+
+
+        /// <summary>
+        /// Country lookup.
+        /// </summary>
+        Country = 6, 
+
+
+        /// <summary>
+        /// Zip lookup.
+        /// </summary>
+        Zip = 7, 
+
+
+        /// <summary>
+        /// No lookup.
+        /// </summary>
+        None = 8 };
 
 
     /// <summary>
@@ -31,14 +82,46 @@ namespace ComLib.LocationSupport
     /// </summary>
     public class LocationConstants
     {
+        /// <summary>
+        /// Country string for United States.
+        /// </summary>
         public const string CountryUsa = "USA";
+
+
+        /// <summary>
+        /// Country id for United States.
+        /// </summary>
         public const int CountryId_USA = 230;
+
+
+        /// <summary>
+        /// Length of zip code.
+        /// </summary>
         public const int ZipCodeLength = 5;
 
         //Constants for Country, State, Zip if class is online.
+
+        /// <summary>
+        /// Country id iz online.
+        /// </summary>
         public const int CountryId_NA_Online = -1;
+
+
+        /// <summary>
+        /// Zip code is online.
+        /// </summary>
         public const string ZipCode_NA_Online = "00000";
+
+
+        /// <summary>
+        /// State id is online.
+        /// </summary>
         public const int StateId_NA_Online = -1;
+
+
+        /// <summary>
+        /// City id is online.
+        /// </summary>
         public const int CityId_NA = -1;
     }
 

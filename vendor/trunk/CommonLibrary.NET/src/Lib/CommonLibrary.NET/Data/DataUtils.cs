@@ -21,7 +21,7 @@ using System.Collections.Specialized;
 using System.Collections;
 
 
-namespace ComLib.Database
+namespace ComLib.Data
 {
     /// <summary>
     /// Database / table related utility functions.
@@ -41,7 +41,70 @@ namespace ComLib.Database
         }
 
 
+        /// <summary>
+        /// Builds a column name excluding potentially unsafe characters.
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        public static string BuildSafeColumn(string column)
+        {
+            if (string.IsNullOrEmpty(column))
+                return column;
 
+            string finalname = "";
+            for (int ndx = 0; ndx < column.Length; ndx++)
+                if (Char.IsLetterOrDigit(column[ndx]))
+                    finalname += column[ndx];
+
+            return finalname;
+        }
+
+
+        /// <summary>
+        /// Converts the list of objects to a data table using the types public / get properties.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="objects">The objects.</param>
+        /// <returns></returns>
+        public static DataTable ConvertListToDataTable<T>(IList<T> objects)
+        {
+            var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.GetProperty);
+            DataTable table = new DataTable();
+
+            // Define all the columns.
+            foreach (PropertyInfo property in props)
+            {
+                DataColumn column = new DataColumn();
+                column.ColumnName = property.Name;
+                column.DataType = typeof(string);
+                column.DefaultValue = string.Empty;
+                table.Columns.Add(column);
+            }
+
+            // Now create each record.
+            foreach (object obj in objects)
+            {
+                DataRow row = table.NewRow();
+
+                foreach (PropertyInfo property in props)
+                {
+                    string val = string.Empty;
+                    object propVal = property.GetValue(obj, null);
+                    row[property.Name] = Convert.ToString(propVal);
+                }
+                table.Rows.Add(row);
+            }
+            return table;
+        }
+
+
+        /// <summary>
+        /// Generates a data table with property names
+        /// as columns and property values as row data.
+        /// </summary>
+        /// <param name="objects">List of objects to extract row data from.</param>
+        /// <param name="properties">List of properties to create columns from.</param>
+        /// <returns>Data table with property columns and property value rows.</returns>
         public static DataTable ConvertPropertyCollectionToDataTable(IList objects, IList<PropertyInfo> properties)
         {
             DataTable table = new DataTable();

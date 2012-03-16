@@ -29,6 +29,9 @@ namespace ComLib.Calendars
         private IDictionary<int, List<DateTime>> _holidayListMap = new Dictionary<int, List<DateTime>>();
         private ICalendarDataProvider _holidayDataProvider;
 
+        /// <summary>
+        /// Raised when the calendar is changed.
+        /// </summary>
         public event EventHandler OnCalendarChanged;
 
 
@@ -45,8 +48,9 @@ namespace ComLib.Calendars
         /// This defaults the # of years of holidays that can be handled to +- 50;
         /// <param name="calendarCode">"U.S.-NewYork"</param>
         /// <param name="provider">The underlying holiday dates provider.</param>
-        /// <param name="forwardBackRange">E.g. 5. The number of years before and after current year
+        /// <param name="forwardBackRange">The number of years before and after current year 
         /// for which to calculate dates.</param>
+        /// </summary>
         public CalendarService(string calendarCode, ICalendarDataProvider provider, int forwardBackRange)
         {
             Init(calendarCode, provider, DateTime.Today.Year - forwardBackRange, DateTime.Today.Year + forwardBackRange);
@@ -179,7 +183,7 @@ namespace ComLib.Calendars
         /// <summary>
         /// Get the next business date after the date supplied.
         /// </summary>
-        /// <param name="afterDate"></param>
+        /// <param name="date"></param>
         /// <returns></returns>
         public DateTime NextBusinessDate(DateTime date)
         {

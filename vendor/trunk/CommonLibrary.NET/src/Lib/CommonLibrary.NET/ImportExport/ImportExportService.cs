@@ -15,40 +15,127 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ComLib;
-using ComLib.Entities;
-using ComLib.Database;
-using ComLib.IO;
-using ComLib.Entities;
+using System.Collections;
+using System.IO;
 
+
+using ComLib;
+using ComLib.IO;
+using ComLib.CsvParse;
+using ComLib.MapperSupport;
 
 
 namespace ComLib.ImportExport
 {
-
     /// <summary>
     /// Interface for an import/export service on objects.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ImportExportServiceIni<T> : IImportExportService<T>
+    public class ImportExportService<T> : IImportExportService<T> where T : class, new()
     {
-        private IEntityValidator<T> _validator;
-        private RowMapperContextual<IniDocument, T, string> _mapper;
+        /// <summary>
+        /// Validator to be used in import.
+        /// </summary>
+        protected IValidator _validator;
 
 
         /// <summary>
-        /// Initialize.
+        /// Mappers for various formats.
         /// </summary>
-        public ImportExportServiceIni(RowMapperContextual<IniDocument, T, string> mapper)
+        protected IDictionary<string, IMapper<T>> _mappers = new Dictionary<string, IMapper<T>>();
+
+        // Handlers for the import / export calls.
+
+        /// <summary>
+        /// Import handler.
+        /// </summary>
+        protected Action<IList<T>> _importHandler;
+
+
+        /// <summary>
+        /// Export page handler.
+        /// </summary>
+        protected Func<int, int, IList<T>> _exportPageHandler;
+
+
+        /// <summary>
+        /// Export handler.
+        /// </summary>
+        protected Func<IList<T>> _exportAllHandler;
+
+
+        /// <summary>
+        /// Total handler.
+        /// </summary>
+        protected Func<int> _totalHandler;
+
+
+        /// <summary>
+        /// Default initialization.
+        /// </summary>
+        public ImportExportService()
         {
-            _mapper = mapper;
+            _mappers = new Dictionary<string, IMapper<T>>();
+            _mappers["csv"] = new MapperCsv<T>();
+            _mappers["ini"] = new MapperIni<T>();
+            _mappers["xml"] = new MapperXml<T>();
+        }
+
+
+        /// <summary>
+        /// Initialize import/export service.
+        /// </summary>
+        /// <param name="validator">Validator to validate the objects before importing.</param>
+        /// <param name="supportedFormatsDelimited">Comma delimited formats. e.g. "xml,csv,ini".</param>
+        public void Init(IValidator validator, string supportedFormatsDelimited)
+        {
+            string[] formats = new string[]{ supportedFormatsDelimited };
+            if (supportedFormatsDelimited.Contains(","))
+                formats = supportedFormatsDelimited.Split(',');
+
+            Init(validator, formats);
+        }
+
+
+        /// <summary>
+        /// Initialize import/export service.
+        /// </summary>
+        /// <param name="validator">Validator to validate the objects before importing.</param>
+        /// <param name="supportedFormats">Comma delimited formats. e.g. "xml,csv,ini".</param>
+        public void Init(IValidator validator, string[] supportedFormats)
+        {
+            _validator = validator;
+            foreach (string format in supportedFormats)
+            {
+                string formatlcase = format.ToLower().Trim();
+
+                if (formatlcase == "csv")
+                    _mappers["csv"] = new MapperCsv<T>();
+                else if (formatlcase == "ini")
+                    _mappers["ini"] = new MapperIni<T>();
+                else if (formatlcase == "xml")
+                    _mappers["xml"] = new MapperXml<T>();
+            }
+        }
+
+
+        /// <summary>
+        /// Initialize import/export service.
+        /// </summary>
+        /// <param name="validator">Validator to validate the objects before importing.</param>
+        /// <param name="mappers"></param>
+        public void Init(IValidator validator, params IMapper<T>[] mappers)
+        {
+            _validator = validator;
+            foreach (var mapper in mappers)
+                _mappers[mapper.SupportedFormat] = mapper;
         }
 
 
         /// <summary>
         /// The validator to use when importing.
         /// </summary>
-        public IEntityValidator<T> Validator
+        public IValidator Validator
         {
             get { return _validator; }
             set { _validator = value; }
@@ -56,119 +143,26 @@ namespace ComLib.ImportExport
 
 
         /// <summary>
-        /// Map each node in the ini document into the item T.
+        /// Is there a validator.
         /// </summary>
-        public RowMapperContextual<IniDocument, T, string> Mapper
+        public bool HasValidator
         {
-            get { return _mapper; }
-            set { _mapper = value; }
-        }
-
-       
-        /// <summary>
-        /// Determines whether this instance can import the specified items.
-        /// </summary>
-        /// <param name="items">The items.</param>
-        /// <param name="errors">The errors.</param>
-        /// <returns></returns>
-        public BoolMessageItem<IList<T>> CanImport(ImportExportActionContext<T> ctx)
-        {
-            ValidationResults results = new ValidationResults();
-
-            foreach (T item in ctx.ItemList)
-            {
-                _validator.Validate(item, results);
-            }
-            return new BoolMessageItem<IList<T>>(ctx.ItemList, results.IsValid, string.Empty);
+            get { return _validator != null; }
         }
 
 
+        #region Core Behaviour - import - count - export
         /// <summary>
-        /// Determines whether this instance can import the specified items.
+        /// Import items.
         /// </summary>
-        /// <param name="items">The items.</param>
-        /// <param name="errors">The errors.</param>
+        /// <param name="items"></param>
         /// <returns></returns>
-        public BoolMessageItem<IList<T>> CanImportFromText(ImportExportActionContext<T> ctx)
+        public virtual BoolErrorsItem<IList<T>> Import(IList<T> items)
         {
-            BoolMessageItem<IList<T>> canImport = null;
-            IList<T> items = new List<T>();               
-                
-            // For each section.
-            try
-            {
-                IniDocument iniDoc = new IniDocument(ctx.ImportText, false, false);
-                ICollection<string> sectionNames = iniDoc.Sections;
-                RowMappingContext<IniDocument, T, string> rowContext = new RowMappingContext<IniDocument, T, string>();
-                rowContext.ValidationResults = ctx.Errors;
-                rowContext.Source = iniDoc;
-                rowContext.IsRowIdStringBased = false;
+            if (_importHandler == null) return new BoolErrorsItem<IList<T>>(null, false, "Import lamda not initialized.", null);
 
-                // Get each section.
-                for (int ndx = 0; ndx < iniDoc.Count; ndx++)
-                {
-                    // Set the current section being parsed.
-                    rowContext.RowId = ndx.ToString();
-
-                    // Now map the row to item T.
-                    BoolMessageItem<T> result = _mapper.MapRow(rowContext);
-
-                    // Check for both success and the item is not null.
-                    if (result.Item != null)
-                    {
-                        T item = result.Item;
-
-                        // Validate.
-                        bool isValid = _validator.Validate(item, rowContext.ValidationResults);
-
-                        // Only add to list if validation passed.
-                        if (isValid) items.Add(item);
-                    }
-                }
-                canImport = new BoolMessageItem<IList<T>>(items, rowContext.ValidationResults.IsValid, string.Empty);
-            }
-            catch (Exception ex)
-            {
-                canImport = new BoolMessageItem<IList<T>>(items, false, "An error occurred during the import process: " + ex.Message);
-            }
-            return canImport;
-        }
-
-
-        /// <summary>
-        /// Imports the specified items.
-        /// </summary>
-        /// <param name="items">The items.</param>
-        /// <returns></returns>
-        public BoolMessageItem<IList<T>> Import(ImportExportActionContext<T> ctx)
-        {
-            // Check if nodes or import text was supplied.
-            if (ctx.ItemList == null )
-                return new BoolMessageItem<IList<T>>(null, false, "Nodes to import was not supplied.");
-
-            return InternalImport(ctx);
-        }
-
-
-        /// <summary>
-        /// Imports the specified items.
-        /// </summary>
-        /// <param name="items">The items.</param>
-        /// <returns></returns>
-        public BoolMessageItem<IList<T>> ImportFromText(ImportExportActionContext<T> ctx)
-        {
-            // If the items are null, and import text is provided, parse it.
-            if (string.IsNullOrEmpty(ctx.ImportText))
-                return new BoolMessageItem<IList<T>>(null, false, "Import content is empty.");
-            
-            BoolMessageItem<IList<T>> result = CanImportFromText(ctx);
-            
-            // Unable to import from text ?
-            if (!result.Success) return result;
-
-            // Set the item list on the context as internal method only handles parsed nodes.
-            ctx.ItemList = result.Item;
-            return InternalImport(ctx);
+            _importHandler(items);
+            return new BoolErrorsItem<IList<T>>(items, true, string.Empty, null);
         }
 
 
@@ -176,19 +170,169 @@ namespace ComLib.ImportExport
         /// Gets the total count of the items that can be exported.
         /// </summary>
         /// <returns></returns>
-        public int GetTotalExportCount()
+        public virtual int TotalExportable()
         {
-            throw new NotImplementedException("Not yet implemented.");
+            if (_totalHandler == null)
+                throw new NotImplementedException("Not yet implemented.");
+
+            return _totalHandler();
         }
 
 
         /// <summary>
-        /// Exports a batch of items.
+        /// Exports items in a batch/page.
         /// </summary>
         /// <returns></returns>
-        public BoolMessageItem<IList<T>> ExportBatch(ImportExportActionContext<T> ctx)
+        public virtual BoolMessageItem<IList<T>> Export(int page, int pageSize)
         {
-            throw new NotImplementedException("Not yet implemented.");
+            if (_exportPageHandler == null)
+                throw new NotImplementedException("Not yet implemented.");
+
+            return new BoolMessageItem<IList<T>>(_exportPageHandler(page, pageSize), true, string.Empty);
+        }
+        #endregion
+
+
+        #region Overloaded & Convenience import/export methods
+        /// <summary>
+        /// Determines whether this instance can import the specified items.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public BoolErrorsItem<IList<T>> Load(IDictionary data, string format)
+        {
+            var errors = new ValidationResults();
+            var result = new BoolErrorsItem<IList<T>>(null, false, string.Empty, errors);
+
+            // For each section.
+            Try.CatchLog(() =>
+            {
+                IMapper<T> mapper = _mappers[format];
+                IList<T> results = mapper.Map(data, errors);
+                result = new BoolErrorsItem<IList<T>>(results, results != null && results.Count > 0, errors.Message(), errors);
+
+            });
+            return result;
+        }
+
+
+        /// <summary>
+        /// Determines whether this instance can import the specified items.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public virtual BoolErrorsItem<IList<T>> LoadFile(string filePath)
+        {
+            // If the items are null, and import text is provided, parse it.
+            if (string.IsNullOrEmpty(filePath) || !System.IO.File.Exists(filePath))
+                return new BoolErrorsItem<IList<T>>(null, false, "Import file path is valid.", null);
+
+            FileInfo file = new FileInfo(filePath);
+            string text = System.IO.File.ReadAllText(filePath);
+            return LoadText(text, file.Extension);
+        }
+
+
+        /// <summary>
+        /// Determines whether this instance can import the specified items.
+        /// </summary>
+        /// <param name="text">The text to import( as csv, xml, ini)</param>
+        /// <param name="format">csv, xml, ini, json</param>
+        /// <returns></returns>
+        public virtual BoolErrorsItem<IList<T>> LoadText(string text, string format)
+        {
+            if (!_mappers.ContainsKey(format.ToLower()))
+                return new BoolErrorsItem<IList<T>>(null, false, "Format : " + format + " not supported.", null);
+
+            BoolErrorsItem<IList<T>> canImport = new BoolErrorsItem<IList<T>>(null, false, "", null);
+
+            // For each section.
+            Try.CatchLog(() =>
+            {
+                var mapper = _mappers[format.ToLower()];
+                var errors = new ValidationResults();
+                IList<T> items = mapper.MapFromText(text, errors);
+                bool success = items != null && items.Count > 0;
+                canImport = new BoolErrorsItem<IList<T>>(items, success, string.Empty, errors);
+            });
+            return canImport;
+        }
+
+
+        /// <summary>
+        /// Imports the specified items.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public virtual BoolErrorsItem<IList<T>> Import(IDictionary data, string format)
+        {
+            var result = Load(data, format);
+            if (!result.Success) return result;
+
+            return Import(result.Item);
+        }
+
+
+        /// <summary>
+        /// Imports the specified items from the file.
+        /// </summary>
+        /// <param name="filePath">The path to the file to import.</param>
+        /// <returns></returns>
+        public BoolMessageItem ImportFileAsObjects(string filePath)
+        {
+            return ImportFile(filePath) as BoolMessageItem;
+        }
+
+
+        /// <summary>
+        /// Imports the specified items from the text
+        /// </summary>
+        /// <param name="text">The text to import( as csv, xml, ini)</param>
+        /// <param name="format">csv, xml, ini, json</param>
+        /// <returns></returns>
+        public BoolErrorsItem ImportTextAsObjects(string text, string format)
+        {
+            return ImportText(text, format) as BoolErrorsItem;
+        }
+
+
+        /// <summary>
+        /// Imports the specified items.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public virtual BoolErrorsItem<IList<T>> ImportFile(string filePath)
+        {
+            // If the items are null, and import text is provided, parse it.
+            if (string.IsNullOrEmpty(filePath) || !System.IO.File.Exists(filePath))
+                return new BoolErrorsItem<IList<T>>(null, false, "Import file path is valid.", null);
+
+            FileInfo file = new FileInfo(filePath);
+            string text = System.IO.File.ReadAllText(filePath);
+            return ImportText(text, file.Extension);
+        }
+
+
+        /// <summary>
+        /// Imports the specified items.
+        /// </summary>/// <param name="text">The text to import( as csv, xml, ini)</param>
+        /// <param name="format">csv, xml, ini, json</param>
+        /// <returns></returns>
+        public virtual BoolErrorsItem<IList<T>> ImportText(string text, string format)
+        {
+            // If the items are null, and import text is provided, parse it.
+            if (string.IsNullOrEmpty(text))
+                return new BoolErrorsItem<IList<T>>(null, false, "Import content is empty.", null);
+
+            var result = LoadText(text, format);
+
+            // Unable to import from text ?
+            if (!result.Success) return result;
+
+            // Set the item list on the context as internal method only handles parsed nodes.       
+            return Import(result.Item);
         }
 
 
@@ -196,27 +340,104 @@ namespace ComLib.ImportExport
         /// Exports all.
         /// </summary>
         /// <returns></returns>
-        public BoolMessageItem<IList<T>> ExportAll()
+        public virtual BoolMessage ExportToFile(string filename, string format)
         {
+            return ExportToFile(filename, format, 1, TotalExportable() + 1);
+        }
+
+
+        /// <summary>
+        /// Exports the range of items to a file.
+        /// </summary>
+        /// <returns></returns>
+        public virtual BoolMessage ExportToFile(string filename, string format, int page, int pageSize)
+        {
+            var result = ExportToText(format, page, pageSize);
+            if (!result.Success) return result;
+
+            try
+            {
+                File.WriteAllText(filename, result.Message);
+            }
+            catch (Exception ex)
+            {
+                return new BoolMessage(false, ex.Message);
+            }
+            return BoolMessage.True;
+        }
+
+
+        /// <summary>
+        /// Exports the batch as text.
+        /// </summary>
+        /// <returns></returns>
+        public virtual BoolMessageItem<string> ExportToText(string format, int page, int pageSize)
+        {
+            ToDo.Implement(ToDo.Priority.High, "kishore", "Need to provide default export functionality for various formats(xml,csv,ini).", () =>
+            {
+                var items = Export(page, pageSize);
+                var mapper = _mappers[format];
+            });
             throw new NotImplementedException("Not yet implemented.");
         }
-
-
-        #region Private members
-        private BoolMessageItem<IList<T>> InternalImport(ImportExportActionContext<T> ctx)
-        {
-            IEntityService<T> service = EntityRegistration.GetService<T>();
-            IActionContext actionContext = EntityRegistration.GetContext(typeof(T).FullName);
-            actionContext.Errors = ctx.Errors;
-            actionContext.Messages = ctx.Messages;
-            actionContext.CombineMessageErrors = false;
-            actionContext.Items = ctx.ItemList;
-            actionContext.Args["isImporting"] = true;
-            BoolMessage createResult = service.Create(actionContext);
-            return new BoolMessageItem<IList<T>>(ctx.ItemList, createResult.Success, createResult.Message);
-        }
-
         #endregion
 
+
+        #region Setters for Handlers
+        /// <summary>
+        /// Sets all the import/export handlers in on go.
+        /// </summary>
+        /// <param name="importHandler"></param>
+        /// <param name="exportByPageHandler"></param>
+        /// <param name="exportAllHandler"></param>
+        /// <param name="totalExportableHandler"></param>
+        public void SetHandlers(Action<IList<T>> importHandler, Func<int, int, IList<T>> exportByPageHandler, Func<IList<T>> exportAllHandler, Func<int> totalExportableHandler)
+        {
+            SetImport(importHandler);
+            SetExportPage(exportByPageHandler);
+            SetExportAll(exportAllHandler);
+            SetTotal(totalExportableHandler);
+        }
+
+
+        /// <summary>
+        /// Set the on import handler.
+        /// </summary>
+        /// <param name="handler"></param>
+        public void SetImport(Action<IList<T>> handler)
+        {
+            _importHandler = handler;
+        }
+
+
+        /// <summary>
+        /// Set the on export page handler.
+        /// </summary>
+        /// <param name="handler"></param>
+        public void SetExportPage(Func<int, int, IList<T>> handler)
+        {
+            _exportPageHandler = handler;
+        }
+
+
+        /// <summary>
+        /// Set the on import handler.
+        /// </summary>
+        /// <param name="handler"></param>
+        public void SetExportAll(Func<IList<T>> handler)
+        {
+            _exportAllHandler = handler;
+        }
+
+
+        /// <summary>
+        /// Set the on import handler.
+        /// </summary>
+        /// <param name="handler"></param>
+        public void SetTotal(Func<int> handler)
+        {
+            _totalHandler = handler;
+        }
+        #endregion
     }
 }

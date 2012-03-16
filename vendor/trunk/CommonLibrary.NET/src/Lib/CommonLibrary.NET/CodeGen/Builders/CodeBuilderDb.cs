@@ -5,20 +5,23 @@ using System.Text;
 using System.Data;
 using System.Data.Common;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using ComLib;
 using ComLib.Logging;
 using ComLib.Models;
-using ComLib.Database;
+using ComLib.Data;
 
 
 namespace ComLib.CodeGeneration
 {
+    /// <summary>
+    /// This class generates sql files for a model.
+    /// </summary>
     public class CodeBuilderDb : CodeBuilderBase, ICodeBuilder    
     {
         private ConnectionInfo _conn;
-        
+        private bool _buildInstallScriptsOnly;
+
 
         /// <summary>
         /// Default setup.
@@ -33,9 +36,19 @@ namespace ComLib.CodeGeneration
         /// Initialize using connection.
         /// </summary>
         /// <param name="conn"></param>
-        public CodeBuilderDb(ConnectionInfo conn)
+        public CodeBuilderDb(ConnectionInfo conn) : this(false, conn)
+        {
+        }
+
+        /// <summary>
+        /// Initialize using connection.
+        /// </summary>
+        /// <param name="buildInstallScriptsOnly"></param>
+        /// <param name="conn"></param>
+        public CodeBuilderDb(bool buildInstallScriptsOnly, ConnectionInfo conn)
         {
             _conn = conn;
+            _buildInstallScriptsOnly = buildInstallScriptsOnly;
         }
 
 
@@ -46,48 +59,78 @@ namespace ComLib.CodeGeneration
         /// <returns></returns>
         public BoolMessageItem<ModelContainer> Process(ModelContext ctx)
         {
-            StringBuilder bufferSql = new StringBuilder();
-            StringBuilder bufferTbl = new StringBuilder();
-            StringBuilder bufferProcs = new StringBuilder();
+            var bufferTables = new StringBuilder();            
+            var bufferProcs = new StringBuilder();
+            var bufferBoth = new StringBuilder();
+            var bufferDrop = new StringBuilder();
+            DBSchema schema = new DBSchema(_conn);
+            
+            ctx.AllModels.Iterate(m => ctx.CanProcess(m, (model)=> model.GenerateTable), currentModel =>
+            {                
+                // Create the database table for all the models.
+                List<Model> modelInheritanceChain = ctx.AllModels.InheritanceFor(currentModel.Name);
+                Validate(ctx, currentModel);
 
-            foreach (Model currentModel in ctx.AllModels.AllModels)
-            {
-                // Pre condition.
-                if (currentModel.GenerateTable)
-                {
-                    // Create the database table for all the models.
-                    List<Model> modelInheritanceChain = ModelUtils.GetModelInheritancePath(ctx, currentModel.Name);
-                    
-                    // Sort the models to create the columns/properties in a specific order.
-                    // For the database, the inheritance chain doesn't really matter.
-                    ModelUtils.Sort(modelInheritanceChain);
+                // Create table schema for model & create in database.
+                DataTable modelTable = ConvertModelChainToTable(currentModel, modelInheritanceChain, ctx);
+                string sqlTableSchema = string.Empty, sqlProcs = string.Empty, sqlModel = string.Empty;
+                string sqlDrop = string.Empty, sqlDropProcs = string.Empty, sqlDropTable = string.Empty;
 
-                    // Create table.
-                    DataTable modelTable = ConvertModelChainToTable(currentModel, modelInheritanceChain, ctx);
+                // Build sql for 
+                // 1. create table
+                // 2. create procs
+                // 3. create table & procs
+                // 4. drop procs & table
+                sqlDropTable = schema.GetDropTable(currentModel.TableName, true);
+                var sqlDropTableNoGo = schema.GetDropTable(currentModel.TableName, false);
+                sqlTableSchema = BuildTableSchema(ctx, modelInheritanceChain, currentModel, true);
+                var sqlTableSchemaNoGo = BuildTableSchema(ctx, modelInheritanceChain, currentModel, false);
+                List<string> sqlTable = new List<string>() { sqlDropTableNoGo, sqlTableSchemaNoGo };
+                List<string> procNames = CodeFileHelper.GetProcNames(ctx.AllModels.Settings.ModelDbStoredProcTemplates);
+                BoolMessageItem<List<string>> storedProcSql = CreateStoredProcs(ctx, currentModel, true);
+                BoolMessageItem<List<string>> storedProcSqlNoGo = CreateStoredProcs(ctx, currentModel, false);
+                if (storedProcSql.Success) storedProcSql.Item.ForEach(proc => sqlProcs += proc + Environment.NewLine);
+                procNames.ForEach(procName => sqlDropProcs += schema.GetDropProc(currentModel.TableName, procName) + Environment.NewLine);
 
-                    string sql = BuildTableSchema(ctx, modelInheritanceChain, currentModel);
-                    
-                    // Actually create the model in the database.
-                    ExecuteSqlInDb(sql, ctx, currentModel);
-                    
-                    // Create the stored procedures
-                    BoolMessageItem<List<string>> result = CreateStoredProcs(ctx, currentModel);
-                    if (result.Success)
-                    {
-                        ExecuteSqlProcsInDb(result, ctx, currentModel);
-                        bufferProcs.Append(result.Item + Environment.NewLine);
-                    }
-                    
-                    bufferSql.Append(sql);                    
-                }
-            }
-            string sqlText = bufferSql.ToString();
-            string sqlProcsText = bufferProcs.ToString();
-            string sqlFile = ctx.AllModels.Settings.ModelInstallLocation + "install.sql";
-            string procsFile = ctx.AllModels.Settings.ModelInstallLocation + "install_procs.sql";
-            File.WriteAllText(sqlFile, sqlText);
-            File.WriteAllText(procsFile, sqlProcsText);
+                sqlModel = sqlDropTable + Environment.NewLine + sqlTableSchema + Environment.NewLine + sqlProcs;
+                sqlDrop = sqlDropProcs + sqlDropTable + Environment.NewLine;
+
+                // Create in the database.
+                ExecuteSqlInDb(sqlTable, ctx, currentModel);
+                ExecuteSqlInDb(storedProcSqlNoGo.Item, ctx, currentModel);
+
+                // Create model install file containing both the table/procs sql.
+                CreateInstallSqlFile(ctx, currentModel, sqlModel);
+
+                bufferTables.Append(sqlTable + Environment.NewLine);
+                bufferProcs.Append(sqlProcs + Environment.NewLine + Environment.NewLine);
+                bufferBoth.Append(sqlModel + Environment.NewLine);
+                bufferDrop.Append(sqlDrop + Environment.NewLine);
+            });
+            
+            // Create the files.
+            string installPath = ctx.AllModels.Settings.ModelInstallLocation;                
+            Try.CatchLog( () => File.WriteAllText(installPath + "_install_models_tables.sql", bufferTables.ToString()));
+            Try.CatchLog(() => File.WriteAllText(installPath + "_install_models_tables.sql", bufferTables.ToString()));
+            Try.CatchLog(() => File.WriteAllText(installPath + "_install_models_procs.sql", bufferProcs.ToString()));
+            Try.CatchLog(() => File.WriteAllText(installPath + "_install_models_all.sql", bufferBoth.ToString()));
+            Try.CatchLog(() => File.WriteAllText(installPath + "_uninstall_models.sql", bufferDrop.ToString()));
             return null;
+        }
+
+
+        private void Validate(ModelContext ctx, Model current)
+        {
+            List<Model> modelInheritanceChain = ctx.AllModels.InheritanceFor(current.Name);
+            IErrors errors = new Errors();
+            foreach (Model model in modelInheritanceChain)
+            {
+                foreach (var prop in model.Properties)
+                    if (prop.DataType == typeof(string) && string.IsNullOrEmpty(prop.MaxLength) && prop.CreateColumn)
+                        errors.Add("String length not specified for model : " + model.Name + "." + prop.Name);
+            }
+            if (errors.HasAny)
+                throw new ArgumentException(errors.Message());
         }
 
 
@@ -96,7 +139,8 @@ namespace ComLib.CodeGeneration
         /// </summary>
         /// <param name="ctx"></param>
         /// <param name="currentModel"></param>
-        private BoolMessageItem<List<string>> CreateStoredProcs(ModelContext ctx, Model currentModel)
+        /// <param name="includeGo"></param>
+        private BoolMessageItem<List<string>> CreateStoredProcs(ModelContext ctx, Model currentModel, bool includeGo)
         {
             string codeTemplatePath = ctx.AllModels.Settings.ModelDbStoredProcTemplates;
             string[] files = Directory.GetFiles(codeTemplatePath);
@@ -131,6 +175,9 @@ namespace ComLib.CodeGeneration
 
                 string dropCommand = "IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[<%= model.TableName %>_" + procName + "]') AND type in (N'P', N'PC'))" + Environment.NewLine
                     + "DROP PROCEDURE [dbo].[<%= model.TableName %>_" + procName + "]";
+                
+                if( includeGo)
+                    dropCommand += Environment.NewLine + "go";
 
                 dropCommand = dropCommand.Replace("<%= model.TableName %>", currentModel.TableName);
 
@@ -149,6 +196,7 @@ namespace ComLib.CodeGeneration
         /// <param name="modelInheritanceChain">The list of models representing the inheritance chain, this includes the model
         /// being created. </param>
         /// <param name="modelToCreate">The model being created.</param>
+        /// <param name="ctx"></param>
         public static DataTable ConvertModelChainToTable(Model modelToCreate, List<Model> modelInheritanceChain, ModelContext ctx)
         {
             DataTable table = new DataTable();
@@ -194,7 +242,7 @@ namespace ComLib.CodeGeneration
         /// </summary>
         public virtual string CreateTableSuffix(Model model)
         {
-            int clobPropertyCount = model.Properties.Count<PropertyInfo>( (p) => p.DataType == typeof(StringClob));
+            int clobPropertyCount = model.Properties.Count( (p) => p.DataType == typeof(StringClob));
 
             //var clobProperties = from p in model.Properties where p.DataType == typeof(StringClob) select p;
             string textImageOn = clobPropertyCount > 0 ? "TEXTIMAGE_ON [PRIMARY]" : string.Empty;
@@ -209,13 +257,13 @@ namespace ComLib.CodeGeneration
         }
 
         
-        private string BuildTableSchema(ModelContext ctx, List<Model> modelInheritanceChain, Model modelToCreate)
+        private string BuildTableSchema(ModelContext ctx, List<Model> modelInheritanceChain, Model modelToCreate, bool includeGo)
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append(CreateTablePrefix(modelToCreate));
             buffer.Append("CREATE TABLE [dbo].[" + modelToCreate.TableName + "]( " + Environment.NewLine);
 
-            List<PropertyInfo> allProps = new List<PropertyInfo>();
+            List<PropInfo> allProps = new List<PropInfo>();
             modelInheritanceChain.ForEach(m => allProps.AddRange(m.Properties));
             
             if( modelToCreate.ComposedOf != null)
@@ -227,7 +275,7 @@ namespace ComLib.CodeGeneration
             // Add all the properties of each model as columns in the table.
             for(int ndx = 0; ndx < allProps.Count; ndx++)
             {
-                PropertyInfo prop = allProps[ndx];
+                PropInfo prop = allProps[ndx];
                 if (prop.CreateColumn)
                 {
                     string columnInfo = string.Empty;
@@ -252,22 +300,34 @@ namespace ComLib.CodeGeneration
             }
             buffer.Append(CreateTableSuffix(modelToCreate));
             string sql = buffer.ToString();
+            if(includeGo)
+                sql += Environment.NewLine + "go";
             return sql;
         }
 
 
-        public virtual string BuildColumnInfo(PropertyInfo prop)
+        /// <summary>
+        /// Builds sql column ddl
+        /// </summary>
+        /// <param name="prop"></param>
+        /// <returns></returns>
+        public virtual string BuildColumnInfo(PropInfo prop)
         {
             string columnInfo = "[{0}] [{1}]{2} {3}";
             string sqlType = TypeMap.Get<string>(TypeMap.SqlServer, prop.DataType.Name);
-            string length = prop.DataType == typeof(string) ? "(" + prop.MaxLength + ")" : string.Empty;
+            string length = prop.DataType == typeof(string) ? "(" + prop.MaxLength + ")" : string.Empty;            
             string nullOption = prop.IsRequired ? "NOT NULL" : "NULL";
             columnInfo = string.Format(columnInfo, prop.ColumnName, sqlType, length, nullOption);
             return columnInfo;
         }
 
 
-        public virtual string BuildColumnInfoForKey(PropertyInfo prop)
+        /// <summary>
+        /// Builds sql column identity ddl.
+        /// </summary>
+        /// <param name="prop"></param>
+        /// <returns></returns>
+        public virtual string BuildColumnInfoForKey(PropInfo prop)
         {
             // [Id] [bigint] IDENTITY(1,1) NOT NULL
             string columnInfo = "[{0}] [{1}] {2} {3}";
@@ -279,59 +339,44 @@ namespace ComLib.CodeGeneration
 
 
         /// <summary>
-        /// Create table in the database.
+        /// Create an install sql file specifically for creating the table for this model.
+        /// The location of the file is obtained from the settings and the model name.
         /// </summary>
-        /// <param name="sql"></param>
         /// <param name="ctx"></param>
         /// <param name="currentModel"></param>
-        public virtual void ExecuteSqlInDb(string sql, ModelContext ctx, Model currentModel)
+        /// <param name="sql"></param>
+        public virtual void CreateInstallSqlFile(ModelContext ctx, Model currentModel, string sql)
         {
-            DbCreateType createType = ctx.AllModels.Settings.DbAction_Create;
-            DBSchema helper = new DBSchema(_conn);
-            try
-            {
-                if (createType == DbCreateType.DropCreate)
-                {
-                    helper.DropTable(currentModel.TableName);
-                }
-                helper.ExecuteNonQuery(sql, CommandType.Text, null);                
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Error creating tables for model : " + currentModel.Name + " table name : " + currentModel.TableName);
-                Logger.Error(ex.Message);
-            }
+            string fileName = currentModel.InstallSqlFile;
+            fileName = ctx.AllModels.Settings.ModelInstallLocation + "install_model_" + fileName;
+            string error = string.Format("Error creating sql install file {0} for model {1}", fileName, currentModel.Name);
+            Try.CatchLog(error, () => File.WriteAllText(fileName, sql));
         }
 
 
         /// <summary>
         /// Create table in the database.
         /// </summary>
-        /// <param name="sql"></param>
+        /// <param name="sqls"></param>
         /// <param name="ctx"></param>
         /// <param name="currentModel"></param>
-        public virtual void ExecuteSqlProcsInDb(BoolMessageItem<List<string>> procs, ModelContext ctx, Model currentModel)
+        public virtual void ExecuteSqlInDb(List<string> sqls, ModelContext ctx, Model currentModel)
         {
             DbCreateType createType = ctx.AllModels.Settings.DbAction_Create;
             DBSchema helper = new DBSchema(_conn);
-            try
-            {
-                foreach (string sql in procs.Item)
-                {
-                    helper.ExecuteNonQuery(sql, CommandType.Text, null);
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Error creating tables for model : " + currentModel.Name + " table name : " + currentModel.TableName);
-                Logger.Error(ex.Message);
-            }
-        }
+            string error = "Error executing sql for model : " + currentModel.Name + " table name : " + currentModel.TableName;
 
+            Try.CatchLog( error, () =>
+            {
+                foreach (string sql in sqls)
+                    helper.ExecuteNonQuery(sql, CommandType.Text, null);
+            });
+        }
+       
 
         private static void BuildTableColumns(Model model, DataTable table, List<DataColumn> primaryKeyColumns)
         {
-            foreach (PropertyInfo prop in model.Properties)
+            foreach (PropInfo prop in model.Properties)
             {
                 DataColumn column = new DataColumn();
 
@@ -353,8 +398,11 @@ namespace ComLib.CodeGeneration
     }
 
 
-
-    public class CodeBuilderDbRowMapper
+    /// <summary>
+    /// This class generates row mapping and
+    /// basic code for a model.
+    /// </summary>
+    public class CodeBuilderDomainDatabase
     {
         /// <summary>
         /// The tabs to use.
@@ -363,73 +411,236 @@ namespace ComLib.CodeGeneration
 
 
         /// <summary>
-        /// Build the entire row mapper.
+        /// Get/set the model context.
         /// </summary>
-        /// <param name="ctx"></param>
+        public ModelContext Context { get; set; }
+
+
+        /// <summary>
+        /// Builds the create params SQL.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <param name="modelInheritanceChain">The model inheritance chain.</param>
+        /// <returns></returns>
+        public string BuildCreateParamsSql(Model model, List<Model> modelInheritanceChain)
+        {
+            List<string> names = new List<string>();
+            var code = "\"insert into {0} ( {1} ) values ( {2} );\" + IdentityStatement;";
+
+            this.Context.AllModels.Iterate(model.Name,
+                    (minherit) => StoreDbParams(minherit, names),
+                    (minclude, include) => StoreDbParams(minclude, names),
+                    (mcompose, compose) => StoreDbParams(mcompose, names),
+                    null, null);
+
+            string cols = EnumerableExtensions.JoinDelimitedWithNewLine<string>(names, ", ", 6, "\"" + Environment.NewLine + Tab + " + \"", name => "[" + name + "]");
+            string vals = EnumerableExtensions.JoinDelimitedWithNewLine<string>(names, ", ", 6, "\"" + Environment.NewLine + Tab + " + \"", name => "@" + name);
+
+            string paramsCode = string.Format(code, model.TableName, cols, vals);
+            return paramsCode;
+        }
+
+
+        /// <summary>
+        /// Builds the update params SQL.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <param name="modelInheritanceChain">The model inheritance chain.</param>
+        /// <returns></returns>
+        public string BuildUpdateParamsSql(Model model, List<Model> modelInheritanceChain)
+        {
+            string code = "\"update {0} set {1} where Id = \" + entity.Id";
+            List<string> names = new List<string>();
+
+            this.Context.AllModels.Iterate(model.Name,
+                    (minherit) => StoreDbParams(minherit, names),
+                    (minclude, include) => StoreDbParams(minclude, names),
+                    (mcompose, compose) => StoreDbParams(mcompose, names), null, null);
+
+            string cols = EnumerableExtensions.JoinDelimitedWithNewLine<string>(names, ", ", 6, "\"" + Environment.NewLine + Tab + " + \"", name => "[" + name + "] = @" + name);
+
+            string paramsCode = string.Format(code, model.TableName, cols);
+            return paramsCode;
+        }
+
+
+        /// <summary>
+        /// Build the database parameters for Create/Update using parameterized sql.
+        /// </summary>
         /// <param name="model"></param>
-        /// <param name="buffer"></param>
         /// <param name="modelInheritanceChain"></param>
         /// <returns></returns>
-        public string BuildRowMapper(ModelContext ctx, Model model, List<Model> modelInheritanceChain)
+        public string BuildDbParams(Model model, List<Model> modelInheritanceChain)
+        {
+            StringBuilder buffer = new StringBuilder();
+            string code = string.Empty;
+            string template = Tab + "dbparams.Add(BuildParam(\"@{0}\", SqlDbType.{1}, entity.{2}));";
+            string template2 = Tab + "dbparams.Add(BuildParam(\"@{0}\", SqlDbType.{1}, entity.{composedName}.{2}));";
+            string stringTemplate = Tab + "dbparams.Add(BuildParam(\"@{0}\", SqlDbType.{1}, string.IsNullOrEmpty(entity.{2}) ? \"\" : entity.{2}));";
+            string stringTemplate2 = Tab + "dbparams.Add(BuildParam(\"@{0}\", SqlDbType.{1}, string.IsNullOrEmpty(entity.{composedName}.{2}) ? \"\" : entity.{composedName}.{2}));";
+
+            this.Context.AllModels.Iterate(model.Name, 
+                    (minherit) => AddDbParams(minherit, template, stringTemplate, buffer),
+                    (minclude, include) => AddDbParams(minclude, template, stringTemplate, buffer),
+                    (mcompose, compose) => AddDbParams(mcompose, template2.Replace("{composedName}", mcompose.Name), stringTemplate2.Replace("{composedName}", mcompose.Name), buffer),
+                    null, null);
+            
+            string paramsCode = buffer.ToString();
+            return paramsCode;
+        }
+
+
+        /// <summary>
+        /// Build the entire row mapper.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="modelInheritanceChain"></param>
+        /// <returns></returns>
+        public string BuildRowMapper(Model model, List<Model> modelInheritanceChain)
         {
             // Job entity = Jobs.New();
             StringBuilder buffer = new StringBuilder();
             string code = string.Empty;
-            
-            // Build property mapping for each inherited model.
-            foreach (Model inheritedModel in modelInheritanceChain)
-            {
-                code = BuildRowMapperProperties(ctx, "entity", model, inheritedModel.Properties);
-                buffer.Append(code);
-            }
 
-            // Build property mapping for each inherited model.
-            if (model.Includes != null && model.Includes.Count > 0)
-            {
-                foreach (Include include in model.Includes)
-                {
-                    Model includedModel = ctx.AllModels.ModelMap[include.Name];
-                    code = BuildRowMapperProperties(ctx, "entity", model, includedModel.Properties);
-                    buffer.Append(code);
-                }
-            }
+            this.Context.AllModels.Iterate(model.Name, 
+                    (minherit) => buffer.Append(BuildRowMapperProperties("entity", model, minherit.Properties)),
+                    (minclude, include) => buffer.Append(BuildRowMapperProperties("entity", model, minclude.Properties)),
+                    (mcompose, compose) =>
+                    {
+                        code = string.Format("entity.{0} = new {1}();", compose.Name, compose.Name);
+                        buffer.Append(code + Environment.NewLine);
 
-            // Build property mapping for each Composed of model.
-            if (model.ComposedOf != null && model.ComposedOf.Count > 0)
-            {
-                foreach (Composition composedModelName in model.ComposedOf)
-                {
-                    Model composedModel = ctx.AllModels.ModelMap[composedModelName.Name];
-                    code = string.Format("entity.{0} = new {1}();", composedModelName.Name, composedModelName.Name);
-                    buffer.Append(code + Environment.NewLine);
+                        // entity.Address
+                        code = BuildRowMapperProperties("entity." + compose.Name, mcompose, mcompose.Properties);
+                        buffer.Append(code);
+                    }, null , null);
 
-                    // entity.Address
-                    code = BuildRowMapperProperties(ctx, "entity." + composedModelName.Name, composedModel, composedModel.Properties);
-                    buffer.Append(code);
-                }
-            }
+
             string mappingCode = buffer.ToString();
             return mappingCode;
+        }
+
+
+        private void StoreDbParams(Model model, List<string> names)
+        {
+            model.Properties.ForEach(prop => { if (CanProcessProp(prop)) names.Add(prop.Name); });
+        }
+
+
+        private bool CanProcessProp(PropInfo prop)
+        {
+            if(string.Compare(prop.Name, "id", true) != 0 && prop.CreateColumn)
+                return true; 
+            return false;
+        }
+
+
+        private void AddDbParams(Model model, string template, string strTemplate, StringBuilder buffer)
+        {
+            model.Properties.ForEach(prop =>
+            {
+                if (CanProcessProp(prop))
+                {
+                    var sqlType = TypeMap.Get<object>(TypeMap.SqlClient, prop.DataType.Name).ToString();
+                    string format = template;
+                    if (prop.DataType == typeof(string) || prop.DataType == typeof(StringClob))
+                    {
+                        format = strTemplate;
+                    }
+                    buffer.Append(string.Format(format, prop.Name, sqlType, prop.Name) + Environment.NewLine);
+                }
+            });
+        }
+
+
+        /// <summary>
+        /// Builds fetch for relational model objects.
+        /// </summary>
+        /// <param name="model">Model to use.</param>
+        /// <returns>Generated string.</returns>
+        public string BuildRelationObjects(Model model)
+        {
+            // entity.User = GetOne<User>("where Id == " + 1);            
+            var buffer = new StringBuilder();
+            model.OneToOne.ForEach(rel =>
+            {
+                if (!string.IsNullOrEmpty(rel.Key))
+                    buffer.Append(string.Format("entity.{0} = GetOne<{1}>(\"id = \" + entity.{2});" + Environment.NewLine, rel.ModelName, rel.ModelName, rel.Key));
+
+                else if(!string.IsNullOrEmpty(rel.ForeignKey))
+                    buffer.Append(string.Format("entity.{0} = GetOne<{1}>(\"{2} = \" + id);" + Environment.NewLine, rel.ModelName, rel.ModelName, rel.ForeignKey));
+            });
+
+            // entity.Comments = GetMany<Comment>("where refid == " + id);
+            model.OneToMany.ForEach(rel =>
+            {
+                buffer.Append(string.Format("entity.{0}s = GetMany<{1}>(\"{2} = \" + id);" + Environment.NewLine, rel.ModelName, rel.ModelName, rel.ForeignKey));
+            });
+            string code = buffer.ToString();
+            if (!string.IsNullOrEmpty(code))
+            {
+                code = "if (entity != null)" + Environment.NewLine
+                     + Tab + " { " + Environment.NewLine 
+                     + Tab + Tab + code + Environment.NewLine 
+                     + Tab + " } " + Environment.NewLine;
+            }
+            return code;
+        }
+
+
+        /// <summary>
+        /// Builds deletion logic for related objects.
+        /// </summary>
+        /// <param name="model">Model to use.</param>
+        /// <returns>Generated string.</returns>
+        public string BuildRelationObjectsDeletion(Model model)
+        {
+            // entity.User = GetOne<User>("where Id == " + 1);            
+            var buffer = new StringBuilder();
+            model.OneToOne.ForEach(rel =>
+            {
+                if (!string.IsNullOrEmpty(rel.Key))
+                    buffer.Append(string.Format("entity.{0} = GetOne<{1}>(\"id = \" + entity.{2});" + Environment.NewLine, rel.ModelName, rel.ModelName, rel.Key));
+
+                else if (!string.IsNullOrEmpty(rel.ForeignKey))
+                    buffer.Append(string.Format("entity.{0} = GetOne<{1}>(\"{2} = \" + id);" + Environment.NewLine, rel.ModelName, rel.ModelName, rel.ForeignKey));
+            });
+
+            // entity.Comments = GetMany<Comment>("where refid == " + id);
+            model.OneToMany.ForEach(rel =>
+            {
+                buffer.Append(string.Format("entity.{0}s = GetMany<{1}>(\"{2} = \" + id);" + Environment.NewLine, rel.ModelName, rel.ModelName, rel.ForeignKey));
+            });
+            string code = buffer.ToString();
+            if (!string.IsNullOrEmpty(code))
+            {
+                code = "if (entity != null)" + Environment.NewLine
+                     + Tab + " { " + Environment.NewLine
+                     + Tab + Tab + code + Environment.NewLine
+                     + Tab + " } " + Environment.NewLine;
+            }
+            return code;
         }
 
 
         /// <summary>
         /// Build row mapper.
         /// </summary>
-        /// <param name="ctx"></param>
+        /// <param name="entityName"></param>
         /// <param name="model"></param>
-        /// <param name="buffer"></param>
-        /// <param name="props"></param>
+        /// <param name="allProps"></param>
         /// <returns></returns>
-        public string BuildRowMapperProperties(ModelContext ctx, string entityName, Model model, List<PropertyInfo> props)
+        public string BuildRowMapperProperties(string entityName, Model model, List<PropInfo> allProps)
         {
             // Job entity = Jobs.New();
             string code = string.Empty;
             StringBuilder buffer = new StringBuilder();
             buffer.Append(code);
 
+            List<PropInfo> props = (from prop in allProps where prop.IsGetterOnly.Equals(false) && prop.CreateColumn.Equals(true) select prop).ToList();
+
             // Create mapping for each property
-            foreach (PropertyInfo prop in props)
+            foreach (PropInfo prop in props)
             {
                 if (prop.DataType == typeof(string) || prop.DataType == typeof(StringClob))
                     code = BuildMappingCode(prop, entityName, "{0}.{1} = reader[\"{2}\"] == DBNull.Value ? string.Empty : reader[\"{3}\"].ToString();");
@@ -449,14 +660,19 @@ namespace ComLib.CodeGeneration
                 else if (prop.DataType == typeof(double))
                     code = BuildMappingCode(prop, entityName, "{0}.{1} = reader[\"{2}\"] == DBNull.Value ? 0 : Convert.ToDouble(reader[\"{2}\"]);");
 
-
+                else if (prop.DataType == typeof(Image))
+                {
+                    code = BuildMappingCode(prop, entityName, "{0}.{1} = reader[\"{2}\"] == DBNull.Value ? new byte[] : (byte[])reader[\"{3}\"];");
+                    code = code.Replace("new byte[] : ", "new byte[]{} : ");
+                }
+                
                 buffer.Append(code + Environment.NewLine);
             }
             return buffer.ToString();
         }
 
 
-        private string BuildMappingCode(PropertyInfo prop, string entityName, string codeLine)
+        private string BuildMappingCode(PropInfo prop, string entityName, string codeLine)
         {
             // reader["Description"] == DBNull.Value ? string.Empty : reader["Description"].ToString();
             string code = string.Format(codeLine, entityName, prop.Name, prop.ColumnName, prop.ColumnName);

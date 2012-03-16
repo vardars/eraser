@@ -54,8 +54,8 @@ namespace ComLib.Scaffolding
         /// <param name="messages"></param>
         /// <param name="entityName"></param>
         /// <param name="parentControlId"></param>
-        public ScaffoldContext(IValidationResults errors, IStatusResults messages, string entityName, string entityId, string parentControlId)
-            : base(errors, messages)
+        public ScaffoldContext(IValidationResults errors, IErrors messages, string entityName, string entityId, string parentControlId)
+            : base(errors)
         {
             EntityName = entityName;
             ParentControlId = parentControlId;

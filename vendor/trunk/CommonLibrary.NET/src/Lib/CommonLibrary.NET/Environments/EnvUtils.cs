@@ -19,9 +19,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Linq;
-using ComLib;
 
-using ComLib.Configuration;
 
 
 namespace ComLib.Environments
@@ -52,7 +50,7 @@ namespace ComLib.Environments
         /// <summary>
         /// Parse the selected environments and config paths.
         /// </summary>
-        /// <param name="envNames">
+        /// <param name="envs">
         /// 1. "prod,qa,dev". If the names are the same as the types.
         /// 2. "prod1:prod,qa1:qa,mydev:dev" If the names are different that the env type names.
         /// </param>
@@ -97,7 +95,7 @@ namespace ComLib.Environments
         /// <summary>
         /// Get list of names of environments that can be selected.
         /// </summary>
-        /// <param name="_ctx"></param>
+        /// <param name="envItems"></param>
         /// <returns></returns>
         public static List<string> GetSelectableEnvironments(List<EnvItem> envItems)
         {
@@ -115,7 +113,7 @@ namespace ComLib.Environments
         public static List<EnvItem> Parse(string selectedEnv, out string firstEnv)
         {
             // Validate.
-            Guard.IsFalse(string.IsNullOrEmpty(selectedEnv), "Must provide the selected environment.");
+            if(string.IsNullOrEmpty(selectedEnv)) throw new ArgumentException("Must provide the selected environment.");
             List<string> envsSelected = ParseEnvsToNames(selectedEnv);
 
             // Create the environment.
@@ -176,8 +174,8 @@ namespace ComLib.Environments
         /// <summary>
         /// Loads an inheritance chain delimited by ,(comma)
         /// </summary>
-        /// <param name="delimitedInheritancePath"></param>
-        /// <param name="ctx"></param>
+        /// <param name="coreEnv"></param>
+        /// <param name="envItems"></param>
         /// <returns></returns>
         public static List<EnvItem> LoadInheritance(EnvItem coreEnv, IDictionary<string, EnvItem> envItems)
         {
@@ -192,7 +190,7 @@ namespace ComLib.Environments
                 inheritancePath = ConvertNestedToFlatInheritance(coreEnv, envItems);
 
             string[] parents = inheritancePath.Split(',');
-            List<EnvItem> inheritanceList = new List<EnvItem>() { coreEnv };
+            List<EnvItem> inheritanceList = new List<EnvItem>();
 
             // Build inheritance path where the first one is the core, following the
             // older parents.
@@ -214,7 +212,9 @@ namespace ComLib.Environments
         /// e.g. prod,qa,dev.
         /// if "," is the delimeter and "prod", "qa" are the environment names.
         /// </summary>
-        /// <param name="_inheritedChainedEnvs"></param>
+        /// <param name="inheritedChainedEnvs"></param>
+        /// <param name="delimeter"></param>
+        /// <param name="propGetter"></param>
         /// <returns></returns>
         public static string CollectEnvironmentProps(List<EnvItem> inheritedChainedEnvs, string delimeter, Func<EnvItem, string> propGetter )
         {

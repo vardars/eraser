@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Linq;
 using System.Collections.Specialized;
 using System.Collections;
 using ComLib;
@@ -280,10 +281,6 @@ namespace ComLib
             return new DictionaryReadOnly<string, string>(ToMap(delimitedText, delimeter));
         }
 
-
-        
-
-
         /// <summary>
         /// Convert to delimited text to a dictionary.
         /// </summary>
@@ -366,11 +363,11 @@ namespace ComLib
 
 
         /// <summary>
-        /// Substitute the placeholders ${name} where name is the key in <paramref name="substitutions"/>
+        /// Substitute the placeholders ${name} where name is the key in <paramref name="subsitutions"/>
         /// and replace it with the value associated with the key.
         /// </summary>
-        /// <param name="subsitutions"></param>
-        /// <param name="contentPlaceholders"></param>
+        /// <param name="subsitutions">The subsitutions.</param>
+        /// <param name="contentPlaceholders">The content placeholders.</param>
         /// <returns></returns>
         public static string Substitute(IDictionary<string, string> subsitutions, string contentPlaceholders)
         {
@@ -430,6 +427,87 @@ namespace ComLib
                 finalText += paddingChar;
             return finalText;
         }
-    }
 
+        #region LineSeparator Conversions
+        /// <summary>
+        /// A liberal list of line breaking characters used in unicode. Typically,
+        /// LF and CR are the only characters supported in C#.
+        /// </summary>
+        public static readonly char[] LineBreakingCharacters = new char[]
+        {
+            '\x000a', // LF \n
+            '\x000d', // CR \r
+            '\x000c', // FF (form feed)
+            '\x2028', // LS (unicode line separator)
+            '\x2029', // paragraph separator
+            '\x0085', // NEL (next line)
+        };
+
+        /// <summary>
+        /// DOS/Windows style line breaks (CR+LF)
+        /// </summary>
+        public static readonly char[] DosLineSeparator = { '\x000d', '\x000a' };
+        /// <summary>
+        /// Unix style line breaks (LF)
+        /// </summary>
+        public static readonly char[] UnixLineSeparator = { '\x000a' };
+        /// <summary>
+        /// Commodore, TRS-80, Apple II, Apple MacOS9 style line breaks (CR)
+        /// </summary>
+        public static readonly char[] MacOs9Separator = { '\x000d' };
+        /// <summary>
+        /// Unicode line separator - not widely supported
+        /// </summary>
+        public static readonly char[] UnicodeSeparator = {'\x2028'};
+
+        /// <summary>
+        /// Converts from a liberal list of unicode line separators to the
+        /// specified line separator.
+        /// </summary>
+        /// <param name="reader">TextReader to read from</param>
+        /// <param name="writer">TextReader to write to</param>
+        /// <param name="separator">Line break separator.</param>
+        public static void ConvertLineSeparators(TextReader reader,
+            TextWriter writer, char[] separator)
+        {
+            for (var c = reader.Read(); c != -1; c = reader.Read())
+            {
+                // One new line
+                if (LineBreakingCharacters.Contains((char)c))
+                {
+                    // If a windows style new line, skip the next char
+                    if (c == '\r' && reader.Peek() == '\n')
+                    {
+                        reader.Read();
+                    }
+
+                    writer.Write(separator);
+                    continue;
+                }
+                writer.Write((char)c);
+            }
+        }
+
+        /// <summary>
+        /// Converts from a liberal list of unicode line separators to the
+        /// specified line separator.
+        /// </summary>
+        /// <example>
+        /// // Convert line breaks to current environment's default
+        /// var text = "blah blah...";
+        /// ConvertLineSeparators(text, Environment.NewLine.ToCharArray());
+        /// </example>
+        /// <param name="text">Source text</param>
+        /// <param name="separator">Line break separator.</param>
+        /// <returns>String with normalized line separators</returns>
+        public static String ConvertLineSeparators(String text, char[] separator)
+        {
+            var reader = new StringReader(text);
+            var writer = new StringWriter();
+            ConvertLineSeparators(reader, writer, separator);
+            return writer.ToString();
+        }
+
+        #endregion
+    }
 }

@@ -7,12 +7,14 @@ using System.Data;
 using System.Data.Common;
 using System.Security.Cryptography;
 
-using ComLib.Entities;
-using ComLib.Membership;
+//<doc:using>
 using ComLib;
+using ComLib.Application;
+//</doc:using>
+using ComLib.Entities;
+using ComLib.Account;
 using ComLib.Arguments;
 using ComLib.Logging;
-using ComLib.Application;
 using ComLib.Configuration;
 using ComLib.IO;
 
@@ -27,7 +29,6 @@ namespace ComLib.Samples
         /// <summary>
         /// Initialize.
         /// </summary>
-        /// <param name="args"></param>
         public Example_AppTemplate()
         {
             // Tell the base framework/base class to parse the 
@@ -54,7 +55,8 @@ namespace ComLib.Samples
             }
         }
 
-
+		
+		//<doc:example>
         /// <summary>
         /// Validate arguments passed, if they are valid, accept them.
         /// </summary>
@@ -126,7 +128,8 @@ namespace ComLib.Samples
             Logger.Info("Shutting down application and dependent services.");
             Logger.ShutDown();            
         }
-
+		//</doc:example>
+		
 
         private string GetSampleContents(string env)
         {
@@ -166,31 +169,52 @@ namespace ComLib.Samples
         /// </summary>
         public class StartupArgs
         {
-            [Arg("config", "config file for environment", typeof(string), true, "dev.config", "dev.config | qa.config | prod.config")]
+            /// <summary>
+            /// Configuration file
+            /// </summary>
+            [Arg("config", "c", "config file for environment", typeof(string), true, "", "dev.config", "dev.config | qa.config | prod.config")]
             public string Config { get; set; }
 
 
-            [Arg("log", "Log file to write to", typeof(string), true, "app.log", "app.log")]
+            /// <summary>
+            /// Log file name/path
+            /// </summary>
+            [Arg("log", "l", "Log file to write to", typeof(string), true, "", "app.log", "app.log | log.txt")]
             public string LogFile { get; set; }
 
 
-            [Arg("env", "Environment to run in", typeof(string), true, "dev", "dev | qa | prod | uat")]
+            /// <summary>
+            /// Environment to run in
+            /// </summary>
+            [Arg("env", "e", "Environment to run in", typeof(string), true, "dev", "dev", "dev | qa | prod | uat")]
             public string Envrionment { get; set; }
 
 
-            [Arg("date", "The business date", typeof(int), true, "${today}", "${today} | 05/12/2009", true, false, false)]
+            /// <summary>
+            /// The business date to run in
+            /// </summary>
+            [Arg("date", "d", "The business date", typeof(int), true, null, "${today}", "${today} | 05/12/2009", true)]
             public DateTime BusinessDate { get; set; }
 
 
-            [Arg("readonly", "readonly mode", typeof(bool), false, false, "true | false")]
+            /// <summary>
+            /// Whether or not to run in read-only mode
+            /// </summary>
+            [Arg("readonly", "r", "readonly mode", typeof(bool), false, false, "true", "true | false")]
             public bool ReadonlyMode { get; set; }
 
 
-            [Arg(1, "Number of categories to display", typeof(int), false, 1, "1 | 2 | 3 etc.")]
+            /// <summary>
+            /// Number of categories to display
+            /// </summary>
+            [Arg(1, "Number of categories to display", typeof(int), false, 1, "1", "1 | 2 | 3 etc.")]
             public int CategoriesToDisplay { get; set; }
 
 
-            [Arg(0, "settings id to load on startup", typeof(string), true, "settings_01", "settings_01")]
+            /// <summary>
+            /// The default settings to load.
+            /// </summary>
+            [Arg(0, "settings id to load on startup", typeof(string), true, "", "settings_01")]
             public string DefaultSettingsId { get; set; }
         }
     }

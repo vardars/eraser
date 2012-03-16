@@ -26,7 +26,7 @@ namespace ComLib.Logging
     /// </summary>
     public class LogConsole : LogBase, ILog
     {
-        private bool _useColorCoding = false;
+        //private bool _useColorCoding = false;
         private static object _colorSync = new object();
        
 
@@ -57,7 +57,7 @@ namespace ComLib.Logging
         /// <summary>
         /// This is the only method REQUIRED to be implemented.
         /// </summary>
-        /// <param name="logEvent"></param>
+        /// <param name="logEvent">Event to log.</param>
         public override void Log(LogEvent logEvent)
         {            
             if (!string.IsNullOrEmpty(logEvent.FinalMessage))

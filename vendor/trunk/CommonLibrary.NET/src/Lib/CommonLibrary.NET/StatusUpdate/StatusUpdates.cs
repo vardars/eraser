@@ -27,18 +27,16 @@ namespace ComLib.StatusUpdater
     /// <summary>
     /// Active record functionality for StatusUpdate
     /// </summary>
-    public partial class StatusUpdates : ActiveRecord<StatusUpdate> 
+    public partial class StatusUpdates : ActiveRecordBase<StatusUpdate> 
     {           
         /// <summary>
-        /// Creates a new instance of BlogPost and 
+        /// Creates a new instance of status update and 
         /// initializes it with a validator and settings.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>An instance of status update.</returns>
         public static StatusUpdate New()
         {
             StatusUpdate entity = new StatusUpdate();
-            entity.Validator = new StatusUpdateValidator();
-            entity.Settings = new StatusUpdateSettings();
             return entity;
         }
     }

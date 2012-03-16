@@ -37,6 +37,13 @@ namespace ComLib.Environments
         public static event EventHandler OnChange;
 
 
+        static Env()
+        {
+            if (_provider == null)
+                Envs.Set("dev");
+        }
+
+
         /// <summary>
         /// Initialize with current environment.
         /// </summary>

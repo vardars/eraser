@@ -31,9 +31,9 @@ namespace ComLib.Types
         /// maximum allowed.
         /// If found, splits the word.
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="maxCharsInWord"></param>
-        /// <returns></returns>
+        /// <param name="text">Line of text.</param>
+        /// <param name="maxCharsInWord">Maximum characters allowed in a word.</param>
+        /// <returns>Splitted text.</returns>
         public static string CheckAndSplitText(string text, int maxCharsInWord)
         {
             // Validate.
@@ -41,7 +41,7 @@ namespace ComLib.Types
 
             bool isSpacerNewLine = false; 
             int currentPosition = 0;
-            int ndxSpace = StringHelpers.GetIndexOfSpacer(text, currentPosition, ref isSpacerNewLine);
+            int ndxSpace = StringHelper.GetIndexOfSpacer(text, currentPosition, ref isSpacerNewLine);
 
             // Case 1: Single long word.
             if (ndxSpace < 0 && text.Length > maxCharsInWord) return SplitWord(text, maxCharsInWord, " ");
@@ -67,7 +67,7 @@ namespace ComLib.Types
                 }
 
                 currentPosition = (isSpacerNewLine) ? ndxSpace + 2 : ndxSpace + 1;
-                ndxSpace = StringHelpers.GetIndexOfSpacer(text, (currentPosition), ref isSpacerNewLine);
+                ndxSpace = StringHelper.GetIndexOfSpacer(text, (currentPosition), ref isSpacerNewLine);
             }
 
             // Final check.. no space found but check complete length now.
@@ -95,10 +95,10 @@ namespace ComLib.Types
         /// <summary>
         /// Split the word, N number of times.
         /// </summary>
-        /// <param name="word">The text to split.</param>
+        /// <param name="text">The text to split.</param>
         /// <param name="charsPerWord">40 chars in each word.</param>
         /// <param name="spacer">" "</param>
-        /// <returns></returns>
+        /// <returns>Splitted word.</returns>
         internal static string SplitWord(string text, int charsPerWord, string spacer)
         {
             // Validate.
@@ -136,9 +136,9 @@ namespace ComLib.Types
         /// <summary>
         /// Determine how many times the word has to be split.
         /// </summary>
-        /// <param name="wordLength"></param>
-        /// <param name="maxCharsInWord"></param>
-        /// <returns></returns>
+        /// <param name="wordLength">Length of word.</param>
+        /// <param name="maxCharsInWord">Maximum characters in word.</param>
+        /// <returns>Number of times to split the word.</returns>
         internal static int GetNumberOfTimesToSplit(int wordLength, int maxCharsInWord)
         {
             // Validate.

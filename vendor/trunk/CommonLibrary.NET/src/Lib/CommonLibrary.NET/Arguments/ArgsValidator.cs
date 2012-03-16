@@ -22,13 +22,12 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 
 using ComLib;
-using ComLib.Reflection;
 
 namespace ComLib.Arguments
 {
     /// <summary>
-    /// Validator class for arguments/commandline options given the
-    /// argument specifications.
+    /// Validation Helper class for confirming that argument were correctly supplied and with 
+    /// appropriate typed values.
     /// </summary>
     public class ArgsValidator
     {
@@ -38,7 +37,6 @@ namespace ComLib.Arguments
         /// <param name="args"></param>
         /// <param name="prefix"></param>
         /// <param name="separator"></param>
-        /// <param name="argSpecs"></param>
         /// <returns></returns>
         public static BoolMessageItem<Args> ValidateInputs(string[] args, string prefix, string separator)
         {
@@ -59,6 +57,7 @@ namespace ComLib.Arguments
         /// <param name="parsedArgs"></param>
         /// <param name="argSpecs"></param>
         /// <param name="errors"></param>
+        /// <param name="onArgumentValidationSuccessCallback"></param>
         public static void Validate(Args parsedArgs, List<ArgAttribute> argSpecs, IList<string> errors,
             Action<ArgAttribute, string, int> onArgumentValidationSuccessCallback)
         {
@@ -69,14 +68,15 @@ namespace ComLib.Arguments
             // Go through all the arg specs.
             for (int ndx = 0; ndx < argSpecs.Count; ndx++)
             {
-                ArgAttribute argAttr = argSpecs[ndx];
+                var argAttr = argSpecs[ndx];
                 string argVal = string.Empty;
                 int initialErrorCount = errors.Count;
 
                 // Named argument. key=value
-                if (!string.IsNullOrEmpty(argAttr.Name))
+                if (argAttr.IsNamed)
                 {
-                    argVal = parsedArgs.Named.ContainsKey(argAttr.Name) ? parsedArgs.Named[argAttr.Name] : string.Empty;
+                    // FIX: Item #	3926 - Case insensitivity not working.
+                    argVal = GetNamedArgValue(argAttr, parsedArgs);
                     ValidateArg(argAttr, argVal, errors);
                 }
                 else
@@ -95,10 +95,11 @@ namespace ComLib.Arguments
                     onArgumentValidationSuccessCallback(argAttr, argVal, ndx);
             }
         }
+        
 
 
         /// <summary>
-        /// Validates various aspects of the argument.
+        /// Validates argument against the value supplied. This includes whether it's required and checks value against datatype.
         /// </summary>
         /// <param name="argAttr"></param>
         /// <param name="argVal"></param>
@@ -125,7 +126,7 @@ namespace ComLib.Arguments
                 errors.Add(string.Format("File '{0}' associated with argument '{1}' does not exist.", argVal, argId));
 
             // Wrong data type.
-            else if (!argAttr.Interpret && !ReflectionTypeChecker.CanConvertTo(argAttr.DataType, argVal))
+            else if (!argAttr.Interpret && !Converter.CanConvertTo(argAttr.DataType, argVal))
                 errors.Add(string.Format("Argument value of '{0}' for '{1}' does not match type {2}.",
                            argVal, argId, argAttr.DataType.FullName));
 
@@ -152,6 +153,40 @@ namespace ComLib.Arguments
                 errors.Add(string.Format("Positional argument at index : [{0}]' was not supplied.", argAttr.IndexPosition));
             }
             return isValidIndex;
+        }
+
+
+        private static string GetNamedArgValue(ArgAttribute argAttr, Args args)
+        {
+            // Case sensitive
+            if (argAttr.IsCaseSensitive) return args.Get<string>(argAttr.Name, string.Empty);
+
+            // Not case sensitive. Try to match name.
+            string suppliedName = argAttr.Name;     
+            foreach(var pair in args.Named)
+            {                
+                // Can be either alias or full name.
+                if (IsSameArg(pair.Key, argAttr))
+                {
+                    suppliedName = pair.Key;
+                    break;
+                }
+            }
+            
+            // Get the value based on the correct name.
+            return args.Get<string>(suppliedName, string.Empty);
+        }
+
+
+        private static bool IsSameArg(string key, ArgAttribute arg)
+        {
+            if (string.Compare(key, arg.Name, true) == 0)
+                return true;
+
+            if (string.Compare(key, arg.Alias, true) == 0)
+                return true;
+
+            return false;
         }
     }    
 }

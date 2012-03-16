@@ -16,17 +16,70 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
-using System.Management;
 using System.IO;
 using System.Collections;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Web;
 using System.Diagnostics;
+using System.Data;
 
 
 namespace ComLib.Diagnostics
 {
+    /// <summary>
+    /// List of different groups of diagnostic information.
+    /// </summary>
+    public enum DiagnosticGroup
+    {
+        /// <summary>
+        /// Information about the machine.
+        /// </summary>
+        MachineInfo,
+
+
+        /// <summary>
+        /// User level environment variables.
+        /// </summary>
+        EnvUser,
+        
+        
+        /// <summary>
+        /// System level environment variables.
+        /// </summary>
+        EnvSys,
+        
+        
+        /// <summary>
+        /// The drives available on the machine.
+        /// </summary>
+        Drives,
+        
+        
+        /// <summary>
+        /// Components loaded in the app-domain.
+        /// </summary>
+        AppDomain,
+        
+        
+        /// <summary>
+        /// List of services that are running.
+        /// </summary>
+        Services,
+        
+        
+        /// <summary>
+        /// List of processes loaded by the executing assembly.
+        /// </summary>
+        Processes,
+        
+        
+        /// <summary>
+        /// Modules.
+        /// </summary>
+        Modules
+    }
+
 
     /// <summary>
     /// Get diagnostic information about the machine and current process.
@@ -65,10 +118,27 @@ namespace ComLib.Diagnostics
         /// This includes:
         /// 1. Machine Information, 2. Environment variables. 3. Drives, 4. AppDomain ( dlls loaded )., etc.
         /// </summary>
-        public DiagnosticsService(List<string> diagnosticGroups, bool include)
+        /// <param name="include">True to include specified groups.</param>
+        /// <param name="groups">Array with groups.</param>
+        public DiagnosticsService(bool include, params DiagnosticGroup[] groups)
+            : this()
+        {            
+            var groupsList = DiagnosticsHelper.ConvertEnumGroupsToStringList(groups);
+            FilterOn(include, groupsList);
+        }
+
+
+        /// <summary>
+        /// Initalizes a list representing a set of computer/application related data that can be diagnosed.
+        /// This includes:
+        /// 1. Machine Information, 2. Environment variables. 3. Drives, 4. AppDomain ( dlls loaded )., etc.
+        /// </summary>
+        /// <param name="include">True to include specified groups.</param>
+        /// <param name="diagnosticGroups">List with groups.</param>
+        public DiagnosticsService( bool include, List<string> diagnosticGroups)
             : this()
         {
-
+            FilterOn(include, diagnosticGroups);
         }
 
 
@@ -79,11 +149,11 @@ namespace ComLib.Diagnostics
         /// <param name="groupNamesDelimited">"MachineInfo,AppDomain,Drives"</param>
         /// <param name="include">Whether or the the groups supplied should be
         /// included, false value representing exclusion.</param>
-        public void FilterOn(string groupNamesDelimited, bool include)
+        public void FilterOn(bool include, string groupNamesDelimited )
         {
             string[] groups = groupNamesDelimited.Split(',');
             List<string> groupNames = new List<string>(groups);
-            FilterOn(groupNames, include);
+            FilterOn(include, groupNames);
         }
 
 
@@ -91,10 +161,10 @@ namespace ComLib.Diagnostics
         /// Filter the diagnostics on the list of groups
         /// representing the areas that can be diagnosed.
         /// </summary>
-        /// <param name="groupNamesDelimited">"MachineInfo,AppDomain,Drives"</param>
+        /// <param name="groupNames">"MachineInfo,AppDomain,Drives"</param>
         /// <param name="include">Whether or the the groups supplied should be
         /// included, false value representing exclusion.</param>
-        public void FilterOn(List<string> groupNames, bool include)
+        public void FilterOn(bool include, List<string> groupNames)
         {
             Init();
             List<string> excluded = groupNames;
@@ -127,6 +197,20 @@ namespace ComLib.Diagnostics
 
 
         /// <summary>
+        /// Filter the diagnostics on the supplied list of groups
+        /// representing the areas that can be diagnosed.
+        /// </summary>
+        /// <param name="include">Whether or the the groups supplied should be
+        /// <param name="groups">Array with groups.</param>
+        /// included, false value representing exclusion.</param>
+        public void FilterOn(bool include, params DiagnosticGroup[] groups)
+        {
+            var groupsList = DiagnosticsHelper.ConvertEnumGroupsToStringList(groups);
+            FilterOn(include, groupsList);
+        }
+
+
+        /// <summary>
         /// The names of the groups representing what can be diagnosed.
         /// </summary>
         public ReadOnlyCollection<string> GroupNames
@@ -148,7 +232,7 @@ namespace ComLib.Diagnostics
         /// Get all diagnostic information about currently running process
         /// and machine information.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Diagnostic information.</returns>
         public string GetDataTextual()
         {
             IDictionary diagnostics = GetData();
@@ -168,9 +252,7 @@ namespace ComLib.Diagnostics
         /// <summary>
         /// Write all the diagnostic info to file.
         /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="append"></param>
-        /// <returns></returns>
+        /// <param name="filePath">Path to file.</param>
         public void WriteInfo(string filePath)
         {
             try
@@ -186,32 +268,37 @@ namespace ComLib.Diagnostics
         /// Write diagnostic information associated with the delimited list
         /// of groups specified.
         /// </summary>
-        /// <param name="commaDelimitedGroups">"Machine,AppDomain"</param>
         /// <param name="path">Path of file to write information to.</param>
-        public void WriteInfo(string commaDelimitedGroups, string path, string referenceMessage)
-        {            
-            if (!string.IsNullOrEmpty(commaDelimitedGroups))
-            {
-                FilterOn(commaDelimitedGroups, true);
-            }
-            string data = GetDataTextual();
-            string message = "[Message]" + Environment.NewLine 
-                            + referenceMessage
-                            + Environment.NewLine + Environment.NewLine + Environment.NewLine
-                            + data;
-            try
-            {
-                File.WriteAllText(path, message);
-            }
-            catch { Console.WriteLine("Unable to write diagnostic information to file : " + path); }
+        /// <param name="referenceMessage">Reference message.</param>
+        /// <param name="diagnosticGroups">String with comma-delimited list of groups.</param>
+        public void WriteInfo(string path, string referenceMessage, string diagnosticGroups)
+        {
+            FilterOn(true, diagnosticGroups);
+            WriteInfoInternal(path, referenceMessage);
         }
+
+
+        
+        /// <summary>
+        /// Write diagnostic information associated with the delimited list
+        /// of groups specified.
+        /// </summary>
+        /// <param name="path">Path of file to write information to.</param>
+        /// <param name="referenceMessage">Reference message.</param>
+        /// <param name="groups">Array with groups.</param>
+        public void WriteInfo(string path, string referenceMessage, params DiagnosticGroup[] groups)
+        {
+            // Apply filter to only the groups of interest.
+            FilterOn(true, groups);
+            WriteInfoInternal(path, referenceMessage);
+        }        
 
 
         /// <summary>
         /// Get all diagnostic information about currently running process
         /// and machine information.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Diagnostic information.</returns>
         public IDictionary GetData()
         {
             IDictionary diagnostics = new SortedDictionary<string, object>();
@@ -235,6 +322,9 @@ namespace ComLib.Diagnostics
 
 
         #region Private methods
+        /// <summary>
+        /// Initializes internal variables.
+        /// </summary>
         protected void Init()
         {
             // This is the full list of all diagnostic information grouped by data.
@@ -251,11 +341,32 @@ namespace ComLib.Diagnostics
 
 
         /// <summary>
+        /// Write diagnostic information associated with the delimited list
+        /// of groups specified.
+        /// </summary>
+        /// <param name="path">Path of file to write information to.</param>
+        /// <param name="referenceMessage">Reference message.</param>
+        protected void WriteInfoInternal(string path, string referenceMessage)
+        {
+            string data = GetDataTextual();
+            string message = "[Message]" + Environment.NewLine
+                            + referenceMessage
+                            + Environment.NewLine + Environment.NewLine + Environment.NewLine
+                            + data;
+            try
+            {
+                File.WriteAllText(path, message);
+            }
+            catch { Console.WriteLine("Unable to write diagnostic information to file : " + path); }
+        }
+
+
+        /// <summary>
         /// Build a textual representation of all the diagnostics information.
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="diagnostics"></param>
-        /// <returns></returns>
+        /// <param name="buffer">String builder to use when building diagnostics info.</param>
+        /// <param name="diagnostics">Dictionary with diagnostic keys.</param>
+        /// <returns>String with diagnostic information.</returns>
         protected string BuildDiagnostics(StringBuilder buffer, IDictionary diagnostics)
         {
             foreach (string group in diagnostics.Keys)
@@ -279,9 +390,9 @@ namespace ComLib.Diagnostics
         /// Builds a "INI" formatted represention of the diagnostic information
         /// for the group specified.
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="diagnostics"></param>
-        /// <param name="sectionName"></param>
+        /// <param name="buffer">String builder to use when building diagnostics info.</param>
+        /// <param name="diagnostics">Dictionary with diagnostic keys.</param>
+        /// <param name="sectionName">INI section.</param>
         protected static void BuildSection(StringBuilder buffer, IDictionary diagnostics, object sectionName)
         {
             IDictionary section = diagnostics[sectionName] as IDictionary;
@@ -296,9 +407,8 @@ namespace ComLib.Diagnostics
         /// Recursively builds an ini formatted representation of all the diagnostic 
         /// information.
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="diagnostics"></param>
-        /// <returns></returns>
+        /// <param name="buffer">String builder to use when building diagnostics info.</param>
+        /// <param name="diagnostics">Dictionary with diagnostic keys.</param>
         protected static void BuildProperties(StringBuilder buffer, IDictionary diagnostics)
         {
             foreach (object key in diagnostics.Keys)

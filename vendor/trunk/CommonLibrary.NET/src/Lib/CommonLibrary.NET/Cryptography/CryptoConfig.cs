@@ -32,7 +32,6 @@ namespace ComLib.Cryptography
         /// <summary>
         /// encryption option
         /// </summary>
-        /// <param name="encrypt"></param>
         public CryptoConfig()
         {
         }

@@ -26,7 +26,7 @@ namespace ComLib.Notifications
     /// <summary>
     /// Notification services.
     /// </summary>
-    public class NotificationService 
+    public class Notifier 
     {
         private static INotificationAccountService _accountNotifyService;
         private static INotificationMessagingService _messageNotifyService;
@@ -49,7 +49,75 @@ namespace ComLib.Notifications
         }
 
 
+        /// <summary>
+        /// Send welcome email to new user.
+        /// </summary>
+        /// <param name="to">E-mail to.</param>
+        /// <param name="subject">E-mail subject.</param>
+        /// <param name="firstname">First name of user.</param>
+        /// <param name="username">Username of user.</param>
+        /// <param name="password">Password of user.</param>
+        public static void WelcomeNewUser(string to, string subject, string firstname, string username, string password)
+        {
+            _accountNotifyService.WelcomeNewUser(to, subject, firstname, username, password);
+        }
+
+
+        /// <summary>
+        /// Send the website url to a friend.
+        /// </summary>
+        /// <param name="toEmail">E-mail to.</param>
+        /// <param name="subject">E-mail subject.</param>
+        /// <param name="friendName">Friend's name.</param>
+        /// <param name="fromName">From name.</param>
+        /// <param name="messageFromFriend">Message text.</param>
+        public static void SendToFriend(string toEmail, string subject, string friendName, string fromName, string messageFromFriend)
+        {
+            _messageNotifyService.SendToFriend(toEmail, subject, friendName, fromName, messageFromFriend);
+        }
+
+
+        /// <summary>
+        /// Send an email to a friend with a link to a post on the page.
+        /// </summary>
+        /// <param name="toEmail">E-mail to.</param>
+        /// <param name="subject">E-mail subject.</param>
+        /// <param name="toFirstname">Name of recipient.</param>
+        /// <param name="fromName">Name of sender.</param>
+        /// <param name="messageToFriend">Message text.</param>
+        /// <param name="postTitle">Title of post.</param>
+        /// <param name="postUrl">Title of url.</param>
+        public static void SendToFriendPost(string toEmail, string subject, string toFirstname,
+            string fromName, string messageToFriend, string postTitle, string postUrl)
+        {
+            _messageNotifyService.SendToFriendPost(toEmail, subject, toFirstname, fromName, messageToFriend, postTitle, postUrl);
+        }
+
+
+        /// <summary>
+        /// Send remind account/password email to user.
+        /// </summary>
+        /// <param name="to">E-mail to.</param>
+        /// <param name="subject">E-mail subject.</param>
+        /// <param name="firstname">First name of user.</param>
+        /// <param name="username">Username of user.</param>
+        /// <param name="password">Password of user.</param>
+        public static void RemindUserPassword(string to, string subject, string firstname, string username, string password)
+        {
+            _accountNotifyService.RemindUserPassword(to, subject, firstname, username, password);
+        }
+
+
         #region INotificationService Members
+        /// <summary>
+        /// Process the queue of notifications.
+        /// </summary>
+        public static void Process()
+        {
+            Queue.Process();
+        }
+
+
         /// <summary>
         /// Get/Set the settings.
         /// </summary>
@@ -57,16 +125,6 @@ namespace ComLib.Notifications
         {
             get { return _settings; }
             set { _settings = value; }
-        }
-
-
-        /// <summary>
-        /// The account services.
-        /// </summary>
-        public static INotificationAccountService AccountService
-        {
-            get { return _accountNotifyService; }
-            set { _accountNotifyService = value; }
         }
 
 
@@ -87,6 +145,16 @@ namespace ComLib.Notifications
         {
             get { return _messageDefinitions; }
         }
+
+
+        /// <summary>
+        /// The account services.
+        /// </summary>
+        public static INotificationAccountService AccountService
+        {
+            get { return _accountNotifyService; }
+            set { _accountNotifyService = value; }
+        }        
 
 
         /// <summary>

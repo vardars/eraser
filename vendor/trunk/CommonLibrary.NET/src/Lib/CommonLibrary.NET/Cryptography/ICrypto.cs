@@ -49,8 +49,8 @@ namespace ComLib.Cryptography
         /// <summary>
         /// Determine if encrypted text can be matched to unencrypted text.
         /// </summary>
-        /// <param name="text1"></param>
-        /// <param name="text2"></param>
+        /// <param name="encrypted"></param>
+        /// <param name="plainText"></param>
         /// <returns></returns>
         bool IsMatch(string encrypted, string plainText);
     }

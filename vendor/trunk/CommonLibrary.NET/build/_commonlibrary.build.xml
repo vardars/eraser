@@ -8,11 +8,13 @@
 	<property name="dist.dir" value="${dist.dir.root}\${app.name}_${build.version}"/>
 		
 	<!-- ****************************************************************************************
-		Remove the temp/current directory
+		Remove the temp/current directory 
 	*******************************************************************************************-->
 	<target name="Clean">
 		<delete file="${dist.dir.root}\${app.name}_${build.version}.zip" />
 		<delete dir="${dist.dir}" />
+		<delete dir="${dist.dir}\src\Apps\CommonLibrary.CodeGeneration\bin\debug" />
+		<delete dir="${dist.dir}\src\Apps\CommonLibrary.CodeGeneration\obj" />
 		<delete dir="${app.base.dir}\src\Apps\CommonLibrary.SampleApp\bin\debug" />
 		<delete dir="${app.base.dir}\src\Apps\CommonLibrary.SampleApp\obj" />
 		<delete dir="${app.base.dir}\src\Apps\CommonLibrary.StockMarketApp\bin\debug" />
@@ -69,6 +71,61 @@
 	</target>
 	
 	
+	
+	<target name="PackageExamples">
+		<echo message="${app.source.dir}" />
+		<mkdir dir="${dist.dir}\src\Examples" />
+		<mkdir dir="${dist.dir}\src\Examples\CommonLibrary.SampleApp" />
+		<mkdir dir="${dist.dir}\src\Examples\CommonLibrary.StockMarketApp" />
+		
+		
+		<copy todir="${dist.dir}\src\examples">
+		    <fileset basedir="${dist.dir}\src\Lib\CommonLibrary.NET\_Samples">
+		        <include name="**/*" />
+		    </fileset>
+		</copy>
+		<copy todir="${dist.dir}\src\examples\CommonLibrary.SampleApp">
+			<fileset basedir="${dist.dir}\src\Apps\CommonLibrary.SampleApp">
+		        <include name="**/*" />
+		    </fileset>
+		</copy>
+		<copy todir="${dist.dir}\src\examples\CommonLibrary.StockMarketApp">
+			<fileset basedir="${dist.dir}\src\Apps\CommonLibrary.StockMarketApp">
+		        <include name="**/*" />
+		    </fileset>
+		</copy>
+		
+		<zip zipfile="${dist.dir.root}\${app.name}_${build.version}_Examples.zip">
+		    <!--<fileset basedir="${dist.dir}\Src\Lib\CommonLibrary.NET\_Samples">
+		        <include name="**/*" />
+		    </fileset>-->
+			<fileset basedir="${dist.dir}\Src\Examples">
+		        <include name="**/*" />
+		    </fileset>
+		</zip>
+	</target>
+	
+	
+	<target name="PackageBinaries">
+		<echo message="${app.source.dir}" />
+		<zip zipfile="${dist.dir.root}\${app.name}_${build.version}_Binaries.zip">
+		    <fileset basedir="${app.source.dir}\Lib\CommonLibrary.NET\bin\${compile.configuration}">
+		        <include name="**/*dll" />
+		    </fileset>
+		</zip>
+	</target>
+	
+	
+	<target name="PackageDocumentation">
+		<echo message="${app.source.dir}" />
+		<zip zipfile="${dist.dir.root}\${app.name}_${build.version}_Documentation.zip">
+		    <fileset basedir="${app.base.dir}\Doc">
+		        <include name="**/*.chm" />
+		    </fileset>
+		</zip>
+	</target>
+	
+	
 	<target name="Package">			
 		<mkdir dir="${dist.dir}" />
 		<copy todir="${dist.dir}">
@@ -79,19 +136,32 @@
 
 		<delete>
 		    <fileset>
+				<include name="${dist.dir}\doc\*.chm" />		        				
+				<include name="${dist.dir}\src\Apps\CommonLibrary.CodeGeneration\bin\debug\*.pdb" />
 		        <include name="${dist.dir}\src\Apps\CommonLibrary.SampleApp\bin\debug\*.pdb" />
+				<include name="${dist.dir}\src\Apps\CommonLibrary.SampleApp\bin\debug\*.xml" />
 				<include name="${dist.dir}\src\Apps\CommonLibrary.StockMarketApp\bin\debug\*.pdb" />
+				<include name="${dist.dir}\src\Apps\CommonLibrary.StockMarketApp\bin\debug\*.xml" />
 				<include name="${dist.dir}\src\Lib\CommonLibrary.NET\bin\debug\*.pdb" />
+				<include name="${dist.dir}\src\Lib\CommonLibrary.NET\bin\debug\*.xml" />
 				<include name="${dist.dir}\src\Tests\CommonLibrary.UnitTests\bin\debug\*.pdb" />
+				<include name="${dist.dir}\src\Tests\CommonLibrary.UnitTests\bin\debug\*.xml" />
 				<include name="${dist.dir}\dist\*.zip" />
 		    </fileset>
 		</delete>
+		<delete dir="${dist.dir}\build\dist" />
 		<delete dir="${dist.dir}\src\Apps\CommonLibrary.SampleApp\obj" />
+		<delete dir="${dist.dir}\src\Apps\CommonLibrary.SampleApp\bin" />
+		<delete dir="${dist.dir}\src\Apps\CommonLibrary.CodeGeneration\obj" />
+		<delete dir="${dist.dir}\src\Apps\CommonLibrary.CodeGeneration\bin" />
 		<delete dir="${dist.dir}\src\Apps\CommonLibrary.StockMarketApp\obj" />
+		<delete dir="${dist.dir}\src\Apps\CommonLibrary.StockMarketApp\bin" />
 		<delete dir="${dist.dir}\src\Lib\CommonLibrary.NET\obj" />
+		<delete dir="${dist.dir}\src\Lib\CommonLibrary.NET\bin" />
+		<delete dir="${dist.dir}\src\Tests\CommonLibrary.UnitTests\bin" />		
 		<delete dir="${dist.dir}\src\Tests\CommonLibrary.UnitTests\obj" />
 		
-		<zip zipfile="${dist.dir.root}\${app.name}_${build.version}.zip">
+		<zip zipfile="${dist.dir.root}\${app.name}_${build.version}_Sources.zip">Com
 		    <fileset basedir="${dist.dir}">
 		        <include name="**/*" />
 		    </fileset>
@@ -108,6 +178,8 @@
 		<call target="Secure" />
 		<call target="Compile" />
 		<call target="Package" />
+		<call target="PackageBinaries" />
+		<call target="PackageExamples" />
 	</target>
 	
 </project>

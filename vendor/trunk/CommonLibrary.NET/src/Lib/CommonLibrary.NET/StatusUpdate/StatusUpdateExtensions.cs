@@ -29,9 +29,27 @@ namespace ComLib.StatusUpdater
     /// </summary>
     public partial class StatusUpdateConstants
     {
+        /// <summary>
+        /// Status update started.
+        /// </summary>
         public const string Started = "started";
+
+
+        /// <summary>
+        /// Status update completed.
+        /// </summary>
         public const string Completed = "completed";
+
+
+        /// <summary>
+        /// Status update running.
+        /// </summary>
         public const string Running = "running";
+
+
+        /// <summary>
+        /// Status update failed.
+        /// </summary>
         public const string Failed = "failed";
     }
 
@@ -46,33 +64,14 @@ namespace ComLib.StatusUpdater
         /// Update status for the specified runId, taskname combination.
         /// </summary>
         /// <remarks>Overloaded convenience method.</remarks>
-        /// <param name="statusExpression">"RUN001:Delta:Started"</param>
+        /// <param name="taskName">Name of task.</param>
+        /// <param name="status">Status of task.</param>
+        /// <param name="comment">Task comment.</param>
+        /// <param name="started">Task start time.</param>
+        /// <param name="ended">Task end time.</param>
         public static void Update(string taskName, string status, string comment, DateTime started, DateTime ended)
         {
-            // To uniquely identify a status.
-            string filter = string.Format(" BatchId = {0} and BatchName = '{1}' and Task = '{2}' ", 
-                Service.BatchId, Service.BatchName, taskName);
-            IList<StatusUpdate> items = GetByFilter(filter).Item;
-            bool isCreating = false;
-
-            if (items == null || items.Count == 0)
-                isCreating = true;
-
-            StatusUpdate entry = isCreating ? new StatusUpdate() : items[0];
-            entry.Task = taskName;
-            entry.Status = status.ToLower().Trim();
-            entry.Comment = comment;
-            if (isCreating)
-            {
-                entry.StartTime = started;
-                entry.EndTime = ended;            
-                Create(entry);
-            }
-            else
-            {
-                entry.EndTime = ended;            
-                Update(entry);
-            }
+            Service.Update(taskName, status, comment, started, ended);
         }
 
 
@@ -120,11 +119,49 @@ namespace ComLib.StatusUpdater
         /// <summary>
         /// Get list of data massagers for the entity.
         /// </summary>
-        /// <returns></returns>
-        protected override void PerformBeforeValidation(IActionContext ctx, EntityAction entityAction)
+        /// <returns>Status with error message.</returns>
+        protected override BoolMessage  PerformValidation(IActionContext ctx, EntityAction entityAction)
+        {            
+            var massager = new StatusUpdateMassager();
+            massager.Massage(ctx.Item, entityAction);
+ 	        return base.PerformValidation(ctx, entityAction);
+        }
+
+
+        /// <summary>
+        /// Update status for the specified runId, taskname combination.
+        /// </summary>
+        /// <remarks>Overloaded convenience method.</remarks>
+        /// <param name="taskName">Name of task.</param>
+        /// <param name="status">Status of task.</param>
+        /// <param name="comment">Task comment.</param>
+        /// <param name="started">Task start time.</param>
+        /// <param name="ended">Task end time.</param>
+        public void Update(string taskName, string status, string comment, DateTime started, DateTime ended)
         {
-            List<IEntityMassager> massagers = new List<IEntityMassager>() { new StatusUpdateMassager() };
-            MassageData(ctx, entityAction, massagers);
+            // To uniquely identify a status.
+            string filter = string.Format(" BatchId = {0} and BatchName = '{1}' and Task = '{2}' ", this.BatchId, this.BatchName, taskName);
+            IList<StatusUpdate> items = Find(filter);
+            bool isCreating = false;
+
+            if (items == null || items.Count == 0)
+                isCreating = true;
+
+            StatusUpdate entry = isCreating ? new StatusUpdate() : items[0];
+            entry.Task = taskName;
+            entry.Status = status.ToLower().Trim();
+            entry.Comment = comment;
+            if (isCreating)
+            {
+                entry.StartTime = started;
+                entry.EndTime = ended;
+                Create(entry);
+            }
+            else
+            {
+                entry.EndTime = ended;
+                Update(entry);
+            }
         }
     }
 
@@ -133,14 +170,13 @@ namespace ComLib.StatusUpdater
     /// <summary>
     /// Data massager for StatusUpdates.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public partial class StatusUpdateMassager : EntityMassager
     {
         /// <summary>
         /// Populate the username, computer and comment.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="action"></param>
+        /// <param name="entity">Entity to populate.</param>
+        /// <param name="action">Action.</param>
         public override void Massage(object entity, EntityAction action)
         {
             StatusUpdate update = entity as StatusUpdate;
@@ -165,16 +201,4 @@ namespace ComLib.StatusUpdater
             }
         }
     }
-
-
-    /*
-     * insert into statusupdates 
-	            ( createdate, updatedate, createuser, updateuser, updatecomment, version, isactive,
-	              computer, executionuser, businessdate, batchname, batchid, batchtime, 
-                  task, status, starttime, endtime, ref, comment )
-          values( '2009-08-04', '2009-08-04', 'kreddy', 'kreddy', 'testing', 1, 0, 
-                  'kishore1', 'kreddy', '2009-08-04', 'StartOfDay', 2, '2009-08-04', 
-                  'Data Load', 'Started', '2009-08-04', '2009-08-04', 'kd', 'via sql');
-
-     * */
 }

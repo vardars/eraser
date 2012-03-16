@@ -15,57 +15,137 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Linq;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Resources;
 
 using ComLib;
+using ComLib.Caching;
 using ComLib.Logging;
 using ComLib.Locale;
-
+using ComLib.Entities;
 
 
 namespace ComLib.LocationSupport
 {
     
     /// <summary>
-    /// LocationService parses location data that can be various formats.
-    /// The formats can range from city, city/state, city/country, state, country.
+    /// LocationService parses text representing a location which can be various formats
+    /// such as city, city/state, city/country, state, country.
     /// </summary>    
     public class LocationService : ILocationService
     {
-        //private IZipCodeDao _zipCodeDao;
-        private IStateDao _stateDao;
-        private ILocationShortNameDao _shortNameDao;
-        private ICityDao _cityDao;
-        private ICountryDao _countryDao;
-        private ILocalizationResourceProvider _resources;
+        private LocationSettings _settings;
 
 
         /// <summary>
         /// Constuctor that also takes in the short name dao.
         /// </summary>
-        /// <param name="shortNameDao"></param>
-        /// <param name="zipCodeDao"></param>
-        /// <param name="stateDao"></param>
-        public LocationService(ICountryDao countryDao, IStateDao stateDao, ICityDao cityDao, ILocationShortNameDao shortNameDao)
+        /// <param name="countryRepoGetter"></param>
+        /// <param name="stateRepoGetter"></param>
+        /// <param name="cityRepoGetter"></param>
+        public LocationService(Func<IRepository<Country>> countryRepoGetter, Func<IRepository<State>> stateRepoGetter, Func<IRepository<City>> cityRepoGetter)
         {
-            Init(shortNameDao, stateDao, cityDao, countryDao);
+            Init(countryRepoGetter(), stateRepoGetter(), cityRepoGetter());
         }
+
+
+        /// <summary>
+        /// Constuctor that also takes in the short name dao.
+        /// </summary>
+        /// <param name="countryRepo"></param>
+        /// <param name="stateRepo"></param>
+        /// <param name="cityRepo"></param>
+        public LocationService(IRepository<Country> countryRepo, IRepository<State> stateRepo, IRepository<City> cityRepo)
+        {
+            Init(countryRepo, stateRepo, cityRepo);
+        }
+
+
+        #region Repositories and Settings
+        /// <summary>
+        /// Repository for the cities.
+        /// </summary>
+        public IRepository<City> Cities { get; set; }
+
+
+        /// <summary>
+        /// Repository for the states.
+        /// </summary>
+        public IRepository<State> States { get; set; }
+
+
+        /// <summary>
+        /// Repository for the countries
+        /// </summary>
+        public IRepository<Country> Countries { get; set; }
+
+
+        /// <summary>
+        /// Settings for this Location service
+        /// </summary>
+        public LocationSettings Settings { get; set; }
+        #endregion
+        
+
+        #region Lists & Lookups
+        /// <summary>
+        /// Get the city lookup.
+        /// </summary>
+        public CityLookUp CitiesLookup
+        {
+            get { return GetCachedLookup<CityLookUp>("cities_lookup", _settings.CacheCityLookup, _settings.CacheTimeForCitiesInSeconds, () => new CityLookUp(Cities.GetAll()), (lookup) => lookup == null || lookup.Lookup1.Count == 0); }
+        }
+
+
+        /// <summary>
+        /// Get the city list.
+        /// </summary>
+        public IList<City> CitiesList
+        {
+            get { return GetCached<City>("cities_list", _settings.CacheCityList, _settings.CacheTimeForCitiesInSeconds, () => Cities.GetAll()); }
+        }
+
+
+        /// <summary>
+        /// Get the city lookup.
+        /// </summary>
+        public CountryLookUp CountriesLookup
+        {
+            get { return GetCachedLookup<CountryLookUp>("countries_lookup", _settings.CacheCountryLookup, _settings.CacheTimeForCountriesInSeconds, () => new CountryLookUp(Countries.GetAll()), (lookup) => lookup == null || lookup.Lookup1.Count == 0 ); }
+        }
+
+
+        /// <summary>
+        /// Get the country lookup
+        /// </summary>        
+        public IList<Country> CountriesList
+        {
+            get { return GetCached<Country>("countries_list", _settings.CacheCountryList, _settings.CacheTimeForCountriesInSeconds, () => Countries.GetAll());  }
+        }
+
+
+        /// <summary>
+        /// Get the city lookup.
+        /// </summary>
+        public StateLookUp StatesLookup
+        {
+            get { return GetCachedLookup<StateLookUp>("states_lookup", _settings.CacheStateLookup, _settings.CacheTimeForStatesInSeconds, () => new StateLookUp(States.GetAll()), (lookup) => lookup == null || lookup.Lookup1.Count == 0); }
+        }
+
+
+        /// <summary>
+        /// Get the states list.
+        /// </summary>
+        public IList<State> StatesList
+        {
+            get { return GetCached<State>("states_list", _settings.CacheStateList, _settings.CacheTimeForStatesInSeconds, () => States.GetAll()); }
+        }
+        #endregion  
 
 
         #region ILocationService Members
-        /// <summary>
-        /// Get the localized resources.
-        /// </summary>
-        public ILocalizationResourceProvider Resources
-        {
-            get { return _resources; }
-            set { _resources = value; }
-        }
-
-
         /// <summary>
         /// Does a high-level check of the format supplied and determines what type
         /// of location input was supplied.
@@ -80,52 +160,235 @@ namespace ComLib.LocationSupport
         /// 7. country                      - "Italy"
         /// the actuall parsing 
         /// </summary>
-        /// <param name="locationData"></param>
+        /// <param name="location">Text representing the location.</param>
         /// <returns></returns>
-        public LocationLookUpResult Parse(string locationData)
+        public LocationLookUpResult Parse(string location)
         {
             // Validate.
-            if (IsEmptyLocation(locationData))
+            if (IsEmptyLocation(location))
             {
                 return new LocationLookUpResult(LocationLookUpType.None, false, "Location was not supplied.");
             }
 
             // Trim any spaces.
-            locationData = locationData.Trim();
-
-            // Possible short name : "bronx".
-            // So get full name : "bronx,NY"
-            //if (_shortNameDao != null)
-            //{
-            //    locationData = MapPossibleAlias(locationData);
-            //}
-
-            return InternalParse(locationData);
+            location = location.Trim();
+            return InternalParse(location);
         }
-        #endregion      
 
 
         /// <summary>
-        /// Get the possible formal name associated with the 
-        /// alias / abbreviation entered.
-        /// e.g. 
-        /// USA -> United States
+        /// Create a city in the underlying datastore using the fields supplied
         /// </summary>
-        /// <param name="locationData"></param>
+        /// <param name="name">Name of the city</param>
+        /// <param name="stateName">Name of the state the city is in</param>
+        /// <param name="countryName">Name of the country the city is in</param>
         /// <returns></returns>
-        private string MapPossibleAlias(string locationData)
+        public BoolMessageItem<City> CreateCity(string name, string stateName, string countryName)
         {
-            // Determine if this is a shortname.
-            ShortNameLookUp lookup = _shortNameDao.GetLookUp();
-            if (lookup[locationData] == null)
-            {
-                return locationData;
-            }
-
-            return lookup[locationData].Name;
+            City city = new City(name, name, 0, 0) { StateName = stateName, CountryName = countryName };            
+            LocationHelper.ApplyCountryState(city);
+            Cities.Create(city);
+            return new BoolMessageItem<City>(city, city.Id > 0, "");
         }
 
 
+        /// <summary>
+        /// Create all the countries.
+        /// </summary>
+        /// <param name="countries"></param>
+        public void CreateCountries(IList<Country> countries)
+        {
+            foreach (var country in countries)
+            {
+                var result = CreateCountry(country);
+                if (!result.Success)
+                    Logger.Error("Unable to create country : " + result.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Create a country with the specified name.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public BoolMessageItem<Country> CreateCountry(string name)
+        {
+            return CreateCountry(name, name, false);
+        }
+
+
+        /// <summary>
+        /// Create the country using the name, alias.
+        /// </summary>
+        /// <param name="name">Country name</param>
+        /// <param name="alias">Alias for the country</param>
+        /// <param name="isAlias">Whether or not creating an alias.</param>
+        /// <returns></returns>
+        public BoolMessageItem<Country> CreateCountry(string name, string alias, bool isAlias)
+        {
+            var country = new Country(name, name) { IsAlias = isAlias };
+            if (isAlias)
+            {
+                country.Name = alias;
+                country.AliasRefName = name;
+            }
+            return CreateCountry(country);
+        }
+
+
+        /// <summary>
+        /// Create the country using the name, alias.
+        /// </summary>
+        /// <param name="country">Country to create</param>
+        /// <returns></returns>
+        public BoolMessageItem<Country> CreateCountry(Country country)
+        {
+            // Duplicate ??
+            string name = country.IsAlias ? country.AliasRefName : country.Name;
+            
+            Country countrySearched = CountriesLookup[name];
+            if (!country.IsAlias && countrySearched != null) return new BoolMessageItem<Country>(null, false, "Country with name : " + name + " already exists");
+            if (country.IsAlias && countrySearched == null) return new BoolMessageItem<Country>(null, false, "Unknown country with name : " + name);
+
+            // Create
+            if (country.IsAlias)
+            {
+                country.AliasRefId = countrySearched.RealId;
+            }
+
+            Countries.Create(country);
+            return new BoolMessageItem<Country>(country, country.Id > 0, "");
+        }
+
+
+        /// <summary>
+        /// Create the state.
+        /// </summary>
+        /// <param name="state">The state to create</param>
+        /// <returns></returns>
+        public BoolMessageItem<State> CreateState(State state)
+        {
+            LocationHelper.ApplyCountry(state);
+            States.Create(state);
+            return new BoolMessageItem<State>(state, state.Id > 0, "");
+        }
+
+
+        /// <summary>
+        /// Create the state.
+        /// </summary>
+        /// <param name="name">Name of the state.</param>
+        /// <param name="abbreviation">Abbreviation used for the state.</param>
+        /// <param name="countryName">Name of the country this state belongs to.</param>
+        /// <returns></returns>
+        public BoolMessageItem<State> CreateState(string name, string abbreviation, string countryName)
+        {
+            State state = new State(name, 0, countryName, abbreviation);
+            return CreateState(state);
+        }
+
+
+        /// <summary>
+        /// Get the country with the specified name.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public BoolMessageItem<Country> Country(string name)
+        {
+            // Check for null.
+            if (string.IsNullOrEmpty(name))
+                return new BoolMessageItem<Country>(null, false, "Country not supplied.");
+
+            var countryLookup = Cacher.Get<LookupMulti<Country>>("countries_lookup", 300, () => Location.Countries.ToLookUpMulti<string>("Name"));
+
+            // Valid country.
+            Country country = countryLookup.ContainsKey(name) ? countryLookup[name] : null;
+            if (country == null)
+                return new BoolMessageItem<Country>(null, false, "Unknown country supplied.");
+
+            return new BoolMessageItem<Country>(country, true, string.Empty);
+        }
+
+
+        /// <summary>
+        /// Get the states for the specified country
+        /// </summary>
+        /// <param name="countryname"></param>
+        /// <returns></returns>
+        public BoolMessageItem<IList<State>> StatesFor(string countryname)
+        {
+            BoolMessageItem<Country> countryResult = Country(countryname);
+            if (!countryResult.Success)
+                return new BoolMessageItem<IList<State>>(null, false, countryResult.Message);
+
+            var country = countryResult.Item;
+            var states = Cacher.Get<IList<State>>("states_list_for_" + country.RealId, 300, () => Location.States.GetAll().Where(s => s.CountryId == country.RealId && !s.IsAlias && s.IsActive).ToList());
+            bool success = states != null && states.Count > 0;
+            string message = success ? string.Empty : "States not available for country : " + countryname;
+            return new BoolMessageItem<IList<State>>(states, success, message);
+        }
+
+
+        /// <summary>
+        /// Get the states for the specified country
+        /// </summary>
+        /// <param name="countryname"></param>
+        /// <param name="statename"></param>
+        /// <returns></returns>
+        public BoolMessageItem<IList<City>> CitiesFor(string countryname, string statename)
+        {
+            BoolMessageItem<Country> countryResult = Country(countryname);
+            if (!countryResult.Success)
+                return new BoolMessageItem<IList<City>>(null, false, countryResult.Message);
+
+            var country = countryResult.Item;
+            var states = Cacher.Get<StateLookUp>("states_lookup_for_" + country.RealId, 300, () => new StateLookUp(Location.States.GetAll().Where(s => s.CountryId == country.RealId && !s.IsAlias && s.IsActive).ToList()));
+            State state = states[statename];
+            if (state == null)
+                return new BoolMessageItem<IList<City>>(null, false, "Unknown state supplied.");
+
+            var cities = Cacher.Get<IList<City>>(string.Format("cities_for_{0}_{1}", country.RealId, state.RealId), 300, () => Location.Cities.GetAll().Where(c => c.CountryId == country.RealId && c.StateId == state.RealId && !c.IsAlias && c.IsActive).ToList());
+            bool success = cities != null && cities.Count > 0;
+            string message = success ? string.Empty : "Cities not available for country : " + country.Name + ", state : " + state.Name;
+            return new BoolMessageItem<IList<City>>(cities, success, message);
+        }
+        #endregion
+
+
+        #region Private Methods
+        private IList<T> GetCached<T>(string key, bool enableCache, int cacheTime, Func<IList<T>> fetcher)
+        {
+            var latestitems = Cacher.Get<IList<T>>(key, enableCache, cacheTime, false, () => fetcher());
+
+            if (latestitems == null || latestitems.Count == 0)
+            {
+                latestitems = fetcher();
+                if (enableCache && latestitems != null && latestitems.Count > 0)
+                {
+                    Cacher.Insert(key, latestitems, cacheTime, false);
+                }
+            }
+            return latestitems;
+        }
+
+
+        private T GetCachedLookup<T>(string key, bool enableCache, int cacheTime, Func<T> fetcher, Func<T, bool> check)
+        {
+            var latestitems = Cacher.Get<T>(key, enableCache, cacheTime, false, () => fetcher());
+
+            if (check(latestitems))
+            {
+                latestitems = fetcher();
+                if (enableCache)
+                {
+                    Cacher.Insert(key, latestitems, cacheTime, false);
+                }
+            }
+            return latestitems;
+        }
+        
+    
         /// <summary>
         /// Does a high-level check of the format supplied and determines what type
         /// of location input was supplied.
@@ -145,9 +408,9 @@ namespace ComLib.LocationSupport
         /// <returns></returns>
         private LocationLookUpResult InternalParse(string locationData)
         {
-            CityLookUp cityLookUp = _cityDao.GetLookUp();
-            StatesLookUp stateLookUp = _stateDao.GetLookUp();
-            CountryLookUp countryLookUp = _countryDao.GetLookUp();
+            CityLookUp cityLookUp = new CityLookUp(Cities.GetAll());
+            StateLookUp stateLookUp = new StateLookUp(States.GetAll());
+            CountryLookUp countryLookUp = new CountryLookUp(Countries.GetAll());
 
             try
             {
@@ -275,13 +538,13 @@ namespace ComLib.LocationSupport
         }
 
 
-        private void Init(ILocationShortNameDao shortNameDao, IStateDao stateDao, ICityDao cityDao, ICountryDao countryDao)
+        private void Init(IRepository<Country> countryDao, IRepository<State> stateDao, IRepository<City> cityDao)
         {
-            _shortNameDao = shortNameDao;
-            //_zipCodeDao = zipCodeDao;
-            _stateDao = stateDao;
-            _cityDao = cityDao;
-            _countryDao = countryDao;
+            Cities = cityDao;
+            States = stateDao;
+            Countries = countryDao;
+            _settings = new LocationSettings();
         }
+        #endregion
     }
 }

@@ -7,13 +7,16 @@ using System.IO;
 
 using ComLib;
 using ComLib.Reflection;
-using ComLib.Database;
+using ComLib.Data;
 using ComLib.IO;
-
 
 
 namespace ComLib.Configuration
 {
+    /// <summary>
+    /// This class provides methods that can load
+    /// a configuration and return a config source.
+    /// </summary>
     public class Configs
     {
         private static ConnectionInfo _connection;
@@ -32,31 +35,51 @@ namespace ComLib.Configuration
         /// <summary>
         /// Load config from single file or multiple files.
         /// </summary>
-        /// <param name="envName">"prod"</param>
-        /// <param name="path">"prod.config" or multiple paths delimited by command.
+        /// <param name="configs">"prod.config" or multiple paths delimited by command.
         /// e.g. "prod.config, qa.config, dev.config"</param>
         /// <returns></returns>
-        public static IConfigSource LoadFiles(string path)
+        public static IConfigSource LoadFiles(string configs)
         {
-            // CASE 1 : File(s) do not exist.
-            if (string.IsNullOrEmpty(path)) return new IniDocument();
+            return LoadFiles(string.Empty, configs);
+        }
 
+
+        /// <summary>
+        /// Load config from single file or multiple files.
+        /// </summary>
+        /// <param name="configDirectory"></param>
+        /// <param name="configs">"prod.config" or multiple paths delimited by command.
+        /// e.g. "prod.config, qa.config, dev.config"</param>
+        /// <returns></returns>
+        public static IConfigSource LoadFiles(string configDirectory, string configs)
+        {
+            bool hasConfigDir = !string.IsNullOrEmpty(configDirectory);
+
+            // CASE 1 : File(s) do not exist.
+            if (string.IsNullOrEmpty(configs)) return new IniDocument();
+            
             // CASE 2 : single environment, represented with single configuration file.
             // e.g. "prod", "prod.config".
-            if (!path.Contains(","))
+            if (!configs.Contains(","))
             {
                 // Check file.
-                if (!File.Exists(path)) return new IniDocument();
+                if (hasConfigDir) configs = configDirectory + @"\" + configs;
+                if (!File.Exists(configs)) return new IniDocument();
 
-                return new IniDocument(path, path, true, true);
+                return new IniDocument(configs, configs, true, true);
             }
             // CASE 3 : single environment, represented with multiple configuration file.
             // e.g. "prod", "prod.config, qa.config, dev.config".
-            string[] configPaths = path.Split(',');
+            string[] configPaths = configs.Split(',');
             var configSources = new List<IConfigSource>();
+            
             configPaths.ForEach(configPath =>
             {
-                configSources.Add(new IniDocument(configPath, configPath, true, true));
+                if (hasConfigDir) configPath = configDirectory + @"\" + configPath;
+                if (!File.Exists(configPath)) throw new FileNotFoundException("Config file : " + configPath + " not found.");
+                FileInfo configFile = new FileInfo(configPath);
+
+                configSources.Add(new IniDocument(configFile.Name, configPath, true, true));
             });
 
             IConfigSource inheritedConfig = new ConfigSourceMulti(configSources);
@@ -80,7 +103,7 @@ namespace ComLib.Configuration
         /// Load config settings into a configSource from an object using
         /// it's public properties.
         /// </summary>
-        /// <param name="ctx"></param>
+        /// <param name="configObj"></param>
         /// <returns></returns>
         public static IConfigSource LoadObject(object configObj)
         {
@@ -94,7 +117,7 @@ namespace ComLib.Configuration
         /// <summary>
         /// Load from string.
         /// </summary>
-        /// <param name="ctx"></param>
+        /// <param name="configText"></param>
         /// <returns></returns>
         public static IConfigSource LoadString(string configText)
         {

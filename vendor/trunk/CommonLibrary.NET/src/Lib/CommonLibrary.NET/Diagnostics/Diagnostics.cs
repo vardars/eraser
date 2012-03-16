@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
-using System.Management;
 using System.IO;
 using System.Collections;
 using System.Reflection;
@@ -49,7 +48,7 @@ namespace ComLib.Diagnostics
         /// <summary>
         /// Initialize the provider.
         /// </summary>
-        /// <param name="service"></param>
+        /// <param name="serviceCreator">Function to execute.</param>
         public static void Init(Func<IDiagnosticsService> serviceCreator)
         {
             _serviceCreator = serviceCreator;
@@ -59,6 +58,7 @@ namespace ComLib.Diagnostics
         /// <summary>
         /// Get all the diagnostic information.
         /// </summary>
+        /// <returns>Diagnostic information.</returns>
         public static string GetAllInfo()
         {
             return GetInfo(string.Empty);
@@ -66,17 +66,51 @@ namespace ComLib.Diagnostics
 
 
         /// <summary>
+        /// Get all the diagnostic information.
+        /// <param name="groups">MachineInfo,AppDomain,Env_System,Env_User</param>
+        /// </summary>
+        /// <returns>Dictionary with diagnostic information.</returns>
+        public static IDictionary GetDataAsDictionary(params DiagnosticGroup[] groups)
+        {
+            IDiagnosticsService svc = _serviceCreator();
+
+            // Env_System,Env_User,Drives
+            if (groups == null || groups.Length == 0)
+            {
+                var filter = "MachineInfo,AppDomain,Env_System,Env_User";
+                svc.FilterOn(true, filter);
+            }
+            else            
+                svc.FilterOn(true, groups);
+
+            IDictionary data = svc.GetData();
+            return data;
+        }
+
+
+        /// <summary>
         /// Get all the information associated with the specified groups.
         /// </summary>
-        /// <param name="commaDelimitedGroups"></param>
-        /// <returns></returns>
+        /// <param name="commaDelimitedGroups">String with comma-delimited groups.</param>
+        /// <returns>Information for specified groups.</returns>
         public static string GetInfo(string commaDelimitedGroups)
         {
             IDiagnosticsService svc = _serviceCreator();
-            if (string.IsNullOrEmpty(commaDelimitedGroups))
-            {
-                svc.FilterOn(commaDelimitedGroups, true);
-            }
+            svc.FilterOn(true, commaDelimitedGroups);
+            string data = svc.GetDataTextual();
+            return data;
+        }
+
+
+        /// <summary>
+        /// Get all the information associated with the specified groups.
+        /// </summary>
+        /// <param name="groups">Array with groups.</param>
+        /// <returns>Information for specified groups.</returns>
+        public static string GetInfo(params DiagnosticGroup[] groups)
+        {
+            IDiagnosticsService svc = _serviceCreator();
+            svc.FilterOn(true, groups);
             string data = svc.GetDataTextual();
             return data;
         }
@@ -110,10 +144,25 @@ namespace ComLib.Diagnostics
         /// </summary>
         /// <param name="commaDelimitedGroups">"Machine,AppDomain"</param>
         /// <param name="path">Path of file to write information to.</param>
+        /// <param name="referenceMessage">Reference message.</param>
         public static void WriteInfo(string commaDelimitedGroups, string path, string referenceMessage)
         {
             IDiagnosticsService svc = _serviceCreator();
-            svc.WriteInfo(commaDelimitedGroups, path, referenceMessage);
+            svc.WriteInfo(path, referenceMessage, commaDelimitedGroups);
+        }
+
+
+        /// <summary>
+        /// Write diagnostic information associated with the delimited list
+        /// of groups specified.
+        /// </summary>
+        /// <param name="path">Path of file to write information to.</param>
+        /// <param name="referenceMessage">Reference message.</param>
+        /// <param name="groups">The groups to write out</param>
+        public static void WriteInfo(string path, string referenceMessage, params DiagnosticGroup[] groups)
+        {
+            IDiagnosticsService svc = _serviceCreator();
+            svc.WriteInfo(path, referenceMessage, groups);
         }
     }
 }

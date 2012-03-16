@@ -29,11 +29,11 @@ namespace CommonLibrary.Tests
         {
             List<EnvItem> envs = new List<EnvItem>()
             {
-                new EnvItem(){ Name = "Dev",    RefPath =@"${rootfolder}\dev.config",    InheritsDeeply = true,  EnvType = EnvType.Dev,       Inherits = "" },
-                new EnvItem(){ Name = "Dev2",   RefPath =@"${rootfolder}\dev2.config",   InheritsDeeply = true,  EnvType = EnvType.Dev,       Inherits = "" },
-                new EnvItem(){ Name = "Qa",     RefPath =@"${rootfolder}\qa.config",     InheritsDeeply = true,  EnvType = EnvType.Qa,        Inherits = "Dev" },
-                new EnvItem(){ Name = "Prod",   RefPath =@"${rootfolder}\prod.config",   InheritsDeeply = true,  EnvType = EnvType.Prod,      Inherits = "Qa" },
-                new EnvItem(){ Name = "MyProd", RefPath =@"${rootfolder}\custom.config", InheritsDeeply = true,  EnvType = EnvType.MixedProd, Inherits = "Prod,Dev2" }
+                new EnvItem(){ Name = "Dev",    RefPath ="dev.config",    InheritsDeeply = true,  EnvType = EnvType.Dev,       Inherits = "" },
+                new EnvItem(){ Name = "Dev2",   RefPath ="dev2.config",   InheritsDeeply = true,  EnvType = EnvType.Dev,       Inherits = "" },
+                new EnvItem(){ Name = "Qa",     RefPath ="qa.config",     InheritsDeeply = true,  EnvType = EnvType.Qa,        Inherits = "Dev" },
+                new EnvItem(){ Name = "Prod",   RefPath ="prod.config",   InheritsDeeply = true,  EnvType = EnvType.Prod,      Inherits = "Qa" },
+                new EnvItem(){ Name = "MyProd", RefPath ="custom.config", InheritsDeeply = true,  EnvType = EnvType.MixedProd, Inherits = "Prod,Dev2" }
             };
             return envs;
         }
@@ -91,7 +91,7 @@ namespace CommonLibrary.Tests
             // Not that <envName>:<envType> is the format
             // where <envType> = prod | uat | qa | dev
             List<EnvItem> available = GetSampleEvironments();
-            Envs.Set("Dev2", available, "");
+            Envs.Set("Dev2", available);
 
             Assert.AreEqual(Env.Name, "Dev2");
             Assert.AreEqual(Env.EnvType, EnvType.Dev);
@@ -115,7 +115,7 @@ namespace CommonLibrary.Tests
             // 1. Setup current env using supplied environment names/types. 
             //    and all the available environments.
             // 2. Also supply the refpaths( config paths in this case ).
-            Envs.Set("ny.prod", "ny.prod:prod,london.prod:prod,uat,qa,dev", "prod.config,qa.config,dev.config");
+            Envs.Set("ny.prod", "ny.prod:prod,london.prod:prod,uat,qa,dev", "prod.config,qa.config,dev.config", false, false);
             
             Assert.AreEqual(Env.Name, "ny.prod");
             Assert.AreEqual(Env.EnvType, EnvType.Prod);
@@ -140,7 +140,7 @@ namespace CommonLibrary.Tests
             // 1. Setup current env using supplied environment names/types. 
             //    and all the available environments.
             // 2. Also supply the refpaths( config paths in this case ).
-            Envs.Set("ny.prod,qa,dev", "ny.prod:prod,london.prod:prod,uat,qa,dev", "ny.prod.config,qa.config,dev.config");
+            Envs.Set("ny.prod", "ny.prod:prod,london.prod:prod,uat,qa,dev", "ny.prod.config,london.prod.config,uat.config,qa.config,dev.config", true, false);
 
             Assert.AreEqual(Env.Name, "ny.prod");
             Assert.AreEqual(Env.EnvType, EnvType.Prod);
@@ -170,7 +170,7 @@ namespace CommonLibrary.Tests
             // 1. Setup current env using supplied environment names/types. 
             //    and all the available environments.
             // 2. Also supply the refpaths( config paths in this case ).
-            Envs.Set("prod,qa,dev", "prod,uat,qa,dev", "prod.config,qa.config,dev.config");
+            Envs.Set("prod", "prod,uat,qa,dev", "prod.config,uat.config,qa.config,dev.config", true, false);
 
             Assert.AreEqual(Env.Name, "prod");
             Assert.AreEqual(Env.EnvType, EnvType.Prod);
@@ -225,7 +225,7 @@ namespace CommonLibrary.Tests
             Envs.Set("dev", "prod,uat,qa,dev", "dev1.config,dev2.config");
             
             // 4. Non-Strict setup indicating current environment inheritance and config inheritance.
-            Envs.Set("prod,qa,dev", "prod,uat,qa,dev", "prod.config,qa.config,dev.config");
+            Envs.Set("prod", "prod,uat,qa,dev", "prod.config,qa.config,dev.config");
             //EnvironmentCurrent.Change("qa");
             
             // 5. Strict setup indicating current environments selected from the possible environments.

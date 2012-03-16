@@ -38,7 +38,7 @@ namespace ComLib.CsvParse
         /// <summary>
         /// The character used to separate values in csv file.
         /// </summary>
-        public string Separator = ",";
+        public char Separator = ',';
         
         
         /// <summary>

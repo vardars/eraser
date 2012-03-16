@@ -51,16 +51,30 @@ namespace ComLib.Collections
         }
 
 
+        /// <summary>
+        /// The first property e.g. A as in "A.B.C"
+        /// </summary>
         public readonly string Group;
+
+
+        /// <summary>
+        /// The second property e.g. B as in "A.B.C"
+        /// </summary>
         public readonly string SubGroup;
+
+
+        /// <summary>
+        /// The last property. e.g Either B if 2 properties as in "A.B" or C if 3 properties as in "A.B.C"
+        /// </summary>
         public readonly string Key;
 
 
         /// <summary>
         /// Constructor.
         /// </summary>
+        /// <param name="group"></param>
+        /// <param name="subGroup"></param>
         /// <param name="key"></param>
-        /// <param name="propName"></param>
         public PropertyKey(string group, string subGroup, string key)
         {
             Group = group;
@@ -106,8 +120,9 @@ namespace ComLib.Collections
         /// <summary>
         /// Builds the property key which is the combination of the group and the key.
         /// </summary>
+        /// <param name="group"></param>
+        /// <param name="subGroup"></param>
         /// <param name="key"></param>
-        /// <param name="propertyName"></param>
         /// <returns></returns>
         public static string BuildKey(string group, string subGroup, string key)
         {

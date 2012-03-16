@@ -19,7 +19,6 @@ using System.Text;
 using System.Collections;
 
 
-
 namespace ComLib.Caching
 {
 
@@ -45,11 +44,11 @@ namespace ComLib.Caching
 
         /// <summary>
         /// Should not be deleted.
+        /// </summary>
         NotRemovable,
 
         /// <summary>
-        /// The default value for a cached item's priority is
-        /// <see cref="Spring.Caching.CachePriority.Normal"/>.
+        /// The default value for a cached item's priority.
         /// </summary>
         Default = Normal
     }

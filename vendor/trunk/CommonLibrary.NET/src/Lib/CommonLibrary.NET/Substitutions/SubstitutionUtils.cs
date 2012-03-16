@@ -28,8 +28,9 @@ namespace ComLib.Subs
         /// <summary>
         /// parse the substitution.
         /// </summary>
-        /// <param name="funcCall"></param>
-        /// <returns></returns>
+        /// <param name="funcCall">Substitution function.</param>
+        /// <param name="subContainer">Substitution service.</param>
+        /// <returns>Result of substitution.</returns>
         public static Substitution Parse(string funcCall, SubstitutionService subContainer)
         {
             Match match = Regex.Match(funcCall, @"\$\{(?<name>[\S]+)\}");
@@ -65,9 +66,9 @@ namespace ComLib.Subs
         /// <summary>
         /// Evaluate the funcall.
         /// </summary>
-        /// <param name="sub"></param>
-        /// <param name="subContainer"></param>
-        /// <returns></returns>
+        /// <param name="sub">Instance of substitution.</param>
+        /// <param name="subContainer">Substitution service.</param>
+        /// <returns>Result of substitution.</returns>
         public static string Eval(Substitution sub, SubstitutionService subContainer)
         {
             if (!sub.IsValid) return sub.FuncName;

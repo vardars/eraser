@@ -38,48 +38,15 @@ namespace ComLib.StatusUpdater
         {
         }
 
-
-        public StatusUpdateService(IEntityRepository<StatusUpdate> repository, StatusUpdateValidator validator,
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="repository">Repository with updates.</param>
+        /// <param name="validator">Validator.</param>
+        /// <param name="settings">Status update settings.</param>
+        public StatusUpdateService(IRepository<StatusUpdate> repository, StatusUpdateValidator validator,
                 StatusUpdateSettings settings ) : base(repository, validator, settings)
         {
-        }
-    }
-
-
-
-    /// <summary>
-    /// Settings class for StatusUpdate.
-    /// </summary>
-    /// <typeparam name="?"></typeparam>
-    public partial class StatusUpdateSettings : EntitySettings<StatusUpdate>, IEntitySettings<StatusUpdate>
-    {
-        public StatusUpdateSettings()
-        {
-            Init();
-        }
-
-
-        /// <summary>
-        /// Initalize settings.
-        /// </summary>
-        public override void Init()
-        {
-            EditRoles = "";
-            EnableValidation = true;
-        }
-    }
-
-
-
-    /// <summary>
-    /// Settings class for StatusUpdate.
-    /// </summary>
-    /// <typeparam name="?"></typeparam>
-    public partial class StatusUpdateResources : EntityResources
-    {
-        public StatusUpdateResources()
-        {
-            _entityName = "StatusUpdate";
         }
     }
 }

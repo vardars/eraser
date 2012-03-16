@@ -6,8 +6,7 @@ using System.IO;
 using System.Data;
 using System.Data.Common;
 using System.Security.Cryptography;
-using ComLib.Entities;
-using ComLib.Membership;
+
 using ComLib;
 using ComLib.Application;
 using ComLib.Logging;
@@ -16,18 +15,10 @@ using ComLib.Logging;
 namespace ComLib.Samples
 {
     /// <summary>
-    /// Example of ActiveRecord Initialization/Configuration.
+    /// Example for the Logging namespace.
     /// </summary>
     public class Example_Logging : App
     {
-        /// <summary>
-        /// Initialize.
-        /// </summary>
-        /// <param name="args"></param>
-        public Example_Logging()
-        {
-        }
-
 
         /// <summary>
         /// Run the application.

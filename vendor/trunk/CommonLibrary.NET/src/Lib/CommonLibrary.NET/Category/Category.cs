@@ -29,8 +29,11 @@ namespace ComLib.Categories
     /// <summary>
     /// Summary description for Category
     /// </summary>
-    public class Category : CompositeWithIdAndName<Category>
+    public class Category : CompositeWithIdAndName<Category>, INodeWithIds
     {
+        /// <summary>
+        /// Default Initialization
+        /// </summary>
         public Category() 
         {
             Id = CategoryConstants.NA;
@@ -47,7 +50,7 @@ namespace ComLib.Categories
         /// <param name="parentCategoryId"></param>
         /// <param name="categoryTitle"></param>
         /// <param name="categoryDescription"></param>
-        /// <param name="categoryImageUrl"></param>
+        /// <param name="imageUrl"></param>
         /// <param name="parentTitle"></param>
         public Category(int categoryId, DateTime addedDate, string addedBy, 
             int parentCategoryId, string categoryTitle, string categoryDescription, 

@@ -28,6 +28,7 @@ namespace ComLib.Application
         /// <summary>
         /// Initialize the decorators.
         /// </summary>
+        /// <param name="appType"></param>
         /// <param name="delimitedDecorators"></param>
         public AppDecoratorHelper(Type appType, string delimitedDecorators)
         {
@@ -77,12 +78,12 @@ namespace ComLib.Application
         /// <param name="taskName">Option name to use for the TaskName for StatusUpdates.</param>
         /// <param name="wrapTryCatch">Whether or not to wrap the call inside a try catch.</param>
         /// <param name="action">Action to execute.</param>
-        public void Execute(string methodName, string taskName, bool wrapTryCatch, ActionVoid action)
+        public void Execute(string methodName, string taskName, bool wrapTryCatch, Action action)
         {
             Execute(methodName, taskName, () =>
             {
                 if (!wrapTryCatch) action();
-                else ExecuteHelper.TryCatchLog(action);
+                else Try.CatchLog(action);
             });
         }
 
@@ -102,7 +103,7 @@ namespace ComLib.Application
             Execute(methodName, taskName, () =>
             {
                 if (!wrapTryCatch) result = action();
-                else result = ExecuteHelper.TryCatchLog<T>("", action);
+                else result = Try.CatchLogGet<T>("", action);
             });
         }
 
@@ -113,9 +114,9 @@ namespace ComLib.Application
         /// 2. Status updates.
         /// </summary>
         /// <param name="methodName">The name of the method being executed.</param>
-        /// <param name="taskName">Option name to use for the TaskName for StatusUpdates.</param
+        /// <param name="taskName">Option name to use for the TaskName for StatusUpdates.</param>
         /// <param name="action">Action to execute.</param>
-        public void Execute(string methodName, string taskName, ActionVoid action)
+        public void Execute(string methodName, string taskName, Action action)
         {
             DateTime startTime = DateTime.Now;
             HandleStart(methodName, startTime);
@@ -128,6 +129,7 @@ namespace ComLib.Application
         /// Handle the "Logging" the starting of the method call before execution.
         /// </summary>
         /// <param name="methodName"></param>
+        /// <param name="startTime"></param>
         private void HandleStart(string methodName, DateTime startTime)
         {
             if (IsDecoratedWith("log"))
@@ -142,6 +144,7 @@ namespace ComLib.Application
         /// Handle the "Logging" the starting of the method call before execution.
         /// </summary>
         /// <param name="methodName"></param>
+        /// <param name="startTime"></param>
         private void HandleEnd(string methodName, DateTime startTime)
         {
             // Time ended.

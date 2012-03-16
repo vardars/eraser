@@ -20,8 +20,7 @@ using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
 using ComLib;
-using ComLib.Parsing;
-using ComLib.Configuration;
+
 
 
 
@@ -47,6 +46,9 @@ namespace ComLib.IO
         private bool _isCaseSensitive = false;
 
 
+        /// <summary>
+        /// Default initialization.
+        /// </summary>
         public IniDocument() { }
 
 
@@ -63,7 +65,8 @@ namespace ComLib.IO
         /// <summary>
         /// Initialize using IniSections.
         /// </summary>
-        /// <param name="sections"></param>
+        /// <param name="iniContentOrFilePath"></param>
+        /// <param name="isFilePath"></param>
         public IniDocument(string iniContentOrFilePath, bool isFilePath)
             : this("", iniContentOrFilePath, isFilePath, true)
         {
@@ -73,7 +76,9 @@ namespace ComLib.IO
         /// <summary>
         /// Initialize using IniSections.
         /// </summary>
-        /// <param name="sections"></param>
+        /// <param name="name"></param>
+        /// <param name="iniContentOrFilePath"></param>
+        /// <param name="isFilePath"></param>
         public IniDocument(string name, string iniContentOrFilePath, bool isFilePath)
             : this(name, iniContentOrFilePath, isFilePath, true)
         {
@@ -95,6 +100,7 @@ namespace ComLib.IO
         /// <summary>
         /// Initialize the ini document with the string or file path.
         /// </summary>
+        /// <param name="name"></param>
         /// <param name="iniContentOrFilePath"></param>
         /// <param name="isFilePath"></param>
         /// <param name="isCaseSensitive"></param>
@@ -248,14 +254,14 @@ namespace ComLib.IO
     /// <summary>
     /// The type of the ini line type.
     /// </summary>
-    public enum IniLineType { Group, KeyValue, Comment, Other, EmptyLine, None }
+    enum IniLineType { Group, KeyValue, Comment, Other, EmptyLine, None }
 
 
 
     /// <summary>
     /// Parser constants.
     /// </summary>
-    public class IniParserConstants
+    class IniParserConstants
     {
         public const string DoubleQuote = "\"";
         public const string SingleQuote = "'";
@@ -275,11 +281,33 @@ namespace ComLib.IO
     /// </summary>
     public class IniParserSettings
     {
+        /// <summary>
+        /// The maximum length of a comment.
+        /// </summary>
         public int MaxLenghtOfComment = 500;
+
+
+        /// <summary>
+        /// The maximum length of a group name [group]
+        /// </summary>
         public int MaxLengthOfGroup = 40;
+
+
+        /// <summary>
+        /// The maximum length of a key key:.
+        /// </summary>
         public int MaxLengthOfKey = 40;
+
+
+        /// <summary>
+        /// The maximum length of a value in a single line.
+        /// </summary>
         public int MaxLenghtOfValueSingleLine = 500;
 
+
+        /// <summary>
+        /// Whether or not the groups/keys are case-sensitive
+        /// </summary>
         public bool IsCaseSensitive = false;
     }
 
@@ -334,14 +362,17 @@ namespace ComLib.IO
     {
         #region Private DataMembers
         private string _inputText = string.Empty;
-        private TokenReader _reader = null;
-        private IniLineType _lastLineType = IniLineType.None;
+        private Scanner _reader = null;
+        //private IniLineType _lastLineType = IniLineType.None;
         private List<string> _errors = new List<string>();
         List<IniSection> _sections = new List<IniSection>();
         IniSection _currentSection = new IniSection();
         #endregion
 
 
+        /// <summary>
+        /// Create new instance with default settings
+        /// </summary>
         public IniParser()
         {
             Settings = new IniParserSettings();
@@ -349,6 +380,11 @@ namespace ComLib.IO
 
 
         private IniParserSettings _settings;
+
+
+        /// <summary>
+        /// The settings for the parser.
+        /// </summary>
         public IniParserSettings Settings
         {
             get { return _settings; }
@@ -384,7 +420,7 @@ namespace ComLib.IO
         private void Init(string text)
         {
             _inputText = text;
-            _reader = new TokenReader(text, @"\", new string[] { "[", "]", ":" }, new string[] { " ", "\t" }, new string[] { "\n", "\r\n" });
+            _reader = new Scanner(text, new char[] { '[', ']', ':' });
         }
 
 
@@ -412,14 +448,14 @@ namespace ComLib.IO
             while ( !_reader.IsEnd() )
             {
                 // Get the current char.
-                string currentChar = _reader.CurrentChar;
+                char currentChar = _reader.CurrentChar;
 
-                if (currentChar == "[")
+                if (currentChar == '[')
                 {
                     StoreGroup();
                     readNextChar = false;
                 }
-                else if (currentChar == ";" )
+                else if (currentChar == ';' )
                 {
                     string comment = _reader.ReadToEol();                   
                 }
@@ -446,31 +482,37 @@ namespace ComLib.IO
         }
 
 
+        /// <summary>
+        /// Store the current group
+        /// </summary>
         protected virtual void StoreGroup()
         {
             // Push the last one into the list.
             if (_currentSection.Count > 0)
                 _sections.Add(_currentSection);
 
-            string group = _reader.ReadToken("]", @"\", false, true, true, true);
+            string group = _reader.ReadToken(']', '\\', false, true, true, true);
             if (!_settings.IsCaseSensitive)
                 group = group.ToLower();
 
             // Create a new section using the name of the group.
             _currentSection = new IniSection() { Name = group };
-            _lastLineType = IniLineType.Group;
+            //_lastLineType = IniLineType.Group;
         }
 
 
+        /// <summary>
+        /// Store the current key value.
+        /// </summary>
         protected virtual void StoreKeyValue()
         {
-            string key = _reader.ReadToken(":", @"\", false, false, true, true);
+            string key = _reader.ReadToken(':', '\\', false, false, true, true);
             string val = "";
 
             _reader.ConsumeWhiteSpace();
             // If starting with " then possibly multi-line.
-            if (_reader.CurrentChar == "\"")
-                val = _reader.ReadToken("\"", @"\", false, true, true, true);
+            if (_reader.CurrentChar == '"')
+                val = _reader.ReadToken('"', '\\', false, true, true, true);
             else
                 val = _reader.ReadToEol();
 
@@ -480,7 +522,7 @@ namespace ComLib.IO
             // This allow multiple values for the same key.
             // Multiple values are stored using List<object>.
             _currentSection.AddMulti(key, val, false);
-            _lastLineType = IniLineType.KeyValue;
+            //_lastLineType = IniLineType.KeyValue;
         }
 
 

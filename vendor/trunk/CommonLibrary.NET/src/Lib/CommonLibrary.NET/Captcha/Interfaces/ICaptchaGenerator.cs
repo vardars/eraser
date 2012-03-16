@@ -43,7 +43,7 @@ namespace ComLib.CaptchaSupport
         /// Gets or sets the settings.
         /// </summary>
         /// <value>The settings.</value>
-        CaptchaGeneratorSettings Settings { get; set; }
+        CaptchaSettings Settings { get; set; }
     }
 
 }

@@ -21,7 +21,7 @@ using System.Web.UI.WebControls;
 using System.Data;
 using System.Reflection;
 using ComLib;
-using ComLib.Database;
+using ComLib.Data;
 using ComLib.Entities;
 using ComLib.Entities.Management;
 using ComLib.Reflection;
@@ -54,7 +54,7 @@ namespace ComLib.Scaffolding
                 EntityServiceContext entityActionContext = creationResult.Item as EntityServiceContext;
 
                 // Create the entity using the entity service.
-                EntityService service = new EntityService();
+                EntityManager service = new EntityManager();
                 BoolMessage result = service.Create(entityActionContext);
                 return result;
             }
@@ -68,7 +68,7 @@ namespace ComLib.Scaffolding
             /// <returns></returns>
             public DataTable GetAll(ScaffoldContext ctx)
             {
-                EntityService entitySvc = new EntityService();
+                EntityManager entitySvc = new EntityManager();
                 EntityServiceContext entityServiceContext = CreateContext(ctx, false, false, false).Item as EntityServiceContext;
                 BoolMessageItem result = entitySvc.GetAll(entityServiceContext);
                 if (!result.Success) { return null; }
@@ -105,7 +105,7 @@ namespace ComLib.Scaffolding
 
                 EntityServiceContext entityActionContext = creationResult.Item as EntityServiceContext;
 
-                EntityService entitySvc = new EntityService();
+                EntityManager entitySvc = new EntityManager();
                 BoolMessageItem result = entitySvc.Get(entityActionContext);
                 return result;
             }
@@ -127,7 +127,7 @@ namespace ComLib.Scaffolding
                 EntityServiceContext entityActionContext = creationResult.Item as EntityServiceContext;
 
                 // Create the entity using the entity service.
-                EntityService service = new EntityService();
+                EntityManager service = new EntityManager();
                 BoolMessage result = service.Update(entityActionContext);
                 return result;
             }
@@ -146,7 +146,7 @@ namespace ComLib.Scaffolding
                 EntityServiceContext entityActionContext = creationResult.Item as EntityServiceContext;
 
                 // Create the entity using the entity service.
-                EntityService service = new EntityService();
+                EntityManager service = new EntityManager();
                 BoolMessage result = service.Delete(entityActionContext);
                 return result;
             }
@@ -206,7 +206,6 @@ namespace ComLib.Scaffolding
 
                 EntityServiceContext enCtx = new EntityServiceContext(typ, entityId, entity);
                 enCtx.Errors = scaffoldContext.Errors;
-                enCtx.Messages = scaffoldContext.Messages;
 
                 // Transfer the values from the Dynamically generated Scaffold UI to the entity.
                 if (createEntity && transferScaffoldUIValuesToEntity)

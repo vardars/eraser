@@ -65,10 +65,13 @@ namespace ComLib.Notifications
         /// <summary>
         /// Notifcation content.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="location"></param>
-        /// <param name="isAssemblyEmbedded"></param>
-        /// <param name="assemblyName"></param>
+        /// <param name="name">Name of notification.</param>
+        /// <param name="fulllocation">Location of template.</param>
+        /// <param name="fileName">Full name of notification.</param>
+        /// <param name="isAssemblyEmbedded">True if the template is 
+        /// embedded in an assembly.</param>
+        /// <param name="assemblyName">Name of assembly.</param>
+        /// <param name="isXsl">True if the notification is xsl based.</param>
         public NotificationDef(string name, string fulllocation, string fileName, bool isAssemblyEmbedded, string assemblyName, bool isXsl)
         {
             Name = name;
@@ -123,7 +126,7 @@ namespace ComLib.Notifications
         /// <summary>
         /// Remove entry associated with the key.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">Key of entry to remove.</param>
         public void Remove(string key)
         {
             _defs.Remove(key);
@@ -133,7 +136,7 @@ namespace ComLib.Notifications
         /// <summary>
         /// Get / set the value.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">Key of entry to get/set.</param>
         /// <returns></returns>
         public NotificationDef this[string key]
         {

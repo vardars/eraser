@@ -30,6 +30,7 @@ namespace ComLib.Application
         /// <summary>
         /// Initialize the underlying instance.
         /// </summary>
+        /// <param name="delimitedDecorators"></param>
         /// <param name="instance"></param>
         public AppDecorator(string delimitedDecorators, IApp instance)
         {
@@ -219,7 +220,7 @@ namespace ComLib.Application
         /// </summary>
         public void InitComplete()
         {
-            _helper.Execute("InitComplete()", "", false, () => _instance.InitComplete());
+            _helper.Execute("InitComplete()", "", true, () => _instance.InitComplete());
         }
 
 
@@ -247,7 +248,7 @@ namespace ComLib.Application
         /// </summary>
         public void ExecuteComplete()
         {
-            _helper.Execute("ExecuteComplete", "", false, () => _instance.ExecuteComplete());
+            _helper.Execute("ExecuteComplete", "", true, () => _instance.ExecuteComplete());
         }
 
 
@@ -318,7 +319,7 @@ namespace ComLib.Application
             string methodName = _instance.GetType().FullName + ".Execute";
             _helper.Execute("Execute(context)", "", () =>
             {
-                _result = ExecuteHelper.TryCatchLogGetBoolMessageItem("Error in " + methodName, Logger.Default, action);
+                _result = Try.CatchLogGet<BoolMessageItem>("Error in " + methodName, action);
             });
 
             // Handle possiblity of applicationTemplate returning null for result.

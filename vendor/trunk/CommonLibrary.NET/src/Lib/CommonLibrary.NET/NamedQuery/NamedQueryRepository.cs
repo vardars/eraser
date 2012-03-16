@@ -19,17 +19,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using CommonLibrary;
-using CommonLibrary.DomainModel;
+
+using ComLib;
+using ComLib.Entities;
+using ComLib.Data;
 
 
-
-namespace CommonLibrary
+namespace ComLib.NamedQueries
 {
     /// <summary>
     /// Generic repository for persisting NamedQuery.
     /// </summary>
-    public partial class NamedQueryRepository : Repository<NamedQuery> //EntityRepositoryInMemory<NamedQuery>  //
+    public partial class NamedQueryRepository : RepositorySql<NamedQuery> //EntityRepositoryInMemory<NamedQuery>  //
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NamedQueryRepository"/> class.
@@ -38,12 +39,12 @@ namespace CommonLibrary
 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Repository&lt;TId, T&gt;"/> class.
+        /// Initializes a new instance of the <see cref="NamedQueryRepository"/> class.
         /// </summary>
         /// <param name="connectionInfo">The connection info.</param>
-        /// <param name="helper">The helper.</param>
-        public NamedQueryRepository(ConnectionInfo connectionInfo, IDBHelper helper)
-            : base(connectionInfo, helper)
+        /// <param name="db">Database instance.</param>
+        public NamedQueryRepository(ConnectionInfo connectionInfo, IDatabase db)
+            : base(connectionInfo, db)
         {
         }
     }
@@ -53,20 +54,23 @@ namespace CommonLibrary
     /// <summary>
     /// RowMapper for NamedQuery.
     /// </summary>
-    /// <typeparam name="?"></typeparam>
     public partial class NamedQueryRowMapper : EntityRowMapper<NamedQuery>, IEntityRowMapper<NamedQuery>
     {
+        /// <summary>
+        /// Mapes reader information to named query properties.
+        /// </summary>
+        /// <param name="reader">Reader with data.</param>
+        /// <param name="rowNumber">Data row number.</param>
+        /// <returns>Instance of named query with data from reader.</returns>
         public override NamedQuery MapRow(IDataReader reader, int rowNumber)
         {
-            NamedQuery entity = NamedQuerys.New();
+            NamedQuery entity = NamedQuery.New();
             entity.Id = reader["Id"] == DBNull.Value ? 0 : (int)reader["Id"];
             entity.CreateDate = reader["CreateDate"] == DBNull.Value ? DateTime.MinValue : (DateTime)reader["CreateDate"];
             entity.UpdateDate = reader["UpdateDate"] == DBNull.Value ? DateTime.MinValue : (DateTime)reader["UpdateDate"];
             entity.CreateUser = reader["CreateUser"] == DBNull.Value ? string.Empty : reader["CreateUser"].ToString();
             entity.UpdateUser = reader["UpdateUser"] == DBNull.Value ? string.Empty : reader["UpdateUser"].ToString();
             entity.UpdateComment = reader["UpdateComment"] == DBNull.Value ? string.Empty : reader["UpdateComment"].ToString();
-            entity.Version = reader["Version"] == DBNull.Value ? 0 : (int)reader["Version"];
-            entity.IsActive = reader["IsActive"] == DBNull.Value ? false : (bool)reader["IsActive"];
             entity.Name = reader["Name"] == DBNull.Value ? string.Empty : reader["Name"].ToString();
             entity.Description = reader["Description"] == DBNull.Value ? string.Empty : reader["Description"].ToString();
             entity.Sql = reader["Sql"] == DBNull.Value ? string.Empty : reader["Sql"].ToString();

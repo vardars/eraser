@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Management;
 using System.IO;
 using System.Collections;
 using System.Reflection;
@@ -35,6 +34,7 @@ namespace ComLib.Diagnostics
         /// <summary>
         /// Returns a key value pair list of drives and available space.
         /// </summary>
+        /// <returns>Dictionary with drive information.</returns>
         public static IDictionary GetDrivesInfo()
         {
             string[] drives = Environment.GetLogicalDrives();
@@ -65,7 +65,7 @@ namespace ComLib.Diagnostics
         /// <summary>
         /// Get the machine level information.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Dictionary with machine information.</returns>
         public static IDictionary GetMachineInfo()
         {
             // Get all the machine info.
@@ -90,7 +90,7 @@ namespace ComLib.Diagnostics
         /// <summary>
         /// Get all the list of services.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Dictionary with services information.</returns>
         public static IDictionary GetServices()
         {
             ServiceController[] services = ServiceController.GetServices();
@@ -114,7 +114,7 @@ namespace ComLib.Diagnostics
         /// <summary>
         /// Get information about the currently executing process.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Dictionary with app domain information.</returns>
         public static IDictionary GetAppDomainInfo()
         {
             AppDomain domain = AppDomain.CurrentDomain;
@@ -143,7 +143,7 @@ namespace ComLib.Diagnostics
         /// <summary>
         /// Get all the loaded modules in the current process.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Dictionary with modules information.</returns>
         public static IDictionary GetModules()
         {
             SortedDictionary<object, object> modules = new SortedDictionary<object, object>();
@@ -172,7 +172,7 @@ namespace ComLib.Diagnostics
         /// <summary>
         /// Get information about the currently executing process.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Dictionary with process information.</returns>
         public static IDictionary GetProcesses()
         {
             Process[] processlist = Process.GetProcesses();
@@ -189,7 +189,7 @@ namespace ComLib.Diagnostics
         /// <summary>
         /// System level environment levels.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Dictionary with system level environmental variables.</returns>
         public static IDictionary GetSystemEnvVariables()
         {
             return GetEnvVariables(() => Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine));
@@ -197,9 +197,9 @@ namespace ComLib.Diagnostics
 
 
         /// <summary>
-        /// User level environment variables
+        /// User level environment variables.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Dictionary with user level environmental variables.</returns>
         public static IDictionary GetUserEnvVariables()
         {
             return GetEnvVariables(() => Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User));
@@ -209,8 +209,8 @@ namespace ComLib.Diagnostics
         /// <summary>
         /// Get the environment variables.
         /// </summary>
-        /// <param name="envGetter"></param>
-        /// <returns></returns>
+        /// <param name="envGetter">Function to get environment.</param>
+        /// <returns>Dictionary with environmental variables.</returns>
         public static IDictionary GetEnvVariables(Func<IDictionary> envGetter)
         {
             SortedDictionary<object, object> sortedEnvs = new SortedDictionary<object, object>();
@@ -221,6 +221,22 @@ namespace ComLib.Diagnostics
             }
             return sortedEnvs;
         }
+        
+
+        /// <summary>
+        /// Converts an array of diagnostic groups
+        /// to a list of diagnostic groups.
+        /// </summary>
+        /// <param name="groups">Array with diagnostic groups.</param>
+        /// <returns>List with diagnostic groups.</returns>
+        public static List<string> ConvertEnumGroupsToStringList(DiagnosticGroup[] groups)
+        {
+            var groupList = new List<string>();
+            foreach (var group in groups)
+                groupList.Add(group.ToString());
+
+            return groupList;
+        }
     }
 
 
@@ -230,10 +246,33 @@ namespace ComLib.Diagnostics
     /// </summary>
     public class LoadedModule
     {
+        /// <summary>
+        /// Get/set the module name.
+        /// </summary>
         public string Name { get; set; }
+
+
+        /// <summary>
+        /// Get/set the module path.
+        /// </summary>
         public string FullPath { get; set; }
+
+
+        /// <summary>
+        /// Get/set the module directory.
+        /// </summary>
         public string Directory { get; set; }
+
+
+        /// <summary>
+        /// Get/set the module version.
+        /// </summary>
         public string Version { get; set; }
+
+
+        /// <summary>
+        /// Get/set the module time stamp.
+        /// </summary>
         public string TimeStamp { get; set; }
 
 

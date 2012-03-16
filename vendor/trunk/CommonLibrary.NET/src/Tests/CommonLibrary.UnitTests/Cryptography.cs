@@ -76,5 +76,21 @@ namespace CommonLibrary.Tests
             string decrypted = crypto.Decrypt(encrypted);
             Assert.AreEqual("~`!@#$%^&*()_+{}|:\"<>?[]\\,./;'-=", decrypted);
         }
+
+        [Test]
+        public void TestTripleDESEncryptionDecryption()
+        {
+            // Test single-length key.
+            Assert.AreEqual("D5D44FF720683D0D", ComLib.Cryptography.DES.TripleDES.Encrypt(new ComLib.Cryptography.DES.DESKey("0123456789ABCDEF"), "0000000000000000"));
+            Assert.AreEqual("0000000000000000", ComLib.Cryptography.DES.TripleDES.Decrypt(new ComLib.Cryptography.DES.DESKey("0123456789ABCDEF"), "D5D44FF720683D0D"));
+
+            // Test double-length key.
+            Assert.AreEqual("9335C20E81AA38EA", ComLib.Cryptography.DES.TripleDES.Encrypt(new ComLib.Cryptography.DES.DESKey("C1EFB589A26DA4E62A8032A10B626E79"), "0000000000000000"));
+            Assert.AreEqual("0000000000000000", ComLib.Cryptography.DES.TripleDES.Decrypt(new ComLib.Cryptography.DES.DESKey("C1EFB589A26DA4E62A8032A10B626E79"), "9335C20E81AA38EA"));
+
+            // Test triple-length key.
+            Assert.AreEqual("5BD812B06E29CE8C", ComLib.Cryptography.DES.TripleDES.Encrypt(new ComLib.Cryptography.DES.DESKey("BA80F4DFCBDCFE3EFB9119E96DE0E52ABC1FCE7CD9376E10"), "0000000000000000"));
+            Assert.AreEqual("0000000000000000", ComLib.Cryptography.DES.TripleDES.Decrypt(new ComLib.Cryptography.DES.DESKey("BA80F4DFCBDCFE3EFB9119E96DE0E52ABC1FCE7CD9376E10"), "5BD812B06E29CE8C"));
+        }
     }
 }

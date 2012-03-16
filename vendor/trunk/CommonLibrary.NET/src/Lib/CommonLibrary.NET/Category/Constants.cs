@@ -18,12 +18,32 @@ using System.Text;
 
 namespace ComLib.Categories
 {
-
+    /// <summary>
+    /// This class is used to define constants.
+    /// </summary>
     public class CategoryConstants
-    {        
+    {
+        /// <summary>
+        /// Root category for categories.
+        /// </summary>
         public const int RootCategoryParentCategoryId = 0;
+
+
+        /// <summary>
+        /// All categories.
+        /// </summary>
         public const int All = -1;
+
+
+        /// <summary>
+        /// All categories.
+        /// </summary>
         public const string AllStringVal = "All";
+
+
+        /// <summary>
+        /// N/A.
+        /// </summary>
         public const int NA = 0;
     }
 }

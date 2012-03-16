@@ -39,7 +39,7 @@ namespace ComLib.Collections
         /// <summary>
         /// Constructor requiring the generic dictionary being wrapped.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="items"></param>
         public DictionaryReadOnly(IDictionary<TKey, TValue> items)
         {
             _throwOnWritableAction = true;
@@ -50,7 +50,8 @@ namespace ComLib.Collections
         /// <summary>
         /// Constructor requiring the generic dictionary being wrapped.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="items"></param>
+        /// <param name="throwOnWritableAction"></param>
         public DictionaryReadOnly(IDictionary<TKey, TValue> items, bool throwOnWritableAction)
         {            
             _throwOnWritableAction = throwOnWritableAction;

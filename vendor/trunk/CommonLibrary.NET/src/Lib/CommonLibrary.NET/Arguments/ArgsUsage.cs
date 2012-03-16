@@ -36,29 +36,58 @@ namespace ComLib.Arguments
         /// </summary>
         /// <param name="argsReciever"></param>
         /// <returns></returns>
-        public static string Build(object argsReciever)
+        public static string BuildUsingReciever(object argsReciever)
         {
-            // Get all the properties that have arg attributes.
-            List<ArgAttribute> argsList = ArgsHelper.GetArgsFromReciever(argsReciever);
-            return Build(argsList);
+            return BuildUsingReciever(argsReciever, "-", ":");
         }
 
 
         /// <summary>
-        /// Build a string showing argument usage.
+        /// Build a string showing what arguments are expected.
+        /// This is done by inspecting the argattributes on all the
+        /// properties of the supplied object.
         /// </summary>
         /// <param name="argsReciever"></param>
+        /// <param name="prefix"></param>
+        /// <param name="separator"></param>
         /// <returns></returns>
-        public static string Build(IList<ArgAttribute> argAttributes)
+        public static string BuildUsingReciever(object argsReciever, string prefix, string separator)
         {
-            return BuildDescriptive(argAttributes, null, "-", ":");
+            // Get all the properties that have arg attributes.
+            List<ArgAttribute> argsList = ArgsHelper.GetArgsFromReciever(argsReciever);
+            return Build("app", argsList, prefix, separator);
+        }
+
+
+        /// <summary>
+        /// Build usage of the arguments.
+        /// </summary>
+        /// <param name="argsList"></param>
+        /// <returns></returns>
+        public static string Build(IList<ArgAttribute> argsList)
+        {
+            return Build("app", argsList, "-", ":");
+        }
+
+
+        /// <summary>
+        /// Build usage of the arguments using the schema
+        /// </summary>
+        /// <param name="schema"></param>
+        /// <returns></returns>
+        public static string Build(ArgsSchema schema)
+        {
+            return Build("app", schema.Items, "-", ":");
         }
 
 
         /// <summary>
         /// Build descriptive usage showing arguments and sample runs.
         /// </summary>
-        /// <param name="argsReciever"></param>
+        /// <param name="appName"></param>
+        /// <param name="argAttributes"></param>
+        /// <param name="prefix"></param>
+        /// <param name="separator"></param>
         /// <returns></returns>
         public static string Build(string appName, IList<ArgAttribute> argAttributes, string prefix, string separator)
         {
@@ -70,7 +99,10 @@ namespace ComLib.Arguments
         /// <summary>
         /// Build a sample run.
         /// </summary>
-        /// <param name="argAttributes"></param>
+        /// <param name="appName">Application name</param>
+        /// <param name="argAttributes">List of args</param>
+        /// <param name="prefix">Prefix used for the arguments</param>
+        /// <param name="separator">Separator used between arg and it's value</param>
         /// <returns></returns>
         public static List<string> BuildSampleRuns(string appName, IList<ArgAttribute> argAttributes, string prefix, string separator)
         {
@@ -101,9 +133,9 @@ namespace ComLib.Arguments
 
 
         /// <summary>
-        /// Build a sample run.
+        /// Build a sample runs using examples provided rather from the schema.
         /// </summary>
-        /// <param name="argAttributes"></param>
+        /// <param name="examples"></param>
         /// <returns></returns>
         public static string BuildSampleRuns(IList<string> examples)
         {
@@ -158,7 +190,6 @@ namespace ComLib.Arguments
         /// </summary>
         /// <param name="paddingLength"></param>
         /// <param name="argAttributes"></param>
-        /// <param name="examples"></param>
         /// <param name="prefix"></param>
         /// <param name="separator"></param>
         /// <returns></returns>
@@ -166,9 +197,10 @@ namespace ComLib.Arguments
         {
             string usage = Build(argAttributes, (arg) =>
             {
-                string padding = StringHelpers.GetFixedLengthString(string.Empty, paddingLength, " ");
+                string padding = StringHelper.GetFixedLengthString(string.Empty, paddingLength, " ");
                 string info = string.Empty;
                 string name = " " + prefix + arg.Name;
+                string alias = (arg.IsAliased) ? prefix + arg.Alias : "";
                 string description = string.IsNullOrEmpty(arg.Description) ? string.Empty : arg.Description;
                 string required = arg.IsRequired ? "Required" : "Optional";
                 string defaultValue = arg.DefaultValue == null ? "\"\"" : arg.DefaultValue.ToString();
@@ -176,8 +208,14 @@ namespace ComLib.Arguments
                 if (string.IsNullOrEmpty(arg.Name))
                     name = "   [" + arg.IndexPosition.ToString() + "]";
 
-                name = StringHelpers.GetFixedLengthString(name, paddingLength, " ");
-                info += name + description + Environment.NewLine;
+                name = StringHelper.GetFixedLengthString(name, paddingLength, " ");
+                if (!arg.IsAliased)
+                    info += name + description + Environment.NewLine;
+                else
+                {
+                    info += name + alias + Environment.NewLine;
+                    info += padding + description + Environment.NewLine;
+                }
                 info += string.Format(padding + "{0}, {1}, {2}, default: {3}", required, arg.DataType.Name, caseSensitivity, defaultValue) + Environment.NewLine;
                 info += padding + "Example: " + arg.ExampleMultiple + Environment.NewLine;
                 if (arg.IsUsedOnlyForDevelopment) info += padding + "DEVELOPMENT USE ONLY" + Environment.NewLine;
@@ -193,7 +231,8 @@ namespace ComLib.Arguments
         /// This is done by inspecting the argattributes on all the
         /// properties of the supplied object.
         /// </summary>
-        /// <param name="argsReciever"></param>
+        /// <param name="argAttributes"></param>
+        /// <param name="formatter"></param>
         /// <returns></returns>
         public static string Build(IList<ArgAttribute> argAttributes, Func<ArgAttribute, string> formatter)
         {
@@ -226,13 +265,19 @@ namespace ComLib.Arguments
         /// Show usage using reciever.
         /// </summary>
         /// <param name="reciever"></param>
-        public static void ShowUsingReciever(object reciever)
+        /// <param name="prefix"></param>
+        /// <param name="separator"></param>
+        public static void ShowUsingReciever(object reciever, string prefix, string separator)
         {
-            string usage = Build(reciever);
+            string usage = BuildUsingReciever(reciever, prefix, separator);
             Console.WriteLine(usage);
         }
 
 
+        /// <summary>
+        /// Shows the error on the console.
+        /// </summary>
+        /// <param name="message"></param>
         public static void ShowError(string message)
         {
             Console.WriteLine("================================================");

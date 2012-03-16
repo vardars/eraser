@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 
 using NUnit.Framework;
 
+using ComLib.Extensions;
 using ComLib;
 using ComLib.Logging;
 using ComLib.Collections;
@@ -147,7 +149,6 @@ namespace CommonLibrary.Tests
 
 
         [Test]
-        [ExpectedException()]
         public void CanGetIndexOfKey()
         {
             DictionaryOrdered<string, string> dict = CreateDefault();
@@ -157,7 +158,6 @@ namespace CommonLibrary.Tests
 
 
         [Test]
-        [ExpectedException()]
         public void CanInsert()
         {
             DictionaryOrdered<string, string> dict = CreateDefault();
@@ -171,7 +171,6 @@ namespace CommonLibrary.Tests
 
 
         [Test]
-        [ExpectedException()]
         public void CanRemove()
         {
             DictionaryOrdered<string, string> dict = CreateDefault();
@@ -268,13 +267,44 @@ namespace CommonLibrary.Tests
             set2.Add("d");
             set2.Add("e");
 
-            ISet<string> diff = set1.Minus(set2);
+            ComLib.Collections.ISet<string> diff = set1.Minus(set2);
             Assert.IsFalse(diff.Contains("d"));
             Assert.IsFalse(diff.Contains("e"));
             Assert.IsFalse(diff.Contains("b"));
             Assert.IsTrue(diff.Contains("a"));
             Assert.IsTrue(diff.Contains("c"));
 
+        }
+    }
+
+
+    [TestFixture]
+    public class DictionaryExtensions
+    {
+        [Test]
+        public void CanUseExtensions()
+        {
+            IDictionary dic = new Dictionary<string, object>();
+            dic["name"] = "kishore";
+            dic["age"] = 30;
+            dic["date"] = DateTime.Today.Date;
+            dic["isover21"] = true;
+            dic["salary"] = 20.5;
+            dic["job"] = new Dictionary<string, object>();
+            dic.Section("job")["salary"] = 20.5;
+            dic.Section("job")["title"] = "lead dev";
+
+            Assert.AreEqual(dic.Get<string>("name"), "kishore");
+            Assert.AreEqual(dic.Get<int>("age"), 30);
+            Assert.AreEqual(dic.Get<bool>("isover21"), true);
+            Assert.AreEqual(dic.Get<double>("salary"), 20.5);
+            Assert.AreEqual(dic.Get<DateTime>("date"), DateTime.Today.Date);
+
+            Assert.AreEqual(dic.Get<double>("job", "salary"), 20.5);
+            Assert.AreEqual(dic.Get<string>("job", "title"), "lead dev");
+
+            Assert.AreEqual(dic.Section("job").GetOrDefault<int>("sal", 200000), 200000);
+            Assert.AreEqual(dic.Section("job").Get<double>("salary"), 20.5);
         }
     }
 

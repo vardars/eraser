@@ -26,15 +26,13 @@ namespace ComLib.StatusUpdater
     /// <summary>
     /// Validator for StatusUpdate
     /// </summary>
-    public partial class StatusUpdateValidator : EntityValidator<StatusUpdate>
+    public partial class StatusUpdateValidator : EntityValidator
     {
         /// <summary>
         /// Validation method for the entity.
         /// </summary>
-        /// <param name="target">The target.</param>
-        /// <param name="useTarget">if set to <c>true</c> [use target].</param>
-        /// <param name="results">The results.</param>
-        /// <returns></returns>
+        /// <param name="validationEvent">Validation event to use.</param>
+        /// <returns>True if the validation succeeds.</returns>
         protected override bool ValidateInternal(ValidationEvent validationEvent)
         {
             object target = validationEvent.Target;

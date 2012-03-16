@@ -1,4 +1,18 @@
-﻿using System;
+﻿/*
+ * Author: Kishore Reddy
+ * Url: http://commonlibrarynet.codeplex.com/
+ * Title: CommonLibrary.NET
+ * Copyright: � 2009 Kishore Reddy
+ * License: LGPL License
+ * LicenseUrl: http://commonlibrarynet.codeplex.com/license
+ * Description: A C# based .NET 3.5 Open-Source collection of reusable components.
+ * Usage: Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,17 +22,21 @@ using System.Data.Common;
 
 namespace ComLib.Models
 {
+    /// <summary>
+    /// This class provides utility methods for the <see cref="ComLib.Models"/> namespace.
+    /// </summary>
     public class ModelUtils
     {
         /// <summary>
         /// Get the inheritance path of a model as list of models.
         /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="modelName"></param>
-        /// <returns></returns>
-        public static List<Model> GetModelInheritancePath(ModelContext ctx, string modelName, bool sortOnProperties)
+        /// <param name="container">The model container.</param>
+        /// <param name="modelName">The model name.</param>
+        /// <param name="sortOnProperties">True to sort the list on properties.</param>
+        /// <returns>Inheritance path.</returns>
+        public static List<Model> GetModelInheritancePath(ModelContainer container, string modelName, bool sortOnProperties)
         {
-            List<Model> chain = GetModelInheritancePath(ctx, modelName);
+            List<Model> chain = GetModelInheritancePath(container, modelName);
             if (sortOnProperties)
                 Sort(chain);
 
@@ -29,18 +47,18 @@ namespace ComLib.Models
         /// <summary>
         /// Get the inheritance path of a model as list of models.
         /// </summary>
-        /// <param name="ctx"></param>
-        /// <param name="modelName"></param>
-        /// <returns></returns>
-        public static List<Model> GetModelInheritancePath(ModelContext ctx, string modelName)
+        /// <param name="container">The model container.</param>
+        /// <param name="modelName">The model name.</param>
+        /// <returns>Inheritance path.</returns>
+        public static List<Model> GetModelInheritancePath(ModelContainer container, string modelName)
         {
-            Model currentModel = ctx.AllModels.ModelMap[modelName];
-            string inheritancePath = ConvertNestedToFlatInheritance(currentModel, ctx);
+            Model currentModel = container.ModelMap[modelName];
+            string inheritancePath = ConvertNestedToFlatInheritance(currentModel, container);
             
             // No parents?
             if( inheritancePath.IndexOf(",") < 0 )
             {
-                return new List<Model>() { ctx.AllModels.ModelMap[inheritancePath] };
+                return new List<Model>() { container.ModelMap[inheritancePath] };
             }
 
             // Delimited.
@@ -48,7 +66,7 @@ namespace ComLib.Models
             string[] parents = inheritancePath.Split(',');
             foreach (string parent in parents)
             {
-                Model model = ctx.AllModels.ModelMap[parent];
+                Model model = container.ModelMap[parent];
                 modelChain.Add(model);
             }
             return modelChain;
@@ -60,8 +78,8 @@ namespace ComLib.Models
         /// inheritance paths.
         /// e.g. returns "Job,Post,EntityBase"
         /// </summary>
-        /// <returns></returns>
-        public static string ConvertNestedToFlatInheritance(Model model, ModelContext ctx)
+        /// <returns>Delimited line of inheritance paths.</returns>
+        public static string ConvertNestedToFlatInheritance(Model model, ModelContainer container)
         {
             // Return name of environment provided if it doesn't have 
             // any inheritance chain.
@@ -72,8 +90,8 @@ namespace ComLib.Models
             if (model.Inherits.IndexOf(",") < 0)
             {
                 // Get the parent.
-                Model parent = ctx.AllModels.ModelMap[model.Inherits.Trim()];
-                return model.Name + "," + ConvertNestedToFlatInheritance(parent, ctx);
+                Model parent = container.ModelMap[model.Inherits.Trim()];
+                return model.Name + "," + ConvertNestedToFlatInheritance(parent, container);
             }
 
             // Multiple parents.
@@ -81,17 +99,17 @@ namespace ComLib.Models
             string path = model.Name;
             foreach (string parent in parents)
             {
-                Model parentModel = ctx.AllModels.ModelMap[model.Inherits.Trim()];
-                path += "," + ConvertNestedToFlatInheritance(parentModel, ctx);
+                Model parentModel = container.ModelMap[model.Inherits.Trim()];
+                path += "," + ConvertNestedToFlatInheritance(parentModel, container);
             }
             return path;
         }
 
 
         /// <summary>
-        /// Sort the 
+        /// Sort the model chain.
         /// </summary>
-        /// <param name="modelChain"></param>
+        /// <param name="modelChain">The model chain to sort.</param>
         public static void Sort(List<Model> modelChain)
         {
             modelChain.Sort(delegate(Model m1, Model m2) 

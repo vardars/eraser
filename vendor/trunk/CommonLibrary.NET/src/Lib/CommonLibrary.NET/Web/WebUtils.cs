@@ -17,6 +17,7 @@ using System.Data;
 using System.Configuration;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using System.Web;
 using System.IO;
 using System.Web.UI.HtmlControls;
@@ -28,12 +29,15 @@ using System.Drawing.Imaging;
 namespace ComLib.Web
 {
     /// <summary>
-    /// Summary description for WebUtils
+    /// This class provides helper methods for the <see cref="ComLib.Web"/> namespace.
     /// </summary>
     public class WebUtils
     {
         private static IDictionary<string, ImageFormat> _imageFormatsLookup;
 
+        /// <summary>
+        /// Static initializer.
+        /// </summary>
         static WebUtils()
         {
             _imageFormatsLookup = new Dictionary<string, ImageFormat>();
@@ -46,11 +50,53 @@ namespace ComLib.Web
 
 
         /// <summary>
+        /// Get a remote web file.
+        /// </summary>
+        /// <param name="file">The remote URL</param>
+        public static string GetFileContentsRemote(string file)
+        {
+            string content = string.Empty;
+            try
+            {
+                Uri url = new Uri(file, UriKind.Absolute);
+                using (WebClient client = new WebClient())
+                {
+                    // Load CSS content
+                    client.Credentials = CredentialCache.DefaultNetworkCredentials;
+                    content = client.DownloadString(url);
+                }
+                return content;
+            }
+            catch (System.Net.Sockets.SocketException)
+            { return string.Empty; }
+        }
+
+
+        /// <summary>
+        /// Retrieve local file contents.
+        /// </summary>
+        public static string GetFileContentsLocal(string file)
+        {
+            string path = HttpContext.Current.Server.MapPath(file);
+            string content = string.Empty;
+            try
+            {
+                using (StreamReader reader = new StreamReader(path))
+                {
+                    content = reader.ReadToEnd();                    
+                }
+            }
+            catch
+            { }
+            return content;
+        }
+
+
+        /// <summary>
         /// Get the content of an upload file as a string.
         /// </summary>
-        /// <param name="inputFile"></param>
-        /// <param name="errors"></param>
-        /// <returns></returns>
+        /// <param name="inputFile">Path to input file.</param>
+        /// <returns>String with file contents.</returns>
         public static string GetContentOfFile(HtmlInputFile inputFile)
         {
             byte[] data = new byte[inputFile.PostedFile.ContentLength];
@@ -67,9 +113,8 @@ namespace ComLib.Web
         /// <summary>
         /// Get the content of an upload file as a string.
         /// </summary>
-        /// <param name="inputFile"></param>
-        /// <param name="errors"></param>
-        /// <returns></returns>
+        /// <param name="inputFile">Path to input file.</param>
+        /// <returns>Byte array with file contents.</returns>
         public static byte[] GetContentOfFileAsBytes(HtmlInputFile inputFile)
         {
             byte[] data = new byte[inputFile.PostedFile.ContentLength];
@@ -81,10 +126,25 @@ namespace ComLib.Web
 
 
         /// <summary>
+        /// Get the content of an upload file as a string.
+        /// </summary>
+        /// <param name="inputFile">Path to input file.</param>
+        /// <returns>Byte array with file contents.</returns>
+        public static byte[] GetContentOfFileAsBytes(HttpPostedFileBase inputFile)
+        {
+            byte[] data = new byte[inputFile.ContentLength];
+            int contentLength = inputFile.ContentLength;
+
+            inputFile.InputStream.Read(data, 0, contentLength);
+            return data;
+        }
+
+
+        /// <summary>
         /// Gets the file extension of the file.
         /// </summary>
-        /// <param name="inputFile"></param>
-        /// <returns></returns>
+        /// <param name="inputFile">Path to file.</param>
+        /// <returns>File extension.</returns>
         public static string GetFileExtension(HtmlInputFile inputFile)
         {
             if (inputFile == null || string.IsNullOrEmpty(inputFile.PostedFile.FileName))
@@ -106,8 +166,8 @@ namespace ComLib.Web
         /// <summary>
         /// Get the file extension as a image format.
         /// </summary>
-        /// <param name="inputFile"></param>
-        /// <returns></returns>
+        /// <param name="inputFile">Path to image file.</param>
+        /// <returns>The format of the image file.</returns>
         public static ImageFormat GetFileExtensionAsFormat(HtmlInputFile inputFile)
         {
             string extension = GetFileExtension(inputFile);
@@ -130,8 +190,9 @@ namespace ComLib.Web
         /// Otherwise, most likely someone is leeching the image.
         /// </summary>
         /// <param name="requestDeniedImagePath">"~/images/backoff.gif"</param>
-        /// <param name="ctx"></param>
-        /// <returns></returns>
+        /// <param name="ctx">Current http contenxt.</param>
+        /// <param name="path">Physical path.</param>
+        /// <returns>True of is being made from the same host.</returns>
         public static bool IsSelfRequest(HttpContext ctx, ref string path, string requestDeniedImagePath)
         {
             HttpRequest req = ctx.Request;

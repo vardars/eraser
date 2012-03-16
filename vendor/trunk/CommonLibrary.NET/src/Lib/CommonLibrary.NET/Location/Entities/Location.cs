@@ -26,19 +26,13 @@ namespace ComLib.LocationSupport
     /// <summary>
     /// Location data base class for state, country, location short name.
     /// </summary>
-    public class LocationDataBase : EntityPersistant<int>
-    {
-        /// <summary>
-        /// This is the id of the location component.
-        /// This actually represents
-        /// </summary>        
-        public int Id { get; set; }
-       
+    public class LocationBase : Entity
+    {       
 
         /// <summary>
         /// Full / Formal name.
         /// </summary>
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
 
 
         /// <summary>
@@ -48,24 +42,40 @@ namespace ComLib.LocationSupport
 
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is active.
-        /// </summary>
-        /// <value><c>true</c> if this instance is active; otherwise, <c>false</c>.</value>
-        public bool IsActive { get; set; }
-
-
-        /// <summary>
         /// Gets or sets a value indicating whether this instance is alias.
         /// </summary>
         /// <value><c>true</c> if this instance is alias; otherwise, <c>false</c>.</value>
-        public bool IsAlias { get; set; }
+        public virtual bool IsAlias { get; set; }
 
 
         /// <summary>
         /// Gets or sets the alias ref id.
         /// </summary>
         /// <value>The alias ref id.</value>
-        public int AliasRefId { get; set; }
+        public virtual int AliasRefId { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the alias ref name.
+        /// </summary>
+        /// <remarks>This is used more when importing location data from files.</remarks>
+        /// <value>The alias ref id.</value>
+        public virtual string AliasRefName { get; set; }
+
+
+        /// <summary>
+        /// Get the real id, if this is a country.
+        /// </summary>
+        public virtual int RealId
+        {
+            get { return IsAlias ? AliasRefId : Id; }
+        }
+
+
+        /// <summary>
+        /// Indicates whether or not this entity is active
+        /// </summary>
+        public virtual bool IsActive { get; set; }
     }
 
 
@@ -73,12 +83,19 @@ namespace ComLib.LocationSupport
     /// <summary>
     /// Location data with the country id.
     /// </summary>
-    public class LocationDataCountryBase : LocationDataBase
+    public class LocationCountryBase : LocationBase
     {
         /// <summary>
         /// Country Id
         /// </summary>
         public int CountryId { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the name of the country.
+        /// </summary>
+        /// <value>The name of the country.</value>
+        public virtual string CountryName { get; set; }      
     }
 
 }

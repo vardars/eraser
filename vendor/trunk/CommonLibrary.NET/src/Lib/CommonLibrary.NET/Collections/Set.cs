@@ -69,7 +69,8 @@ namespace ComLib.Collections
         /// Gets all the unique elements from both sets.
         /// Whats in first OR second.
         /// </summary>
-        /// <param name="other">The other.</param>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
         /// <returns></returns>
         public static ISet<T> Union(ISet<T> first, ISet<T> second)
         {
@@ -97,7 +98,8 @@ namespace ComLib.Collections
         /// Finds the intersection of the elements in first and second.
         /// Whats in both first AND second.
         /// </summary>
-        /// <param name="other">The other.</param>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
         /// <returns></returns>
         public static ISet<T> Intersect(ISet<T> first, ISet<T> second)
         {
@@ -126,7 +128,8 @@ namespace ComLib.Collections
         /// <summary>
         /// Exclusives the or.
         /// </summary>
-        /// <param name="other">The other.</param>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
         /// <returns></returns>
         public static ISet<T> ExclusiveOr(ISet<T> first, ISet<T> second)
         {
@@ -153,7 +156,8 @@ namespace ComLib.Collections
         /// <summary>
         /// Minuses the specified other.
         /// </summary>
-        /// <param name="other">The other.</param>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
         /// <returns></returns>
         public static ISet<T> Minus(ISet<T> first, ISet<T> second)
         {

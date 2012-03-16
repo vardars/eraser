@@ -12,6 +12,23 @@ namespace ComLib.LocationSupport
     /// </summary>
     public class LocationDataMassager
     {
+        public static CityLookUp CitiesLookup { get; set; }
+
+
+        public static StateLookUp StatesLookup { get; set; }
+
+
+        public static CountryLookUp CountriesLookup { get; set; }
+
+
+        public LocationDataMassager(CityLookUp cityLookup, StateLookUp stateLookup, CountryLookUp countryLookup)
+        {
+            CitiesLookup = cityLookup;
+            StatesLookup = stateLookup;
+            CountriesLookup = countryLookup;
+        }
+
+
         /// <summary>
         /// Massage the address by setting it's cityid, stateid, countryid 
         /// from the city, state, country name.
@@ -21,12 +38,9 @@ namespace ComLib.LocationSupport
         public static void Massage(Address address, EntityAction entityAction)
         {
             List<string> errors = new List<string>();
-            CityLookUp cityLookup = Ioc.GetObject<ICityDao>("cityDao").GetLookUp();
-            StatesLookUp stateLookup = Ioc.GetObject<IStateDao>("stateDao").GetLookUp();
-            CountryLookUp countryLookup = Ioc.GetObject<ICountryDao>("countryDao").GetLookUp();
-            LocationUtils.ApplyCountry(address, countryLookup, errors);
-            LocationUtils.ApplyState(address, stateLookup, errors);
-            LocationUtils.ApplyCity(address, cityLookup, stateLookup, countryLookup);
+            LocationHelper.ApplyCountry(address, CountriesLookup, errors);
+            LocationHelper.ApplyState(address, StatesLookup, errors);
+            LocationHelper.ApplyCity(address, CitiesLookup, StatesLookup, CountriesLookup);
         }
     }
 }

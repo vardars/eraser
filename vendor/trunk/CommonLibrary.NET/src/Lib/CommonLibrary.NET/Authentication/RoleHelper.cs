@@ -22,6 +22,9 @@ using System.Collections.ObjectModel;
 
 namespace ComLib.Authentication
 {
+    /// <summary>
+    /// This class provides utility methods related to the ComLib.Authentication namespace.
+    /// </summary>
     public class RoleHelper
     {
         /// <summary>
@@ -34,7 +37,7 @@ namespace ComLib.Authentication
             if (string.IsNullOrEmpty(rolesDelimited))
                 return false;
 
-            string[] roles = StringHelpers.ToStringArray(rolesDelimited, ';');
+            string[] roles = ToStringArray(rolesDelimited, ';');
             foreach (string role in roles)
             {
                 if (Roles.IsUserInRole(role))
@@ -48,19 +51,36 @@ namespace ComLib.Authentication
         /// Is User in the selected roles.
         /// </summary>
         /// <param name="rolesDelimited"></param>
+        /// <param name="user"></param>
         /// <returns></returns>
         public static bool IsInRoles(string rolesDelimited, IPrincipal user)
         {
             if (string.IsNullOrEmpty(rolesDelimited))
                 return false;
 
-            string[] roles = StringHelpers.ToStringArray(rolesDelimited, ';');
+            string[] roles = ToStringArray(rolesDelimited, ';');
             foreach (string role in roles)
             {
                 if (user.IsInRole(role))
                     return true;
             }
             return false;
+        }
+
+        
+        /// <summary>
+        /// Parses a delimited list of items into a string[].
+        /// </summary>
+        /// <param name="delimitedText">"1,2,3,4,5,6"</param>
+        /// <param name="delimeter">','</param>
+        /// <returns></returns>
+        private static string[] ToStringArray(string delimitedText, char delimeter)
+        {
+            if (string.IsNullOrEmpty(delimitedText))
+                return null;
+
+            string[] tokens = delimitedText.Split(delimeter);
+            return tokens;
         }
     }
 }

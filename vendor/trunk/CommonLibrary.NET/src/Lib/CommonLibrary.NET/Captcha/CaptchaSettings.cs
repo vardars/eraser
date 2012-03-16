@@ -29,7 +29,7 @@ namespace ComLib.CaptchaSupport
     /// <summary>
     /// Settings for the random text generator.
     /// </summary>
-    public class CaptchaGeneratorSettings
+    public class CaptchaSettings
     {
         /// <summary>
         /// Gets or sets the height.
@@ -50,5 +50,18 @@ namespace ComLib.CaptchaSupport
         /// </summary>
         /// <value>The font.</value>
         public string Font { get; set; }
+
+
+        /// <summary>
+        /// How many characters should it produce
+        /// </summary>
+        public int NumChars { get; set; }
+
+
+        /// <summary>
+        /// Whether or not Upper/Lower case sensitive is
+        /// enabled when validating userinput against the generated text.
+        /// </summary>
+        public bool IsCaseSensitive { get; set; }
     }
 }

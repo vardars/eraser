@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 
 
-namespace ComLib.Database
+namespace ComLib.Data
 {    
     /// <summary>
     /// Class containing various helper methods for accessing data.
@@ -36,6 +36,7 @@ namespace ComLib.Database
         /// Execute a non-query with a single output value.
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="dbHelper"></param>
         /// <param name="commandText">E.g. Storedprocedure : Posts_DeleteExpired</param>
         /// <param name="commandType">Type of the command.</param>
         /// <param name="outputParamName">The name of the output parameter. E.g. @TotalRows</param>
@@ -51,7 +52,7 @@ namespace ComLib.Database
         /// <summary>
         /// Execute a non-query with a single input parameter.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <param name="dbHelper"></param>
         /// <param name="commandText">E.g. Storedprocedure : Posts_DeleteByUser</param>
         /// <param name="commandType">Type of the command.</param>
         /// <param name="paramName">E.g. "@UserName"</param>

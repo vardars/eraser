@@ -24,7 +24,6 @@ namespace ComLib.Authentication
 {
     /// <summary>
     /// Custom prinical class with additional propertes to identity user.
-    /// This is also useful for Unit Testing.
     /// </summary>
     public class UserPrincipal : IPrincipal
     {
@@ -40,11 +39,15 @@ namespace ComLib.Authentication
         /// </summary>
         public static IPrincipal Empty { get { return _empty; } }
         #endregion
-
+        
 
         private int _userId;
         private string _userName;
         private string[] _userRoles = null;
+
+        /// <summary>
+        /// The user identity used for authentication.
+        /// </summary>
         protected IIdentity _identity;
 
 
@@ -62,11 +65,9 @@ namespace ComLib.Authentication
         /// <param name="userRolesDelimitedByComma"></param>
         /// <param name="identity"></param>
         public UserPrincipal(int userId, string userName, string userRolesDelimitedByComma, IIdentity identity)
-        {
-            _userRoles = userRolesDelimitedByComma.Split(new char[] { ';' });
-            _identity = identity;
-            _userId = userId;
-            _userName = userName;
+        {            
+            string[] roles = userRolesDelimitedByComma.Split(new char[] { ';' });
+            Init(userId, userName, roles, identity);
         }
 
 
@@ -76,13 +77,26 @@ namespace ComLib.Authentication
         /// <param name="userId"></param>
         /// <param name="userName"></param>
         /// <param name="userRolesDelimitedByComma"></param>
+        /// <param name="authType"></param>
+        /// <param name="isAuthenicated"></param>
+        public UserPrincipal(int userId, string userName, string userRolesDelimitedByComma, string authType, bool isAuthenicated)
+        {
+            string[] roles = userRolesDelimitedByComma.Split(new char[] { ';' });
+            IIdentity identity = new UserIdentity(userId, userName, authType, isAuthenicated);
+            Init(userId, userName, roles, identity);
+        }
+
+
+        /// <summary>
+        /// Create new instance using supplied user information.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="userName"></param>
+        /// <param name="roles"></param>
         /// <param name="identity"></param>
         public UserPrincipal(int userId, string userName, string[] roles, IIdentity identity)
         {
-            _userRoles = roles;
-            _identity = identity;
-            _userId = userId;
-            _userName = userName;
+            Init(userId, userName, roles, identity);
         }
 
 
@@ -99,7 +113,7 @@ namespace ComLib.Authentication
         /// <summary>
         /// Id of the user.
         /// </summary>
-        public int Id
+        public int UserId
         {
             get { return _userId; }
             set { _userId = value; }
@@ -133,14 +147,28 @@ namespace ComLib.Authentication
         /// <returns></returns>
         public bool IsInRole(string role)
         {
-            GenericIdentity i = new GenericIdentity("s");
-
             foreach (string userRole in _userRoles)
             {
                 if (userRole == role)
                     return true;
             }
             return false;
+        }
+
+
+        /// <summary>
+        /// Initializes this instance with the specified parameters.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="userName"></param>
+        /// <param name="roles"></param>
+        /// <param name="identity"></param>
+        public void Init(int userId, string userName, string[] roles, IIdentity identity)
+        {
+            _userRoles = roles;
+            _identity = identity;
+            _userId = userId;
+            _userName = userName;
         }
     }
 

@@ -8,11 +8,14 @@ using System.Collections;
 
 namespace ComLib.CsvParse
 {
+    /// <summary>
+    /// Class to write out data into a csv format.
+    /// </summary>
     public class CsvWriter : IDisposable
     {
         #region Private data
         private string _filename = string.Empty;
-        private List<List<string>> _data;
+        private List<List<object>> _data;
         private List<string> _columns;
         private bool _hasColumns;
         private bool _hasData;
@@ -25,11 +28,12 @@ namespace ComLib.CsvParse
         /// <param name="data">The csv data.</param>
         /// <param name="delimeter">The delimeter to use.</param>
         /// <param name="columns">The header columns.</param>
+        /// <param name="firstRowInDataAreColumns"></param>
         /// <param name="quoteChar">Quote character to use.</param>
         /// <param name="append">Append to file</param>
         /// <param name="newLine">New line to use.</param>
         /// <param name="quoteAll">Whether or not to quote all the values.</param>        
-        public CsvWriter(string fileName, List<List<string>> data, string delimeter, List<string> columns, bool firstRowInDataAreColumns, bool quoteAll, string quoteChar, string newLine, bool append)
+        public CsvWriter(string fileName, List<List<object>> data, string delimeter, List<string> columns, bool firstRowInDataAreColumns, bool quoteAll, string quoteChar, string newLine, bool append)
         {
             Init(fileName, data, delimeter, columns, firstRowInDataAreColumns, quoteAll, quoteChar, newLine, append);
         }
@@ -42,11 +46,12 @@ namespace ComLib.CsvParse
         /// <param name="data">The csv data.</param>
         /// <param name="delimeter">The delimeter to use.</param>
         /// <param name="columns">The header columns.</param>
+        /// <param name="firstRowInDataAreColumns"></param>
         /// <param name="quoteAll">Whether or not to quote all the values.</param>  
         /// <param name="append">Whether or not to append to csv file.</param>
         /// <param name="quoteChar">The quote char to use to enclose data.</param>
         /// <param name="newLine">New line to use.</param>
-        public void Init(string fileName, List<List<string>> data, string delimeter, List<string> columns, bool firstRowInDataAreColumns, bool quoteAll, string quoteChar, string newLine, bool append)
+        public void Init(string fileName, List<List<object>> data, string delimeter, List<string> columns, bool firstRowInDataAreColumns, bool quoteAll, string quoteChar, string newLine, bool append)
         {
             _filename = fileName;
             _columns = columns;
@@ -56,7 +61,8 @@ namespace ComLib.CsvParse
             // Columns in first row of data.
             if (firstRowInDataAreColumns && _hasData)
             {
-                _columns = data[0];
+                _columns.Clear();
+                foreach (object obj in data[0]) _columns.Add(obj.ToString());
                 data.RemoveAt(0);
             }
 
@@ -77,23 +83,44 @@ namespace ComLib.CsvParse
             // Write out columns and data.
             WriteColumns(_columns);            
             foreach (var record in _data) WriteRow(record);
+            _writer.Flush();
+        }
+
+
+        /// <summary>
+        /// Write out the data supplied at Initialization.
+        /// </summary>
+        public string WriteText()
+        {
+            // Validate
+            if (!_hasData) throw new InvalidOperationException("No csv data to write.");
+
+            // Write out columns and data.
+            WriteColumns(_columns);
+            foreach (var record in _data) WriteRow(record);
+            return _writer.ToString();
         }
 
 
         /// <summary>
         /// Write out a row of data.
         /// </summary>
-        /// <param name="data"></param>
-        public void WriteRow(List<string> record)
+        /// <param name="record"></param>
+        public void WriteRow(List<object> record)
         {            
             // First rec column val.
-            if (_config.QuoteAll) _writer.Write(_config.QuoteChar + record[0] + _config.QuoteChar);
-            else _writer.Write(record[0]);
+            string val = record[0] == null ? null : record[0].ToString();
+            if (val.Contains(_config.Delimeter) || _config.QuoteAll)
+                val = _config.QuoteChar + val + _config.QuoteChar;
+            _writer.Write(val);
 
+            
             // Write the rest using the delimeter.
-            for (int ndx = 0; ndx < record.Count; ndx++)
+            for (int ndx = 1; ndx < record.Count; ndx++)
             {
-                string val = _config.QuoteAll ? _config.QuoteChar + record[ndx] + _config.QuoteChar : record[ndx];
+                val = record[ndx] == null ? null : record[ndx].ToString();
+                if (val.Contains(_config.Delimeter) || _config.QuoteAll)
+                    val = _config.QuoteChar + val + _config.QuoteChar;
                 _writer.Write(_config.Delimeter + val);
             }
             _writer.Write(_config.NewLineChar);
@@ -140,7 +167,9 @@ namespace ComLib.CsvParse
         }
 
         #region IDisposable Members
-        //Implement IDisposable.
+        /// <summary>
+        /// Dispose of the csv writer
+        /// </summary>
         public void Dispose() 
         {
             Dispose(true);

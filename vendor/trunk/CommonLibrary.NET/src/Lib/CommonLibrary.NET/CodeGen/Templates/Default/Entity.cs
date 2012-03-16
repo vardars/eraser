@@ -20,6 +20,8 @@ using System.Text;
 
 using ComLib.Entities;
 using ComLib.LocationSupport;
+using ComLib.ValidationSupport;
+<%= model.ReferencedNameSpaces %>
 
 
 namespace <%= model.NameSpace %>
@@ -27,8 +29,23 @@ namespace <%= model.NameSpace %>
     /// <summary>
     /// <%= model.Name %> entity.
     /// </summary>
-    public partial class <%= model.Name %> : DomainObject<<%= model.Name %>>
+    public partial class <%= model.Name %> : ActiveRecordBaseEntity<<%= model.Name %>>, IEntity
     {
-<%= model.Properties %>
+        /// <summary>
+        /// Creates a new instance of BlogPost and 
+        /// initializes it with a validator and settings.
+        /// </summary>
+        /// <returns></returns>
+        public static <%= model.Name %> New()
+        {
+            <%= model.Name %> entity = new <%= model.Name %>(); 
+            return entity;
+        }       
+
+
+        <%= model.Properties %>
+
+        
+        <%= model.ValidationCode %>
     }
 }

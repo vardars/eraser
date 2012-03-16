@@ -30,20 +30,11 @@ namespace ComLib.Paging
         /// <summary>
         /// Default settings
         /// </summary>
-        public static readonly PagerSettings Default;
+        public static readonly PagerSettings Default = new PagerSettings(7, "current", "");
 
 
         /// <summary>
-        /// Initialize default settings
-        /// </summary>
-        static PagerSettings()
-        {
-            Default = new PagerSettings(7, "pager_currentpage", "pager_page");
-        }
-
-
-        /// <summary>
-        /// Default constructor.
+        /// Default construction
         /// </summary>
         public PagerSettings() { }
 
@@ -51,9 +42,9 @@ namespace ComLib.Paging
         /// <summary>
         /// Initialize fields.
         /// </summary>
-        /// <param name="numberPagesToDisplay"></param>
-        /// <param name="cssForCurrentPage"></param>
-        /// <param name="cssForPage"></param>
+        /// <param name="numberPagesToDisplay">Number of paged to display.</param>
+        /// <param name="cssClassForCurrentPage">Css for current page.</param>
+        /// <param name="cssClassForPage">Css for pages.</param>
         public PagerSettings(int numberPagesToDisplay, string cssClassForCurrentPage, string cssClassForPage)
         {
             NumberPagesToDisplay = numberPagesToDisplay;
@@ -65,7 +56,7 @@ namespace ComLib.Paging
         /// <summary>
         /// How many pages to display in a row at once.
         /// </summary>
-        public int NumberPagesToDisplay = 7;
+        public int NumberPagesToDisplay = 5;
 
 
         /// <summary>

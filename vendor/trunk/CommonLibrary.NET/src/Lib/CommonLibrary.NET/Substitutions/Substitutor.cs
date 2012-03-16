@@ -30,6 +30,9 @@ namespace ComLib.Subs
         private static SubstitutionService _provider;
 
 
+        /// <summary>
+        /// Static initializer.
+        /// </summary>
         static Substitutor()
         {
             _provider = new SubstitutionService();
@@ -40,7 +43,7 @@ namespace ComLib.Subs
         /// Performs substitutions on all the string items in the list supplied.
         /// converts: List[0] = ${today} = 03/28/2009.
         /// </summary>
-        /// <param name="names"></param>
+        /// <param name="names">List of strings for substitution.</param>
         public static void Substitute(List<string> names)
         {
             _provider.Substitute(names);
@@ -56,8 +59,8 @@ namespace ComLib.Subs
         /// 4. "${Enc.Decode('28asd42=')} will decrypt the encrypted value supplied, 
         ///                               using the provider setup in the cryptography service.
         /// </summary>
-        /// <param name="funcCall"></param>
-        /// <returns></returns>
+        /// <param name="substitution">Substitution to use.</param>
+        /// <returns>Interpreted value.</returns>
         public static string Substitute(string substitution)
         {
             return _provider[substitution];
@@ -67,8 +70,8 @@ namespace ComLib.Subs
         /// <summary>
         /// Register custom substitutions.
         /// </summary>
-        /// <param name="group"></param>
-        /// <param name="interpretedVals"></param>
+        /// <param name="group">Group to use.</param>
+        /// <param name="interpretedVals">Custom substitutions.</param>
         public static void Register(string group, IDictionary<string, Func<string, string>> interpretedVals)
         {
             _provider.Register(group, interpretedVals);
@@ -78,9 +81,9 @@ namespace ComLib.Subs
         /// <summary>
         /// Add a single custom substitution interpretor for the respective group, key.
         /// </summary>
-        /// <param name="group"></param>
-        /// <param name="replacement"></param>
-        /// <param name="interpretor"></param>
+        /// <param name="group">Group to use.</param>
+        /// <param name="replacement">String to substitute.</param>
+        /// <param name="interpretor">Function to calculate substitution.</param>
         public static void Register(string group, string replacement, Func<string, string> interpretor)
         {
             _provider.Register(group, replacement, interpretor);

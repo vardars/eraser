@@ -24,7 +24,13 @@ using System.Web.Security;
 namespace ComLib.Authentication
 {
     /// <summary>
-    /// Static security service provider class.
+    /// Provides static access to the all the <see cref="IAuth"/> methods in the current <see cref="IAuth"/> provider being used.
+    /// <para>
+    /// Auth.IsAdmin();
+    /// Auth.IsGuest();
+    /// Auth.UserName;
+    /// etc.
+    /// </para>
     /// </summary>
     public class Auth
     {
@@ -41,7 +47,7 @@ namespace ComLib.Authentication
 
 
         /// <summary>
-        /// Initialize the provider.
+        /// Initialize the current <see cref="IAuth"/> provider.
         /// </summary>
         /// <param name="provider"></param>
         public static void Init(IAuth provider)
@@ -76,6 +82,15 @@ namespace ComLib.Authentication
         public static string UserName
         {
             get { return _provider.UserName; }
+        }
+
+
+        /// <summary>
+        /// Get the user id.
+        /// </summary>
+        public static int UserId
+        {
+            get { return _provider.UserId; }
         }
 
 
@@ -118,7 +133,6 @@ namespace ComLib.Authentication
         /// Get the user data.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="userName"></param>
         /// <returns></returns>
         public static T GetUser<T>() where T : class, IPrincipal
         {
@@ -140,8 +154,23 @@ namespace ComLib.Authentication
         {
             if (rolesDelimited == null)
                 return true;
-            return false;
-            //return _provider.IsUserInRoles(rolesDelimited);
+            
+            return _provider.IsUserInRoles(rolesDelimited);
+        }
+
+
+        /// <summary>
+        /// Is User in the selected roles or if user is admin.
+        /// </summary>
+        /// <param name="rolesDelimited"></param>
+        /// <returns></returns>
+        public static bool IsUserInRolesOrAdmin(string rolesDelimited)
+        {
+            bool success = _provider.IsUserInRoles(rolesDelimited);
+            if (!success)
+                success = _provider.IsAdmin();
+
+            return success;
         }
 
 
@@ -176,6 +205,52 @@ namespace ComLib.Authentication
 
 
         /// <summary>
+        /// Determine if the logged in user is the same as the username supplied.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public static bool IsUser(string username)
+        {
+            return _provider.IsUser(username);
+        }
+
+
+        /// <summary>
+        /// Returns true if the logged in user is the same as the username supplied,
+        /// or if the logged in user is an admin.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        public static bool IsUserOrAdmin(string username)
+        {
+            return _provider.IsUserOrAdmin(username);
+        }
+
+
+        /// <summary>
+        /// Whether or not the current user's role matches the supplied roles exactly.
+        /// Roles can be "?" for gues, "*" for authenticated users, "rolename" otherwise.
+        /// </summary>
+        /// <param name="roles"></param>
+        /// <returns></returns>
+        public static bool Matches(string roles)
+        {
+            if (string.IsNullOrEmpty(roles))
+                return true;
+
+            bool isAuthenticated = IsAuthenticated();
+
+            if (roles == "?")
+                return !isAuthenticated;
+
+            if (roles == "*" && isAuthenticated)
+                return true;
+
+            return IsUserInRoles(roles);
+        }
+
+
+        /// <summary>
         /// Sign the user in.
         /// </summary>
         /// <param name="user"></param>
@@ -199,6 +274,7 @@ namespace ComLib.Authentication
         /// Sign the user in via username.
         /// </summary>
         /// <param name="user"></param>
+        /// <param name="rememberUser"></param>
         public static void SignIn(string user, bool rememberUser)
         {
             _provider.SignIn(user, rememberUser);

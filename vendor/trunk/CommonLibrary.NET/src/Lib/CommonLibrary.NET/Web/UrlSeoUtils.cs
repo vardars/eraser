@@ -16,6 +16,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Web;
+using System.Text.RegularExpressions;
+
 
 namespace ComLib.Web
 {
@@ -54,11 +56,28 @@ namespace ComLib.Web
 
 
         /// <summary>
+        /// Same as BuildValidUrl but uses RegEx and is much, much slower.
+        /// </summary>
+        /// <param name="title">URL.</param>
+        /// <returns>Valid URL.</returns>
+        public static string BuildValidUrlUsingRegex(string title)
+        {
+            //Replace . with – dash
+            string newTitle = Regex.Replace(title.Trim(), @"\W", "-");
+
+            //Replace multiple “-” dashes with single “-” dash
+            newTitle = Regex.Replace(newTitle, @"55+", "-").Trim('-');
+
+            return newTitle.ToLower();
+        }
+
+
+        /// <summary>
         /// Generates an SEO optimized url.
         /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public static string GenerateTitle(string title)
+        /// <param name="title">URL.</param>
+        /// <returns>Valid URL.</returns>
+        public static string BuildValidUrl(string title)
         {
             // Validate.
             if (string.IsNullOrEmpty(title)) return string.Empty;

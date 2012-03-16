@@ -32,7 +32,7 @@ namespace ComLib.Reflection
         /// </summary>
         /// <param name="assemblyFolderPath">"CommonLibrary.Notifications.Templates."</param>
         /// <param name="fileName">"welcome.html"</param>
-        /// <returns></returns>
+        /// <returns>String with internal template content.</returns>
         public static string GetInternalFileContent(string assemblyFolderPath, string fileName)
         {
             Assembly current = Assembly.GetExecutingAssembly();

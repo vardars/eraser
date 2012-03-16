@@ -1,5 +1,0 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <StartArguments>-env:Prod -date:${today-1} -config:config\prod.config,config\dev.config -source:Reuters 10</StartArguments>
-  </PropertyGroup>
-</Project>
