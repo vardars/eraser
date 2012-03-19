@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.IO;
 using Microsoft.Win32.SafeHandles;
 
 namespace Eraser.Util
@@ -43,6 +44,142 @@ namespace Eraser.Util
 		{
 			return NativeMethods.NtQuerySystemInformation(type, data, maxSize,
 				out dataSize);
+		}
+
+		/// <summary>
+		/// Resolves the reparse point pointed to by the path.
+		/// </summary>
+		/// <param name="path">The path to the reparse point.</param>
+		/// <returns>The NT Namespace Name of the reparse point.</returns>
+		public static string ResolveReparsePoint(string path)
+		{
+			if (string.IsNullOrEmpty(path))
+				throw new ArgumentException(path);
+
+			//If the path is a directory, remove the trailing \
+			if (Directory.Exists(path) && path[path.Length - 1] == '\\')
+				path = path.Remove(path.Length - 1);
+
+			using (SafeFileHandle handle = KernelApi.NativeMethods.CreateFile(path,
+				KernelApi.NativeMethods.GENERIC_READ,
+				KernelApi.NativeMethods.FILE_SHARE_READ | KernelApi.NativeMethods.FILE_SHARE_WRITE,
+				IntPtr.Zero, KernelApi.NativeMethods.OPEN_EXISTING,
+				KernelApi.NativeMethods.FILE_FLAG_OPEN_REPARSE_POINT |
+				KernelApi.NativeMethods.FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero))
+			{
+				if (handle.IsInvalid)
+					throw new System.IO.IOException(string.Format("Cannot open handle to {0}", path));
+
+				int bufferSize = Marshal.SizeOf(typeof(NativeMethods.REPARSE_DATA_BUFFER)) + 260 * sizeof(char);
+				IntPtr buffer = Marshal.AllocHGlobal(bufferSize);
+
+				//Get all the information about the reparse point.
+				try
+				{
+					uint returnedBytes = 0;
+					while (!NativeMethods.DeviceIoControl(handle, NativeMethods.FSCTL_GET_REPARSE_POINT,
+						IntPtr.Zero, 0, buffer, (uint)bufferSize, out returnedBytes, IntPtr.Zero))
+					{
+						if (Marshal.GetLastWin32Error() == 122) //ERROR_INSUFFICIENT_BUFFER
+						{
+							bufferSize *= 2;
+							Marshal.FreeHGlobal(buffer);
+							buffer = Marshal.AllocHGlobal(bufferSize);
+						}
+						else
+						{
+							throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+						}
+					}
+
+					string result = ResolveReparsePoint(buffer, path);
+
+					//Is it a directory? If it is, we need to add a trailing \
+					if (Directory.Exists(path))
+						result += '\\';
+					return result;
+				}
+				finally
+				{
+					Marshal.FreeHGlobal(buffer);
+				}
+			}
+		}
+
+		private static string ResolveReparsePoint(IntPtr ptr, string path)
+		{
+			NativeMethods.REPARSE_DATA_BUFFER buffer = (NativeMethods.REPARSE_DATA_BUFFER)
+				Marshal.PtrToStructure(ptr, typeof(NativeMethods.REPARSE_DATA_BUFFER));
+
+			//Check that this Reparse Point has a Microsoft Tag
+			if (((uint)buffer.ReparseTag & (1 << 31)) == 0)
+			{
+				//We can only handle Microsoft's reparse tags.
+				throw new ArgumentException("Unknown Reparse point type.");
+			}
+
+			//Then handle the tags
+			switch (buffer.ReparseTag)
+			{
+				case NativeMethods.REPARSE_DATA_TAG.IO_REPARSE_TAG_MOUNT_POINT:
+					return ResolveReparsePointJunction((IntPtr)(ptr.ToInt64() + Marshal.SizeOf(buffer)));
+
+				case NativeMethods.REPARSE_DATA_TAG.IO_REPARSE_TAG_SYMLINK:
+					return ResolveReparsePointSymlink((IntPtr)(ptr.ToInt64() + Marshal.SizeOf(buffer)),
+						path);
+
+				default:
+					throw new ArgumentException("Unsupported Reparse point type.");
+			}
+		}
+
+		private static string ResolveReparsePointJunction(IntPtr ptr)
+		{
+			NativeMethods.REPARSE_DATA_BUFFER.MountPointReparseBuffer buffer =
+				(NativeMethods.REPARSE_DATA_BUFFER.MountPointReparseBuffer)
+				Marshal.PtrToStructure(ptr,
+					typeof(NativeMethods.REPARSE_DATA_BUFFER.MountPointReparseBuffer));
+
+			//Get the substitute and print names from the buffer.
+			string substituteName;
+			string printName;
+			unsafe
+			{
+				char* path = (char*)(((byte*)ptr.ToInt64()) + Marshal.SizeOf(buffer));
+				printName = new string(path + (buffer.PrintNameOffset / sizeof(char)), 0,
+					buffer.PrintNameLength / sizeof(char));
+				substituteName = new string(path + (buffer.SubstituteNameOffset / sizeof(char)), 0,
+					buffer.SubstituteNameLength / sizeof(char));
+			}
+
+			return substituteName;
+		}
+
+		private static string ResolveReparsePointSymlink(IntPtr ptr, string path)
+		{
+			NativeMethods.REPARSE_DATA_BUFFER.SymbolicLinkReparseBuffer buffer =
+				(NativeMethods.REPARSE_DATA_BUFFER.SymbolicLinkReparseBuffer)
+				Marshal.PtrToStructure(ptr,
+					typeof(NativeMethods.REPARSE_DATA_BUFFER.SymbolicLinkReparseBuffer));
+
+			//Get the substitute and print names from the buffer.
+			string substituteName;
+			string printName;
+			unsafe
+			{
+				char* pathBuffer = (char*)(((byte*)ptr.ToInt64()) + Marshal.SizeOf(buffer));
+				printName = new string(pathBuffer + (buffer.PrintNameOffset / sizeof(char)), 0,
+					buffer.PrintNameLength / sizeof(char));
+				substituteName = new string(pathBuffer + (buffer.SubstituteNameOffset / sizeof(char)), 0,
+					buffer.SubstituteNameLength / sizeof(char));
+			}
+
+			if ((buffer.Flags & NativeMethods.REPARSE_DATA_BUFFER.SymbolicLinkFlags.SYMLINK_FLAG_RELATIVE) != 0)
+			{
+				return Path.Combine(Path.GetDirectoryName(path), substituteName);
+			}
+
+			return substituteName;
 		}
 
 		internal static class NativeMethods
@@ -350,6 +487,206 @@ namespace Eraser.Util
 				uint dwIoControlCode, IntPtr lpInBuffer, uint nInBufferSize,
 				out NTFS_VOLUME_DATA_BUFFER lpOutBuffer, uint nOutBufferSize,
 				out uint lpBytesReturned, IntPtr lpOverlapped);
+
+			/// <summary>
+			/// The REPARSE_DATA_BUFFER structure contains reparse point data for a
+			/// Microsoft reparse point. (Third-party reparse point owners must use
+			/// the REPARSE_GUID_DATA_BUFFER structure instead.) 
+			/// </summary>
+			[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+			public struct REPARSE_DATA_BUFFER
+			{
+				/// <summary>
+				/// Contains the reparse point information for a Symbolic Link.
+				/// </summary>
+				/// <remarks>The PathBuffer member found at the end of the C structure
+				/// declaration is appended at the end of this structure.</remarks>
+				[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+				public struct SymbolicLinkReparseBuffer
+				{
+					/// <summary>
+					/// Offset, in bytes, of the substitute name string in the PathBuffer
+					/// array. Note that this offset must be divided by sizeof(char) to
+					/// get the array index.
+					/// </summary>
+					public ushort SubstituteNameOffset;
+
+					/// <summary>
+					/// Length, in bytes, of the substitute name string. If this string is
+					/// NULL-terminated, SubstituteNameLength does not include space for
+					/// the UNICODE_NULL character.
+					/// </summary>
+					public ushort SubstituteNameLength;
+
+					/// <summary>
+					/// Offset, in bytes, of the print name string in the PathBuffer array.
+					/// Note that this offset must be divided by sizeof(char) to get the
+					/// array index.
+					/// </summary>
+					public ushort PrintNameOffset;
+
+					/// <summary>
+					/// Length, in bytes, of the print name string. If this string is
+					/// NULL-terminated, PrintNameLength does not include space for the
+					/// UNICODE_NULL character.
+					/// </summary>
+					public ushort PrintNameLength;
+
+					/// <summary>
+					/// Used to indicate if the given symbolic link is an absolute or relative
+					/// symbolic link. If Flags contains SYMLINK_FLAG_RELATIVE, the symbolic
+					/// link contained in the PathBuffer array (at offset SubstitueNameOffset)
+					/// is processed as a relative symbolic link; otherwise, it is processed
+					/// as an absolute symbolic link.
+					/// </summary>
+					public SymbolicLinkFlags Flags;
+				}
+
+				/// <summary>
+				/// Contains the reparse point information for a Directory Junction.
+				/// </summary>
+				/// <remarks>The PathBuffer member found at the end of the C structure
+				/// declaration is appended at the end of this structure.</remarks>
+				[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+				public struct MountPointReparseBuffer
+				{
+					/// <summary>
+					/// Offset, in bytes, of the substitute name string in the PathBuffer
+					/// array. Note that this offset must be divided by sizeof(char) to
+					/// get the array index.
+					/// </summary>
+					public ushort SubstituteNameOffset;
+
+					/// <summary>
+					/// Length, in bytes, of the substitute name string. If this string is
+					/// NULL-terminated, SubstituteNameLength does not include space for
+					/// the UNICODE_NULL character.
+					/// </summary>
+					public ushort SubstituteNameLength;
+
+					/// <summary>
+					/// Offset, in bytes, of the print name string in the PathBuffer array.
+					/// Note that this offset must be divided by sizeof(char) to get the
+					/// array index.
+					/// </summary>
+					public ushort PrintNameOffset;
+
+					/// <summary>
+					/// Length, in bytes, of the print name string. If this string is
+					/// NULL-terminated, PrintNameLength does not include space for the
+					/// UNICODE_NULL character.
+					/// </summary>
+					public ushort PrintNameLength;
+				}
+
+				[Flags]
+				public enum SymbolicLinkFlags
+				{
+					/// <summary>
+					/// <see cref="SymbolicLinkReparseBuffer.Flags"/>
+					/// </summary>
+					SYMLINK_FLAG_RELATIVE = 0x00000001
+				}
+
+				/// <summary>
+				/// Reparse point tag. Must be a Microsoft reparse point tag. (See the following Remarks section.)
+				/// </summary>
+				public REPARSE_DATA_TAG ReparseTag;
+
+				/// <summary>
+				/// Size, in bytes, of the reparse data in the DataBuffer member.
+				/// </summary>
+				public ushort ReparseDataLength;
+				ushort Reserved;
+			}
+
+			/// <summary>
+			/// See http://msdn.microsoft.com/en-us/library/windows/desktop/aa365511%28v=vs.85%29.aspx.
+			/// </summary>
+			public enum REPARSE_DATA_TAG : uint
+			{
+				IO_REPARSE_TAG_MOUNT_POINT = 0xA0000003,
+				IO_REPARSE_TAG_HSM = 0xC0000004,
+				IO_REPARSE_TAG_HSM2 = 0x80000006,
+				IO_REPARSE_TAG_SIS = 0x80000007,
+				IO_REPARSE_TAG_WIM = 0x80000008,
+				IO_REPARSE_TAG_CSV = 0x80000009,
+				IO_REPARSE_TAG_DFS = 0x8000000A,
+				IO_REPARSE_TAG_SYMLINK = 0xA000000C,
+				IO_REPARSE_TAG_DFSR = 0x80000012
+			}
+
+			/// <summary>
+			/// Retrieves the reparse point data associated with the file or
+			/// directory identified by the specified handle.
+			/// 
+			/// To perform this operation, call the DeviceIoControl function with
+			/// the following parameters.
+			/// </summary>
+			/// <param name="hDevice">A handle to the file or directory from which
+			/// to retrieve the reparse point data. To retrieve a handle, use the
+			/// CreateFile function.</param>
+			/// <param name="dwIoControlCode">The control code for the operation.
+			/// Use FSCTL_GET_REPARSE_POINT for this operation.</param>
+			/// <param name="lpInBuffer">Not used with this operation; set to
+			/// NULL.</param>
+			/// <param name="nInBufferSize">Not used with this operation; set to
+			/// zero.</param>
+			/// <param name="lpOutBuffer">A pointer to a buffer that receives the reparse
+			/// point data. If the reparse tag is a Microsoft reparse tag, the data is
+			/// a REPARSE_DATA_BUFFER structure. Otherwise, the data is a
+			/// REPARSE_GUID_DATA_BUFFER structure.</param>
+			/// <param name="nOutBufferSize">The size of the output buffer, in bytes.
+			/// This value must be at least the size indicated by
+			/// REPARSE_GUID_DATA_BUFFER_HEADER_SIZE, plus the size of the expected
+			/// user-defined data.</param>
+			/// <param name="lpBytesReturned">A pointer to a variable that receives the
+			/// size of the data stored in the output buffer, in bytes.
+			/// 
+			/// If the output buffer is too small, the call fails, GetLastError returns
+			/// ERROR_INSUFFICIENT_BUFFER, and lpBytesReturned is zero.
+			/// 
+			/// If lpOverlapped is NULL, lpBytesReturned cannot be NULL. Even when an
+			/// operation returns no output data and lpOutBuffer is NULL, DeviceIoControl
+			/// makes use of lpBytesReturned. After such an operation, the value of
+			/// lpBytesReturned is meaningless.
+			/// 
+			/// If lpOverlapped is not NULL, lpBytesReturned can be NULL. If this parameter
+			/// is not NULL and the operation returns data, lpBytesReturned is meaningless
+			/// until the overlapped operation has completed. To retrieve the number of bytes
+			/// returned, call GetOverlappedResult. If hDevice is associated with an
+			/// I/O completion port, you can retrieve the number of bytes returned by
+			/// calling GetQueuedCompletionStatus.</param>
+			/// <param name="lpOverlapped">A pointer to an OVERLAPPED structure.
+			/// 
+			/// If hDevice was opened without specifying FILE_FLAG_OVERLAPPED, lpOverlapped
+			/// is ignored.
+			/// 
+			/// If hDevice was opened with the FILE_FLAG_OVERLAPPED flag, the operation is
+			/// performed as an overlapped (asynchronous) operation. In this case, lpOverlapped
+			/// must point to a valid OVERLAPPED structure that contains a handle to an event
+			/// object. Otherwise, the function fails in unpredictable ways.
+			/// 
+			/// For overlapped operations, DeviceIoControl returns immediately, and the event
+			/// object is signaled when the operation has been completed. Otherwise, the
+			/// function does not return until the operation has been completed or an error
+			/// occurs.</param>
+			/// <returns>If the operation completes successfully, DeviceIoControl returns
+			/// a nonzero value, and the output buffer pointed to by lpOutBuffer contains a
+			/// valid REPARSE_GUID_DATA_BUFFER structure, or a portion thereof, depending
+			/// on the value of nOutBufferSize.
+			/// 
+			/// If the operation fails or is pending, DeviceIoControl returns zero. The
+			/// contents of the output buffer pointed to by lpOutBuffer are meaningless.
+			/// For extended error information, call Marshal.GetLastWin32Error.</returns>
+			[DllImport("Kernel32.dll", CharSet = CharSet.Unicode)]
+			[return: MarshalAs(UnmanagedType.Bool)]
+			public static extern bool DeviceIoControl(SafeFileHandle hDevice,
+				uint dwIoControlCode, IntPtr lpInBuffer, uint nInBufferSize,
+				IntPtr lpOutBuffer, uint nOutBufferSize,
+				out uint lpBytesReturned, IntPtr lpOverlapped);
+
+			public const uint FSCTL_GET_REPARSE_POINT =  (9 << 16) | (42 << 2);
 		}
 	}
 }

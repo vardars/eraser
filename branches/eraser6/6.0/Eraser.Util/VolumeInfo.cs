@@ -318,6 +318,22 @@ namespace Eraser.Util
 				}
 				else
 				{
+					//If this is a mountpoint, resolve it before calling
+					//GetVolumeNameForVolumeMountPoint since it will return an error if
+					//the path given is a reparse point, but not a volume reparse point.
+					while ((new DirectoryInfo(currentDir).Attributes & FileAttributes.ReparsePoint) != 0)
+					{
+						currentDir = NTApi.ResolveReparsePoint(currentDir);
+
+						//Strip the NT namespace bit
+						if (currentDir.StartsWith("\\??\\Volume"))
+							throw new ArgumentException(S._("The path provided includes a reparse" +
+								"point which references another volume."));
+						else
+							currentDir = currentDir.Substring(4);
+						mountpointDir = new DirectoryInfo(currentDir);
+					}
+
 					if (KernelApi.NativeMethods.GetVolumeNameForVolumeMountPoint(
 						currentDir, volumeID, 50))
 					{
@@ -332,6 +348,13 @@ namespace Eraser.Util
 							case 3: //ERROR_PATH_NOT_FOUND
 							case 4390: //ERROR_NOT_A_REPARSE_POINT
 								break;
+
+							case 87: //ERROR_INVALID_PARAMETER (0x57)
+							case 1008: //ERROR_NO_TOKEN (0x3F0)
+								//An interesting case: Certain paths where directory traversal is not
+								//allowed will yield this, notably, erasing through the symlinks
+								//Vista uses for compatibility (e.g. C:\Users\Username\Documents\Pictures\*)
+
 							default:
 								throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
 						}
