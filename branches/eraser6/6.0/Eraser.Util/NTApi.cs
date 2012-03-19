@@ -61,7 +61,7 @@ namespace Eraser.Util
 				path = path.Remove(path.Length - 1);
 
 			using (SafeFileHandle handle = KernelApi.NativeMethods.CreateFile(path,
-				KernelApi.NativeMethods.GENERIC_READ,
+				KernelApi.NativeMethods.FILE_READ_ATTRIBUTES | KernelApi.NativeMethods.FILE_READ_EA,
 				KernelApi.NativeMethods.FILE_SHARE_READ | KernelApi.NativeMethods.FILE_SHARE_WRITE,
 				IntPtr.Zero, KernelApi.NativeMethods.OPEN_EXISTING,
 				KernelApi.NativeMethods.FILE_FLAG_OPEN_REPARSE_POINT |
