@@ -353,22 +353,25 @@ namespace Eraser.Util
 			const string IntelDefaultProvider = "Intel Hardware Cryptographic Service Provider";
 
 			handle = new SafeCryptHandle();
-			if (AdvApi.NativeMethods.CryptAcquireContext(out handle, string.Empty,
-				IntelDefaultProvider, AdvApi.NativeMethods.PROV_INTEL_SEC, 0))
+			if (AdvApi.NativeMethods.CryptAcquireContext(out handle, null,
+				IntelDefaultProvider, AdvApi.NativeMethods.PROV_INTEL_SEC,
+				AdvApi.NativeMethods.CRYPT_VERIFYCONTEXT))
 			{
 				return;
 			}
-			else if (AdvApi.NativeMethods.CryptAcquireContext(out handle, string.Empty,
-				string.Empty, AdvApi.NativeMethods.PROV_RSA_FULL, 0))
+			else if (AdvApi.NativeMethods.CryptAcquireContext(out handle, null,
+				null, AdvApi.NativeMethods.PROV_RSA_FULL,
+				AdvApi.NativeMethods.CRYPT_VERIFYCONTEXT))
 			{
 				return;
 			}
 			else if (Marshal.GetLastWin32Error() == AdvApi.NativeMethods.NTE_BAD_KEYSET)
 			{
 				//Default keyset doesn't exist, attempt to create a new one
-				if (AdvApi.NativeMethods.CryptAcquireContext(out handle, string.Empty,
+				if (AdvApi.NativeMethods.CryptAcquireContext(out handle, null,
 					string.Empty, AdvApi.NativeMethods.PROV_RSA_FULL,
-					AdvApi.NativeMethods.CRYPT_NEWKEYSET))
+					AdvApi.NativeMethods.CRYPT_NEWKEYSET |
+					AdvApi.NativeMethods.CRYPT_VERIFYCONTEXT))
 				{
 					return;
 				}
