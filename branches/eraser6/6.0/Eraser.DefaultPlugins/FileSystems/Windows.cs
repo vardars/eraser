@@ -129,20 +129,22 @@ namespace Eraser.DefaultPlugins
 
 		public override void DeleteFolder(DirectoryInfo info, bool recursive)
 		{
-			if (!recursive && info.GetFileSystemInfos().Length != 0)
-				throw new InvalidOperationException(S._("The folder {0} cannot be deleted as it is " +
-					"not empty."));
-
 			//If the directory does not already exist, we should just return -- there's
 			//nothing to be done.
 			if (!info.Exists)
 				return;
 
-			//TODO: check for reparse points
-			foreach (DirectoryInfo dir in info.GetDirectories())
-				DeleteFolder(dir);
-			foreach (FileInfo file in info.GetFiles())
-				DeleteFile(file);
+			if ((info.Attributes & FileAttributes.ReparsePoint) == 0)
+			{
+				if (!recursive && info.GetFileSystemInfos().Length != 0)
+					throw new InvalidOperationException(S._("The folder {0} cannot be deleted as it is " +
+						"not empty."));
+
+				foreach (DirectoryInfo dir in info.GetDirectories())
+					DeleteFolder(dir, true);
+				foreach (FileInfo file in info.GetFiles())
+					DeleteFile(file);
+			}
 
 			//Check that this folder is not the root of a drive since we can't delete
 			//roots of drives.
