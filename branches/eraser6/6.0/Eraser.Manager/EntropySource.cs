@@ -433,19 +433,6 @@ namespace Eraser.Manager
 	public class EntropyPoller
 	{
 		/// <summary>
-		/// The algorithm used for mixing
-		/// </summary>
-		private enum PRFAlgorithms
-		{
-			Md5,
-			Sha1,
-			Ripemd160,
-			Sha256,
-			Sha384,
-			Sha512,
-		};
-
-		/// <summary>
 		/// Constructor.
 		/// </summary>
 		public EntropyPoller()
