@@ -511,10 +511,19 @@ namespace Eraser.Manager
 			AddEntropy(source.GetPrimer());
 			MixPool();
 
-			//Apply whitening effect
-			PRFAlgorithm = PRFAlgorithms.Ripemd160;
-			MixPool();
-			PRFAlgorithm = PRFAlgorithms.Sha512;
+			//Apply "whitening" effect. Try to mix the pool using RIPEMD-160 to strengthen
+			//the cryptographic strength of the pool.
+			//There is a need to catch the InvalidOperationException because if Eraser is
+			//running under an OS with FIPS-compliance mode the RIPEMD-160 algorithm cannot
+			//be used.
+			try
+			{
+				using (HashAlgorithm hash = new RIPEMD160Managed())
+					MixPool(hash);
+			}
+			catch (InvalidOperationException)
+			{
+			}
 		}
 
 		/// <summary>
@@ -558,19 +567,19 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Mixes the contents of the pool.
 		/// </summary>
-		private void MixPool()
+		private void MixPool(HashAlgorithm hash)
 		{
 			lock (poolLock)
 			{
 				//Mix the last 128 bytes first.
 				const int mixBlockSize = 128;
-				int hashSize = PRF.HashSize / 8;
-				PRF.ComputeHash(pool, pool.Length - mixBlockSize, mixBlockSize).CopyTo(pool, 0);
+				int hashSize = hash.HashSize / 8;
+				hash.ComputeHash(pool, pool.Length - mixBlockSize, mixBlockSize).CopyTo(pool, 0);
 
 				//Then mix the following bytes until wraparound is required
 				int i = 0;
 				for (; i < pool.Length - hashSize; i += hashSize)
-					Buffer.BlockCopy(PRF.ComputeHash(pool, i,
+					Buffer.BlockCopy(hash.ComputeHash(pool, i,
 						i + mixBlockSize >= pool.Length ? pool.Length - i : mixBlockSize),
 						0, pool, i, i + hashSize >= pool.Length ? pool.Length - i : hashSize);
 
@@ -583,10 +592,20 @@ namespace Eraser.Manager
 					Buffer.BlockCopy(pool, 0, combinedBuffer, pool.Length - i,
 								mixBlockSize - (pool.Length - i));
 
-					Buffer.BlockCopy(PRF.ComputeHash(combinedBuffer, 0, mixBlockSize), 0,
+					Buffer.BlockCopy(hash.ComputeHash(combinedBuffer, 0, mixBlockSize), 0,
 						pool, i, pool.Length - i > hashSize ? hashSize : pool.Length - i);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Mixes the contents of the entropy pool using the currently specified default
+		/// algorithm.
+		/// </summary>
+		private void MixPool()
+		{
+			using (HashAlgorithm hash = new SHA1CryptoServiceProvider())
+				MixPool(hash);
 		}
 
 		/// <summary>
@@ -644,53 +663,6 @@ namespace Eraser.Manager
 					*db++ ^= *ds++;
 			}
 		}
-
-		/// <summary>
-		/// PRF algorithm handle
-		/// </summary>
-		private HashAlgorithm PRF
-		{
-			get
-			{
-				Type type = null;
-				switch (PRFAlgorithm)
-				{
-					case PRFAlgorithms.Md5:
-						type = typeof(MD5CryptoServiceProvider);
-						break;
-					case PRFAlgorithms.Sha1:
-						type = typeof(SHA1Managed);
-						break;
-					case PRFAlgorithms.Ripemd160:
-						type = typeof(RIPEMD160Managed);
-						break;
-					case PRFAlgorithms.Sha256:
-						type = typeof(SHA256Managed);
-						break;
-					case PRFAlgorithms.Sha384:
-						type = typeof(SHA384Managed);
-						break;
-					default:
-						type = typeof(SHA512Managed);
-						break;
-				}
-
-				if (type.IsInstanceOfType(prfCache))
-					return prfCache;
-				ConstructorInfo hashConstructor = type.GetConstructor(Type.EmptyTypes);
-				return prfCache = (HashAlgorithm)hashConstructor.Invoke(null);
-			}
-		}
-
-		/// <summary>
-		/// The last created PRF algorithm handle.
-		/// </summary>
-		private HashAlgorithm prfCache;
-
-		/// <summary>
-		/// PRF algorithm identifier
-		/// </summary>
-		private PRFAlgorithms PRFAlgorithm = PRFAlgorithms.Sha512;
 
 		/// <summary>
 		/// The pool of data which we currently maintain.
