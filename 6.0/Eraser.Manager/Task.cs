@@ -277,9 +277,14 @@ namespace Eraser.Manager
 		{
 			Guid methodGuid = (Guid)info.GetValue("Method", typeof(Guid));
 			if (methodGuid == Guid.Empty)
+			{
 				method = ErasureMethodManager.Default;
+			}
 			else
+			{
 				method = ErasureMethodManager.GetInstance(methodGuid);
+				MethodDefined = true;
+			}
 		}
 
 		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
