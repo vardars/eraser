@@ -177,6 +177,18 @@
   <data name="passesLv.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="passesColNumber.Text" xml:space="preserve">
+    <value>Pass Number</value>
+  </data>
+  <data name="passesColNumber.Width" type="System.Int32, mscorlib">
+    <value>90</value>
+  </data>
+  <data name="passesColType.Text" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="passesColType.Width" type="System.Int32, mscorlib">
+    <value>135</value>
+  </data>
   <data name="passesLv.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 60</value>
   </data>
@@ -197,18 +209,6 @@
   </data>
   <data name="&gt;&gt;passesLv.ZOrder" xml:space="preserve">
     <value>9</value>
-  </data>
-  <data name="passesColNumber.Text" xml:space="preserve">
-    <value>Pass Number</value>
-  </data>
-  <data name="passesColNumber.Width" type="System.Int32, mscorlib">
-    <value>90</value>
-  </data>
-  <data name="passesColType.Text" xml:space="preserve">
-    <value>Data</value>
-  </data>
-  <data name="passesColType.Width" type="System.Int32, mscorlib">
-    <value>135</value>
   </data>
   <data name="passesAddBtn.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -375,6 +375,9 @@
   <data name="passGrp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left, Right</value>
   </data>
+  <data name="passEditor.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 9pt</value>
+  </data>
   <data name="passEditor.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 13</value>
   </data>
@@ -388,7 +391,7 @@
     <value>passEditor</value>
   </data>
   <data name="&gt;&gt;passEditor.Type" xml:space="preserve">
-    <value>Eraser.DefaultPlugins.CustomMethodPassEditor, Eraser.DefaultPlugins, Version=6.0.0.1, Culture=neutral, PublicKeyToken=4411c113eac74bb2</value>
+    <value>Eraser.DefaultPlugins.CustomMethodPassEditor, Eraser.DefaultPlugins, Version=6.0.9.2575, Culture=neutral, PublicKeyToken=ab8c5acb8db9a36b</value>
   </data>
   <data name="&gt;&gt;passEditor.Parent" xml:space="preserve">
     <value>passGrp</value>
