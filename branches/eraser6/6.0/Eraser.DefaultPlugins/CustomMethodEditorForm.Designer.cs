@@ -62,11 +62,11 @@ namespace Eraser.DefaultPlugins
 			this.passesMoveUpBtn = new System.Windows.Forms.Button();
 			this.passesMoveDownBtn = new System.Windows.Forms.Button();
 			this.passGrp = new System.Windows.Forms.GroupBox();
+			this.passEditor = new Eraser.DefaultPlugins.CustomMethodPassEditor();
 			this.randomizeChk = new System.Windows.Forms.CheckBox();
 			this.okBtn = new System.Windows.Forms.Button();
 			this.cancelBtn = new System.Windows.Forms.Button();
 			this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-			this.passEditor = new Eraser.DefaultPlugins.CustomMethodPassEditor();
 			this.passGrp.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
 			this.SuspendLayout();
@@ -144,6 +144,13 @@ namespace Eraser.DefaultPlugins
 			this.passGrp.Name = "passGrp";
 			this.passGrp.TabStop = false;
 			// 
+			// passEditor
+			// 
+			resources.ApplyResources(this.passEditor, "passEditor");
+			this.passEditor.Name = "passEditor";
+			this.passEditor.PassData = null;
+			this.passEditor.PassType = Eraser.DefaultPlugins.CustomMethodPassEditorPassType.Text;
+			// 
 			// randomizeChk
 			// 
 			resources.ApplyResources(this.randomizeChk, "randomizeChk");
@@ -160,6 +167,7 @@ namespace Eraser.DefaultPlugins
 			// cancelBtn
 			// 
 			resources.ApplyResources(this.cancelBtn, "cancelBtn");
+			this.cancelBtn.CausesValidation = false;
 			this.cancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.cancelBtn.Name = "cancelBtn";
 			this.cancelBtn.UseVisualStyleBackColor = true;
@@ -167,13 +175,6 @@ namespace Eraser.DefaultPlugins
 			// errorProvider
 			// 
 			this.errorProvider.ContainerControl = this;
-			// 
-			// passEditor
-			// 
-			resources.ApplyResources(this.passEditor, "passEditor");
-			this.passEditor.Name = "passEditor";
-			this.passEditor.PassData = null;
-			this.passEditor.PassType = Eraser.DefaultPlugins.CustomMethodPassEditorPassType.Text;
 			// 
 			// CustomMethodEditorForm
 			// 
