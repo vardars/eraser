@@ -31,6 +31,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Security.Permissions;
 using System.IO;
+using System.Globalization;
 
 using Eraser.Util;
 using Eraser.Plugins;
