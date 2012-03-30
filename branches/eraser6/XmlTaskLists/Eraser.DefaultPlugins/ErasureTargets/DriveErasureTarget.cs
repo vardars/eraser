@@ -24,9 +24,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
-using System.Runtime.Serialization;
+using System.Xml;
+using System.Xml.Serialization;
 using System.IO;
+using System.Globalization;
 
 using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
@@ -48,11 +49,13 @@ namespace Eraser.DefaultPlugins
 		}
 
 		#region Serialization code
-		protected DriveErasureTarget(SerializationInfo info, StreamingContext context)
-			: base(info, context)
+		public override void ReadXml(XmlReader reader)
 		{
-			string volumeId = info.GetString("Volume");
-			int physicalDriveIndex = info.GetInt32("PhysicalDrive");
+			base.ReadXml(reader);
+
+			string volumeId = reader.GetAttribute("volume");
+			int physicalDriveIndex = -1;
+			int.TryParse(reader.GetAttribute("physicalDrive"), out physicalDriveIndex);
 
 			if (volumeId != null)
 				Volume = new VolumeInfo(volumeId);
@@ -62,12 +65,14 @@ namespace Eraser.DefaultPlugins
 				throw new InvalidDataException();
 		}
 
-		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		public override void WriteXml(XmlWriter writer)
 		{
-			base.GetObjectData(info, context);
-			info.AddValue("Volume", Volume == null ? null : Volume.VolumeId);
-			info.AddValue("PhysicalDrive", PhysicalDrive == null ? -1 : PhysicalDrive.Index);
+			base.WriteXml(writer);
+
+			writer.WriteAttributeString("volume", Volume == null ? null : Volume.VolumeId);
+			writer.WriteAttributeString("physicalDrive",
+				(PhysicalDrive == null ? -1 : PhysicalDrive.Index).ToString(
+					CultureInfo.InvariantCulture));
 		}
 		#endregion
 

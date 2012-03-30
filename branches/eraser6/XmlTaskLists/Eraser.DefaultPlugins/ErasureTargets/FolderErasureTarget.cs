@@ -25,10 +25,11 @@ using System.Linq;
 using System.Text;
 
 using System.Text.RegularExpressions;
-using System.Runtime.Serialization;
+using System.Xml;
+using System.Xml.Serialization;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.IO;
+using System.Globalization;
 
 using Eraser.Util;
 using Eraser.Plugins;
@@ -44,21 +45,27 @@ namespace Eraser.DefaultPlugins
 	class FolderErasureTarget : FileSystemObjectErasureTarget
 	{
 		#region Serialization code
-		protected FolderErasureTarget(SerializationInfo info, StreamingContext context)
-			: base(info, context)
+		public override void ReadXml(XmlReader reader)
 		{
-			IncludeMask = (string)info.GetValue("IncludeMask", typeof(string));
-			ExcludeMask = (string)info.GetValue("ExcludeMask", typeof(string));
-			DeleteIfEmpty = (bool)info.GetValue("DeleteIfEmpty", typeof(bool));
+			base.ReadXml(reader);
+			IncludeMask = reader.GetAttribute("includeMask");
+			ExcludeMask = reader.GetAttribute("excludeMask");
+
+			if (reader.HasAttributes)
+			{
+				bool deleteIfEmpty = true;
+				bool.TryParse(reader.GetAttribute("deleteIfEmpty"), out deleteIfEmpty);
+				DeleteIfEmpty = deleteIfEmpty;
+			}
 		}
 
-		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		public override void WriteXml(XmlWriter writer)
 		{
-			base.GetObjectData(info, context);
-			info.AddValue("IncludeMask", IncludeMask);
-			info.AddValue("ExcludeMask", ExcludeMask);
-			info.AddValue("DeleteIfEmpty", DeleteIfEmpty);
+			base.WriteXml(writer);
+			writer.WriteAttributeString("includeMask", IncludeMask);
+			writer.WriteAttributeString("excludeMask", ExcludeMask);
+			writer.WriteAttributeString("deleteIfEmpty",
+				DeleteIfEmpty.ToString(CultureInfo.InvariantCulture));
 		}
 		#endregion
 

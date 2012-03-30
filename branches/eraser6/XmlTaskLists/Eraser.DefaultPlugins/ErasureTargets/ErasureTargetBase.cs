@@ -23,8 +23,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Runtime.Serialization;
-using System.Security.Permissions;
+using System.Xml;
+using System.Xml.Serialization;
 
 using Eraser.Util;
 using Eraser.Plugins;
@@ -68,19 +68,27 @@ namespace Eraser.DefaultPlugins
 		#endregion
 
 		#region Serialization code
-		protected ErasureTargetBase(SerializationInfo info, StreamingContext context)
+		public System.Xml.Schema.XmlSchema GetSchema()
 		{
-			Guid methodGuid = (Guid)info.GetValue("Method", typeof(Guid));
+			return null;
+		}
+
+		public virtual void ReadXml(XmlReader reader)
+		{
+			Guid methodGuid = Guid.Empty;
+			if (reader.HasAttributes)
+				methodGuid = new Guid(reader.GetAttribute("method"));
+
 			if (methodGuid == Guid.Empty)
 				Method = ErasureMethodRegistrar.Default;
 			else
 				Method = Host.Instance.ErasureMethods[methodGuid];
 		}
 
-		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+		public virtual void WriteXml(XmlWriter writer)
 		{
-			info.AddValue("Method", Method.Guid);
+			if (method != ErasureMethodRegistrar.Default)
+				writer.WriteAttributeString("method", method.Guid.ToString());
 		}
 		#endregion
 
