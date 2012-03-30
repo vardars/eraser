@@ -59,11 +59,13 @@ namespace Eraser.DefaultPlugins
 			info.AddValue("Path", Path);
 		}
 
-		public override void ReadXml(XmlReader reader)
+		protected override void ReadXml(XmlReader reader, bool advance)
 		{
 			base.ReadXml(reader, false);
 			Path = reader.ReadString();
-			reader.Read();
+
+			if (advance)
+				reader.Read();
 		}
 
 		public override void WriteXml(XmlWriter writer)

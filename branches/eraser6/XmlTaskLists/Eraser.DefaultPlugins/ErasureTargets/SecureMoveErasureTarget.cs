@@ -59,17 +59,19 @@ namespace Eraser.DefaultPlugins
 			info.AddValue("Destination", Destination);
 		}
 
-		public override void ReadXml(XmlReader reader)
+		protected override void ReadXml(XmlReader reader, bool advance)
 		{
 			base.ReadXml(reader, false);
 			Destination = reader.GetAttribute("destination");
-			reader.Read();
+
+			if (advance)
+				reader.Read();
 		}
 
 		public override void WriteXml(XmlWriter writer)
 		{
-			base.WriteXml(writer);
 			writer.WriteAttributeString("destination", Destination);
+			base.WriteXml(writer);
 		}
 		#endregion
 

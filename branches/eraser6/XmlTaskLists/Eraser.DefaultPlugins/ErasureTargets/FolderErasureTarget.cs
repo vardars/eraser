@@ -64,7 +64,7 @@ namespace Eraser.DefaultPlugins
 			info.AddValue("DeleteIfEmpty", DeleteIfEmpty);
 		}
 
-		public override void ReadXml(XmlReader reader)
+		protected override void ReadXml(XmlReader reader, bool advance)
 		{
 			base.ReadXml(reader, false);
 			IncludeMask = reader.GetAttribute("includeMask");
@@ -77,16 +77,17 @@ namespace Eraser.DefaultPlugins
 				DeleteIfEmpty = deleteIfEmpty;
 			}
 
-			reader.Read();
+			if (advance)
+				reader.Read();
 		}
 
 		public override void WriteXml(XmlWriter writer)
 		{
-			base.WriteXml(writer);
 			writer.WriteAttributeString("includeMask", IncludeMask);
 			writer.WriteAttributeString("excludeMask", ExcludeMask);
 			writer.WriteAttributeString("deleteIfEmpty",
 				DeleteIfEmpty.ToString(CultureInfo.InvariantCulture));
+			base.WriteXml(writer);
 		}
 		#endregion
 

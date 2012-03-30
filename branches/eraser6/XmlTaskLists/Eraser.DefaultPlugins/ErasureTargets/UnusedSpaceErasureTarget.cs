@@ -63,7 +63,7 @@ namespace Eraser.DefaultPlugins
 			info.AddValue("EraseClusterTips", EraseClusterTips);
 		}
 
-		public override void ReadXml(XmlReader reader)
+		protected override void ReadXml(XmlReader reader, bool advance)
 		{
 			base.ReadXml(reader, false);
 
@@ -75,16 +75,18 @@ namespace Eraser.DefaultPlugins
 				bool.TryParse(reader.GetAttribute("eraseClusterTips"), out eraseClusterTips);
 				EraseClusterTips = eraseClusterTips;
 			}
-			reader.Read();
+
+			if (advance)
+				reader.Read();
 		}
 
 		public override void WriteXml(XmlWriter writer)
 		{
+			writer.WriteAttributeString("eraseClusterTips", EraseClusterTips.ToString(
+				CultureInfo.InvariantCulture));
 			base.WriteXml(writer);
 
 			writer.WriteString(Drive);
-			writer.WriteAttributeString("eraseClusterTips", EraseClusterTips.ToString(
-				CultureInfo.InvariantCulture));
 		}
 		#endregion
 

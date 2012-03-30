@@ -96,11 +96,17 @@ namespace Eraser.DefaultPlugins
 		/// <param name="reader">The XML Reader containing the element to deserialise.</param>
 		/// <param name="advance">Whether to advance the element pointer. Set to false if
 		/// a derived class will be doing further processing on the element.</param>
-		protected void ReadXml(XmlReader reader, bool advance)
+		/// <remarks>When inheriting and overriding this method, call the base method with
+		/// <paramref name="advance"/> set to false.</remarks>
+		protected virtual void ReadXml(XmlReader reader, bool advance)
 		{
 			Guid methodGuid = Guid.Empty;
 			if (reader.HasAttributes)
-				methodGuid = new Guid(reader.GetAttribute("method"));
+			{
+				string method = reader.GetAttribute("method");
+				if (method != null)
+					methodGuid = new Guid(method);
+			}
 
 			if (methodGuid == Guid.Empty)
 				Method = ErasureMethodRegistrar.Default;
@@ -111,7 +117,7 @@ namespace Eraser.DefaultPlugins
 				reader.Read();
 		}
 
-		public virtual void ReadXml(XmlReader reader)
+		public void ReadXml(XmlReader reader)
 		{
 			ReadXml(reader, true);
 		}
