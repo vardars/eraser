@@ -467,7 +467,8 @@ namespace Eraser.Manager
 			{
 				lock (list)
 				{
-					XmlSerializer serializer = new XmlSerializer(list.GetType());
+					XmlRootAttribute root = new XmlRootAttribute("TaskList");
+					XmlSerializer serializer = new XmlSerializer(list.GetType(), root);
 					serializer.Serialize(stream, list);
 				}
 			}
@@ -475,7 +476,8 @@ namespace Eraser.Manager
 			public override void LoadFromStream(Stream stream)
 			{
 				//Load the list into the dictionary
-				XmlSerializer serializer = new XmlSerializer(list.GetType());
+				XmlRootAttribute root = new XmlRootAttribute("TaskList");
+				XmlSerializer serializer = new XmlSerializer(list.GetType(), root);
 
 				try
 				{
