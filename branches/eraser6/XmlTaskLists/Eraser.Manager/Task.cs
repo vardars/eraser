@@ -25,6 +25,8 @@ using System.Text;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Xml;
+using System.Xml.Serialization;
 using System.Threading;
 
 using Eraser.Util;
@@ -38,7 +40,7 @@ namespace Eraser.Manager
 	/// Deals with an erase task.
 	/// </summary>
 	[Serializable]
-	public class Task : ITask, ISerializable
+	public class Task : ITask
 	{
 		#region Serialization code
 		protected Task(SerializationInfo info, StreamingContext context)
@@ -71,6 +73,101 @@ namespace Eraser.Manager
 			info.AddValue("Schedule", Schedule);
 			info.AddValue("Targets", Targets);
 			info.AddValue("Log", Log);
+		}
+
+		public System.Xml.Schema.XmlSchema GetSchema()
+		{
+			return null;
+		}
+
+		public void ReadXml(XmlReader reader)
+		{
+			Canceled = false;
+			Name = reader.GetAttribute("name");
+
+			for (reader.Read() ; reader.NodeType != XmlNodeType.EndElement; reader.Read())
+			{
+				switch (reader.Name)
+				{
+					case "Schedule":
+						ReadSchedule(reader);
+						break;
+
+					case "ErasureTargetCollection":
+						ReadTargets(reader);
+						break;
+
+					case "ArrayOfArrayOfLogEntry":
+						ReadLog(reader);
+						break;
+
+					default:
+						System.Diagnostics.Debug.Assert(false);
+						break;
+				}
+			}
+		}
+
+		private void ReadSchedule(XmlReader reader)
+		{
+			switch (reader.GetAttribute("type"))
+			{
+				case "Manual":
+					Schedule = Schedule.RunManually;
+					break;
+
+				case "Now":
+					Schedule = Schedule.RunNow;
+					break;
+
+				case "Restart":
+					Schedule = Schedule.RunOnRestart;
+					break;
+
+				default:
+					XmlSerializer serializer = new XmlSerializer(typeof(RecurringSchedule));
+					reader.ReadStartElement();
+					schedule = (RecurringSchedule)serializer.Deserialize(reader);
+					break;
+			}
+		}
+
+		private void ReadTargets(XmlReader reader)
+		{
+			XmlSerializer targetsSerializer = new XmlSerializer(Targets.GetType());
+			Targets = (ErasureTargetCollection)targetsSerializer.Deserialize(reader);
+			Targets.Owner = this;
+		}
+
+		private void ReadLog(XmlReader reader)
+		{
+			XmlSerializer logSerializer = new XmlSerializer(Log.GetType());
+			Log = (List<LogSink>)logSerializer.Deserialize(reader);
+		}
+
+		public void WriteXml(XmlWriter writer)
+		{
+			writer.WriteAttributeString("name", Name);
+
+			writer.WriteStartElement("Schedule");
+			if (schedule.GetType() == Schedule.RunManually.GetType())
+				writer.WriteAttributeString("type", "Manual");
+			else if (schedule.GetType() == Schedule.RunNow.GetType())
+				writer.WriteAttributeString("type", "Now");
+			else if (schedule.GetType() == Schedule.RunOnRestart.GetType())
+				writer.WriteAttributeString("type", "Restart");
+			else if (schedule is RecurringSchedule)
+			{
+				XmlSerializer serializer = new XmlSerializer(schedule.GetType());
+				serializer.Serialize(writer, schedule);
+			}
+			writer.WriteEndElement();
+
+			XmlSerializer targetsSerializer = new XmlSerializer(Targets.GetType());
+			targetsSerializer.Serialize(writer, Targets);
+
+			XmlSerializer logSerializer = new XmlSerializer(Log.GetType());
+			logSerializer.Serialize(writer, Log);
 		}
 		#endregion
 
