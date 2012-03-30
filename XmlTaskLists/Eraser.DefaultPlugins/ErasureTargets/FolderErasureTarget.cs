@@ -44,7 +44,7 @@ namespace Eraser.DefaultPlugins
 	/// </summary>
 	[Serializable]
 	[Guid("F50B0A44-3AB1-4cab-B81E-1713AC3D28C9")]
-	class FolderErasureTarget : FileSystemObjectErasureTarget
+	public class FolderErasureTarget : FileSystemObjectErasureTarget
 	{
 		#region Serialization code
 		protected FolderErasureTarget(SerializationInfo info, StreamingContext context)

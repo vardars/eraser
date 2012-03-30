@@ -35,7 +35,7 @@ using Eraser.Plugins.ExtensionPoints;
 
 namespace Eraser.DefaultPlugins
 {
-	abstract class ErasureTargetBase : IErasureTarget
+	public abstract class ErasureTargetBase : IErasureTarget
 	{
 		#region IErasureTarget Members
 

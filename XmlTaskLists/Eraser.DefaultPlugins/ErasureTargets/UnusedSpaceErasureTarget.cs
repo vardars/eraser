@@ -45,7 +45,7 @@ namespace Eraser.DefaultPlugins
 	/// </summary>
 	[Serializable]
 	[Guid("A627BEC4-CAFC-46ce-92AD-209157C3177A")]
-	class UnusedSpaceErasureTarget : ErasureTargetBase
+	public class UnusedSpaceErasureTarget : ErasureTargetBase
 	{
 		#region Serialization code
 		protected UnusedSpaceErasureTarget(SerializationInfo info, StreamingContext context)
