@@ -61,8 +61,9 @@ namespace Eraser.DefaultPlugins
 
 		public override void ReadXml(XmlReader reader)
 		{
-			base.ReadXml(reader);
+			base.ReadXml(reader, false);
 			Path = reader.ReadString();
+			reader.Read();
 		}
 
 		public override void WriteXml(XmlWriter writer)

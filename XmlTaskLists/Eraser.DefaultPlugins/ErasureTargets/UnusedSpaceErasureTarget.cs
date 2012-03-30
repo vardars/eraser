@@ -65,7 +65,7 @@ namespace Eraser.DefaultPlugins
 
 		public override void ReadXml(XmlReader reader)
 		{
-			base.ReadXml(reader);
+			base.ReadXml(reader, false);
 
 			Drive = reader.ReadString();
 			EraseClusterTips = false;
@@ -75,6 +75,7 @@ namespace Eraser.DefaultPlugins
 				bool.TryParse(reader.GetAttribute("eraseClusterTips"), out eraseClusterTips);
 				EraseClusterTips = eraseClusterTips;
 			}
+			reader.Read();
 		}
 
 		public override void WriteXml(XmlWriter writer)

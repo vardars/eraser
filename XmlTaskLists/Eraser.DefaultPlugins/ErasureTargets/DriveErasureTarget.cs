@@ -75,7 +75,7 @@ namespace Eraser.DefaultPlugins
 
 		public override void ReadXml(XmlReader reader)
 		{
-			base.ReadXml(reader);
+			base.ReadXml(reader, false);
 
 			string volumeId = reader.GetAttribute("volume");
 			int physicalDriveIndex = -1;
@@ -87,6 +87,7 @@ namespace Eraser.DefaultPlugins
 				PhysicalDrive = new PhysicalDriveInfo(physicalDriveIndex);
 			else
 				throw new InvalidDataException();
+			reader.Read();
 		}
 
 		public override void WriteXml(XmlWriter writer)

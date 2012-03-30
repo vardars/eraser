@@ -68,9 +68,9 @@ namespace Eraser.Manager
 
 			public override void ReadXml(XmlReader reader)
 			{
-				reader.Read();
 				if (reader.GetAttribute("type") != "Manual")
 					throw new InvalidDataException();
+				reader.Read();
 			}
 
 			public override void WriteXml(XmlWriter writer)
@@ -104,9 +104,9 @@ namespace Eraser.Manager
 
 			public override void ReadXml(XmlReader reader)
 			{
-				reader.Read();
 				if (reader.GetAttribute("type") != "Now")
 					throw new InvalidDataException();
+				reader.Read();
 			}
 
 			public override void WriteXml(XmlWriter writer)
@@ -140,9 +140,9 @@ namespace Eraser.Manager
 
 			public override void ReadXml(XmlReader reader)
 			{
-				reader.Read();
 				if (reader.GetAttribute("type") != "Restart")
 					throw new InvalidDataException();
+				reader.Read();
 			}
 
 			public override void WriteXml(XmlWriter writer)
@@ -294,7 +294,6 @@ namespace Eraser.Manager
 
 		public override void ReadXml(XmlReader reader)
 		{
-			reader.Read();
 			if (!Enum.TryParse<RecurringScheduleUnit>(reader.GetAttribute("type"), out type))
 				throw new InvalidDataException();
 			if (!int.TryParse(reader.GetAttribute("frequency"), out frequency))
@@ -315,6 +314,7 @@ namespace Eraser.Manager
 				throw new InvalidDataException();
 			LastRun = lastRun;
 			NextRunCache = nextRunCache;
+			reader.Read();
 		}
 
 		public override void WriteXml(XmlWriter writer)
