@@ -112,10 +112,6 @@ namespace Eraser.Manager
 		{
 			switch (reader.GetAttribute("type"))
 			{
-				case "Manual":
-					Schedule = Schedule.RunManually;
-					break;
-
 				case "Now":
 					Schedule = Schedule.RunNow;
 					break;
@@ -124,10 +120,15 @@ namespace Eraser.Manager
 					Schedule = Schedule.RunOnRestart;
 					break;
 
-				default:
+				case "Recurring":
 					XmlSerializer serializer = new XmlSerializer(typeof(RecurringSchedule));
 					reader.ReadStartElement();
 					schedule = (RecurringSchedule)serializer.Deserialize(reader);
+					break;
+
+				case "Manual":
+				default:
+					Schedule = Schedule.RunManually;
 					break;
 			}
 		}
@@ -158,6 +159,7 @@ namespace Eraser.Manager
 				writer.WriteAttributeString("type", "Restart");
 			else if (schedule is RecurringSchedule)
 			{
+				writer.WriteAttributeString("type", "Recurring");
 				XmlSerializer serializer = new XmlSerializer(schedule.GetType());
 				serializer.Serialize(writer, schedule);
 			}
