@@ -713,8 +713,8 @@ namespace Eraser.Util
 		{
 			get
 			{
-				lock(List)
-					return Count;
+				lock (List)
+					return List.Count;
 			}
 		}
 
@@ -878,14 +878,11 @@ namespace Eraser.Util
 
 		private void LoadList()
 		{
-			lock (Synchronise)
-			{
-				XmlRootAttribute root = new XmlRootAttribute("Log");
-				XmlSerializer serializer = new XmlSerializer(typeof(List<LogEntry>), root);
+			XmlRootAttribute root = new XmlRootAttribute("Log");
+			XmlSerializer serializer = new XmlSerializer(typeof(List<LogEntry>), root);
 
-				using (FileStream stream = new FileStream(SavePath, FileMode.Open))
-					list = (List<LogEntry>)serializer.Deserialize(stream);
-			}
+			using (FileStream stream = new FileStream(SavePath, FileMode.Open))
+				list = (List<LogEntry>)serializer.Deserialize(stream);
 		}
 
 		/// <summary>
@@ -901,9 +898,12 @@ namespace Eraser.Util
 		{
 			get
 			{
-				if (list == null)
-					LoadList();
-				return list;
+				lock (Synchronise)
+				{
+					if (list == null)
+						LoadList();
+					return list;
+				}
 			}
 		}
 
