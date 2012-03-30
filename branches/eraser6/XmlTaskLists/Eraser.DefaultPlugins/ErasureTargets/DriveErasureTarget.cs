@@ -44,7 +44,7 @@ namespace Eraser.DefaultPlugins
 	/// </summary>
 	[Serializable]
 	[Guid("12CA079F-0B7A-48fa-B221-73AA217C1781")]
-	class DriveErasureTarget : ErasureTargetBase
+	public class DriveErasureTarget : ErasureTargetBase
 	{
 		public DriveErasureTarget()
 		{

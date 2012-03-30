@@ -43,7 +43,7 @@ namespace Eraser.DefaultPlugins
 	/// Class representing a tangible object (file/folder) to be erased.
 	/// </summary>
 	[Serializable]
-	abstract class FileSystemObjectErasureTarget : ErasureTargetBase
+	public abstract class FileSystemObjectErasureTarget : ErasureTargetBase
 	{
 		#region Serialization code
 		protected FileSystemObjectErasureTarget(SerializationInfo info, StreamingContext context)
