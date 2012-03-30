@@ -92,6 +92,7 @@ namespace Eraser.DefaultPlugins
 
 		public virtual void ReadXml(XmlReader reader)
 		{
+			reader.Read();
 			Guid methodGuid = Guid.Empty;
 			if (reader.HasAttributes)
 				methodGuid = new Guid(reader.GetAttribute("method"));
