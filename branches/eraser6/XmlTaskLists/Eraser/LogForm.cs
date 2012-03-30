@@ -320,7 +320,7 @@ namespace Eraser
 				return;
 
 			Application.UseWaitCursor = true;
-			LogSink sink = Task.Log[filterSessionCombobox.SelectedIndex];
+			LogSinkBase sink = Task.Log[filterSessionCombobox.SelectedIndex];
 			EntryCache.Clear();
 			SelectedEntries.Clear();
 			EntryCache.AddRange(sink.Where(MeetsCriteria));
