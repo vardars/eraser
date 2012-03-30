@@ -259,8 +259,8 @@ namespace Eraser
 		{
 			using (SaveFileDialog dialog = new SaveFileDialog())
 			{
-				dialog.Filter = "Eraser 6 task lists (*.ersx)|*.ersx";
-				dialog.DefaultExt = "ersx";
+				dialog.Filter = "Eraser 6 task lists (*.ersy)|*.ersy";
+				dialog.DefaultExt = "ersy";
 				dialog.OverwritePrompt = true;
 
 				if (dialog.ShowDialog() == DialogResult.OK)
