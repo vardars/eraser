@@ -49,7 +49,7 @@ namespace Eraser.Manager
 			Executor = context.Context as Executor;
 			Targets = (ErasureTargetCollection)info.GetValue("Targets", typeof(ErasureTargetCollection));
 			Targets.Owner = this;
-			Log = (List<LogSink>)info.GetValue("Log", typeof(List<LogSink>));
+			Log = (List<LogSinkBase>)info.GetValue("Log", typeof(List<LogSinkBase>));
 			Canceled = false;
 
 			Schedule schedule = (Schedule)info.GetValue("Schedule", typeof(Schedule));
@@ -97,7 +97,7 @@ namespace Eraser.Manager
 						ReadTargets(reader);
 						break;
 
-					case "ArrayOfArrayOfLogEntry":
+					case "Logs":
 						ReadLog(reader);
 						break;
 
@@ -142,11 +142,27 @@ namespace Eraser.Manager
 
 		private void ReadLog(XmlReader reader)
 		{
-			XmlSerializer logSerializer = new XmlSerializer(Log.GetType());
-			Log = (List<LogSink>)logSerializer.Deserialize(reader);
+			//We can either have a ArrayOfLogEntry or LogRef element as children.
+			Log = new List<LogSinkBase>();
+			while (reader.Read() && reader.NodeType != XmlNodeType.EndElement)
+			{
+				if (reader.Name == "LogRef")
+				{
+					Log.Add(new LazyLogSink(reader.ReadString()));
+				}
+				else if (reader.Name == "ArrayOfLogEntry")
+				{
+					XmlSerializer logSerializer = new XmlSerializer(typeof(LogSink));
+					Log.Add((LogSink)logSerializer.Deserialize(reader));
+				}
+			}
 		}
 
-		public void WriteXml(XmlWriter writer)
+		/// <summary>
+		/// Writes the common part of the Task XML Element.
+		/// </summary>
+		/// <param name="writer">The XML Writer instance to write to.</param>
+		private void WriteXmlCommon(XmlWriter writer)
 		{
 			writer.WriteAttributeString("name", Name);
 
@@ -167,9 +183,62 @@ namespace Eraser.Manager
 
 			XmlSerializer targetsSerializer = new XmlSerializer(Targets.GetType());
 			targetsSerializer.Serialize(writer, Targets);
+		}
 
-			XmlSerializer logSerializer = new XmlSerializer(Log.GetType());
-			logSerializer.Serialize(writer, Log);
+		public void WriteXml(XmlWriter writer)
+		{
+			WriteXmlCommon(writer);
+
+			writer.WriteStartElement("Logs");
+			foreach (LogSinkBase log in Log)
+			{
+				XmlSerializer logSerializer = new XmlSerializer(log.GetType());
+				logSerializer.Serialize(writer, log);
+			}
+			writer.WriteEndElement();
+		}
+
+		/// <summary>
+		/// Writes an XML element with the Log entries linked instead of embedded
+		/// in the task list.
+		/// </summary>
+		/// <param name="writer">The XML Writer instance to write to.</param>
+		/// <param name="logPaths">The path to a folder to store logs in.</param>
+		public void WriteSeparatedXml(XmlWriter writer, string logPaths)
+		{
+			WriteXmlCommon(writer);
+
+			writer.WriteStartElement("Logs");
+			foreach (LogSinkBase log in Log)
+			{
+				//If we have a file-backed log, retain that.
+				if (log is LazyLogSink)
+				{
+					writer.WriteElementString("LogRef", ((LazyLogSink)log).SavePath);
+				}
+				
+				//Otherwise, decide if we want to store the log inline (if small) or
+				//link to the log file.
+				else if (log.Count < 5)
+				{
+					//Small log, keep it inline.
+					XmlSerializer logSerializer = new XmlSerializer(log.GetType());
+					logSerializer.Serialize(writer, log);
+				}
+				else
+				{
+					string savePath;
+					do
+					{
+						savePath = Path.Combine(logPaths, Guid.NewGuid().ToString() + ".log");
+					}
+					while (File.Exists(savePath));
+
+					log.Save(savePath);
+					writer.WriteElementString("LogRef", savePath);
+				}
+			}
+			writer.WriteEndElement();
 		}
 		#endregion
 
@@ -182,7 +251,7 @@ namespace Eraser.Manager
 			Targets = new ErasureTargetCollection(this);
 			Schedule = Schedule.RunNow;
 			Canceled = false;
-			Log = new List<LogSink>();
+			Log = new List<LogSinkBase>();
 		}
 
 		/// <summary>
@@ -281,7 +350,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The log entries which this task has accumulated.
 		/// </summary>
-		public List<LogSink> Log { get; private set; }
+		public List<LogSinkBase> Log { get; private set; }
 
 		/// <summary>
 		/// The progress manager object which manages the progress of this task.
