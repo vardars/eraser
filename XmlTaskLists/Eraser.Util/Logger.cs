@@ -104,13 +104,14 @@ namespace Eraser.Util
 
 			Level = level;
 			Timestamp = timestamp;
-			Message = reader.Value;
+			Message = reader.ReadString();
+			reader.Read();
 		}
 
 		public void WriteXml(XmlWriter writer)
 		{
 			writer.WriteAttributeString("level", Level.ToString());
-			writer.WriteAttributeString("timestamp", Timestamp.ToString());
+			writer.WriteAttributeString("timestamp", Timestamp.ToString("O"));
 			writer.WriteString(Message);
 		}
 		#endregion
