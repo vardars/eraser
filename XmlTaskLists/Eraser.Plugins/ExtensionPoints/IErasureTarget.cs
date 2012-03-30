@@ -24,6 +24,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 using System.Xml.Serialization;
 
 using Eraser.Util;
@@ -34,7 +36,7 @@ namespace Eraser.Plugins.ExtensionPoints
 	/// <summary>
 	/// Represents a generic target of erasure
 	/// </summary>
-	public interface IErasureTarget : IXmlSerializable, IRegisterable
+	public interface IErasureTarget : ISerializable, IXmlSerializable, IRegisterable
 	{
 		/// <summary>
 		/// Retrieves the text to display representing this target.

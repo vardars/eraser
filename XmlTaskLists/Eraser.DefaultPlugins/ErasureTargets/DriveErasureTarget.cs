@@ -24,6 +24,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
+using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
@@ -49,6 +51,28 @@ namespace Eraser.DefaultPlugins
 		}
 
 		#region Serialization code
+		protected DriveErasureTarget(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+			string volumeId = info.GetString("Volume");
+			int physicalDriveIndex = info.GetInt32("PhysicalDrive");
+
+			if (volumeId != null)
+				Volume = new VolumeInfo(volumeId);
+			else if (physicalDriveIndex != -1)
+				PhysicalDrive = new PhysicalDriveInfo(physicalDriveIndex);
+			else
+				throw new InvalidDataException();
+		}
+
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+			info.AddValue("Volume", Volume == null ? null : Volume.VolumeId);
+			info.AddValue("PhysicalDrive", PhysicalDrive == null ? -1 : PhysicalDrive.Index);
+		}
+
 		public override void ReadXml(XmlReader reader)
 		{
 			base.ReadXml(reader);

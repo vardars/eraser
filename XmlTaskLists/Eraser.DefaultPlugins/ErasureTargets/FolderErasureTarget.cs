@@ -25,11 +25,12 @@ using System.Linq;
 using System.Text;
 
 using System.Text.RegularExpressions;
+using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using System.IO;
-using System.Globalization;
 
 using Eraser.Util;
 using Eraser.Plugins;
@@ -45,6 +46,23 @@ namespace Eraser.DefaultPlugins
 	class FolderErasureTarget : FileSystemObjectErasureTarget
 	{
 		#region Serialization code
+		protected FolderErasureTarget(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+			IncludeMask = (string)info.GetValue("IncludeMask", typeof(string));
+			ExcludeMask = (string)info.GetValue("ExcludeMask", typeof(string));
+			DeleteIfEmpty = (bool)info.GetValue("DeleteIfEmpty", typeof(bool));
+		}
+
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+			info.AddValue("IncludeMask", IncludeMask);
+			info.AddValue("ExcludeMask", ExcludeMask);
+			info.AddValue("DeleteIfEmpty", DeleteIfEmpty);
+		}
+
 		public override void ReadXml(XmlReader reader)
 		{
 			base.ReadXml(reader);

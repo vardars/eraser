@@ -25,8 +25,10 @@ using System.Linq;
 using System.Text;
 
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Security.Permissions;
 using System.IO;
 
 using Eraser.Util;
@@ -44,6 +46,19 @@ namespace Eraser.DefaultPlugins
 	class SecureMoveErasureTarget : FileSystemObjectErasureTarget
 	{
 		#region Serialization code
+		protected SecureMoveErasureTarget(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+			Destination = (string)info.GetValue("Destination", typeof(string));
+		}
+
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+			info.AddValue("Destination", Destination);
+		}
+
 		public override void ReadXml(XmlReader reader)
 		{
 			base.ReadXml(reader);
