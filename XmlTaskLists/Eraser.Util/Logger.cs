@@ -27,7 +27,10 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Runtime.Serialization;
+using System.Xml;
+using System.Xml.Serialization;
 using System.Security.Permissions;
+using System.IO;
 
 namespace Eraser.Util
 {
@@ -66,7 +69,7 @@ namespace Eraser.Util
 	/// Represents a log entry.
 	/// </summary>
 	[Serializable]
-	public struct LogEntry : ISerializable
+	public struct LogEntry : ISerializable, IXmlSerializable
 	{
 		#region Serialization code
 		private LogEntry(SerializationInfo info, StreamingContext context)
@@ -83,6 +86,32 @@ namespace Eraser.Util
 			info.AddValue("Level", Level);
 			info.AddValue("Timestamp", Timestamp);
 			info.AddValue("Message", Message);
+		}
+
+		public System.Xml.Schema.XmlSchema GetSchema()
+		{
+			return null;
+		}
+
+		public void ReadXml(XmlReader reader)
+		{
+			LogLevel level;
+			DateTime timestamp;
+			if (!Enum.TryParse<LogLevel>(reader.GetAttribute("level"), out level))
+				throw new InvalidDataException();
+			if (!DateTime.TryParse(reader.GetAttribute("timestamp"), out timestamp))
+				throw new InvalidDataException();
+
+			Level = level;
+			Timestamp = timestamp;
+			Message = reader.Value;
+		}
+
+		public void WriteXml(XmlWriter writer)
+		{
+			writer.WriteAttributeString("level", Level.ToString());
+			writer.WriteAttributeString("timestamp", Timestamp.ToString());
+			writer.WriteString(Message);
 		}
 		#endregion
 
