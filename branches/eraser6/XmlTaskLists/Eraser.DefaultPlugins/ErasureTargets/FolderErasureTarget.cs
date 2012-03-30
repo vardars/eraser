@@ -66,7 +66,7 @@ namespace Eraser.DefaultPlugins
 
 		public override void ReadXml(XmlReader reader)
 		{
-			base.ReadXml(reader);
+			base.ReadXml(reader, false);
 			IncludeMask = reader.GetAttribute("includeMask");
 			ExcludeMask = reader.GetAttribute("excludeMask");
 
@@ -76,6 +76,8 @@ namespace Eraser.DefaultPlugins
 				bool.TryParse(reader.GetAttribute("deleteIfEmpty"), out deleteIfEmpty);
 				DeleteIfEmpty = deleteIfEmpty;
 			}
+
+			reader.Read();
 		}
 
 		public override void WriteXml(XmlWriter writer)

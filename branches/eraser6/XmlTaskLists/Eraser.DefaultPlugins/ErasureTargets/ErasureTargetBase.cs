@@ -90,9 +90,14 @@ namespace Eraser.DefaultPlugins
 			return null;
 		}
 
-		public virtual void ReadXml(XmlReader reader)
+		/// <summary>
+		/// Reads the XML for the current Erasure Target.
+		/// </summary>
+		/// <param name="reader">The XML Reader containing the element to deserialise.</param>
+		/// <param name="advance">Whether to advance the element pointer. Set to false if
+		/// a derived class will be doing further processing on the element.</param>
+		protected void ReadXml(XmlReader reader, bool advance)
 		{
-			reader.Read();
 			Guid methodGuid = Guid.Empty;
 			if (reader.HasAttributes)
 				methodGuid = new Guid(reader.GetAttribute("method"));
@@ -101,6 +106,14 @@ namespace Eraser.DefaultPlugins
 				Method = ErasureMethodRegistrar.Default;
 			else
 				Method = Host.Instance.ErasureMethods[methodGuid];
+
+			if (advance)
+				reader.Read();
+		}
+
+		public virtual void ReadXml(XmlReader reader)
+		{
+			ReadXml(reader, true);
 		}
 
 		public virtual void WriteXml(XmlWriter writer)
