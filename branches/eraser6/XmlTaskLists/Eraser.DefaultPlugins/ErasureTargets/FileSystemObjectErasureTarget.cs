@@ -24,8 +24,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Security.Permissions;
 using System.IO;
 
 using Eraser.Util;
@@ -43,6 +46,19 @@ namespace Eraser.DefaultPlugins
 	abstract class FileSystemObjectErasureTarget : ErasureTargetBase
 	{
 		#region Serialization code
+		protected FileSystemObjectErasureTarget(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+			Path = (string)info.GetValue("Path", typeof(string));
+		}
+
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+			info.AddValue("Path", Path);
+		}
+
 		public override void ReadXml(XmlReader reader)
 		{
 			base.ReadXml(reader);

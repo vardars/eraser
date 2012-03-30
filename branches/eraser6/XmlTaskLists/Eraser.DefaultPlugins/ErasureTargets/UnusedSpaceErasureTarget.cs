@@ -24,9 +24,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using System.Runtime.Serialization;
+using System.Runtime.InteropServices;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using System.IO;
 using System.Globalization;
 
@@ -46,6 +48,21 @@ namespace Eraser.DefaultPlugins
 	class UnusedSpaceErasureTarget : ErasureTargetBase
 	{
 		#region Serialization code
+		protected UnusedSpaceErasureTarget(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+			Drive = (string)info.GetValue("Drive", typeof(string));
+			EraseClusterTips = (bool)info.GetValue("EraseClusterTips", typeof(bool));
+		}
+
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+			info.AddValue("Drive", Drive);
+			info.AddValue("EraseClusterTips", EraseClusterTips);
+		}
+
 		public override void ReadXml(XmlReader reader)
 		{
 			base.ReadXml(reader);
