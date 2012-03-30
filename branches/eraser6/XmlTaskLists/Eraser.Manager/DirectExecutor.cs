@@ -31,6 +31,7 @@ using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
 using Eraser.Plugins;
 using Eraser.Plugins.ExtensionPoints;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace Eraser.Manager
@@ -470,6 +471,32 @@ namespace Eraser.Manager
 					XmlRootAttribute root = new XmlRootAttribute("TaskList");
 					XmlSerializer serializer = new XmlSerializer(list.GetType(), root);
 					serializer.Serialize(stream, list);
+				}
+			}
+
+			public override void SaveToFile(string file)
+			{
+				XmlWriterSettings settings = new XmlWriterSettings();
+				settings.Indent = true;
+				lock (list)
+				using (XmlWriter writer = XmlWriter.Create(file, settings))
+				{
+					writer.WriteStartDocument();
+					writer.WriteStartElement("TaskList");
+
+					string logFolderPath = Path.Combine(Path.GetDirectoryName(file), "Logs");
+					if (!Directory.Exists(logFolderPath))
+						Directory.CreateDirectory(logFolderPath);
+
+					foreach (Task task in list)
+					{
+						writer.WriteStartElement("Task");
+						task.WriteSeparatedXml(writer, logFolderPath);
+						writer.WriteEndElement();
+					}
+
+					writer.WriteEndElement();
+					writer.WriteEndDocument();
 				}
 			}
 
