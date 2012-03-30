@@ -73,7 +73,7 @@ namespace Eraser.DefaultPlugins
 			info.AddValue("PhysicalDrive", PhysicalDrive == null ? -1 : PhysicalDrive.Index);
 		}
 
-		public override void ReadXml(XmlReader reader)
+		protected override void ReadXml(XmlReader reader, bool advance)
 		{
 			base.ReadXml(reader, false);
 
@@ -87,17 +87,20 @@ namespace Eraser.DefaultPlugins
 				PhysicalDrive = new PhysicalDriveInfo(physicalDriveIndex);
 			else
 				throw new InvalidDataException();
-			reader.Read();
+
+			if (advance)
+				reader.Read();
 		}
 
 		public override void WriteXml(XmlWriter writer)
 		{
-			base.WriteXml(writer);
+			if (Volume != null)
+				writer.WriteAttributeString("volume", Volume.VolumeId);
+			if (PhysicalDrive != null)
+			writer.WriteAttributeString("physicalDrive",PhysicalDrive.Index.ToString(
+				CultureInfo.InvariantCulture));
 
-			writer.WriteAttributeString("volume", Volume == null ? null : Volume.VolumeId);
-			writer.WriteAttributeString("physicalDrive",
-				(PhysicalDrive == null ? -1 : PhysicalDrive.Index).ToString(
-					CultureInfo.InvariantCulture));
+			base.WriteXml(writer);
 		}
 		#endregion
 
