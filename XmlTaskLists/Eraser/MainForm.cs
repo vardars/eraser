@@ -278,8 +278,8 @@ namespace Eraser
 		{
 			using (OpenFileDialog dialog = new OpenFileDialog())
 			{
-				dialog.Filter = "Eraser 6 task lists (*.ersx)|*.ersx";
-				dialog.DefaultExt = "ersx";
+				dialog.Filter = "Eraser 6 XML task lists (*.ersy)|*.ersy";
+				dialog.DefaultExt = "ersy";
 
 				if (dialog.ShowDialog() == DialogResult.OK)
 				{

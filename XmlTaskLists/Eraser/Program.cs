@@ -775,7 +775,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// <summary>
 		/// File name of the Eraser task list.
 		/// </summary>
-		private const string TaskListFileName = @"Task List.ersx";
+		private const string TaskListFileName = @"Task List.ersy";
 
 		/// <summary>
 		/// Path to the Eraser task list.
