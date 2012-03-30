@@ -68,6 +68,7 @@ namespace Eraser.Manager
 
 			public override void ReadXml(XmlReader reader)
 			{
+				reader.Read();
 				if (reader.GetAttribute("type") != "Manual")
 					throw new InvalidDataException();
 			}
@@ -103,6 +104,7 @@ namespace Eraser.Manager
 
 			public override void ReadXml(XmlReader reader)
 			{
+				reader.Read();
 				if (reader.GetAttribute("type") != "Now")
 					throw new InvalidDataException();
 			}
@@ -138,6 +140,7 @@ namespace Eraser.Manager
 
 			public override void ReadXml(XmlReader reader)
 			{
+				reader.Read();
 				if (reader.GetAttribute("type") != "Restart")
 					throw new InvalidDataException();
 			}
@@ -291,6 +294,7 @@ namespace Eraser.Manager
 
 		public override void ReadXml(XmlReader reader)
 		{
+			reader.Read();
 			if (!Enum.TryParse<RecurringScheduleUnit>(reader.GetAttribute("type"), out type))
 				throw new InvalidDataException();
 			if (!int.TryParse(reader.GetAttribute("frequency"), out frequency))
@@ -317,11 +321,11 @@ namespace Eraser.Manager
 		{
 			writer.WriteAttributeString("type", type.ToString());
 			writer.WriteAttributeString("frequency", frequency.ToString());
-			writer.WriteAttributeString("executionTime", executionTime.ToString());
+			writer.WriteAttributeString("executionTime", executionTime.ToString("O"));
 			writer.WriteAttributeString("weeklySchedule", weeklySchedule.ToString());
 			writer.WriteAttributeString("monthlySchedule", monthlySchedule.ToString());
-			writer.WriteAttributeString("lastRun", LastRun.ToString());
-			writer.WriteAttributeString("nextRun", NextRunCache.ToString());
+			writer.WriteAttributeString("lastRun", LastRun.ToString("O"));
+			writer.WriteAttributeString("nextRun", NextRunCache.ToString("O"));
 		}
 		#endregion
 
