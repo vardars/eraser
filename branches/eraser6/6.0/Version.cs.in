@@ -21,7 +21,7 @@
 using System;
 using System.Reflection;
 
-[assembly: AssemblyFileVersion("6.0.9.$WCREV$")]
+[assembly: AssemblyFileVersion("6.0.10.$WCREV$")]
 [assembly: AssemblyVersion("6.0.9.$WCREV$")]
 
 namespace Eraser {
