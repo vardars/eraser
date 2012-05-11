@@ -559,6 +559,14 @@ namespace Eraser.Manager
 			{
 				throw new NotSupportedException();
 			}
+
+			private new RemoteExecutorClient Owner
+			{
+				get
+				{
+					return (RemoteExecutorClient)base.Owner;
+				}
+			}
 		}
 	}
 }

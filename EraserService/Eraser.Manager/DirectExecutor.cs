@@ -531,6 +531,14 @@ namespace Eraser.Manager
 				}
 			}
 
+			private new DirectExecutor Owner
+			{
+				get
+				{
+					return (DirectExecutor)base.Owner;
+				}
+			}
+
 			/// <summary>
 			/// The data store for this object.
 			/// </summary>
