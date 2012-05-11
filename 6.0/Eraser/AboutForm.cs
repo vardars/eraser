@@ -118,8 +118,9 @@ Eraser Project Members:
 				#pragma warning restore 429
 
 				g.DrawString(string.Format(CultureInfo.CurrentCulture, versionString,
-					Assembly.GetExecutingAssembly().GetName().Version, BuildInfo.BuildDate),
-					Font, textBrush, new PointF(eraserPos.X + eraserSize.Width + 3, eraserPos.Y));
+					FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion,
+					BuildInfo.BuildDate), Font, textBrush,
+					new PointF(eraserPos.X + eraserSize.Width + 3, eraserPos.Y));
 
 				//Copyright and Website
 				string copyrightText = S._("copyright \u00a9 2008-2010 The Eraser Project");
