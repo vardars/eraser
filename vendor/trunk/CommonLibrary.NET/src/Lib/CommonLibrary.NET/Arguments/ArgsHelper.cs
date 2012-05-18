@@ -121,13 +121,20 @@ namespace ComLib.Arguments
         {
             ArgAttribute argAttr = val.Key;
 
-            // First interpret.
-            string argValue = rawArgValue;
-            if (argAttr.Interpret)
+            if (string.IsNullOrEmpty(rawArgValue))
             {
-                argValue = Substitute(argValue);
+                ReflectionHelper.SetProperty(argReciever, val.Value, val.Key.DefaultValue);
             }
-            ReflectionHelper.SetProperty(argReciever, val.Value, argValue);
+            else
+            {
+                // First interpret.
+                string argValue = rawArgValue;
+                if (argAttr.Interpret)
+                {
+                    argValue = Substitute(argValue);
+                }
+                ReflectionHelper.SetProperty(argReciever, val.Value, argValue);
+            }
         }
 
 

@@ -48,6 +48,28 @@ namespace ComLib
             }
         }
 
+        /// <summary>
+        /// Set the property value using the string value.
+        /// </summary>
+        /// <param name="obj">Object whose property is to be set.</param>
+        /// <param name="prop">Property name.</param>
+        /// <param name="propVal">Value to set.</param>
+        public static void SetProperty(object obj, PropertyInfo prop, object propVal)
+        {
+            Guard.IsNotNull(obj, "Object containing properties to set is null");
+            Guard.IsNotNull(prop, "Property not supplied.");
+
+            // Correct property with write access 
+            if (prop != null && prop.CanWrite)
+            {
+                // Check same Type
+                if (Converter.CanConvertToCorrectType(prop, propVal))
+                {
+                    object convertedVal = Converter.ConvertToSameType(prop, propVal);
+                    prop.SetValue(obj, convertedVal, null);
+                }
+            }
+        }
 
         /// <summary>
         /// Gets the property value safely, without throwing an exception.
