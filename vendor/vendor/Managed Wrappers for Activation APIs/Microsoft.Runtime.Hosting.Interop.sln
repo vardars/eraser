@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Runtime.Hosting.Interop", "Microsoft.Runtime.Hosting.Interop\Microsoft.Runtime.Hosting.Interop.csproj", "{C826DAF7-9D2F-46A0-BA86-BDA1351DE143}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Runtime.Hosting", "Microsoft.Runtime.Hosting\Microsoft.Runtime.Hosting.csproj", "{3036E740-543B-4942-873A-24AE2A72485E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C826DAF7-9D2F-46A0-BA86-BDA1351DE143}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C826DAF7-9D2F-46A0-BA86-BDA1351DE143}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C826DAF7-9D2F-46A0-BA86-BDA1351DE143}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C826DAF7-9D2F-46A0-BA86-BDA1351DE143}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C826DAF7-9D2F-46A0-BA86-BDA1351DE143}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C826DAF7-9D2F-46A0-BA86-BDA1351DE143}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C826DAF7-9D2F-46A0-BA86-BDA1351DE143}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C826DAF7-9D2F-46A0-BA86-BDA1351DE143}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C826DAF7-9D2F-46A0-BA86-BDA1351DE143}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C826DAF7-9D2F-46A0-BA86-BDA1351DE143}.Release|x86.ActiveCfg = Release|Any CPU
+		{3036E740-543B-4942-873A-24AE2A72485E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3036E740-543B-4942-873A-24AE2A72485E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3036E740-543B-4942-873A-24AE2A72485E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{3036E740-543B-4942-873A-24AE2A72485E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{3036E740-543B-4942-873A-24AE2A72485E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3036E740-543B-4942-873A-24AE2A72485E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3036E740-543B-4942-873A-24AE2A72485E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3036E740-543B-4942-873A-24AE2A72485E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{3036E740-543B-4942-873A-24AE2A72485E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{3036E740-543B-4942-873A-24AE2A72485E}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
