@@ -909,6 +909,18 @@ namespace Eraser.Manager
 					fsManager.EraseFileSystemObject(info, method, progressCallback);
 					return;
 				}
+				catch (FileNotFoundException)
+				{
+					task.Log.LastSessionEntries.Add(new LogEntry(S._("The file {0} was not " +
+						"securely erased because the file was deleted before it could be erased.",
+						info.FullName), LogLevel.Warning));
+				}
+				catch (DirectoryNotFoundException)
+				{
+					task.Log.LastSessionEntries.Add(new LogEntry(S._("The file {0} was not " +
+						"securely erased because the containing directory was deleted before " +
+						"it could be erased.", info.FullName), LogLevel.Warning));
+				}
 				catch (FileLoadException e)
 				{
 					if (!ManagerLibrary.Settings.ForceUnlockLockedFiles)
