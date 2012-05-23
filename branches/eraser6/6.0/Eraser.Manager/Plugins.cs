@@ -29,6 +29,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Eraser.Util;
+using System.Diagnostics;
 
 namespace Eraser.Manager.Plugin
 {
@@ -319,7 +320,7 @@ namespace Eraser.Manager.Plugin
 				assembly = value;
 
 				AssemblyInfo info = new AssemblyInfo();
-				info.Version = assembly.GetName().Version;
+				info.Version = new Version(FileVersionInfo.GetVersionInfo(assembly.Location).FileVersion);
 				IList<CustomAttributeData> attributes = CustomAttributeData.GetCustomAttributes(assembly);
 				foreach (CustomAttributeData attr in attributes)
 					if (attr.Constructor.DeclaringType == typeof(GuidAttribute))
