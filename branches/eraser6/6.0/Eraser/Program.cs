@@ -295,8 +295,18 @@ namespace Eraser
 			this.instanceID = instanceID;
 			this.CommandLine = commandLine;
 
-			//Check if there already is another instance of the program.
-			globalMutex = new Mutex(true, instanceID, out isFirstInstance);
+			try
+			{
+				isFirstInstance = false;
+				globalMutex = new Mutex(true, instanceID, out isFirstInstance);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				//If we get here, the mutex exists but we cannot modify it. That
+				//would imply that this is not the first instance.
+				//See http://msdn.microsoft.com/en-us/library/bwe34f1k.aspx
+				isFirstInstance = false;
+			}
 		}
 
 		~GUIProgram()
