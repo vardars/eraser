@@ -742,7 +742,8 @@ namespace Eraser.Util
 				KernelApi.NativeMethods.FSCTL_UNLOCK_VOLUME, IntPtr.Zero, 0, IntPtr.Zero,
 				0, out result, IntPtr.Zero))
 			{
-				throw new IOException("Could not unlock volume.");
+				throw new IOException("Could not unlock volume.",
+					new Win32Exception(Marshal.GetLastWin32Error()));
 			}
 		}
 
