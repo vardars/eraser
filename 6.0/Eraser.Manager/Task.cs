@@ -401,6 +401,12 @@ namespace Eraser.Manager
 		/// <param name="file">The file to look for ADSes</param>
 		protected void GetPathADSes(ICollection<string> list, out long totalSize, string file)
 		{
+			int attempts = 0;
+			GetPathADSes(list, out totalSize, file, ref attempts);
+		}
+
+		private void GetPathADSes(ICollection<string> list, out long totalSize, string file, ref int attempts)
+		{
 			totalSize = 0;
 
 			try
@@ -417,18 +423,33 @@ namespace Eraser.Manager
 					totalSize += info.Length;
 				}
 			}
+			catch (FileNotFoundException)
+			{
+			}
 			catch (FileLoadException)
 			{
 				//The system cannot open the file, try to force the file handle to close.
 				if (!ManagerLibrary.Settings.ForceUnlockLockedFiles)
 					throw;
 
+				bool handlesClosed = false;
 				foreach (OpenHandle handle in OpenHandle.Items)
 					if (handle.Path == file && handle.Close())
+						handlesClosed = true;
+
+				if (handlesClosed)
+				{
+					//Retry closing the file 10 times. If we can't do that, we should abort
+					//since we may not be able to get the process information of processes
+					//running with higher privileges.
+					if (++attempts <= 10)
 					{
-						GetPathADSes(list, out totalSize, file);
+						GetPathADSes(list, out totalSize, file, ref attempts);
 						return;
 					}
+					else
+						throw;
+				}
 			}
 			catch (UnauthorizedAccessException e)
 			{
@@ -572,13 +593,27 @@ namespace Eraser.Manager
 			List<string> result = new List<string>();
 			FileInfo fileInfo = new FileInfo(Path);
 
-			if (fileInfo.Exists)
+			try
 			{
 				GetPathADSes(result, out totalSize, Path);
 				totalSize += fileInfo.Length;
+				result.Add(Path);
+			}
+			catch (FileLoadException)
+			{
+				Task.Log.LastSessionEntries.Add(new LogEntry(
+					S._("Could not list the Alternate Data Streams for file {0} " +
+						"because the file is being used by another process. The file " +
+						"will not be erased.", fileInfo.FullName),
+					LogLevel.Error));
+			}
+			catch (FileNotFoundException)
+			{
+			}
+			catch (DirectoryNotFoundException)
+			{
 			}
 
-			result.Add(Path);
 			return result;
 		}
 	}
@@ -641,11 +676,37 @@ namespace Eraser.Manager
 						(file.Attributes & FileAttributes.ReparsePoint) == 0 &&
 						excludePattern.Matches(file.FullName).Count == 0)
 					{
-						totalSize += file.Length;
-						long adsesSize = 0;
-						GetPathADSes(result, out adsesSize, file.FullName);
-						totalSize += adsesSize;
-						result.Add(file.FullName);
+						try
+						{
+							totalSize += file.Length;
+							long adsesSize = 0;
+							GetPathADSes(result, out adsesSize, file.FullName);
+							totalSize += adsesSize;
+							result.Add(file.FullName);
+						}
+ 						catch (FileNotFoundException)
+						{
+							Task.Log.LastSessionEntries.Add(new LogEntry(
+								S._("The file {0} was not erased because it was deleted " +
+									"before it could be erased.", file.FullName),
+								LogLevel.Information));
+						}
+						catch (DirectoryNotFoundException)
+						{
+							Task.Log.LastSessionEntries.Add(new LogEntry(
+								S._("The file {0} was not erased because the containing " +
+									"directory was deleted before it could be erased.",
+									file.FullName),
+								LogLevel.Information));
+						}
+						catch (FileLoadException)
+						{
+							Task.Log.LastSessionEntries.Add(new LogEntry(
+								S._("Could not list the Alternate Data Streams for file {0} " +
+									"because the file is being used by another process. The " +
+									"file will not be erased.", file.FullName),
+								LogLevel.Error));
+						}
 					}
 			}
 			else
@@ -654,14 +715,40 @@ namespace Eraser.Manager
 					if (!file.Exists || (file.Attributes & FileAttributes.ReparsePoint) != 0)
 						continue;
 
-					//Get the size of the file and its ADSes
-					totalSize += file.Length;
-					long adsesSize = 0;
-					GetPathADSes(result, out adsesSize, file.FullName);
-					totalSize += adsesSize;
+					try
+					{
+						//Get the size of the file and its ADSes
+						totalSize += file.Length;
+						long adsesSize = 0;
+						GetPathADSes(result, out adsesSize, file.FullName);
+						totalSize += adsesSize;
 
-					//Append this file to the list of files to erase.
-					result.Add(file.FullName);
+						//Append this file to the list of files to erase.
+						result.Add(file.FullName);
+					}
+					catch (FileNotFoundException)
+					{
+						Task.Log.LastSessionEntries.Add(new LogEntry(
+							S._("The file {0} was not erased because it was deleted " +
+								"before it could be erased.", file.FullName),
+							LogLevel.Information));
+					}
+					catch (DirectoryNotFoundException)
+					{
+						Task.Log.LastSessionEntries.Add(new LogEntry(
+							S._("The file {0} was not erased because the containing " +
+								"directory was deleted before it could be erased.",
+								file.FullName),
+							LogLevel.Information));
+					}
+					catch (FileLoadException)
+					{
+						Task.Log.LastSessionEntries.Add(new LogEntry(
+							S._("Could not list the Alternate Data Streams for file {0} " +
+								"because the file is being used by another process. The " +
+								"file will not be erased.", file.FullName),
+							LogLevel.Error));
+					}
 				}
 
 			//Return the filtered list.
@@ -778,12 +865,38 @@ namespace Eraser.Manager
 			{
 				foreach (FileInfo fileInfo in info.GetFiles())
 				{
-					if (!fileInfo.Exists || (fileInfo.Attributes & FileAttributes.ReparsePoint) != 0)
-						continue;
+					try
+					{
+						if (!fileInfo.Exists || (fileInfo.Attributes & FileAttributes.ReparsePoint) != 0)
+							continue;
 
-					totalSize += fileInfo.Length;
-					GetPathADSes(paths, out totalSize, fileInfo.FullName);
-					paths.Add(fileInfo.FullName);
+						totalSize += fileInfo.Length;
+						GetPathADSes(paths, out totalSize, fileInfo.FullName);
+						paths.Add(fileInfo.FullName);
+					}
+					catch (FileNotFoundException)
+					{
+						Task.Log.LastSessionEntries.Add(new LogEntry(
+							S._("The file {0} was not erased because it was deleted " +
+								"before it could be erased.", fileInfo.FullName),
+							LogLevel.Information));
+					}
+					catch (DirectoryNotFoundException)
+					{
+						Task.Log.LastSessionEntries.Add(new LogEntry(
+							S._("The file {0} was not erased because the containing " +
+								"directory was deleted before it could be erased.",
+								fileInfo.FullName),
+							LogLevel.Information));
+					}
+					catch (FileLoadException)
+					{
+						Task.Log.LastSessionEntries.Add(new LogEntry(
+							S._("Could not list the Alternate Data Streams for file {0} " +
+								"because the file is being used by another process. The " +
+								"file will not be erased.", fileInfo.FullName),
+							LogLevel.Error));
+					}
 				}
 
 				foreach (DirectoryInfo directoryInfo in info.GetDirectories())
