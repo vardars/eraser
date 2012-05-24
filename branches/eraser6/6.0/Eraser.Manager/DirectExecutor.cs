@@ -832,6 +832,14 @@ namespace Eraser.Manager
 						{
 							fsManager.DeleteFolder(info);
 						}
+						catch (DirectoryNotFoundException)
+						{
+							task.Log.LastSessionEntries.Add(new LogEntry(
+								S._("The folder {0} was not erased because the containing " +
+									"directory was deleted before it could be erased.",
+									info.FullName),
+								LogLevel.Information));
+						}
 						catch (UnauthorizedAccessException)
 						{
 							task.Log.LastSessionEntries.Add(new LogEntry(S._(
