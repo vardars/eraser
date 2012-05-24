@@ -163,7 +163,8 @@ namespace Eraser.Manager
 			//the original file)
 			long amountToCopy = Math.Min(stream.Length,
 				Math.Min(4 * 1024 * 1024, shadowFileInfo.Length));
-			using (FileStream shadowFileStream = shadowFileInfo.OpenRead())
+			using (FileStream shadowFileStream = shadowFileInfo.Open(
+					FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 			{
 				while (stream.Position < amountToCopy)
 				{
