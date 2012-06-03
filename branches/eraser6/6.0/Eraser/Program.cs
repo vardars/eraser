@@ -1193,7 +1193,7 @@ All arguments are case sensitive.");
 			Console.WriteLine(@"Eraser {0}
 (c) 2008 The Eraser Project
 Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
-", Assembly.GetExecutingAssembly().GetName().Version);
+", FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion);
 
 			Console.Out.Flush();
 			CommandUsage();
