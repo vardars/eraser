@@ -34,6 +34,7 @@ using Eraser.Util;
 using System.Net.Cache;
 using System.Net.Mime;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace Eraser
 {
@@ -532,7 +533,8 @@ namespace Eraser
 				HttpRequestCacheLevel.Refresh);
 			HttpWebRequest req = (HttpWebRequest)
 				WebRequest.Create(new Uri("http://eraser.heidi.ie/updates?action=listupdates&" +
-					"version=" + Assembly.GetExecutingAssembly().GetName().Version.ToString()));
+					"version=" + FileVersionInfo.GetVersionInfo(
+						Assembly.GetExecutingAssembly().Location).FileVersion));
 			
 			using (WebResponse resp = req.GetResponse())
 			using (Stream strm = resp.GetResponseStream())

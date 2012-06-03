@@ -78,7 +78,7 @@ namespace Eraser
 			item.ImageIndex = e.Instance.AssemblyAuthenticode == null ? -1 : 0;
 			item.Group = e.Instance.IsCore ? pluginsManager.Groups[0] :
 				pluginsManager.Groups[1];
-			item.SubItems.Add(e.Instance.Assembly.GetName().Version.ToString());
+			item.SubItems.Add(e.Instance.AssemblyInfo.Version.ToString());
 			item.SubItems.Add(e.Instance.Assembly.Location);
 			item.Tag = e.Instance;
 			pluginsManager.Items.Add(item);
