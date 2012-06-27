@@ -162,6 +162,9 @@
   <data name="Removing folders..." xml:space="preserve">
     <value>Rimozione cartelle...</value>
   </data>
+  <data name="The folder {0} was not erased because the containing directory was deleted before it could be erased." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="The folder {0} could not be deleted because the folder's permissions prevents the deletion of the folder." xml:space="preserve">
     <value>La cartella {0} non può essere cancellata perchè i permessi sulla cartella lo impediscono.</value>
   </data>
@@ -170,6 +173,12 @@
   </data>
   <data name="The file {0} could not be erased because the file was either compressed, encrypted or a sparse file." xml:space="preserve">
     <value>Il file {0} non può essere pulito perchè è compresso, crittato o distribuito.</value>
+  </data>
+  <data name="The file {0} was not securely erased because the file was deleted before it could be erased." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="The file {0} was not securely erased because the containing directory was deleted before it could be erased." xml:space="preserve">
+    <value>(Untranslated)</value>
   </data>
   <data name="(locked by {0})" xml:space="preserve">
     <value>(bloccato da {0})</value>
@@ -290,6 +299,15 @@
   </data>
   <data name="Unused disk space ({0})" xml:space="preserve">
     <value>Spazio disco inutilizzato ({0})</value>
+  </data>
+  <data name="Could not list the Alternate Data Streams for file {0} because the file is being used by another process. The file will not be erased." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="The file {0} was not erased because it was deleted before it could be erased." xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="The file {0} was not erased because the containing directory was deleted before it could be erased." xml:space="preserve">
+    <value>(Untranslated)</value>
   </data>
   <data name="Could not erase files and subfolders in {0} because {1}" xml:space="preserve">
     <value>Impossibile pulire file e cartelle in {0} a causa di {1}</value>

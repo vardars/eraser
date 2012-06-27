@@ -345,6 +345,9 @@
   <data name="The installer exited with an error code {0}" xml:space="preserve">
     <value>Instalator zamknięty z błędem {0}</value>
   </data>
+  <data name="Installation cancelled" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Unknown mirror selected." xml:space="preserve">
     <value>Wybrano nieznane lustro</value>
   </data>
