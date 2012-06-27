@@ -45,6 +45,12 @@ namespace Util {
 		/// \param[in] stream The stream to use to read/write to the disk.
 		FatApi(VolumeInfo^ info, IO::Stream^ stream);
 
+		/// Destructor.
+		virtual ~FatApi() { this->!FatApi(); }
+
+		/// Finalizer.
+		!FatApi();
+
 	public:
 		/// Loads the File Allocation Table from disk.
 		virtual void LoadFat() = 0;
@@ -146,6 +152,9 @@ namespace Util {
 	public ref class FatDirectoryEntry
 	{
 	public:
+		virtual ~FatDirectoryEntry() {}
+
+	public:
 		/// Gets the name of the file or directory.
 		property String^ Name
 		{
@@ -213,6 +222,8 @@ namespace Util {
 		/// \param[in] cluster The cluster at which the directory list starts.
 		FatDirectoryBase(String^ name, FatDirectoryBase^ parent, unsigned cluster);
 
+		virtual ~FatDirectoryBase() {}
+
 	public:
 		/// Compacts the directory structure, updating the structure on-disk as well.
 		void ClearDeletedEntries();
@@ -279,6 +290,12 @@ namespace Util {
 		/// \param[in] api     The FAT API object which is creating this object.
 		FatDirectory(String^ name, FatDirectoryBase^ parent, unsigned cluster, FatApi^ api);
 
+		/// Destructor.
+		virtual ~FatDirectory() { this->!FatDirectory(); }
+
+		/// Finalizer.
+		!FatDirectory();
+
 		virtual void ReadDirectory() override;
 		virtual void WriteDirectory() override;
 
@@ -291,6 +308,9 @@ namespace Util {
 	protected:
 		Fat12Or16Api(VolumeInfo^ info);
 		Fat12Or16Api(VolumeInfo^ info, IO::Stream^ stream);
+
+		virtual ~Fat12Or16Api() { this->!Fat12Or16Api(); }
+		!Fat12Or16Api();
 
 	public:
 		virtual void LoadFat() override;
@@ -306,6 +326,9 @@ namespace Util {
 		{
 		public:
 			RootDirectory(Fat12Or16Api^ api);
+
+			virtual ~RootDirectory() { this->!RootDirectory(); }
+			!RootDirectory();
 
 		protected:
 			virtual void ReadDirectory() override;
@@ -362,6 +385,9 @@ namespace Util {
 	public:
 		Fat32Api(VolumeInfo^ info);
 		Fat32Api(VolumeInfo^ info, IO::Stream^ stream);
+
+		virtual ~Fat32Api() { this->!Fat32Api(); }
+		!Fat32Api();
 
 	public:
 		virtual void LoadFat() override;

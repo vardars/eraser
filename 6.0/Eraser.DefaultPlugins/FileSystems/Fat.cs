@@ -74,43 +74,52 @@ namespace Eraser.DefaultPlugins
 			FileSystemEntriesEraseProgress callback)
 		{
 			using (FileStream stream = info.Open(FileAccess.ReadWrite, FileShare.ReadWrite))
+			using (FatApi api = GetFatApi(info, stream))
 			{
 				int directoriesCleaned = 0;
-				FatApi api = GetFatApi(info, stream);
 				HashSet<uint> eraseQueueClusters = new HashSet<uint>();
 				List<FatDirectoryEntry> eraseQueue = new List<FatDirectoryEntry>();
-				{
-					FatDirectoryEntry entry = api.LoadDirectory(string.Empty);
-					eraseQueue.Add(entry);
-					eraseQueueClusters.Add(entry.Cluster);
-				}
 
-				using (VolumeLock volumeLock = info.LockVolume(stream))
+				try
 				{
-					while (eraseQueue.Count != 0)
 					{
-						if (callback != null)
-							callback(directoriesCleaned, directoriesCleaned + eraseQueue.Count);
-
-						FatDirectoryBase currentDir = api.LoadDirectory(eraseQueue[0].FullName);
-						eraseQueue.RemoveAt(0);
-
-						//Queue the subfolders in this directory
-						foreach (KeyValuePair<string, FatDirectoryEntry> entry in currentDir.Items)
-							if (entry.Value.EntryType == FatDirectoryEntryType.Directory)
-							{
-								//Check that we don't have the same cluster queued twice (e.g. for
-								//long/8.3 file names)
-								if (eraseQueueClusters.Contains(entry.Value.Cluster))
-									continue;
-
-								eraseQueueClusters.Add(entry.Value.Cluster);
-								eraseQueue.Add(entry.Value);
-							}
-
-						currentDir.ClearDeletedEntries();
-						++directoriesCleaned;
+						FatDirectoryEntry entry = api.LoadDirectory(string.Empty);
+						eraseQueue.Add(entry);
+						eraseQueueClusters.Add(entry.Cluster);
 					}
+
+					using (VolumeLock volumeLock = info.LockVolume(stream))
+					{
+						while (eraseQueue.Count != 0)
+						{
+							if (callback != null)
+								callback(directoriesCleaned, directoriesCleaned + eraseQueue.Count);
+
+							FatDirectoryBase currentDir = api.LoadDirectory(eraseQueue[0].FullName);
+							eraseQueue.RemoveAt(0);
+
+							//Queue the subfolders in this directory
+							foreach (KeyValuePair<string, FatDirectoryEntry> entry in currentDir.Items)
+								if (entry.Value.EntryType == FatDirectoryEntryType.Directory)
+								{
+									//Check that we don't have the same cluster queued twice (e.g. for
+									//long/8.3 file names)
+									if (eraseQueueClusters.Contains(entry.Value.Cluster))
+										continue;
+
+									eraseQueueClusters.Add(entry.Value.Cluster);
+									eraseQueue.Add(entry.Value);
+								}
+
+							currentDir.ClearDeletedEntries();
+							++directoriesCleaned;
+						}
+					}
+				}
+				finally
+				{
+					foreach (FatDirectoryEntry entry in eraseQueue)
+						entry.Dispose();
 				}
 			}
 		}
