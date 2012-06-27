@@ -345,6 +345,9 @@
   <data name="The installer exited with an error code {0}" xml:space="preserve">
     <value>The installer exited with an error code {0}</value>
   </data>
+  <data name="Installation cancelled" xml:space="preserve">
+    <value>Installation cancelled</value>
+  </data>
   <data name="Unknown mirror selected." xml:space="preserve">
     <value>Unknown mirror selected.</value>
   </data>
