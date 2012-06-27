@@ -792,16 +792,29 @@ namespace Eraser
 					info.FileName = path;
 					info.UseShellExecute = true;
 
-					System.Diagnostics.Process process = System.Diagnostics.Process.Start(info);
-					process.WaitForExit(Int32.MaxValue);
-					if (process.ExitCode == 0)
-						OnProgress(new ProgressEventArgs(1.0f, progress,
-							item, S._("Installed {0}", item.Name)));
-					else
+					try
+					{
+						System.Diagnostics.Process process = System.Diagnostics.Process.Start(info);
+						process.WaitForExit(Int32.MaxValue);
+						if (process.ExitCode == 0)
+							OnProgress(new ProgressEventArgs(1.0f, progress,
+								item, S._("Installed {0}", item.Name)));
+						else
+							OnProgress(new ProgressErrorEventArgs(new ProgressEventArgs(1.0f,
+								progress, item, S._("Error installing {0}", item.Name)),
+								new ApplicationException(S._("The installer exited with an error code {0}",
+									process.ExitCode))));
+					}
+					catch (Win32Exception e)
+					{
+						if (e.ErrorCode != 1223)
+							throw;
+
+						//User cancelled elevation.
 						OnProgress(new ProgressErrorEventArgs(new ProgressEventArgs(1.0f,
 							progress, item, S._("Error installing {0}", item.Name)),
-							new ApplicationException(S._("The installer exited with an error code {0}",
-								process.ExitCode))));
+							new ApplicationException(S._("Installation cancelled"))));
+					}
 				}
 			}
 			finally
