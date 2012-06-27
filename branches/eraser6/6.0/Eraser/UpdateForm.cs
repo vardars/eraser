@@ -692,7 +692,8 @@ namespace Eraser
 					//Then grab the download. We have to manually follow redirects since headers sent
 					//in the first requset would be lost.
 					ContentDisposition contentDisposition = null;
-					for (int redirects = 0; redirects < 20; ++redirects)
+					int redirects = 0;
+					for ( ; redirects < 20; ++redirects)
 					{
 						HttpWebRequest req = (HttpWebRequest)WebRequest.Create(reqUri);
 						req.AllowAutoRedirect = false;
@@ -709,12 +710,20 @@ namespace Eraser
 							if ((int)resp.StatusCode >= 300 && (int)resp.StatusCode <= 399)
 							{
 								//Redirect.
+								bool locationHeader = false;
 								foreach (string header in resp.Headers.AllKeys)
-									if (header.ToLowerInvariant() == "location")
+									if (header.ToUpperInvariant() == "LOCATION")
 									{
+										locationHeader = true;
 										reqUri = new Uri(resp.Headers[header]);
 										break;
 									}
+
+								if (!locationHeader)
+									throw new WebException("A redirect response was received but no redirection" +
+										"URI was provided.");
+
+								continue;
 							}
 							else
 							{
@@ -755,6 +764,9 @@ namespace Eraser
 							}
 						}
 					}
+
+					if (redirects >= 20)
+						throw new WebException("The server is not redirecting properly.");
 				}
 				catch (Exception e)
 				{
