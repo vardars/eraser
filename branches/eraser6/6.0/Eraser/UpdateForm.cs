@@ -689,48 +689,71 @@ namespace Eraser
 					else
 						reqUri = new Uri(new Uri(SelectedMirror.Link), new Uri(update.Link));
 					
-					//Then grab the download.
-					HttpWebRequest req = (HttpWebRequest)WebRequest.Create(reqUri);
-					using (WebResponse resp = req.GetResponse())
+					//Then grab the download. We have to manually follow redirects since headers sent
+					//in the first requset would be lost.
+					ContentDisposition contentDisposition = null;
+					for (int redirects = 0; redirects < 20; ++redirects)
 					{
-						//Check for a suggested filename.
-						ContentDisposition contentDisposition = null;
-						foreach (string header in resp.Headers.AllKeys)
-							if (header.ToLowerInvariant() == "content-disposition")
-								contentDisposition = new ContentDisposition(resp.Headers[header]);
-
-						string tempFilePath = Path.Combine(
-							tempDir.FullName, string.Format(CultureInfo.InvariantCulture, "{0}-{1}",
-							++currUpdate,
-							contentDisposition == null ?
-								Path.GetFileName(reqUri.GetComponents(UriComponents.Path,
-								UriFormat.Unescaped)) : contentDisposition.FileName));
-
-						byte[] tempBuffer = new byte[16384];
-						using (Stream strm = resp.GetResponseStream())
-						using (FileStream tempStrm = new FileStream(tempFilePath, FileMode.CreateNew))
-						using (BufferedStream bufStrm = new BufferedStream(tempStrm))
+						HttpWebRequest req = (HttpWebRequest)WebRequest.Create(reqUri);
+						req.AllowAutoRedirect = false;
+						using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
 						{
-							//Copy the information into the file stream
-							int readBytes = 0;
-							while ((readBytes = strm.Read(tempBuffer, 0, tempBuffer.Length)) != 0)
-							{
-								bufStrm.Write(tempBuffer, 0, readBytes);
+							//Try to find a content-disposition header, if we have one.
+							foreach (string header in resp.Headers.AllKeys)
+								if (header.ToLowerInvariant() == "content-disposition")
+								{
+									contentDisposition = new ContentDisposition(resp.Headers[header]);
+									break;
+								}
 
-								//Compute progress
-								float itemProgress = tempStrm.Position / (float)resp.ContentLength;
-								float overallProgress = (currUpdate - 1 + itemProgress) / downloadQueue.Count;
-								OnProgress(new ProgressEventArgs(itemProgress, overallProgress,
-									update, S._("Downloading: {0}", update.Name)));
+							if ((int)resp.StatusCode >= 300 && (int)resp.StatusCode <= 399)
+							{
+								//Redirect.
+								foreach (string header in resp.Headers.AllKeys)
+									if (header.ToLowerInvariant() == "location")
+									{
+										reqUri = new Uri(resp.Headers[header]);
+										break;
+									}
+							}
+							else
+							{
+								//Check for a suggested filename.
+								string tempFilePath = Path.Combine(
+									tempDir.FullName, string.Format(CultureInfo.InvariantCulture, "{0}-{1}",
+									++currUpdate,
+									contentDisposition == null ?
+										Path.GetFileName(reqUri.GetComponents(UriComponents.Path,
+										UriFormat.Unescaped)) : contentDisposition.FileName));
+
+								byte[] tempBuffer = new byte[16384];
+								using (Stream strm = resp.GetResponseStream())
+								using (FileStream tempStrm = new FileStream(tempFilePath, FileMode.CreateNew))
+								using (BufferedStream bufStrm = new BufferedStream(tempStrm))
+								{
+									//Copy the information into the file stream
+									int readBytes = 0;
+									while ((readBytes = strm.Read(tempBuffer, 0, tempBuffer.Length)) != 0)
+									{
+										bufStrm.Write(tempBuffer, 0, readBytes);
+
+										//Compute progress
+										float itemProgress = tempStrm.Position / (float)resp.ContentLength;
+										float overallProgress = (currUpdate - 1 + itemProgress) / downloadQueue.Count;
+										OnProgress(new ProgressEventArgs(itemProgress, overallProgress,
+											update, S._("Downloading: {0}", update.Name)));
+									}
+								}
+
+								//Store the filename-to-update mapping
+								tempFilesMap.Add(tempFilePath, update);
+
+								//Let the event handler know the download is complete.
+								OnProgress(new ProgressEventArgs(1.0f, (float)currUpdate / downloadQueue.Count,
+									update, S._("Downloaded: {0}", update.Name)));
+								break;
 							}
 						}
-
-						//Store the filename-to-update mapping
-						tempFilesMap.Add(tempFilePath, update);
-
-						//Let the event handler know the download is complete.
-						OnProgress(new ProgressEventArgs(1.0f, (float)currUpdate / downloadQueue.Count,
-							update, S._("Downloaded: {0}", update.Name)));
 					}
 				}
 				catch (Exception e)
