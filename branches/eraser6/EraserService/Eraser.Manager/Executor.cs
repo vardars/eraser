@@ -127,8 +127,7 @@ namespace Eraser.Manager
 		}
 	}
 
-	[Serializable]
-	public abstract class ExecutorTasksCollection : IList<Task>
+	public abstract class ExecutorTasksCollection : MarshalByRefObject, IList<Task>
 	{
 		/// <summary>
 		/// Constructor.

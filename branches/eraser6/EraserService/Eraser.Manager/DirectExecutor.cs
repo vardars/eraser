@@ -338,7 +338,6 @@ namespace Eraser.Manager
 		/// </summary>
 		AutoResetEvent schedulerInterrupt = new AutoResetEvent(true);
 
-		[Serializable]
 		private class DirectExecutorTasksCollection : ExecutorTasksCollection
 		{
 			/// <summary>
