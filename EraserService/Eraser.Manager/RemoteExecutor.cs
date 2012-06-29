@@ -22,66 +22,16 @@
 
 using System;
 using System.Text;
-using System.IO;
-using System.IO.Pipes;
-using System.Threading;
 using System.Collections.Generic;
 
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Principal;
-using System.Security.AccessControl;
+//using System.Security.AccessControl;
 
 namespace Eraser.Manager
 {
-	/// <summary>
-	/// Represents a request to the RemoteExecutorServer instance
-	/// </summary>
-	[Serializable]
-	internal class RemoteExecutorRequest
-	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="func">The function this command is wanting to execute.</param>
-		/// <param name="data">The parameters for the command, serialised using a
-		/// BinaryFormatter</param>
-		public RemoteExecutorRequest(RemoteExecutorFunction func, params object[] data)
-		{
-			Func = func;
-			Data = data;
-		}
-
-		/// <summary>
-		/// The function that this request is meant to call.
-		/// </summary>
-		public RemoteExecutorFunction Func { get; set; }
-
-		/// <summary>
-		/// The parameters associated with the function call.
-		/// </summary>
-		public object[] Data { get; private set; }
-	};
-
-	/// <summary>
-	/// List of supported functions
-	/// </summary>
-	public enum RemoteExecutorFunction
-	{
-		QueueTask,
-		ScheduleTask,
-		UnqueueTask,
-
-		AddTask,
-		DeleteTask,
-		//UpdateTask,
-		GetTaskCount,
-		GetTask
-	}
-
 	/// <summary>
 	/// The RemoteExecutorServer class is the server half required for remote execution
 	/// of tasks.
@@ -191,255 +141,83 @@ namespace Eraser.Manager
 					messageSink.GetType().ToString());
 			}
 
-			// Create an instance of the remote object.
-			DirectExecutor server = (DirectExecutor)Activator.GetObject(typeof(DirectExecutor),
-				"ipc://localhost:9090/" + RemoteExecutorServer.ServerName);
-			ExecutorTasksCollection tasks = server.Tasks;
-			int x = tasks.Count;
+			Run();
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			if (client == null)
-				return;
-
-			if (disposing)
-			{
-				client.Close();
-			}
-
-			client = null;
+			Client = null;
 			base.Dispose(disposing);
 		}
 
 		public override void Run()
 		{
+			//This function should be idempotent since our constructor will call us.
+			if (Client != null)
+				return;
+
 			try
 			{
-				client.Connect(0);
+				//Create an instance of the remote object.
+				DirectExecutor client = (DirectExecutor)Activator.GetObject(typeof(DirectExecutor),
+					"ipc://localhost:9090/" + RemoteExecutorServer.ServerName);
+
+				//Try to connect to the server instance.
+				//TODO: is there a better way?
+				int x = client.Tasks.Count;
+				Client = client;
+				IsConnected = true;
 			}
-			catch (TimeoutException)
+			catch (RemotingException)
 			{
 			}
-		}
-
-		/// <summary>
-		/// Sends a request to the executor server.
-		/// </summary>
-		/// <typeparam name="ReturnType">The expected return type of the request.</typeparam>
-		/// <param name="function">The requested operation.</param>
-		/// <param name="args">The arguments for the operation.</param>
-		/// <returns>The return result from the object as if it were executed locally.</returns>
-		internal ReturnType SendRequest<ReturnType>(RemoteExecutorFunction function, params object[] args)
-		{
-			//Connect to the server
-			object result = null;
-
-			using (MemoryStream mStream = new MemoryStream())
-			{
-				//Serialise the request
-				new BinaryFormatter().Serialize(mStream, new RemoteExecutorRequest(function, args));
-
-				//Write the request to the pipe
-				byte[] buffer = mStream.ToArray();
-				client.Write(buffer, 0, buffer.Length);
-
-				//Read the response from the pipe
-				mStream.Position = 0;
-				buffer = new byte[65536];
-				client.ReadMode = PipeTransmissionMode.Message;
-				do
-				{
-					int lastRead = client.Read(buffer, 0, buffer.Length);
-					mStream.Write(buffer, 0, lastRead);
-				}
-				while (!client.IsMessageComplete);
-
-				//Check if the server says there is a response. If so, read it.
-				if (BitConverter.ToInt32(mStream.ToArray(), 0) == 1)
-				{
-					mStream.Position = 0;
-					do
-					{
-						int lastRead = client.Read(buffer, 0, buffer.Length);
-						mStream.Write(buffer, 0, lastRead);
-					}
-					while (!client.IsMessageComplete);
-
-					//Deserialise the response
-					mStream.Position = 0;
-					if (mStream.Length > 0)
-						result = new BinaryFormatter().Deserialize(mStream);
-				}
-			}
-
-			return (ReturnType)result;
 		}
 
 		public override void QueueTask(Task task)
 		{
-			SendRequest<object>(RemoteExecutorFunction.QueueTask, task);
+			Client.QueueTask(task);
 		}
 
 		public override void ScheduleTask(Task task)
 		{
-			SendRequest<object>(RemoteExecutorFunction.ScheduleTask, task);
+			Client.ScheduleTask(task);
 		}
 
 		public override void UnqueueTask(Task task)
 		{
-			SendRequest<object>(RemoteExecutorFunction.UnqueueTask, task);
+			Client.UnqueueTask(task);
 		}
 
 		public override void QueueRestartTasks()
 		{
-			throw new NotImplementedException();
+			Client.QueueRestartTasks();
 		}
 
 		internal override bool IsTaskQueued(Task task)
 		{
-			throw new NotImplementedException();
+			return Client.IsTaskQueued(task);
 		}
 
 		public override ExecutorTasksCollection Tasks
 		{
 			get
 			{
-				return tasks;
+				return Client.Tasks;
 			}
 		}
 
 		/// <summary>
 		/// Checks whether the executor instance has connected to a server.
 		/// </summary>
-		public bool IsConnected 
+		public bool IsConnected
 		{
-			get { return client.IsConnected; }
+			get;
+			private set;
 		}
 
 		/// <summary>
-		/// The list of tasks belonging to this executor instance.
+		/// The DirectExecutor proxy object used for calls to the server.
 		/// </summary>
-		private RemoteExecutorClientTasksCollection tasks;
-
-		/// <summary>
-		/// The named pipe used to connect to another running instance of Eraser.
-		/// </summary>
-		private NamedPipeClientStream client;
-
-		private class RemoteExecutorClientTasksCollection : ExecutorTasksCollection
-		{
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			/// <param name="executor">The <see cref="RemoteExecutor"/> object owning
-			/// this list.</param>
-			public RemoteExecutorClientTasksCollection(RemoteExecutorClient executor)
-				: base(executor)
-			{
-			}
-
-			/// <summary>
-			/// Sends a request to the executor server.
-			/// </summary>
-			/// <typeparam name="ReturnType">The expected return type of the request.</typeparam>
-			/// <param name="function">The requested operation.</param>
-			/// <param name="args">The arguments for the operation.</param>
-			/// <returns>The return result from the object as if it were executed locally.</returns>
-			private ReturnType SendRequest<ReturnType>(RemoteExecutorFunction function, params object[] args)
-			{
-				RemoteExecutorClient client = (RemoteExecutorClient)Owner;
-				return client.SendRequest<ReturnType>(function, args);
-			}
-
-			#region IList<Task> Members
-			public override int IndexOf(Task item)
-			{
-				throw new NotSupportedException();
-			}
-
-			public override void Insert(int index, Task item)
-			{
-				throw new NotSupportedException();
-			}
-
-			public override void RemoveAt(int index)
-			{
-				throw new NotSupportedException();
-			}
-
-			public override Task this[int index]
-			{
-				get
-				{
-					return SendRequest<Task>(RemoteExecutorFunction.GetTask, index);
-				}
-				set
-				{
-					throw new NotSupportedException();
-				}
-			}
-			#endregion
-
-			#region ICollection<Task> Members
-			public override void Add(Task item)
-			{
-				item.Executor = Owner;
-				SendRequest<object>(RemoteExecutorFunction.AddTask, item);
-
-				//Call all the event handlers who registered to be notified of tasks
-				//being added.
-				Owner.OnTaskAdded(new TaskEventArgs(item));
-			}
-
-			public override void Clear()
-			{
-				throw new NotSupportedException();
-			}
-
-			public override bool Contains(Task item)
-			{
-				throw new NotSupportedException();
-			}
-
-			public override void CopyTo(Task[] array, int arrayIndex)
-			{
-				throw new NotSupportedException();
-			}
-
-			public override int Count
-			{
-				get { return SendRequest<int>(RemoteExecutorFunction.GetTaskCount); }
-			}
-
-			public override bool Remove(Task item)
-			{
-				item.Cancel();
-				item.Executor = null;
-				SendRequest<object>(RemoteExecutorFunction.DeleteTask, item);
-
-				//Call all event handlers registered to be notified of task deletions.
-				Owner.OnTaskDeleted(new TaskEventArgs(item));
-				return true;
-			}
-			#endregion
-
-			#region IEnumerable<Task> Members
-			public override IEnumerator<Task> GetEnumerator()
-			{
-				throw new NotSupportedException();
-			}
-			#endregion
-
-			public override void SaveToStream(Stream stream)
-			{
-				throw new NotSupportedException();
-			}
-
-			public override void LoadFromStream(Stream stream)
-			{
-				throw new NotSupportedException();
-			}
-		}
+		private DirectExecutor Client;
 	}
 }
