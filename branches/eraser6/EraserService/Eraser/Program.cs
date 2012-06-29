@@ -760,7 +760,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// <summary>
 		/// The global Executor instance.
 		/// </summary>
-		public static IExecutor eraserClient;
+		public static Executor eraserClient;
 
 		/// <summary>
 		/// Path to the Eraser application data path.
