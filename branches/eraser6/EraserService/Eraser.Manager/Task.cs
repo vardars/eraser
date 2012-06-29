@@ -40,7 +40,7 @@ namespace Eraser.Manager
 	/// Deals with an erase task.
 	/// </summary>
 	[Serializable]
-	public class Task : ITask
+	public class Task : MarshalByRefObject, ITask
 	{
 		#region Serialization code
 		protected Task(SerializationInfo info, StreamingContext context)

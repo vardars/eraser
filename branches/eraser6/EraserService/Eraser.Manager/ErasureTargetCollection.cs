@@ -41,8 +41,8 @@ namespace Eraser.Manager
 	/// Maintains a collection of erasure targets.
 	/// </summary>
 	[Serializable]
-	public class ErasureTargetCollection : IList<IErasureTarget>, ISerializable,
-		                                   IXmlSerializable
+	public class ErasureTargetCollection : MarshalByRefObject, IList<IErasureTarget>,
+		                                   ISerializable, IXmlSerializable
 	{
 		#region Constructors
 		public ErasureTargetCollection()

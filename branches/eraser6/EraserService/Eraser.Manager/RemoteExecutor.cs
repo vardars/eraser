@@ -27,6 +27,9 @@ using System.IO.Pipes;
 using System.Threading;
 using System.Collections.Generic;
 
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Principal;
@@ -97,211 +100,61 @@ namespace Eraser.Manager
 		/// </summary>
 		public RemoteExecutorServer()
 		{
-			thread = new Thread(Main);
-			serverLock = new Semaphore(maxServerInstances, maxServerInstances);
+			ServerChannel = new IpcChannel("localhost:9090");
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			if (thread == null || serverLock == null)
-				return;
+			ServerChannel.StopListening(null);
 
-			if (disposing)
-			{
-				//Close the polling thread that creates new server instances
-				thread.Abort();
-				thread.Join();
-
-				//Close all waiting streams
-				lock (servers)
-					foreach (NamedPipeServerStream server in servers)
-						server.Close();
-
-				//Acquire all available locks to ensure no more server instances exist,
-				//then destroy the semaphore
-				for (int i = 0; i < maxServerInstances; ++i)
-					serverLock.WaitOne();
-				serverLock.Close();
-			}
-
-			thread = null;
-			serverLock = null;
 			base.Dispose(disposing);
 		}
 
 		public override void Run()
 		{
-			thread.Start();
-			Thread.Sleep(0);
 			base.Run();
-		}
 
-		/// <summary>
-		/// The polling loop dealing with every server connection.
-		/// </summary>
-		private void Main()
-		{
-			while (Thread.CurrentThread.ThreadState != ThreadState.AbortRequested)
+			//Register the server channel.
+			ChannelServices.RegisterChannel(ServerChannel, true);
+
+			// Show the name of the channel.
+			Console.WriteLine("The name of the channel is {0}.",
+				ServerChannel.ChannelName);
+
+			// Show the priority of the channel.
+			Console.WriteLine("The priority of the channel is {0}.",
+				ServerChannel.ChannelPriority);
+
+			// Show the URIs associated with the channel.
+			ChannelDataStore channelData = (ChannelDataStore)
+				ServerChannel.ChannelData;
+			foreach (string uri in channelData.ChannelUris)
 			{
-				//Wait for a new server instance to be available.
-				if (!serverLock.WaitOne())
-					continue;
+				Console.WriteLine("The channel URI is {0}.", uri);
+			}
 
-				PipeSecurity security = new PipeSecurity();
-				security.AddAccessRule(new PipeAccessRule(
-					WindowsIdentity.GetCurrent().User,
-					PipeAccessRights.FullControl, AccessControlType.Allow));
+			// Expose an object for remote calls.
+			RemotingConfiguration.RegisterWellKnownServiceType(
+				typeof(RemoteExecutorServer), ServerName,
+				System.Runtime.Remoting.WellKnownObjectMode.Singleton);
 
-				//Otherwise, a new instance can be created. Create it and wait for connections.
-				NamedPipeServerStream server = new NamedPipeServerStream(ServerName,
-					PipeDirection.InOut, maxServerInstances, PipeTransmissionMode.Message,
-					PipeOptions.Asynchronous, 128, 128, security);
-				server.BeginWaitForConnection(EndWaitForConnection, server);
-				
-				lock (servers)
-					servers.Add(server);
+			// Parse the channel's URI.
+			string[] urls = ServerChannel.GetUrlsForUri("RemoteObject.rem");
+			if (urls.Length > 0)
+			{
+				string objectUrl = urls[0];
+				string objectUri;
+				string channelUri = ServerChannel.Parse(objectUrl, out objectUri);
+				Console.WriteLine("The object URI is {0}.", objectUri);
+				Console.WriteLine("The channel URI is {0}.", channelUri);
+				Console.WriteLine("The object URL is {0}.", objectUrl);
 			}
 		}
 
 		/// <summary>
-		/// Handles the arguments passed to the server and calls the real function.
+		/// The IPC Channel used for communications.
 		/// </summary>
-		/// <param name="arguments">The arguments to the function.</param>
-		/// <returns>Te result of the function call.</returns>
-		private delegate object RequestHandler(object[] arguments);
-
-		/// <summary>
-		/// Waits for a connection from a client.
-		/// </summary>
-		/// <param name="result">The AsyncResult object associated with this asynchronous
-		/// operation.</param>
-		private void EndWaitForConnection(IAsyncResult result)
-		{
-			NamedPipeServerStream server = (NamedPipeServerStream)result.AsyncState;
-
-			try
-			{
-				//We're done waiting for the connection
-				server.EndWaitForConnection(result);
-
-				while (server.IsConnected)
-				{
-					//Read the request into the buffer.
-					RemoteExecutorRequest request = null;
-					using (MemoryStream mstream = new MemoryStream())
-					{
-						byte[] buffer = new byte[65536];
-
-						do
-						{
-							int lastRead = server.Read(buffer, 0, buffer.Length);
-							mstream.Write(buffer, 0, lastRead);
-						}
-						while (!server.IsMessageComplete);
-
-						//Ignore the request if the client disconnected from us.
-						if (!server.IsConnected)
-							return;
-
-						//Deserialise the header of the request.
-						mstream.Position = 0;
-						try
-						{
-							request = (RemoteExecutorRequest)new BinaryFormatter().Deserialize(mstream);
-						}
-						catch (SerializationException)
-						{
-							//We got a unserialisation issue but we can't do anything about it.
-							return;
-						}
-					}
-
-					//Map the deserialisation function to a real function
-					Dictionary<RemoteExecutorFunction, RequestHandler> functionMap =
-						new Dictionary<RemoteExecutorFunction, RequestHandler>();
-					functionMap.Add(RemoteExecutorFunction.QueueTask,
-						delegate(object[] args) { QueueTask((Task)args[0]); return null; });
-					functionMap.Add(RemoteExecutorFunction.ScheduleTask,
-						delegate(object[] args) { ScheduleTask((Task)args[0]); return null; });
-					functionMap.Add(RemoteExecutorFunction.UnqueueTask,
-						delegate(object[] args) { UnqueueTask((Task)args[0]); return null; });
-
-					functionMap.Add(RemoteExecutorFunction.AddTask,
-						delegate(object[] args)
-						{
-							Tasks.Add((Task)args[0]);
-							return null;
-						});
-					functionMap.Add(RemoteExecutorFunction.DeleteTask,
-						delegate(object[] args)
-						{
-							Tasks.Remove((Task)args[0]);
-							return null;
-						});
-					functionMap.Add(RemoteExecutorFunction.GetTaskCount,
-						delegate(object[] args) { return Tasks.Count; });
-					functionMap.Add(RemoteExecutorFunction.GetTask,
-						delegate(object[] args) { return Tasks[(int)args[0]]; });
-
-					//Execute the function
-					object returnValue = functionMap[request.Func](request.Data);
-
-					//Return the result of the invoked function.
-					using (MemoryStream mStream = new MemoryStream())
-					{
-						if (returnValue != null)
-						{
-							byte[] header = BitConverter.GetBytes((Int32)1);
-							byte[] buffer = null;
-							new BinaryFormatter().Serialize(mStream, returnValue);
-
-							server.Write(header, 0, header.Length);
-							server.Write(buffer, 0, buffer.Length);
-						}
-						else
-						{
-							byte[] header = BitConverter.GetBytes((Int32)0);
-							server.Write(header, 0, header.Length);
-						}
-					}
-
-					server.WaitForPipeDrain();
-				}
-			}
-			catch (OperationCanceledException)
-			{
-			}
-			catch (ObjectDisposedException)
-			{
-			}
-			finally
-			{
-				lock (servers)
-					servers.Remove(server);
-				server.Close();
-				serverLock.Release();
-			}
-		}
-
-		/// <summary>
-		/// The thread which will answer pipe connections
-		/// </summary>
-		private Thread thread;
-
-		/// <summary>
-		/// Counts the number of available server instances.
-		/// </summary>
-		private Semaphore serverLock;
-
-		/// <summary>
-		/// The list storing all available created server instances.
-		/// </summary>
-		private List<NamedPipeServerStream> servers = new List<NamedPipeServerStream>();
-
-		/// <summary>
-		/// The maximum number of server instances existing concurrently.
-		/// </summary>
-		private const int maxServerInstances = 4;
+		private IpcChannel ServerChannel;
 	}
 
 	/// <summary>
@@ -312,9 +165,37 @@ namespace Eraser.Manager
 	{
 		public RemoteExecutorClient()
 		{
-			client = new NamedPipeClientStream(".", RemoteExecutorServer.ServerName,
-				PipeDirection.InOut);
-			tasks = new RemoteExecutorClientTasksCollection(this);
+			// Create the channel.
+			IpcChannel channel = new IpcChannel();
+
+			// Register the channel.
+			ChannelServices.RegisterChannel(channel, true);
+
+			// Register as client for remote object.
+			WellKnownClientTypeEntry remoteType = new WellKnownClientTypeEntry(
+				typeof(RemoteExecutorServer),
+				"ipc://localhost:9090/" + RemoteExecutorServer.ServerName);
+			RemotingConfiguration.RegisterWellKnownClientType(remoteType);
+
+			// Create a message sink.
+			string objectUri;
+			System.Runtime.Remoting.Messaging.IMessageSink messageSink =
+				channel.CreateMessageSink(
+					"ipc://localhost:9090/" + RemoteExecutorServer.ServerName, null,
+					out objectUri);
+			Console.WriteLine("The URI of the message sink is {0}.",
+				objectUri);
+			if (messageSink != null)
+			{
+				Console.WriteLine("The type of the message sink is {0}.",
+					messageSink.GetType().ToString());
+			}
+
+			// Create an instance of the remote object.
+			RemoteExecutorServer server = (RemoteExecutorServer)
+				Activator.GetObject(typeof(RemoteExecutorServer),
+				"ipc://localhost:9090/" + RemoteExecutorServer.ServerName);
+
 		}
 
 		protected override void Dispose(bool disposing)
