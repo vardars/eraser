@@ -24,8 +24,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-using System.ServiceModel;
-
 namespace Eraser.Manager
 {
 	/// <summary>
@@ -33,51 +31,7 @@ namespace Eraser.Manager
 	/// to be run and will run them when they are set to be run. This class is
 	/// abstract as they each will have their own ways of dealing with tasks.
 	/// </summary>
-	[ServiceContract(Namespace="http://eraser.sourceforge.net/", SessionMode=SessionMode.Required)]
-	public interface IExecutor : IDisposable
-	{
-		/// <summary>
-		/// Queues the task for execution.
-		/// </summary>
-		/// <param name="task">The task to queue.</param>
-		[OperationContract]
-		void QueueTask(Task task);
-
-		/// <summary>
-		/// Schedules the given task for execution.
-		/// </summary>
-		/// <param name="task">The task to schedule</param>
-		[OperationContract]
-		void ScheduleTask(Task task);
-
-		/// <summary>
-		/// Removes the given task from the execution queue.
-		/// </summary>
-		/// <remarks>If the task given runs a recurring schedule, the task will only
-		/// remove requested tasks and not the scheduled ones</remarks>
-		/// <param name="task">The task to cancel.</param>
-		[OperationContract]
-		void UnqueueTask(Task task);
-
-		/// <summary>
-		/// Queues all tasks in the task list which are meant for restart execution.
-		/// This is a separate function rather than just running them by default on
-		/// task load because creating a new instance and loading the task list
-		/// may just be a program restart and may not necessarily be a system
-		/// restart. Therefore this fuction has to be explicitly called by clients.
-		/// </summary>
-		[OperationContract]
-		void QueueRestartTasks();
-
-		/// <summary>
-		/// Retrieves the current task list for the executor.
-		/// </summary>
-		/// <returns>A list of tasks which the executor has registered.</returns>
-		[OperationContract]
-		ExecutorTasksCollection GetTasks();
-	}
-
-	public abstract class Executor : IExecutor, IDisposable
+	public abstract class Executor : IDisposable
 	{
 		#region IDisposable members
 		~Executor()
@@ -145,15 +99,6 @@ namespace Eraser.Manager
 		public abstract ExecutorTasksCollection Tasks { get; }
 
 		/// <summary>
-		/// Retrieves the current task list for the executor.
-		/// </summary>
-		/// <returns>A list of tasks which the executor has registered.</returns>
-		public ExecutorTasksCollection GetTasks()
-		{
-			return Tasks;
-		}
-
-		/// <summary>
 		/// The task added event object.
 		/// </summary>
 		public EventHandler<TaskEventArgs> TaskAdded { get; set; }
@@ -187,9 +132,9 @@ namespace Eraser.Manager
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="executor">The <seealso cref="IExecutor"/> object owning
+		/// <param name="executor">The <seealso cref="Executor"/> object owning
 		/// this task list.</param>
-		protected ExecutorTasksCollection(IExecutor executor)
+		protected ExecutorTasksCollection(Executor executor)
 		{
 			Owner = executor;
 		}
@@ -254,6 +199,6 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The owner of this task list.
 		/// </summary>
-		protected IExecutor Owner { get; private set; }
+		protected Executor Owner { get; private set; }
 	}
 }

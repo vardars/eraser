@@ -288,7 +288,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The Executor object which is managing this task.
 		/// </summary>
-		public IExecutor Executor
+		public Executor Executor
 		{
 			get
 			{
@@ -499,7 +499,7 @@ namespace Eraser.Manager
 			}
 		}
 
-		private IExecutor executor;
+		private Executor executor;
 		private Schedule schedule;
 		private SteppedProgressManager progress;
 
