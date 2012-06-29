@@ -135,7 +135,7 @@ namespace Eraser.Manager
 
 			// Expose an object for remote calls.
 			RemotingConfiguration.RegisterWellKnownServiceType(
-				typeof(RemoteExecutorServer), ServerName,
+				typeof(DirectExecutor), ServerName,
 				System.Runtime.Remoting.WellKnownObjectMode.Singleton);
 
 			// Parse the channel's URI.
@@ -192,10 +192,10 @@ namespace Eraser.Manager
 			}
 
 			// Create an instance of the remote object.
-			RemoteExecutorServer server = (RemoteExecutorServer)
-				Activator.GetObject(typeof(RemoteExecutorServer),
+			DirectExecutor server = (DirectExecutor)Activator.GetObject(typeof(DirectExecutor),
 				"ipc://localhost:9090/" + RemoteExecutorServer.ServerName);
-
+			ExecutorTasksCollection tasks = server.Tasks;
+			int x = tasks.Count;
 		}
 
 		protected override void Dispose(bool disposing)
