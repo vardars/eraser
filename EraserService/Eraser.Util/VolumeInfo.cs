@@ -589,7 +589,17 @@ namespace Eraser.Util
 		/// </summary>
 		public bool IsMounted
 		{
-			get { return MountPoints.Count != 0; }
+			get
+			{
+				try
+				{
+					return MountPoints.Count != 0;
+				}
+				catch (FileNotFoundException)
+				{
+					return false;
+				}
+			}
 		}
 
 		/// <summary>
@@ -611,32 +621,18 @@ namespace Eraser.Util
 					buffer = Marshal.AllocHGlobal(bufferSize);
 					NativeMethods.VOLUME_DISK_EXTENTS header;
 
-					if (!NativeMethods.DeviceIoControl(handle,
+					while (!NativeMethods.DeviceIoControl(handle,
 						NativeMethods.IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, IntPtr.Zero, 0,
 						buffer, (uint)bufferSize, out returnSize, IntPtr.Zero))
 					{
 						int error = Marshal.GetLastWin32Error();
-						if (error == Win32ErrorCode.InvalidFunction)
+						if (error == Win32ErrorCode.InvalidFunction ||
+							error == Win32ErrorCode.NotSupported)
 							return null;
 						else if (error != Win32ErrorCode.MoreData)
 							throw Win32ErrorCode.GetExceptionForWin32Error(error);
 
-						//Calculate the size of the buffer required
-						header = (NativeMethods.VOLUME_DISK_EXTENTS)
-							Marshal.PtrToStructure(buffer,
-								typeof(NativeMethods.VOLUME_DISK_EXTENTS));
-						Marshal.FreeHGlobal(buffer);
-						bufferSize += (int)(header.NumberOfDiskExtents - 1) *
-							Marshal.SizeOf(typeof(NativeMethods.DISK_EXTENT));
-						buffer = Marshal.AllocHGlobal(bufferSize);
-
-						if (!NativeMethods.DeviceIoControl(handle,
-							NativeMethods.IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, IntPtr.Zero, 0,
-							buffer, (uint)bufferSize, out returnSize, IntPtr.Zero))
-						{
-							throw Win32ErrorCode.GetExceptionForWin32Error(
-								Marshal.GetLastWin32Error());
-						}
+						buffer = Marshal.ReAllocHGlobal(buffer, (IntPtr)(bufferSize *= 2));
 					}
 
 					//Parse the structure.
@@ -880,7 +876,8 @@ namespace Eraser.Util
 			if (!NativeMethods.DeviceIoControl(SafeFileHandle, NativeMethods.FSCTL_UNLOCK_VOLUME,
 				IntPtr.Zero, 0, IntPtr.Zero, 0, out result, IntPtr.Zero))
 			{
-				throw new IOException("Could not unlock volume.");
+				throw new IOException("Could not unlock volume.",
+					new Win32Exception(Marshal.GetLastWin32Error()));
 			}
 
 			LengthCache = 0;

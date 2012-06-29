@@ -128,17 +128,40 @@ namespace Eraser.DefaultPlugins
 					Logger.Log(S._("Could not erase files and subfolders in {0} because {1}",
 						info.FullName, e.Message), LogLevel.Error);
 				}
+				catch (IOException e)
+				{
+					//We can get IOExceptions if the drive was disconnected during traversal.
+					//Such an occurrance would be when the user disconnects from a network share.
+					Logger.Log(S._("Could not erase files and subfolders in {0} because {1}",
+						info.FullName, e.Message), LogLevel.Error);
+				}
 			}
 
 			return result.ToArray();
 		}
 
 		/// <summary>
-		/// Adds ADSes of the given file to the list, forcing the open handles to the
-		/// files closed if necessary.
+		/// Returns the ADSes of the given file, forcing open handles to the files closed
+		/// if necessary.
 		/// </summary>
-		/// <param name="file">The file to look for ADSes</param>
+		/// <param name="file">The file to look for ADSes.</param>
+		/// <exception cref="SharingViolationException">Thrown when the file cannot be unlocked
+		/// and enumerated for ADSes.</exception>
 		protected static StreamInfo[] GetPathADSes(FileInfo file)
+		{
+			int attempts = 1;
+			return GetPathADSes(file, ref attempts);
+		}
+
+		/// <summary>
+		/// Returns the ADSes of the given file, forcing open handles to the files closed
+		/// if necessary.
+		/// </summary>
+		/// <param name="file">The file to look for ADSes.</param>
+		/// <param name="attempts">The number of tries to close open handles. Abort after a
+		/// large number of tries (currently 10 attempts)</param>
+		/// <returns>The list of ADSes the file contains.</returns>
+		private static StreamInfo[] GetPathADSes(FileInfo file, ref int attempts)
 		{
 			try
 			{
@@ -146,6 +169,7 @@ namespace Eraser.DefaultPlugins
 			}
 			catch (FileNotFoundException)
 			{
+				return new StreamInfo[0];
 			}
 			catch (SharingViolationException)
 			{
@@ -153,25 +177,11 @@ namespace Eraser.DefaultPlugins
 				if (!Host.Instance.Settings.ForceUnlockLockedFiles)
 					throw;
 
-				StringBuilder processStr = new StringBuilder();
-				foreach (OpenHandle handle in OpenHandle.Close(file.FullName))
-				{
-					try
-					{
-						processStr.AppendFormat(
-							System.Globalization.CultureInfo.InvariantCulture,
-							"{0}, ", handle.Process.MainModule.FileName);
-					}
-					catch (System.ComponentModel.Win32Exception)
-					{
-						processStr.AppendFormat(
-							System.Globalization.CultureInfo.InvariantCulture,
-							"Process ID {0}, ", handle.Process.Id);
-					}
-				}
-
-				if (processStr.Length == 0)
-					return GetPathADSes(file);
+				//Retry closing the file 10 times. If we can't do that, we should abort
+				//since we may not be able to get the process information of processes
+				//running with higher privileges.
+				if (OpenHandle.Close(file.FullName).Count == 0 && ++attempts <= 10)
+					return GetPathADSes(file, ref attempts);
 				else
 					throw;
 			}
@@ -216,7 +226,20 @@ namespace Eraser.DefaultPlugins
 		{
 			//Retrieve the list of files to erase.
 			List<StreamInfo> paths = GetPaths();
-			long dataTotal = paths.Sum(x => x.Length);
+			long dataTotal = paths.Sum(delegate(StreamInfo x) {
+				try
+				{
+					return x.Length;
+				}
+				catch (DirectoryNotFoundException)
+				{
+					return 0;
+				}
+				catch (FileNotFoundException)
+				{
+					return 0;
+				}
+			});
 
 			//Set the event's current target status.
 			if (Progress == null)
@@ -341,8 +364,19 @@ namespace Eraser.DefaultPlugins
 						fsManager.EraseFileSystemObject(info, method, callback);
 					else
 						Logger.Log(S._("The file {0} is a hard link or a symbolic link thus the " +
-							"contents of the file was not erased.", LogLevel.Notice));
+							"contents of the file was not erased.", info.FullName), LogLevel.Notice);
 					return;
+				}
+				catch (FileNotFoundException)
+				{
+					Logger.Log(S._("The file {0} was not erased because it was " +
+						"deleted before it could be erased.", info.FullName), LogLevel.Information);
+				}
+				catch (DirectoryNotFoundException)
+				{
+					Logger.Log(S._("The file {0} was not erased because the containing " +
+						"directory was deleted before it could be erased.", info.FullName),
+						LogLevel.Information);
 				}
 				catch (SharingViolationException)
 				{
@@ -358,28 +392,38 @@ namespace Eraser.DefaultPlugins
 
 					//Either we could not close all instances, or we already tried twice. Report
 					//the error.
-					StringBuilder processStr = new StringBuilder();
-					foreach (OpenHandle handle in remainingHandles)
+					string processes = string.Empty;
 					{
-						try
+						StringBuilder processStr = new StringBuilder();
+						foreach (OpenHandle handle in remainingHandles)
 						{
-							processStr.AppendFormat(
-								System.Globalization.CultureInfo.InvariantCulture,
-								"{0}, ", handle.Process.MainModule.FileName);
+							try
+							{
+								processStr.AppendFormat(
+									System.Globalization.CultureInfo.InvariantCulture,
+									"{0}, ", handle.Process.MainModule.FileName);
+							}
+							catch (System.ComponentModel.Win32Exception)
+							{
+								processStr.AppendFormat(
+									System.Globalization.CultureInfo.InvariantCulture,
+									"Process ID {0}, ", handle.Process.Id);
+							}
 						}
-						catch (System.ComponentModel.Win32Exception)
+
+						if (processStr.Length > 2)
 						{
-							processStr.AppendFormat(
-								System.Globalization.CultureInfo.InvariantCulture,
-								"Process ID {0}, ", handle.Process.Id);
+							processes = processStr.ToString().Remove(processStr.Length - 2).Trim();
+						}
+						else
+						{
+							processes = S._("(unknown)");
 						}
 					}
 
 					throw new SharingViolationException(S._(
 						"Could not force closure of file \"{0}\" {1}", info.FileName,
-						S._("(locked by {0})",
-							processStr.ToString().Remove(processStr.Length - 2)).Trim()),
-						info.FileName);
+						S._("(locked by {0})", processes)));
 				}
 			}
 		}

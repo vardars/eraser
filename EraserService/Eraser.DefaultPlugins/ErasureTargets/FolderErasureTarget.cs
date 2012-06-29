@@ -146,11 +146,31 @@ namespace Eraser.DefaultPlugins
 				if (excludePattern != null && excludePattern.Match(file.FullName).Success)
 					continue;
 
-				//Add the size of the file and its alternate data streams
-				result.AddRange(GetPathADSes(file));
+				try
+				{
+					//Add the size of the file and its alternate data streams
+					result.AddRange(GetPathADSes(file));
 
-				//And the file itself
-				result.Add(new StreamInfo(file.FullName));
+					//And the file itself
+					result.Add(new StreamInfo(file.FullName));
+				}
+				catch (FileNotFoundException)
+				{
+					Logger.Log(S._("The file {0} was not erased because it was deleted " +
+						"before it could be erased.", file.FullName), LogLevel.Information);
+				}
+				catch (DirectoryNotFoundException)
+				{
+					Logger.Log(S._("The file {0} was not erased because the containing " +
+						"directory was deleted before it could be erased.", file.FullName),
+						LogLevel.Information);
+				}
+				catch (SharingViolationException)
+				{
+					Logger.Log(S._("Could not list the Alternate Data Streams for file {0} " +
+						"because the file is being used by another process. The file will not " +
+						"be erased.", file.FullName), LogLevel.Error);
+				}
 			}
 
 			//Return the filtered list.
@@ -264,6 +284,12 @@ namespace Eraser.DefaultPlugins
 				{
 					Host.Instance.FileSystems[VolumeInfo.FromMountPoint(Path)].
 						DeleteFolder(info, true);
+				}
+				catch (DirectoryNotFoundException)
+				{
+					Logger.Log(new LogEntry(S._("The folder {0} was not erased because " +
+						"the containing directory was deleted before it could be erased.",
+						info.FullName), LogLevel.Information));
 				}
 				catch (UnauthorizedAccessException)
 				{

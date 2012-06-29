@@ -21,6 +21,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -34,25 +36,26 @@ namespace Eraser.BlackBox
 {
 	public partial class BlackBoxMainForm : Form
 	{
-		public BlackBoxMainForm()
+		#region Singleton instance
+		public static BlackBoxMainForm Get()
+		{
+			if (Instance == null)
+				Instance = new BlackBoxMainForm();
+			return Instance;
+		}
+
+		private static BlackBoxMainForm Instance;
+		#endregion
+
+		private BlackBoxMainForm()
 		{
 			InitializeComponent();
+		}
+
+		private void BlackBoxMainForm_Load(object sender, EventArgs e)
+		{
 			Theming.ApplyTheme(this);
-
-			ReportsLv.BeginUpdate();
-			foreach (BlackBoxReport report in BlackBox.GetDumps())
-			{
-				if (report.Submitted)
-					continue;
-
-				ListViewItem item = ReportsLv.Items.Add(report.Timestamp.ToString(
-					"F", CultureInfo.CurrentCulture));
-				if (report.StackTrace.Count != 0)
-					item.SubItems.Add(report.StackTrace[0].ExceptionType);
-				item.Tag = report;
-				item.Checked = true;
-			}
-			ReportsLv.EndUpdate();
+			RefreshReports();
 		}
 
 		private void ReportsLv_ItemActivate(object sender, EventArgs e)
@@ -63,14 +66,45 @@ namespace Eraser.BlackBox
 			Process.Start((ReportsLv.SelectedItems[0].Tag as BlackBoxReport).Path);
 		}
 
+		private void ReportsMenuStrip_Opening(object sender, CancelEventArgs e)
+		{
+			if (ReportsLv.SelectedItems.Count == 0)
+			{
+				e.Cancel = true;
+			}
+		}
+
+		private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			List<ListViewItem> selection = new List<ListViewItem>(
+				ReportsLv.SelectedItems.Cast<ListViewItem>());
+			foreach (ListViewItem item in selection)
+			{
+				try
+				{
+					((BlackBoxReport)item.Tag).Delete();
+					item.Remove();
+				}
+				catch (UnauthorizedAccessException ex)
+				{
+					MessageBox.Show(this, S._("Could not delete report {0} because of " +
+						"the following error: {1}", item.Text, ex.Message), S._("BlackBox"),
+						MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+			}
+		}
+
+		private void DataCollectionPolicyLbl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			Process.Start("http://eraser.heidi.ie/trac/wiki/DataCollectionPolicy");
+		}
+
 		private void SubmitBtn_Click(object sender, EventArgs e)
 		{
 			List<BlackBoxReport> reports = new List<BlackBoxReport>();
 			foreach (ListViewItem item in ReportsLv.Items)
 				if (item.Checked)
 					reports.Add((BlackBoxReport)item.Tag);
-				else
-					((BlackBoxReport)item.Tag).Delete();
 
 			if (reports.Count != 0)
 			{
@@ -84,6 +118,27 @@ namespace Eraser.BlackBox
 		private void PostponeBtn_Click(object sender, EventArgs e)
 		{
 			Close();
+		}
+
+		private void RefreshReports()
+		{
+			ReportsLv.BeginUpdate();
+			ReportsLv.Items.Clear();
+			foreach (BlackBoxReport report in BlackBox.GetDumps())
+			{
+				ListViewItem item = ReportsLv.Items.Add(report.Timestamp.ToString(
+					"g", CultureInfo.CurrentCulture));
+				if (report.StackTrace.Count != 0)
+					item.SubItems.Add(report.StackTrace[0].ExceptionType);
+				else
+					item.SubItems.Add(string.Empty);
+				item.SubItems.Add(report.Status == BlackBoxReportStatus.New ?
+					S._("Not submitted") :
+					S._("Submitted (Report ID {0})", report.ID));
+				item.Tag = report;
+				item.Checked = true;
+			}
+			ReportsLv.EndUpdate();
 		}
 
 		/// <summary>
