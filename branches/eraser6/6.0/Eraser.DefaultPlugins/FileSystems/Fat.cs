@@ -96,6 +96,7 @@ namespace Eraser.DefaultPlugins
 								callback(directoriesCleaned, directoriesCleaned + eraseQueue.Count);
 
 							FatDirectoryBase currentDir = api.LoadDirectory(eraseQueue[0].FullName);
+							eraseQueue[0].Dispose();
 							eraseQueue.RemoveAt(0);
 
 							//Queue the subfolders in this directory
