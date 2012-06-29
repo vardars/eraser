@@ -153,6 +153,9 @@
   <data name="Processing:" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
+  <data name="Unknown action {0}" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
   <data name="Eraser cannot connect to the running instance for erasures." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
@@ -394,6 +397,12 @@
     <value>(Untranslated)</value>
   </data>
   <data name="{0} of {1} downloaded" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Installation failed with exit code {0}" xml:space="preserve">
+    <value>(Untranslated)</value>
+  </data>
+  <data name="Installation cancelled" xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
 </root>

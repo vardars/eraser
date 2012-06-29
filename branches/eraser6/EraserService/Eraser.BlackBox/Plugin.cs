@@ -35,8 +35,21 @@ namespace Eraser.BlackBox
 			//Initialise our crash handler
 			BlackBox blackBox = BlackBox.Get();
 
-			//Hook the Application's idle loop to display the form
-			Application.Idle += OnGUIIdle;
+			//Register our client tools
+			Host.Instance.ClientTools.Add(new BlackBoxClientTool());
+
+			bool allSubmitted = true;
+			foreach (BlackBoxReport report in blackBox.GetDumps())
+				if (report.Status == BlackBoxReportStatus.New)
+				{
+					allSubmitted = false;
+					break;
+				}
+
+			if (!allSubmitted)
+			{
+				Host.Instance.Notifiers.Add(new BlackBoxNotifier());
+			}
 		}
 
 		public void Dispose()
@@ -67,21 +80,7 @@ namespace Eraser.BlackBox
 		public static void OnGUIIdle(object sender, EventArgs e)
 		{
 			Application.Idle -= OnGUIIdle;
-			BlackBox blackBox = BlackBox.Get();
-
-			bool allSubmitted = true;
-			foreach (BlackBoxReport report in blackBox.GetDumps())
-				if (!report.Submitted)
-				{
-					allSubmitted = false;
-					break;
-				}
-
-			if (allSubmitted)
-				return;
-
-			BlackBoxMainForm form = new BlackBoxMainForm();
-			form.Show();
+			
 		}
 	}
 }

@@ -138,28 +138,40 @@ namespace Eraser.DefaultPlugins
 										"and cannot be removed.", info.FullName), e);
 								}
 
-								StringBuilder processStr = new StringBuilder();
-								foreach (OpenHandle handle in OpenHandle.Close(info.FullName))
+								//Either we could not close all instances, or we already tried twice. Report
+								//the error.
+								string processes = string.Empty;
 								{
-									try
+									StringBuilder processStr = new StringBuilder();
+									foreach (OpenHandle handle in OpenHandle.Close(info.FullName))
 									{
-										processStr.AppendFormat(
-											System.Globalization.CultureInfo.InvariantCulture,
-											"{0}, ", handle.Process.MainModule.FileName);
+										try
+										{
+											processStr.AppendFormat(
+												System.Globalization.CultureInfo.InvariantCulture,
+												"{0}, ", handle.Process.MainModule.FileName);
+										}
+										catch (System.ComponentModel.Win32Exception)
+										{
+											processStr.AppendFormat(
+												System.Globalization.CultureInfo.InvariantCulture,
+												"Process ID {0}, ", handle.Process.Id);
+										}
 									}
-									catch (System.ComponentModel.Win32Exception)
+
+									if (processStr.Length > 2)
 									{
-										processStr.AppendFormat(
-											System.Globalization.CultureInfo.InvariantCulture,
-											"Process ID {0}, ", handle.Process.Id);
+										processes = processStr.ToString().Remove(processStr.Length - 2).Trim();
+									}
+									else
+									{
+										processes = S._("(unknown)");
 									}
 								}
 
-								if (processStr.Length != 0)
-									Logger.Log(S._("Could not force closure of file \"{0}\" {1}",
-											info.FullName, S._("(locked by {0})",
-												processStr.ToString().Remove(processStr.Length - 2)).Trim()),
-										LogLevel.Error);
+								throw new SharingViolationException(S._(
+									"Could not force closure of file \"{0}\" {1}", info.FullName,
+									S._("(locked by {0})", processes)));
 							}
 
 							//Let the process locking the file release the lock
@@ -261,7 +273,8 @@ namespace Eraser.DefaultPlugins
 			//the original file)
 			long amountToCopy = Math.Min(stream.Length,
 				Math.Min(4 * 1024 * 1024, shadowFileInfo.Length));
-			using (FileStream shadowFileStream = shadowFileInfo.OpenRead())
+			using (FileStream shadowFileStream = shadowFileInfo.Open(
+					FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 			{
 				while (stream.Position < amountToCopy)
 				{

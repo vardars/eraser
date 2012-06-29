@@ -49,15 +49,21 @@ namespace Eraser.BlackBox
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BlackBoxMainForm));
 			this.MainLbl = new System.Windows.Forms.Label();
 			this.SubmitBtn = new System.Windows.Forms.Button();
-			this.PostponeBtn = new System.Windows.Forms.Button();
+			this.CancelBtn = new System.Windows.Forms.Button();
 			this.BlackBoxPic = new System.Windows.Forms.PictureBox();
 			this.ReportsLv = new System.Windows.Forms.ListView();
-			this.ReportsLvTimestampColumn = new System.Windows.Forms.ColumnHeader();
-			this.ReportsLvErrorColumn = new System.Windows.Forms.ColumnHeader();
+			this.ReportsLvTimestampColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.ReportsLvErrorColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.ReportsLvStatusColumn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.ReportsMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.DataCollectionPolicyLbl = new System.Windows.Forms.LinkLabel();
 			((System.ComponentModel.ISupportInitialize)(this.BlackBoxPic)).BeginInit();
+			this.ReportsMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MainLbl
@@ -72,12 +78,13 @@ namespace Eraser.BlackBox
 			this.SubmitBtn.UseVisualStyleBackColor = true;
 			this.SubmitBtn.Click += new System.EventHandler(this.SubmitBtn_Click);
 			// 
-			// PostponeBtn
+			// CancelBtn
 			// 
-			resources.ApplyResources(this.PostponeBtn, "PostponeBtn");
-			this.PostponeBtn.Name = "PostponeBtn";
-			this.PostponeBtn.UseVisualStyleBackColor = true;
-			this.PostponeBtn.Click += new System.EventHandler(this.PostponeBtn_Click);
+			resources.ApplyResources(this.CancelBtn, "CancelBtn");
+			this.CancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.CancelBtn.Name = "CancelBtn";
+			this.CancelBtn.UseVisualStyleBackColor = true;
+			this.CancelBtn.Click += new System.EventHandler(this.PostponeBtn_Click);
 			// 
 			// BlackBoxPic
 			// 
@@ -92,7 +99,9 @@ namespace Eraser.BlackBox
 			this.ReportsLv.CheckBoxes = true;
 			this.ReportsLv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.ReportsLvTimestampColumn,
-            this.ReportsLvErrorColumn});
+            this.ReportsLvErrorColumn,
+            this.ReportsLvStatusColumn});
+			this.ReportsLv.ContextMenuStrip = this.ReportsMenuStrip;
 			this.ReportsLv.FullRowSelect = true;
 			this.ReportsLv.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this.ReportsLv.Name = "ReportsLv";
@@ -108,13 +117,41 @@ namespace Eraser.BlackBox
 			// 
 			resources.ApplyResources(this.ReportsLvErrorColumn, "ReportsLvErrorColumn");
 			// 
+			// ReportsLvStatusColumn
+			// 
+			resources.ApplyResources(this.ReportsLvStatusColumn, "ReportsLvStatusColumn");
+			// 
+			// ReportsMenuStrip
+			// 
+			this.ReportsMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deleteToolStripMenuItem});
+			this.ReportsMenuStrip.Name = "ReportsMenuStrip";
+			resources.ApplyResources(this.ReportsMenuStrip, "ReportsMenuStrip");
+			this.ReportsMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.ReportsMenuStrip_Opening);
+			// 
+			// deleteToolStripMenuItem
+			// 
+			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+			resources.ApplyResources(this.deleteToolStripMenuItem, "deleteToolStripMenuItem");
+			this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+			// 
+			// DataCollectionPolicyLbl
+			// 
+			resources.ApplyResources(this.DataCollectionPolicyLbl, "DataCollectionPolicyLbl");
+			this.DataCollectionPolicyLbl.Name = "DataCollectionPolicyLbl";
+			this.DataCollectionPolicyLbl.TabStop = true;
+			this.DataCollectionPolicyLbl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.DataCollectionPolicyLbl_LinkClicked);
+			// 
 			// BlackBoxMainForm
 			// 
+			this.AcceptButton = this.SubmitBtn;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+			this.CancelButton = this.CancelBtn;
+			this.Controls.Add(this.DataCollectionPolicyLbl);
 			this.Controls.Add(this.ReportsLv);
 			this.Controls.Add(this.BlackBoxPic);
-			this.Controls.Add(this.PostponeBtn);
+			this.Controls.Add(this.CancelBtn);
 			this.Controls.Add(this.SubmitBtn);
 			this.Controls.Add(this.MainLbl);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -122,9 +159,11 @@ namespace Eraser.BlackBox
 			this.MinimizeBox = false;
 			this.Name = "BlackBoxMainForm";
 			this.ShowInTaskbar = false;
-			this.TopMost = true;
+			this.Load += new System.EventHandler(this.BlackBoxMainForm_Load);
 			((System.ComponentModel.ISupportInitialize)(this.BlackBoxPic)).EndInit();
+			this.ReportsMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -132,10 +171,14 @@ namespace Eraser.BlackBox
 
 		private System.Windows.Forms.Label MainLbl;
 		private System.Windows.Forms.Button SubmitBtn;
-		private System.Windows.Forms.Button PostponeBtn;
+		private System.Windows.Forms.Button CancelBtn;
 		private System.Windows.Forms.PictureBox BlackBoxPic;
 		private System.Windows.Forms.ListView ReportsLv;
 		private System.Windows.Forms.ColumnHeader ReportsLvTimestampColumn;
 		private System.Windows.Forms.ColumnHeader ReportsLvErrorColumn;
+		private System.Windows.Forms.LinkLabel DataCollectionPolicyLbl;
+		private System.Windows.Forms.ContextMenuStrip ReportsMenuStrip;
+		private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+		private System.Windows.Forms.ColumnHeader ReportsLvStatusColumn;
 	}
 }

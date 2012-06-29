@@ -470,6 +470,23 @@ namespace Eraser.Manager
 					{
 						throw;
 					}
+					catch (NotSupportedException e)
+					{
+						//This is thrown whenever we try to erase files on an unsupported
+						//filesystem.
+						Logger.Log(e.Message, LogLevel.Error);
+					}
+					catch (UnauthorizedAccessException e)
+					{
+						//The OS denied us access to erasing the file.
+						Logger.Log(e.Message, LogLevel.Error);
+					}
+					catch (PathTooLongException e)
+					{
+						//Until we have code to deal with paths using NT names, we can't
+						//do much about it.
+						Logger.Log(e.Message, LogLevel.Error);
+					}
 					catch (SharingViolationException)
 					{
 					}

@@ -153,6 +153,9 @@
   <data name="Processing:" xml:space="preserve">
     <value>Processing:</value>
   </data>
+  <data name="Unknown action {0}" xml:space="preserve">
+    <value>Unknown action {0}</value>
+  </data>
   <data name="Eraser cannot connect to the running instance for erasures." xml:space="preserve">
     <value>Eraser cannot connect to the running instance for erasures.</value>
   </data>
@@ -295,7 +298,7 @@
     <value>Default file erasure method</value>
   </data>
   <data name="Default drive erasure method" xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>Default drive erasure method</value>
   </data>
   <data name="Randomness data source" xml:space="preserve">
     <value>Randomness data source</value>
@@ -316,7 +319,7 @@
     <value>An invalid file erasure method was selected.</value>
   </data>
   <data name="An invalid drive erasure method was selected." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>An invalid drive erasure method was selected.</value>
   </data>
   <data name="An invalid randomness data source was selected." xml:space="preserve">
     <value>An invalid randomness data source was selected.</value>
@@ -334,7 +337,7 @@
     <value>(This erasure type does not have any settings to define.)</value>
   </data>
   <data name="The erasure method selected does not support erasing the erasure target." xml:space="preserve">
-    <value>(Untranslated)</value>
+    <value>The erasure method selected does not support erasing the erasure target.</value>
   </data>
   <data name="{0}, " xml:space="preserve">
     <value>{0}, </value>
@@ -395,5 +398,11 @@
   </data>
   <data name="{0} of {1} downloaded" xml:space="preserve">
     <value>{0} of {1} downloaded</value>
+  </data>
+  <data name="Installation failed with exit code {0}" xml:space="preserve">
+    <value>Installation failed with exit code {0}</value>
+  </data>
+  <data name="Installation cancelled" xml:space="preserve">
+    <value>Installation cancelled</value>
   </data>
 </root>
