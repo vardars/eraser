@@ -127,6 +127,7 @@ namespace Eraser.Manager
 		}
 	}
 
+	[Serializable]
 	public abstract class ExecutorTasksCollection : IList<Task>
 	{
 		/// <summary>
