@@ -67,38 +67,12 @@ namespace Eraser.Manager
 			//Register the server channel.
 			ChannelServices.RegisterChannel(ServerChannel, true);
 
-			// Show the name of the channel.
-			Console.WriteLine("The name of the channel is {0}.",
-				ServerChannel.ChannelName);
-
-			// Show the priority of the channel.
-			Console.WriteLine("The priority of the channel is {0}.",
-				ServerChannel.ChannelPriority);
-
-			// Show the URIs associated with the channel.
-			ChannelDataStore channelData = (ChannelDataStore)
-				ServerChannel.ChannelData;
-			foreach (string uri in channelData.ChannelUris)
-			{
-				Console.WriteLine("The channel URI is {0}.", uri);
-			}
 
 			// Expose an object for remote calls.
 			RemotingConfiguration.RegisterWellKnownServiceType(
 				typeof(DirectExecutor), ServerName,
 				System.Runtime.Remoting.WellKnownObjectMode.Singleton);
 
-			// Parse the channel's URI.
-			string[] urls = ServerChannel.GetUrlsForUri("RemoteObject.rem");
-			if (urls.Length > 0)
-			{
-				string objectUrl = urls[0];
-				string objectUri;
-				string channelUri = ServerChannel.Parse(objectUrl, out objectUri);
-				Console.WriteLine("The object URI is {0}.", objectUri);
-				Console.WriteLine("The channel URI is {0}.", channelUri);
-				Console.WriteLine("The object URL is {0}.", objectUrl);
-			}
 		}
 
 		/// <summary>
