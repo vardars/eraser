@@ -240,11 +240,7 @@ namespace Eraser.Util
 			/// <summary>
 			/// Called when a WM_THEMECHANGED message is sent.
 			/// </summary>
-			public EventHandler<EventArgs> ThemeChanged
-			{
-				get;
-				set;
-			}
+			public event EventHandler<EventArgs> ThemeChanged;
 
 			private bool ThemesActive;
 		}

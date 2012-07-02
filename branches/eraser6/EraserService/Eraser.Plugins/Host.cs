@@ -155,12 +155,12 @@ namespace Eraser.Plugins
 		/// The plugin load event, allowing clients to decide whether to load
 		/// the given plugin.
 		/// </summary>
-		public EventHandler<PluginLoadEventArgs> PluginLoad { get; set; }
+		public event EventHandler<PluginLoadEventArgs> PluginLoad;
 
 		/// <summary>
 		/// The plugin loaded event.
 		/// </summary>
-		public EventHandler<PluginLoadedEventArgs> PluginLoaded { get; set; }
+		public event EventHandler<PluginLoadedEventArgs> PluginLoaded;
 
 		/// <summary>
 		/// Event callback executor for the OnPluginLoad event.
