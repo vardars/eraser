@@ -96,6 +96,7 @@ namespace Eraser.Manager
 			base.Dispose(disposing);
 		}
 
+		#pragma warning disable 642
 		/// <summary>
 		/// Whether an instance of the remote executor server is running.
 		/// </summary>
@@ -122,6 +123,7 @@ namespace Eraser.Manager
 				return !isFirstInstance;
 			}
 		}
+		#pragma warning restore 642
 
 		public override void Run()
 		{
