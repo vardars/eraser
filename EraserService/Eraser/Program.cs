@@ -265,12 +265,11 @@ namespace Eraser
 			return 0;
 		}
 
-		#region Console Program code
 		/// <summary>
 		/// Connects to the running Eraser instance for erasures.
 		/// </summary>
-		/// <returns>The connectin with the remote instance.</returns>
-		private static RemoteExecutorClient CommandConnect()
+		/// <returns>The connection with the remote instance.</returns>
+		private static RemoteExecutorClient ConnectExecutor()
 		{
 			try
 			{
@@ -281,8 +280,10 @@ namespace Eraser
 					//The client cannot connect to the server. This probably means
 					//that the server process isn't running. Start an instance.
 					Process eraserInstance = Process.Start(
-						Assembly.GetExecutingAssembly().Location, "/quiet");
-					eraserInstance.WaitForInputIdle();
+						Path.Combine(
+							Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+							"Eraser.Service.exe")
+						, "/quiet");
 
 					//Wait for the server to be initialised.
 					for (int i = 0; !result.IsConnected; ++i)
@@ -312,6 +313,7 @@ namespace Eraser
 			}
 		}
 
+		#region Console Program code
 		/// <summary>
 		/// Runs Eraser as a command-line application.
 		/// </summary>
@@ -473,7 +475,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// <param name="arg">The command line parameters passed to the program.</param>
 		private static void CommandAddTask(ConsoleArguments arg)
 		{
-			using (eraserClient = CommandConnect())
+			using (eraserClient = ConnectExecutor())
 			{
 				TaskArguments arguments = (TaskArguments)arg;
 				Task task = TaskFromCommandLine(arguments);
@@ -597,7 +599,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		private static void CommandImportTaskList(ConsoleArguments args)
 		{
 			//Import the task list
-			using (eraserClient = CommandConnect())
+			using (eraserClient = ConnectExecutor())
 				foreach (string path in args.PositionalArguments)
 					using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
 						eraserClient.Tasks.LoadFromStream(stream);
@@ -638,7 +640,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			}
 
 			//Then queue for erasure.
-			using (eraserClient = CommandConnect())
+			using (eraserClient = ConnectExecutor())
 				eraserClient.Tasks.Add(task);
 		}
 		#endregion
@@ -672,7 +674,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		private static void OnGUIInitInstance(object sender, InitInstanceEventArgs e)
 		{
 			GuiProgram program = (GuiProgram)sender;
-			eraserClient = new RemoteExecutorClient();
+			eraserClient = ConnectExecutor();
 			Application.SafeTopLevelCaptionFormat = S._("Eraser");
 
 			//Decide whether to display any UI.
