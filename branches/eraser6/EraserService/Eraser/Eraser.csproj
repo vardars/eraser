@@ -384,6 +384,10 @@
       <Project>{59F7ED0F-3589-4112-B612-4A9A6588F4A0}</Project>
       <Name>Eraser.Plugins</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Eraser.Service\Eraser.Service.csproj">
+      <Project>{62840616-03D1-45E8-A29B-A8EDF883A32E}</Project>
+      <Name>Eraser.Service</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Eraser.Util\Eraser.Util.csproj">
       <Project>{D083E1A8-3A4C-4683-9B3F-D5FEDE61B9C9}</Project>
       <Name>Eraser.Util</Name>
