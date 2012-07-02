@@ -186,9 +186,6 @@
   <data name="The provided Erasure Method '{0}' does not exist." xml:space="preserve">
     <value>(Untranslated)</value>
   </data>
-  <data name="Could not load task list. All task entries have been lost. The error returned was: {0}" xml:space="preserve">
-    <value>Impossibile caricare la lista delle operazioni. Tutte i relativi riferimenti sono stati persi. L'errore è stato: {0}</value>
-  </data>
   <data name="Another instance of Eraser is already running but it is running with higher privileges than this instance of Eraser.\n\nEraser will now exit." xml:space="preserve">
     <value>Un'altra occorrenza di Eraser è già in esecuzione, ma con privilegi più elevati di questa.\n\nEraser adesso si chiuderà.</value>
   </data>
