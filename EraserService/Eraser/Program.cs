@@ -237,7 +237,7 @@ namespace Eraser
 			Application.SetCompatibleTextRenderingDefault(false);
 
 			//Load the Eraser.Manager library
-			using (ManagerLibrary library = new ManagerLibrary(Settings.Get()))
+			using (ManagerLibrary library = new ManagerLibrary(Eraser.Service.Settings.Get()))
 			{
 				//Set our UI language
 				EraserSettings settings = EraserSettings.Get();
@@ -473,12 +473,14 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// <param name="arg">The command line parameters passed to the program.</param>
 		private static void CommandAddTask(ConsoleArguments arg)
 		{
-			TaskArguments arguments = (TaskArguments)arg;
-			Task task = TaskFromCommandLine(arguments);
-
-			//Send the task out.
 			using (eraserClient = CommandConnect())
+			{
+				TaskArguments arguments = (TaskArguments)arg;
+				Task task = TaskFromCommandLine(arguments);
+
+				//Send the task out.
 				eraserClient.Tasks.Add(task);
+			}
 		}
 
 		/// <summary>
@@ -770,25 +772,27 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// <summary>
 		/// Path to the Eraser application data path.
 		/// </summary>
+		[Obsolete]
 		public static readonly string AppDataPath = Path.Combine(Environment.GetFolderPath(
 			Environment.SpecialFolder.LocalApplicationData), @"Eraser 6");
 
 		/// <summary>
 		/// File name of the Eraser task list.
 		/// </summary>
-		private const string TaskListFileName = @"Task List.ersy";
+		[Obsolete]
+		private const string TaskListFileName = Service.Program.TaskListFileName;
 
 		/// <summary>
 		/// Path to the Eraser task list.
 		/// </summary>
-		public static readonly string TaskListPath = Path.Combine(AppDataPath, TaskListFileName);
+		[Obsolete]
+		public static readonly string TaskListPath = Service.Program.TaskListPath;
 
 		/// <summary>
 		/// Path to the Eraser settings key (relative to HKCU)
 		/// </summary>
-		public const string SettingsPath = @"SOFTWARE\Eraser\Eraser 6";
-
-		public static IEnumerable<IErasureTarget> ErasureTargetRegistrar { get; set; }
+		[Obsolete]
+		public const string SettingsPath = Service.Program.SettingsPath;
 	}
 
 	class Win32Window : IWin32Window
