@@ -167,7 +167,7 @@ namespace Eraser.Manager
 		{
 			//Create the channel.
 			Dictionary<string, string> properties = new Dictionary<string, string>();
-			properties["portName"] = RemoteExecutorServer.ServerID;
+			properties["portName"] = RemoteExecutorServer.ServerID + Guid.NewGuid().ToString();
 			BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
 			serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
 			BinaryClientFormatterSinkProvider clientProvider = new BinaryClientFormatterSinkProvider();
