@@ -36,37 +36,52 @@ namespace Eraser.Service
 		static void Main(string[] args)
 		{
 			using (ManagerLibrary library = new ManagerLibrary(Settings.Get()))
-			using (RemoteExecutorServer eraserClient = new RemoteExecutorServer())
 			{
-				//Load the task list
+				RemoteExecutorServer eraserClient = null;
 				try
 				{
-					if (File.Exists(TaskListPath))
+					eraserClient = new RemoteExecutorServer();
+				}
+				catch (InvalidOperationException)
+				{
+					//We already have another instance running.
+					return;
+				}
+
+				try
+				{
+					//Load the task list
+					try
 					{
-						using (FileStream stream = new FileStream(TaskListPath, FileMode.Open,
-							FileAccess.Read, FileShare.Read))
+						if (File.Exists(TaskListPath))
 						{
-							eraserClient.Tasks.LoadFromStream(stream);
+							using (FileStream stream = new FileStream(TaskListPath, FileMode.Open,
+								FileAccess.Read, FileShare.Read))
+							{
+								eraserClient.Tasks.LoadFromStream(stream);
+							}
 						}
 					}
+					catch (InvalidDataException)
+					{
+						File.Delete(TaskListPath);
+					}
+
+					//Run the eraser client.
+					eraserClient.Run();
+
+					Console.ReadKey();
+
+					//Save the task list
+					if (!Directory.Exists(Program.AppDataPath))
+						Directory.CreateDirectory(Program.AppDataPath);
+					eraserClient.Tasks.SaveToFile(TaskListPath);
 				}
-				catch (InvalidDataException)
+				finally
 				{
-					File.Delete(TaskListPath);
+					//Dispose the Eraser Executor instance
+					eraserClient.Dispose();
 				}
-
-				//Run the eraser client.
-				eraserClient.Run();
-
-				Console.ReadKey();
-
-				//Save the task list
-				if (!Directory.Exists(Program.AppDataPath))
-					Directory.CreateDirectory(Program.AppDataPath);
-				eraserClient.Tasks.SaveToFile(TaskListPath);
-
-				//Dispose the eraser executor instance
-				eraserClient.Dispose();
 			}
 		}
 

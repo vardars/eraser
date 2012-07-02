@@ -29,6 +29,9 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Serialization.Formatters;
 using System.Security.Principal;
+using System.Threading;
+
+using Eraser.Util;
 
 namespace Eraser.Manager
 {
@@ -39,17 +42,33 @@ namespace Eraser.Manager
 	public class RemoteExecutorServer : DirectExecutor
 	{
 		/// <summary>
+		/// Our Remote Server ID which will be used for obtaining a named mutex.
+		/// </summary>
+		public const string ServerID =
+			"Eraser-FB6C5A7D-E47F-475f-ABA4-58F4D24BB67E-RemoteExecutor-";
+
+		/// <summary>
 		/// Our Remote Server name, prevent collisions!
 		/// </summary>
 		public static readonly string ServerName =
-			"Eraser-FB6C5A7D-E47F-475f-ABA4-58F4D24BB67E-RemoteExecutor-" +
-			WindowsIdentity.GetCurrent().User.ToString();
+			ServerID + WindowsIdentity.GetCurrent().User.ToString();
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		public RemoteExecutorServer()
 		{
+			//Only one server can exist per computer at any one time.
+			bool isFirstInstance;
+			Mutex globalMutex = new Mutex(true, ServerID, out isFirstInstance);
+			if (!isFirstInstance)
+			{
+				throw new InvalidOperationException(S._("Only one RemoteExecutorServer can be " +
+					"instantiated at any one time on one computer."));
+			}
+			GlobalMutex = globalMutex;
+
+			//Create the server.
 			Dictionary<string, string> properties = new Dictionary<string, string>();
 			properties["portName"] = "localhost:9090";
 
@@ -60,9 +79,41 @@ namespace Eraser.Manager
 
 		protected override void Dispose(bool disposing)
 		{
-			ServerChannel.StopListening(null);
+			if (disposing)
+			{
+				ServerChannel.StopListening(null);
+				GlobalMutex.Close();
+				GlobalMutex = null;
+			}
 
 			base.Dispose(disposing);
+		}
+
+		/// <summary>
+		/// Whether an instance of the remote executor server is running.
+		/// </summary>
+		public static bool IsRunning
+		{
+			get
+			{
+				//Do we already have the global mutex?
+				if (GlobalMutex != null)
+					return true;
+
+				//Try to obtain our mutex on the port.
+				bool isFirstInstance = false;
+				try
+				{
+					using (new Mutex(true, ServerID, out isFirstInstance))
+						;
+				}
+				catch (UnauthorizedAccessException)
+				{
+					isFirstInstance = false;
+				}
+
+				return !isFirstInstance;
+			}
 		}
 
 		public override void Run()
@@ -84,6 +135,11 @@ namespace Eraser.Manager
 		/// The IPC Channel used for communications.
 		/// </summary>
 		private IpcChannel ServerChannel;
+
+		/// <summary>
+		/// The global mutex to allow only one server instance to run on a machine at any one time.
+		/// </summary>
+		private static Mutex GlobalMutex;
 	}
 
 	/// <summary>
