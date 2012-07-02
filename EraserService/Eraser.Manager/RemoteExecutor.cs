@@ -27,8 +27,8 @@ using System.Collections.Generic;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
+using System.Runtime.Serialization.Formatters;
 using System.Security.Principal;
-//using System.Security.AccessControl;
 
 namespace Eraser.Manager
 {
@@ -68,11 +68,11 @@ namespace Eraser.Manager
 			ChannelServices.RegisterChannel(ServerChannel, true);
 
 
-			// Expose an object for remote calls.
-			RemotingConfiguration.RegisterWellKnownServiceType(
-				typeof(DirectExecutor), ServerName,
-				System.Runtime.Remoting.WellKnownObjectMode.Singleton);
+			//Expose the DirectExecutor object for remote calls.
+			RemotingServices.Marshal(this, ServerName);
 
+			//Expose a factory for Task objects.
+			RemotingConfiguration.RegisterActivatedServiceType(typeof(Task));
 		}
 
 		/// <summary>
@@ -82,25 +82,29 @@ namespace Eraser.Manager
 	}
 
 	/// <summary>
-	/// The RemoteExecutorServer class is the client half required for remote execution
+	/// The RemoteExecutorClient class is the client half required for remote execution
 	/// of tasks, sending requests to the server running on the local computer.
 	/// </summary>
+	/// <remarks>If a RemoteExecutorClient object has been constructed, all Task objects can
+	/// only be used with RemoteExecutorServer.
+	/// 
+	/// TODO: For this restriction to be lifted, every Executor needs to have a factory method
+	/// to get the Task type for each executor.
+	/// See http://msdn.microsoft.com/en-us/library/ff650208.aspx
+	/// </remarks>
 	public class RemoteExecutorClient : Executor
 	{
 		public RemoteExecutorClient()
 		{
-			// Create the channel.
+			//Create the channel.
 			IpcChannel channel = new IpcChannel();
 
-			// Register the channel.
+			//Register the channel.
 			ChannelServices.RegisterChannel(channel, true);
 
-			// Register as client for remote object.
-			WellKnownClientTypeEntry remoteType = new WellKnownClientTypeEntry(
-				typeof(RemoteExecutorServer),
-				"ipc://localhost:9090/" + RemoteExecutorServer.ServerName);
-			RemotingConfiguration.RegisterWellKnownClientType(remoteType);
-
+			//Register the Client-activated Task class.
+			RemotingConfiguration.RegisterActivatedClientType(typeof(Task),
+				"ipc://localhost:9090");
 			Run();
 		}
 
@@ -118,14 +122,11 @@ namespace Eraser.Manager
 
 			try
 			{
+				//TODO: is there a better way to verify that we can connect to our Remote instance?
 				//Create an instance of the remote object.
-				DirectExecutor client = (DirectExecutor)Activator.GetObject(typeof(DirectExecutor),
+				Task task2 = new Task();
+				Client = (DirectExecutor)Activator.GetObject(typeof(DirectExecutor),
 					"ipc://localhost:9090/" + RemoteExecutorServer.ServerName);
-
-				//Try to connect to the server instance.
-				//TODO: is there a better way?
-				int x = client.Tasks.Count;
-				Client = client;
 				IsConnected = true;
 			}
 			catch (RemotingException)
@@ -152,7 +153,7 @@ namespace Eraser.Manager
 		{
 			Client.QueueRestartTasks();
 		}
-
+		
 		internal override bool IsTaskQueued(Task task)
 		{
 			return Client.IsTaskQueued(task);
