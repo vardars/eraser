@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
+using System.Runtime.Remoting.Messaging
 using System.Runtime.Serialization.Formatters;
 using System.Security.Principal;
 using System.Threading;
@@ -236,11 +237,13 @@ namespace Eraser.Manager
 			return Client.IsTaskQueued(task);
 		}
 
+		[OneWay]
 		public void OnTaskAdded(object sender, TaskEventArgs e)
 		{
 			OnTaskAdded(e);
 		}
 
+		[OneWay]
 		public void OnTaskDeleted(object sender, TaskEventArgs e)
 		{
 			OnTaskDeleted(e);
