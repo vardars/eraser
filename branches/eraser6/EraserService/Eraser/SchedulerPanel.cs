@@ -129,7 +129,7 @@ namespace Eraser
 		/// <summary>
 		/// Handles the Task Added event.
 		/// </summary>
-		private void TaskAdded(object sender, TaskEventArgs e)
+		public void TaskAdded(object sender, TaskEventArgs e)
 		{
 			if (InvokeRequired)
 			{
@@ -171,7 +171,7 @@ namespace Eraser
 		/// <summary>
 		/// Handles the task deleted event.
 		/// </summary>
-		private void TaskDeleted(object sender, TaskEventArgs e)
+		public void TaskDeleted(object sender, TaskEventArgs e)
 		{
 			if (InvokeRequired)
 			{
@@ -193,7 +193,7 @@ namespace Eraser
 		/// Handles the task start event.
 		/// </summary>
 		/// <param name="e">The task event object.</param>
-		void TaskStarted(object sender, EventArgs e)
+		public void TaskStarted(object sender, EventArgs e)
 		{
 			if (InvokeRequired)
 			{
@@ -246,7 +246,7 @@ namespace Eraser
 		/// <summary>
 		/// Handles the task completion event.
 		/// </summary>
-		void TaskFinished(object sender, EventArgs e)
+		public void TaskFinished(object sender, EventArgs e)
 		{
 			if (InvokeRequired)
 			{
