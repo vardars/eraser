@@ -41,6 +41,8 @@ namespace Eraser.Manager
 
 		protected virtual void Dispose(bool disposing)
 		{
+			if (Instance == this)
+				Instance = null;
 		}
 
 		public void Dispose()
@@ -49,6 +51,17 @@ namespace Eraser.Manager
 			GC.SuppressFinalize(this);
 		}
 		#endregion
+
+		/// <summary>
+		/// Constructor.
+		/// 
+		/// We should only have one instance of the Executor object at any one time. We do not
+		/// enforce this at the moment, however, but this may change in future.
+		/// </summary>
+		protected Executor()
+		{
+			Instance = this;
+		}
 
 		/// <summary>
 		/// Starts the execution of tasks queued.
@@ -124,6 +137,20 @@ namespace Eraser.Manager
 		{
 			if (TaskDeleted != null)
 				TaskDeleted(this, e);
+		}
+
+		/// <summary>
+		/// The current Executor instance.
+		/// 
+		/// This is kept only for the Task object to check that it is not called before an
+		/// Executor is constructed (Remoting API constraint: if a client-activated type has
+		/// been constructed before being registered with Remoting, subsequent objects will
+		/// not be client-activated.)
+		/// </summary>
+		internal static Executor Instance
+		{
+			get;
+			private set;
 		}
 	}
 

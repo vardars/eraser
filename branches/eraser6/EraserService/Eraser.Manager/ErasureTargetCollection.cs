@@ -45,7 +45,7 @@ namespace Eraser.Manager
 		                                   ISerializable, IXmlSerializable
 	{
 		#region Constructors
-		public ErasureTargetCollection()
+		private ErasureTargetCollection()
 		{
 			this.list = new List<IErasureTarget>();
 		}

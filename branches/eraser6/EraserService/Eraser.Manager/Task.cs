@@ -28,6 +28,7 @@ using System.Security.Permissions;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Threading;
+using System.Diagnostics;
 
 using Eraser.Util;
 using Eraser.Util.ExtensionMethods;
@@ -39,6 +40,8 @@ namespace Eraser.Manager
 	/// <summary>
 	/// Deals with an erase task.
 	/// </summary>
+	/// <remarks>Due to the Remoting API's constraints, a Task object can only be constructed
+	/// after an <see cref="Executor"/> object is constructed.</remarks>
 	[Serializable]
 	public class Task : MarshalByRefObject, ITask
 	{
@@ -278,6 +281,10 @@ namespace Eraser.Manager
 		/// </summary>
 		public Task()
 		{
+			if (Eraser.Manager.Executor.Instance == null)
+				throw new InvalidOperationException("Task objects can be created only after " +
+					"an Executor instance is constructed.");
+
 			Name = string.Empty;
 			Targets = new ErasureTargetCollection(this);
 			Schedule = Schedule.RunNow;
