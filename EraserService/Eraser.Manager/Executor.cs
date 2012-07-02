@@ -114,7 +114,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The task added event object.
 		/// </summary>
-		public EventHandler<TaskEventArgs> TaskAdded { get; set; }
+		public event EventHandler<TaskEventArgs> TaskAdded;
 
 		/// <summary>
 		/// Helper function for the task added event.
@@ -128,7 +128,7 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The task added event object.
 		/// </summary>
-		public EventHandler<TaskEventArgs> TaskDeleted { get; set; }
+		public event EventHandler<TaskEventArgs> TaskDeleted;
 
 		/// <summary>
 		/// Helper function for the task deleted event.

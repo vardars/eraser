@@ -59,13 +59,13 @@ namespace Eraser.Plugins
 		/// The event raised when an <see cref="IRegisterable"/> object is
 		/// registered.
 		/// </summary>
-		EventHandler<EventArgs> Registered { get; set; }
+		event EventHandler<EventArgs> Registered;
 
 		/// <summary>
 		/// The event raised when an <see cref="IRegisterable"/> object is
 		/// unregistered.
 		/// </summary>
-		EventHandler<EventArgs> Unregistered { get; set; }
+		event EventHandler<EventArgs> Unregistered;
 	}
 
 	/// <summary>
@@ -253,9 +253,9 @@ namespace Eraser.Plugins
 			}
 		}
 
-		public EventHandler<EventArgs> Registered { get; set; }
+		public event EventHandler<EventArgs> Registered;
 
-		public EventHandler<EventArgs> Unregistered { get; set; }
+		public event EventHandler<EventArgs> Unregistered;
 
 		#endregion
 
@@ -453,9 +453,9 @@ namespace Eraser.Plugins
 			return result;
 		}
 
-		public EventHandler<EventArgs> Registered { get; set; }
+		public event EventHandler<EventArgs> Registered;
 
-		public EventHandler<EventArgs> Unregistered { get; set; }
+		public event EventHandler<EventArgs> Unregistered;
 
 		#endregion
 
