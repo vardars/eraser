@@ -473,14 +473,12 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// <param name="arg">The command line parameters passed to the program.</param>
 		private static void CommandAddTask(ConsoleArguments arg)
 		{
-			using (eraserClient = CommandConnect())
-			{
-				TaskArguments arguments = (TaskArguments)arg;
-				Task task = TaskFromCommandLine(arguments);
+			TaskArguments arguments = (TaskArguments)arg;
+			Task task = TaskFromCommandLine(arguments);
 
-				//Send the task out.
+			//Send the task out.
+			using (eraserClient = CommandConnect())
 				eraserClient.Tasks.Add(task);
-			}
 		}
 
 		/// <summary>
