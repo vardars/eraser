@@ -625,6 +625,7 @@ namespace Eraser.Manager
 	/// <summary>
 	/// A base event class for all event arguments involving a task.
 	/// </summary>
+	[Serializable]
 	public class TaskEventArgs : EventArgs
 	{
 		/// <summary>
