@@ -672,31 +672,8 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		private static void OnGUIInitInstance(object sender, InitInstanceEventArgs e)
 		{
 			GuiProgram program = (GuiProgram)sender;
-			eraserClient = new RemoteExecutorServer();
+			eraserClient = new RemoteExecutorClient();
 			Application.SafeTopLevelCaptionFormat = S._("Eraser");
-
-			//Load the task list
-			try
-			{
-				if (File.Exists(TaskListPath))
-				{
-					using (FileStream stream = new FileStream(TaskListPath, FileMode.Open,
-						FileAccess.Read, FileShare.Read))
-					{
-						eraserClient.Tasks.LoadFromStream(stream);
-					}
-				}
-			}
-			catch (InvalidDataException ex)
-			{
-				File.Delete(TaskListPath);
-				MessageBox.Show(S._("Could not load task list. All task entries have " +
-					"been lost. The error returned was: {0}", ex.Message), S._("Eraser"),
-					MessageBoxButtons.OK, MessageBoxIcon.Error,
-					MessageBoxDefaultButton.Button1,
-					Localisation.IsRightToLeft(null) ?
-						MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
-			}
 
 			//Decide whether to display any UI.
 			GuiArguments arguments = new GuiArguments();
@@ -744,13 +721,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// <param name="e">Event argument.</param>
 		private static void OnGUIExitInstance(object sender, EventArgs e)
 		{
-			//Save the task list
-			if (!Directory.Exists(Program.AppDataPath))
-				Directory.CreateDirectory(Program.AppDataPath);
-			eraserClient.Tasks.SaveToFile(TaskListPath);
-
-			//Dispose the eraser executor instance
-			eraserClient.Dispose();
+			
 		}
 		#endregion
 
@@ -768,31 +739,6 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// The global Executor instance.
 		/// </summary>
 		public static Executor eraserClient;
-
-		/// <summary>
-		/// Path to the Eraser application data path.
-		/// </summary>
-		[Obsolete]
-		public static readonly string AppDataPath = Path.Combine(Environment.GetFolderPath(
-			Environment.SpecialFolder.LocalApplicationData), @"Eraser 6");
-
-		/// <summary>
-		/// File name of the Eraser task list.
-		/// </summary>
-		[Obsolete]
-		private const string TaskListFileName = Service.Program.TaskListFileName;
-
-		/// <summary>
-		/// Path to the Eraser task list.
-		/// </summary>
-		[Obsolete]
-		public static readonly string TaskListPath = Service.Program.TaskListPath;
-
-		/// <summary>
-		/// Path to the Eraser settings key (relative to HKCU)
-		/// </summary>
-		[Obsolete]
-		public const string SettingsPath = Service.Program.SettingsPath;
 	}
 
 	class Win32Window : IWin32Window
