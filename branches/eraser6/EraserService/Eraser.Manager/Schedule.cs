@@ -87,6 +87,16 @@ namespace Eraser.Manager
 			{
 				return string.Empty;
 			}
+
+			public override bool Equals(object obj)
+			{
+				return obj is RunManuallySchedule;
+			}
+
+			public override int GetHashCode()
+			{
+				return -1;
+			}
 		}
 
 		[Serializable]
@@ -122,6 +132,16 @@ namespace Eraser.Manager
 			public override string ToString()
 			{
 				return string.Empty;
+			}
+
+			public override bool Equals(object obj)
+			{
+				return obj is RunNowSchedule;
+			}
+
+			public override int GetHashCode()
+			{
+				return -2;
 			}
 		}
 
@@ -159,6 +179,16 @@ namespace Eraser.Manager
 			{
 				return S._("Running on restart");
 			}
+
+			public override bool Equals(object obj)
+			{
+				return obj is RunOnRestartSchedule;
+			}
+
+			public override int GetHashCode()
+			{
+				return -3;
+			}
 		}
 		#endregion
 
@@ -167,6 +197,29 @@ namespace Eraser.Manager
 		/// the schedule for use in user interface elements.
 		/// </summary>
 		public abstract override string ToString();
+
+		/// <summary>
+		/// Comparison operator. This allows us to compare against our constants.
+		/// </summary>
+		public static bool operator==(Schedule lhs, Schedule rhs)
+		{
+			return lhs.Equals(rhs);
+		}
+
+		public static bool operator!=(Schedule lhs, Schedule rhs)
+		{
+			return !(lhs == rhs);
+		}
+		
+		public override bool Equals(object obj)
+		{
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
 		/// <summary>
 		/// The owner of this schedule item.
