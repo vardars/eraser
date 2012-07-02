@@ -57,7 +57,7 @@ namespace Eraser
 			LoadSettings();
 		}
 
-		private void OnNewPluginLoaded(object sender, PluginLoadedEventArgs e)
+		public void OnNewPluginLoaded(object sender, PluginLoadedEventArgs e)
 		{
 			ListViewItem item = new ListViewItem();
 			if (e.Plugin.Loaded)
@@ -88,7 +88,7 @@ namespace Eraser
 			pluginsManager.Items.Add(item);
 		}
 
-		private void OnMethodRegistered(object sender, EventArgs e)
+		public void OnMethodRegistered(object sender, EventArgs e)
 		{
 			IErasureMethod method = (IErasureMethod)sender;
 			eraseFilesMethod.Items.Add(method);
@@ -96,7 +96,7 @@ namespace Eraser
 				eraseDriveMethod.Items.Add(method);
 		}
 
-		private void OnMethodUnregistered(object sender, EventArgs e)
+		public void OnMethodUnregistered(object sender, EventArgs e)
 		{
 			IErasureMethod method = (IErasureMethod)sender;
 			foreach (IErasureMethod obj in eraseFilesMethod.Items)

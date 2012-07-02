@@ -62,12 +62,12 @@ namespace Eraser
 			//Register our event handler to get live log messages
 			if (Task.Log.Count > 0)
 				Task.Log.Last().Chain(this);
-			Task.TaskStarted += task_TaskStarted;
+			Task.TaskStarted += OnTaskStarted;
 		}
 
 		private void LogForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			Task.TaskStarted -= task_TaskStarted;
+			Task.TaskStarted -= OnTaskStarted;
 			if (Task.Log.Count > 0)
 				Task.Log.Last().Unchain(this);
 		}
@@ -77,13 +77,13 @@ namespace Eraser
 			RefreshMessages();
 		}
 
-		private void task_TaskStarted(object sender, EventArgs e)
+		public void OnTaskStarted(object sender, EventArgs e)
 		{
 			if (IsDisposed || !IsHandleCreated)
 				return;
 			if (InvokeRequired)
 			{
-				Invoke((EventHandler<EventArgs>)task_TaskStarted, sender, e);
+				Invoke((EventHandler<EventArgs>)OnTaskStarted, sender, e);
 				return;
 			}
 

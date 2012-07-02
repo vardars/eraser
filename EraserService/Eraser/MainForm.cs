@@ -154,7 +154,7 @@ namespace Eraser
 				ShowNextNotification();
 		}
 
-		private void Notifier_Registered(object sender, EventArgs e)
+		public void Notifier_Registered(object sender, EventArgs e)
 		{
 			((INotifier)sender).Sink = this;
 		}
@@ -446,19 +446,19 @@ namespace Eraser
 		}
 
 		#region Task processing code (for notification area animation)
-		void OnTaskAdded(object sender, TaskEventArgs e)
+		public void OnTaskAdded(object sender, TaskEventArgs e)
 		{
 			e.Task.TaskStarted += OnTaskProcessing;
 			e.Task.TaskFinished += OnTaskProcessed;
 		}
 
-		void OnTaskDeleted(object sender, TaskEventArgs e)
+		public void OnTaskDeleted(object sender, TaskEventArgs e)
 		{
 			e.Task.TaskStarted -= OnTaskProcessing;
 			e.Task.TaskFinished -= OnTaskProcessed;
 		}
 
-		void OnTaskProcessing(object sender, EventArgs e)
+		public void OnTaskProcessing(object sender, EventArgs e)
 		{
 			if (InvokeRequired)
 			{
@@ -476,7 +476,7 @@ namespace Eraser
 			notificationIconTimer.Enabled = true;
 		}
 
-		void OnTaskProcessed(object sender, EventArgs e)
+		public void OnTaskProcessed(object sender, EventArgs e)
 		{
 			if (InvokeRequired)
 			{

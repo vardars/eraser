@@ -49,7 +49,7 @@ namespace Eraser
 
 			//Register the event handlers
 			jobTitle.Text = task.ToString();
-			task.TaskFinished += task_TaskFinished;
+			task.TaskFinished += OnTaskFinished;
 
 			//Set the current progress
 			UpdateProgress();
@@ -57,7 +57,7 @@ namespace Eraser
 
 		private void ProgressForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			task.TaskFinished -= task_TaskFinished;
+			task.TaskFinished -= OnTaskFinished;
 		}
 
 		private void progressTimer_Tick(object sender, EventArgs e)
@@ -65,13 +65,13 @@ namespace Eraser
 			UpdateProgress();
 		}
 
-		private void task_TaskFinished(object sender, EventArgs e)
+		public void OnTaskFinished(object sender, EventArgs e)
 		{
 			if (IsDisposed || !IsHandleCreated)
 				return;
 			if (InvokeRequired)
 			{
-				Invoke((EventHandler)task_TaskFinished, sender, e);
+				Invoke((EventHandler)OnTaskFinished, sender, e);
 				return;
 			}
 
