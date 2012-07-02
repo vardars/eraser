@@ -54,6 +54,9 @@
 						Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\Eraser.exe"
 						Type="string" Value="[!EraserExe]" />
 
+					<File Id="EraserServiceExe" Name="Eraser.Service.exe" Source="..\bin\Release\Eraser.Service.exe"
+						  ProcessorArchitecture="msil" />
+
 					<File Id="Alglib" Name="alglibnet2.dll" Source="..\bin\Release\alglibnet2.dll"
 						ProcessorArchitecture="msil" />
 					<File Id="BevelLine" Name="BevelLine.dll" Source="..\bin\Release\BevelLine.dll"
@@ -93,7 +96,7 @@
 					<!-- Start Eraser when Windows starts -->
 					<RegistryValue Id="EraserStartup" Root="HKLM"
 						Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Run" Name="Eraser"
-						Value="&quot;[!EraserExe]&quot; /atRestart" Type="string" />
+						Value="&quot;[!EraserServiceExe]&quot; /atRestart" Type="string" />
 					
 					<!-- Register the ersy extension with Eraser -->
 					<RegistryValue Id="EraserErsyFileExtension" Root="HKCR"
