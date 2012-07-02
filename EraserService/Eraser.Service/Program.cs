@@ -38,11 +38,41 @@ namespace Eraser.Service
 			using (ManagerLibrary library = new ManagerLibrary(Settings.Get()))
 			using (RemoteExecutorServer eraserClient = new RemoteExecutorServer())
 			{
+				//Load the task list
+				try
+				{
+					if (File.Exists(TaskListPath))
+					{
+						using (FileStream stream = new FileStream(TaskListPath, FileMode.Open,
+							FileAccess.Read, FileShare.Read))
+						{
+							eraserClient.Tasks.LoadFromStream(stream);
+						}
+					}
+				}
+				catch (InvalidDataException ex)
+				{
+					File.Delete(TaskListPath);
+					MessageBox.Show(S._("Could not load task list. All task entries have " +
+						"been lost. The error returned was: {0}", ex.Message), S._("Eraser"),
+						MessageBoxButtons.OK, MessageBoxIcon.Error,
+						MessageBoxDefaultButton.Button1,
+						Localisation.IsRightToLeft(null) ?
+							MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
+				}
 
 				//Run the eraser client.
 				eraserClient.Run();
 
 				Console.ReadKey();
+
+				//Save the task list
+				if (!Directory.Exists(Program.AppDataPath))
+					Directory.CreateDirectory(Program.AppDataPath);
+				eraserClient.Tasks.SaveToFile(TaskListPath);
+
+				//Dispose the eraser executor instance
+				eraserClient.Dispose();
 			}
 		}
 
