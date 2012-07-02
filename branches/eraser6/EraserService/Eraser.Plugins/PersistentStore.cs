@@ -48,7 +48,8 @@ namespace Eraser.Plugins
 		/// to the value.</param>
 		/// <param name="defaultValue">The default to return if the no data is assocated
 		/// with the given setting.</param>
-		/// <returns>The value stored in the backend, or null if none exists.</returns>
+		/// <returns>The value stored in the backend, or null if none exists or if the data
+		/// stored is invalid/corrupt.</returns>
 		public abstract T GetValue<T>(string name, T defaultValue);
 
 		/// <summary>
