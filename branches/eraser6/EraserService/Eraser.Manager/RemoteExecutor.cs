@@ -30,6 +30,7 @@ using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Serialization.Formatters;
 using System.Security.Principal;
 using System.Threading;
+using System.Globalization;
 
 using Eraser.Util;
 
@@ -54,6 +55,11 @@ namespace Eraser.Manager
 			ServerID + WindowsIdentity.GetCurrent().User.ToString();
 
 		/// <summary>
+		/// The name of the Executor object, needed when retrieving the global instance.
+		/// </summary>
+		public const string ExecutorName = "Executor.rem";
+
+		/// <summary>
 		/// Constructor.
 		/// </summary>
 		public RemoteExecutorServer()
@@ -70,11 +76,12 @@ namespace Eraser.Manager
 
 			//Create the server.
 			Dictionary<string, string> properties = new Dictionary<string, string>();
-			properties["portName"] = "localhost:9090";
+			properties["portName"] = ServerName;
 
-			BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
-			provider.TypeFilterLevel = TypeFilterLevel.Full;
-			ServerChannel = new IpcChannel(properties, null, provider);
+			BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
+			serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
+			BinaryClientFormatterSinkProvider clientProvider = new BinaryClientFormatterSinkProvider();
+			ServerChannel = new IpcChannel(properties, clientProvider, serverProvider);
 		}
 
 		protected override void Dispose(bool disposing)
@@ -123,9 +130,8 @@ namespace Eraser.Manager
 			//Register the server channel.
 			ChannelServices.RegisterChannel(ServerChannel, true);
 
-
 			//Expose the DirectExecutor object for remote calls.
-			RemotingServices.Marshal(this, ServerName);
+			RemotingServices.Marshal(this, ExecutorName);
 
 			//Expose a factory for Task objects.
 			RemotingConfiguration.RegisterActivatedServiceType(typeof(Task));
@@ -158,14 +164,19 @@ namespace Eraser.Manager
 		public RemoteExecutorClient()
 		{
 			//Create the channel.
-			IpcChannel channel = new IpcChannel();
+			Dictionary<string, string> properties = new Dictionary<string, string>();
+			properties["portName"] = RemoteExecutorServer.ServerID;
+			BinaryServerFormatterSinkProvider serverProvider = new BinaryServerFormatterSinkProvider();
+			serverProvider.TypeFilterLevel = TypeFilterLevel.Full;
+			BinaryClientFormatterSinkProvider clientProvider = new BinaryClientFormatterSinkProvider();
+			IpcChannel channel = new IpcChannel(properties, clientProvider, serverProvider);
 
 			//Register the channel.
 			ChannelServices.RegisterChannel(channel, true);
 
 			//Register the Client-activated Task class.
 			RemotingConfiguration.RegisterActivatedClientType(typeof(Task),
-				"ipc://localhost:9090");
+				"ipc://" + RemoteExecutorServer.ServerName);
 			Run();
 		}
 
@@ -187,7 +198,8 @@ namespace Eraser.Manager
 				//Create an instance of the remote object.
 				Task task2 = new Task();
 				Client = (DirectExecutor)Activator.GetObject(typeof(DirectExecutor),
-					"ipc://localhost:9090/" + RemoteExecutorServer.ServerName);
+					string.Format(CultureInfo.InvariantCulture, "ipc://{0}/{1}",
+						RemoteExecutorServer.ServerName, RemoteExecutorServer.ExecutorName));
 				IsConnected = true;
 			}
 			catch (RemotingException)
