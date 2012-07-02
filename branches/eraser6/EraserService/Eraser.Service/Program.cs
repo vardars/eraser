@@ -50,15 +50,9 @@ namespace Eraser.Service
 						}
 					}
 				}
-				catch (InvalidDataException ex)
+				catch (InvalidDataException)
 				{
 					File.Delete(TaskListPath);
-					MessageBox.Show(S._("Could not load task list. All task entries have " +
-						"been lost. The error returned was: {0}", ex.Message), S._("Eraser"),
-						MessageBoxButtons.OK, MessageBoxIcon.Error,
-						MessageBoxDefaultButton.Button1,
-						Localisation.IsRightToLeft(null) ?
-							MessageBoxOptions.RtlReading | MessageBoxOptions.RightAlign : 0);
 				}
 
 				//Run the eraser client.
