@@ -203,6 +203,9 @@ namespace Eraser.Manager
 		/// </summary>
 		public static bool operator==(Schedule lhs, Schedule rhs)
 		{
+			if ((object)lhs == null)
+				return (object)rhs == null;
+
 			return lhs.Equals(rhs);
 		}
 
