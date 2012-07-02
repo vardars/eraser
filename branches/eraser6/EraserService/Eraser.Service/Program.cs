@@ -26,15 +26,36 @@ using System.Text;
 
 using System.IO;
 
+using ComLib.Arguments;
+
 using Eraser.Manager;
 using Eraser.Plugins;
+using System.Windows.Forms;
 
 namespace Eraser.Service
 {
+	/// <summary>
+	/// Program arguments which only apply to the Eraser Service.
+	/// </summary>
+	class ServiceArguments
+	{
+		/// <summary>
+		/// True if the command line specified atRestart, which should result in the
+		/// queueing of tasks meant for running at restart.
+		/// </summary>
+		[Arg("atRestart", "r", "The program should queue all tasks scheduled for " +
+			"running at the system restart.", typeof(bool), false, false)]
+		public bool AtRestart { get; set; }
+	}
+
 	public class Program
 	{
 		static void Main(string[] args)
 		{
+			//Parse the command line arguments
+			ServiceArguments arguments = new ServiceArguments();
+			Args.Parse(args, CommandLinePrefixes, CommandLineSeparators, arguments);
+			
 			using (ManagerLibrary library = new ManagerLibrary(Settings.Get()))
 			{
 				RemoteExecutorServer eraserClient = null;
@@ -67,10 +88,13 @@ namespace Eraser.Service
 						File.Delete(TaskListPath);
 					}
 
+					//Queue tasks meant for running at restart if we are given that command line.
+					if (arguments.AtRestart)
+						eraserClient.QueueRestartTasks();
+
 					//Run the eraser client.
 					eraserClient.Run();
-
-					Console.ReadKey();
+					Application.Run();
 
 					//Save the task list
 					if (!Directory.Exists(Program.AppDataPath))
@@ -105,5 +129,15 @@ namespace Eraser.Service
 		/// Path to the Eraser settings key (relative to HKCU)
 		/// </summary>
 		public const string SettingsPath = @"SOFTWARE\Eraser\Eraser 6";
+
+		/// <summary>
+		/// The acceptable list of command line prefixes we will accept.
+		/// </summary>
+		public const string CommandLinePrefixes = "^(/|-|--)";
+
+		/// <summary>
+		/// The acceptable list of command line separators we will accept.
+		/// </summary>
+		public const string CommandLineSeparators = "(:|=)";
 	}
 }

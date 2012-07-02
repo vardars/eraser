@@ -61,20 +61,6 @@ namespace Eraser
 			public bool Quiet { get; set; }
 		}
 
-		/// <summary>
-		/// Program arguments which only apply to the GUI program.
-		/// </summary>
-		class GuiArguments : Arguments
-		{
-			/// <summary>
-			/// True if the command line specified atRestart, which should result in the
-			/// queueing of tasks meant for running at restart.
-			/// </summary>
-			[Arg("atRestart",  "r", "The program should queue all tasks scheduled for " +
-				"running at the system restart.", typeof(bool), false, false)]
-			public bool AtRestart { get; set; }
-		}
-
 		class ConsoleArguments : Arguments
 		{
 			/// <summary>
@@ -678,13 +664,9 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 			Application.SafeTopLevelCaptionFormat = S._("Eraser");
 
 			//Decide whether to display any UI.
-			GuiArguments arguments = new GuiArguments();
+			Arguments arguments = new Arguments();
 			Args.Parse(program.CommandLine, CommandLinePrefixes, CommandLineSeparators, arguments);
-			e.ShowMainForm = !arguments.AtRestart && !arguments.Quiet;
-
-			//Queue tasks meant for running at restart if we are given that command line.
-			if (arguments.AtRestart)
-				eraserClient.QueueRestartTasks();
+			e.ShowMainForm = !arguments.Quiet;
 
 			//Run the eraser client.
 			eraserClient.Run();
@@ -730,12 +712,14 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// <summary>
 		/// The acceptable list of command line prefixes we will accept.
 		/// </summary>
-		public const string CommandLinePrefixes = "^(/|-|--)";
+		[Obsolete]
+		public const string CommandLinePrefixes = Service.Program.CommandLinePrefixes;
 
 		/// <summary>
 		/// The acceptable list of command line separators we will accept.
 		/// </summary>
-		public const string CommandLineSeparators = "(:|=)";
+		[Obsolete]
+		public const string CommandLineSeparators = Service.Program.CommandLineSeparators;
 
 		/// <summary>
 		/// The global Executor instance.
