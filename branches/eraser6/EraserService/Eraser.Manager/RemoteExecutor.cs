@@ -202,6 +202,8 @@ namespace Eraser.Manager
 				Client = (DirectExecutor)Activator.GetObject(typeof(DirectExecutor),
 					string.Format(CultureInfo.InvariantCulture, "ipc://{0}/{1}",
 						RemoteExecutorServer.ServerName, RemoteExecutorServer.ExecutorName));
+				Client.TaskAdded += OnTaskAdded;
+				Client.TaskDeleted += OnTaskDeleted;
 				IsConnected = true;
 			}
 			catch (RemotingException)
@@ -232,6 +234,16 @@ namespace Eraser.Manager
 		internal override bool IsTaskQueued(Task task)
 		{
 			return Client.IsTaskQueued(task);
+		}
+
+		public void OnTaskAdded(object sender, TaskEventArgs e)
+		{
+			OnTaskAdded(e);
+		}
+
+		public void OnTaskDeleted(object sender, TaskEventArgs e)
+		{
+			OnTaskDeleted(e);
 		}
 
 		public override ExecutorTasksCollection Tasks
