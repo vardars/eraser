@@ -50,7 +50,12 @@ namespace Eraser.Manager
 		/// </summary>
 		public RemoteExecutorServer()
 		{
-			ServerChannel = new IpcChannel("localhost:9090");
+			Dictionary<string, string> properties = new Dictionary<string, string>();
+			properties["portName"] = "localhost:9090";
+
+			BinaryServerFormatterSinkProvider provider = new BinaryServerFormatterSinkProvider();
+			provider.TypeFilterLevel = TypeFilterLevel.Full;
+			ServerChannel = new IpcChannel(properties, null, provider);
 		}
 
 		protected override void Dispose(bool disposing)
