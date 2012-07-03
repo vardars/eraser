@@ -61,7 +61,7 @@ namespace Eraser.Service
 				RemoteExecutorServer eraserClient = null;
 				try
 				{
-					eraserClient = new RemoteExecutorServer();
+					eraserClient = new RemoteExecutorServiceServer();
 				}
 				catch (InvalidOperationException)
 				{
@@ -139,5 +139,19 @@ namespace Eraser.Service
 		/// The acceptable list of command line separators we will accept.
 		/// </summary>
 		public const string CommandLineSeparators = "(:|=)";
+	}
+
+	/// <summary>
+	/// A subclass of RemoteExecutorServer so that we will quit when the client requests Exit.
+	/// </summary>
+	class RemoteExecutorServiceServer : RemoteExecutorServer
+	{
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+
+			if (disposing)
+				Application.Exit();
+		}
 	}
 }
