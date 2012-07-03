@@ -144,6 +144,17 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
+		/// Gets whether this instance of the RemoteExecutor has administrator permissions.
+		/// </summary>
+		public bool IsAdministrator
+		{
+			get
+			{
+				return Security.IsAdministrator();
+			}
+		}
+
+		/// <summary>
 		/// The IPC Channel used for communications.
 		/// </summary>
 		private IpcChannel ServerChannel;
@@ -280,8 +291,19 @@ namespace Eraser.Manager
 		}
 
 		/// <summary>
-		/// The DirectExecutor proxy object used for calls to the server.
+		/// Gets whether the server instance has administrator permissions.
 		/// </summary>
-		private DirectExecutor Client;
+		public bool IsAdministrator
+		{
+			get
+			{
+				return Client.IsAdministrator;
+			}
+		}
+
+		/// <summary>
+		/// The RemoteExecutorServer proxy object used for calls to the server.
+		/// </summary>
+		private RemoteExecutorServer Client;
 	}
 }

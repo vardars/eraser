@@ -559,7 +559,7 @@ namespace Eraser
 		{
 			//Hide the restart as administrator menu item if we are already running as an
 			//administrator
-			if (Security.IsAdministrator())
+			if (Program.eraserClient.IsAdministrator)
 				restartAsAdministratorToolStripMenuItem.Visible = false;
 			else
 			{
@@ -579,8 +579,16 @@ namespace Eraser
 
 		private void restartAsAdministratorToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			Program.eraserClient.Exit();
-			Application.Exit();
+			//Start a new instance of Eraser first
+			Process adminEraser = new Process();
+			adminEraser.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
+			adminEraser.StartInfo.UseShellExecute = true;
+			adminEraser.StartInfo.Verb = "runas";
+			if (adminEraser.Start())
+			{
+				Program.eraserClient.Exit();
+				Application.Exit();
+			}
 		}
 	}
 
