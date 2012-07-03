@@ -203,7 +203,7 @@ namespace Eraser.Manager
 				//TODO: is there a better way to verify that we can connect to our Remote instance?
 				//Create an instance of the remote object.
 				Task task2 = new Task();
-				Client = (DirectExecutor)Activator.GetObject(typeof(DirectExecutor),
+				Client = (RemoteExecutorServer)Activator.GetObject(typeof(RemoteExecutorServer),
 					string.Format(CultureInfo.InvariantCulture, "ipc://{0}/{1}",
 						RemoteExecutorServer.ServerName, RemoteExecutorServer.ExecutorName));
 				Client.TaskAdded += OnTaskAdded;
@@ -258,6 +258,16 @@ namespace Eraser.Manager
 			{
 				return Client.Tasks;
 			}
+		}
+
+		/// <summary>
+		/// This will tell the server process to exit. As such, this client connection will be
+		/// invalid after this call.
+		/// </summary>
+		public void Exit()
+		{
+			Client.Dispose();
+			Dispose();
 		}
 
 		/// <summary>
