@@ -90,8 +90,11 @@ namespace Eraser.Manager
 			if (disposing)
 			{
 				ServerChannel.StopListening(null);
-				GlobalMutex.Close();
-				GlobalMutex = null;
+				if (GlobalMutex != null)
+				{
+					GlobalMutex.Close();
+					GlobalMutex = null;
+				}
 			}
 
 			base.Dispose(disposing);
