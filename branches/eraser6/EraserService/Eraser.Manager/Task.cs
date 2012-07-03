@@ -531,17 +531,17 @@ namespace Eraser.Manager
 		/// <summary>
 		/// The task has been edited.
 		/// </summary>
-		public EventHandler TaskEdited { get; set; }
+		public event EventHandler TaskEdited;
 
 		/// <summary>
 		/// The start of the execution of a task.
 		/// </summary>
-		public EventHandler TaskStarted { get; set; }
+		public event EventHandler TaskStarted;
 
 		/// <summary>
 		/// The completion of the execution of a task.
 		/// </summary>
-		public EventHandler TaskFinished { get; set; }
+		public event EventHandler TaskFinished;
 
 		/// <summary>
 		/// Broadcasts the task edited event.
