@@ -27,6 +27,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using System.IO;
+using System.Drawing;
 
 namespace Eraser.Util
 {
@@ -66,6 +67,32 @@ namespace Eraser.Util
 						key.Close();
 				}
 			}
+		}
+
+		public enum StockIcon
+		{
+			Shield = NativeMethods.SHStockIcons.SIID_SHIELD
+		}
+
+		/// <summary>
+		/// Gets the stock icon for the given identifier.
+		/// </summary>
+		/// <param name="icon">The icon to look up.</param>
+		/// <returns>A stock icon for the given identifier, or null if the icon cannot
+		/// be found.</returns>
+		public static Icon GetStockIcon(StockIcon icon)
+		{
+			NativeMethods.SHSTOCKICONINFO stockIconInfo = new NativeMethods.SHSTOCKICONINFO();
+			stockIconInfo.cbSize = (uint)Marshal.SizeOf(stockIconInfo);
+			
+			if (NativeMethods.SHGetStockIconInfo((NativeMethods.SHStockIcons)icon,
+				NativeMethods.ShGetStockIconInfoFlags.SHGSI_ICON |
+				NativeMethods.ShGetStockIconInfoFlags.SHGSI_SMALLICON, ref stockIconInfo) == 0)
+			{
+				return Icon.FromHandle(stockIconInfo.hIcon);
+			}
+
+			return null;
 		}
 
 		/// <summary>
