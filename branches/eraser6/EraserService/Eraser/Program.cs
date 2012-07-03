@@ -724,7 +724,7 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// <summary>
 		/// The global Executor instance.
 		/// </summary>
-		public static Executor eraserClient;
+		public static RemoteExecutorClient eraserClient;
 	}
 
 	class Win32Window : IWin32Window

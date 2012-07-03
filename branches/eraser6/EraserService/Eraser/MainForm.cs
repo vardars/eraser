@@ -554,6 +554,34 @@ namespace Eraser
 				hideWhenMinimisedToolStripMenuItem.Checked;
 		}
 		#endregion
+
+		private void notificationMenu_Opening(object sender, CancelEventArgs e)
+		{
+			//Hide the restart as administrator menu item if we are already running as an
+			//administrator
+			if (Security.IsAdministrator())
+				restartAsAdministratorToolStripMenuItem.Visible = false;
+			else
+			{
+				//Otherwise only allow that if we are on Vista+
+				if (Environment.OSVersion.Platform != PlatformID.Win32NT ||
+					Environment.OSVersion.Version < new Version(6, 0))
+				{
+					restartAsAdministratorToolStripMenuItem.Visible = false;
+				}
+				else if (restartAsAdministratorToolStripMenuItem.Image == null)
+				{
+					restartAsAdministratorToolStripMenuItem.Image =
+						Shell.GetStockIcon(Shell.StockIcon.Shield).ToBitmap();
+				}
+			}
+		}
+
+		private void restartAsAdministratorToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			Program.eraserClient.Exit();
+			Application.Exit();
+		}
 	}
 
 	public enum MainFormPage

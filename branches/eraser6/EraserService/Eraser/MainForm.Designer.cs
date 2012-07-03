@@ -58,6 +58,7 @@ namespace Eraser
 			this.openEraserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
 			this.hideWhenMinimisedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.restartAsAdministratorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.notificationIconTimer = new System.Windows.Forms.Timer(this.components);
 			this.ToolBar = new Eraser.ToolBar();
@@ -114,9 +115,11 @@ namespace Eraser
             this.openEraserToolStripMenuItem,
             this.toolStripMenuItem1,
             this.hideWhenMinimisedToolStripMenuItem,
+            this.restartAsAdministratorToolStripMenuItem,
             this.exitToolStripMenuItem});
 			this.notificationMenu.Name = "notificationMenu";
 			resources.ApplyResources(this.notificationMenu, "notificationMenu");
+			this.notificationMenu.Opening += new System.ComponentModel.CancelEventHandler(this.notificationMenu_Opening);
 			// 
 			// openEraserToolStripMenuItem
 			// 
@@ -135,6 +138,12 @@ namespace Eraser
 			this.hideWhenMinimisedToolStripMenuItem.Name = "hideWhenMinimisedToolStripMenuItem";
 			resources.ApplyResources(this.hideWhenMinimisedToolStripMenuItem, "hideWhenMinimisedToolStripMenuItem");
 			this.hideWhenMinimisedToolStripMenuItem.Click += new System.EventHandler(this.hideWhenMinimiseToolStripMenuItem_Click);
+			// 
+			// restartAsAdministratorToolStripMenuItem
+			// 
+			this.restartAsAdministratorToolStripMenuItem.Name = "restartAsAdministratorToolStripMenuItem";
+			resources.ApplyResources(this.restartAsAdministratorToolStripMenuItem, "restartAsAdministratorToolStripMenuItem");
+			this.restartAsAdministratorToolStripMenuItem.Click += new System.EventHandler(this.restartAsAdministratorToolStripMenuItem_Click);
 			// 
 			// exitToolStripMenuItem
 			// 
@@ -345,5 +354,6 @@ namespace Eraser
 		private System.Windows.Forms.ToolStripMenuItem tbTools;
 		private System.Windows.Forms.ToolStripMenuItem tbToolsDropDown;
 		private System.Windows.Forms.ContextMenuStrip tbToolsMenu;
+		private System.Windows.Forms.ToolStripMenuItem restartAsAdministratorToolStripMenuItem;
 	}
 }
