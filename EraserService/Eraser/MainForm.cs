@@ -584,11 +584,17 @@ namespace Eraser
 			adminEraser.StartInfo.FileName = Assembly.GetExecutingAssembly().Location;
 			adminEraser.StartInfo.UseShellExecute = true;
 			adminEraser.StartInfo.Verb = "runas";
-			if (adminEraser.Start())
+
+			Program.eraserClient.Exit();
+			try
 			{
-				Program.eraserClient.Exit();
-				Application.Exit();
+				adminEraser.Start();
 			}
+			catch (Win32Exception)
+			{
+			}
+			
+			Application.Exit();
 		}
 	}
 
