@@ -733,6 +733,11 @@ namespace Eraser.Util
 			if (disposing)
 				GC.SuppressFinalize(this);
 
+			//If we have already run, or if we did not lock the volume in the first place
+			//do not do stream cleanup.
+			if (Stream == null)
+				return;
+
 			//Flush the contents of the buffer to disk since after we unlock the volume
 			//we can no longer write to the volume.
 			Stream.Flush();
@@ -745,6 +750,9 @@ namespace Eraser.Util
 				throw new IOException("Could not unlock volume.",
 					new Win32Exception(Marshal.GetLastWin32Error()));
 			}
+
+			//Make this idempotent.
+			Stream = null;
 		}
 
 		private FileStream Stream;
