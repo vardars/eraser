@@ -30,6 +30,7 @@ namespace Eraser.Util
 	/// Provides functions to sample data.
 	/// </summary>
 	/// <typeparam name="T">The type of data to sample.</typeparam>
+	[Serializable]
 	public class Sampler
 	{
 		public void Add(double sample)
@@ -90,6 +91,7 @@ namespace Eraser.Util
 	/// <summary>
 	/// Represents an interval.
 	/// </summary>
+	[Serializable]
 	public class Interval
 	{
 		/// <summary>
