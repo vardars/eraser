@@ -354,6 +354,7 @@ namespace Eraser.Plugins
 		/// <summary>
 		/// The class which manages the steps which comprise the overall progress.
 		/// </summary>
+		[Serializable]
 		private class StepsList : IList<SteppedProgressManagerStepBase>
 		{
 			public StepsList(SteppedProgressManager manager)
@@ -799,6 +800,7 @@ namespace Eraser.Plugins
 		/// <summary>
 		/// The class which manages the progress of each dependent task.
 		/// </summary>
+		[Serializable]
 		private class SubTasksList : IList<ProgressManagerBase>
 		{
 			public SubTasksList(ParallelProgressManager manager)
