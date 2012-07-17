@@ -85,6 +85,11 @@ namespace Eraser.Manager
 			ServerChannel = new IpcChannel(properties, clientProvider, serverProvider);
 		}
 
+		public override object InitializeLifetimeService()
+		{
+			return null;
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
