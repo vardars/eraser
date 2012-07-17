@@ -30,8 +30,7 @@ namespace Eraser.Util
 	/// Provides functions to sample data.
 	/// </summary>
 	/// <typeparam name="T">The type of data to sample.</typeparam>
-	[Serializable]
-	public class Sampler
+	public class Sampler : MarshalByRefObject
 	{
 		public void Add(double sample)
 		{

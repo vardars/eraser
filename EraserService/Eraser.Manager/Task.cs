@@ -576,7 +576,6 @@ namespace Eraser.Manager
 	/// Returns the progress of an erasure target, since that comprises the
 	/// steps of the Task Progress.
 	/// </summary>
-	[Serializable]
 	public class ErasureTargetProgressManagerStep : SteppedProgressManagerStepBase
 	{
 		/// <summary>

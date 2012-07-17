@@ -31,8 +31,7 @@ namespace Eraser.Plugins
 	/// <summary>
 	/// Manages the progress for any operation.
 	/// </summary>
-	[Serializable]
-	public abstract class ProgressManagerBase
+	public abstract class ProgressManagerBase : MarshalByRefObject
 	{
 		/// <summary>
 		/// Constructor.
@@ -155,7 +154,6 @@ namespace Eraser.Plugins
 	/// Manages progress based only on one input, set through the Completed and Total
 	/// properties.
 	/// </summary>
-	[Serializable]
 	public class ProgressManager : ProgressManagerBase
 	{
 		/// <summary>
@@ -336,7 +334,6 @@ namespace Eraser.Plugins
 	/// <summary>
 	/// Manages progress based on sub-tasks.
 	/// </summary>
-	[Serializable]
 	public abstract class ChainedProgressManager : ProgressManagerBase
 	{
 	}
@@ -348,14 +345,12 @@ namespace Eraser.Plugins
 	/// take more time are given a larger amount of progress-bar space for finer
 	/// grained progress reporting.
 	/// </summary>
-	[Serializable]
 	public class SteppedProgressManager : ChainedProgressManager
 	{
 		/// <summary>
 		/// The class which manages the steps which comprise the overall progress.
 		/// </summary>
-		[Serializable]
-		private class StepsList : IList<SteppedProgressManagerStepBase>
+		private class StepsList : MarshalByRefObject, IList<SteppedProgressManagerStepBase>
 		{
 			public StepsList(SteppedProgressManager manager)
 			{
@@ -686,8 +681,7 @@ namespace Eraser.Plugins
 	/// <summary>
 	/// Represents one step in the list of steps to complete.
 	/// </summary>
-	[Serializable]
-	public abstract class SteppedProgressManagerStepBase
+	public abstract class SteppedProgressManagerStepBase : MarshalByRefObject
 	{
 		/// <summary>
 		/// Constructor.
@@ -747,7 +741,6 @@ namespace Eraser.Plugins
 		}
 	}
 
-	[Serializable]
 	public class SteppedProgressManagerStep : SteppedProgressManagerStepBase
 	{
 		/// <summary>
@@ -794,13 +787,11 @@ namespace Eraser.Plugins
 	/// Manages progress based on sub-tasks, assuming each sub-task to be independent
 	/// of the rest.
 	/// </summary>
-	[Serializable]
 	public class ParallelProgressManager : ChainedProgressManager
 	{
 		/// <summary>
 		/// The class which manages the progress of each dependent task.
 		/// </summary>
-		[Serializable]
 		private class SubTasksList : IList<ProgressManagerBase>
 		{
 			public SubTasksList(ParallelProgressManager manager)
