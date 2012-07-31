@@ -597,37 +597,39 @@ Eraser is Open-Source Software: see http://eraser.heidi.ie/ for details.
 		/// <param name="args">The command line parameters passed to the program.</param>
 		private static void CommandShell(ConsoleArguments args)
 		{
-			ShellArguments arguments = (ShellArguments)args;
-			Task task = TaskFromCommandLine(arguments);
-
-			//Confirm that the user wants the erase.
-			if (arguments.Confirm)
-			{
-				//Do we have a parent dialog?
-				IWin32Window parent = null;
-				if (!string.IsNullOrEmpty(arguments.Parent))
-				{
-					//We do. Get the handle
-					parent = new Win32Window((IntPtr)(ulong)
-						Convert.ChangeType(arguments.Parent, typeof(ulong)));
-
-					//And find the top-level window of the handle.
-					IWin32Window topLevel = UserApi.GetAncestor(parent,
-						UserApi.GetAncestorFlags.GA_ROOT);
-					if (topLevel != null)
-						parent = topLevel;
-				}
-
-				using (Form dialog = new ShellConfirmationDialog(task))
-				{
-					if (dialog.ShowDialog(parent) != DialogResult.Yes)
-						return;
-				}
-			}
-
-			//Then queue for erasure.
 			using (eraserClient = ConnectExecutor())
+			{
+				ShellArguments arguments = (ShellArguments)args;
+				Task task = TaskFromCommandLine(arguments);
+
+				//Confirm that the user wants the erase.
+				if (arguments.Confirm)
+				{
+					//Do we have a parent dialog?
+					IWin32Window parent = null;
+					if (!string.IsNullOrEmpty(arguments.Parent))
+					{
+						//We do. Get the handle
+						parent = new Win32Window((IntPtr)(ulong)
+							Convert.ChangeType(arguments.Parent, typeof(ulong)));
+
+						//And find the top-level window of the handle.
+						IWin32Window topLevel = UserApi.GetAncestor(parent,
+							UserApi.GetAncestorFlags.GA_ROOT);
+						if (topLevel != null)
+							parent = topLevel;
+					}
+
+					using (Form dialog = new ShellConfirmationDialog(task))
+					{
+						if (dialog.ShowDialog(parent) != DialogResult.Yes)
+							return;
+					}
+				}
+
+				//Then queue for erasure.
 				eraserClient.Tasks.Add(task);
+			}
 		}
 		#endregion
 
