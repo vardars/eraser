@@ -968,6 +968,11 @@ namespace Eraser
 					//Create the base target
 					FolderTarget target = new FolderTarget();
 
+					//The target defaults to deleting the folder if the folder is empty.
+					//Since we only provide an interface for the user to delete the folder,
+					//we need to default to not deleting the folder.
+					target.DeleteIfEmpty = false;
+
 					//Parse the subparameters.
 					List<KeyValuePair<string, string>> subParams =
 						GetSubParameters(param.Substring(equalPos + 1));
