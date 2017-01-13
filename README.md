@@ -1,3 +1,3 @@
 # eraser
 
-for of https://sourceforge.net/projects/eraser/
+fork of https://sourceforge.net/projects/eraser/
